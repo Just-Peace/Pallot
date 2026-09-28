@@ -1,0 +1,62 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 14,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 3,
+  "per_page": 5
+ },
+ "results": [
+  {
+   "candidate_id": "S6TX00479",
+   "candidate_name": "TALARICO, JAMES",
+   "committee_id": "C00918268",
+   "committee_name": "LONE STAR RISING PAC",
+   "count": 16,
+   "cycle": 2026,
+   "support_oppose_indicator": "S",
+   "total": 3980261.86
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "candidate_name": "TALARICO, JAMES",
+   "committee_id": "C00930099",
+   "committee_name": "FORWARD TEXAS",
+   "count": 5,
+   "cycle": 2026,
+   "support_oppose_indicator": "O",
+   "total": 505023.93
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "candidate_name": "TALARICO, JAMES",
+   "committee_id": "C00901223",
+   "committee_name": "LONE STAR LIBERTY PAC",
+   "count": 1,
+   "cycle": 2026,
+   "support_oppose_indicator": "O",
+   "total": 200000.0
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "candidate_name": "TALARICO, JAMES",
+   "committee_id": "C00562777",
+   "committee_name": "LATINO VICTORY FUND",
+   "count": 5,
+   "cycle": 2026,
+   "support_oppose_indicator": "S",
+   "total": 82500.0
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "candidate_name": "TALARICO, JAMES",
+   "committee_id": "C00835041",
+   "committee_name": "FORWARD BLUE",
+   "count": 2,
+   "cycle": 2026,
+   "support_oppose_indicator": "S",
+   "total": 45559.38
+  }
+ ]
+}

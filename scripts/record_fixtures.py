@@ -1,17 +1,23 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
-    python scripts/record_fixtures.py
+    python scripts/record_fixtures.py              # everything
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, tec, trackaipac)
 
-Makes about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia). The 2.6 MB
-statewide candidate list is cut down to the candidates on the recorded ballots, and the
-TrackAIPAC fixture is a Texas subset of trackaipac_cache's bundled data (no request).
+The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia).
+The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
+The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
+the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose ~10 requests
+an hour fit one; set VOTEBOT_FEC_API_KEY for the rest). The TrackAIPAC and Texas Ethics
+Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -21,7 +27,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from votebot.config import Config  # noqa: E402
-from votebot.sources import ballotpedia, census, nominatim, sos  # noqa: E402
+from votebot.offices import classify  # noqa: E402
+from votebot.sources import ballotpedia, census, fec, nominatim, sos  # noqa: E402
+from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
 ADDRESSES = {
@@ -38,6 +46,9 @@ TRACKAIPAC_PEOPLE = (
     "tx-ken-paxton", "tx-james-talarico", "tx-august-pfluger", "tx-greg-casar", "tx-lloyd-doggett",
     "tx-michael-cloud", "tx-tanya-lloyd", "tx-ted-cruz", "tx-michael-mccaul", "tx-christian-menefee",
 )
+FEC_CYCLE = 2026
+FEC_RACES = ("TX-SEN", "TX-10")  # the Capitol ballot's federal races
+FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
 
 
 def save(name: str, data: object) -> None:
@@ -47,65 +58,142 @@ def save(name: str, data: object) -> None:
     print(f"{name}: {path.stat().st_size:,} bytes")
 
 
-def main() -> int:
-    with httpx.Client(timeout=90, headers={"User-Agent": Config.user_agent}, follow_redirects=True) as client:
+def record_ballots(client: httpx.Client) -> None:
+    def get(url: str, **kwargs: object) -> object:
+        response = client.get(url, **kwargs)
+        response.raise_for_status()
+        return response.json()
 
-        def get(url: str, **kwargs: object) -> object:
-            response = client.get(url, **kwargs)
-            response.raise_for_status()
-            return response.json()
+    def post(url: str, body: dict) -> list:
+        response = client.post(url, json=body)
+        response.raise_for_status()
+        return response.json()
 
-        def post(url: str, body: dict) -> list:
-            response = client.post(url, json=body)
-            response.raise_for_status()
-            return response.json()
+    points = {}
+    for name, address in ADDRESSES.items():
+        data = get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+        save(f"census_{name}.json", data)
+        matches = data["result"]["addressMatches"]
+        if matches:
+            points[name] = (matches[0]["coordinates"]["y"], matches[0]["coordinates"]["x"])
 
-        points = {}
-        for name, address in ADDRESSES.items():
-            data = get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-            save(f"census_{name}.json", data)
-            matches = data["result"]["addressMatches"]
-            if matches:
-                points[name] = (matches[0]["coordinates"]["y"], matches[0]["coordinates"]["x"])
+    hits = get(nominatim.URL, params={"q": census.normalize_address(ADDRESSES["mopac"]), "format": "jsonv2",
+                                      "countrycodes": "us", "limit": "1"})
+    save("nominatim_mopac.json", hits)
+    lat, lon = float(hits[0]["lat"]), float(hits[0]["lon"])
+    save("census_coords_mopac.json",
+         get(f"{census.BASE}/coordinates", params={"x": f"{lon:.6f}", "y": f"{lat:.6f}", **census.PARAMS}))
 
-        hits = get(nominatim.URL, params={"q": census.normalize_address(ADDRESSES["mopac"]), "format": "jsonv2",
-                                          "countrycodes": "us", "limit": "1"})
-        save("nominatim_mopac.json", hits)
-        lat, lon = float(hits[0]["lat"]), float(hits[0]["lon"])
-        save("census_coords_mopac.json",
-             get(f"{census.BASE}/coordinates", params={"x": f"{lon:.6f}", "y": f"{lat:.6f}", **census.PARAMS}))
+    for year in (2026, 2027):
+        save(f"sos_elections_{year}.json", get(f"{sos.CBP}/getElectionsByYear/{year}"))
+    save("sos_regions.json", get(f"{sos.SYSTEM}/getAllRegions"))
+    save("sos_parties.json", get(f"{sos.CBP}/getPoliticalParties"))
+    save("sos_statuses.json", get(f"{sos.CBP}/getCandidateStatus"))
+    save("sos_declarations.json", get(f"{sos.CBP}/getDeclarationStatus"))
 
-        for year in (2026, 2027):
-            save(f"sos_elections_{year}.json", get(f"{sos.CBP}/getElectionsByYear/{year}"))
-        save("sos_regions.json", get(f"{sos.SYSTEM}/getAllRegions"))
-        save("sos_parties.json", get(f"{sos.CBP}/getPoliticalParties"))
-        save("sos_statuses.json", get(f"{sos.CBP}/getCandidateStatus"))
-        save("sos_declarations.json", get(f"{sos.CBP}/getDeclarationStatus"))
+    on_ballot: set[int] = set()
+    for election, year in ELECTIONS.items():
+        for county_id in COUNTIES:
+            rows = post(f"{sos.CBP}/getCandidateBallotOrder",
+                        {"electionYear": year, "electionId": election, "countyId": county_id, "source": "TX"})
+            save(f"sos_ballot_{election}_{county_id}.json", rows)
+            on_ballot |= {row["idCandidate"] for row in rows}
+    for election, year in ELECTIONS.items():
+        rows = post(f"{sos.CBP}/findQualifiedCandidates", {"electionYear": year, "electionId": election})
+        if len(rows) > 200:
+            rows = [row for row in rows if row["idCandidate"] in on_ballot]
+        save(f"sos_candidates_{election}.json", rows)
 
-        on_ballot: set[int] = set()
-        for election, year in ELECTIONS.items():
-            for county_id in COUNTIES:
-                rows = post(f"{sos.CBP}/getCandidateBallotOrder",
-                            {"electionYear": year, "electionId": election, "countyId": county_id, "source": "TX"})
-                save(f"sos_ballot_{election}_{county_id}.json", rows)
-                on_ballot |= {row["idCandidate"] for row in rows}
-        for election, year in ELECTIONS.items():
-            rows = post(f"{sos.CBP}/findQualifiedCandidates", {"electionYear": year, "electionId": election})
-            if len(rows) > 200:
-                rows = [row for row in rows if row["idCandidate"] in on_ballot]
-            save(f"sos_candidates_{election}.json", rows)
+    for name in BALLOTPEDIA_AT:
+        lat, lon = points[name]
+        save(f"ballotpedia_{name}.json",
+             get(ballotpedia.URL, params={"long": f"{lon:.5f}", "lat": f"{lat:.5f}", "include_volunteer": "true"},
+                 headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"}))
 
-        for name in BALLOTPEDIA_AT:
-            lat, lon = points[name]
-            save(f"ballotpedia_{name}.json",
-                 get(ballotpedia.URL, params={"long": f"{lon:.5f}", "lat": f"{lat:.5f}", "include_volunteer": "true"},
-                     headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"}))
 
+def record_fec(client: httpx.Client) -> None:
+    key = os.environ.get("VOTEBOT_FEC_API_KEY") or fec.DEMO_KEY
+
+    def get(path: str, params: dict[str, str]) -> dict:
+        response = client.get(f"{fec.API}{path}", params=params, headers={"X-Api-Key": key})
+        response.raise_for_status()
+        print(f"  FEC requests left this hour: {response.headers.get('x-ratelimit-remaining', '?')}")
+        return response.json()
+
+    rows: dict[str, dict] = {}
+    for seat in FEC_RACES:
+        state, _, district = seat.partition("-")
+        params = {"state": state, "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts"}
+        if district == "SEN":
+            params["office"], name = "senate", "fec_elections_senate.json"
+        else:
+            params.update(office="house", district=f"{int(district):02d}")
+            name = f"fec_elections_house_{int(district):02d}.json"
+        data = get("/elections/", params)
+        save(name, data)
+        rows.update({row["candidate_id"]: row for row in data.get("results") or []})
+
+    whole = {"cycle": str(FEC_CYCLE), "election_full": "true"}
+    try:
+        for candidate_id in FEC_DETAILS if key != fec.DEMO_KEY else FEC_DETAILS[:1]:
+            ranked = {**whole, "candidate_id": candidate_id, "per_page": "100", "sort": "-total"}
+            save(f"fec_totals_{candidate_id}.json", get(f"/candidate/{candidate_id}/totals/", whole))
+            save(f"fec_by_size_{candidate_id}.json",
+                 get("/schedules/schedule_a/by_size/by_candidate/", {**whole, "candidate_id": candidate_id}))
+            save(f"fec_by_state_{candidate_id}.json", get("/schedules/schedule_a/by_state/by_candidate/", ranked))
+            save(f"fec_outside_{candidate_id}.json", get("/schedules/schedule_e/by_candidate/", ranked))
+            committee = rows.get(candidate_id, {}).get("candidate_pcc_id")
+            if committee:
+                save(f"fec_by_employer_{committee}.json",
+                     get("/schedules/schedule_a/by_employer/",
+                         {"committee_id": committee, "cycle": str(FEC_CYCLE), "per_page": "40", "sort": "-total"}))
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code != 429:
+            raise
+        print("The FEC's hourly limit ran out; the rest of the FEC fixtures were not recorded. "
+              "Set VOTEBOT_FEC_API_KEY, or run --only fec again in an hour.")
+
+
+def record_tec() -> None:
+    """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
+    bundled = ROOT / "tec_cache" / "data"
+    current = json.loads((bundled / "current.json").read_text(encoding="utf-8"))
+    counties = {row["txName"].upper() for row in json.loads((FIXTURES / "sos_regions.json").read_text(encoding="utf-8"))}
+    seats = set()
+    for row in json.loads((FIXTURES / "sos_ballot_53815_227.json").read_text(encoding="utf-8")):
+        seat = tec_seat(classify(row.get("txOfficeName") or "", row.get("cdOfficeType"), counties), "TRAVIS")
+        if seat:
+            seats.add(seat)
+    subset = {
+        **current,
+        "filers": [f for f in current["filers"] if _seats(f) & seats],
+        "outside": [o for o in current["outside"] if _seats(o) & seats],
+    }
+    save("tec/current.json", subset)
+    save("tec/meta.json", json.loads((bundled / "meta.json").read_text(encoding="utf-8")))
+
+
+def record_trackaipac() -> None:
     bundled = ROOT / "trackaipac_cache" / "data"
     current = json.loads((bundled / "current.json").read_text(encoding="utf-8"))
     people = [p for p in current["candidates"] if p["candidate_id"] in TRACKAIPAC_PEOPLE]
     save("trackaipac/current.json", {"snapshot": current["snapshot"], "candidates": people})
     save("trackaipac/meta.json", json.loads((bundled / "meta.json").read_text(encoding="utf-8")))
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
+    parser.add_argument("--only", choices=("ballots", "fec", "tec", "trackaipac"), help="record just this part")
+    only = parser.parse_args(argv).only
+    with httpx.Client(timeout=90, headers={"User-Agent": Config.user_agent}, follow_redirects=True) as client:
+        if only in (None, "ballots"):
+            record_ballots(client)
+        if only in (None, "fec"):
+            record_fec(client)
+    if only in (None, "tec"):
+        record_tec()
+    if only in (None, "trackaipac"):
+        record_trackaipac()
     return 0
 
 

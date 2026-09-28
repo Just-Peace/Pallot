@@ -28,6 +28,8 @@ class Ttls:
     geocode_miss: int = DAY
     ballotpedia: int = DAY
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
+    fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
+    fec_backoff: int = HOUR  # after the FEC's hourly limit, stop asking for this long
 
 
 @dataclass(frozen=True)
@@ -36,6 +38,9 @@ class Config:
     user_agent: str = "VoteBot/0.1 (personal ballot helper)"
     http_timeout: float = 30.0
     ttl: Ttls = field(default_factory=Ttls)
+    # A free api.data.gov key; the shared DEMO_KEY only allows about 10 requests an hour.
+    # Only ever sent to the FEC, never written to disk.
+    fec_api_key: str = field(default="DEMO_KEY", repr=False)
 
     @property
     def cache_path(self) -> Path:
@@ -53,6 +58,10 @@ class Config:
     def trackaipac_dir(self) -> Path:
         return self.data_dir / "trackaipac"
 
+    @property
+    def tec_dir(self) -> Path:
+        return self.data_dir / "tec"
+
 
 def load_config(env: Mapping[str, str] | None = None) -> Config:
     env = os.environ if env is None else env
@@ -64,4 +73,5 @@ def load_config(env: Mapping[str, str] | None = None) -> Config:
         user_agent=env.get("VOTEBOT_USER_AGENT") or Config.user_agent,
         http_timeout=float(env.get("VOTEBOT_HTTP_TIMEOUT") or Config.http_timeout),
         ttl=Ttls(**overrides),
+        fec_api_key=(env.get("VOTEBOT_FEC_API_KEY") or "").strip() or "DEMO_KEY",
     )

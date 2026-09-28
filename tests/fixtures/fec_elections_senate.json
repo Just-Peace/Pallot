@@ -1,0 +1,510 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 31,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00479",
+   "candidate_name": "TALARICO, JAMES",
+   "candidate_pcc_id": "C00919084",
+   "candidate_pcc_name": "TALARICO FOR TEXAS",
+   "cash_on_hand_end_period": 21548155.08,
+   "committee_ids": [
+    "C00919084"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 47012775.34,
+   "total_receipts": 68560930.42
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S2TX00106",
+   "candidate_name": "CORNYN, JOHN SEN",
+   "candidate_pcc_id": "C00369033",
+   "candidate_pcc_name": "TEXANS FOR SENATOR JOHN CORNYN INC.",
+   "cash_on_hand_end_period": 542119.97,
+   "committee_ids": [
+    "C00369033"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 14352854.31,
+   "total_receipts": 14261513.59
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00552",
+   "candidate_name": "CROCKETT, JASMINE",
+   "candidate_pcc_id": "C00929901",
+   "candidate_pcc_name": "JASMINE FOR TEXAS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929901"
+   ],
+   "coverage_end_date": "2026-08-13",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 11096965.96,
+   "total_receipts": 11096965.96
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00388",
+   "candidate_name": "PAXTON, WARREN KENNETH JR.",
+   "candidate_pcc_id": "C00901918",
+   "candidate_pcc_name": "KEN PAXTON FOR SENATE",
+   "cash_on_hand_end_period": 1755783.35,
+   "committee_ids": [
+    "C00901918",
+    "C00930446"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 7492915.18,
+   "total_receipts": 9248698.53
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4TX00722",
+   "candidate_name": "ALLRED, COLIN",
+   "candidate_pcc_id": "C00909572",
+   "candidate_pcc_name": "ALLRED FOR TEXAS 2026",
+   "cash_on_hand_end_period": 708.42,
+   "committee_ids": [
+    "C00839597",
+    "C00909572"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 7772468.72,
+   "total_receipts": 7629042.5
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00511",
+   "candidate_name": "HUNT, WESLEY",
+   "candidate_pcc_id": "C00701003",
+   "candidate_pcc_name": "HUNT FOR SENATE",
+   "cash_on_hand_end_period": 29183.19,
+   "committee_ids": [
+    "C00701003"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 4587880.36,
+   "total_receipts": 2129887.39
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00586",
+   "candidate_name": "SIMS, DANIEL M",
+   "candidate_pcc_id": "C00933440",
+   "candidate_pcc_name": "REFORM TEXAS WITH DANIEL M SIMS",
+   "cash_on_hand_end_period": 200.0,
+   "committee_ids": [
+    "C00933440"
+   ],
+   "coverage_end_date": "2026-05-19",
+   "incumbent_challenge_full": null,
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 11565.57,
+   "total_receipts": 11665.57
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00362",
+   "candidate_name": "KHAN, GULREZ",
+   "candidate_pcc_id": "C00899294",
+   "candidate_pcc_name": "GULREZ GUS KHAN FOR U.S. SENATE",
+   "cash_on_hand_end_period": -645.69,
+   "committee_ids": [
+    "C00899294"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 11438.76,
+   "total_receipts": 10793.07
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0TX00365",
+   "candidate_name": "BIERSCHWALE, VIRGIL",
+   "candidate_pcc_id": "C00908087",
+   "candidate_pcc_name": "VIRGIL BIERSCHWALE FOR U.S. SENATE 2026",
+   "cash_on_hand_end_period": 383.2,
+   "committee_ids": [
+    "C00908087"
+   ],
+   "coverage_end_date": "2026-03-16",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 9657.03,
+   "total_receipts": 9988.18
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00495",
+   "candidate_name": "SIMMONS, JADE",
+   "candidate_pcc_id": "C00923201",
+   "candidate_pcc_name": "JADE SIMMONS FOR SENATE",
+   "cash_on_hand_end_period": 955.76,
+   "committee_ids": [
+    "C00923201"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 8368.73,
+   "total_receipts": 9324.49
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4TX00888",
+   "candidate_name": "BROWN, THEODORE E. JR.",
+   "candidate_pcc_id": "C00857623",
+   "candidate_pcc_name": "TED BROWN ELECTION COMMITTEE",
+   "cash_on_hand_end_period": 1150.97,
+   "committee_ids": [
+    "C00857623"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 6376.43,
+   "total_receipts": 7459.52
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00396",
+   "candidate_name": "SWANSON, MICHAEL",
+   "candidate_pcc_id": "C00902551",
+   "candidate_pcc_name": "FRIENDS OF MICHAEL SWANSON",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00902551"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6991.29,
+   "total_receipts": 6991.29
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00321",
+   "candidate_name": "SCHMOKER, TONY",
+   "candidate_pcc_id": "C00894907",
+   "candidate_pcc_name": "TONY SCHMOKER FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00894907"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 3106.71,
+   "total_receipts": 2500.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00545",
+   "candidate_name": "CANADY, SARA LARUE",
+   "candidate_pcc_id": "C00929406",
+   "candidate_pcc_name": "SARA FOR SENATE",
+   "cash_on_hand_end_period": -429.81,
+   "committee_ids": [
+    "C00929406"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 7490.84,
+   "total_receipts": 770.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00305",
+   "candidate_name": "ALLEN, KEITH",
+   "candidate_pcc_id": "C00886291",
+   "candidate_pcc_name": "KEITH ALLEN 4 CONGRESS",
+   "cash_on_hand_end_period": 944.54,
+   "committee_ids": [
+    "C00886291"
+   ],
+   "coverage_end_date": "2024-12-31",
+   "incumbent_challenge_full": null,
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 200.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4TX00441",
+   "candidate_name": "AYERS, AVERY L",
+   "candidate_pcc_id": "C00886770",
+   "candidate_pcc_name": "FRIENDS OF AVERY AYERS FOR U.S. SENATE OF TEXAS 2026",
+   "cash_on_hand_end_period": 210.0,
+   "committee_ids": [
+    "C00886770"
+   ],
+   "coverage_end_date": "2025-10-31",
+   "incumbent_challenge_full": null,
+   "party_full": "WRITE-IN",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4TX00821",
+   "candidate_name": "HASSAN, AHMAD",
+   "candidate_pcc_id": "C00944900",
+   "candidate_pcc_name": "DR AHMAD HASSAN FOR TEXAS SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00944900"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00297",
+   "candidate_name": "MANN, RENNIE HILL",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00833921"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00313",
+   "candidate_name": "WYATT, DOC LEO DR",
+   "candidate_pcc_id": "C00892828",
+   "candidate_pcc_name": "MAGA REPUBLICAN PARTY PAC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00892828"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00354",
+   "candidate_name": "DUNCAN, ALEXANDER",
+   "candidate_pcc_id": "C00897611",
+   "candidate_pcc_name": "DUNCAN FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00897611"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00370",
+   "candidate_name": "ALVAREZ, ANDREW",
+   "candidate_pcc_id": "C00745356",
+   "candidate_pcc_name": "ANDREW ALVAREZ FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00745356"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00446",
+   "candidate_name": "EVANS, RONALD JR",
+   "candidate_pcc_id": "C00913228",
+   "candidate_pcc_name": "THE PEOPLE FOR RONALD EVANS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00913228"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00453",
+   "candidate_name": "MORGUL, EMILY",
+   "candidate_pcc_id": "C00911917",
+   "candidate_pcc_name": "EMILY MORGUL'S COMMITTEE FOR HOPE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00911917"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00529",
+   "candidate_name": "TRAKAS, ANDREW KYLE",
+   "candidate_pcc_id": "C00922476",
+   "candidate_pcc_name": "TRAKAS FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00922476"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00537",
+   "candidate_name": "WILLIAMS, PAULA STEPHEN MS",
+   "candidate_pcc_id": "C00927756",
+   "candidate_pcc_name": "PAULA WILLIAMS FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00927756"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00560",
+   "candidate_name": "BENDER, ANNA",
+   "candidate_pcc_id": "C00930131",
+   "candidate_pcc_name": "ANNA BENDER FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00930131"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00578",
+   "candidate_name": "ADEFOPE, JOHN",
+   "candidate_pcc_id": "C00934158",
+   "candidate_pcc_name": "TEXANS FOR ADEFOPE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00934158"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00594",
+   "candidate_name": "BROWN GAINES, JENNIFER TAWANDA",
+   "candidate_pcc_id": "C00940213",
+   "candidate_pcc_name": "YEARN CO. JENNIFER TAWANDA BROWN GAINES",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00940213"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "LIBERAL PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00602",
+   "candidate_name": "HUSE, RODGER",
+   "candidate_pcc_id": "C00944504",
+   "candidate_pcc_name": "RODGER HUSE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00944504"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": null,
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00636",
+   "candidate_name": "HALL, BRADFORD WINSTON",
+   "candidate_pcc_id": "C00954123",
+   "candidate_pcc_name": "HALL FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00954123"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "WRITE-IN",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6TX00651",
+   "candidate_name": "MOHAMED, ZUL MIRZA",
+   "candidate_pcc_id": "C00959197",
+   "candidate_pcc_name": "ZUL MOHAMED",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00959197"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "AMERICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

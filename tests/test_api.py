@@ -21,11 +21,13 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "sos", "ballotpedia", "trackaipac"]
-    geocoding, sos, _, tracker = overview["sources"]
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "sos", "ballotpedia", "trackaipac", "fec", "tec"]
+    geocoding, sos, _, tracker, fec, tec = overview["sources"]
     assert geocoding["toggleable"] is False and sos["enabled"] is True
-    assert tracker["clear_label"] == "Reset to bundled snapshot"
+    assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
+    assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
+    assert tec["notice"] and {"Snapshot", "Money raised since"} <= {f["label"] for f in tec["details"]}
 
 
 def test_toggles_persist_across_restarts(make_app, tmp_path):

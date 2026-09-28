@@ -1,0 +1,36 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 55,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 19,
+  "per_page": 3
+ },
+ "results": [
+  {
+   "candidate_id": "S6TX00479",
+   "count": 108674,
+   "cycle": 2026,
+   "state": "TX",
+   "state_full": "Texas",
+   "total": 17529507.63
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "count": 16302,
+   "cycle": 2026,
+   "state": "CA",
+   "state_full": "California",
+   "total": 3579701.09
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "count": 5079,
+   "cycle": 2026,
+   "state": "NY",
+   "state_full": "New York",
+   "total": 1482533.04
+  }
+ ]
+}

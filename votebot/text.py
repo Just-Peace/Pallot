@@ -36,6 +36,26 @@ def display_office(name: str) -> str:
     return " ".join(words).replace("U. S. ", "U.S. ")
 
 
+_ACRONYMS = {
+    "PAC", "PACS", "LLC", "LLP", "PLLC", "USA", "US", "AIPAC", "SEIU", "AFL-CIO", "NEA", "AFT", "LCV", "NRA", "UAW",
+    "IBEW", "CEO", "CFO", "COO", "CTO", "CPA", "VP", "MD", "DO", "UT", "ISD",
+}
+
+
+def display_org(name: str) -> str:
+    """ "LONE STAR RISING PAC" -> "Lone Star Rising PAC": like display_office, but acronyms
+    (and vowel-less words like NRCC) stay in capitals."""
+    shown = display_office(name)
+    if not name.isupper() or len(shown.split()) != len(name.split()):
+        return shown
+    words = []
+    for word, pretty in zip(name.split(), shown.split()):
+        bare = word.strip(".,()")
+        keep = bare in _ACRONYMS or (bare.isalpha() and not re.search(r"[AEIOUY]", bare))
+        words.append(word if keep else pretty)
+    return " ".join(words)
+
+
 def _name_part(part: str) -> str:
     bare = part.strip(".,")
     if bare in _ROMAN:
@@ -70,5 +90,29 @@ def web_url(value: str | None) -> str | None:
     return value if re.match(r"^https?://", value, re.I) else f"https://{value}"
 
 
-def money(amount: int | None) -> str | None:
-    return None if amount is None else f"${amount:,}"
+def money(amount: float | None) -> str | None:
+    """Whole dollars: 219959 -> "$219,959"."""
+    return None if amount is None else f"${round(amount):,}"
+
+
+def money_short(amount: float | None) -> str | None:
+    """For badges: 68560930 -> "$68.6M", 542119 -> "$542K", 950 -> "$950"."""
+    if amount is None:
+        return None
+    sign, value = ("-" if amount < 0 else ""), abs(amount)
+    for size, suffix in ((1e9, "B"), (1e6, "M"), (1e3, "K")):
+        if value >= size * 0.9995:  # 999,600 is "$1M", not "$1000K"
+            scaled = value / size
+            text = f"{scaled:.1f}" if scaled < 99.95 else f"{scaled:.0f}"
+            return f"{sign}${text.removesuffix('.0')}{suffix}"
+    return f"{sign}${value:,.0f}"
+
+
+def display_date(value: str | dt.date | None) -> str | None:
+    """ "2026-06-30" or "2026-06-30T00:00:00" -> "Jun 30, 2026"."""
+    if isinstance(value, str):
+        try:
+            value = dt.date.fromisoformat(value[:10])
+        except ValueError:
+            return None
+    return f"{value:%b} {value.day}, {value.year}" if value else None
