@@ -1,14 +1,15 @@
-// The ballot page. The left pane holds your address, the list of sections and the
-// settings; the main area has the progress strip and the races, each one collapsible.
+// The ballot page. The left pane holds "Your ballot" with your address under it, the list of
+// sections, and links to the other pages at the bottom; the main area has the progress strip
+// and the races, each one collapsible.
 
+import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
-import { Picks, WRITE_IN, loadLastLookup, saveLastLookup } from "./picks.js";
+import { Picks, WRITE_IN, loadLastLookup, saveAddressCard, saveLastLookup, settingsStamp } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
-import { initSettings } from "./settings-pane.js";
 import { badgeList, renderTabs } from "./source-cards.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -47,12 +48,6 @@ function showForm(show) {
   addressCard.hidden = show;
   cancelButton.hidden = !ballot;
   if (show) addressInput.focus();
-}
-
-function showAddress(address, place = "", districts = "") {
-  $("#address-line").textContent = address;
-  $("#address-sub").textContent = place;
-  $("#address-districts").textContent = districts;
 }
 
 $("#change-address").addEventListener("click", () => showForm(true));
@@ -98,7 +93,8 @@ function readForm() {
   return request;
 }
 
-async function lookup(request) {
+// keepForm: leave the address form open afterwards ("Change" on another page opened it).
+async function lookup(request, { keepForm = false } = {}) {
   lastRequest = request;
   setStatus("Looking up your ballot…", "busy");
   submitButton.disabled = true;
@@ -108,7 +104,8 @@ async function lookup(request) {
     picks = new Picks(ballot.election_date);
     render();
     setStatus("");
-    showForm(false);
+    if (keepForm) cancelButton.hidden = false;
+    else showForm(false);
   } catch (error) {
     setStatus(error.message, "error");
     if (!ballot) showForm(true);
@@ -135,15 +132,17 @@ function render() {
 
 function renderAddress() {
   const { location, districts: d } = ballot;
-  showAddress(
-    lastRequest.address,
-    [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
-    [
+  const card = {
+    address: lastRequest.address,
+    place: [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
+    districts: [
       d.cd && `U.S. House ${d.cd}`, d.sd && `State Senate ${d.sd}`, d.hd && `State House ${d.hd}`, d.sboe && `SBOE ${d.sboe}`,
       d.commissioner && `Commissioner ${d.commissioner}`, d.jp && `JP ${d.jp}`, d.constable && `Constable ${d.constable}`,
     ].filter(Boolean).join(" · "),
-  );
-  $("#address-line").title = location.matched_address || "";
+    matched: location.matched_address || "",
+  };
+  showAddress(card);
+  saveAddressCard(card); // the other pages show it too
 }
 
 function renderHeader() {
@@ -325,18 +324,7 @@ function searchLink(race, candidate, className, label) {
     rel: "noopener noreferrer",
     title: `Search ${currentEngine().label} for ${candidate.name}`,
     "aria-label": `Search the web for ${candidate.name} (opens in a new tab)`,
-    "data-query": query,
-    "data-name": candidate.name,
   }, label);
-}
-
-// After the engine changes in Settings, point every search link at the new one.
-function updateSearchLinks() {
-  const engine = currentEngine();
-  for (const link of document.querySelectorAll("a[data-query]")) {
-    link.href = searchHref(link.dataset.query);
-    link.title = `Search ${engine.label} for ${link.dataset.name}`;
-  }
 }
 
 function candidateRow(race, candidate) {
@@ -362,15 +350,18 @@ function candidateRow(race, candidate) {
     if (opening) textarea.focus();
   });
   let timer;
+  const save = () => {
+    clearTimeout(timer);
+    picks.setNote(candidate.key, textarea.value);
+    noteButton.classList.toggle("has-note", Boolean(textarea.value.trim()));
+    saved.textContent = "Saved";
+    setTimeout(() => { saved.textContent = ""; }, 1500);
+  };
   textarea.addEventListener("input", () => {
     clearTimeout(timer);
-    timer = setTimeout(() => {
-      picks.setNote(candidate.key, textarea.value);
-      noteButton.classList.toggle("has-note", Boolean(textarea.value.trim()));
-      saved.textContent = "Saved";
-      setTimeout(() => { saved.textContent = ""; }, 1500);
-    }, 400);
+    timer = setTimeout(save, 400);
   });
+  textarea.addEventListener("change", save); // on leaving the box, e.g. for another page
 
   const sources = candidate.cards.length;
   const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources },
@@ -412,17 +403,20 @@ function writeInRow(race) {
     if (input.checked) name.focus();
   });
   let timer;
+  const save = () => {
+    clearTimeout(timer);
+    picks.setWriteIn(race.key, name.value);
+    const typed = Boolean(name.value.trim());
+    const picked = picks.picked(race.key).includes(WRITE_IN);
+    const full = multi && !picked && picks.picked(race.key).length >= race.seats;
+    if (typed !== picked && !full) choose(race, WRITE_IN, typed);
+    else refresh(race.key); // the collapsed line shows the new name
+  };
   name.addEventListener("input", () => {
     clearTimeout(timer);
-    timer = setTimeout(() => {
-      picks.setWriteIn(race.key, name.value);
-      const typed = Boolean(name.value.trim());
-      const picked = picks.picked(race.key).includes(WRITE_IN);
-      const full = multi && !picked && picks.picked(race.key).length >= race.seats;
-      if (typed !== picked && !full) choose(race, WRITE_IN, typed);
-      else refresh(race.key); // the collapsed line shows the new name
-    }, 300);
+    timer = setTimeout(save, 300);
   });
+  name.addEventListener("change", save); // on leaving the box, e.g. for another page
   const hint = STATES[ballot.location.state]?.writeInNote;
   return h(
     "li",
@@ -593,35 +587,39 @@ form.addEventListener("submit", (event) => {
 electionSelect.addEventListener("change", syncPartyField);
 
 hydrateIcons();
-initSettings({
-  onSearchEngineChanged: updateSearchLinks,
-  async onSourcesChanged() {
-    await loadElections(electionSelect.value);
-    if (lastRequest) lookup(lastRequest);
-  },
-  onPicksCleared() {
-    if (!ballot) return;
-    picks = new Picks(ballot.election_date);
-    render();
-  },
+
+// Settings live on their own page. If they changed while this page was open (in another tab,
+// or kept by the browser for the Back button), start over so the ballot reflects them.
+const settingsSeen = settingsStamp();
+function reloadIfSettingsChanged() {
+  if (settingsStamp() !== settingsSeen) location.reload();
+}
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) reloadIfSettingsChanged();
+});
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) reloadIfSettingsChanged();
 });
 
 async function start() {
   const fromHash = new URLSearchParams(location.hash.slice(1));
+  const changing = fromHash.has("change"); // "Change" on another page's address card
+  if (changing) history.replaceState(null, "", location.pathname + location.search);
   const initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
     : loadLastLookup();
   if (initial?.address) {
     // Show the remembered address right away; the lookup fills in the rest.
     addressInput.value = initial.address;
-    showAddress(initial.address);
+    showAddress(rememberedCard(initial.address));
     form.hidden = true;
     addressCard.hidden = false;
   }
+  if (changing) showForm(true);
   await loadElections(initial?.election_date);
   if (initial?.address) {
     if (initial.party) partySelect.value = initial.party;
-    lookup(initial);
+    lookup(initial, { keepForm: changing });
   }
 }
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import threading
 
 import pytest
@@ -117,6 +118,22 @@ def test_trackaipac_data_with_etag(client):
     assert client.get("/api/sources/trackaipac/data").headers["etag"] != etag
 
 
-@pytest.mark.parametrize("path", ["/", "/js/ballot.js", "/js/settings-pane.js", "/js/icons.js", "/js/search.js", "/css/app.css"])
+PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]
+
+
+@pytest.mark.parametrize("path", ["/", "/js/ballot.js", "/js/settings.js", "/js/page.js", "/js/address.js", "/js/icons.js", "/js/search.js", "/css/app.css"])
 def test_static_pages(client, path):
     assert client.get(path).status_code == 200
+
+
+@pytest.mark.parametrize("page", PAGES)
+def test_every_page_has_the_same_left_pane_and_its_files_exist(client, page):
+    html = client.get(f"/{page}").text
+    navs = re.findall(r'<nav class="side-section site-nav[^"]*".*?</nav>', html, re.S)
+    # "Your ballot" at the top with the address under it; the other pages at the bottom
+    assert [re.findall(r'href="([^"]+)"', nav) for nav in navs] == [PAGES[:1], PAGES[1:]]
+    assert html.index(navs[0]) < html.index('id="address-card"') < html.index(navs[1])
+    assert re.findall(r'href="([^"]+)" aria-current="page"', "".join(navs)) == [page]
+    local = {ref.split("#")[0] for ref in re.findall(r'(?:href|src)="([^"#:][^":]*)"', html)}
+    for ref in local:
+        assert client.get(f"/{ref}").status_code == 200, ref

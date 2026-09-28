@@ -4,6 +4,8 @@
 const PICKS_KEY = "votebot.picks.v1";
 const LOOKUP_KEY = "votebot.lastLookup.v1";
 const UI_KEY = "votebot.ui.v1";
+const SETTINGS_CHANGED_KEY = "votebot.settingsChanged.v1";
+const ADDRESS_CARD_KEY = "votebot.addressCard.v1";
 
 export const WRITE_IN = "write-in"; // the pick key for a name the voter types in
 
@@ -107,11 +109,30 @@ export function saveUi(prefs) {
   }
 }
 
+// The Settings page stamps every change that affects the ballot, so a ballot page that was
+// open meanwhile (in another tab, or kept for the Back button) can tell it's out of date.
+export function markSettingsChanged() {
+  try {
+    localStorage.setItem(SETTINGS_CHANGED_KEY, String(Date.now()));
+  } catch {
+    // storage unavailable: nothing else can have remembered the old settings either
+  }
+}
+
+export function settingsStamp() {
+  try {
+    return localStorage.getItem(SETTINGS_CHANGED_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function clearAllPicks() {
   memory = {};
   try {
     localStorage.removeItem(PICKS_KEY);
     localStorage.removeItem(LOOKUP_KEY);
+    localStorage.removeItem(ADDRESS_CARD_KEY);
   } catch {
     // nothing stored
   }
@@ -122,6 +143,24 @@ export function saveLastLookup(request) {
     localStorage.setItem(LOOKUP_KEY, JSON.stringify(request));
   } catch {
     // not remembered; fine
+  }
+}
+
+// What the left pane's address card shows for the last lookup (the address, its city and
+// county, its districts), so every page can show it without looking the address up again.
+export function saveAddressCard(card) {
+  try {
+    localStorage.setItem(ADDRESS_CARD_KEY, JSON.stringify(card));
+  } catch {
+    // not remembered; fine
+  }
+}
+
+export function loadAddressCard() {
+  try {
+    return JSON.parse(localStorage.getItem(ADDRESS_CARD_KEY) || "null");
+  } catch {
+    return null;
   }
 }
 

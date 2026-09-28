@@ -1,16 +1,19 @@
-// Settings, in the left pane: turn sources on/off and refresh or clear what each has cached.
+// The Settings page: the web search engine, sources on/off, refresh or clear what each has
+// cached, and deleting this browser's picks. Changes that affect the ballot are marked with
+// markSettingsChanged(), so an open ballot page reloads when the voter goes back to it.
 
+import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { h } from "./dom.js";
-import { clearAllPicks, loadUi, saveUi } from "./picks.js";
+import { clearAllPicks, markSettingsChanged } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 
-const panel = document.querySelector("#settings");
 const list = document.querySelector("#source-list");
-const status = document.querySelector("#settings-status");
-let hooks = {};
+const searchStatus = document.querySelector("#search-status");
+const sourcesStatus = document.querySelector("#sources-status");
+const picksStatus = document.querySelector("#picks-status");
 
-function say(message, kind = "ok") {
+function say(status, message, kind = "ok") {
   status.className = `status status-${kind}`;
   status.textContent = message;
 }
@@ -33,12 +36,12 @@ function sourceRow(source) {
     toggle.disabled = true;
     try {
       render(await api.put(`/api/sources/${source.id}`, { enabled: toggle.checked }));
-      say(`${source.label} turned ${toggle.checked ? "on" : "off"}.`);
-      hooks.onSourcesChanged?.();
+      markSettingsChanged();
+      say(sourcesStatus, `${source.label} turned ${toggle.checked ? "on" : "off"}.`);
     } catch (error) {
       toggle.checked = !toggle.checked;
       toggle.disabled = false;
-      say(error.message, "error");
+      say(sourcesStatus, error.message, "error");
     }
   });
 
@@ -49,9 +52,9 @@ function sourceRow(source) {
     result.textContent = "";
     try {
       const { message } = await api.post(`/api/sources/${source.id}/refresh`);
+      markSettingsChanged();
       await load();
-      say(`${source.label}: ${message}`);
-      hooks.onSourcesChanged?.();
+      say(sourcesStatus, `${source.label}: ${message}`);
     } catch (error) {
       refreshButton.disabled = false;
       clearButton.disabled = false;
@@ -68,9 +71,9 @@ function sourceRow(source) {
     try {
       const { message } = await api.post(`/api/sources/${source.id}/clear`);
       await load();
-      say(`${source.label}: ${message}`);
+      say(sourcesStatus, `${source.label}: ${message}`);
     } catch (error) {
-      say(error.message, "error");
+      say(sourcesStatus, error.message, "error");
     }
   });
 
@@ -98,7 +101,7 @@ async function load() {
   try {
     render(await api.get("/api/sources"));
   } catch (error) {
-    say(error.message, "error");
+    say(sourcesStatus, error.message, "error");
   }
 }
 
@@ -108,38 +111,35 @@ function initSearchEngine() {
   select.replaceChildren(...ENGINES.map((e) => h("option", { value: e.id, selected: e.id === selected }, e.label)));
   select.addEventListener("change", () => {
     setEngine(select.value);
-    say(`Web search now uses ${currentEngine().label}.`);
-    hooks.onSearchEngineChanged?.();
+    markSettingsChanged();
+    say(searchStatus, `Web search now uses ${currentEngine().label}.`);
   });
 }
 
-// hooks.onSearchEngineChanged(): the web search engine was changed.
-// hooks.onSourcesChanged(): a source was turned on/off or refreshed.
-// hooks.onPicksCleared(): the browser's picks and notes were deleted.
-export function initSettings(callbacks) {
-  hooks = callbacks;
-  initSearchEngine();
-  panel.addEventListener("toggle", () => {
-    saveUi({ ...loadUi(), settingsOpen: panel.open });
-    if (panel.open) load();
-  });
-  panel.open = Boolean(loadUi().settingsOpen); // fires "toggle" (and loads) when it opens
+document.querySelector("#clear-all").addEventListener("click", async () => {
+  if (!confirm("Clear every cache? The next lookups will fetch everything again.")) return;
+  try {
+    const { message } = await api.post("/api/cache/clear");
+    await load();
+    say(sourcesStatus, message);
+  } catch (error) {
+    say(sourcesStatus, error.message, "error");
+  }
+});
 
-  document.querySelector("#clear-all").addEventListener("click", async () => {
-    if (!confirm("Clear every cache? The next lookups will fetch everything again.")) return;
-    try {
-      const { message } = await api.post("/api/cache/clear");
-      await load();
-      say(message);
-    } catch (error) {
-      say(error.message, "error");
-    }
-  });
+document.querySelector("#clear-my-picks").addEventListener("click", () => {
+  if (!confirm("Delete all your picks, notes and remembered address from this browser?")) return;
+  clearAllPicks();
+  markSettingsChanged();
+  showRememberedAddress();
+  say(picksStatus, "Your picks, notes and remembered address were removed from this browser.");
+});
 
-  document.querySelector("#clear-my-picks").addEventListener("click", () => {
-    if (!confirm("Delete all your picks, notes and remembered address from this browser?")) return;
-    clearAllPicks();
-    say("Your picks, notes and remembered address were removed from this browser.");
-    hooks.onPicksCleared?.();
-  });
-}
+// Back from the ballot, the browser may show this page as it was left; a lookup since then can
+// have paused Ballotpedia, so ask the server again.
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) load();
+});
+
+initSearchEngine();
+load();

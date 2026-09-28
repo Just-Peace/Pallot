@@ -25,10 +25,10 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
 
 ## Using it
 
-- **Left pane:**
-  - your address: after a lookup it's saved in the browser and shown as a card with your county and districts; **Change** opens the form again
-  - the list of sections, with how many races in each you've picked
-  - **Settings**: turn sources on or off, refresh or clear what each has cached
+- **Left pane**, the same on every page:
+  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with your county and districts. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+  - on the ballot, the list of sections, with how many races in each you've picked
+  - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
 - **Top of the ballot:** a progress bar that stays in view, plus Collapse all, Expand all, Clear picks and Print my picks.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
@@ -73,12 +73,13 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 - Concurrent identical requests share one fetch. If a refresh fails, the old copy is shown with a "data as of" note.
 - If Ballotpedia refuses a request, VoteBot stops asking it for an hour.
 
-**Settings**, at the bottom of the left pane:
+The **Settings** page (`settings.html`, linked from the left pane):
+- picks the web search engine;
 - turns Texas SOS, Ballotpedia and TrackAIPAC on or off;
-- shows what each source has cached, with a refresh or clear button per source, plus "clear everything";
-- has a button to delete your picks and notes from the browser.
+- has a refresh or clear button per source, plus "Clear all caches";
+- has a button to delete your picks, notes and remembered address from the browser.
 
-Turning a source on or off re-runs the lookup straight away. With Texas SOS off, the ballot comes entirely from Ballotpedia.
+When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
 ## trackaipac_cache
 
@@ -108,7 +109,8 @@ votebot/
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
   sources/          census, nominatim, sboe, sos, ballotpedia, trackaipac
-  static/           index.html, css/app.css, js/ (ballot.js, settings-pane.js, source-cards.js, print.js, …)
+  static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
+                    css/app.css, js/ (ballot.js, settings.js, page.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
 tests/              VoteBot tests + tests/trackaipac/
@@ -121,6 +123,7 @@ Each source contributes `SourceCard`s (badges, facts, quotes, links, match confi
 1. A module in `votebot/sources/` that fetches through `HttpCache` and builds cards.
 2. A line in `enrich.py`.
 3. An entry in `admin.py` so it appears in Settings.
+4. A row in the tables on `static/privacy.html` (what the source is sent and kept) and `static/about.html`.
 
 ## Not built yet
 
