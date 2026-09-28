@@ -18,9 +18,9 @@ Keep the default `127.0.0.1` binding, because the Settings actions have no login
 Tests:
 
 ```bash
-uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's own tests
-uv run pytest -m live                      # one smoke test against the real services
-uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs
+uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's and tec_cache's own tests
+uv run pytest -m live                      # smoke tests against the real services (the FEC one needs VOTEBOT_FEC_API_KEY)
+uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|tec|trackaipac)
 ```
 
 ## Using it
@@ -32,6 +32,12 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
 - **Top of the ballot:** a progress bar that stays in view, plus Collapse all, Expand all, Clear picks and Print my picks.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
+- **Money:** congressional and state races show what each candidate has raised, above the candidates. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source breaks it down:
+  - where the money came from;
+  - donation sizes;
+  - where donors live;
+  - the largest donors (the FEC groups them by employer);
+  - outside spending.
 - **Write-ins:** every race ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button
@@ -51,8 +57,21 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct; candidate profiles | **unofficial** endpoint that needs Ballotpedia's own origin header. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | from `trackaipac_cache/` (see below) |
+| FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. The shared `DEMO_KEY` only allows race totals; set `VOTEBOT_FEC_API_KEY` to a free [api.data.gov](https://api.data.gov/signup/) key for the rest |
+| Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | from `tec_cache/` (see below), built from TEC's nightly CSV export |
 
 The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from numbers the voter types in; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot".
+
+Campaign money covers congressional races (FEC) and state races (TEC), which includes:
+- statewide offices;
+- the Legislature;
+- the State Board of Education;
+- appellate and district courts;
+- district attorneys.
+
+County candidates (county courts at law included), precinct, city and school candidates file with their county or city, so their races show none.
+- **TEC totals:** the reports whose period ends after the last November general election, excluding daily pre-election and special-session reports, whose money is reported again later.
+- **FEC totals:** the whole election period (two years for the House, six for the Senate).
 
 State-specific text (the official elections site, the print sheet's voting rules) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
 
@@ -68,14 +87,18 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
   - empty ballot orders: 6 hours
   - geocodes: 30 days
   - Ballotpedia: 24 hours
+  - FEC: 7 days (a year for past elections)
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see `votebot/config.py`.
+- The Texas Ethics Commission data comes with VoteBot (`tec_cache/`), so lookups never contact TEC; it's only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - Concurrent identical requests share one fetch. If a refresh fails, the old copy is shown with a "data as of" note.
 - If Ballotpedia refuses a request, VoteBot stops asking it for an hour.
+- If the FEC says its hourly limit is reached, VoteBot stops asking it for an hour, and shows what it already has meanwhile.
 
 The **Settings** page (`settings.html`, linked from the left pane):
 - picks the web search engine;
-- turns Texas SOS, Ballotpedia and TrackAIPAC on or off;
+- turns Texas SOS, Ballotpedia, TrackAIPAC, the FEC and the Texas Ethics Commission on or off;
+- says whether the FEC is using your key and how old the Texas Ethics Commission snapshot is;
 - has a refresh or clear button per source, plus "Clear all caches";
 - has a button to delete your picks, notes and remembered address from the browser.
 
@@ -89,13 +112,24 @@ When you go back to your ballot after changing a setting, it reloads with the ne
 - **Reset** goes back to the copy in the repo.
 - To update the bundled copy itself, run `uv run trackaipac-cache refresh` and see `trackaipac_cache/README.md`.
 
+## tec_cache
+
+`tec_cache/` builds the Texas Ethics Commission snapshot from TEC's nightly export, `TEC_CF_CSV.zip` (about 1 GB), and bundles it in the repo. VoteBot copies it into `data/tec/` on first run, so ballot lookups never contact TEC.
+- **Refresh** (the Texas Ethics Commission row in Settings) rebuilds it in a separate process.
+  - It first makes one small request to see whether TEC's zip has changed; if not, that's all.
+  - If it has, it downloads the zip in one request (about 1 GB, a minute or two on a fast connection), reading just the files it needs as they arrive.
+- **Reset** goes back to the bundled copy.
+- **TEC's download server blocks bursts of requests.** If a refresh says it was refused, try later, or download the zip in a browser, save it as `data/tec/TEC_CF_CSV.zip`, and press Refresh again.
+- To update the bundled copy itself, run `uv run tec-cache refresh` (or `--zip PATH`) and see `tec_cache/README.md`.
+
 ## Configuration
 
 Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/votebot uv run votebot`.
 
 | Variable | Default |
 |---|---|
-| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE map, TrackAIPAC data; git-ignored) |
+| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE map, TrackAIPAC and TEC data; git-ignored) |
+| `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals. Get a free key at [api.data.gov](https://api.data.gov/signup/). It's only sent to the FEC, in a header, and never saved |
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper)` (Nominatim requires an identifying one) |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_TTL_*` | cache lifetimes, see above |
@@ -108,17 +142,18 @@ votebot/
   http_cache.py     persistent request cache       enrich.py   adds each source's cards to candidates
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
-  sources/          census, nominatim, sboe, sos, ballotpedia, trackaipac
+  sources/          census, nominatim, sboe, sos, ballotpedia, trackaipac, fec, tec
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
                     css/app.css, js/ (ballot.js, settings.js, page.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
+tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
-tests/              VoteBot tests + tests/trackaipac/
+tests/              VoteBot tests + tests/trackaipac/ + tests/tec/
 ```
 
 ## Adding a source
 
-Each source contributes `SourceCard`s (badges, facts, quotes, links, match confidence). The page renders them generically, as badges on the candidate row and a tab in Details. So a new source only needs:
+Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, links and match confidence. A source can also add a card to a race, such as the money comparison. The page renders them all generically, as badges on the candidate row, a tab in Details, and a block at the top of the race. So a new source only needs:
 
 1. A module in `votebot/sources/` that fetches through `HttpCache` and builds cards.
 2. A line in `enrich.py`.
@@ -128,6 +163,8 @@ Each source contributes `SourceCard`s (badges, facts, quotes, links, match confi
 ## Not built yet
 
 The research phase:
-- PACs beyond TrackAIPAC (FEC for federal candidates, Texas Ethics Commission for state and county candidates)
 - each candidate's top three views (LLM plus web search)
 - chances of winning (race ratings, district partisan lean)
+- incumbents' voting records
+- campaign money for county, city and school races, which file locally (the City of Austin publishes its own data)
+- lobby spending on state officeholders (TEC lobby reports), late-filing fines, and fundraising over time

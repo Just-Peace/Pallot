@@ -51,7 +51,7 @@
       <header class="page-head">
         <h1>Privacy</h1>
         <p class="lede">VoteBot has no accounts, cookies, ads or analytics. This page lists what it sends, what it keeps, where, and for how long.</p>
-        <p class="updated">Last updated 27 September 2026</p>
+        <p class="updated">Last updated 28 September 2026</p>
       </header>
 
       <section class="panel prose" aria-labelledby="summary">
@@ -123,11 +123,16 @@
                 <td data-label="What it's sent">Your county and the election, never your address</td>
                 <td data-label="When">At most once a day for each county and election</td>
               </tr>
+              <tr>
+                <th scope="row">FEC (Federal Election Commission)</th>
+                <td data-label="What it's sent">Your congressional races (state, district and election year) and the FEC's ID for each candidate in them, never your address. Also the FEC key VoteBot is set up with, which identifies whoever signed up for it at api.data.gov.</td>
+                <td data-label="When">A race or candidate the server hasn't asked about in the last 7 days, if the FEC is on</td>
+              </tr>
             </tbody>
           </table>
         </div>
         <p>Refresh in Settings sends the saved requests again: refreshing "Address lookup &amp; districts" re-sends every address in the server's copy, and refreshing Ballotpedia re-sends every saved location.</p>
-        <p>Two sources never receive anything about you. The Texas Legislative Council's district map is downloaded once and searched on the server. TrackAIPAC's data comes with VoteBot, and is only fetched again from trackaipac.com when you press Refresh in Settings.</p>
+        <p>Three sources never receive anything about you. The Texas Legislative Council's district map is downloaded once and searched on the server. TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot, and are only fetched again from trackaipac.com or the Texas Ethics Commission when you press Refresh in Settings.</p>
         <p>Each service decides what it keeps of the requests it receives, under its own privacy policy.</p>
       </section>
 
@@ -157,9 +162,14 @@
                 <td data-label="Kept until">Cleared. After 24 hours, the next lookup there asks again and replaces the copy.</td>
               </tr>
               <tr>
-                <th scope="row">Elections, candidates, the district map and TrackAIPAC's data; nothing about you</th>
+                <th scope="row">Elections, candidates, campaign finance (the FEC's answers and the Texas Ethics Commission's data), the district map and TrackAIPAC's data; nothing about you</th>
                 <td data-label="Where"><code>data/</code></td>
                 <td data-label="Kept until">Cleared or reset in Settings</td>
+              </tr>
+              <tr>
+                <th scope="row">The FEC key, if one is set</th>
+                <td data-label="Where">Only the <code>VOTEBOT_FEC_API_KEY</code> environment variable. VoteBot never writes it to disk.</td>
+                <td data-label="Kept until">Whoever runs VoteBot removes it</td>
               </tr>
               <tr>
                 <th scope="row">Which sources are on</th>
