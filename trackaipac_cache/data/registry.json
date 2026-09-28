@@ -1,0 +1,4370 @@
+{
+  "ak-dan-sullivan": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Dan Sullivan",
+    "party": "R",
+    "state": "AK"
+  },
+  "ak-lisa-murkowski": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Lisa Murkowski",
+    "party": "R",
+    "state": "AK"
+  },
+  "ak-mary-peltola": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mary Peltola",
+    "party": "D",
+    "state": "AK"
+  },
+  "ak-nick-begich": {
+    "chamber": "house",
+    "district": "AL",
+    "name": "Nick Begich",
+    "party": "R",
+    "state": "AK"
+  },
+  "al-barry-moore": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Barry Moore",
+    "party": "R",
+    "state": "AL"
+  },
+  "al-dale-strong": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Dale Strong",
+    "party": "R",
+    "state": "AL"
+  },
+  "al-gary-palmer": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Gary Palmer",
+    "party": "R",
+    "state": "AL"
+  },
+  "al-katie-britt": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Katie Britt",
+    "party": "R",
+    "state": "AL"
+  },
+  "al-mike-rogers": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Mike Rogers",
+    "party": "R",
+    "state": "AL"
+  },
+  "al-robert-aderholt": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Robert Aderholt",
+    "party": "R",
+    "state": "AL"
+  },
+  "al-shomari-figures": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Shomari Figures",
+    "party": "D",
+    "state": "AL"
+  },
+  "al-terri-sewell": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Terri Sewell",
+    "party": "D",
+    "state": "AL"
+  },
+  "al-tommy-tuberville": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tommy Tuberville",
+    "party": "R",
+    "state": "AL"
+  },
+  "ar-bruce-westerman": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Bruce Westerman",
+    "party": "R",
+    "state": "AR"
+  },
+  "ar-french-hill": {
+    "chamber": "house",
+    "district": "02",
+    "name": "French Hill",
+    "party": "R",
+    "state": "AR"
+  },
+  "ar-john-boozman": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Boozman",
+    "party": "R",
+    "state": "AR"
+  },
+  "ar-rick-crawford": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Rick Crawford",
+    "party": "R",
+    "state": "AR"
+  },
+  "ar-robb-ryerse": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Robb Ryerse",
+    "party": "D",
+    "state": "AR"
+  },
+  "ar-steve-womack": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Steve Womack",
+    "party": "R",
+    "state": "AR"
+  },
+  "ar-tom-cotton": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tom Cotton",
+    "party": "R",
+    "state": "AR"
+  },
+  "az-abe-hamadeh": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Abe Hamadeh",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-adelita-grijalva": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Adelita Grijalva",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-amish-shah": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Amish Shah",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-andy-biggs": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Andy Biggs",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-david-schweikert": {
+    "chamber": "house",
+    "district": "01",
+    "name": "David Schweikert",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-eli-crane": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Eli Crane",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-elizabeth-lee": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Elizabeth Lee",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-greg-stanton": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Greg Stanton",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-joanna-mendoza": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Joanna Mendoza",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-juan-ciscomani": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Juan Ciscomani",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-mark-kelly": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mark Kelly",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-mark-lamb": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Mark Lamb",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-paul-gosar": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Paul Gosar",
+    "party": "R",
+    "state": "AZ"
+  },
+  "az-ruben-gallego": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ruben Gallego",
+    "party": "D",
+    "state": "AZ"
+  },
+  "az-yassamin-ansari": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Yassamin Ansari",
+    "party": "D",
+    "state": "AZ"
+  },
+  "ca-adam-gray": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Adam Gray",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-adam-schiff": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Adam Schiff",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-aisha-wahab": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Aisha Wahab",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-alex-padilla": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Alex Padilla",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-ami-bera": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Ami Bera",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-angela-gonzales-torres": {
+    "chamber": "house",
+    "district": "34",
+    "name": "Angela Gonzales-Torres",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-angelica-duenas": {
+    "chamber": "house",
+    "district": "29",
+    "name": "Angélica Dueñas",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-brad-sherman": {
+    "chamber": "house",
+    "district": "32",
+    "name": "Brad Sherman",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-connie-chan": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Connie Chan",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-darrell-issa": {
+    "chamber": "house",
+    "district": "48",
+    "name": "Darrell Issa",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-dave-min": {
+    "chamber": "house",
+    "district": "47",
+    "name": "Dave Min",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-david-valadao": {
+    "chamber": "house",
+    "district": "22",
+    "name": "David Valadao",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-derek-tran": {
+    "chamber": "house",
+    "district": "45",
+    "name": "Derek Tran",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-doris-matsui": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Doris Matsui",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-george-whitesides": {
+    "chamber": "house",
+    "district": "27",
+    "name": "George Whitesides",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-gil-cisneros": {
+    "chamber": "house",
+    "district": "31",
+    "name": "Gil Cisneros",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-hilda-solis": {
+    "chamber": "house",
+    "district": "38",
+    "name": "Hilda Solis",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-james-gallagher": {
+    "chamber": "house",
+    "district": "01",
+    "name": "James Gallagher",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-jared-huffman": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jared Huffman",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-jay-obernolte": {
+    "chamber": "house",
+    "district": "23",
+    "name": "Jay Obernolte",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-jim-costa": {
+    "chamber": "house",
+    "district": "21",
+    "name": "Jim Costa",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-jimmy-gomez": {
+    "chamber": "house",
+    "district": "34",
+    "name": "Jimmy Gomez",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-jimmy-panetta": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Jimmy Panetta",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-john-garamendi": {
+    "chamber": "house",
+    "district": "08",
+    "name": "John Garamendi",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-josh-harder": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Josh Harder",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-juan-vargas": {
+    "chamber": "house",
+    "district": "52",
+    "name": "Juan Vargas",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-judy-chu": {
+    "chamber": "house",
+    "district": "28",
+    "name": "Judy Chu",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-julia-brownley": {
+    "chamber": "house",
+    "district": "26",
+    "name": "Julia Brownley",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-ken-calvert": {
+    "chamber": "house",
+    "district": "41",
+    "name": "Ken Calvert",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-kevin-kiley": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Kevin Kiley",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-kevin-mullin": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Kevin Mullin",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-lateefah-simon": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Lateefah Simon",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-laura-friedman": {
+    "chamber": "house",
+    "district": "30",
+    "name": "Laura Friedman",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-linda-sanchez": {
+    "chamber": "house",
+    "district": "38",
+    "name": "Linda Sanchez",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-lou-correa": {
+    "chamber": "house",
+    "district": "46",
+    "name": "Lou Correa",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-luz-rivas": {
+    "chamber": "house",
+    "district": "29",
+    "name": "Luz Rivas",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-mai-vang": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Mai Vang",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-mark-desaulnier": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Mark DeSaulnier",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-mark-takano": {
+    "chamber": "house",
+    "district": "39",
+    "name": "Mark Takano",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-marni-von-wilpert": {
+    "chamber": "house",
+    "district": "48",
+    "name": "Marni Von Wilpert",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-maxine-waters": {
+    "chamber": "house",
+    "district": "43",
+    "name": "Maxine Waters",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-melissa-hernandez": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Melissa Hernandez",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-mike-levin": {
+    "chamber": "house",
+    "district": "49",
+    "name": "Mike Levin",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-mike-mcguire": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Mike McGuire",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-mike-thompson": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Mike Thompson",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-nancy-pelosi": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Nancy Pelosi",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-nanette-barragan": {
+    "chamber": "house",
+    "district": "44",
+    "name": "Nanette Barragan",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-norma-torres": {
+    "chamber": "house",
+    "district": "35",
+    "name": "Norma Torres",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-pete-aguilar": {
+    "chamber": "house",
+    "district": "33",
+    "name": "Pete Aguilar",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-randy-villegas": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Randy Villegas",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-raul-ruiz": {
+    "chamber": "house",
+    "district": "25",
+    "name": "Raul Ruiz",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-ro-khanna": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Ro Khanna",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-robert-garcia": {
+    "chamber": "house",
+    "district": "42",
+    "name": "Robert Garcia",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-salud-carbajal": {
+    "chamber": "house",
+    "district": "24",
+    "name": "Salud Carbajal",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-sam-liccardo": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Sam Liccardo",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-sara-jacobs": {
+    "chamber": "house",
+    "district": "51",
+    "name": "Sara Jacobs",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-scott-peters": {
+    "chamber": "house",
+    "district": "50",
+    "name": "Scott Peters",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-scott-wiener": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Scott Wiener",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-sydney-kamlager-dove": {
+    "chamber": "house",
+    "district": "37",
+    "name": "Sydney Kamlager-Dove",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-ted-lieu": {
+    "chamber": "house",
+    "district": "36",
+    "name": "Ted Lieu",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-tessa-lynn-hodge": {
+    "chamber": "house",
+    "district": "23",
+    "name": "Tessa Lynn Hodge",
+    "party": "D",
+    "state": "CA"
+  },
+  "ca-tom-mcclintock": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Tom McClintock",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-vince-fong": {
+    "chamber": "house",
+    "district": "20",
+    "name": "Vince Fong",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-young-kim": {
+    "chamber": "house",
+    "district": "40",
+    "name": "Young Kim",
+    "party": "R",
+    "state": "CA"
+  },
+  "ca-zoe-lofgren": {
+    "chamber": "house",
+    "district": "18",
+    "name": "Zoe Lofgren",
+    "party": "D",
+    "state": "CA"
+  },
+  "co-brittany-pettersen": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Brittany Pettersen",
+    "party": "D",
+    "state": "CO"
+  },
+  "co-diana-degette": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Diana DeGette",
+    "party": "D",
+    "state": "CO"
+  },
+  "co-gabe-evans": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Gabe Evans",
+    "party": "R",
+    "state": "CO"
+  },
+  "co-jason-crow": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Jason Crow",
+    "party": "D",
+    "state": "CO"
+  },
+  "co-jeff-crank": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Jeff Crank",
+    "party": "R",
+    "state": "CO"
+  },
+  "co-jeff-hurd": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Jeff Hurd",
+    "party": "R",
+    "state": "CO"
+  },
+  "co-joe-neguse": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Joe Neguse",
+    "party": "D",
+    "state": "CO"
+  },
+  "co-john-hickenlooper": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Hickenlooper",
+    "party": "D",
+    "state": "CO"
+  },
+  "co-lauren-boebert": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Lauren Boebert",
+    "party": "R",
+    "state": "CO"
+  },
+  "co-melat-kiros": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Melat Kiros",
+    "party": "D",
+    "state": "CO"
+  },
+  "co-michael-bennet": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Michael Bennet",
+    "party": "D",
+    "state": "CO"
+  },
+  "ct-andrew-rice": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Andrew Rice",
+    "party": "I",
+    "state": "CT"
+  },
+  "ct-chris-murphy": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Chris Murphy",
+    "party": "D",
+    "state": "CT"
+  },
+  "ct-jahana-hayes": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Jahana Hayes",
+    "party": "D",
+    "state": "CT"
+  },
+  "ct-jim-himes": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Jim Himes",
+    "party": "D",
+    "state": "CT"
+  },
+  "ct-joe-courtney": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Joe Courtney",
+    "party": "D",
+    "state": "CT"
+  },
+  "ct-john-larson": {
+    "chamber": "house",
+    "district": "01",
+    "name": "John Larson",
+    "party": "D",
+    "state": "CT"
+  },
+  "ct-richard-blumenthal": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Richard Blumenthal",
+    "party": "D",
+    "state": "CT"
+  },
+  "ct-rosa-delauro": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Rosa DeLauro",
+    "party": "D",
+    "state": "CT"
+  },
+  "de-chris-coons": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Chris Coons",
+    "party": "D",
+    "state": "DE"
+  },
+  "de-lisa-blunt-rochester": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Lisa Blunt Rochester",
+    "party": "D",
+    "state": "DE"
+  },
+  "de-sarah-mcbride": {
+    "chamber": "house",
+    "district": "AL",
+    "name": "Sarah McBride",
+    "party": "D",
+    "state": "DE"
+  },
+  "fl-aaron-bean": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Aaron Bean",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-angie-nixon": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Angie Nixon",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-anna-paulina-luna": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Anna Paulina Luna",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-ashley-moody": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ashley Moody",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-brian-mast": {
+    "chamber": "house",
+    "district": "21",
+    "name": "Brian Mast",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-byron-donalds": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Byron Donalds",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-carlos-a-gimenez": {
+    "chamber": "house",
+    "district": "28",
+    "name": "Carlos A. Gimenez",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-cory-mills": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Cory Mills",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-daniel-webster": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Daniel Webster",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-darren-soto": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Darren Soto",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-debbie-wasserman-schultz": {
+    "chamber": "house",
+    "district": "25",
+    "name": "Debbie Wasserman-Schultz",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-frederica-wilson": {
+    "chamber": "house",
+    "district": "24",
+    "name": "Frederica Wilson",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-greg-steube": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Greg Steube",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-gus-bilirakis": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Gus Bilirakis",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-jared-moskowitz": {
+    "chamber": "house",
+    "district": "23",
+    "name": "Jared Moskowitz",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-jimmy-patronis": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Jimmy Patronis",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-john-rutherford": {
+    "chamber": "house",
+    "district": "05",
+    "name": "John Rutherford",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-kat-cammack": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Kat Cammack",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-kathy-castor": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Kathy Castor",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-laurel-lee": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Laurel Lee",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-lois-frankel": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Lois Frankel",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-maria-salazar": {
+    "chamber": "house",
+    "district": "27",
+    "name": "Maria Salazar",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-mario-diaz-balart": {
+    "chamber": "house",
+    "district": "26",
+    "name": "Mario Diaz-Balart",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-maxwell-frost": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Maxwell Frost",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-mike-haridopolos": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Mike Haridopolos",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-neal-dunn": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Neal Dunn",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-nicole-locklin": {
+    "chamber": "house",
+    "district": "26",
+    "name": "Nicole Locklin",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-randy-fine": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Randy Fine",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-rick-scott": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Rick Scott",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-robert-people": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Robert People",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-scott-franklin": {
+    "chamber": "house",
+    "district": "18",
+    "name": "Scott Franklin",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-vacant": {
+    "chamber": "house",
+    "district": "20",
+    "name": "Vacant",
+    "party": null,
+    "state": "FL"
+  },
+  "fl-vern-buchanan": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Vern Buchanan",
+    "party": "R",
+    "state": "FL"
+  },
+  "ga-andrew-clyde": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Andrew Clyde",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-austin-scott": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Austin Scott",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-barry-loudermilk": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Barry Loudermilk",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-brian-jack": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Brian Jack",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-buddy-carter": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Buddy Carter",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-clay-fuller": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Clay Fuller",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-everton-blair": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Everton Blair",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-hank-johnson": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Hank Johnson",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-houston-gaines": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Houston Gaines",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-jon-ossoff": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jon Ossoff",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-lucy-mcbath": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Lucy McBath",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-mike-collins": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Mike Collins",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-nikema-williams": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Nikema Williams",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-raphael-warnock": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Raphael Warnock",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-rich-mccormick": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Rich McCormick",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-rick-allen": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Rick Allen",
+    "party": "D",
+    "state": "GA"
+  },
+  "ga-sanford-bishop": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Sanford Bishop",
+    "party": "D",
+    "state": "GA"
+  },
+  "hi-brian-schatz": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Brian Schatz",
+    "party": "D",
+    "state": "HI"
+  },
+  "hi-ed-case": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Ed Case",
+    "party": "D",
+    "state": "HI"
+  },
+  "hi-jill-tokuda": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jill Tokuda",
+    "party": "D",
+    "state": "HI"
+  },
+  "hi-mazie-hirono": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mazie Hirono",
+    "party": "D",
+    "state": "HI"
+  },
+  "ia-ashley-hinson": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Ashley Hinson",
+    "party": "R",
+    "state": "IA"
+  },
+  "ia-christina-bohannan": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Christina Bohannan",
+    "party": "D",
+    "state": "IA"
+  },
+  "ia-chuck-grassley": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Chuck Grassley",
+    "party": "R",
+    "state": "IA"
+  },
+  "ia-joe-mitchell": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Joe Mitchell",
+    "party": "R",
+    "state": "IA"
+  },
+  "ia-joni-ernst": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Joni Ernst",
+    "party": "R",
+    "state": "IA"
+  },
+  "ia-marianette-miller-meeks": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Marianette Miller-Meeks",
+    "party": "R",
+    "state": "IA"
+  },
+  "ia-randy-feenstra": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Randy Feenstra",
+    "party": "R",
+    "state": "IA"
+  },
+  "ia-zach-nunn": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Zach Nunn",
+    "party": "R",
+    "state": "IA"
+  },
+  "id-jim-risch": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jim Risch",
+    "party": "R",
+    "state": "ID"
+  },
+  "id-mike-crapo": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mike Crapo",
+    "party": "R",
+    "state": "ID"
+  },
+  "id-mike-simpson": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Mike Simpson",
+    "party": "R",
+    "state": "ID"
+  },
+  "id-russ-fulcher": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Russ Fulcher",
+    "party": "R",
+    "state": "ID"
+  },
+  "il-bill-foster": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Bill Foster",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-brad-schneider": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Brad Schneider",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-daniel-biss": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Daniel Biss",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-danny-davis": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Danny Davis",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-darin-lahood": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Darin LaHood",
+    "party": "R",
+    "state": "IL"
+  },
+  "il-delia-ramirez": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Delia Ramirez",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-dick-durbin": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Dick Durbin",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-donna-miller": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Donna Miller",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-eric-sorensen": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Eric Sorensen",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-james-marter": {
+    "chamber": "house",
+    "district": "14",
+    "name": "James Marter",
+    "party": "R",
+    "state": "IL"
+  },
+  "il-jan-schakowsky": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Jan Schakowsky",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-jesus-chuy-garcia": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Jesús Chuy García",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-jonathan-jackson": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Jonathan Jackson",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-julianna-stratton": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Julianna Stratton",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-lauren-underwood": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Lauren Underwood",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-mary-miller": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Mary Miller",
+    "party": "R",
+    "state": "IL"
+  },
+  "il-melissa-bean": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Melissa Bean",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-mike-bost": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Mike Bost",
+    "party": "R",
+    "state": "IL"
+  },
+  "il-mike-quigley": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Mike Quigley",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-nikki-budzinski": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Nikki Budzinski",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-paul-nolley": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Paul Nolley",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-raja-krishnamoorthi": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Raja Krishnamoorthi",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-robin-kelly": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Robin Kelly",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-sean-casten": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Sean Casten",
+    "party": "D",
+    "state": "IL"
+  },
+  "il-tammy-duckworth": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tammy Duckworth",
+    "party": "D",
+    "state": "IL"
+  },
+  "in-andre-carson": {
+    "chamber": "house",
+    "district": "07",
+    "name": "André Carson",
+    "party": "D",
+    "state": "IN"
+  },
+  "in-drew-cox": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Drew Cox",
+    "party": "D",
+    "state": "IN"
+  },
+  "in-erin-houchin": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Erin Houchin",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-frank-mrvan": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Frank Mrvan",
+    "party": "D",
+    "state": "IN"
+  },
+  "in-jefferson-shreve": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Jefferson Shreve",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-jim-baird": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Jim Baird",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-jim-banks": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jim Banks",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-mark-messmer": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Mark Messmer",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-marlin-stutzman": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Marlin Stutzman",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-rudy-yakym": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Rudy Yakym",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-todd-young": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Todd Young",
+    "party": "R",
+    "state": "IN"
+  },
+  "in-victoria-spartz": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Victoria Spartz",
+    "party": "R",
+    "state": "IN"
+  },
+  "ks-derek-schmidt": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Derek Schmidt",
+    "party": "R",
+    "state": "KS"
+  },
+  "ks-jerry-moran": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jerry Moran",
+    "party": "R",
+    "state": "KS"
+  },
+  "ks-roger-marshall": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Roger Marshall",
+    "party": "R",
+    "state": "KS"
+  },
+  "ks-ron-estes": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Ron Estes",
+    "party": "R",
+    "state": "KS"
+  },
+  "ks-sharice-davids": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Sharice Davids",
+    "party": "D",
+    "state": "KS"
+  },
+  "ks-tracey-mann": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Tracey Mann",
+    "party": "R",
+    "state": "KS"
+  },
+  "ky-andy-barr": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Andy Barr",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-brett-guthrie": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Brett Guthrie",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-charles-booker": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Charles Booker",
+    "party": "D",
+    "state": "KY"
+  },
+  "ky-ed-gallrein": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Ed Gallrein",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-hal-rogers": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Hal Rogers",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-james-comer": {
+    "chamber": "house",
+    "district": "01",
+    "name": "James Comer",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-mitch-mcconnell": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mitch McConnell",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-morgan-mcgarvey": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Morgan McGarvey",
+    "party": "D",
+    "state": "KY"
+  },
+  "ky-ralph-alvarado": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Ralph Alvarado",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-rand-paul": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Rand Paul",
+    "party": "R",
+    "state": "KY"
+  },
+  "ky-thomas-massie": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Thomas Massie",
+    "party": "R",
+    "state": "KY"
+  },
+  "la-bill-cassidy": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Bill Cassidy",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-clay-higgins": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Clay Higgins",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-cleo-fields": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Cleo Fields",
+    "party": "D",
+    "state": "LA"
+  },
+  "la-john-fleming": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Fleming",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-john-kennedy": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Kennedy",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-julia-letlow": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Julia Letlow",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-mike-johnson": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Mike Johnson",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-steve-scalise": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Steve Scalise",
+    "party": "R",
+    "state": "LA"
+  },
+  "la-troy-carter": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Troy Carter",
+    "party": "D",
+    "state": "LA"
+  },
+  "ma-ayanna-pressley": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Ayanna Pressley",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-bill-keating": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Bill Keating",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-ed-markey": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ed Markey",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-elizabeth-warren": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Elizabeth Warren",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-jake-auchincloss": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Jake Auchincloss",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-jim-mcgovern": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jim McGovern",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-katherine-clark": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Katherine Clark",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-lori-trahan": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Lori Trahan",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-richard-neal": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Richard Neal",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-seth-moulton": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Seth Moulton",
+    "party": "D",
+    "state": "MA"
+  },
+  "ma-stephen-lynch": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Stephen Lynch",
+    "party": "D",
+    "state": "MA"
+  },
+  "md-adrian-boafo": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Adrian Boafo",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-andy-harris": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Andy Harris",
+    "party": "R",
+    "state": "MD"
+  },
+  "md-angela-alsobrooks": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Angela Alsobrooks",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-april-mcclain-delaney": {
+    "chamber": "house",
+    "district": "06",
+    "name": "April McClain Delaney",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-chris-van-hollen": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Chris Van Hollen",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-glenn-ivey": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Glenn Ivey",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-jamie-raskin": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Jamie Raskin",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-john-olszewski": {
+    "chamber": "house",
+    "district": "02",
+    "name": "John Olszewski",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-kweisi-mfume": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Kweisi Mfume",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-sarah-elfreth": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Sarah Elfreth",
+    "party": "D",
+    "state": "MD"
+  },
+  "md-steny-hoyer": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Steny Hoyer",
+    "party": "D",
+    "state": "MD"
+  },
+  "me-angus-king": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Angus King",
+    "party": "I",
+    "state": "ME"
+  },
+  "me-chellie-pingree": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Chellie Pingree",
+    "party": "D",
+    "state": "ME"
+  },
+  "me-jared-golden": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jared Golden",
+    "party": "D",
+    "state": "ME"
+  },
+  "me-susan-collins": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Susan Collins",
+    "party": "R",
+    "state": "ME"
+  },
+  "mi-abdul-el-sayed": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Abdul El-Sayed",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-bill-huizenga": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Bill Huizenga",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-debbie-dingell": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Debbie Dingell",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-donavan-mckinney": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Donavan McKinney",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-elissa-slotkin": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Elissa Slotkin",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-gary-peters": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Gary Peters",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-haley-stevens": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Haley Stevens",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-hillary-scholten": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Hillary Scholten",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-jack-bergman": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Jack Bergman",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-jeremy-moss": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Jeremy Moss",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-john-james": {
+    "chamber": "house",
+    "district": "10",
+    "name": "John James",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-john-moolenaar": {
+    "chamber": "house",
+    "district": "02",
+    "name": "John Moolenaar",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-kristen-mcdonald-rivet": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Kristen McDonald Rivet",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-lisa-mcclain": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Lisa McClain",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-mike-rogers": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mike Rogers",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-rashida-tlaib": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Rashida Tlaib",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-shri-thanedar": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Shri Thanedar",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-tim-greimel": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Tim Greimel",
+    "party": "D",
+    "state": "MI"
+  },
+  "mi-tim-walberg": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Tim Walberg",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-tom-barrett": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Tom Barrett",
+    "party": "R",
+    "state": "MI"
+  },
+  "mi-william-lawrence": {
+    "chamber": "house",
+    "district": "07",
+    "name": "William Lawrence",
+    "party": "D",
+    "state": "MI"
+  },
+  "mn-amy-klobuchar": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Amy Klobuchar",
+    "party": "D",
+    "state": "MN"
+  },
+  "mn-angie-craig": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Angie Craig",
+    "party": "D",
+    "state": "MN"
+  },
+  "mn-betty-mccollum": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Betty McCollum",
+    "party": "D",
+    "state": "MN"
+  },
+  "mn-brad-finstad": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Brad Finstad",
+    "party": "R",
+    "state": "MN"
+  },
+  "mn-ilhan-omar": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Ilhan Omar",
+    "party": "D",
+    "state": "MN"
+  },
+  "mn-kelly-morrison": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Kelly Morrison",
+    "party": "D",
+    "state": "MN"
+  },
+  "mn-michelle-fischbach": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Michelle Fischbach",
+    "party": "R",
+    "state": "MN"
+  },
+  "mn-pete-stauber": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Pete Stauber",
+    "party": "R",
+    "state": "MN"
+  },
+  "mn-tina-smith": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tina Smith",
+    "party": "D",
+    "state": "MN"
+  },
+  "mn-tom-emmer": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Tom Emmer",
+    "party": "R",
+    "state": "MN"
+  },
+  "mo-ann-wagner": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Ann Wagner",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-bob-onder": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Bob Onder",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-emanuel-cleaver": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Emanuel Cleaver",
+    "party": "D",
+    "state": "MO"
+  },
+  "mo-eric-burlison": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Eric Burlison",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-eric-schmitt": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Eric Schmitt",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-jason-smith": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Jason Smith",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-josh-hawley": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Josh Hawley",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-mark-alford": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Mark Alford",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-sam-graves": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Sam Graves",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-wesley-bell": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Wesley Bell",
+    "party": "D",
+    "state": "MO"
+  },
+  "ms-bennie-thompson": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Bennie Thompson",
+    "party": "D",
+    "state": "MS"
+  },
+  "ms-cindy-hyde-smith": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Cindy Hyde-Smith",
+    "party": "R",
+    "state": "MS"
+  },
+  "ms-michael-guest": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Michael Guest",
+    "party": "R",
+    "state": "MS"
+  },
+  "ms-mike-ezell": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Mike Ezell",
+    "party": "R",
+    "state": "MS"
+  },
+  "ms-roger-wicker": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Roger Wicker",
+    "party": "R",
+    "state": "MS"
+  },
+  "ms-trent-kelly": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Trent Kelly",
+    "party": "R",
+    "state": "MS"
+  },
+  "mt-kurt-alme": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Kurt Alme",
+    "party": "R",
+    "state": "MT"
+  },
+  "mt-ryan-zinke": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Ryan Zinke",
+    "party": "R",
+    "state": "MT"
+  },
+  "mt-steve-daines": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Steve Daines",
+    "party": "R",
+    "state": "MT"
+  },
+  "mt-tim-sheehy": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tim Sheehy",
+    "party": "R",
+    "state": "MT"
+  },
+  "mt-troy-downing": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Troy Downing",
+    "party": "R",
+    "state": "MT"
+  },
+  "nc-addison-mcdowell": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Addison McDowell",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-allison-jaslow": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Allison Jaslow",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-alma-adams": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Alma Adams",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-ashley-bell": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Ashley Bell",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-brad-knott": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Brad Knott",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-chuck-edwards": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Chuck Edwards",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-david-rouzer": {
+    "chamber": "house",
+    "district": "07",
+    "name": "David Rouzer",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-deborah-ross": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Deborah Ross",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-don-davis": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Don Davis",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-greg-murphy": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Greg Murphy",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-laurie-buckhout": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Laurie Buckhout",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-mark-harris": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Mark Harris",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-michael-whatley": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Michael Whatley",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-pat-harrigan": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Pat Harrigan",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-richard-hudson": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Richard Hudson",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-roy-cooper": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Roy Cooper",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-ted-budd": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ted Budd",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-thom-tillis": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Thom Tillis",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-tim-moore": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Tim Moore",
+    "party": "R",
+    "state": "NC"
+  },
+  "nc-valerie-foushee": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Valerie Foushee",
+    "party": "D",
+    "state": "NC"
+  },
+  "nc-virginia-foxx": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Virginia Foxx",
+    "party": "R",
+    "state": "NC"
+  },
+  "nd-john-hoeven": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Hoeven",
+    "party": "R",
+    "state": "ND"
+  },
+  "nd-julie-fedorchak": {
+    "chamber": "house",
+    "district": "AL",
+    "name": "Julie Fedorchak",
+    "party": null,
+    "state": "ND"
+  },
+  "nd-kevin-cramer": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Kevin Cramer",
+    "party": "R",
+    "state": "ND"
+  },
+  "ne-adrian-smith": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Adrian Smith",
+    "party": "R",
+    "state": "NE"
+  },
+  "ne-deb-fischer": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Deb Fischer",
+    "party": "R",
+    "state": "NE"
+  },
+  "ne-denise-powell": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Denise Powell",
+    "party": "D",
+    "state": "NE"
+  },
+  "ne-don-bacon": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Don Bacon",
+    "party": "R",
+    "state": "NE"
+  },
+  "ne-mike-flood": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Mike Flood",
+    "party": "R",
+    "state": "NE"
+  },
+  "ne-pete-ricketts": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Pete Ricketts",
+    "party": "R",
+    "state": "NE"
+  },
+  "nh-chris-pappas": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Chris Pappas",
+    "party": "D",
+    "state": "NH"
+  },
+  "nh-jeanne-shaheen": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jeanne Shaheen",
+    "party": "D",
+    "state": "NH"
+  },
+  "nh-john-sununu": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Sununu",
+    "party": "R",
+    "state": "NH"
+  },
+  "nh-maggie-goodlander": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Maggie Goodlander",
+    "party": "D",
+    "state": "NH"
+  },
+  "nh-maggie-hassan": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Maggie Hassan",
+    "party": "D",
+    "state": "NH"
+  },
+  "nh-maura-sullivan": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Maura Sullivan",
+    "party": "D",
+    "state": "NH"
+  },
+  "nh-scott-brown": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Scott Brown",
+    "party": "R",
+    "state": "NH"
+  },
+  "nj-adam-hamawy": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Adam Hamawy",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-analilia-mejia": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Analilia Mejia",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-andy-kim": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Andy Kim",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-bonnie-watson-coleman": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Bonnie Watson Coleman",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-chris-smith": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Chris Smith",
+    "party": "R",
+    "state": "NJ"
+  },
+  "nj-cory-booker": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Cory Booker",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-donald-norcross": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Donald Norcross",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-frank-pallone": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Frank Pallone",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-herb-conaway": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Herb Conaway",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-jeff-van-drew": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jeff Van Drew",
+    "party": "R",
+    "state": "NJ"
+  },
+  "nj-josh-gottheimer": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Josh Gottheimer",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-lamonica-mciver": {
+    "chamber": "house",
+    "district": "10",
+    "name": "LaMonica McIver",
+    "party": null,
+    "state": "NJ"
+  },
+  "nj-nellie-pou": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Nellie Pou",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-rob-menendez": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Rob Menendez",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-tom-kean": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Tom Kean",
+    "party": "R",
+    "state": "NJ"
+  },
+  "nm-ben-ray-lujan": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ben Ray Lujan",
+    "party": "D",
+    "state": "NM"
+  },
+  "nm-gabe-vasquez": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Gabe Vasquez",
+    "party": "D",
+    "state": "NM"
+  },
+  "nm-martin-heinrich": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Martin Heinrich",
+    "party": "D",
+    "state": "NM"
+  },
+  "nm-melanie-stansbury": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Melanie Stansbury",
+    "party": "D",
+    "state": "NM"
+  },
+  "nm-teresa-leger-fernandez": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Teresa Leger Fernandez",
+    "party": "D",
+    "state": "NM"
+  },
+  "nv-catherine-cortez-masto": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Catherine Cortez-Masto",
+    "party": "D",
+    "state": "NV"
+  },
+  "nv-dina-titus": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Dina Titus",
+    "party": "D",
+    "state": "NV"
+  },
+  "nv-jacky-rosen": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jacky Rosen",
+    "party": "D",
+    "state": "NV"
+  },
+  "nv-mark-amodei": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Mark Amodei",
+    "party": "R",
+    "state": "NV"
+  },
+  "nv-steven-horsford": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Steven Horsford",
+    "party": "D",
+    "state": "NV"
+  },
+  "nv-susie-lee": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Susie Lee",
+    "party": "D",
+    "state": "NV"
+  },
+  "ny-adriano-espaillat": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Adriano Espaillat",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-alexandria-ocasio-cortez": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Alexandria Ocasio-Cortez",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-andrew-garbarino": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Andrew Garbarino",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-cait-conley": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Cait Conley",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-chuck-schumer": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Chuck Schumer",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-claire-valdez": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Claire Valdez",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-claudia-tenney": {
+    "chamber": "house",
+    "district": "24",
+    "name": "Claudia Tenney",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-dan-goldman": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Dan Goldman",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-darializa-avila-chevalier": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Darializa Avila Chevalier",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-elise-stefanik": {
+    "chamber": "house",
+    "district": "21",
+    "name": "Elise Stefanik",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-george-latimer": {
+    "chamber": "house",
+    "district": "16",
+    "name": "George Latimer",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-grace-meng": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Grace Meng",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-gregory-meeks": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Gregory Meeks",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-hakeem-jeffries": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Hakeem Jeffries",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-jerry-nadler": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Jerry Nadler",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-joe-morelle": {
+    "chamber": "house",
+    "district": "25",
+    "name": "Joe Morelle",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-john-mannion": {
+    "chamber": "house",
+    "district": "22",
+    "name": "John Mannion",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-josh-riley": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Josh Riley",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-karen-ortiz": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Karen Ortiz",
+    "party": "I",
+    "state": "NY"
+  },
+  "ny-kirsten-gillibrand": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Kirsten Gillibrand",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-laura-gillen": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Laura Gillen",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-micah-lasher": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Micah Lasher",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-mike-lawler": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Mike Lawler",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-nick-lalota": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Nick LaLota",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-nick-langworthy": {
+    "chamber": "house",
+    "district": "23",
+    "name": "Nick Langworthy",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-nicole-malliotakis": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Nicole Malliotakis",
+    "party": "R",
+    "state": "NY"
+  },
+  "ny-nydia-velazquez": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Nydia Velazquez",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-pat-ryan": {
+    "chamber": "house",
+    "district": "18",
+    "name": "Pat Ryan",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-paul-tonko": {
+    "chamber": "house",
+    "district": "20",
+    "name": "Paul Tonko",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-ritchie-torres": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Ritchie Torres",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-tim-kennedy": {
+    "chamber": "house",
+    "district": "26",
+    "name": "Tim Kennedy",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-tom-suozzi": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Tom Suozzi",
+    "party": "D",
+    "state": "NY"
+  },
+  "ny-yvette-clarke": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Yvette Clarke",
+    "party": "D",
+    "state": "NY"
+  },
+  "oh-bernie-moreno": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Bernie Moreno",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-bob-latta": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Bob Latta",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-dave-joyce": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Dave Joyce",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-david-taylor": {
+    "chamber": "house",
+    "district": "02",
+    "name": "David Taylor",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-emilia-sykes": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Emilia Sykes",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-greg-landsman": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Greg Landsman",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-jerrad-christian": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Jerrad Christian",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-jim-jordan": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Jim Jordan",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-jon-husted": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jon Husted",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-joyce-beatty": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Joyce Beatty",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-marcy-kaptur": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Marcy Kaptur",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-max-miller": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Max Miller",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-michael-rulli": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Michael Rulli",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-mike-carey": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Mike Carey",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-mike-turner": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Mike Turner",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-sherrod-brown": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Sherrod Brown",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-shontel-brown": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Shontel Brown",
+    "party": "D",
+    "state": "OH"
+  },
+  "oh-troy-balderson": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Troy Balderson",
+    "party": "R",
+    "state": "OH"
+  },
+  "oh-warren-davidson": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Warren Davidson",
+    "party": "R",
+    "state": "OH"
+  },
+  "ok-alan-armstrong": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Alan Armstrong",
+    "party": "R",
+    "state": "OK"
+  },
+  "ok-frank-lucas": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Frank Lucas",
+    "party": "R",
+    "state": "OK"
+  },
+  "ok-james-lankford": {
+    "chamber": "senate",
+    "district": null,
+    "name": "James Lankford",
+    "party": "R",
+    "state": "OK"
+  },
+  "ok-josh-brecheen": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Josh Brecheen",
+    "party": "R",
+    "state": "OK"
+  },
+  "ok-kevin-hern": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Kevin Hern",
+    "party": "R",
+    "state": "OK"
+  },
+  "ok-stephanie-bice": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Stephanie Bice",
+    "party": "R",
+    "state": "OK"
+  },
+  "ok-tom-cole": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Tom Cole",
+    "party": "R",
+    "state": "OK"
+  },
+  "or-andrea-salinas": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Andrea Salinas",
+    "party": "D",
+    "state": "OR"
+  },
+  "or-cliff-bentz": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Cliff Bentz",
+    "party": "R",
+    "state": "OR"
+  },
+  "or-janelle-bynum": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Janelle Bynum",
+    "party": "D",
+    "state": "OR"
+  },
+  "or-jeff-merkley": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jeff Merkley",
+    "party": "D",
+    "state": "OR"
+  },
+  "or-maxine-dexter": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Maxine Dexter",
+    "party": "D",
+    "state": "OR"
+  },
+  "or-ron-wyden": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ron Wyden",
+    "party": "D",
+    "state": "OR"
+  },
+  "or-suzanne-bonamici": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Suzanne Bonamici",
+    "party": "D",
+    "state": "OR"
+  },
+  "or-val-hoyle": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Val Hoyle",
+    "party": "D",
+    "state": "OR"
+  },
+  "pa-brendan-boyle": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Brendan Boyle",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-brian-fitzpatrick": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Brian Fitzpatrick",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-chris-deluzio": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Chris DeLuzio",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-chris-rabb": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Chris Rabb",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-chrissy-houlahan": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Chrissy Houlahan",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-dan-meuser": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Dan Meuser",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-dave-mccormick": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Dave McCormick",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-dwight-evans": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Dwight Evans",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-glenn-g-t-thompson": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Glenn \"G.T.\" Thompson",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-guy-reschenthaler": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Guy Reschenthaler",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-janelle-stelson": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Janelle Stelson",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-john-fetterman": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Fetterman",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-john-joyce": {
+    "chamber": "house",
+    "district": "13",
+    "name": "John Joyce",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-justin-wagner": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Justin Wagner",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-lloyd-smucker": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Lloyd Smucker",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-madeleine-dean": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Madeleine Dean",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-mary-gay-scanlon": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Mary Gay Scanlon",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-mike-kelly": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Mike Kelly",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-paige-cognetti": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Paige Cognetti",
+    "party": "D",
+    "state": "PA"
+  },
+  "pa-rob-bresnahan": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Rob Bresnahan",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-ryan-mackenzie": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Ryan Mackenzie",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-scott-perry": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Scott Perry",
+    "party": "R",
+    "state": "PA"
+  },
+  "pa-summer-lee": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Summer Lee",
+    "party": "D",
+    "state": "PA"
+  },
+  "ri-gabe-amo": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Gabe Amo",
+    "party": "D",
+    "state": "RI"
+  },
+  "ri-jack-reed": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jack Reed",
+    "party": "D",
+    "state": "RI"
+  },
+  "ri-raymond-mckay": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Raymond McKay",
+    "party": "R",
+    "state": "RI"
+  },
+  "ri-seth-magaziner": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Seth Magaziner",
+    "party": "D",
+    "state": "RI"
+  },
+  "ri-sheldon-whitehouse": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Sheldon Whitehouse",
+    "party": "D",
+    "state": "RI"
+  },
+  "sc-annie-andrews": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Annie Andrews",
+    "party": "D",
+    "state": "SC"
+  },
+  "sc-darline-graham": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Darline Graham",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-jim-clyburn": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Jim Clyburn",
+    "party": "D",
+    "state": "SC"
+  },
+  "sc-joe-wilson": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Joe Wilson",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-nancy-mace": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Nancy Mace",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-ralph-norman": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Ralph Norman",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-russell-fry": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Russell Fry",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-sheri-biggs": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Sheri Biggs",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-tim-scott": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tim Scott",
+    "party": "R",
+    "state": "SC"
+  },
+  "sc-william-timmons": {
+    "chamber": "house",
+    "district": "04",
+    "name": "William Timmons",
+    "party": "R",
+    "state": "SC"
+  },
+  "sd-dusty-johnson": {
+    "chamber": "house",
+    "district": "AL",
+    "name": "Dusty Johnson",
+    "party": "R",
+    "state": "SD"
+  },
+  "sd-john-thune": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Thune",
+    "party": "R",
+    "state": "SD"
+  },
+  "sd-mike-rounds": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mike Rounds",
+    "party": "R",
+    "state": "SD"
+  },
+  "tn-andy-ogles": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Andy Ogles",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-bill-hagerty": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Bill Hagerty",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-brent-taylor": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Brent Taylor",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-chuck-fleischmann": {
+    "chamber": null,
+    "district": null,
+    "name": "Chuck Fleischmann",
+    "party": null,
+    "state": "TN"
+  },
+  "tn-david-kustoff": {
+    "chamber": "house",
+    "district": "08",
+    "name": "David Kustoff",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-diana-harshbarger": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Diana Harshbarger",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-john-rose": {
+    "chamber": "house",
+    "district": "06",
+    "name": "John Rose",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-justin-j-pearson": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Justin J. Pearson",
+    "party": "D",
+    "state": "TN"
+  },
+  "tn-marsha-blackburn": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Marsha Blackburn",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-matt-van-epps": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Matt Van Epps",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-scott-desjarlais": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Scott DesJarlais",
+    "party": "R",
+    "state": "TN"
+  },
+  "tn-steve-cohen": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Steve Cohen",
+    "party": "D",
+    "state": "TN"
+  },
+  "tn-tim-burchett": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Tim Burchett",
+    "party": "R",
+    "state": "TN"
+  },
+  "tx-al-green": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Al Green",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-august-pfluger": {
+    "chamber": "house",
+    "district": "11",
+    "name": "August Pfluger",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-beth-van-duyne": {
+    "chamber": "house",
+    "district": "24",
+    "name": "Beth Van Duyne",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-bobby-pulido": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Bobby Pulido",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-brandon-gill": {
+    "chamber": "house",
+    "district": "26",
+    "name": "Brandon Gill",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-brian-babin": {
+    "chamber": "house",
+    "district": "36",
+    "name": "Brian Babin",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-chip-roy": {
+    "chamber": "house",
+    "district": "21",
+    "name": "Chip Roy",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-christian-menefee": {
+    "chamber": "house",
+    "district": "18",
+    "name": "Christian Menefee",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-colin-allred": {
+    "chamber": "house",
+    "district": "33",
+    "name": "Colin Allred",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-craig-goldman": {
+    "chamber": "house",
+    "district": "12",
+    "name": "Craig Goldman",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-dan-crenshaw": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Dan Crenshaw",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-danny-minton": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Danny Minton",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-eric-flores": {
+    "chamber": "house",
+    "district": "34",
+    "name": "Eric Flores",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-frederick-haynes-iii": {
+    "chamber": "house",
+    "district": "30",
+    "name": "Frederick Haynes III",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-greg-casar": {
+    "chamber": "house",
+    "district": "35",
+    "name": "Greg Casar",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-henry-cuellar": {
+    "chamber": "house",
+    "district": "28",
+    "name": "Henry Cuellar",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-jace-yarbrough": {
+    "chamber": "house",
+    "district": "32",
+    "name": "Jace Yarbrough",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-jake-ellzey": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Jake Ellzey",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-james-talarico": {
+    "chamber": "senate",
+    "district": null,
+    "name": "James Talarico",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-jasmine-crockett": {
+    "chamber": "house",
+    "district": "30",
+    "name": "Jasmine Crockett",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-joaquin-castro": {
+    "chamber": "house",
+    "district": "20",
+    "name": "Joaquin Castro",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-jodey-arrington": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Jodey Arrington",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-john-carter": {
+    "chamber": "house",
+    "district": "31",
+    "name": "John Carter",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-john-cornyn": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Cornyn",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-johnny-garcia": {
+    "chamber": "house",
+    "district": "35",
+    "name": "Johnny Garcia",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-julie-johnson": {
+    "chamber": "house",
+    "district": "32",
+    "name": "Julie Johnson",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-justin-early": {
+    "chamber": "house",
+    "district": "31",
+    "name": "Justin Early",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-keith-self": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Keith Self",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-ken-paxton": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ken Paxton",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-kyle-rable": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Kyle Rable",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-lance-gooden": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Lance Gooden",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-lizzie-fletcher": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Lizzie Fletcher",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-lloyd-doggett": {
+    "chamber": "house",
+    "district": "37",
+    "name": "Lloyd Doggett",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-marc-veasey": {
+    "chamber": "house",
+    "district": "33",
+    "name": "Marc Veasey",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-mark-teixeira": {
+    "chamber": "house",
+    "district": "21",
+    "name": "Mark Teixeira",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-michael-cloud": {
+    "chamber": "house",
+    "district": "27",
+    "name": "Michael Cloud",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-michael-mccaul": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Michael McCaul",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-monica-de-la-cruz": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Monica De La Cruz",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-morgan-luttrell": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Morgan Luttrell",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-nathaniel-moran": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Nathaniel Moran",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-pat-fallon": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Pat Fallon",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-pete-sessions": {
+    "chamber": "house",
+    "district": "17",
+    "name": "Pete Sessions",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-randy-weber": {
+    "chamber": "house",
+    "district": "14",
+    "name": "Randy Weber",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-roger-williams": {
+    "chamber": "house",
+    "district": "25",
+    "name": "Roger Williams",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-ronny-jackson": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Ronny Jackson",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-steve-toth": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Steve Toth",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-steven-shook": {
+    "chamber": "house",
+    "district": "26",
+    "name": "Steven Shook",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-sylvia-garcia": {
+    "chamber": "house",
+    "district": "29",
+    "name": "Sylvia Garcia",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-tanya-lloyd": {
+    "chamber": "house",
+    "district": "27",
+    "name": "Tanya Lloyd",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-ted-cruz": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ted Cruz",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-tom-sell": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Tom Sell",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-troy-nehls": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Troy Nehls",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-vacant": {
+    "chamber": "house",
+    "district": "23",
+    "name": "Vacant",
+    "party": null,
+    "state": "TX"
+  },
+  "tx-veronica-escobar": {
+    "chamber": "house",
+    "district": "16",
+    "name": "Veronica Escobar",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-vicente-gonzalez": {
+    "chamber": "house",
+    "district": "34",
+    "name": "Vicente Gonzalez",
+    "party": "D",
+    "state": "TX"
+  },
+  "tx-wesley-hunt": {
+    "chamber": "house",
+    "district": "38",
+    "name": "Wesley Hunt",
+    "party": "R",
+    "state": "TX"
+  },
+  "ut-ben-mcadams": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Ben McAdams",
+    "party": "D",
+    "state": "UT"
+  },
+  "ut-blake-moore": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Blake Moore",
+    "party": "R",
+    "state": "UT"
+  },
+  "ut-burgess-owens": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Burgess Owens",
+    "party": "R",
+    "state": "UT"
+  },
+  "ut-celeste-maloy": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Celeste Maloy",
+    "party": "R",
+    "state": "UT"
+  },
+  "ut-john-curtis": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Curtis",
+    "party": "R",
+    "state": "UT"
+  },
+  "ut-mike-kennedy": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Mike Kennedy",
+    "party": "R",
+    "state": "UT"
+  },
+  "ut-mike-lee": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mike Lee",
+    "party": "R",
+    "state": "UT"
+  },
+  "va-ben-cline": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Ben Cline",
+    "party": "R",
+    "state": "VA"
+  },
+  "va-bobby-scott": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Bobby Scott",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-don-beyer": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Don Beyer",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-elaine-luria": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Elaine Luria",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-eugene-vindman": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Eugene Vindman",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-james-walkinshaw": {
+    "chamber": "house",
+    "district": "11",
+    "name": "James Walkinshaw",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-jen-kiggans": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jen Kiggans",
+    "party": "R",
+    "state": "VA"
+  },
+  "va-jennifer-mcclellan": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Jennifer McClellan",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-john-mcguire": {
+    "chamber": "house",
+    "district": "05",
+    "name": "John McGuire",
+    "party": "R",
+    "state": "VA"
+  },
+  "va-mark-warner": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Mark Warner",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-morgan-griffith": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Morgan Griffith",
+    "party": "R",
+    "state": "VA"
+  },
+  "va-rob-wittman": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Rob Wittman",
+    "party": "R",
+    "state": "VA"
+  },
+  "va-suhas-subramanyam": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Suhas Subramanyam",
+    "party": "D",
+    "state": "VA"
+  },
+  "va-tim-kaine": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tim Kaine",
+    "party": "D",
+    "state": "VA"
+  },
+  "vt-becca-balint": {
+    "chamber": "house",
+    "district": "AL",
+    "name": "Becca Balint",
+    "party": "D",
+    "state": "VT"
+  },
+  "vt-bernie-sanders": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Bernie Sanders",
+    "party": "I",
+    "state": "VT"
+  },
+  "vt-peter-welch": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Peter Welch",
+    "party": "D",
+    "state": "VT"
+  },
+  "wa-adam-smith": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Adam Smith",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-dan-newhouse": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Dan Newhouse",
+    "party": "R",
+    "state": "WA"
+  },
+  "wa-emily-randall": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Emily Randall",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-john-duresky": {
+    "chamber": "house",
+    "district": "04",
+    "name": "John Duresky",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-kim-schrier": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Kim Schrier",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-maria-cantwell": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Maria Cantwell",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-marie-gluesenkamp-perez": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Marie Gluesenkamp Perez",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-marilyn-strickland": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Marilyn Strickland",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-michael-baumgartner": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Michael Baumgartner",
+    "party": "R",
+    "state": "WA"
+  },
+  "wa-patty-murray": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Patty Murray",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-pramila-jayapal": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Pramila Jayapal",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-rick-larsen": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Rick Larsen",
+    "party": "D",
+    "state": "WA"
+  },
+  "wa-suzan-delbene": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Suzan DelBene",
+    "party": "D",
+    "state": "WA"
+  },
+  "wi-bryan-steil": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Bryan Steil",
+    "party": "R",
+    "state": "WI"
+  },
+  "wi-derrick-van-orden": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Derrick Van Orden",
+    "party": "R",
+    "state": "WI"
+  },
+  "wi-glenn-grothman": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Glenn Grothman",
+    "party": "R",
+    "state": "WI"
+  },
+  "wi-gwen-moore": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Gwen Moore",
+    "party": "D",
+    "state": "WI"
+  },
+  "wi-mark-pocan": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Mark Pocan",
+    "party": "D",
+    "state": "WI"
+  },
+  "wi-rebecca-cooke": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Rebecca Cooke",
+    "party": "D",
+    "state": "WI"
+  },
+  "wi-ron-johnson": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Ron Johnson",
+    "party": "R",
+    "state": "WI"
+  },
+  "wi-scott-fitzgerald": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Scott Fitzgerald",
+    "party": "R",
+    "state": "WI"
+  },
+  "wi-tammy-baldwin": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Tammy Baldwin",
+    "party": "D",
+    "state": "WI"
+  },
+  "wi-tom-tiffany": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Tom Tiffany",
+    "party": "R",
+    "state": "WI"
+  },
+  "wi-tony-wied": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Tony Wied",
+    "party": "R",
+    "state": "WI"
+  },
+  "wv-carol-miller": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Carol Miller",
+    "party": "R",
+    "state": "WV"
+  },
+  "wv-jim-justice": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Jim Justice",
+    "party": "R",
+    "state": "WV"
+  },
+  "wv-riley-moore": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Riley Moore",
+    "party": "R",
+    "state": "WV"
+  },
+  "wv-shelley-moore-capito": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Shelley Moore Capito",
+    "party": "R",
+    "state": "WV"
+  },
+  "wy-cynthia-lummis": {
+    "chamber": "senate",
+    "district": null,
+    "name": "Cynthia Lummis",
+    "party": "R",
+    "state": "WY"
+  },
+  "wy-harriet-hageman": {
+    "chamber": "house",
+    "district": "AL",
+    "name": "Harriet Hageman",
+    "party": "R",
+    "state": "WY"
+  },
+  "wy-john-barrasso": {
+    "chamber": "senate",
+    "district": null,
+    "name": "John Barrasso",
+    "party": "R",
+    "state": "WY"
+  }
+}

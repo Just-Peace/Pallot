@@ -1,0 +1,80 @@
+[
+ {
+  "idCreated": "SYSTEM",
+  "tsCreated": "2025-08-25T04:39:44.071497Z",
+  "flActive": true,
+  "idConfigDetail": 2134,
+  "txKey": "D",
+  "txVal": "DEMOCRATIC",
+  "txValEsEs": "DEMÓCRATA",
+  "cdType": "",
+  "cdStatus": "A",
+  "nbSeq": 1,
+  "cdOwner": "BASE"
+ },
+ {
+  "idCreated": "SYSTEM",
+  "tsCreated": "2025-08-25T04:39:44.071497Z",
+  "flActive": true,
+  "idConfigDetail": 2135,
+  "txKey": "G",
+  "txVal": "GREEN",
+  "txValEsEs": "VERDE",
+  "cdType": "",
+  "cdStatus": "A",
+  "nbSeq": 2,
+  "cdOwner": "BASE"
+ },
+ {
+  "idCreated": "SYSTEM",
+  "tsCreated": "2025-08-25T04:39:44.071497Z",
+  "flActive": true,
+  "idConfigDetail": 2136,
+  "txKey": "I",
+  "txVal": "INDEPENDENT",
+  "txValEsEs": "INDEPENDIENTE",
+  "cdType": "",
+  "cdStatus": "A",
+  "nbSeq": 3,
+  "cdOwner": "BASE"
+ },
+ {
+  "idCreated": "SYSTEM",
+  "tsCreated": "2025-08-25T04:39:44.071497Z",
+  "flActive": true,
+  "idConfigDetail": 2137,
+  "txKey": "L",
+  "txVal": "LIBERTARIAN",
+  "txValEsEs": "LIBERTARIO",
+  "cdType": "",
+  "cdStatus": "A",
+  "nbSeq": 4,
+  "cdOwner": "BASE"
+ },
+ {
+  "idCreated": "SYSTEM",
+  "tsCreated": "2025-08-25T04:39:44.071497Z",
+  "flActive": true,
+  "idConfigDetail": 2138,
+  "txKey": "R",
+  "txVal": "REPUBLICAN",
+  "txValEsEs": "REPUBLICANO",
+  "cdType": "",
+  "cdStatus": "A",
+  "nbSeq": 5,
+  "cdOwner": "BASE"
+ },
+ {
+  "idCreated": "SYSTEM",
+  "tsCreated": "2025-08-25T04:39:44.071497Z",
+  "flActive": true,
+  "idConfigDetail": 2139,
+  "txKey": "W",
+  "txVal": "WRITE-IN",
+  "txValEsEs": "POR ESCRITO",
+  "cdType": "",
+  "cdStatus": "A",
+  "nbSeq": 6,
+  "cdOwner": "BASE"
+ }
+]

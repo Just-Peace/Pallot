@@ -1,0 +1,398 @@
+{
+ "result": {
+  "geographies": {
+   "2020 Census Public Use Microdata Areas": [
+    {
+     "GEOID": "4805302",
+     "CENTLAT": "+30.4077447",
+     "AREAWATER": 0,
+     "BASENAME": "Austin City (North)",
+     "STATE": "48",
+     "OID": "217704486408876",
+     "LSADC": "P0",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.4077447",
+     "NAME": "Austin City (North) PUMA",
+     "OBJECTID": 337,
+     "CENTLON": "-097.7107917",
+     "AREALAND": 68124022,
+     "INTPTLON": "-097.7107917",
+     "MTFCC": "G6120",
+     "PUMA": "05302"
+    }
+   ],
+   "2020 Census ZIP Code Tabulation Areas": [
+    {
+     "GEOID": "78728",
+     "CENTLAT": "+30.4553664",
+     "AREAWATER": 44122,
+     "BASENAME": "78728",
+     "OID": "221704258478020",
+     "ZCTA5": "78728",
+     "LSADC": "Z5",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.4537644",
+     "NAME": "ZCTA5 78728",
+     "OBJECTID": 10919,
+     "CENTLON": "-097.6894739",
+     "AREALAND": 20069562,
+     "INTPTLON": "-097.6866947",
+     "MTFCC": "G6350",
+     "ZCTA5CC": "B5"
+    }
+   ],
+   "Urban Areas": [
+    {
+     "GEOID": "04384",
+     "CENTLAT": "+30.3774192",
+     "AREAWATER": 12571948,
+     "BASENAME": "Austin, TX",
+     "OID": "27021327918298",
+     "UA": "04384",
+     "LSADC": "67",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.3743936",
+     "NAME": "Austin, TX Urban Area",
+     "OBJECTID": 1828,
+     "CENTLON": "-097.7655116",
+     "AREALAND": 1604832120,
+     "INTPTLON": "-097.7649819",
+     "MTFCC": "G3500"
+    }
+   ],
+   "Incorporated Places": [
+    {
+     "DISP_CLR": 3,
+     "STGEOMETRY_Area": 1154867329.1476536,
+     "NECTAPCI": "N",
+     "GEOID": "4805000",
+     "CENTLAT": "+30.2984886",
+     "AREAWATER": 16923733,
+     "BASENAME": "Austin",
+     "STATE": "48",
+     "OID": "27890327911139",
+     "LSADC": "25",
+     "PLACE": "05000",
+     "FUNCSTAT": "A",
+     "INTPTLAT": "+30.2986219",
+     "NAME": "Austin city",
+     "OBJECTID": 31956,
+     "PLACECC": "C1",
+     "CENTLON": "-097.7536575",
+     "STGEOMETRY_Length": 1015591.1856887105,
+     "CBSAPCI": "Y",
+     "AREALAND": 841154563,
+     "INTPTLON": "-097.7541339",
+     "PLACENS": "02409761",
+     "MTFCC": "G4110"
+    }
+   ],
+   "Counties": [
+    {
+     "GEOID": "48453",
+     "CENTLAT": "+30.3343599",
+     "AREAWATER": 79451592,
+     "STATE": "48",
+     "BASENAME": "Travis",
+     "OID": "27590377912845",
+     "LSADC": "06",
+     "FUNCSTAT": "A",
+     "INTPTLAT": "+30.2395263",
+     "NAME": "Travis County",
+     "OBJECTID": 2500,
+     "CENTLON": "-097.7818171",
+     "COUNTYCC": "H1",
+     "COUNTYNS": "01384012",
+     "AREALAND": 2575354868,
+     "INTPTLON": "-097.6910527",
+     "MTFCC": "G4020",
+     "COUNTY": "453"
+    }
+   ],
+   "Unified School Districts": [
+    {
+     "LOGRADE": "PK",
+     "GEOID": "4838080",
+     "CENTLAT": "+30.4970479",
+     "AREAWATER": 1596569,
+     "STATE": "48",
+     "BASENAME": "Round Rock Independent School District",
+     "OID": "28490378133915",
+     "SDTYP": "",
+     "LSADC": "00",
+     "FUNCSTAT": "E",
+     "INTPTLAT": "+30.4954039",
+     "SDUNI": "38080",
+     "NAME": "Round Rock Independent School District",
+     "OBJECTID": 7924,
+     "CENTLON": "-097.7089839",
+     "HIGRADE": "12",
+     "AREALAND": 252177297,
+     "INTPTLON": "-097.7091574",
+     "MTFCC": "G5420"
+    }
+   ],
+   "2020 Census Blocks": [
+    {
+     "SUFFIX": "",
+     "GEOID": "484530430001009",
+     "CENTLAT": "+30.4455477",
+     "BLOCK": "1009",
+     "AREAWATER": 0,
+     "STATE": "48",
+     "BASENAME": "1009",
+     "OID": "210701000419715",
+     "LSADC": "BK",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.4486900",
+     "NAME": "Block 1009",
+     "OBJECTID": 7214545,
+     "TRACT": "043000",
+     "CENTLON": "-097.6971790",
+     "BLKGRP": "1",
+     "AREALAND": 34302,
+     "INTPTLON": "-097.6967463",
+     "MTFCC": "G5040",
+     "LWBLKTYP": "L",
+     "UR": "U",
+     "COUNTY": "453"
+    }
+   ],
+   "States": [
+    {
+     "STATENS": "01779801",
+     "GEOID": "48",
+     "CENTLAT": "+31.4276892",
+     "AREAWATER": 19009359594,
+     "STATE": "48",
+     "BASENAME": "Texas",
+     "STUSAB": "TX",
+     "OID": "2749098452115",
+     "LSADC": "00",
+     "FUNCSTAT": "A",
+     "INTPTLAT": "+31.4347032",
+     "DIVISION": "7",
+     "NAME": "Texas",
+     "REGION": "3",
+     "OBJECTID": 49,
+     "CENTLON": "-099.2890539",
+     "AREALAND": 676658961621,
+     "INTPTLON": "-099.2818238",
+     "MTFCC": "G4000"
+    }
+   ],
+   "Census Block Groups": [
+    {
+     "GEOID": "484530430001",
+     "CENTLAT": "+30.4500660",
+     "AREAWATER": 0,
+     "STATE": "48",
+     "BASENAME": "1",
+     "OID": "2089015903134250",
+     "LSADC": "BG",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.4500660",
+     "NAME": "Block Group 1",
+     "OBJECTID": 51157,
+     "TRACT": "043000",
+     "CENTLON": "-097.7030334",
+     "BLKGRP": "1",
+     "AREALAND": 4739969,
+     "INTPTLON": "-097.7030334",
+     "MTFCC": "G5030",
+     "COUNTY": "453"
+    }
+   ],
+   "County Subdivisions": [
+    {
+     "COUSUB": "90165",
+     "GEOID": "4845390165",
+     "CENTLAT": "+30.2398885",
+     "AREAWATER": 14347784,
+     "STATE": "48",
+     "BASENAME": "Austin",
+     "OID": "27690377965786",
+     "LSADC": "22",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.2395263",
+     "NAME": "Austin CCD",
+     "OBJECTID": 16351,
+     "CENTLON": "-097.6922280",
+     "COUSUBCC": "Z5",
+     "AREALAND": 1212517203,
+     "INTPTLON": "-097.6910527",
+     "MTFCC": "G4040",
+     "COUSUBNS": "01938508",
+     "COUNTY": "453"
+    }
+   ],
+   "2026 State Legislative Districts - Upper": [
+    {
+     "GEOID": "48014",
+     "CENTLAT": "+30.3276171",
+     "AREAWATER": 13661972,
+     "STATE": "48",
+     "BASENAME": "14",
+     "OID": "2129042579652186",
+     "SLDU": "014",
+     "LSADC": "LU",
+     "FUNCSTAT": "N",
+     "INTPTLAT": "+30.3276222",
+     "NAME": "State Senate District 14",
+     "OBJECTID": 841,
+     "CENTLON": "-097.6765074",
+     "LSY": "2026",
+     "AREALAND": 1333781950,
+     "INTPTLON": "-097.6766210",
+     "MTFCC": "G5210",
+     "LDTYP": "O"
+    }
+   ],
+   "Census Divisions": [
+    {
+     "GEOID": "7",
+     "CENTLAT": "+32.4683953",
+     "AREAWATER": 49213835709,
+     "BASENAME": "West South Central",
+     "OID": "2739020719806",
+     "LSADC": "69",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+32.4680012",
+     "DIVISION": "7",
+     "REGION": "3",
+     "NAME": "West South Central Division",
+     "OBJECTID": 1,
+     "CENTLON": "-097.3217459",
+     "AREALAND": 1100925237701,
+     "INTPTLON": "-097.3301012",
+     "MTFCC": "G1200"
+    }
+   ],
+   "120th Congressional Districts": [
+    {
+     "STGEOMETRY_Area": 31652204758.17124,
+     "CD120": "10",
+     "GEOID": "4810",
+     "CENTLAT": "+30.8368739",
+     "CDSESSN": "120",
+     "AREAWATER": 599864221,
+     "STATE": "48",
+     "BASENAME": "10",
+     "OID": "2119042393348413",
+     "LSADC": "C2",
+     "FUNCSTAT": "N",
+     "INTPTLAT": "+30.8460626",
+     "NAME": "Congressional District 10",
+     "OBJECTID": 348,
+     "CENTLON": "-095.8456381",
+     "STGEOMETRY_Length": 1655201.6152337315,
+     "AREALAND": 22660297989,
+     "INTPTLON": "-095.8392688",
+     "MTFCC": "G5200"
+    }
+   ],
+   "2026 State Legislative Districts - Lower": [
+    {
+     "GEOID": "48047",
+     "CENTLAT": "+30.3189637",
+     "SLDL": "047",
+     "AREAWATER": 17786858,
+     "STATE": "48",
+     "BASENAME": "47",
+     "OID": "2139042579652573",
+     "LSADC": "LL",
+     "FUNCSTAT": "N",
+     "INTPTLAT": "+30.3280293",
+     "NAME": "State House District 47",
+     "OBJECTID": 4034,
+     "CENTLON": "-097.9080818",
+     "LSY": "2026",
+     "AREALAND": 502243529,
+     "INTPTLON": "-097.9009005",
+     "MTFCC": "G5220",
+     "LDTYP": "O"
+    }
+   ],
+   "Census Regions": [
+    {
+     "GEOID": "3",
+     "CENTLAT": "+33.5118953",
+     "AREAWATER": 148755379603,
+     "BASENAME": "South",
+     "OID": "2729020719822",
+     "LSADC": "68",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+33.5144473",
+     "REGION": "3",
+     "NAME": "South Region",
+     "OBJECTID": 1,
+     "CENTLON": "-090.1228227",
+     "AREALAND": 2249831112956,
+     "INTPTLON": "-090.1228714",
+     "MTFCC": "G1100"
+    }
+   ],
+   "Metropolitan Statistical Areas": [
+    {
+     "POP100": "",
+     "GEOID": "12420",
+     "CENTLAT": "+30.2616643",
+     "AREAWATER": 149897577,
+     "BASENAME": "Austin-Round Rock-San Marcos, TX",
+     "OID": "2629034687907092",
+     "LSADC": "M1",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.2498002",
+     "NAME": "Austin-Round Rock-San Marcos, TX Metro Area",
+     "CSA": "",
+     "OBJECTID": 578,
+     "CENTLON": "-097.6543028",
+     "CBSA": "12420",
+     "AREALAND": 10929370942,
+     "INTPTLON": "-097.6496306",
+     "HU100": "",
+     "MTFCC": "G3110"
+    }
+   ],
+   "Census Tracts": [
+    {
+     "GEOID": "48453043000",
+     "CENTLAT": "+30.4490320",
+     "AREAWATER": 0,
+     "STATE": "48",
+     "BASENAME": "430",
+     "OID": "2079015903134470",
+     "LSADC": "CT",
+     "FUNCSTAT": "S",
+     "INTPTLAT": "+30.4490320",
+     "NAME": "Census Tract 430",
+     "OBJECTID": 10003,
+     "TRACT": "043000",
+     "CENTLON": "-097.7018024",
+     "AREALAND": 5219682,
+     "INTPTLON": "-097.7018024",
+     "MTFCC": "G5020",
+     "COUNTY": "453"
+    }
+   ]
+  },
+  "input": {
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "location": {
+    "x": -97.696722,
+    "y": 30.44584
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  }
+ }
+}

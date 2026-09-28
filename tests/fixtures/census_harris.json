@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1001 PRESTON ST, HOUSTON, TX 77002"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "96067507"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "4804602",
+       "CENTLAT": "+29.7402220",
+       "AREAWATER": 2079090,
+       "BASENAME": "Houston City (East Central)--East of I-45 & Inside Loop I-610",
+       "STATE": "48",
+       "OID": "217704486393187",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7402406",
+       "NAME": "Houston City (East Central)--East of I-45 & Inside Loop I-610 PUMA",
+       "OBJECTID": 1465,
+       "CENTLON": "-095.3090428",
+       "AREALAND": 66082511,
+       "INTPTLON": "-095.3082586",
+       "MTFCC": "G6120",
+       "PUMA": "04602"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "77002",
+       "CENTLAT": "+29.7563320",
+       "AREAWATER": 114561,
+       "BASENAME": "77002",
+       "OID": "221704258476337",
+       "ZCTA5": "77002",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7568447",
+       "NAME": "ZCTA5 77002",
+       "OBJECTID": 30556,
+       "CENTLON": "-095.3654400",
+       "AREALAND": 5101445,
+       "INTPTLON": "-095.3656519",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "40429",
+       "CENTLAT": "+29.7738155",
+       "AREAWATER": 65783576,
+       "BASENAME": "Houston, TX",
+       "OID": "27021142459070",
+       "UA": "40429",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7730212",
+       "NAME": "Houston, TX Urban Area",
+       "OBJECTID": 111,
+       "CENTLON": "-095.4019631",
+       "AREALAND": 4540248549,
+       "INTPTLON": "-095.4003948",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 2318735653.437516,
+       "NECTAPCI": "N",
+       "GEOID": "4835000",
+       "CENTLAT": "+29.7859623",
+       "AREAWATER": 80857826,
+       "BASENAME": "Houston",
+       "STATE": "48",
+       "OID": "27890262361690",
+       "LSADC": "25",
+       "PLACE": "35000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+29.7857435",
+       "NAME": "Houston city",
+       "OBJECTID": 31978,
+       "PLACECC": "C1",
+       "CENTLON": "-095.3886610",
+       "STGEOMETRY_Length": 2933733.3949610796,
+       "CBSAPCI": "Y",
+       "AREALAND": 1659718963,
+       "INTPTLON": "-095.3888059",
+       "PLACENS": "02410796",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "48201",
+       "CENTLAT": "+29.8573332",
+       "AREAWATER": 180506183,
+       "STATE": "48",
+       "BASENAME": "Harris",
+       "OID": "27590325947046",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+29.8572730",
+       "NAME": "Harris County",
+       "OBJECTID": 2896,
+       "CENTLON": "-095.3920016",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01383886",
+       "AREALAND": 4422002774,
+       "INTPTLON": "-095.3930371",
+       "MTFCC": "G4020",
+       "COUNTY": "201"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "4823640",
+       "CENTLAT": "+29.7369983",
+       "AREAWATER": 8155408,
+       "STATE": "48",
+       "BASENAME": "Houston Independent School District",
+       "OID": "28490326103571",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+29.7366216",
+       "SDUNI": "23640",
+       "NAME": "Houston Independent School District",
+       "OBJECTID": 4448,
+       "CENTLON": "-095.3806316",
+       "HIGRADE": "12",
+       "AREALAND": 855076235,
+       "INTPTLON": "-095.3803675",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "482019807001057",
+       "CENTLAT": "+29.7616180",
+       "BLOCK": "1057",
+       "AREAWATER": 0,
+       "STATE": "48",
+       "BASENAME": "1057",
+       "OID": "210701004767806",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7616180",
+       "NAME": "Block 1057",
+       "OBJECTID": 7476272,
+       "TRACT": "980700",
+       "CENTLON": "-095.3605937",
+       "BLKGRP": "1",
+       "AREALAND": 10670,
+       "INTPTLON": "-095.3605937",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "201"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779801",
+       "GEOID": "48",
+       "CENTLAT": "+31.4276892",
+       "AREAWATER": 19009359594,
+       "STATE": "48",
+       "BASENAME": "Texas",
+       "STUSAB": "TX",
+       "OID": "2749098452115",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+31.4347032",
+       "DIVISION": "7",
+       "NAME": "Texas",
+       "REGION": "3",
+       "OBJECTID": 49,
+       "CENTLON": "-099.2890539",
+       "AREALAND": 676658961621,
+       "INTPTLON": "-099.2818238",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "482019807001",
+       "CENTLAT": "+29.7620997",
+       "AREAWATER": 48203,
+       "STATE": "48",
+       "BASENAME": "1",
+       "OID": "2089015701946773",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7621790",
+       "NAME": "Block Group 1",
+       "OBJECTID": 27645,
+       "TRACT": "980700",
+       "CENTLON": "-095.3652151",
+       "BLKGRP": "1",
+       "AREALAND": 1255605,
+       "INTPTLON": "-095.3652480",
+       "MTFCC": "G5030",
+       "COUNTY": "201"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "288",
+       "CENTLAT": "+29.7169884",
+       "AREAWATER": 4648985254,
+       "BASENAME": "Houston-Pasadena, TX",
+       "OID": "2619034687908039",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7163759",
+       "NAME": "Houston-Pasadena, TX CSA",
+       "OBJECTID": 156,
+       "CSA": "288",
+       "CENTLON": "-095.5453278",
+       "INTPTLON": "-095.5429841",
+       "AREALAND": 32133709535,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "91835",
+       "GEOID": "4820191835",
+       "CENTLAT": "+29.8013105",
+       "AREAWATER": 73249882,
+       "STATE": "48",
+       "BASENAME": "Houston",
+       "OID": "27690325949083",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.8014132",
+       "NAME": "Houston CCD",
+       "OBJECTID": 29108,
+       "CENTLON": "-095.3881675",
+       "COUSUBCC": "Z5",
+       "AREALAND": 2493560261,
+       "INTPTLON": "-095.3887412",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01938848",
+       "COUNTY": "201"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "48013",
+       "CENTLAT": "+29.6503286",
+       "AREAWATER": 8587160,
+       "STATE": "48",
+       "BASENAME": "13",
+       "OID": "2129042579652185",
+       "SLDU": "013",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+29.6468345",
+       "NAME": "State Senate District 13",
+       "OBJECTID": 840,
+       "CENTLON": "-095.4476960",
+       "LSY": "2026",
+       "AREALAND": 617647604,
+       "INTPTLON": "-095.4529267",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "7",
+       "CENTLAT": "+32.4683953",
+       "AREAWATER": 49213835709,
+       "BASENAME": "West South Central",
+       "OID": "2739020719806",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+32.4680012",
+       "DIVISION": "7",
+       "REGION": "3",
+       "NAME": "West South Central Division",
+       "OBJECTID": 1,
+       "CENTLON": "-097.3217459",
+       "AREALAND": 1100925237701,
+       "INTPTLON": "-097.3301012",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 821721244.6017581,
+       "CD120": "18",
+       "GEOID": "4818",
+       "CENTLAT": "+29.7010804",
+       "CDSESSN": "120",
+       "AREAWATER": 6693748,
+       "STATE": "48",
+       "BASENAME": "18",
+       "OID": "2119042393351431",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+29.7006420",
+       "NAME": "Congressional District 18",
+       "OBJECTID": 368,
+       "CENTLON": "-095.3868297",
+       "STGEOMETRY_Length": 226714.3735730385,
+       "AREALAND": 611173016,
+       "INTPTLON": "-095.3882508",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "48145",
+       "CENTLAT": "+29.7582586",
+       "SLDL": "145",
+       "AREAWATER": 1446412,
+       "STATE": "48",
+       "BASENAME": "145",
+       "OID": "2139042579652722",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+29.7593233",
+       "NAME": "State House District 145",
+       "OBJECTID": 4051,
+       "CENTLON": "-095.3400587",
+       "LSY": "2026",
+       "AREALAND": 93713416,
+       "INTPTLON": "-095.3382064",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "26420",
+       "CENTLAT": "+29.8011484",
+       "AREAWATER": 3192289351,
+       "BASENAME": "Houston-Pasadena-The Woodlands, TX",
+       "OID": "2629034687907420",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.8010046",
+       "NAME": "Houston-Pasadena-The Woodlands, TX Metro Area",
+       "CSA": "288",
+       "OBJECTID": 36,
+       "CENTLON": "-095.3423270",
+       "CBSA": "26420",
+       "AREALAND": 22893413377,
+       "INTPTLON": "-095.3426200",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "48201980700",
+       "CENTLAT": "+29.7620997",
+       "AREAWATER": 48203,
+       "STATE": "48",
+       "BASENAME": "9807",
+       "OID": "2079015701946950",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+29.7621790",
+       "NAME": "Census Tract 9807",
+       "OBJECTID": 81271,
+       "TRACT": "980700",
+       "CENTLON": "-095.3652151",
+       "AREALAND": 1255605,
+       "INTPTLON": "-095.3652480",
+       "MTFCC": "G5020",
+       "COUNTY": "201"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -95.361246115782,
+     "y": 29.761519177017
+    },
+    "addressComponents": {
+     "zip": "77002",
+     "streetName": "PRESTON",
+     "preType": "",
+     "city": "HOUSTON",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "1001",
+     "state": "TX",
+     "suffixType": "ST",
+     "toAddress": "1099",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1001 PRESTON ST, HOUSTON, TX, 77002"
+   }
+  ]
+ }
+}

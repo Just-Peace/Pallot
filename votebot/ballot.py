@@ -1,0 +1,485 @@
+"""Assemble one voter's ballot from the enabled sources.
+
+Official path: the Census gives the county and districts, the SBOE map adds the State
+Board of Education district, and the county's Texas SOS ballot order is filtered down to
+those districts. Ballotpedia adds city/school races and the voter's precincts, or supplies
+the whole ballot when the state source is off. Then every candidate gets a card from each
+enabled source (enrich.py).
+"""
+
+from __future__ import annotations
+
+import asyncio
+import datetime as dt
+import time
+import zipfile
+from dataclasses import dataclass
+from typing import Any, Callable
+
+import httpx
+
+from . import enrich
+from .config import Config
+from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
+from .models import (
+    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionRef, Location, MaybeSection,
+    Measure, Meta, Race, SourceUse,
+)
+from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
+from .settings import Settings
+from .sources import sos as sos_source
+from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
+from .sources.census import TEXAS_FIPS, Census, Place
+from .sources.nominatim import Nominatim
+from .sources.sboe import SboeMap
+from .sources.sos import Election, Lookups, Sos, still_running
+from .sources.trackaipac import TrackAipac
+from .text import display_office, display_person, iso_utc
+
+MAYBE_SECTIONS = {
+    "precinct": (
+        "Depends on your precinct",
+        "These races are only on some ballots in {county} County. Your commissioner, justice of the peace and "
+        "constable precincts are printed on your voter registration certificate; enter them to narrow this list.",
+    ),
+    "unconfirmed": (
+        "Couldn't confirm",
+        "We couldn't work out which of these districts your address is in, so check your county's sample ballot.",
+    ),
+    "special": (
+        "Special districts (MUDs, water and utility districts)",
+        "Ballotpedia lists these for your area, but you only vote in one if your home is inside that district. "
+        "Check your county's sample ballot.",
+    ),
+}
+
+
+class BallotError(Exception):
+    def __init__(self, status: int, message: str):
+        super().__init__(message)
+        self.status = status
+        self.message = message
+
+
+@dataclass
+class Services:
+    config: Config
+    settings: Settings
+    cache: HttpCache
+    census: Census
+    nominatim: Nominatim
+    sboe: SboeMap
+    sos: Sos
+    ballotpedia: Ballotpedia
+    trackaipac: TrackAipac
+    today: Callable[[], dt.date] = dt.date.today
+
+
+@dataclass
+class SosData:
+    county_id: int
+    county_names: set[str]
+    sboe: int | None
+    lookups: Lookups
+    orders: list[tuple[Election, list[dict[str, Any]]]]
+
+
+def election_ref(election: Election) -> ElectionRef:
+    return ElectionRef(
+        id=election.id,
+        name=display_office(election.name),
+        type=election.type,
+        date=election.day.isoformat() if election.day else None,
+        party=election.party,
+    )
+
+
+async def election_dates(sos: Sos) -> list[ElectionDate]:
+    upcoming = await sos.upcoming()
+    return [
+        ElectionDate(
+            date=day.isoformat(),
+            elections=[election_ref(e) for e in elections],
+            has_primaries=any(e.party for e in elections),
+        )
+        for day, elections in upcoming.items()
+    ]
+
+
+async def locate(svc: Services, address: str) -> tuple[Place, Location]:
+    try:
+        place = await svc.census.geocode(address)
+        geocoder, approximate, label = "census", False, place.matched_address if place else None
+        if place is None:
+            point = await svc.nominatim.locate(address)
+            if point is None:
+                raise BallotError(422, "We couldn't find that address. Include the street, city and ZIP code.")
+            place = await svc.census.at(point.lat, point.lon)
+            if place is None:
+                raise BallotError(422, "That address doesn't seem to be in the United States.")
+            geocoder, approximate, label = "nominatim", point.approximate, point.label
+    except UpstreamError as exc:
+        raise BallotError(502, f"The address lookup service isn't responding ({exc}). Try again in a minute.") from exc
+    if place.state_fips != TEXAS_FIPS:
+        raise BallotError(422, "VoteBot only covers Texas addresses for now.")
+    location = Location(
+        input_address=address,
+        matched_address=label,
+        lat=place.lat,
+        lon=place.lon,
+        state=place.state,
+        state_name=place.state_name,
+        county=place.county,
+        city=place.city,
+        school_district=place.school_district,
+        geocoder=geocoder,
+        approximate=approximate,
+    )
+    return place, location
+
+
+def placement(scope: OfficeScope, districts: Districts) -> str:
+    """ "include", "skip" (another district's race), or the maybe-section it belongs in."""
+    if scope.kind in DISTRICT_KINDS or scope.kind in PRECINCT_KINDS:
+        mine = getattr(districts, scope.kind)
+        if mine is None:
+            return "unconfirmed" if scope.kind in DISTRICT_KINDS else "precinct"
+        return "include" if mine == scope.number else "skip"
+    if scope.kind == "precinct_other":
+        return "precinct"
+    return "include"
+
+
+def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
+    return (
+        row.get("nbOfficeTypeOrder") or 99,
+        row.get("nbSortOrder") or 999,
+        row.get("nbSecondarySortOrder") or 999,
+        name,
+    )
+
+
+async def build_ballot(svc: Services, request: BallotRequest) -> Ballot:
+    return await _Builder(svc, request, track_calls()).run()
+
+
+async def _nothing() -> None:
+    return None
+
+
+class _Builder:
+    def __init__(self, svc: Services, request: BallotRequest, calls: CallStats):
+        self.svc = svc
+        self.request = request
+        self.calls = calls
+        self.started = time.monotonic()
+        self.use_sos = svc.settings.enabled("sos")
+        self.use_bp = svc.settings.enabled("ballotpedia")
+        self.use_tap = svc.settings.enabled("trackaipac")
+        self.notes: list[str] = []
+        self.warnings: list[str] = []
+        self.errors: dict[str, str] = {}
+        self.ballot_rows: dict[str, dict[str, Any]] = {}  # candidate key -> its SOS row
+        self.included: set[tuple[str, int | None]] = set()  # (kind, number) of SOS races kept
+        self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
+
+    async def run(self) -> Ballot:
+        if not (self.use_sos or self.use_bp):
+            raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
+        place, location = await locate(self.svc, self.request.address)
+        if location.approximate:
+            self.warnings.append(
+                f"We could only place this address approximately ({location.matched_address}), "
+                "so double-check the districts below."
+            )
+
+        elections, day = await self._elections()
+        sos_data, bp_ballot = await asyncio.gather(
+            self._sos(elections, place) if elections else _nothing(),
+            self._ballotpedia(place, day) if self.use_bp else _nothing(),
+        )
+        if sos_data is None and not (bp_ballot and bp_ballot.races):
+            if "sos" in self.errors:
+                raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.errors['sos']}).")
+            raise BallotError(404, " ".join(self.warnings) or "No ballot data found for this address.")
+        if self.use_sos and sos_data is None:
+            self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
+
+        precincts, precinct_source = self._precincts(bp_ballot)
+        districts = Districts(
+            county_id=sos_data.county_id if sos_data else None,
+            cd=place.cd,
+            sd=place.sd,
+            hd=place.hd,
+            sboe=sos_data.sboe if sos_data else None,
+            precinct_source=precinct_source,
+            **precincts,
+        )
+
+        if sos_data:
+            races = self._sos_races(sos_data, districts)
+            if bp_ballot:
+                races += self._bp_races(bp_ballot, only={"local"})
+            self._district_notes(districts, [e for e, _ in sos_data.orders])
+        else:
+            races = self._bp_races(bp_ballot, only=None) if bp_ballot else []
+
+        maybe = [
+            MaybeSection(
+                id=key,
+                title=MAYBE_SECTIONS[key][0],
+                explanation=MAYBE_SECTIONS[key][1].format(county=place.county or "your"),
+                races=found,
+            )
+            for key, found in self.maybe.items()
+            if found
+        ]
+        every_race = races + [race for section in maybe for race in section.races]
+        self.warnings += await enrich.run(
+            self.svc,
+            every_race,
+            elections={e.id: e for e, _ in sos_data.orders} if sos_data else {},
+            ballot_rows=self.ballot_rows,
+            bp_ballot=bp_ballot if self.use_bp else None,
+            use_sos=sos_data is not None,
+            use_trackaipac=self.use_tap,
+        )
+
+        ballot_day = day or (bp_ballot.day if bp_ballot else None)
+        if sos_data:
+            used = {race.election_id for race in every_race}
+            refs = [election_ref(e) for e, _ in sos_data.orders if e.id in used]
+        else:
+            refs = [ElectionRef(name="Ballotpedia sample ballot", date=ballot_day.isoformat() if ballot_day else None)]
+        return Ballot(
+            election_date=ballot_day.isoformat() if ballot_day else None,
+            elections=refs,
+            location=location,
+            districts=districts,
+            races=races,
+            maybe=maybe,
+            measures=[
+                Measure(key=f"bp:{m.id}", title=m.title, summary=m.summary, url=m.url, district=m.district)
+                for m in (bp_ballot.measures if bp_ballot else ())
+            ],
+            notes=self.notes,
+            warnings=self.warnings,
+            sources=self._sources(location),
+            meta=Meta(
+                external_calls=self.calls.external_calls,
+                cache_hits=self.calls.cache_hits,
+                elapsed_ms=int((time.monotonic() - self.started) * 1000),
+            ),
+        )
+
+    # -- gathering -----------------------------------------------------------------
+
+    async def _elections(self) -> tuple[list[Election], dt.date | None]:
+        requested = self.request.election_date
+        if not self.use_sos:
+            return [], requested
+        try:
+            upcoming = await self.svc.sos.upcoming()
+        except UpstreamError as exc:
+            self.errors["sos"] = str(exc)
+            return [], requested
+        if not upcoming:
+            self.warnings.append("Texas SOS doesn't list any upcoming elections.")
+            return [], requested
+        day = requested if requested in upcoming else next(iter(upcoming))
+        if requested and requested != day:
+            self.warnings.append(f"Texas SOS lists no election on {requested:%b %d, %Y}; showing {day:%b %d, %Y}.")
+        on_day = upcoming[day]
+        chosen = [e for e in on_day if not e.party]
+        primaries = [e for e in on_day if e.party]
+        if primaries:
+            if self.request.party:
+                chosen += [e for e in primaries if e.party == self.request.party]
+            else:
+                self.warnings.append("This date has party primaries. Choose Democratic or Republican to see those races.")
+        return chosen, day
+
+    async def _sos(self, elections: list[Election], place: Place) -> SosData | None:
+        sos = self.svc.sos
+        try:
+            county_id, counties, lookups = await asyncio.gather(
+                sos.county_id(place.county, place.county_fips), sos.counties(), sos.lookups()
+            )
+            if county_id is None:
+                self.warnings.append(f"Texas SOS doesn't list {place.county} County.")
+                return None
+            *orders, sboe = await asyncio.gather(
+                *(self._rows(e, county_id, place.county) for e in elections), self._sboe(place)
+            )
+        except UpstreamError as exc:
+            self.errors["sos"] = str(exc)
+            return None
+        return SosData(county_id, set(counties), sboe, lookups, list(zip(elections, orders)))
+
+    async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
+        """The county's ballot order; when that's empty (special elections), the statewide
+        candidate list trimmed to races that can reach this county."""
+        rows = (await self.svc.sos.ballot_order(election, county_id)).value or []
+        if rows:
+            return rows
+        everyone = (await self.svc.sos.candidates(election)).value or []
+        wanted = (county or "").upper()
+        return [
+            r for r in everyone
+            if still_running(r)
+            and (r.get("cdOfficeType") in ("FD", "SW", "SR") or (r.get("txCountyName") or "").upper() == wanted)
+        ]
+
+    async def _sboe(self, place: Place) -> int | None:
+        try:
+            return await self.svc.sboe.district_at(place.lat, place.lon)
+        except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile):
+            self.warnings.append("Couldn't load the State Board of Education map; SBOE races are listed as unconfirmed.")
+            return None
+
+    async def _ballotpedia(self, place: Place, day: dt.date | None) -> BpBallot | None:
+        try:
+            ballot = await self.svc.ballotpedia.ballot(place.lat, place.lon, day)
+        except BallotpediaUnavailable as exc:
+            self.errors["ballotpedia"] = str(exc)
+            self.warnings.append(f"Ballotpedia isn't available ({exc}), so city and school races aren't shown.")
+            return None
+        if not ballot.races and day:
+            self.notes.append(f"Ballotpedia has nothing for {day:%b %d, %Y} at this address yet.")
+        return ballot
+
+    # -- building races ----------------------------------------------------------------
+
+    def _precincts(self, bp_ballot: BpBallot | None) -> tuple[dict[str, int | None], str | None]:
+        given = self.request.precincts.model_dump(exclude_none=True) if self.request.precincts else {}
+        from_bp = dict(bp_ballot.precincts) if bp_ballot else {}
+        merged = {**from_bp, **given}
+        source = "you" if given else "ballotpedia" if from_bp else None
+        return {kind: merged.get(kind) for kind in PRECINCT_KINDS}, source
+
+    def _sos_races(self, data: SosData, districts: Districts) -> list[Race]:
+        entries: list[tuple[tuple[int, int, int, str], Race]] = []
+        for election, rows in data.orders:
+            offices: dict[int, list[dict[str, Any]]] = {}
+            for row in rows:
+                offices.setdefault(row["idOffice"], []).append(row)
+            for office_id, office_rows in offices.items():
+                first = office_rows[0]
+                scope = classify(first.get("txOfficeName") or "", first.get("cdOfficeType"), data.county_names)
+                where = placement(scope, districts)
+                if where == "skip":
+                    continue
+                ordered = sorted(
+                    office_rows,
+                    key=lambda r: (r.get("nbBallotOrder") is None, r.get("nbBallotOrder") or 0, r.get("txLastNameBallot") or ""),
+                )
+                race = Race(
+                    key=f"sos:{election.id}:{office_id}",
+                    name=display_office(scope.name),
+                    group=scope.group,
+                    unexpired=scope.unexpired,
+                    seat=scope.seat,
+                    election_id=election.id,
+                    election_name=display_office(election.name),
+                    source=sos_source.SOURCE,
+                    url=sos_source.BALLOT_ORDER_PAGE,
+                    candidates=[self._sos_candidate(election, row, data.lookups) for row in ordered],
+                )
+                if where == "include":
+                    self.included.add((scope.kind, scope.number))
+                    entries.append((_sort_key(first, scope.name), race))
+                else:
+                    self.maybe[where].append(race)
+        entries.sort(key=lambda e: (GROUPS.index(e[1].group), e[0]))
+        return [race for _, race in entries]
+
+    def _sos_candidate(self, election: Election, row: dict[str, Any], lookups: Lookups) -> Candidate:
+        key = f"sos:{election.id}:{row['idCandidate']}"
+        self.ballot_rows[key] = row
+        code = row.get("cdParty")
+        return Candidate(
+            key=key,
+            name=display_person(row.get("txFullNameBallot") or ""),
+            ballot_name=row.get("txFullNameBallot"),
+            party=code,
+            party_name=(lookups.parties.get(code or "") or "").title() or None,
+            incumbent=bool(row.get("flIncmbntGen")),
+            write_in=code == "W",
+            ballot_position=row.get("nbBallotOrder"),
+        )
+
+    def _bp_races(self, ballot: BpBallot, only: set[str] | None) -> list[Race]:
+        """Ballotpedia's races (``only`` these groups, when the state covers the rest);
+        special districts always go to the "may be on your ballot" list."""
+        races = []
+        for bp_race in ballot.races:
+            if only is not None and bp_race.group not in only and bp_race.group != "special":
+                continue
+            race = Race(
+                key=f"bp:{bp_race.id}",
+                name=bp_race.office,
+                group="local" if bp_race.group == "special" else bp_race.group,
+                seats=bp_race.seats,
+                seat=bp_race.seat,
+                source="ballotpedia",
+                url=bp_race.url,
+                candidates=[
+                    Candidate(
+                        key=f"bp:{c.id}",
+                        name=c.name,
+                        party=c.party,
+                        party_name=c.party_name,
+                        incumbent=c.incumbent,
+                        write_in=c.write_in,
+                        photo_url=c.photo,
+                    )
+                    for c in bp_race.candidates
+                ],
+            )
+            (self.maybe["special"] if bp_race.group == "special" else races).append(race)
+        return sorted(races, key=lambda r: GROUPS.index(r.group))
+
+    def _district_notes(self, districts: Districts, elections: list[Election]) -> None:
+        for kind in ("sd", "sboe"):
+            number = getattr(districts, kind)
+            if number and (kind, number) not in self.included:
+                self.notes.append(f"{KIND_LABELS[kind]} District {number} (yours) isn't up for election on this ballot.")
+        if any(e.type == "GE" for e in elections):
+            for kind in ("cd", "hd"):  # every one of these seats is up in a general election
+                number = getattr(districts, kind)
+                if number and (kind, number) not in self.included:
+                    self.warnings.append(
+                        f"Couldn't find the {KIND_LABELS[kind]} District {number} race on your county's ballot. "
+                        "Double-check with your county elections office."
+                    )
+
+    def _sources(self, location: Location) -> list[SourceUse]:
+        def status(source_id: str, label: str, on: bool, tags: tuple[str, ...]) -> SourceUse:
+            if not on:
+                return SourceUse(id=source_id, label=label, status="off")
+            if source_id in self.errors:
+                return SourceUse(id=source_id, label=label, status="error", message=self.errors[source_id])
+            used = [self.calls.oldest[t] for t in tags if t in self.calls.oldest]
+            if not used:
+                return SourceUse(id=source_id, label=label, status="unused")
+            stale = any(t in self.calls.stale_sources for t in tags)
+            return SourceUse(id=source_id, label=label, status="stale" if stale else "used", as_of=iso_utc(min(used)))
+
+        geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim"))
+        geocoding.message = "OpenStreetMap + US Census" if location.geocoder == "nominatim" else "US Census"
+        tracker = SourceUse(id="trackaipac", label="TrackAIPAC", status="off")
+        if self.use_tap:
+            snapshot = self.svc.trackaipac.document().get("snapshot")
+            tracker = SourceUse(
+                id="trackaipac",
+                label="TrackAIPAC",
+                status="used" if snapshot else "unused",
+                as_of=snapshot,
+                message=None if snapshot else "no TrackAIPAC data yet; refresh it in Settings",
+            )
+        return [
+            geocoding,
+            status("sos", "Texas SOS", self.use_sos, ("sos",)),
+            status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
+            tracker,
+        ]

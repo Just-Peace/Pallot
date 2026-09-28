@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoteBot · Your ballot</title>
+  <meta name="description" content="See every race on your ballot, research candidates across sources, pick, take notes and print your picks.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/ballot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the ballot</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Lookup, summary and settings">
+      <div class="side-inner">
+        <a class="brand" href="./">Vote<span>Bot</span></a>
+
+        <section class="side-section first" aria-labelledby="find-title">
+          <h2 class="side-title" id="find-title">Find your ballot</h2>
+          <form id="lookup-form" class="lookup-form">
+            <div class="field">
+              <label for="address">Home address</label>
+              <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
+                     placeholder="1100 Congress Ave, Austin, TX 78701">
+            </div>
+            <div class="field">
+              <label for="election">Election</label>
+              <select id="election"><option value="">Next election</option></select>
+            </div>
+            <div class="field" id="party-field" hidden>
+              <label for="party">Primary ballot</label>
+              <select id="party">
+                <option value="">Choose a party</option>
+                <option value="D">Democratic</option>
+                <option value="R">Republican</option>
+              </select>
+            </div>
+            <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
+          </form>
+          <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and Ballotpedia, if it's on) to find your districts, and results are cached on this computer.</p>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="side-section" id="summary" aria-labelledby="summary-title" hidden>
+          <h2 class="side-title" id="summary-title">Your ballot</h2>
+          <p class="eyebrow" id="election-label"></p>
+          <p class="where" id="where"></p>
+          <p class="muted small" id="where-sub"></p>
+          <ul class="chips" id="district-chips" aria-label="Your districts"></ul>
+          <p class="progress" id="progress" aria-live="polite"></p>
+          <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
+          <div class="button-row">
+            <button class="btn primary" id="print-btn" type="button">Print my picks</button>
+            <button class="btn ghost" id="clear-picks" type="button">Clear picks</button>
+          </div>
+          <ul class="source-chips" id="source-chips" aria-label="Where this ballot's data came from"></ul>
+          <p class="fine" id="official"></p>
+        </section>
+
+        <nav class="side-section" id="jump" aria-labelledby="jump-title" hidden>
+          <h2 class="side-title" id="jump-title">Sections</h2>
+          <ul class="jump-list" id="jump-list"></ul>
+        </nav>
+
+        <details class="side-section settings" id="settings">
+          <summary><span class="side-title">Settings</span></summary>
+          <p class="fine" id="total-size"></p>
+          <div id="source-list" class="source-list"></div>
+          <div class="button-row">
+            <button class="btn danger small" id="clear-all" type="button">Clear all caches</button>
+            <button class="btn ghost small" id="clear-my-picks" type="button">Clear my picks &amp; notes</button>
+          </div>
+          <p id="settings-status" class="status" role="status" aria-live="polite"></p>
+          <p class="fine">Ballotpedia's endpoint is unofficial and meant for personal use; turn it off before sharing VoteBot with anyone else.</p>
+        </details>
+      </div>
+    </aside>
+
+    <main id="main" class="content">
+      <section id="welcome" class="panel welcome" aria-labelledby="welcome-title">
+        <h1 id="welcome-title">Your ballot, race by race</h1>
+        <p class="lede">Enter your home address in the left pane to see every race you'll vote in.</p>
+        <ol class="steps">
+          <li><strong>Compare sources.</strong> Each candidate shows what the state's filings, Ballotpedia and TrackAIPAC say, plus a Google search.</li>
+          <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
+          <li><strong>Print your picks</strong> and take the sheet with you to vote.</li>
+        </ol>
+      </section>
+
+      <section id="result" hidden>
+        <div class="toolbar">
+          <div>
+            <h1 id="ballot-title">Your ballot</h1>
+            <p class="muted" id="ballot-sub"></p>
+          </div>
+          <div class="button-row">
+            <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
+            <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
+          </div>
+        </div>
+        <div id="messages"></div>
+        <div id="groups"></div>
+        <div id="maybe"></div>
+        <div id="measures"></div>
+      </section>
+
+      <footer class="site-footer">
+        <p>VoteBot is an unofficial helper. Always check the official sample ballot from your county elections office.
+          Data from the US Census, state election and legislative offices, Ballotpedia and TrackAIPAC; each candidate's details say which source said what.</p>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="details" class="details" aria-labelledby="details-name"></dialog>
+
+  <dialog id="print-dialog" class="small-dialog" aria-labelledby="print-title">
+    <form method="dialog">
+      <h2 id="print-title">Print my picks</h2>
+      <label class="check"><input type="checkbox" id="print-notes" checked> Include my notes</label>
+      <label class="check"><input type="checkbox" id="print-blank"> Include races I haven't picked, as blank lines</label>
+      <p class="muted">Bring the printout with you: many polling places don't allow phones in the voting booth. To keep a copy, choose "Save as PDF" as the printer.</p>
+      <div class="button-row end">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn primary" value="print">Print</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="print-sheet" class="print-sheet" aria-hidden="true"></div>
+</body>
+</html>

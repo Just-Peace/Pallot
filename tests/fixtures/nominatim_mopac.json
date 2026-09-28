@@ -1,0 +1,23 @@
+[
+ {
+  "place_id": 316708633,
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 148865851,
+  "lat": "30.4458397",
+  "lon": "-97.6967223",
+  "category": "highway",
+  "type": "motorway",
+  "place_rank": 26,
+  "importance": 0.05340827725642783,
+  "addresstype": "road",
+  "name": "North Mopac Expressway",
+  "display_name": "North Mopac Expressway, Austin, Travis County, Texas, 78728, United States",
+  "boundingbox": [
+   "30.4435476",
+   "30.4481850",
+   "-97.6972781",
+   "-97.6964848"
+  ]
+ }
+]

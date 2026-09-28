@@ -1,0 +1,562 @@
+{
+ "snapshot": "2026-09-27",
+ "candidates": [
+  {
+   "candidate_id": "tx-august-pfluger",
+   "categories": [
+    "congress"
+   ],
+   "chamber": "house",
+   "district": "11",
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-august-pfluger",
+     "category": "congress",
+     "chamber": "house",
+     "district": "11",
+     "donate_url": null,
+     "donations": 219959,
+     "election_date": null,
+     "ie": 0,
+     "incumbent": null,
+     "israel_lobby_total": 219959,
+     "lines": [
+      "TX-11 [R]",
+      "Israel Lobby Total: $219,959",
+      "PACs: $219,959",
+      "IE: $0",
+      "AIPAC, AMP, RJC, USI, WAPAC"
+     ],
+     "name": "August Pfluger",
+     "notes": [],
+     "pacs": [
+      "AIPAC",
+      "AMP",
+      "RJC",
+      "USI",
+      "WAPAC"
+     ],
+     "party": "R",
+     "seat": "TX-11",
+     "seat_text": "TX-11 [R]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "August Pfluger",
+   "party": "R",
+   "seat": "TX-11",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-christian-menefee",
+   "categories": [
+    "congress"
+   ],
+   "chamber": "house",
+   "district": "18",
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-christian-menefee",
+     "category": "congress",
+     "chamber": "house",
+     "district": "18",
+     "donate_url": null,
+     "donations": 0,
+     "election_date": null,
+     "ie": 0,
+     "incumbent": null,
+     "israel_lobby_total": 0,
+     "lines": [
+      "TX-18 [D]",
+      "Israel Lobby Total: $0",
+      "PACs: $0",
+      "IE: $0",
+      "This representative is newly elected. We are monitoring their legislative record."
+     ],
+     "name": "Christian Menefee",
+     "notes": [
+      "This representative is newly elected. We are monitoring their legislative record."
+     ],
+     "pacs": [],
+     "party": "D",
+     "seat": "TX-18",
+     "seat_text": "TX-18 [D]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "Christian Menefee",
+   "party": "D",
+   "seat": "TX-18",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-greg-casar",
+   "categories": [
+    "endorsed",
+    "congress"
+   ],
+   "chamber": "house",
+   "district": "35",
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-greg-casar",
+     "category": "endorsed",
+     "chamber": "house",
+     "district": "35",
+     "donate_url": "https://secure.actblue.com/donate/greg-rejects-aipac?refcode=website-endorsement",
+     "donations": null,
+     "election_date": "2026-11-03",
+     "ie": null,
+     "incumbent": true,
+     "israel_lobby_total": null,
+     "lines": [
+      "U.S. Representative",
+      "TX-35 (TX-37 2026)",
+      "General Election",
+      "November 3, 2026",
+      "[Support Greg](https://secure.actblue.com/donate/greg-rejects-aipac?refcode=website-endorsement)"
+     ],
+     "name": "Greg Casar",
+     "notes": [
+      "General Election"
+     ],
+     "pacs": [],
+     "party": null,
+     "seat": "TX-35",
+     "seat_text": "TX-35 (TX-37 2026)",
+     "section": "Our Endorsed Incumbents",
+     "source": "endorsements",
+     "state": "TX",
+     "title": "U.S. Representative"
+    },
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-greg-casar",
+     "category": "congress",
+     "chamber": "house",
+     "district": "35",
+     "donate_url": null,
+     "donations": null,
+     "election_date": null,
+     "ie": null,
+     "incumbent": null,
+     "israel_lobby_total": null,
+     "lines": [
+      "TX-35 [D]",
+      "[Track AIPAC Approved!](https://www.trackaipac.com/endorsements#incumbents)",
+      "This representative rejects AIPAC and champions a foreign policy based on human rights and international law."
+     ],
+     "name": "Greg Casar",
+     "notes": [
+      "[Track AIPAC Approved!](https://www.trackaipac.com/endorsements#incumbents)",
+      "This representative rejects AIPAC and champions a foreign policy based on human rights and international law."
+     ],
+     "pacs": [],
+     "party": "D",
+     "seat": "TX-35",
+     "seat_text": "TX-35 [D]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "Greg Casar",
+   "party": "D",
+   "seat": "TX-35",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-james-talarico",
+   "categories": [
+    "watchlist"
+   ],
+   "chamber": "senate",
+   "district": null,
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-james-talarico",
+     "category": "watchlist",
+     "chamber": "senate",
+     "district": null,
+     "donate_url": null,
+     "donations": null,
+     "election_date": null,
+     "ie": null,
+     "incumbent": false,
+     "israel_lobby_total": 0,
+     "lines": [
+      "Candidate for U.S. Senate",
+      "TX [D]",
+      "Israel Lobby Total: $0",
+      "Endorsed by JAC",
+      "[This candidate is pro-israel.](/james-talarico)"
+     ],
+     "name": "James Talarico",
+     "notes": [
+      "Endorsed by JAC",
+      "[This candidate is pro-israel.](/james-talarico)"
+     ],
+     "pacs": [],
+     "party": "D",
+     "seat": "TX-SEN",
+     "seat_text": "TX [D]",
+     "section": null,
+     "source": "candidates",
+     "state": "TX",
+     "title": "Candidate for U.S. Senate"
+    }
+   ],
+   "name": "James Talarico",
+   "party": "D",
+   "seat": "TX-SEN",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-ken-paxton",
+   "categories": [
+    "watchlist"
+   ],
+   "chamber": "senate",
+   "district": null,
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-ken-paxton",
+     "category": "watchlist",
+     "chamber": "senate",
+     "district": null,
+     "donate_url": null,
+     "donations": null,
+     "election_date": null,
+     "ie": null,
+     "incumbent": false,
+     "israel_lobby_total": 0,
+     "lines": [
+      "Candidate for U.S. Senate",
+      "Texas [R]",
+      "Israel Lobby Total: $0",
+      "[This candidate is pro-Israel.](https://x.com/KenPaxtonTX/status/1731727033187577869)"
+     ],
+     "name": "Ken Paxton",
+     "notes": [
+      "[This candidate is pro-Israel.](https://x.com/KenPaxtonTX/status/1731727033187577869)"
+     ],
+     "pacs": [],
+     "party": "R",
+     "seat": "TX-SEN",
+     "seat_text": "Texas [R]",
+     "section": null,
+     "source": "candidates",
+     "state": "TX",
+     "title": "Candidate for U.S. Senate"
+    }
+   ],
+   "name": "Ken Paxton",
+   "party": "R",
+   "seat": "TX-SEN",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-lloyd-doggett",
+   "categories": [
+    "congress"
+   ],
+   "chamber": "house",
+   "district": "37",
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-lloyd-doggett",
+     "category": "congress",
+     "chamber": "house",
+     "district": "37",
+     "donate_url": null,
+     "donations": 67374,
+     "election_date": null,
+     "ie": 0,
+     "incumbent": null,
+     "israel_lobby_total": 67374,
+     "lines": [
+      "TX-37 [D]",
+      "Israel Lobby Total: $67,374",
+      "PACs: $67,374",
+      "IE: $0",
+      "AGG, AUSD, BAYPAC, COPAC, CITY, DVPAC, FIPAC, GSPAC, HVPAC, JAC, JSTREET, LAFAS, MMPAC, MIPAC, NACPAC, NATPAC, STLBG, DESERT, WAPAC",
+      "We encourage this representative to continue improving their legislative record on Israel-Palestine issues.",
+      "Retiring 2026"
+     ],
+     "name": "Lloyd Doggett",
+     "notes": [
+      "We encourage this representative to continue improving their legislative record on Israel-Palestine issues.",
+      "Retiring 2026"
+     ],
+     "pacs": [
+      "AGG",
+      "AUSD",
+      "BAYPAC",
+      "COPAC",
+      "CITY",
+      "DVPAC",
+      "FIPAC",
+      "GSPAC",
+      "HVPAC",
+      "JAC",
+      "JSTREET",
+      "LAFAS",
+      "MMPAC",
+      "MIPAC",
+      "NACPAC",
+      "NATPAC",
+      "STLBG",
+      "DESERT",
+      "WAPAC"
+     ],
+     "party": "D",
+     "seat": "TX-37",
+     "seat_text": "TX-37 [D]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "Lloyd Doggett",
+   "party": "D",
+   "seat": "TX-37",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-michael-cloud",
+   "categories": [
+    "congress"
+   ],
+   "chamber": "house",
+   "district": "27",
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-michael-cloud",
+     "category": "congress",
+     "chamber": "house",
+     "district": "27",
+     "donate_url": null,
+     "donations": 36023,
+     "election_date": null,
+     "ie": 0,
+     "incumbent": null,
+     "israel_lobby_total": 36023,
+     "lines": [
+      "TX-27 [R]",
+      "Israel Lobby Total: $36,023",
+      "PACs: $36,023",
+      "IE: $0",
+      "AIPAC, AMP, USI"
+     ],
+     "name": "Michael Cloud",
+     "notes": [],
+     "pacs": [
+      "AIPAC",
+      "AMP",
+      "USI"
+     ],
+     "party": "R",
+     "seat": "TX-27",
+     "seat_text": "TX-27 [R]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "Michael Cloud",
+   "party": "R",
+   "seat": "TX-27",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-michael-mccaul",
+   "categories": [
+    "congress"
+   ],
+   "chamber": "house",
+   "district": "10",
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-michael-mccaul",
+     "category": "congress",
+     "chamber": "house",
+     "district": "10",
+     "donate_url": null,
+     "donations": 883348,
+     "election_date": null,
+     "ie": 7258,
+     "incumbent": null,
+     "israel_lobby_total": 890606,
+     "lines": [
+      "TX-10 [R]",
+      "Israel Lobby Total: $890,606",
+      "PACs: $883,348",
+      "IE: $7,258",
+      "AIPAC, AMP, COPAC, CITY, HEARTLAND, LAFAS, MDACC, NORPAC, PIA, RJC, DESERT, TPOH, USI",
+      "Retiring 2026"
+     ],
+     "name": "Michael McCaul",
+     "notes": [
+      "Retiring 2026"
+     ],
+     "pacs": [
+      "AIPAC",
+      "AMP",
+      "COPAC",
+      "CITY",
+      "HEARTLAND",
+      "LAFAS",
+      "MDACC",
+      "NORPAC",
+      "PIA",
+      "RJC",
+      "DESERT",
+      "TPOH",
+      "USI"
+     ],
+     "party": "R",
+     "seat": "TX-10",
+     "seat_text": "TX-10 [R]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "Michael McCaul",
+   "party": "R",
+   "seat": "TX-10",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-tanya-lloyd",
+   "categories": [
+    "endorsed"
+   ],
+   "chamber": "house",
+   "district": "27",
+   "listings": [
+    {
+     "campaign_url": "https://www.tanyafortexas.com/",
+     "candidate_id": "tx-tanya-lloyd",
+     "category": "endorsed",
+     "chamber": "house",
+     "district": "27",
+     "donate_url": "https://secure.actblue.com/donate/tanya-rejects-aipac?refcode=website-endorsement",
+     "donations": null,
+     "election_date": "2026-11-03",
+     "ie": null,
+     "incumbent": false,
+     "israel_lobby_total": null,
+     "lines": [
+      "[Candidate for U.S. House](https://www.tanyafortexas.com/)",
+      "TX-27 [D]",
+      "General Election",
+      "November 3, 2026",
+      "[Support Tanya](https://secure.actblue.com/donate/tanya-rejects-aipac?refcode=website-endorsement)"
+     ],
+     "name": "Tanya Lloyd",
+     "notes": [
+      "General Election"
+     ],
+     "pacs": [],
+     "party": "D",
+     "seat": "TX-27",
+     "seat_text": "TX-27 [D]",
+     "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+     "source": "endorsements",
+     "state": "TX",
+     "title": "Candidate for U.S. House"
+    }
+   ],
+   "name": "Tanya Lloyd",
+   "party": "D",
+   "seat": "TX-27",
+   "state": "TX"
+  },
+  {
+   "candidate_id": "tx-ted-cruz",
+   "categories": [
+    "congress"
+   ],
+   "chamber": "senate",
+   "district": null,
+   "listings": [
+    {
+     "campaign_url": null,
+     "candidate_id": "tx-ted-cruz",
+     "category": "congress",
+     "chamber": "senate",
+     "district": null,
+     "donate_url": null,
+     "donations": 1411545,
+     "election_date": null,
+     "ie": 0,
+     "incumbent": null,
+     "israel_lobby_total": 1411545,
+     "lines": [
+      "TX-SEN [R]",
+      "Israel Lobby Total: $1,411,545",
+      "PACs: $1,411,545",
+      "IE: $0",
+      "AIPAC, AMP, AGG, BICPAC, BICOUNTY, COPAC, CITY, GCSC, HEARTLAND, LAFAS, MDACC, MMPAC, NORPAC, RJC, SUNPAC, TPOH, USI, WAPAC, YJL",
+      "Next Election: 2030"
+     ],
+     "name": "Ted Cruz",
+     "notes": [
+      "Next Election: 2030"
+     ],
+     "pacs": [
+      "AIPAC",
+      "AMP",
+      "AGG",
+      "BICPAC",
+      "BICOUNTY",
+      "COPAC",
+      "CITY",
+      "GCSC",
+      "HEARTLAND",
+      "LAFAS",
+      "MDACC",
+      "MMPAC",
+      "NORPAC",
+      "RJC",
+      "SUNPAC",
+      "TPOH",
+      "USI",
+      "WAPAC",
+      "YJL"
+     ],
+     "party": "R",
+     "seat": "TX-SEN",
+     "seat_text": "TX-SEN [R]",
+     "section": "Texas",
+     "source": "congress",
+     "state": "TX",
+     "title": null
+    }
+   ],
+   "name": "Ted Cruz",
+   "party": "R",
+   "seat": "TX-SEN",
+   "state": "TX"
+  }
+ ]
+}

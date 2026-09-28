@@ -1,0 +1,22 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "13500 N MOPAC EXPY, AUSTIN, TX 78728"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": []
+ }
+}
