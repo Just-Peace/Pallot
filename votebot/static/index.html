@@ -12,14 +12,20 @@
 <body>
   <a class="skip" href="#main">Skip to the ballot</a>
   <div class="app">
-    <aside class="sidebar" aria-label="Your address, sections and settings">
+    <aside class="sidebar" aria-label="Your ballot, address and pages">
       <div class="side-inner">
         <a class="brand" href="./">
           <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
           <span class="brand-name">Vote<span>Bot</span></span>
         </a>
 
-        <section class="side-section" aria-labelledby="address-title">
+        <nav class="side-section site-nav" aria-label="Your ballot">
+          <ul>
+            <li><a href="./" aria-current="page"><span data-icon="ballot"></span>Your ballot</a></li>
+          </ul>
+        </nav>
+
+        <section class="side-address" aria-labelledby="address-title">
           <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
           <div class="address-card" id="address-card" hidden>
             <p class="address-line" id="address-line"></p>
@@ -49,7 +55,7 @@
               <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
               <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
             </div>
-            <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and Ballotpedia, if it's on) to find your districts, and is remembered in this browser.</p>
+            <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and its location to Ballotpedia, if it's on) to find your districts, and is remembered in this browser. More in <a href="privacy.html">Privacy</a>.</p>
           </form>
           <p id="status" class="status" role="status" aria-live="polite"></p>
         </section>
@@ -59,21 +65,14 @@
           <ul class="jump-list" id="jump-list"></ul>
         </nav>
 
-        <details class="side-section settings" id="settings">
-          <summary><span class="side-title"><span data-icon="settings"></span>Settings</span></summary>
-          <div class="setting-row">
-            <label for="search-engine">Web search engine</label>
-            <select id="search-engine"></select>
-            <p class="fine">Used by each candidate's "Web search" link. Saved in this browser.</p>
-          </div>
-          <div id="source-list" class="source-list"></div>
-          <div class="button-row">
-            <button class="btn danger small" id="clear-all" type="button">Clear all caches</button>
-            <button class="btn ghost small" id="clear-my-picks" type="button">Clear my picks &amp; notes</button>
-          </div>
-          <p id="settings-status" class="status" role="status" aria-live="polite"></p>
-          <p class="fine">Ballotpedia's endpoint is unofficial and meant for personal use; turn it off before sharing VoteBot with anyone else.</p>
-        </details>
+        <nav class="side-section site-nav side-bottom" aria-label="Settings and information">
+          <ul>
+            <li><a href="settings.html"><span data-icon="settings"></span>Settings</a></li>
+            <li><a href="faq.html"><span data-icon="help"></span>FAQ</a></li>
+            <li><a href="about.html"><span data-icon="info"></span>About</a></li>
+            <li><a href="privacy.html"><span data-icon="shield"></span>Privacy</a></li>
+          </ul>
+        </nav>
       </div>
     </aside>
 

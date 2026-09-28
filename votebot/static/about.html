@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoteBot · About</title>
+  <meta name="description" content="What VoteBot is, where its information comes from, and what it isn't.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/page.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the page</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Your ballot, address and pages">
+      <div class="side-inner">
+        <a class="brand" href="./">
+          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
+          <span class="brand-name">Vote<span>Bot</span></span>
+        </a>
+
+        <nav class="side-section site-nav" aria-label="Your ballot">
+          <ul>
+            <li><a href="./"><span data-icon="ballot"></span>Your ballot</a></li>
+          </ul>
+        </nav>
+
+        <section class="side-address" aria-labelledby="address-title">
+          <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
+          <div class="address-card" id="address-card" hidden>
+            <p class="address-line" id="address-line"></p>
+            <p class="muted small" id="address-sub"></p>
+            <p class="districts" id="address-districts"></p>
+            <a class="link-btn with-icon" href="./#change"><span data-icon="edit"></span>Change</a>
+          </div>
+          <p class="muted small" id="no-address"><a href="./">Enter your address</a> to see your ballot.</p>
+        </section>
+
+        <nav class="side-section site-nav side-bottom" aria-label="Settings and information">
+          <ul>
+            <li><a href="settings.html"><span data-icon="settings"></span>Settings</a></li>
+            <li><a href="faq.html"><span data-icon="help"></span>FAQ</a></li>
+            <li><a href="about.html" aria-current="page"><span data-icon="info"></span>About</a></li>
+            <li><a href="privacy.html"><span data-icon="shield"></span>Privacy</a></li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <main id="main" class="content">
+      <header class="page-head">
+        <h1>About VoteBot</h1>
+        <p class="lede">A personal helper for working through your ballot: every race you'll vote in, what several sources say about each candidate, and a printout of your picks to take with you.</p>
+      </header>
+
+      <section class="panel prose" aria-labelledby="what">
+        <h2 id="what">What it does</h2>
+        <ul>
+          <li>Enter your home address and VoteBot shows every race on your ballot, with the candidates in ballot order.</li>
+          <li>Each candidate shows what the Texas Secretary of State's filings, Ballotpedia and TrackAIPAC say, and which source said what, with a link to search the web for more.</li>
+          <li>Pick a candidate in each race, jot down why, and print your picks to take to the polls.</li>
+        </ul>
+      </section>
+
+      <section class="panel prose" aria-labelledby="isnt">
+        <h2 id="isnt">What it isn't</h2>
+        <ul>
+          <li><strong>Not official.</strong> VoteBot isn't affiliated with any government, election office, party or campaign, or with the sources it uses. Always check the official sample ballot from your county elections office.</li>
+          <li><strong>Not a recommendation.</strong> VoteBot shows what its sources say, side by side. It doesn't tell you how to vote.</li>
+          <li><strong>Not where you register or vote.</strong> To check your registration or find your polling place, go to <a href="https://www.votetexas.gov/" target="_blank" rel="noopener noreferrer">VoteTexas.gov</a>.</li>
+        </ul>
+      </section>
+
+      <section class="panel prose" aria-labelledby="sources">
+        <h2 id="sources">Where the information comes from</h2>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th scope="col">Source</th><th scope="col">Used for</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">US Census geocoder</th><td>Your county, and your U.S. House, State Senate and State House districts</td></tr>
+              <tr><th scope="row">OpenStreetMap Nominatim</th><td>Finding addresses the Census can't match</td></tr>
+              <tr><th scope="row">Texas Legislative Council</th><td>Your State Board of Education district, from its district map</td></tr>
+              <tr><th scope="row">Texas Secretary of State</th><td>Elections, the official ballot order for your county, and candidate filings</td></tr>
+              <tr><th scope="row">Ballotpedia</th><td>City council, school board and special district races; your precincts; candidate profiles and photos</td></tr>
+              <tr><th scope="row">TrackAIPAC</th><td>Money and endorsements from pro-Israel lobby groups for congressional candidates</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Candidates are matched across sources by name, with the seat and party to confirm, and every match is marked as certain or likely. The <a href="faq.html#candidates">FAQ</a> explains more.</p>
+      </section>
+
+      <section class="panel prose" aria-labelledby="how">
+        <h2 id="how">How it works</h2>
+        <p>VoteBot is a small program that runs on your own computer. It serves these pages and asks the sources on your behalf. It keeps a copy of every answer, so looking up the same address again doesn't ask anyone, even after a restart.</p>
+        <p>There are no accounts, ads or tracking. Your picks and notes stay in your browser; <a href="privacy.html">Privacy</a> lists everything VoteBot sends and keeps.</p>
+      </section>
+
+      <section class="panel prose" aria-labelledby="next">
+        <h2 id="next">What's next</h2>
+        <ul>
+          <li>Money from political action committees beyond TrackAIPAC: the FEC for federal candidates, and the Texas Ethics Commission for state and county candidates</li>
+          <li>Each candidate's main positions</li>
+          <li>Each candidate's chances of winning, from race ratings and how the district has voted</li>
+          <li>States other than Texas</li>
+        </ul>
+      </section>
+
+      <section class="panel prose" aria-labelledby="credits">
+        <h2 id="credits">Credits</h2>
+        <p>VoteBot is built on information from:</p>
+        <ul>
+          <li><strong>Texas Secretary of State</strong>: elections, ballot order and candidate filings, from its <a href="https://goelect.txelections.civixapps.com" target="_blank" rel="noopener noreferrer">elections site</a>. Official voting information is at <a href="https://www.votetexas.gov/" target="_blank" rel="noopener noreferrer">VoteTexas.gov</a>.</li>
+          <li><strong>Ballotpedia</strong>: local races, precincts, and candidate profiles and photos, from <a href="https://ballotpedia.org/" target="_blank" rel="noopener noreferrer">ballotpedia.org</a>.</li>
+          <li><strong>TrackAIPAC</strong>: lobby money and endorsements for congressional candidates, from <a href="https://www.trackaipac.com" target="_blank" rel="noopener noreferrer">trackaipac.com</a>.</li>
+          <li><strong>US Census Bureau</strong>: county and districts for your address, from the <a href="https://geocoding.geo.census.gov/geocoder/" target="_blank" rel="noopener noreferrer">Census Geocoder</a>.</li>
+          <li><strong>Texas Legislative Council</strong>: the State Board of Education district map, from the <a href="https://data.capitol.texas.gov/dataset/ad1ae979-6df9-4322-98cf-6771cc67f02d" target="_blank" rel="noopener noreferrer">Capitol Data Portal</a>.</li>
+          <li><strong>OpenStreetMap</strong>: address search by <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Nominatim</a>. Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>.</li>
+        </ul>
+        <p>Each candidate's "Web search" link goes to Google, or to the search engine you choose in <a href="settings.html">Settings</a>: Bing, DuckDuckGo, Brave Search, Yahoo, Startpage, Ecosia, Kagi or Perplexity.</p>
+        <p>Icons from <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">Feather</a> (MIT licence).
+          VoteBot's code is on <a href="https://github.com/Fahd-Siddiqui/VoteBot" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

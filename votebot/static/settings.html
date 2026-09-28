@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoteBot · Settings</title>
+  <meta name="description" content="Choose VoteBot's web search engine and sources, and clear what it has saved.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/page.js"></script>
+  <script type="module" src="js/settings.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the settings</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Your ballot, address and pages">
+      <div class="side-inner">
+        <a class="brand" href="./">
+          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
+          <span class="brand-name">Vote<span>Bot</span></span>
+        </a>
+
+        <nav class="side-section site-nav" aria-label="Your ballot">
+          <ul>
+            <li><a href="./"><span data-icon="ballot"></span>Your ballot</a></li>
+          </ul>
+        </nav>
+
+        <section class="side-address" aria-labelledby="address-title">
+          <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
+          <div class="address-card" id="address-card" hidden>
+            <p class="address-line" id="address-line"></p>
+            <p class="muted small" id="address-sub"></p>
+            <p class="districts" id="address-districts"></p>
+            <a class="link-btn with-icon" href="./#change"><span data-icon="edit"></span>Change</a>
+          </div>
+          <p class="muted small" id="no-address"><a href="./">Enter your address</a> to see your ballot.</p>
+        </section>
+
+        <nav class="side-section site-nav side-bottom" aria-label="Settings and information">
+          <ul>
+            <li><a href="settings.html" aria-current="page"><span data-icon="settings"></span>Settings</a></li>
+            <li><a href="faq.html"><span data-icon="help"></span>FAQ</a></li>
+            <li><a href="about.html"><span data-icon="info"></span>About</a></li>
+            <li><a href="privacy.html"><span data-icon="shield"></span>Privacy</a></li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <main id="main" class="content">
+      <header class="page-head">
+        <h1>Settings</h1>
+        <p class="lede">Choose your web search engine and which sources VoteBot uses, and clear what it has saved.</p>
+      </header>
+
+      <section class="panel" aria-labelledby="search-title">
+        <h2 id="search-title">Web search</h2>
+        <div class="setting-row">
+          <label for="search-engine">Search engine</label>
+          <select id="search-engine"></select>
+          <p class="fine">Used by each candidate's "Web search" link. Saved in this browser.</p>
+        </div>
+        <p id="search-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="sources-title">
+        <h2 id="sources-title">Sources</h2>
+        <p class="muted">VoteBot keeps a copy of what each source sends back, so looking up the same address again doesn't ask anyone.
+          Turn a source off to build your ballot without it, refresh it to fetch its data again now, or clear its copy.</p>
+        <div id="source-list" class="source-list"></div>
+        <div class="button-row">
+          <button class="btn danger small" id="clear-all" type="button">Clear all caches</button>
+        </div>
+        <p id="sources-status" class="status" role="status" aria-live="polite"></p>
+        <p class="fine">Ballotpedia's endpoint is unofficial and meant for personal use; turn it off before sharing VoteBot with anyone else.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="picks-title">
+        <h2 id="picks-title">Your picks and notes</h2>
+        <p class="muted">Your picks, notes and write-ins are kept only in this browser. It also remembers your last address, so your ballot is there when you come back.
+          <a href="privacy.html">Privacy</a> lists everything VoteBot keeps.</p>
+        <div class="button-row">
+          <button class="btn danger small" id="clear-my-picks" type="button">Clear my picks &amp; notes</button>
+        </div>
+        <p id="picks-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
