@@ -1,11 +1,13 @@
-// The ballot page. The left pane holds the address lookup, the ballot summary, a list of
-// sections and the settings; the main area lists the races, each one collapsible.
+// The ballot page. The left pane holds your address, the list of sections and the
+// settings; the main area has the progress strip and the races, each one collapsible.
 
 import { api } from "./api.js";
-import { extLink, formatDate, h, initials, relativeTime, safeUrl, slug } from "./dom.js";
+import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
+import { hydrateIcons } from "./icons.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
-import { Picks, loadLastLookup, saveLastLookup } from "./picks.js";
+import { Picks, WRITE_IN, loadLastLookup, saveLastLookup } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
+import { currentEngine, searchHref } from "./search.js";
 import { initSettings } from "./settings-pane.js";
 import { badgeList, renderTabs } from "./source-cards.js";
 
@@ -16,10 +18,11 @@ const electionSelect = $("#election");
 const partyField = $("#party-field");
 const partySelect = $("#party");
 const submitButton = $("#lookup-btn");
+const cancelButton = $("#cancel-change");
+const addressCard = $("#address-card");
 const statusBox = $("#status");
 const welcome = $("#welcome");
 const result = $("#result");
-const summary = $("#summary");
 const jump = $("#jump");
 const details = $("#details");
 const printDialog = $("#print-dialog");
@@ -30,12 +33,30 @@ let lastRequest = null;
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
 
-// ---- status line ------------------------------------------------------------------
+// ---- status line (only while working, or when something went wrong) -------------------
 
 function setStatus(message, kind = "info") {
   statusBox.className = `status status-${kind}`;
   statusBox.textContent = message || "";
 }
+
+// ---- the address: a saved card, or the form ------------------------------------------
+
+function showForm(show) {
+  form.hidden = !show;
+  addressCard.hidden = show;
+  cancelButton.hidden = !ballot;
+  if (show) addressInput.focus();
+}
+
+function showAddress(address, place = "", districts = "") {
+  $("#address-line").textContent = address;
+  $("#address-sub").textContent = place;
+  $("#address-districts").textContent = districts;
+}
+
+$("#change-address").addEventListener("click", () => showForm(true));
+cancelButton.addEventListener("click", () => showForm(false));
 
 // ---- elections dropdown -------------------------------------------------------------
 
@@ -86,11 +107,11 @@ async function lookup(request) {
     saveLastLookup(request);
     picks = new Picks(ballot.election_date);
     render();
-    const { external_calls: calls, elapsed_ms: ms } = ballot.meta;
-    const fetched = calls === 0 ? "all from the cache" : `${calls} request${calls === 1 ? "" : "s"} to outside sites`;
-    setStatus(`${ballot.races.length} races on your ballot · ${fetched} · ${(ms / 1000).toFixed(1)} s`, "ok");
+    setStatus("");
+    showForm(false);
   } catch (error) {
     setStatus(error.message, "error");
+    if (!ballot) showForm(true);
   } finally {
     submitButton.disabled = false;
   }
@@ -100,7 +121,8 @@ async function lookup(request) {
 
 function render() {
   redraw.clear();
-  renderSummary();
+  renderAddress();
+  renderHeader();
   renderMessages();
   renderGroups();
   renderMaybe();
@@ -109,45 +131,27 @@ function render() {
   updateProgress();
   welcome.hidden = true;
   result.hidden = false;
-  summary.hidden = false;
 }
 
-function sourceState(source) {
-  if (source.status === "off") return "off";
-  if (source.status === "error") return "unavailable";
-  if (source.status === "unused") return "not used";
-  const when = !source.as_of ? "" : source.as_of.length === 10
-    ? formatDate(source.as_of, { month: "short", day: "numeric" })
-    : relativeTime(source.as_of);
-  return source.status === "stale" ? `old copy · ${when}` : when;
-}
-
-function renderSummary() {
+function renderAddress() {
   const { location, districts: d } = ballot;
-  const electionNames = ballot.elections.map((e) => e.name).join(" + ");
-  $("#election-label").textContent = formatDate(ballot.election_date);
-  $("#ballot-sub").textContent = [formatDate(ballot.election_date), electionNames].filter(Boolean).join(" · ");
-  $("#where").textContent = location.matched_address || location.input_address;
-  $("#where-sub").textContent = [
-    location.city && `City of ${location.city}`,
-    location.county && `${location.county} County`,
-    location.school_district,
-  ].filter(Boolean).join(" · ");
+  showAddress(
+    lastRequest.address,
+    [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
+    [
+      d.cd && `U.S. House ${d.cd}`, d.sd && `State Senate ${d.sd}`, d.hd && `State House ${d.hd}`, d.sboe && `SBOE ${d.sboe}`,
+      d.commissioner && `Commissioner ${d.commissioner}`, d.jp && `JP ${d.jp}`, d.constable && `Constable ${d.constable}`,
+    ].filter(Boolean).join(" · "),
+  );
+  $("#address-line").title = location.matched_address || "";
+}
 
-  const chips = [
-    ["U.S. House", d.cd], ["State Senate", d.sd], ["State House", d.hd], ["State Board of Ed.", d.sboe],
-    ["Commissioner Pct", d.commissioner], ["Justice of the Peace", d.jp], ["Constable", d.constable],
-  ].filter(([, value]) => value);
-  $("#district-chips").replaceChildren(
-    ...chips.map(([label, value]) => h("li", { class: "chip" }, h("span", {}, label), h("strong", {}, String(value)))),
+function renderHeader() {
+  const site = STATES[ballot.location.state]?.site;
+  $("#ballot-sub").replaceChildren(
+    [formatDate(ballot.election_date), ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · "),
+    ...(site ? [" · Official info: ", extLink(site.url, site.label)] : []),
   );
-  $("#source-chips").replaceChildren(
-    ...ballot.sources.map((s) =>
-      h("li", { class: `source-chip s-${s.status}`, title: s.message || null },
-        h("span", { class: "dot", "aria-hidden": "true" }), s.label, h("span", { class: "source-state" }, sourceState(s)))),
-  );
-  const site = STATES[location.state]?.site;
-  $("#official").replaceChildren(...(site ? ["Official election information: ", extLink(site.url, site.label)] : []));
 }
 
 function renderMessages() {
@@ -205,17 +209,16 @@ function updateProgress() {
 
 // ---- collapsible cards --------------------------------------------------------------
 
-// A card whose heading is a button that shows or hides its body. When collapsed, the
-// heading shows a one-line status ("James Talarico selected").
+// A card whose heading is a button that shows or hides its body. Collapsed, the heading
+// is one line: the race on the left, the pick ("✓ James Talarico") on the right.
 function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
   const toggle = h("button", { type: "button", class: "race-toggle", "aria-controls": bodyId },
     h("span", { class: "chevron", "aria-hidden": "true" }),
-    h("span", { class: "race-title" },
-      h("span", { class: "race-name" }, title),
-      meta ? h("span", { class: "race-meta" }, meta) : null,
-      status));
+    h("span", { class: "race-name" }, title),
+    status,
+    meta ? h("span", { class: "race-meta" }, meta) : null);
   const bodyElement = h("div", { class: "race-body", id: bodyId }, body);
   const article = h("article", { class: "race", "data-race": key },
     h("header", { class: "race-head" }, h("h3", {}, toggle), ...headExtras),
@@ -233,22 +236,30 @@ function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
       toggle.setAttribute("aria-expanded", String(!collapsed));
       bodyElement.hidden = collapsed;
       status.textContent = statusText;
+      status.title = statusText;
       status.classList.toggle("done", done);
       return collapsed;
     },
   };
 }
 
+function writeInText(race) {
+  const name = picks.writeIn(race.key).trim();
+  return name ? `${name} (write-in)` : "Write-in (no name yet)";
+}
+
 function pickedText(race, picked) {
   if (!picked.length) return "Not picked yet";
-  const names = picked.map((key) => race.candidates.find((c) => c.key === key)?.name).filter(Boolean);
-  return `${names.join(", ")} selected`;
+  return picked
+    .map((key) => (key === WRITE_IN ? writeInText(race) : race.candidates.find((c) => c.key === key)?.name))
+    .filter(Boolean)
+    .join(", ");
 }
 
 function raceCard(race) {
   const multi = race.seats > 1;
   const meta = [
-    multi ? `Vote for up to ${race.seats}` : "Vote for 1",
+    multi ? `Vote for up to ${race.seats}` : null,
     race.unexpired ? "Unexpired term" : null,
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
@@ -258,15 +269,18 @@ function raceCard(race) {
     picks.set(race.key, []);
     refresh(race.key);
   });
-  const body = race.candidates.length
-    ? h("fieldset", { class: "race-options" },
-        h("legend", { class: "sr-only" }, `${race.name}: ${meta[0]}`),
-        h("ul", { class: "cands" }, race.candidates.map((c) => candidateRow(race, c))))
-    : h("p", { class: "muted" }, "No candidates listed yet.");
+  const body = h("fieldset", { class: "race-options" },
+    h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
+    race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
+    h("ul", { class: "cands" }, race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)));
   const card = collapsibleCard(race.key, { title: race.name, meta: meta.join(" · "), body, headExtras: [clearButton] });
 
   redraw.set(race.key, () => {
     const picked = picks.picked(race.key);
+    // Colour the race by its pick's party (neutral when the picks are from different parties).
+    const parties = new Set(picked.map((key) => race.candidates.find((c) => c.key === key)?.party || "none"));
+    if (parties.size === 1) card.article.dataset.pickParty = [...parties][0];
+    else delete card.article.dataset.pickParty;
     const collapsed = card.show(pickedText(race, picked), picked.length > 0);
     clearButton.hidden = collapsed || !picked.length;
     for (const row of card.article.querySelectorAll(".cand")) {
@@ -275,6 +289,8 @@ function raceCard(race) {
       const input = row.querySelector(".pick-input");
       input.checked = on;
       if (multi) input.disabled = !on && picked.length >= race.seats;
+      const note = row.querySelector(".write-in-note");
+      if (note) note.hidden = !on;
     }
   });
   redraw.get(race.key)();
@@ -288,8 +304,8 @@ function avatar(candidate, extraClass = "") {
     : h("span", { class: `avatar ${extraClass}`, "aria-hidden": "true" }, initials(candidate.name));
 }
 
-// A Google search for the candidate, with the office and place so common names find the right person.
-function searchUrl(race, candidate) {
+// What to search the web for: the candidate plus the office and place, so common names find the right person.
+function searchQuery(race, candidate) {
   const { county, state_name: stateName } = ballot.location;
   const terms = [candidate.name, race.name];
   if ((race.group === "county" || race.group === "precinct") && county && !race.name.includes(county)) {
@@ -297,24 +313,37 @@ function searchUrl(race, candidate) {
   }
   if (stateName && !race.name.includes(stateName)) terms.push(stateName);
   if (ballot.election_date) terms.push(ballot.election_date.slice(0, 4));
-  return `https://www.google.com/search?q=${encodeURIComponent(terms.join(" "))}`;
+  return terms.join(" ");
 }
 
 function searchLink(race, candidate, className, label) {
+  const query = searchQuery(race, candidate);
   return h("a", {
     class: className,
-    href: searchUrl(race, candidate),
+    href: searchHref(query),
     target: "_blank",
     rel: "noopener noreferrer",
-    "aria-label": `Search Google for ${candidate.name} (opens in a new tab)`,
+    title: `Search ${currentEngine().label} for ${candidate.name}`,
+    "aria-label": `Search the web for ${candidate.name} (opens in a new tab)`,
+    "data-query": query,
+    "data-name": candidate.name,
   }, label);
+}
+
+// After the engine changes in Settings, point every search link at the new one.
+function updateSearchLinks() {
+  const engine = currentEngine();
+  for (const link of document.querySelectorAll("a[data-query]")) {
+    link.href = searchHref(link.dataset.query);
+    link.title = `Search ${engine.label} for ${link.dataset.name}`;
+  }
 }
 
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
   const id = slug(candidate.key);
   const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id: `pick-${id}`, class: "pick-input" });
-  input.addEventListener("change", () => choose(race, candidate, input.checked));
+  input.addEventListener("change", () => choose(race, candidate.key, input.checked));
 
   const noteText = picks.note(candidate.key);
   const textarea = h("textarea", { id: `note-${id}-text`, rows: "2", placeholder: "Your thoughts on this candidate…" });
@@ -350,7 +379,7 @@ function candidateRow(race, candidate) {
 
   return h(
     "li",
-    { class: "cand", "data-cand": candidate.key },
+    { class: "cand", "data-cand": candidate.key, "data-party": candidate.party || null },
     h("div", { class: "cand-main" },
       input,
       h("label", { for: `pick-${id}`, class: "cand-label" },
@@ -361,17 +390,56 @@ function candidateRow(race, candidate) {
             partyPill(candidate),
             candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,
             candidate.write_in ? h("span", { class: "pill" }, "Write-in") : null))),
-      h("div", { class: "cand-actions" }, noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Google ↗"))),
+      h("div", { class: "cand-actions" }, noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"))),
     badgeList(candidate),
     noteBox,
   );
 }
 
+// The last row of every race: a blank for someone who isn't listed. Typing a name picks
+// it; emptying the box takes the pick back.
+function writeInRow(race) {
+  const multi = race.seats > 1;
+  const id = `writein-${slug(race.key)}`;
+  const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id, class: "pick-input" });
+  const name = h("input", {
+    type: "text", id: `${id}-name`, class: "write-in-name", maxlength: "80", autocomplete: "off",
+    placeholder: "Someone else's name", "aria-label": `Write-in name for ${race.name}`,
+  });
+  name.value = picks.writeIn(race.key);
+  input.addEventListener("change", () => {
+    choose(race, WRITE_IN, input.checked);
+    if (input.checked) name.focus();
+  });
+  let timer;
+  name.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      picks.setWriteIn(race.key, name.value);
+      const typed = Boolean(name.value.trim());
+      const picked = picks.picked(race.key).includes(WRITE_IN);
+      const full = multi && !picked && picks.picked(race.key).length >= race.seats;
+      if (typed !== picked && !full) choose(race, WRITE_IN, typed);
+      else refresh(race.key); // the collapsed line shows the new name
+    }, 300);
+  });
+  const hint = STATES[ballot.location.state]?.writeInNote;
+  return h(
+    "li",
+    { class: "cand write-in", "data-cand": WRITE_IN },
+    h("div", { class: "cand-main" },
+      input,
+      h("label", { for: id, class: "write-in-label" }, "Write-in"),
+      name),
+    hint ? h("p", { class: "fine write-in-note", hidden: true }, hint) : null,
+  );
+}
+
 // ---- picking ------------------------------------------------------------------------
 
-function choose(race, candidate, checked) {
-  let keys = picks.picked(race.key).filter((k) => k !== candidate.key);
-  if (checked) keys = race.seats > 1 ? [...keys, candidate.key] : [candidate.key];
+function choose(race, key, checked) {
+  let keys = picks.picked(race.key).filter((k) => k !== key);
+  if (checked) keys = race.seats > 1 ? [...keys, key] : [key];
   picks.set(race.key, keys);
   refresh(race.key);
 }
@@ -468,7 +536,7 @@ function openDetails(race, candidate) {
     pickButton.classList.toggle("ghost", on);
   };
   pickButton.addEventListener("click", () => {
-    choose(race, candidate, !picks.isPicked(race.key, candidate.key));
+    choose(race, candidate.key, !picks.isPicked(race.key, candidate.key));
     syncPickButton();
   });
   syncPickButton();
@@ -489,7 +557,7 @@ function openDetails(race, candidate) {
         h("p", { class: "cand-sub" }, partyPill(candidate), candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null)),
       closeButton),
     tabs,
-    h("div", { class: "details-foot" }, searchLink(race, candidate, "btn ghost", `Search Google for ${candidate.name} ↗`), pickButton),
+    h("div", { class: "details-foot" }, searchLink(race, candidate, "btn ghost", `Search the web for ${candidate.name} ↗`), pickButton),
   );
   details.showModal();
   closeButton.focus();
@@ -524,7 +592,9 @@ form.addEventListener("submit", (event) => {
 });
 electionSelect.addEventListener("change", syncPartyField);
 
+hydrateIcons();
 initSettings({
+  onSearchEngineChanged: updateSearchLinks,
   async onSourcesChanged() {
     await loadElections(electionSelect.value);
     if (lastRequest) lookup(lastRequest);
@@ -541,9 +611,15 @@ async function start() {
   const initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
     : loadLastLookup();
+  if (initial?.address) {
+    // Show the remembered address right away; the lookup fills in the rest.
+    addressInput.value = initial.address;
+    showAddress(initial.address);
+    form.hidden = true;
+    addressCard.hidden = false;
+  }
   await loadElections(initial?.election_date);
   if (initial?.address) {
-    addressInput.value = initial.address;
     if (initial.party) partySelect.value = initial.party;
     lookup(initial);
   }

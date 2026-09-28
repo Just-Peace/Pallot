@@ -117,6 +117,6 @@ def test_trackaipac_data_with_etag(client):
     assert client.get("/api/sources/trackaipac/data").headers["etag"] != etag
 
 
-@pytest.mark.parametrize("path", ["/", "/js/ballot.js", "/js/settings-pane.js", "/css/app.css"])
+@pytest.mark.parametrize("path", ["/", "/js/ballot.js", "/js/settings-pane.js", "/js/icons.js", "/js/search.js", "/css/app.css"])
 def test_static_pages(client, path):
     assert client.get(path).status_code == 200

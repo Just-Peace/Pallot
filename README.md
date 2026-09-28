@@ -26,19 +26,18 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
 ## Using it
 
 - **Left pane:**
-  - the address lookup
-  - your ballot summary: districts, a progress bar, Print and Clear buttons, and where the data came from
-  - a list of sections showing how many races in each you've picked
-  - **Settings**
-- **Main area:** the races.
-  - Click a race's heading to collapse it. A collapsed race shows your pick ("James Talarico selected") or "Not picked yet".
-  - **Collapse all** gives a one-screen overview of your picks.
-  - Collapsed races stay collapsed when you come back.
+  - your address: after a lookup it's saved in the browser and shown as a card with your county and districts; **Change** opens the form again
+  - the list of sections, with how many races in each you've picked
+  - **Settings**: turn sources on or off, refresh or clear what each has cached
+- **Top of the ballot:** a progress bar that stays in view, plus Collapse all, Expand all, Clear picks and Print my picks.
+- **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
+- **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
+- **Write-ins:** every race ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button
   - a note
   - **Details**, with one tab per source
-  - a **Google ↗** link that searches for their name, office and place
+  - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
 Picks, notes and collapsed races are kept in the browser's `localStorage`, never on the server.
 

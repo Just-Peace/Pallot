@@ -16,6 +16,8 @@ GROUPS = ("federal", "state", "legislature", "judicial", "county", "precinct", "
 class Badge(BaseModel):
     text: str
     tone: Tone = "neutral"
+    url: str | None = None  # makes the badge a link to the source's page
+    hint: str | None = None  # tooltip explaining the badge
 
 
 class Fact(BaseModel):

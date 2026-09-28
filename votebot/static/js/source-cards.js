@@ -1,10 +1,16 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and a tab in Details) without any code change.
 
-import { extLink, formatDate, h, linkedText } from "./dom.js";
+import { extLink, formatDate, h, linkedText, safeUrl } from "./dom.js";
 
+// A badge with a url links to that source's page for the candidate (opens a new tab).
 function badge(item, source) {
-  return h("li", { class: `badge tone-${item.tone}`, title: source ? `From ${source}` : null }, item.text);
+  const title = [item.hint, source ? `From ${source}` : null].filter(Boolean).join(" · ") || null;
+  const href = safeUrl(item.url);
+  return h("li", {}, href
+    ? h("a", { class: `badge badge-link tone-${item.tone}`, href, target: "_blank", rel: "noopener noreferrer", title },
+        item.text, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗"))
+    : h("span", { class: `badge tone-${item.tone}`, title }, item.text));
 }
 
 // Highlights from every source, shown under the candidate's name.
@@ -26,9 +32,7 @@ function matchNote(card) {
 }
 
 function asOf(card) {
-  if (!card.as_of) return null;
-  const options = { month: "short", day: "numeric", year: "numeric" };
-  return `Data as of ${formatDate(card.as_of, card.as_of.length > 10 ? { ...options, hour: "numeric", minute: "2-digit" } : options)}`;
+  return card.as_of ? `Data as of ${formatDate(card.as_of, { month: "short", day: "numeric", year: "numeric" })}` : null;
 }
 
 export function cardPanel(card) {

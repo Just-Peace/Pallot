@@ -1,37 +1,18 @@
 // Settings, in the left pane: turn sources on/off and refresh or clear what each has cached.
 
 import { api } from "./api.js";
-import { formatBytes, h, relativeTime } from "./dom.js";
+import { h } from "./dom.js";
 import { clearAllPicks, loadUi, saveUi } from "./picks.js";
+import { ENGINES, currentEngine, setEngine } from "./search.js";
 
 const panel = document.querySelector("#settings");
 const list = document.querySelector("#source-list");
-const totalSize = document.querySelector("#total-size");
 const status = document.querySelector("#settings-status");
 let hooks = {};
 
 function say(message, kind = "ok") {
   status.className = `status status-${kind}`;
   status.textContent = message;
-}
-
-// The server reports times in UTC ISO form; show them in the viewer's local time.
-function localTimes(text) {
-  return text.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})/g, (iso) => {
-    const date = new Date(iso);
-    return Number.isNaN(date.getTime())
-      ? iso
-      : `${date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })} (${relativeTime(iso)})`;
-  });
-}
-
-function stats(source) {
-  if (source.id === "trackaipac") return null; // its details say what it holds
-  const { cache } = source;
-  const parts = [`${cache.entries} cached`, formatBytes(cache.bytes)];
-  if (cache.newest) parts.push(`updated ${relativeTime(cache.newest)}`);
-  if (cache.expired) parts.push(`${cache.expired} due for refresh`);
-  return h("p", { class: "source-stats" }, parts.join(" · "));
 }
 
 function sourceRow(source) {
@@ -93,6 +74,7 @@ function sourceRow(source) {
     }
   });
 
+  const paused = source.details.some((f) => f.label === "Paused");
   const name = h("span", { class: "source-name" }, source.label);
   return h(
     "div",
@@ -102,17 +84,13 @@ function sourceRow(source) {
         ? h("label", { class: "switch", for: `toggle-${source.id}` }, toggle, name)
         : h("span", { class: "source-name-wrap" }, name, h("span", { class: "pill" }, "Always on"))),
     h("p", { class: "source-desc" }, source.description),
-    stats(source),
-    source.details.length
-      ? h("dl", { class: "mini-facts" }, source.details.map((f) => [h("dt", {}, f.label), h("dd", {}, localTimes(f.value))]))
-      : null,
+    paused ? h("p", { class: "source-warning" }, "Paused after Ballotpedia refused a request; it will try again later.") : null,
     h("div", { class: "source-actions" }, refreshButton, clearButton),
     result,
   );
 }
 
 function render(overview) {
-  totalSize.textContent = `${formatBytes(overview.total_bytes)} cached on this computer. Repeat lookups don't contact these sites again.`;
   list.replaceChildren(...overview.sources.map(sourceRow));
 }
 
@@ -124,10 +102,23 @@ async function load() {
   }
 }
 
+function initSearchEngine() {
+  const select = document.querySelector("#search-engine");
+  const selected = currentEngine().id;
+  select.replaceChildren(...ENGINES.map((e) => h("option", { value: e.id, selected: e.id === selected }, e.label)));
+  select.addEventListener("change", () => {
+    setEngine(select.value);
+    say(`Web search now uses ${currentEngine().label}.`);
+    hooks.onSearchEngineChanged?.();
+  });
+}
+
+// hooks.onSearchEngineChanged(): the web search engine was changed.
 // hooks.onSourcesChanged(): a source was turned on/off or refreshed.
 // hooks.onPicksCleared(): the browser's picks and notes were deleted.
 export function initSettings(callbacks) {
   hooks = callbacks;
+  initSearchEngine();
   panel.addEventListener("toggle", () => {
     saveUi({ ...loadUi(), settingsOpen: panel.open });
     if (panel.open) load();

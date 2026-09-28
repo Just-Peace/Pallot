@@ -2,15 +2,21 @@
 
 import { formatDate, h } from "./dom.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, partyName } from "./labels.js";
+import { WRITE_IN } from "./picks.js";
 
-function pickText(race, keys) {
+function pickText(race, keys, picks) {
   return keys
-    .map((key) => race.candidates.find((c) => c.key === key))
-    .filter(Boolean)
-    .map((c) => {
-      const party = partyName(c);
-      return party && party !== "Nonpartisan" ? `${c.name} (${party})` : c.name;
-    });
+    .map((key) => {
+      if (key === WRITE_IN) {
+        const name = picks.writeIn(race.key).trim();
+        return name ? `${name} (write-in)` : "Write-in: ____________________";
+      }
+      const candidate = race.candidates.find((c) => c.key === key);
+      if (!candidate) return null;
+      const party = partyName(candidate);
+      return party && party !== "Nonpartisan" ? `${candidate.name} (${party})` : candidate.name;
+    })
+    .filter(Boolean);
 }
 
 function sections(ballot) {
@@ -39,7 +45,7 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank }) {
           "tr",
           {},
           h("td", {}, race.name, race.unexpired ? " (unexpired term)" : ""),
-          h("td", { class: keys.length ? "" : "blank" }, keys.length ? pickText(race, keys).join("; ") : ""),
+          h("td", { class: keys.length ? "" : "blank" }, keys.length ? pickText(race, keys, picks).join("; ") : ""),
           includeNotes ? h("td", {}, notes) : null,
         );
       })

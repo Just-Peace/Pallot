@@ -5,6 +5,8 @@ const PICKS_KEY = "votebot.picks.v1";
 const LOOKUP_KEY = "votebot.lastLookup.v1";
 const UI_KEY = "votebot.ui.v1";
 
+export const WRITE_IN = "write-in"; // the pick key for a name the voter types in
+
 let memory = null;
 
 function readAll() {
@@ -56,6 +58,17 @@ export class Picks {
     writeAll();
   }
 
+  writeIn(raceKey) {
+    return this.data.writeIns?.[raceKey] || "";
+  }
+
+  setWriteIn(raceKey, name) {
+    this.data.writeIns ||= {};
+    if (name.trim()) this.data.writeIns[raceKey] = name;
+    else delete this.data.writeIns[raceKey];
+    writeAll();
+  }
+
   // Which race cards the voter collapsed (a view setting, kept by "Clear picks").
   isCollapsed(raceKey) {
     return Boolean(this.data.collapsed?.[raceKey]);
@@ -73,6 +86,7 @@ export class Picks {
   clear() {
     this.data.races = {};
     this.data.notes = {};
+    this.data.writeIns = {};
     writeAll();
   }
 }

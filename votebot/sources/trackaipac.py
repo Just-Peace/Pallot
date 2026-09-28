@@ -132,10 +132,18 @@ class TrackAipac:
 def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCard:
     listings = person.get("listings") or []
     categories = [c for c in person.get("categories") or [] if c in CATEGORY_PAGES]
-    badges = [Badge(text=_CATEGORY_BADGES[c][0], tone=_CATEGORY_BADGES[c][1]) for c in categories]
-    totals = [item["israel_lobby_total"] for item in listings if item.get("israel_lobby_total") is not None]
-    if totals:
-        badges.append(Badge(text=f"Israel lobby {money(max(totals))}", tone="warn" if max(totals) > 0 else "neutral"))
+    badges = []
+    for category in categories:  # one badge per list, with that listing's Israel-lobby total when shown
+        text, tone = _CATEGORY_BADGES[category]
+        totals = [item["israel_lobby_total"] for item in listings
+                  if item.get("category") == category and item.get("israel_lobby_total") is not None]
+        hint = None
+        if totals:
+            text = f"{text} {money(max(totals))}"
+            hint = "Israel lobby total, as tracked by TrackAIPAC"
+            if category == "congress" and max(totals) > 0:
+                tone = "warn"
+        badges.append(Badge(text=text, tone=tone, url=CATEGORY_PAGES[category], hint=hint))
 
     facts = [Fact(label="Seat on TrackAIPAC", value=person.get("seat") or "not shown")]
     for item in listings:

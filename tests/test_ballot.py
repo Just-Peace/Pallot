@@ -47,7 +47,10 @@ def test_capitol_ballot(client):
     assert sources_of(paxton) == ["sos", "ballotpedia", "trackaipac"]
     tap = paxton["cards"][2]
     assert tap["match"]["confidence"] == "exact"
-    assert "TrackAIPAC watchlist" in [b["text"] for b in tap["badges"]]
+    watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
+    assert watchlist["text"] == "TrackAIPAC watchlist $0" and watchlist["url"].endswith("/candidates")
+    profile = next(b for b in paxton["cards"][1]["badges"] if b["text"] == "Ballotpedia profile")
+    assert profile["url"].startswith("https://ballotpedia.org/")
     sos_card = paxton["cards"][0]
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia

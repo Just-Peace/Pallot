@@ -12,12 +12,21 @@
 <body>
   <a class="skip" href="#main">Skip to the ballot</a>
   <div class="app">
-    <aside class="sidebar" aria-label="Lookup, summary and settings">
+    <aside class="sidebar" aria-label="Your address, sections and settings">
       <div class="side-inner">
-        <a class="brand" href="./">Vote<span>Bot</span></a>
+        <a class="brand" href="./">
+          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
+          <span class="brand-name">Vote<span>Bot</span></span>
+        </a>
 
-        <section class="side-section first" aria-labelledby="find-title">
-          <h2 class="side-title" id="find-title">Find your ballot</h2>
+        <section class="side-section" aria-labelledby="address-title">
+          <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
+          <div class="address-card" id="address-card" hidden>
+            <p class="address-line" id="address-line"></p>
+            <p class="muted small" id="address-sub"></p>
+            <p class="districts" id="address-districts"></p>
+            <button class="link-btn with-icon" id="change-address" type="button"><span data-icon="edit"></span>Change</button>
+          </div>
           <form id="lookup-form" class="lookup-form">
             <div class="field">
               <label for="address">Home address</label>
@@ -36,36 +45,27 @@
                 <option value="R">Republican</option>
               </select>
             </div>
-            <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
+            <div class="button-row">
+              <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
+              <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
+            </div>
+            <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and Ballotpedia, if it's on) to find your districts, and is remembered in this browser.</p>
           </form>
-          <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and Ballotpedia, if it's on) to find your districts, and results are cached on this computer.</p>
           <p id="status" class="status" role="status" aria-live="polite"></p>
         </section>
 
-        <section class="side-section" id="summary" aria-labelledby="summary-title" hidden>
-          <h2 class="side-title" id="summary-title">Your ballot</h2>
-          <p class="eyebrow" id="election-label"></p>
-          <p class="where" id="where"></p>
-          <p class="muted small" id="where-sub"></p>
-          <ul class="chips" id="district-chips" aria-label="Your districts"></ul>
-          <p class="progress" id="progress" aria-live="polite"></p>
-          <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
-          <div class="button-row">
-            <button class="btn primary" id="print-btn" type="button">Print my picks</button>
-            <button class="btn ghost" id="clear-picks" type="button">Clear picks</button>
-          </div>
-          <ul class="source-chips" id="source-chips" aria-label="Where this ballot's data came from"></ul>
-          <p class="fine" id="official"></p>
-        </section>
-
         <nav class="side-section" id="jump" aria-labelledby="jump-title" hidden>
-          <h2 class="side-title" id="jump-title">Sections</h2>
+          <h2 class="side-title" id="jump-title"><span data-icon="list"></span>Sections</h2>
           <ul class="jump-list" id="jump-list"></ul>
         </nav>
 
         <details class="side-section settings" id="settings">
-          <summary><span class="side-title">Settings</span></summary>
-          <p class="fine" id="total-size"></p>
+          <summary><span class="side-title"><span data-icon="settings"></span>Settings</span></summary>
+          <div class="setting-row">
+            <label for="search-engine">Web search engine</label>
+            <select id="search-engine"></select>
+            <p class="fine">Used by each candidate's "Web search" link. Saved in this browser.</p>
+          </div>
           <div id="source-list" class="source-list"></div>
           <div class="button-row">
             <button class="btn danger small" id="clear-all" type="button">Clear all caches</button>
@@ -82,21 +82,27 @@
         <h1 id="welcome-title">Your ballot, race by race</h1>
         <p class="lede">Enter your home address in the left pane to see every race you'll vote in.</p>
         <ol class="steps">
-          <li><strong>Compare sources.</strong> Each candidate shows what the state's filings, Ballotpedia and TrackAIPAC say, plus a Google search.</li>
+          <li><strong>Compare sources.</strong> Each candidate shows what the state's filings, Ballotpedia and TrackAIPAC say, plus a web search.</li>
           <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
           <li><strong>Print your picks</strong> and take the sheet with you to vote.</li>
         </ol>
       </section>
 
       <section id="result" hidden>
-        <div class="toolbar">
-          <div>
-            <h1 id="ballot-title">Your ballot</h1>
-            <p class="muted" id="ballot-sub"></p>
+        <header class="ballot-head">
+          <h1>Your ballot</h1>
+          <p class="muted" id="ballot-sub"></p>
+        </header>
+        <div class="progress-strip">
+          <div class="progress-info">
+            <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
+            <p class="progress" id="progress" aria-live="polite"></p>
           </div>
           <div class="button-row">
-            <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
             <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
+            <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
+            <button class="btn ghost small" id="clear-picks" type="button">Clear picks</button>
+            <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
           </div>
         </div>
         <div id="messages"></div>

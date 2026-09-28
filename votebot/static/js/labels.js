@@ -16,6 +16,7 @@ export const GROUP_LABELS = {
 export const STATES = {
   TX: {
     site: { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
+    writeInNote: "In Texas, a write-in vote only counts for someone who filed as a write-in candidate.",
     printTips: [
       "Phones can't be used at the voting station in Texas, so bring this sheet.",
       "Texas has no straight-ticket option: vote each race.",
