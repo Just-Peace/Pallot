@@ -31,8 +31,62 @@ function matchNote(card) {
   );
 }
 
+const SHORT_DATE = { month: "short", day: "numeric", year: "numeric" };
+const DOLLARS = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const COUNT = new Intl.NumberFormat("en-US");
+
 function asOf(card) {
-  return card.as_of ? `Data as of ${formatDate(card.as_of, { month: "short", day: "numeric", year: "numeric" })}` : null;
+  return card.as_of ? `Data as of ${formatDate(card.as_of, SHORT_DATE)}` : null;
+}
+
+function percent(share) {
+  if (share <= 0) return "0%";
+  return share < 0.01 ? "<1%" : `${Math.round(share * 100)}%`;
+}
+
+// One row of a breakdown: the label (with its note), a bar, and the amount. partyOf maps a
+// candidate key to their party, so a race comparison's bars take the party colours.
+function shareRow(part, scale, showPercent, partyOf) {
+  const width = scale > 0 && part.amount != null ? Math.min(100, Math.max(0, (part.amount / scale) * 100)) : 0;
+  const count = part.count ? `${COUNT.format(part.count)} donation${part.count === 1 ? "" : "s"}` : null;
+  const note = [part.note, count].filter(Boolean).join(" · ");
+  const party = part.candidate_key && partyOf ? partyOf(part.candidate_key) : null;
+  return h(
+    "li",
+    { class: `share${part.tone ? ` tone-${part.tone}` : ""}`, "data-party": party || null },
+    h("span", { class: "share-label" }, part.label, note ? h("span", { class: "share-note" }, note) : null),
+    h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width: ${width.toFixed(1)}%` })),
+    h("span", { class: "share-amount" },
+      part.amount == null ? "—" : DOLLARS.format(part.amount),
+      showPercent && part.amount != null && scale > 0 ? h("span", { class: "share-pct" }, percent(part.amount / scale)) : null),
+  );
+}
+
+// A Breakdown: labelled bars. With a total they're shares of it (and show a %); without
+// one they're scaled to the largest part.
+export function breakdownBlock(item, partyOf = null) {
+  const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
+  const scale = item.total || largest;
+  return h(
+    "section",
+    { class: "breakdown" },
+    h("h4", { class: "breakdown-title" }, item.title),
+    h("ul", { class: "breakdown-rows" }, item.parts.map((part) => shareRow(part, scale, Boolean(item.total), partyOf))),
+    item.note ? h("p", { class: "fine" }, item.note) : null,
+  );
+}
+
+// A race's money comparison (one per money source), shown above its candidates.
+export function raceMoney(race) {
+  if (!race.cards?.length) return null;
+  const partyOf = (key) => race.candidates.find((c) => c.key === key)?.party || null;
+  return race.cards.map((card) =>
+    h("div", { class: "race-money" },
+      card.breakdowns.map((b) => breakdownBlock(b, partyOf)),
+      h("p", { class: "fine" },
+        `From ${card.label}`,
+        card.as_of ? `, reports through ${formatDate(card.as_of, SHORT_DATE)}` : "",
+        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null)));
 }
 
 export function cardPanel(card) {
@@ -48,6 +102,7 @@ export function cardPanel(card) {
     card.quotes.length
       ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
       : null,
+    (card.breakdowns || []).map((b) => breakdownBlock(b)),
     card.links.length ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label)))) : null,
     h("p", { class: "fine" }, asOf(card), card.as_of && card.url ? " · " : null, card.url ? extLink(card.url, `Open ${card.label}`) : null),
   );

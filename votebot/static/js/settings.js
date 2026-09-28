@@ -12,6 +12,7 @@ const list = document.querySelector("#source-list");
 const searchStatus = document.querySelector("#search-status");
 const sourcesStatus = document.querySelector("#sources-status");
 const picksStatus = document.querySelector("#picks-status");
+let pollTimer = null; // re-checks the sources while one is refreshing (the TEC's takes minutes)
 
 function say(status, message, kind = "ok") {
   status.className = `status status-${kind}`;
@@ -19,6 +20,7 @@ function say(status, message, kind = "ok") {
 }
 
 function sourceRow(source) {
+  const resets = source.clear_label.startsWith("Reset"); // sources that come with a bundled snapshot
   const result = h("p", { class: "action-result", "aria-live": "polite" });
   const refreshButton = h("button", {
     class: "icon-btn", type: "button", title: source.refresh_label,
@@ -27,7 +29,7 @@ function sourceRow(source) {
   const clearButton = h("button", {
     class: "icon-btn", type: "button", title: source.clear_label,
     "aria-label": `${source.clear_label}: ${source.label}`, disabled: source.busy,
-  }, source.id === "trackaipac" ? "Reset" : "Clear");
+  }, resets ? "Reset" : "Clear");
   const toggle = source.toggleable
     ? h("input", { type: "checkbox", role: "switch", id: `toggle-${source.id}`, checked: source.enabled, disabled: source.busy })
     : null;
@@ -60,12 +62,14 @@ function sourceRow(source) {
       clearButton.disabled = false;
       refreshButton.textContent = "↻ Refresh";
       result.textContent = error.message;
+      say(sourcesStatus, `${source.label}: ${error.message}`, "error"); // the row may have been redrawn meanwhile
+      load();
     }
   });
 
   clearButton.addEventListener("click", async () => {
-    const question = source.id === "trackaipac"
-      ? "Throw away refreshed TrackAIPAC data and go back to the bundled snapshot?"
+    const question = resets
+      ? `Throw away refreshed ${source.label} data and go back to the bundled snapshot?`
       : `Clear everything cached from ${source.label}? The next lookup will fetch it again.`;
     if (!confirm(question)) return;
     try {
@@ -87,6 +91,7 @@ function sourceRow(source) {
         ? h("label", { class: "switch", for: `toggle-${source.id}` }, toggle, name)
         : h("span", { class: "source-name-wrap" }, name, h("span", { class: "pill" }, "Always on"))),
     h("p", { class: "source-desc" }, source.description),
+    source.notice ? h("p", { class: `source-notice tone-${source.notice_tone || "info"}` }, source.notice) : null,
     paused ? h("p", { class: "source-warning" }, "Paused after Ballotpedia refused a request; it will try again later.") : null,
     h("div", { class: "source-actions" }, refreshButton, clearButton),
     result,
@@ -95,6 +100,8 @@ function sourceRow(source) {
 
 function render(overview) {
   list.replaceChildren(...overview.sources.map(sourceRow));
+  clearTimeout(pollTimer);
+  if (overview.sources.some((s) => s.busy)) pollTimer = setTimeout(load, 5000);
 }
 
 async function load() {
