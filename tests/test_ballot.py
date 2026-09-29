@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
 
 from .conftest import ADDRESSES, candidate_names, find_race, get_ballot
@@ -44,7 +45,7 @@ def test_capitol_ballot(client):
     assert all(r["group"] == "local" for r in special["races"]) and any(r["seats"] > 1 for r in special["races"])
 
     paxton = senate["candidates"][0]
-    assert sources_of(paxton) == ["sos", "ballotpedia", "trackaipac"]
+    assert sources_of(paxton) == ["sos", "ballotpedia", "trackaipac", "fec"]
     tap = paxton["cards"][2]
     assert tap["match"]["confidence"] == "exact"
     watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
@@ -55,8 +56,39 @@ def test_capitol_ballot(client):
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia
 
-    assert [s["status"] for s in ballot["sources"]] == ["used", "used", "used", "used"]
+    statuses = {s["id"]: s["status"] for s in ballot["sources"]}
+    assert statuses == {"geocoding": "used", "sos": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
+                        "tec": statuses["tec"]}
     assert ballot["warnings"] == []
+
+
+def test_federal_races_get_fec_money(client):
+    ballot = get_ballot(client)
+    senate, house = find_race(ballot, "U.S. Senator"), find_race(ballot, "U.S. Representative District 10")
+
+    [comparison] = senate["cards"]
+    assert comparison["source"] == "fec" and comparison["url"].endswith("/elections/senate/TX/2026/")
+    raised = {p["label"]: p["amount"] for p in comparison["breakdowns"][0]["parts"]}
+    assert raised == {"Ken Paxton": 9248698.53, "James Talarico": 68560930.42, "Ted Brown": 7459.52}
+    assert [p["candidate_key"] for p in comparison["breakdowns"][0]["parts"]] == [c["key"] for c in senate["candidates"]]
+    assert [p["label"] for p in house["cards"][0]["breakdowns"][0]["parts"]] == ["Chris Gober", "Caitlin Rourk"]
+
+    talarico = next(c for c in senate["candidates"] if c["name"] == "James Talarico")
+    fec = next(card for card in talarico["cards"] if card["source"] == "fec")
+    assert fec["match"]["confidence"] == "exact" and fec["as_of"] == "2026-06-30"
+    assert [b["text"] for b in fec["badges"]] == ["FEC: raised $68.6M", "Outside spending: $4.1M for · $705K against"]
+    assert fec["badges"][0]["url"] == "https://www.fec.gov/data/candidate/S6TX00479/?cycle=2026&election_full=true"
+    assert [b["title"] for b in fec["breakdowns"]] == [
+        "Where the money came from", "Donations by size", "Where donors live", "Top donors' employers", "Outside spending",
+    ]
+    sources = fec["breakdowns"][0]
+    assert sum(p["amount"] for p in sources["parts"]) == pytest.approx(sources["total"], abs=1)
+    assert any("Senate" in link["label"] for link in fec["links"])  # personal financial disclosures
+
+    paxton = next(card for card in senate["candidates"][0]["cards"] if card["source"] == "fec")
+    assert paxton["match"]["confidence"] == "likely" and "Warren Kenneth Paxton" in paxton["match"]["note"]
+    assert paxton["breakdowns"] == []  # only Talarico's breakdown calls were recorded
+    assert not [card for race in ballot["races"] if not race["seat"] for card in race["cards"] if card["source"] == "fec"]
 
 
 def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, upstream):
@@ -100,7 +132,7 @@ def test_ballotpedia_off(client):
     assert "special" not in maybe
     assert next(s for s in ballot["sources"] if s["id"] == "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
-    assert sources_of(senate["candidates"][0]) == ["sos", "trackaipac"]
+    assert sources_of(senate["candidates"][0]) == ["sos", "trackaipac", "fec"]
 
 
 def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):

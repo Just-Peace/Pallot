@@ -13,11 +13,12 @@ import re
 import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 from .models import Match
 
 _SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}
+_TITLES = {"MR", "MRS", "MS", "MISS", "DR", "HON", "HONORABLE", "SEN", "SENATOR", "REP", "GOV", "JUDGE", "REV"}
 _NICKNAME = re.compile(r"[\"“”(][^\"“”()]*[\"“”)]")  # KENNETH "KEN" SMITH, JOHN (JACK) DOE
 _SEAT = re.compile(r"\b([A-Z]{2})-(\d{1,2}|SEN|AL)\b")
 
@@ -42,6 +43,18 @@ def short_key(name: str) -> str:
 def last_name(name: str) -> str:
     tokens = name_tokens(name)
     return tokens[-1] if tokens else ""
+
+
+def last_first(name: str) -> str:
+    """Filings write the last name first: "PAXTON, WARREN KENNETH JR." -> "WARREN KENNETH
+    PAXTON JR.", "Lucero, Homero R. (Mr.)" -> "Homero R. Lucero". Titles (SEN, MR, "(The
+    Honorable)") are dropped; a name without a comma is returned as it is."""
+    last, comma, rest = _NICKNAME.sub(" ", name).partition(",")
+    if not comma:
+        return " ".join(name.split())
+    words = [word for word in rest.split() if word.strip(".").upper() not in _TITLES]
+    suffixes = [word for word in words if word.strip(".").upper() in _SUFFIXES]
+    return " ".join([*(w for w in words if w not in suffixes), *last.split(), *suffixes])
 
 
 def seats_in(text: str | None) -> set[str]:
@@ -107,35 +120,72 @@ def trackaipac_seats(person: dict[str, Any]) -> set[str]:
     return seats
 
 
-def match_trackaipac(
-    index: NameIndex, name: str, party: str | None, seat: str | None
-) -> tuple[dict[str, Any], Match] | None:
+def _once(items: list[Any]) -> list[Any]:
+    """An entry indexed under two names (its nickname too) still counts once."""
+    return list({id(item): item for item in items}.values())
+
+
+def match_person(
+    index: NameIndex,
+    name: str,
+    party: str | None,
+    seat: str | None,
+    *,
+    seats_of: Callable[[Any], set[str]],
+    party_of: Callable[[Any], str | None] = lambda item: None,
+    source: str = "The source",
+    seat_text: Callable[[Any], str | None] = lambda item: None,
+    name_of: Callable[[Any], str | None] = lambda item: None,
+) -> tuple[Any, Match] | None:
+    """The one entry for this candidate: found by name, with the seat and party to confirm.
+
+    Several people with the name are narrowed to the one in this seat. A unique name in
+    another seat, or with another party, is only "likely". With no name match, a unique
+    last name in this seat is "likely" too (nicknames, or a first name the source keeps
+    as a middle name: Ken Paxton is "PAXTON, WARREN KENNETH" to the FEC).
+    """
     found, how = index.find(name)
+    found = _once(found)
     if len(found) > 1 and seat:
-        found = [p for p in found if seat in trackaipac_seats(p)]
+        found = [item for item in found if seat in seats_of(item)]
     if len(found) == 1:
-        person = found[0]
+        item = found[0]
         notes = []
-        if seat and seat in trackaipac_seats(person):
+        if seat and seat in seats_of(item):
             confidence = "exact" if how in (FULL, FIRST_LAST) else "likely"
             method = f"{how} + seat {seat}"
         else:
             confidence, method = "likely", how
-            notes.append(f"TrackAIPAC lists them for {person.get('seat') or 'another seat'}")
-        if party and person.get("party") and person["party"] != party:
+            notes.append(f"{source} lists them for {seat_text(item) or 'another seat'}")
+        their_party = party_of(item)
+        if party and their_party and their_party != party:
             confidence = "likely"
-            notes.append(f"party differs (TrackAIPAC says {person['party']})")
-        return person, Match(confidence=confidence, method=method, note="; ".join(notes) or None)
+            notes.append(f"party differs ({source} says {their_party})")
+        return item, Match(confidence=confidence, method=method, note="; ".join(notes) or None)
     if not found and seat:
         same_seat = [
-            p
-            for p in index.by_last.get(last_name(name), [])
-            if seat in trackaipac_seats(p) and (not party or p.get("party") in (None, party))
+            item
+            for item in _once(index.by_last.get(last_name(name), []))
+            if seat in seats_of(item) and (not party or party_of(item) in (None, party))
         ]
         if len(same_seat) == 1:
+            listed = name_of(same_seat[0])
             return same_seat[0], Match(
                 confidence="likely",
                 method="last name + seat",
-                note="first names differ; check it's the same person",
+                note=f"first names differ ({source} lists {listed}); check it's the same person" if listed
+                else "first names differ; check it's the same person",
             )
     return None
+
+
+def match_trackaipac(
+    index: NameIndex, name: str, party: str | None, seat: str | None
+) -> tuple[dict[str, Any], Match] | None:
+    return match_person(
+        index, name, party, seat,
+        seats_of=trackaipac_seats,
+        party_of=lambda person: person.get("party"),
+        source="TrackAIPAC",
+        seat_text=lambda person: person.get("seat"),
+    )

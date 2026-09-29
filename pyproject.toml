@@ -20,16 +20,18 @@ dependencies = [
 [project.scripts]
 votebot = "votebot.__main__:main"
 trackaipac-cache = "trackaipac_cache.__main__:main"
+tec-cache = "tec_cache.__main__:main"
 
 [dependency-groups]
 dev = ["pytest>=8", "respx>=0.21"]  # installed by `uv sync`
 
 [tool.setuptools]
-packages = ["votebot", "votebot.sources", "trackaipac_cache"]
+packages = ["votebot", "votebot.sources", "trackaipac_cache", "tec_cache"]
 
 [tool.setuptools.package-data]
 votebot = ["static/*.html", "static/css/*.css", "static/js/*.js"]
 trackaipac_cache = ["data/*.json", "data/history/*.json"]
+tec_cache = ["data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

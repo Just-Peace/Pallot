@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .fsutil import write_text_atomic
 
-DEFAULT_SOURCES: dict[str, bool] = {"sos": True, "ballotpedia": True, "trackaipac": True}
+DEFAULT_SOURCES: dict[str, bool] = {"sos": True, "ballotpedia": True, "trackaipac": True, "fec": True, "tec": True}
 
 
 class Settings:

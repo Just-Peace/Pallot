@@ -1,0 +1,47 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 15907,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 3182,
+  "per_page": 5
+ },
+ "results": [
+  {
+   "committee_id": "C00919084",
+   "count": 105053,
+   "cycle": 2026,
+   "employer": "NOT EMPLOYED",
+   "total": 16004500.1
+  },
+  {
+   "committee_id": "C00919084",
+   "count": 14983,
+   "cycle": 2026,
+   "employer": "SELF EMPLOYED",
+   "total": 3035079.28
+  },
+  {
+   "committee_id": "C00919084",
+   "count": 381,
+   "cycle": 2026,
+   "employer": "NONE",
+   "total": 173516.67
+  },
+  {
+   "committee_id": "C00919084",
+   "count": 522,
+   "cycle": 2026,
+   "employer": "UNIVERSITY OF TEXAS",
+   "total": 83750.99
+  },
+  {
+   "committee_id": "C00919084",
+   "count": 225,
+   "cycle": 2026,
+   "employer": "BAYLOR COLLEGE OF MEDICINE",
+   "total": 61975.16
+  }
+ ]
+}

@@ -1,0 +1,172 @@
+{
+  "content_hash": "4a666ab149a5354f5859da164d631e6268a1cb51ce4c58ad6c1341f548f21636",
+  "counts": {
+    "contribs": 482084,
+    "dce": 8482,
+    "filers": 10623,
+    "reports": 7789,
+    "snapshot_filers": 2144
+  },
+  "last_checked": "2026-09-28T18:25:03+00:00",
+  "last_refresh": "2026-09-28T18:25:03+00:00",
+  "members": {
+    "contribs_100.csv": {
+      "crc": 2437262326,
+      "first": "20260505",
+      "last": "20260926"
+    },
+    "contribs_101.csv": {
+      "crc": 2718543584,
+      "first": "20260709",
+      "last": "20260731"
+    },
+    "contribs_102.csv": {
+      "crc": 728602957,
+      "first": "20260715",
+      "last": "20260926"
+    },
+    "contribs_103.csv": {
+      "crc": 3943228348,
+      "first": "20260805",
+      "last": "20260927"
+    },
+    "contribs_74.csv": {
+      "crc": 578003376,
+      "first": "20221011",
+      "last": "20230117"
+    },
+    "contribs_75.csv": {
+      "crc": 1695403465,
+      "first": "20221031",
+      "last": "20230209"
+    },
+    "contribs_76.csv": {
+      "crc": 3883436065,
+      "first": "20221031",
+      "last": "20231021"
+    },
+    "contribs_77.csv": {
+      "crc": 204283609,
+      "first": "20221130",
+      "last": "20231021"
+    },
+    "contribs_78.csv": {
+      "crc": 1571000360,
+      "first": "20230105",
+      "last": "20230717"
+    },
+    "contribs_79.csv": {
+      "crc": 4259820862,
+      "first": "20230117",
+      "last": "20251028"
+    },
+    "contribs_80.csv": {
+      "crc": 1483474295,
+      "first": "20230206",
+      "last": "20240517"
+    },
+    "contribs_81.csv": {
+      "crc": 3757836,
+      "first": "20230428",
+      "last": "20260305"
+    },
+    "contribs_82.csv": {
+      "crc": 4036838184,
+      "first": "20231001",
+      "last": "20240703"
+    },
+    "contribs_83.csv": {
+      "crc": 994641029,
+      "first": "20240109",
+      "last": "20240715"
+    },
+    "contribs_84.csv": {
+      "crc": 276344087,
+      "first": "20240114",
+      "last": "20260723"
+    },
+    "contribs_85.csv": {
+      "crc": 2396023355,
+      "first": "20240326",
+      "last": "20250115"
+    },
+    "contribs_86.csv": {
+      "crc": 3338649060,
+      "first": "20240704",
+      "last": "20250114"
+    },
+    "contribs_87.csv": {
+      "crc": 2469790152,
+      "first": "20240712",
+      "last": "20250213"
+    },
+    "contribs_88.csv": {
+      "crc": 3574729408,
+      "first": "20241007",
+      "last": "20250115"
+    },
+    "contribs_89.csv": {
+      "crc": 2762643100,
+      "first": "20241027",
+      "last": "20250714"
+    },
+    "contribs_90.csv": {
+      "crc": 290327803,
+      "first": "20250107",
+      "last": "20250729"
+    },
+    "contribs_91.csv": {
+      "crc": 3741216434,
+      "first": "20250114",
+      "last": "20260215"
+    },
+    "contribs_92.csv": {
+      "crc": 1018118875,
+      "first": "20250506",
+      "last": "20260211"
+    },
+    "contribs_93.csv": {
+      "crc": 2401996676,
+      "first": "20250715",
+      "last": "20260211"
+    },
+    "contribs_94.csv": {
+      "crc": 822181439,
+      "first": "20251026",
+      "last": "20260715"
+    },
+    "contribs_95.csv": {
+      "crc": 1483040513,
+      "first": "20260105",
+      "last": "20260703"
+    },
+    "contribs_96.csv": {
+      "crc": 3759055499,
+      "first": "20260113",
+      "last": "20260714"
+    },
+    "contribs_97.csv": {
+      "crc": 93564541,
+      "first": "20260115",
+      "last": "20260911"
+    },
+    "contribs_98.csv": {
+      "crc": 2999309626,
+      "first": "20260116",
+      "last": "20260715"
+    },
+    "contribs_99.csv": {
+      "crc": 1792364254,
+      "first": "20260223",
+      "last": "20260804"
+    }
+  },
+  "schema_version": 1,
+  "snapshot": "2026-09-28",
+  "window_start": "2024-11-06",
+  "zip": {
+    "etag": "\"local-1042151650-1790619481\"",
+    "last_modified": "Mon, 28 Sep 2026 18:18:01 GMT",
+    "size": 1042151650
+  }
+}

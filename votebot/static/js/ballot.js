@@ -10,7 +10,7 @@ import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
 import { Picks, WRITE_IN, loadLastLookup, saveAddressCard, saveLastLookup, settingsStamp } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
-import { badgeList, renderTabs } from "./source-cards.js";
+import { badgeList, raceMoney, renderTabs } from "./source-cards.js";
 
 const $ = (selector) => document.querySelector(selector);
 const form = $("#lookup-form");
@@ -272,7 +272,7 @@ function raceCard(race) {
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)));
-  const card = collapsibleCard(race.key, { title: race.name, meta: meta.join(" · "), body, headExtras: [clearButton] });
+  const card = collapsibleCard(race.key, { title: race.name, meta: meta.join(" · "), body: [raceMoney(race), body], headExtras: [clearButton] });
 
   redraw.set(race.key, () => {
     const picked = picks.picked(race.key);

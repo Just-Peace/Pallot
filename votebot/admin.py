@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from .ballot import Services
-from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus
-from .sources import ballotpedia, sos, trackaipac
-from .text import iso_utc
+from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
+from .sources import ballotpedia, fec, sos, tec, trackaipac
+from .text import display_date, iso_utc
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,16 @@ SOURCES = (
         refresh_label="Refresh from trackaipac.com",
         clear_label="Reset to bundled snapshot",
     ),
+    SourceInfo(fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,)),
+    SourceInfo(
+        tec.SOURCE,
+        "Texas Ethics Commission",
+        tec.DESCRIPTION,
+        True,
+        (),
+        refresh_label="Refresh from the Texas Ethics Commission (downloads about 1 GB if it changed)",
+        clear_label="Reset to bundled snapshot",
+    ),
 )
 BY_ID = {info.id: info for info in SOURCES}
 _SLOW = {"ballotpedia", "nominatim"}  # one request at a time when refreshing
@@ -57,6 +68,10 @@ def _size(num: int) -> str:
     return f"{num / 1_048_576:.1f} MB" if num >= 1_048_576 else f"{num / 1024:.0f} KB"
 
 
+def _dir_bytes(path: Path) -> int:
+    return sum(p.stat().st_size for p in path.rglob("*") if p.is_file()) if path.exists() else 0
+
+
 class Admin:
     def __init__(self, svc: Services):
         self.svc = svc
@@ -68,11 +83,10 @@ class Admin:
         return BY_ID[source_id]
 
     def overview(self) -> SourcesOverview:
-        tracker_dir = self.svc.trackaipac.data_dir
-        tracker_bytes = sum(p.stat().st_size for p in tracker_dir.rglob("*") if p.is_file()) if tracker_dir.exists() else 0
+        snapshots = _dir_bytes(self.svc.trackaipac.data_dir) + _dir_bytes(self.svc.tec.data_dir)
         return SourcesOverview(
             sources=[self._status(info) for info in SOURCES],
-            total_bytes=self.svc.cache.file_bytes() + self.svc.sboe.size() + tracker_bytes,
+            total_bytes=self.svc.cache.file_bytes() + self.svc.sboe.size() + snapshots,
         )
 
     def _status(self, info: SourceInfo) -> SourceStatus:
@@ -86,6 +100,7 @@ class Admin:
             oldest=iso_utc(min(oldest)) if oldest else None,
             newest=iso_utc(max(newest)) if newest else None,
         )
+        notice, tone = self._notice(info.id)
         return SourceStatus(
             id=info.id,
             label=info.label,
@@ -97,7 +112,29 @@ class Admin:
             details=self._details(info.id),
             refresh_label=info.refresh_label,
             clear_label=info.clear_label,
+            notice=notice,
+            notice_tone=tone,
         )
+
+    def _notice(self, source_id: str) -> tuple[str | None, Tone]:
+        """One line under the source's description: what it's missing, or where its data stands."""
+        if source_id == fec.SOURCE:
+            until = self.svc.fec.paused_until()
+            if until:
+                return f"Paused until {iso_utc(until)} after reaching the FEC's hourly limit.", "warn"
+            if not self.svc.fec.keyed:
+                return ("Using the shared DEMO_KEY, so federal races show totals only. For the full breakdown, set "
+                        "VOTEBOT_FEC_API_KEY to a free key from api.data.gov and restart VoteBot."), "warn"
+            return "Using your api.data.gov key.", "info"
+        if source_id == tec.SOURCE:
+            if self.svc.tec.last_error:
+                return f"The last refresh failed and nothing changed: {self.svc.tec.last_error}", "warn"
+            document = self.svc.tec.document()
+            if not document.get("snapshot"):
+                return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
+            since = display_date((document.get("window") or {}).get("start"))
+            return f"Snapshot of {display_date(document['snapshot'])}: money raised since {since}.", "info"
+        return None, "info"
 
     def _details(self, source_id: str) -> list[Fact]:
         if source_id == "geocoding":
@@ -121,6 +158,18 @@ class Admin:
                 Fact(label="Texas entries", value=str(len(tracker.people("TX")))),
                 Fact(label="All entries", value=str(len(tracker.people()))),
             ]
+        if source_id == tec.SOURCE:
+            document, meta = self.svc.tec.document(), self.svc.tec.meta()
+            return [
+                Fact(label="Snapshot", value=document.get("snapshot") or "none"),
+                Fact(label="Money raised since", value=(document.get("window") or {}).get("start") or "unknown"),
+                Fact(label="TEC data from", value=document.get("tec_updated") or "unknown"),
+                Fact(label="Last checked", value=meta.get("last_checked") or "never"),
+                Fact(label="Candidates and officeholders", value=str(len(document.get("filers") or []))),
+            ]
+        if source_id == fec.SOURCE:
+            until = self.svc.fec.paused_until()
+            return [Fact(label="Paused", value=f"until {iso_utc(until)} after the FEC's hourly limit")] if until else []
         return []
 
     def set_enabled(self, source_id: str, enabled: bool) -> None:
@@ -139,6 +188,11 @@ class Admin:
                     return ActionResult(message=await self.svc.trackaipac.refresh())
                 except Exception as exc:  # the package raises FetchError/ValidationError without writing anything
                     raise AdminError(502, f"TrackAIPAC refresh failed; nothing changed. {exc}") from exc
+            if source_id == tec.SOURCE:
+                try:
+                    return ActionResult(message=await self.svc.tec.refresh())
+                except Exception as exc:  # tec_cache writes nothing unless the whole refresh succeeds
+                    raise AdminError(502, f"Texas Ethics Commission refresh failed; nothing changed. {exc}") from exc
             refreshed = failed = 0
             errors: list[str] = []
             for tag in info.cache_tags:
@@ -164,6 +218,10 @@ class Admin:
             self.svc.trackaipac.reset()
             snapshot = self.svc.trackaipac.meta().get("latest_snapshot") or "none"
             return ActionResult(message=f"Back to the snapshot bundled with trackaipac_cache ({snapshot}).")
+        if source_id == tec.SOURCE:
+            self.svc.tec.reset()
+            snapshot = self.svc.tec.document().get("snapshot") or "none"
+            return ActionResult(message=f"Back to the snapshot bundled with tec_cache ({snapshot}).")
         removed = sum(self.svc.cache.clear(tag) for tag in info.cache_tags)
         message = f"Cleared {removed} cached response{'s' if removed != 1 else ''}."
         if source_id == "geocoding":
@@ -177,6 +235,8 @@ class Admin:
         removed = self.svc.cache.clear()
         self.svc.sboe.clear()
         self.svc.trackaipac.reset()
+        self.svc.tec.reset()
         return ActionResult(
-            message=f"Cleared {removed} cached responses and the SBOE map, and reset TrackAIPAC to its bundled snapshot."
+            message=f"Cleared {removed} cached responses and the SBOE map, and reset TrackAIPAC and the Texas Ethics "
+            "Commission data to their bundled snapshots."
         )

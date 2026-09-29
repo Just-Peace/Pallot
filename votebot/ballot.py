@@ -30,9 +30,11 @@ from .settings import Settings
 from .sources import sos as sos_source
 from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
 from .sources.census import TEXAS_FIPS, Census, Place
+from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, still_running
+from .sources.tec import Tec
 from .sources.trackaipac import TrackAipac
 from .text import display_office, display_person, iso_utc
 
@@ -72,6 +74,8 @@ class Services:
     sos: Sos
     ballotpedia: Ballotpedia
     trackaipac: TrackAipac
+    fec: Fec
+    tec: Tec
     today: Callable[[], dt.date] = dt.date.today
 
 
@@ -176,10 +180,13 @@ class _Builder:
         self.use_sos = svc.settings.enabled("sos")
         self.use_bp = svc.settings.enabled("ballotpedia")
         self.use_tap = svc.settings.enabled("trackaipac")
+        self.use_fec = svc.settings.enabled("fec")
+        self.use_tec = svc.settings.enabled("tec")
         self.notes: list[str] = []
         self.warnings: list[str] = []
         self.errors: dict[str, str] = {}
         self.ballot_rows: dict[str, dict[str, Any]] = {}  # candidate key -> its SOS row
+        self.scopes: dict[str, OfficeScope] = {}  # SOS race key -> what its office covers
         self.included: set[tuple[str, int | None]] = set()  # (kind, number) of SOS races kept
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
 
@@ -235,7 +242,8 @@ class _Builder:
             if found
         ]
         every_race = races + [race for section in maybe for race in section.races]
-        self.warnings += await enrich.run(
+        ballot_day = day or (bp_ballot.day if bp_ballot else None)
+        outcome = await enrich.run(
             self.svc,
             every_race,
             elections={e.id: e for e, _ in sos_data.orders} if sos_data else {},
@@ -243,9 +251,16 @@ class _Builder:
             bp_ballot=bp_ballot if self.use_bp else None,
             use_sos=sos_data is not None,
             use_trackaipac=self.use_tap,
+            use_fec=self.use_fec,
+            use_tec=self.use_tec,
+            day=ballot_day,
+            scopes=self.scopes,
+            county=place.county,
         )
+        self.warnings += outcome.warnings
+        self.notes += outcome.notes
+        self.errors.update(outcome.errors)
 
-        ballot_day = day or (bp_ballot.day if bp_ballot else None)
         if sos_data:
             used = {race.election_id for race in every_race}
             refs = [election_ref(e) for e, _ in sos_data.orders if e.id in used]
@@ -373,6 +388,7 @@ class _Builder:
                     office_rows,
                     key=lambda r: (r.get("nbBallotOrder") is None, r.get("nbBallotOrder") or 0, r.get("txLastNameBallot") or ""),
                 )
+                self.scopes[f"sos:{election.id}:{office_id}"] = scope
                 race = Race(
                     key=f"sos:{election.id}:{office_id}",
                     name=display_office(scope.name),
@@ -477,9 +493,21 @@ class _Builder:
                 as_of=snapshot,
                 message=None if snapshot else "no TrackAIPAC data yet; refresh it in Settings",
             )
+        ethics = SourceUse(id="tec", label="Texas Ethics Commission", status="off")
+        if self.use_tec:
+            snapshot = self.svc.tec.document().get("snapshot")
+            ethics = SourceUse(
+                id="tec",
+                label="Texas Ethics Commission",
+                status="used" if snapshot else "unused",
+                as_of=snapshot,
+                message=None if snapshot else "no TEC snapshot yet; refresh it in Settings",
+            )
         return [
             geocoding,
             status("sos", "Texas SOS", self.use_sos, ("sos",)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             tracker,
+            status("fec", "FEC", self.use_fec, ("fec",)),
+            ethics,
         ]

@@ -1,5 +1,6 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
-served through respx, and a VoteBot app on a temp data dir with "today" pinned."""
+served through respx, and a VoteBot app on a temp data dir with "today" pinned, an FEC
+API key, and the TrackAIPAC and Texas Ethics Commission fixture snapshots."""
 
 from __future__ import annotations
 
@@ -23,6 +24,7 @@ from votebot.sources.census import normalize_address
 
 FIXTURES = Path(__file__).parent / "fixtures"
 TODAY = dt.date(2026, 9, 27)
+FEC_KEY = "test-fec-key"
 ADDRESSES = {
     "capitol": "1100 Congress Ave, Austin, TX 78701",
     "ut": "110 Inner Campus Dr, Austin, TX 78712",
@@ -86,6 +88,8 @@ class Upstream:
         self.calls: list[str] = []
         self.down: set[str] = set()  # hosts that answer HTTP 500
         self.ballotpedia_status: int | None = None
+        self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
+        self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
     def count(self, host_part: str) -> int:
@@ -131,7 +135,30 @@ class Upstream:
             return httpx.Response(200, json={"success": True, "data": {"districts": [], "elections": []}})
         if url.host == "data.capitol.texas.gov":
             return httpx.Response(200, content=sboe_zip())
+        if url.host == "api.open.fec.gov":
+            return self._fec(request)
         raise AssertionError(f"unexpected request: {request.method} {url}")
+
+    def _fec(self, request: httpx.Request) -> httpx.Response:
+        params = request.url.params
+        assert "api_key" not in params, "the FEC key travels in a header, never in the URL"
+        self.fec_keys.add(request.headers.get("x-api-key"))
+        if self.fec_status:
+            return httpx.Response(self.fec_status, json={"error": {"code": "OVER_RATE_LIMIT"}})
+        path, empty = request.url.path.removeprefix("/v1"), {"results": []}
+        if path == "/elections/":
+            office = params["office"]
+            return _file("fec_elections_senate.json" if office == "senate" else f"fec_elections_house_{params['district']}.json",
+                         default=empty)
+        if path.startswith("/candidate/") and path.endswith("/totals/"):
+            return _file(f"fec_totals_{path.split('/')[2]}.json", default=empty)
+        for suffix, name in (("/schedule_a/by_size/by_candidate/", "by_size"), ("/schedule_a/by_state/by_candidate/", "by_state"),
+                             ("/schedule_e/by_candidate/", "outside")):
+            if path.endswith(suffix):
+                return _file(f"fec_{name}_{params['candidate_id']}.json", default=empty)
+        if path.endswith("/schedule_a/by_employer/"):
+            return _file(f"fec_by_employer_{params['committee_id']}.json", default=empty)
+        raise AssertionError(f"unexpected FEC request: {request.url}")
 
 
 class FakeRefreshResult:
@@ -147,24 +174,38 @@ def upstream():
         yield handler
 
 
+class FakeTecResult:
+    def summary(self) -> str:
+        return "updated snapshot 2026-09-27: 2 candidates and officeholders with reports since Nov 6, 2024 (read the zip)"
+
+
 @pytest.fixture
 def make_app(tmp_path, upstream):
-    """make_app(data_dir=None, refresh=None) -> a new app; call again on the same dir to 'restart'."""
+    """make_app(data_dir=None, refresh=None, tec_refresh=None, fec_key=FEC_KEY) -> a new app;
+    call again on the same dir to 'restart'."""
     refreshed: list[Path] = []
+    tec_refreshed: list[dict[str, Any]] = []
 
     def fake_refresh(*, data_dir):
         refreshed.append(Path(data_dir))
         return FakeRefreshResult()
 
-    def build(data_dir: Path | None = None, refresh=None):
+    def fake_tec_refresh(**kwargs):
+        tec_refreshed.append(kwargs)
+        return FakeTecResult()
+
+    def build(data_dir: Path | None = None, refresh=None, tec_refresh=None, fec_key: str = FEC_KEY):
         return create_app(
-            Config(data_dir=data_dir or tmp_path / "data"),
+            Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key),
             today=lambda: TODAY,
             trackaipac_bundled=FIXTURES / "trackaipac",
             trackaipac_refresh=refresh or fake_refresh,
+            tec_bundled=FIXTURES / "tec",
+            tec_refresh=tec_refresh or fake_tec_refresh,
         )
 
     build.refreshed = refreshed
+    build.tec_refreshed = tec_refreshed
     return build
 
 

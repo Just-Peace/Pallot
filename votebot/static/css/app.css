@@ -325,6 +325,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .source-name-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .source-desc { font-size: 0.78rem; color: var(--muted); margin: 6px 0 4px; }
 .source-warning { font-size: 0.78rem; color: var(--warn); margin: 4px 0; }
+.source-notice { font-size: 0.78rem; color: var(--muted); margin: 4px 0; }
+.source-notice.tone-warn { color: var(--warn); }
 .source-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
 .action-result { color: var(--danger); font-size: 0.82rem; margin: 6px 0 0; }
 .action-result:empty { display: none; }
@@ -532,6 +534,28 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.92rem; overflow-wrap: anywhere; }
 .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0; font-size: 0.92rem; }
 
+/* Money breakdowns: each row a label (with its note), a bar and the amount. A race's
+   comparison sits above its candidates, the bars in the candidates' party colours. */
+.breakdown { margin: 14px 0; }
+.breakdown-title { font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
+  margin: 0 0 6px; }
+.breakdown-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.breakdown .fine { margin-top: 6px; }
+.share { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content; align-items: center; gap: 2px 12px;
+  font-size: 0.9rem; --bar: var(--accent); }
+.share .bar span { background: var(--bar); transition: none; }
+.share.tone-info { --bar: var(--info); }
+.share.tone-warn { --bar: var(--warn); }
+.share.tone-good { --bar: var(--good); }
+.share[data-party="R"], .share[data-party="D"], .share[data-party="L"], .share[data-party="G"] { --bar: var(--pick); }
+.share-label { min-width: 0; overflow-wrap: anywhere; }
+.share-note { display: block; color: var(--muted); font-size: 0.8rem; }
+.share-amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+.share-pct { margin-left: 6px; color: var(--muted); font-weight: 400; }
+.race-money { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); padding: 10px 12px;
+  margin: 0 0 10px; }
+.race-money .breakdown { margin: 0; }
+
 .small-dialog { width: min(460px, calc(100vw - 32px)); }
 .small-dialog form { padding: 20px; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
@@ -562,6 +586,10 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   .badges, .note { margin-left: 0; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
+  .share { grid-template-columns: minmax(0, 1fr) max-content; grid-template-areas: "label amount" "bar bar"; }
+  .share-label { grid-area: label; }
+  .share .bar { grid-area: bar; }
+  .share-amount { grid-area: amount; }
   .details-head { padding: 14px 16px 10px; }
   .details-tabs { padding: 0 16px; }
   .tabs { margin: 0 -16px; padding: 0 16px; }

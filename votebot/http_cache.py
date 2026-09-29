@@ -151,12 +151,16 @@ def describe_error(exc: Exception) -> str:
 
 
 class HttpCache:
+    """``source_headers`` are added to every request of that source when it is sent, and are
+    never stored or part of the cache key: that's where API keys go."""
+
     def __init__(
         self,
         path: Path,
         client: httpx.AsyncClient,
         *,
         min_interval: dict[str, float] | None = None,
+        source_headers: dict[str, dict[str, str]] | None = None,
         memory_items: int = 32,
         clock: Callable[[], float] = time.time,
     ):
@@ -172,6 +176,7 @@ class HttpCache:
         self._memory_items = memory_items
         self._inflight: dict[str, asyncio.Future[Cached]] = {}
         self._min_interval = dict(min_interval or {})
+        self._source_headers = {source: dict(headers) for source, headers in (source_headers or {}).items()}
         self._last_call: dict[str, float] = {}
         self._throttle_locks: dict[str, asyncio.Lock] = {}
 
@@ -208,6 +213,18 @@ class HttpCache:
         result = await asyncio.shield(task)
         return self._hit(source, result) if joined else result
 
+    def cached(self, source: str, spec: RequestSpec) -> Cached | None:
+        """The stored copy of ``spec`` without asking the source (marked stale once it has
+        expired), or None if there isn't one. For sources that are pausing their requests."""
+        meta = self._meta(spec.key)
+        if meta is None:
+            return None
+        stale = meta[1] <= self._clock()
+        stats = current_calls()
+        if stale and stats:
+            stats.stale_sources.add(source)
+        return self._hit(source, Cached(self._value(spec.key, meta[0]), meta[0], stale=stale))
+
     def _settle(self, key: str, task: asyncio.Future[Cached]) -> None:
         self._inflight.pop(key, None)
         if not task.cancelled():
@@ -239,9 +256,8 @@ class HttpCache:
         stats = current_calls()
         if stats:
             stats.external_calls += 1
-        response = await self._client.request(
-            spec.method, spec.url, params=spec.params, json=spec.json, headers=spec.headers
-        )
+        headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
+        response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=headers)
         response.raise_for_status()
         return response.json()
 

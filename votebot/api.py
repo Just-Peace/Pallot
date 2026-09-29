@@ -22,9 +22,11 @@ from .models import ActionResult, Ballot, BallotRequest, ElectionDate, SourcesOv
 from .settings import Settings
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
+from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.sboe import SboeMap
 from .sources.sos import Sos
+from .sources.tec import Tec
 from .sources.trackaipac import TrackAipac
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -36,6 +38,8 @@ def create_app(
     today: Callable[[], dt.date] = dt.date.today,
     trackaipac_refresh: Callable[..., Any] | None = None,
     trackaipac_bundled: Path | None = None,
+    tec_refresh: Callable[..., Any] | None = None,
+    tec_bundled: Path | None = None,
 ) -> FastAPI:
     config = config or load_config()
 
@@ -45,7 +49,12 @@ def create_app(
         async with httpx.AsyncClient(
             timeout=config.http_timeout, headers={"User-Agent": config.user_agent}, follow_redirects=True
         ) as client:
-            cache = HttpCache(config.cache_path, client, min_interval={"nominatim": 1.0, "ballotpedia": 1.0})
+            cache = HttpCache(
+                config.cache_path,
+                client,
+                min_interval={"nominatim": 1.0, "ballotpedia": 1.0, "fec": 0.1},
+                source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
+            )
             try:
                 svc = Services(
                     config=config,
@@ -59,9 +68,12 @@ def create_app(
                     trackaipac=TrackAipac(
                         config.trackaipac_dir, refresh_fn=trackaipac_refresh, bundled_dir=trackaipac_bundled
                     ),
+                    fec=Fec(cache, config.ttl, config.fec_api_key, today),
+                    tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                     today=today,
                 )
                 await asyncio.to_thread(svc.trackaipac.ensure_seeded)
+                await asyncio.to_thread(svc.tec.ensure_seeded)
                 app.state.svc = svc
                 app.state.admin = Admin(svc)
                 yield

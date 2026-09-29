@@ -1,0 +1,47 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 20
+ },
+ "results": [
+  {
+   "candidate_id": "S6TX00479",
+   "count": null,
+   "cycle": 2026,
+   "size": 0,
+   "total": 44905271.82
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "count": 13087,
+   "cycle": 2026,
+   "size": 200,
+   "total": 3369127.55
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "count": 10770,
+   "cycle": 2026,
+   "size": 500,
+   "total": 5404634.9
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "count": 5761,
+   "cycle": 2026,
+   "size": 1000,
+   "total": 5825705.59
+  },
+  {
+   "candidate_id": "S6TX00479",
+   "count": 2988,
+   "cycle": 2026,
+   "size": 2000,
+   "total": 9065285.42
+  }
+ ]
+}

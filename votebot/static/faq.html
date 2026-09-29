@@ -122,7 +122,37 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, Ballotpedia and TrackAIPAC. A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
+            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission. A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>Where do the money figures come from?</summary>
+          <div class="faq-body">
+            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission); candidates for state offices, the Legislature, the State Board of Education, the courts and district attorney report to the Texas Ethics Commission.</p>
+            <p>"Raised" is what the candidate's campaign reported receiving. For Congress it covers the whole election period: two years for the House, six for the Senate. For state offices it counts the reports since the last November general election, so the earliest may reach back a few months before it. "Cash on hand" is from the candidate's latest report, and the date shown is when that report ends, not when VoteBot fetched it.</p>
+            <p>A candidate's details break the money down: small and large donations, individuals and political action committees (PACs), where donors live, and the largest donors. For Congress, the largest donors are grouped by the employer each donor listed, because an individual can give a federal candidate at most a few thousand dollars.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>What is "outside spending"?</summary>
+          <div class="faq-body">
+            <p>Money spent on a race by groups the campaign doesn't control, such as super PACs buying ads. For Congress, the FEC records whether each group spent for or against the candidate. The Texas Ethics Commission records which candidate the spending was about, but not whether it was for or against them.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>Why don't county, city or school candidates show any money?</summary>
+          <div class="faq-body">
+            <p>They report to their county or city, not the state (county court at law judges included), and those reports aren't in a form VoteBot can read yet. Your county clerk's or city secretary's website usually has them.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>Why does the FEC tab show only totals?</summary>
+          <div class="faq-body">
+            <p>VoteBot is using the FEC's shared demonstration key, which allows only a few requests an hour. Whoever runs VoteBot can get a free key at <a href="https://api.data.gov/signup/" target="_blank" rel="noopener noreferrer">api.data.gov</a>, set it as <code>VOTEBOT_FEC_API_KEY</code>, and restart VoteBot. Settings says which key is in use.</p>
           </div>
         </details>
 
@@ -151,7 +181,8 @@
         <details class="faq">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, candidates and Ballotpedia, and after 30 days for address lookups. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
+            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, candidates and Ballotpedia, after 7 days for the FEC, and after 30 days for address lookups. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
+            <p>The Texas Ethics Commission's data comes with VoteBot and is only fetched again when you press Refresh; Settings shows how old it is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
           </div>
         </details>

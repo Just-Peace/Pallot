@@ -39,9 +39,30 @@ class Match(BaseModel):
     note: str | None = None
 
 
+class Share(BaseModel):
+    """One part of a Breakdown. ``amount`` is None when the source has no figure for it."""
+
+    label: str
+    amount: float | None = None
+    count: int | None = None
+    note: str | None = None
+    tone: Tone | None = None
+    candidate_key: str | None = None  # in a race comparison, whose row this is (for the party colour)
+
+
+class Breakdown(BaseModel):
+    """Money split into parts, drawn as labelled bars. With a ``total`` the bars are shares
+    of it (and show a %); without one they are scaled to the largest part."""
+
+    title: str
+    parts: list[Share] = Field(default_factory=list)
+    total: float | None = None
+    note: str | None = None
+
+
 class SourceCard(BaseModel):
-    """One source's information about one candidate. The frontend renders every card the
-    same way, so a new source only has to produce these."""
+    """One source's information about one candidate (or, in Race.cards, about a race). The
+    frontend renders every card the same way, so a new source only has to produce these."""
 
     source: str
     label: str
@@ -53,6 +74,7 @@ class SourceCard(BaseModel):
     badges: list[Badge] = Field(default_factory=list)
     facts: list[Fact] = Field(default_factory=list)
     quotes: list[str] = Field(default_factory=list)
+    breakdowns: list[Breakdown] = Field(default_factory=list)
     links: list[Link] = Field(default_factory=list)
 
 
@@ -81,6 +103,7 @@ class Race(BaseModel):
     source: str
     url: str | None = None
     candidates: list[Candidate] = Field(default_factory=list)
+    cards: list[SourceCard] = Field(default_factory=list)  # race-level cards, e.g. money raised by each candidate
 
 
 class MaybeSection(BaseModel):
@@ -200,6 +223,8 @@ class SourceStatus(BaseModel):
     details: list[Fact]
     refresh_label: str
     clear_label: str
+    notice: str | None = None  # one line shown under the description, e.g. what the source is missing
+    notice_tone: Tone = "info"
 
 
 class SourcesOverview(BaseModel):
