@@ -1,0 +1,13 @@
+.git
+.venv
+# the FEC key: compose.yaml passes .env in at run time, never into the image
+.env
+# only the top-level data folder: tec_cache/data and trackaipac_cache/data are the bundled snapshots
+/data
+tests
+scripts
+**/__pycache__
+*.pyc
+.pytest_cache
+*.egg-info
+build
