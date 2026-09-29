@@ -30,7 +30,7 @@ def test_trackaipac_badge_per_list_without_money_when_none_is_shown():
 
 
 def test_ballotpedia_profile_badge_links_to_the_profile():
-    race = BpRace(1, "U.S. Senate Texas", "Senator", "State", "Texas", "federal", 1, "https://ballotpedia.org/race", ())
+    race = BpRace(1, "U.S. Senate Texas", "State", "Texas", "federal", 1, "https://ballotpedia.org/race", ())
     with_survey = BpCandidate(7, "Ken Paxton", "R", "Republican Party", False, False, "On the Ballot",
                               "https://ballotpedia.org/Ken_Paxton", None, True)
     result = ballotpedia_card(with_survey, race, 0.0, None)

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import csv
-import os
 
 import httpx
 import pytest
@@ -13,14 +12,15 @@ from tec_cache.models import ZIP_URL
 from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
 from votebot.api import create_app
-from votebot.config import Config
+from votebot.config import DEMO_KEY, Config, load_config
 from votebot.sources import fec
 
 pytestmark = pytest.mark.live
+FEC_KEY = load_config().fec_api_key  # from the environment or .env
 
 
 def test_capitol_ballot_live(tmp_path):
-    with TestClient(create_app(Config(data_dir=tmp_path / "data"))) as client:
+    with TestClient(create_app(Config(data_dir=tmp_path / "data", fec_api_key=FEC_KEY))) as client:
         response = client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"})
         assert response.status_code == 200, response.text
         ballot = response.json()
@@ -33,12 +33,12 @@ def test_capitol_ballot_live(tmp_path):
     assert again["meta"]["external_calls"] == 0
 
 
-@pytest.mark.skipif(not os.environ.get("VOTEBOT_FEC_API_KEY"), reason="needs VOTEBOT_FEC_API_KEY (DEMO_KEY runs out fast)")
+@pytest.mark.skipif(FEC_KEY == DEMO_KEY, reason="needs VOTEBOT_FEC_API_KEY (DEMO_KEY runs out fast)")
 def test_fec_race_totals_live():
     response = httpx.get(
         f"{fec.API}/elections/",
         params={"office": "senate", "state": "TX", "cycle": "2026", "election_full": "true", "per_page": "100"},
-        headers={"X-Api-Key": os.environ["VOTEBOT_FEC_API_KEY"]},
+        headers={"X-Api-Key": FEC_KEY},
         timeout=60,
     )
     response.raise_for_status()

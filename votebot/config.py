@@ -1,4 +1,5 @@
-"""Settings that come from the environment: where data lives, timeouts, cache lifetimes."""
+"""Settings that come from the environment (or the project's .env file): where data lives,
+timeouts, cache lifetimes, the FEC key."""
 
 from __future__ import annotations
 
@@ -11,6 +12,8 @@ HOUR = 3600
 DAY = 24 * HOUR
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
+ENV_FILE = PROJECT_DIR / ".env"
+DEMO_KEY = "DEMO_KEY"  # api.data.gov's shared key: a few requests an hour, per IP address
 
 
 @dataclass(frozen=True)
@@ -29,7 +32,8 @@ class Ttls:
     ballotpedia: int = DAY
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
-    fec_backoff: int = HOUR  # after the FEC's hourly limit, stop asking for this long
+    fec_backoff: int = HOUR  # after the FEC's rate limit, stop asking for this long
+    retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
 
 
 @dataclass(frozen=True)
@@ -38,9 +42,9 @@ class Config:
     user_agent: str = "VoteBot/0.1 (personal ballot helper)"
     http_timeout: float = 30.0
     ttl: Ttls = field(default_factory=Ttls)
-    # A free api.data.gov key; the shared DEMO_KEY only allows about 10 requests an hour.
-    # Only ever sent to the FEC, never written to disk.
-    fec_api_key: str = field(default="DEMO_KEY", repr=False)
+    # A free key from https://api.open.fec.gov/developers/ (issued by api.data.gov); without
+    # one, the shared DEMO_KEY. Only ever sent to the FEC, never written to disk.
+    fec_api_key: str = field(default=DEMO_KEY, repr=False)
 
     @property
     def cache_path(self) -> Path:
@@ -63,8 +67,33 @@ class Config:
         return self.data_dir / "tec"
 
 
-def load_config(env: Mapping[str, str] | None = None) -> Config:
-    env = os.environ if env is None else env
+def read_env_file(path: Path) -> dict[str, str]:
+    """KEY=VALUE lines of a .env file ("#" comments, optional quotes and "export"); {} if
+    there is no file."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return {}
+    values = {}
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.removeprefix("export ").partition("=")
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        else:
+            value = value.split(" #", 1)[0].rstrip()  # a comment after an unquoted value
+        values[key.strip()] = value
+    return values
+
+
+def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None = ENV_FILE) -> Config:
+    """The config from ``env``, or by default from the environment on top of ``env_file``
+    (variables already set in the environment win)."""
+    if env is None:
+        env = {**(read_env_file(env_file) if env_file else {}), **os.environ}
     overrides = {
         f.name: int(env[key]) for f in fields(Ttls) if (key := f"VOTEBOT_TTL_{f.name.upper()}") in env
     }
@@ -73,5 +102,5 @@ def load_config(env: Mapping[str, str] | None = None) -> Config:
         user_agent=env.get("VOTEBOT_USER_AGENT") or Config.user_agent,
         http_timeout=float(env.get("VOTEBOT_HTTP_TIMEOUT") or Config.http_timeout),
         ttl=Ttls(**overrides),
-        fec_api_key=(env.get("VOTEBOT_FEC_API_KEY") or "").strip() or "DEMO_KEY",
+        fec_api_key=(env.get("VOTEBOT_FEC_API_KEY") or "").strip() or DEMO_KEY,
     )

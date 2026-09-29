@@ -14,13 +14,10 @@ county or city instead, so those races get nothing from here.
 from __future__ import annotations
 
 import asyncio
-import contextlib
-import json
 import re
 import sys
-from importlib import resources
 from pathlib import Path
-from typing import Any, Callable, ContextManager
+from typing import Any, Callable
 
 import tec_cache
 from tec_cache.models import SIZE_BUCKETS
@@ -30,6 +27,7 @@ from ..models import Badge, Breakdown, Fact, Link, Match, Race, Share, SourceCar
 from ..offices import OfficeScope
 from ..text import display_date, display_office, display_org, money, money_short
 from . import CardSet
+from .snapshot import BundledSnapshot, summary_of
 
 SOURCE = "tec"
 LABEL = "TEC"
@@ -169,7 +167,11 @@ def office_text(office: dict[str, Any] | None) -> str:
 # -- the snapshot -------------------------------------------------------------------------
 
 
-class Tec:
+class Tec(BundledSnapshot):
+    """The snapshot: {"snapshot", "window", "filers", "outside", ...}."""
+
+    EMPTY = {"snapshot": None, "filers": [], "outside": []}
+
     def __init__(
         self,
         data_dir: Path,
@@ -178,68 +180,24 @@ class Tec:
         bundled_dir: Path | None = None,
         user_agent: str | None = None,
     ):
-        self.data_dir = data_dir
-        self._refresh_fn = refresh_fn
-        self._bundled_dir = bundled_dir
+        super().__init__(data_dir, tec_cache, refresh_fn=refresh_fn, bundled_dir=bundled_dir)
         self._user_agent = user_agent
-        self._doc: tuple[tuple[int, int], dict[str, Any]] | None = None
-        self._indexes: dict[str, NameIndex] = {}
-        self.last_error: str | None = None  # why the last refresh failed, for Settings
-
-    @property
-    def current_path(self) -> Path:
-        return self.data_dir / "current.json"
-
-    @property
-    def meta_path(self) -> Path:
-        return self.data_dir / "meta.json"
 
     @property
     def local_zip(self) -> Path:
         return self.data_dir / LOCAL_ZIP
 
-    def _bundled(self) -> ContextManager[Path]:
-        if self._bundled_dir is not None:
-            return contextlib.nullcontext(self._bundled_dir)
-        return resources.as_file(resources.files(tec_cache) / "data")
-
-    def ensure_seeded(self) -> bool:
-        """Copy in the package's bundled snapshot if we have no data yet; True if copied."""
-        if self.current_path.exists():
-            return False
-        with self._bundled() as source:
-            if not (source / "current.json").exists():
-                return False
-            self.data_dir.mkdir(parents=True, exist_ok=True)
-            for name in ("current.json", "meta.json"):
-                if (source / name).exists():
-                    (self.data_dir / name).write_bytes((source / name).read_bytes())
-        return True
-
-    def reset(self) -> None:
-        """Go back to the bundled snapshot. A zip the voter downloaded into data/tec stays."""
-        for path in (self.current_path, self.meta_path):
+    def _discard(self) -> None:
+        for path in (self.current_path, self.meta_path):  # a zip the voter downloaded into data/tec stays
             path.unlink(missing_ok=True)
-        self._doc = None
-        self.last_error = None
-        self.ensure_seeded()
 
-    async def refresh(self) -> str:
-        """Rebuild the snapshot from TEC's zip (or the voter's downloaded copy): a separate
-        process, since it reads a couple of GB of CSV. Returns tec_cache's summary."""
-        self.ensure_seeded()
+    async def _refresh(self) -> str:
+        """From TEC's zip (or the voter's downloaded copy), in a separate process, since it
+        reads a couple of GB of CSV."""
         zip_path = self.local_zip if self.local_zip.exists() else None
-        try:
-            if self._refresh_fn is not None:
-                result = await asyncio.to_thread(self._refresh_fn, data_dir=self.data_dir, zip_path=zip_path)
-                summary = result.summary() if hasattr(result, "summary") else str(result)
-            else:
-                summary = await self._run_refresh(zip_path)
-        except Exception as exc:
-            self.last_error = str(exc)
-            raise
-        self.last_error = None
-        return summary
+        if self._refresh_fn is not None:
+            return summary_of(await asyncio.to_thread(self._refresh_fn, data_dir=self.data_dir, zip_path=zip_path))
+        return await self._run_refresh(zip_path)
 
     async def _run_refresh(self, zip_path: Path | None) -> str:
         args = [sys.executable, "-m", "tec_cache", "refresh", "--data-dir", str(self.data_dir)]
@@ -256,48 +214,23 @@ class Tec:
             raise TecRefreshError(detail or f"tec_cache exited with code {process.returncode}")
         return out.decode("utf-8", "replace").strip()
 
-    def _signature(self) -> tuple[int, int] | None:
-        try:
-            stat = self.current_path.stat()
-        except FileNotFoundError:
-            return None
-        return stat.st_mtime_ns, stat.st_size
-
-    def document(self) -> dict[str, Any]:
-        """The snapshot: {"snapshot", "window", "filers", "outside", ...}."""
-        signature = self._signature()
-        if signature is None:
-            return {"snapshot": None, "filers": [], "outside": []}
-        if self._doc is None or self._doc[0] != signature:
-            self._doc = (signature, json.loads(self.current_path.read_text(encoding="utf-8")))
-            self._indexes = {}
-        return self._doc[1]
-
-    def meta(self) -> dict[str, Any]:
-        try:
-            return json.loads(self.meta_path.read_text(encoding="utf-8"))
-        except (FileNotFoundError, ValueError):
-            return {}
-
-    def _index(self, key: str) -> NameIndex:
-        document = self.document()  # (re)loads, clearing the indexes when the file changed
-        if key not in self._indexes:
-            index = NameIndex()
-            for entry in document.get(key) or []:
-                first, last = entry.get("first") or "", entry.get("last") or ""
-                if not last:
-                    continue
-                index.add(f"{first} {last}", entry)
-                if entry.get("short"):
-                    index.add(f"{entry['short']} {last}", entry)  # the nickname they go by
-            self._indexes[key] = index
-        return self._indexes[key]
-
     def name_index(self) -> NameIndex:
-        return self._index("filers")
+        return self._index("filers", lambda document: _people_index(document.get("filers") or []))
 
     def outside_index(self) -> NameIndex:
-        return self._index("outside")
+        return self._index("outside", lambda document: _people_index(document.get("outside") or []))
+
+
+def _people_index(entries: list[dict[str, Any]]) -> NameIndex:
+    index = NameIndex()
+    for entry in entries:
+        first, last = entry.get("first") or "", entry.get("last") or ""
+        if not last:
+            continue
+        index.add(f"{first} {last}", entry)
+        if entry.get("short"):
+            index.add(f"{entry['short']} {last}", entry)  # the nickname they go by
+    return index
 
 
 # -- cards ----------------------------------------------------------------------------------
@@ -503,7 +436,7 @@ def cards(tec: Tec, races: list[Race], scopes: dict[str, OfficeScope], county: s
             )
             if not found:
                 continue
-            outside = match_person(spending, candidate.name, None, seat, seats_of=_seats, source=LABEL)
+            outside = match_person(spending, candidate.name, None, seat, seats_of=_seats)
             out.candidates[candidate.key] = card(found[0], found[1], outside[0] if outside else None, window=window)
             found_rows[candidate.key] = found[0]
         if found_rows:

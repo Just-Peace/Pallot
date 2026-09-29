@@ -11,12 +11,11 @@ import datetime as dt
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-from .http_cache import UpstreamError
 from .models import Race
 from .offices import OfficeScope
 from .sources import CardSet, ballotpedia, fec, sos, tec, trackaipac
 from .sources.ballotpedia import BpBallot
-from .sources.sos import Election
+from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
     from .ballot import Services
@@ -38,7 +37,7 @@ async def run(
     elections: dict[int, Election],
     ballot_rows: dict[str, dict[str, Any]],
     bp_ballot: BpBallot | None,
-    use_sos: bool,
+    sos_lookups: Lookups | None,
     use_trackaipac: bool,
     use_fec: bool = False,
     use_tec: bool = False,
@@ -46,15 +45,13 @@ async def run(
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
 ) -> Outcome:
-    """Add cards in place; say what failed."""
+    """Add cards in place; say what failed. ``sos_lookups`` is None when the ballot didn't
+    come from Texas SOS."""
     candidates = [c for race in races for c in race.candidates]
     outcome = Outcome()
     per_source: list[CardSet] = []
-    if use_sos and elections:
-        try:
-            per_source.append(CardSet(candidates=await sos.cards(svc.sos, elections, candidates, ballot_rows)))
-        except UpstreamError as exc:
-            outcome.warnings.append(f"Couldn't load Texas SOS candidate details ({exc}).")
+    if sos_lookups and elections:
+        per_source.append(CardSet(candidates=await sos.cards(svc.sos, elections, candidates, ballot_rows, sos_lookups)))
     if bp_ballot is not None:
         per_source.append(CardSet(candidates=ballotpedia.cards(bp_ballot, races)))
     if use_trackaipac:

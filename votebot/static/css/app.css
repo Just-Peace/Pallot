@@ -324,9 +324,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .source-name { font-weight: 650; font-size: 0.92rem; }
 .source-name-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .source-desc { font-size: 0.78rem; color: var(--muted); margin: 6px 0 4px; }
-.source-warning { font-size: 0.78rem; color: var(--warn); margin: 4px 0; }
-.source-notice { font-size: 0.78rem; color: var(--muted); margin: 4px 0; }
-.source-notice.tone-warn { color: var(--warn); }
+.source-notice, .source-cache, .source-last { font-size: 0.78rem; color: var(--muted); margin: 4px 0; }
+.source-notice.tone-warn, .source-last.tone-warn { color: var(--warn); }
+.source-facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 4px 0; font-size: 0.78rem; }
+.source-facts dt { color: var(--muted); }
+.source-facts dd { margin: 0; overflow-wrap: anywhere; }
 .source-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
 .action-result { color: var(--danger); font-size: 0.82rem; margin: 6px 0 0; }
 .action-result:empty { display: none; }
@@ -535,14 +537,17 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0; font-size: 0.92rem; }
 
 /* Money breakdowns: each row a label (with its note), a bar and the amount. A race's
-   comparison sits above its candidates, the bars in the candidates' party colours. */
+   comparison sits above its candidates, the bars in the candidates' party colours. The
+   rows share the list's columns (subgrid), so every bar starts on the same line and the
+   amounts line up, however wide each amount is. */
 .breakdown { margin: 14px 0; }
 .breakdown-title { font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
   margin: 0 0 6px; }
-.breakdown-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.breakdown-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 12px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content; }
 .breakdown .fine { margin-top: 6px; }
-.share { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content; align-items: center; gap: 2px 12px;
-  font-size: 0.9rem; --bar: var(--accent); }
+.share { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content;
+  grid-template-columns: subgrid; align-items: center; gap: 2px 12px; font-size: 0.9rem; --bar: var(--accent); }
 .share .bar span { background: var(--bar); transition: none; }
 .share.tone-info { --bar: var(--info); }
 .share.tone-warn { --bar: var(--warn); }
@@ -586,10 +591,11 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   .badges, .note { margin-left: 0; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
-  .share { grid-template-columns: minmax(0, 1fr) max-content; grid-template-areas: "label amount" "bar bar"; }
-  .share-label { grid-area: label; }
-  .share .bar { grid-area: bar; }
-  .share-amount { grid-area: amount; }
+  .breakdown-rows { grid-template-columns: minmax(0, 1fr) max-content; }
+  .share { grid-template-columns: minmax(0, 1fr) max-content; grid-template-columns: subgrid; }
+  .share-label { grid-column: 1; grid-row: 1; }
+  .share-amount { grid-column: 2; grid-row: 1; }
+  .share .bar { grid-column: 1 / -1; grid-row: 2; }
   .details-head { padding: 14px 16px 10px; }
   .details-tabs { padding: 0 16px; }
   .tabs { margin: 0 -16px; padding: 0 16px; }

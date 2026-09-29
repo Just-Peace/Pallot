@@ -20,6 +20,7 @@ class SourceInfo:
     cache_tags: tuple[str, ...]  # HttpCache source names holding this source's responses
     refresh_label: str = "Refresh now"
     clear_label: str = "Clear cache"
+    resettable: bool = False  # a bundled snapshot rather than cached responses: "clear" resets to it
 
 
 SOURCES = (
@@ -41,6 +42,7 @@ SOURCES = (
         (),
         refresh_label="Refresh from trackaipac.com",
         clear_label="Reset to bundled snapshot",
+        resettable=True,
     ),
     SourceInfo(fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,)),
     SourceInfo(
@@ -51,6 +53,7 @@ SOURCES = (
         (),
         refresh_label="Refresh from the Texas Ethics Commission (downloads about 1 GB if it changed)",
         clear_label="Reset to bundled snapshot",
+        resettable=True,
     ),
 )
 BY_ID = {info.id: info for info in SOURCES}
@@ -87,6 +90,7 @@ class Admin:
         return SourcesOverview(
             sources=[self._status(info) for info in SOURCES],
             total_bytes=self.svc.cache.file_bytes() + self.svc.sboe.size() + snapshots,
+            last_lookup=self.svc.last_lookup,
         )
 
     def _status(self, info: SourceInfo) -> SourceStatus:
@@ -106,6 +110,7 @@ class Admin:
             label=info.label,
             description=info.description,
             toggleable=info.toggleable,
+            resettable=info.resettable,
             enabled=self.svc.settings.enabled(info.id) if info.toggleable else True,
             busy=info.id in self._busy,
             cache=cache,
@@ -114,21 +119,33 @@ class Admin:
             clear_label=info.clear_label,
             notice=notice,
             notice_tone=tone,
+            last_use=self.svc.last_uses.get(info.id),
         )
 
     def _notice(self, source_id: str) -> tuple[str | None, Tone]:
         """One line under the source's description: what it's missing, or where its data stands."""
+        if source_id == ballotpedia.SOURCE:
+            until = self.svc.ballotpedia.paused_until()
+            if until:
+                return (f"Paused until {iso_utc(until)} after Ballotpedia refused a request; "
+                        "ballots it already sent still show."), "warn"
+            return None, "info"
         if source_id == fec.SOURCE:
             until = self.svc.fec.paused_until()
-            if until:
-                return f"Paused until {iso_utc(until)} after reaching the FEC's hourly limit.", "warn"
+            paused = (f"Paused until {iso_utc(until)} after reaching the FEC's rate limit; "
+                      "what it already sent still shows.") if until else ""
             if not self.svc.fec.keyed:
-                return ("Using the shared DEMO_KEY, so federal races show totals only. For the full breakdown, set "
-                        "VOTEBOT_FEC_API_KEY to a free key from api.data.gov and restart VoteBot."), "warn"
-            return "Using your api.data.gov key.", "info"
+                return " ".join(filter(None, (
+                    paused,
+                    "Using the shared DEMO_KEY, so federal races show totals only. For the full breakdown, set "
+                    f"VOTEBOT_FEC_API_KEY to a free key from {fec.KEY_SIGNUP} and restart VoteBot.",
+                ))), "warn"
+            return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
+        if source_id in (trackaipac.SOURCE, tec.SOURCE):
+            snapshot = self.svc.trackaipac if source_id == trackaipac.SOURCE else self.svc.tec
+            if snapshot.last_error:
+                return f"The last refresh failed and nothing changed: {snapshot.last_error}", "warn"
         if source_id == tec.SOURCE:
-            if self.svc.tec.last_error:
-                return f"The last refresh failed and nothing changed: {self.svc.tec.last_error}", "warn"
             document = self.svc.tec.document()
             if not document.get("snapshot"):
                 return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
@@ -145,9 +162,6 @@ class Admin:
                 if downloaded else "fetched on the first lookup"
             )
             return [Fact(label="SBOE map", value=value)]
-        if source_id == "ballotpedia":
-            until = self.svc.ballotpedia.paused_until()
-            return [Fact(label="Paused", value=f"until {iso_utc(until)} after Ballotpedia refused a request")] if until else []
         if source_id == "trackaipac":
             tracker = self.svc.trackaipac
             meta = tracker.meta()
@@ -167,9 +181,6 @@ class Admin:
                 Fact(label="Last checked", value=meta.get("last_checked") or "never"),
                 Fact(label="Candidates and officeholders", value=str(len(document.get("filers") or []))),
             ]
-        if source_id == fec.SOURCE:
-            until = self.svc.fec.paused_until()
-            return [Fact(label="Paused", value=f"until {iso_utc(until)} after the FEC's hourly limit")] if until else []
         return []
 
     def set_enabled(self, source_id: str, enabled: bool) -> None:
@@ -193,19 +204,25 @@ class Admin:
                     return ActionResult(message=await self.svc.tec.refresh())
                 except Exception as exc:  # tec_cache writes nothing unless the whole refresh succeeds
                     raise AdminError(502, f"Texas Ethics Commission refresh failed; nothing changed. {exc}") from exc
-            refreshed = failed = 0
+            refreshed = failed = skipped = 0
             errors: list[str] = []
+            paused_until: float | None = None
             for tag in info.cache_tags:
                 report = await self.svc.cache.refresh(tag, concurrency=1 if tag in _SLOW else 3)
                 refreshed += report.refreshed
                 failed += report.failed
+                skipped += report.skipped
                 errors += report.errors
+                paused_until = paused_until or report.paused_until
             message = f"Refreshed {refreshed} cached response{'s' if refreshed != 1 else ''}."
             if source_id == "geocoding":
                 await self.svc.sboe.download()
                 message += " Re-downloaded the State Board of Education map."
             if failed:
                 message += f" {failed} failed and kept their old copy ({'; '.join(errors)})."
+            if paused_until:
+                message += (f" {info.label} is paused until {iso_utc(paused_until)} after refusing a request"
+                            + (f", so {skipped} weren't asked." if skipped else "."))
             return ActionResult(message=message)
         finally:
             self._busy.discard(source_id)

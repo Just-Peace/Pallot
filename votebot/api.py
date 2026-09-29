@@ -54,6 +54,7 @@ def create_app(
                 client,
                 min_interval={"nominatim": 1.0, "ballotpedia": 1.0, "fec": 0.1},
                 source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
+                retry_after=config.ttl.retry_after,
             )
             try:
                 svc = Services(
@@ -131,19 +132,6 @@ def create_app(
     @app.post("/api/cache/clear", response_model=ActionResult)
     async def clear_all(request: Request) -> ActionResult:
         return admin(request).clear_all()
-
-    @app.get("/api/sources/trackaipac/data")
-    async def trackaipac_data(request: Request, state: str | None = None) -> Response:
-        """The full cached TrackAIPAC dataset (optionally one state), with an ETag."""
-        tracker = services(request).trackaipac
-        wanted = state.upper() if state else None
-        etag = tracker.etag()[:-1] + (f"-{wanted}" if wanted else "") + '"'
-        if request.headers.get("if-none-match") == etag:
-            return Response(status_code=304, headers={"ETag": etag})
-        document = tracker.document()
-        if wanted:
-            document = {**document, "candidates": tracker.people(wanted)}
-        return JSONResponse(document, headers={"ETag": etag, "Cache-Control": "no-cache"})
 
     app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
     return app

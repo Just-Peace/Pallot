@@ -1,16 +1,13 @@
 // The print-only sheet: the voter's picks in ballot order, to take to the polls.
 
 import { formatDate, h } from "./dom.js";
-import { GROUP_LABELS, GROUP_ORDER, STATES, partyName } from "./labels.js";
+import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyName } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 
 function pickText(race, keys, picks) {
   return keys
     .map((key) => {
-      if (key === WRITE_IN) {
-        const name = picks.writeIn(race.key).trim();
-        return name ? `${name} (write-in)` : "Write-in: ____________________";
-      }
+      if (key === WRITE_IN) return picks.writeInLabel(race.key, "Write-in: ____________________");
       const candidate = race.candidates.find((c) => c.key === key);
       if (!candidate) return null;
       const party = partyName(candidate);
@@ -71,18 +68,14 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank }) {
 
   const state = STATES[ballot.location.state];
   const tips = state?.printTips ?? ["Bring this sheet with you: many polling places don't allow phones in the voting booth."];
-  const d = ballot.districts;
-  const districtLine = [
-    d.cd && `U.S. House ${d.cd}`, d.sd && `State Senate ${d.sd}`, d.hd && `State House ${d.hd}`, d.sboe && `SBOE ${d.sboe}`,
-    d.commissioner && `Commissioner Pct ${d.commissioner}`, d.jp && `JP Pct ${d.jp}`, d.constable && `Constable Pct ${d.constable}`,
-  ].filter(Boolean).join(" · ");
+  const districts = districtLine(ballot.districts, { precinct: " Pct" });
 
   sheet.replaceChildren(
     h("header", {},
       h("h1", {}, "My ballot picks"),
       h("p", {}, [formatDate(ballot.election_date), ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · ")),
       h("p", {}, ballot.location.matched_address || ballot.location.input_address),
-      districtLine ? h("p", { class: "small" }, districtLine) : null),
+      districts ? h("p", { class: "small" }, districts) : null),
     ...(rows ? tables.filter(Boolean) : [h("p", {}, "No picks yet. Pick candidates on the ballot page, then print again.")]),
     h("footer", {},
       h("p", {}, tips.join(" ")),

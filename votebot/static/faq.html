@@ -152,7 +152,7 @@
         <details class="faq">
           <summary>Why does the FEC tab show only totals?</summary>
           <div class="faq-body">
-            <p>VoteBot is using the FEC's shared demonstration key, which allows only a few requests an hour. Whoever runs VoteBot can get a free key at <a href="https://api.data.gov/signup/" target="_blank" rel="noopener noreferrer">api.data.gov</a>, set it as <code>VOTEBOT_FEC_API_KEY</code>, and restart VoteBot. Settings says which key is in use.</p>
+            <p>VoteBot is using the FEC's shared demonstration key, which allows only a few requests an hour. Whoever runs VoteBot can get a free key from the <a href="https://api.open.fec.gov/developers/" target="_blank" rel="noopener noreferrer">OpenFEC developers page</a>, set it as <code>VOTEBOT_FEC_API_KEY</code> (in the environment or VoteBot's <code>.env</code> file), and restart VoteBot. Settings says which key is in use.</p>
           </div>
         </details>
 
@@ -190,7 +190,7 @@
         <details class="faq">
           <summary>Why is Ballotpedia paused?</summary>
           <div class="faq-body">
-            <p>If Ballotpedia refuses a request, VoteBot stops asking it for an hour rather than keep trying. Your ballot is built from the other sources in the meantime.</p>
+            <p>If Ballotpedia refuses a request, VoteBot stops asking it for an hour rather than keep trying. Addresses it already answered for still show its races; for others, your ballot is built from the other sources in the meantime.</p>
           </div>
         </details>
       </section>
@@ -224,7 +224,7 @@
         <details class="faq">
           <summary>How do I delete my picks and my address?</summary>
           <div class="faq-body">
-            <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins and remembered address from this browser. "Clear picks" at the top of your ballot clears just that election's picks and notes.</p>
+            <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes and write-ins from this browser, and "Clear all browser data" also deletes your remembered address and search engine. "Clear picks" at the top of your ballot clears just that election's picks and notes.</p>
             <p>The VoteBot server also keeps a copy of address lookups. <a href="privacy.html#server">Privacy</a> explains how to clear it.</p>
           </div>
         </details>

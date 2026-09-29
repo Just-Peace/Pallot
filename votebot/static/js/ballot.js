@@ -6,7 +6,7 @@ import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
-import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
+import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyPill } from "./labels.js";
 import { Picks, WRITE_IN, loadLastLookup, saveAddressCard, saveLastLookup, settingsStamp } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
@@ -135,10 +135,7 @@ function renderAddress() {
   const card = {
     address: lastRequest.address,
     place: [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
-    districts: [
-      d.cd && `U.S. House ${d.cd}`, d.sd && `State Senate ${d.sd}`, d.hd && `State House ${d.hd}`, d.sboe && `SBOE ${d.sboe}`,
-      d.commissioner && `Commissioner ${d.commissioner}`, d.jp && `JP ${d.jp}`, d.constable && `Constable ${d.constable}`,
-    ].filter(Boolean).join(" · "),
+    districts: districtLine(d),
     matched: location.matched_address || "",
   };
   showAddress(card);
@@ -242,15 +239,12 @@ function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
   };
 }
 
-function writeInText(race) {
-  const name = picks.writeIn(race.key).trim();
-  return name ? `${name} (write-in)` : "Write-in (no name yet)";
-}
-
 function pickedText(race, picked) {
   if (!picked.length) return "Not picked yet";
   return picked
-    .map((key) => (key === WRITE_IN ? writeInText(race) : race.candidates.find((c) => c.key === key)?.name))
+    .map((key) => (key === WRITE_IN
+      ? picks.writeInLabel(race.key, "Write-in (no name yet)")
+      : race.candidates.find((c) => c.key === key)?.name))
     .filter(Boolean)
     .join(", ");
 }

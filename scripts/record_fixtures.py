@@ -6,8 +6,10 @@
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
-the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose ~10 requests
-an hour fit one; set VOTEBOT_FEC_API_KEY for the rest). The TrackAIPAC and Texas Ethics
+the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
+an hour fit one; set VOTEBOT_FEC_API_KEY, in the environment or .env, for the rest). These
+requests skip VoteBot's cache, and with DEMO_KEY they use up the same per-IP allowance as
+a running VoteBot. The TrackAIPAC and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -17,7 +19,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -26,7 +27,7 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from votebot.config import Config  # noqa: E402
+from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
 from votebot.sources import ballotpedia, census, fec, nominatim, sos  # noqa: E402
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
@@ -111,9 +112,7 @@ def record_ballots(client: httpx.Client) -> None:
                  headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"}))
 
 
-def record_fec(client: httpx.Client) -> None:
-    key = os.environ.get("VOTEBOT_FEC_API_KEY") or fec.DEMO_KEY
-
+def record_fec(client: httpx.Client, key: str) -> None:
     def get(path: str, params: dict[str, str]) -> dict:
         response = client.get(f"{fec.API}{path}", params=params, headers={"X-Api-Key": key})
         response.raise_for_status()
@@ -135,7 +134,7 @@ def record_fec(client: httpx.Client) -> None:
 
     whole = {"cycle": str(FEC_CYCLE), "election_full": "true"}
     try:
-        for candidate_id in FEC_DETAILS if key != fec.DEMO_KEY else FEC_DETAILS[:1]:
+        for candidate_id in FEC_DETAILS if key != DEMO_KEY else FEC_DETAILS[:1]:
             ranked = {**whole, "candidate_id": candidate_id, "per_page": "100", "sort": "-total"}
             save(f"fec_totals_{candidate_id}.json", get(f"/candidate/{candidate_id}/totals/", whole))
             save(f"fec_by_size_{candidate_id}.json",
@@ -185,11 +184,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
     parser.add_argument("--only", choices=("ballots", "fec", "tec", "trackaipac"), help="record just this part")
     only = parser.parse_args(argv).only
-    with httpx.Client(timeout=90, headers={"User-Agent": Config.user_agent}, follow_redirects=True) as client:
+    config = load_config()
+    with httpx.Client(timeout=90, headers={"User-Agent": config.user_agent}, follow_redirects=True) as client:
         if only in (None, "ballots"):
             record_ballots(client)
         if only in (None, "fec"):
-            record_fec(client)
+            record_fec(client, config.fec_api_key)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

@@ -221,6 +221,11 @@ def get_ballot(client: TestClient, address: str = "capitol", **extra: Any) -> di
     return response.json()
 
 
+def last_use(client: TestClient, source_id: str) -> dict[str, Any] | None:
+    """How the last lookup used a source, as the Settings page shows it."""
+    return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == source_id)["last_use"]
+
+
 def find_race(ballot: dict[str, Any], name: str, *, maybe: bool = False) -> dict[str, Any] | None:
     races = [r for s in ballot["maybe"] for r in s["races"]] if maybe else ballot["races"]
     return next((r for r in races if r["name"] == name), None)
