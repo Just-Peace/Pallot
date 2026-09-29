@@ -1,0 +1,1363 @@
+{
+ "success": true,
+ "count": 16,
+ "data": [
+  {
+   "poll_id": "93338",
+   "pollster_id": "1107",
+   "sponsor_ids": "447",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-27",
+   "end_date": "2026-08-31",
+   "filter_value": "house_general",
+   "race_id": 17584,
+   "url": "https://hub.nationaljournal.com/can-democrats-school-ramaswamy-in-ohio",
+   "pollster": {
+    "pollster_id": 1107,
+    "name": "Normington, Petts & Associates",
+    "display_name": "Normington, Petts & Associates",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "House Majority PAC",
+      "internal": null,
+      "partisan": "DEM",
+      "sponsor_id": 447,
+      "display_name": "House Majority PAC (hybrid PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://hub.nationaljournal.com/can-democrats-school-ramaswamy-in-ohio",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "DEM",
+       "answer": "Garcia",
+       "answer_id": 23899,
+       "candidate": {
+        "name": "Johnny Garcia",
+        "party": "DEM",
+        "person_id": 38840
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38840
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "De La Cruz",
+       "answer_id": 23900,
+       "candidate": {
+        "name": "Carlos De La Cruz",
+        "party": "REP",
+        "person_id": 38841
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38841
+      }
+     ],
+     "race_id": 17584,
+     "seat_name": "District 35",
+     "created_at": "2026-09-02 13:23:19 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 232700,
+     "sample_size": 500,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93052",
+   "pollster_id": "1950",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-27",
+   "end_date": "2026-07-30",
+   "filter_value": "house_general",
+   "race_id": 17524,
+   "url": "https://static1.squarespace.com/static/67aa7aa3e284b002cd6a420e/t/6a8debe648e3721adb0534b6/1787685864204/SouthTexasCDs2026.pdf",
+   "pollster": {
+    "pollster_id": 1950,
+    "name": "Texas Southern University",
+    "display_name": "Texas Southern University Barbara Jordan Public Policy Research and Survey Center",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://static1.squarespace.com/static/67aa7aa3e284b002cd6a420e/t/6a8debe648e3721adb0534b6/1787685864204/SouthTexasCDs2026.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 50,
+       "party": "DEM",
+       "answer": "Pulido",
+       "answer_id": 23800,
+       "candidate": {
+        "name": "Bobby Pulido",
+        "party": "DEM",
+        "person_id": 38244
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38244
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "De La Cruz",
+       "answer_id": 23801,
+       "candidate": {
+        "name": "Monica De La Cruz",
+        "party": "REP",
+        "person_id": 38245
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38245
+      }
+     ],
+     "race_id": 17524,
+     "seat_name": "District 15",
+     "created_at": "2026-08-26 13:03:39 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 232537,
+     "sample_size": 700,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93052",
+   "pollster_id": "1950",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-27",
+   "end_date": "2026-07-30",
+   "filter_value": "house_general",
+   "race_id": 17581,
+   "url": "https://static1.squarespace.com/static/67aa7aa3e284b002cd6a420e/t/6a8debe648e3721adb0534b6/1787685864204/SouthTexasCDs2026.pdf",
+   "pollster": {
+    "pollster_id": 1950,
+    "name": "Texas Southern University",
+    "display_name": "Texas Southern University Barbara Jordan Public Policy Research and Survey Center",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://static1.squarespace.com/static/67aa7aa3e284b002cd6a420e/t/6a8debe648e3721adb0534b6/1787685864204/SouthTexasCDs2026.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 42,
+       "party": "REP",
+       "answer": "Flores",
+       "answer_id": 23797,
+       "candidate": {
+        "name": "Eric Flores",
+        "party": "DEM",
+        "person_id": 39100
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 39100
+      },
+      {
+       "pct": 45,
+       "party": "DEM",
+       "answer": "Gonzalez",
+       "answer_id": 23796,
+       "candidate": {
+        "name": "Vicente Gonzalez",
+        "party": "DEM",
+        "person_id": 38837
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38837
+      },
+      {
+       "pct": 3,
+       "party": "GRE",
+       "answer": "Espinoza",
+       "answer_id": 23798,
+       "candidate": {
+        "name": "Eddie Espinoza",
+        "party": "GRE",
+        "person_id": 40415
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40415
+      },
+      {
+       "pct": 2,
+       "party": "LIB",
+       "answer": "Royal",
+       "answer_id": 23799,
+       "candidate": {
+        "name": "Chris Royal",
+        "party": "LIB",
+        "person_id": 40416
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40416
+      }
+     ],
+     "race_id": 17581,
+     "seat_name": "District 34",
+     "created_at": "2026-08-26 13:00:54 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 232534,
+     "sample_size": 700,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93052",
+   "pollster_id": "1950",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-27",
+   "end_date": "2026-07-30",
+   "filter_value": "house_general",
+   "race_id": 17563,
+   "url": "https://static1.squarespace.com/static/67aa7aa3e284b002cd6a420e/t/6a8debe648e3721adb0534b6/1787685864204/SouthTexasCDs2026.pdf",
+   "pollster": {
+    "pollster_id": 1950,
+    "name": "Texas Southern University",
+    "display_name": "Texas Southern University Barbara Jordan Public Policy Research and Survey Center",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://static1.squarespace.com/static/67aa7aa3e284b002cd6a420e/t/6a8debe648e3721adb0534b6/1787685864204/SouthTexasCDs2026.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 34,
+       "party": "REP",
+       "answer": "Tijerina",
+       "answer_id": 23794,
+       "candidate": {
+        "name": "Tano Tijerina",
+        "party": "DEM",
+        "person_id": 38825
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38825
+      },
+      {
+       "pct": 45,
+       "party": "DEM",
+       "answer": "Cuellar",
+       "answer_id": 23793,
+       "candidate": {
+        "name": "Henry Cuellar",
+        "party": "DEM",
+        "person_id": 38824
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38824
+      },
+      {
+       "pct": 6,
+       "party": "GRE",
+       "answer": "Duran",
+       "answer_id": 23795,
+       "candidate": {
+        "name": "Marlón Durán",
+        "party": "GRE",
+        "person_id": 40414
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40414
+      }
+     ],
+     "race_id": 17563,
+     "seat_name": "District 28",
+     "created_at": "2026-08-26 12:58:25 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 232533,
+     "sample_size": 600,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93054",
+   "pollster_id": "1107",
+   "sponsor_ids": "447",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-23",
+   "end_date": "2026-07-27",
+   "filter_value": "house_general",
+   "race_id": 17524,
+   "url": "https://mailchi.mp/thehousemajoritypac.com/hmp-poll-bobby-pulido-leads-monica-de-la-cruz-in-tx-15",
+   "pollster": {
+    "pollster_id": 1107,
+    "name": "Normington, Petts & Associates",
+    "display_name": "Normington, Petts & Associates",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "House Majority PAC",
+      "internal": null,
+      "partisan": "DEM",
+      "sponsor_id": 447,
+      "display_name": "House Majority PAC (hybrid PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://mailchi.mp/thehousemajoritypac.com/hmp-poll-bobby-pulido-leads-monica-de-la-cruz-in-tx-15",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 51,
+       "party": "DEM",
+       "answer": "Pulido",
+       "answer_id": 23770,
+       "candidate": {
+        "name": "Bobby Pulido",
+        "party": "DEM",
+        "person_id": 38244
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38244
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "De La Cruz",
+       "answer_id": 23771,
+       "candidate": {
+        "name": "Monica De La Cruz",
+        "party": "REP",
+        "person_id": 38245
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38245
+      }
+     ],
+     "race_id": 17524,
+     "seat_name": "District 15",
+     "created_at": "2026-08-04 16:07:28 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 231919,
+     "sample_size": 500,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92838",
+   "pollster_id": "1738",
+   "sponsor_ids": "1780",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-05-18",
+   "end_date": "2026-05-25",
+   "filter_value": "house_general",
+   "race_id": 17524,
+   "url": "https://welcome.team/press-releases/Blog%20Post%20Title%20One-3zaa9-zlxng-67tfc-2sf8d",
+   "pollster": {
+    "pollster_id": 1738,
+    "name": "Applecart",
+    "display_name": "Applecart",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "The Welcome PAC",
+      "internal": null,
+      "partisan": "DEM",
+      "sponsor_id": 1780,
+      "display_name": "WelcomePAC"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://welcome.team/press-releases/Blog%20Post%20Title%20One-3zaa9-zlxng-67tfc-2sf8d",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 48,
+       "party": "DEM",
+       "answer": "Pulido",
+       "answer_id": 23618,
+       "candidate": {
+        "name": "Bobby Pulido",
+        "party": "DEM",
+        "person_id": 38244
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38244
+      },
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "De La Cruz",
+       "answer_id": 23619,
+       "candidate": {
+        "name": "Monica De La Cruz",
+        "party": "REP",
+        "person_id": 38245
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38245
+      }
+     ],
+     "race_id": 17524,
+     "seat_name": "District 15",
+     "created_at": "2026-07-06 17:28:58 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 231076,
+     "sample_size": 802,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92827",
+   "pollster_id": "1500",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": 39100,
+   "state": "Texas",
+   "start_date": "2026-06-14",
+   "end_date": "2026-06-16",
+   "filter_value": "house_general",
+   "race_id": 17581,
+   "url": "https://x.com/EricDFloress/status/2073053353924305365",
+   "pollster": {
+    "pollster_id": 1500,
+    "name": "Ragnar Research Partners",
+    "display_name": "Ragnar Research Partners",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": [
+     {
+      "name": "Eric Flores",
+      "partisan": "REP",
+      "display_name": "Eric Flores",
+      "sponsor_candidate_id": 39100
+     }
+    ]
+   },
+   "questions": [
+    {
+     "url": "https://x.com/EricDFloress/status/2073053353924305365",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "REP",
+       "answer": "Flores",
+       "answer_id": 23648,
+       "candidate": {
+        "name": "Eric Flores",
+        "party": "DEM",
+        "person_id": 39100
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 39100
+      },
+      {
+       "pct": 41,
+       "party": "DEM",
+       "answer": "Gonzalez",
+       "answer_id": 23647,
+       "candidate": {
+        "name": "Vicente Gonzalez",
+        "party": "DEM",
+        "person_id": 38837
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38837
+      }
+     ],
+     "race_id": 17581,
+     "seat_name": "District 34",
+     "created_at": "2026-07-04 13:05:51 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 231000,
+     "sample_size": 400,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92811",
+   "pollster_id": "1939",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": 38825,
+   "state": "Texas",
+   "start_date": "2026-06-21",
+   "end_date": "2026-06-23",
+   "filter_value": "house_general",
+   "race_id": 17563,
+   "url": "https://x.com/birenbomb/status/2072354489642942795?s=20",
+   "pollster": {
+    "pollster_id": 1939,
+    "name": "Pulse Decision Science",
+    "display_name": "Pulse Decision Science",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": [
+     {
+      "name": "Tano Tijerina",
+      "partisan": "REP",
+      "display_name": "Tano Tijerina",
+      "sponsor_candidate_id": 38825
+     }
+    ]
+   },
+   "questions": [
+    {
+     "url": "https://x.com/birenbomb/status/2072354489642942795?s=20",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "Tijerina",
+       "answer_id": 23668,
+       "candidate": {
+        "name": "Tano Tijerina",
+        "party": "DEM",
+        "person_id": 38825
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38825
+      },
+      {
+       "pct": 38,
+       "party": "DEM",
+       "answer": "Cuellar",
+       "answer_id": 23667,
+       "candidate": {
+        "name": "Henry Cuellar",
+        "party": "DEM",
+        "person_id": 38824
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38824
+      }
+     ],
+     "race_id": 17563,
+     "seat_name": "District 28",
+     "created_at": "2026-07-01 17:24:22 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 230964,
+     "sample_size": 400,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92329",
+   "pollster_id": "1497",
+   "sponsor_ids": "452",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-04-25",
+   "end_date": "2026-04-29",
+   "filter_value": "house_general",
+   "race_id": 17581,
+   "url": "https://www.politico.com/news/2026/05/08/gop-polls-show-they-have-a-shot-at-flipping-house-dem-districts-trump-won-00910791",
+   "pollster": {
+    "pollster_id": 1497,
+    "name": "co/efficient",
+    "display_name": "co/efficient",
+    "partisan": "REP",
+    "sponsors": [
+     {
+      "name": "NRCC",
+      "internal": true,
+      "partisan": "REP",
+      "sponsor_id": 452,
+      "display_name": "NRCC"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.politico.com/news/2026/05/08/gop-polls-show-they-have-a-shot-at-flipping-house-dem-districts-trump-won-00910791",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 40,
+       "party": "DEM",
+       "answer": "Gonzalez",
+       "answer_id": 23572,
+       "candidate": {
+        "name": "Vicente Gonzalez",
+        "party": "DEM",
+        "person_id": 38837
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38837
+      },
+      {
+       "pct": 41,
+       "party": "REP",
+       "answer": "Flores",
+       "answer_id": 23573,
+       "candidate": {
+        "name": "Mayra Flores",
+        "party": "REP",
+        "person_id": 38838
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38838
+      }
+     ],
+     "race_id": 17581,
+     "seat_name": "District 34",
+     "created_at": "2026-05-08 13:06:18 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 229315,
+     "sample_size": 777,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "91894",
+   "pollster_id": "383",
+   "sponsor_ids": "447",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-03-10",
+   "end_date": "2026-03-11",
+   "filter_value": "house_general",
+   "race_id": 17548,
+   "url": "https://www.texastribune.org/2026/03/12/brandon-herrera-democrats-texas-23rd-congressional-district-tony-gonzales/",
+   "pollster": {
+    "pollster_id": 383,
+    "name": "PPP",
+    "display_name": "Public Policy Polling",
+    "partisan": "DEM",
+    "sponsors": [
+     {
+      "name": "House Majority PAC",
+      "internal": null,
+      "partisan": "DEM",
+      "sponsor_id": 447,
+      "display_name": "House Majority PAC (hybrid PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.texastribune.org/2026/03/12/brandon-herrera-democrats-texas-23rd-congressional-district-tony-gonzales/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 40,
+       "party": "DEM",
+       "answer": "Padilla Stout",
+       "answer_id": 23515,
+       "candidate": {
+        "name": "Katy Padilla Stout",
+        "party": "DEM",
+        "person_id": 38758
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38758
+      },
+      {
+       "pct": 42,
+       "party": "REP",
+       "answer": "Herrera",
+       "answer_id": 23516,
+       "candidate": {
+        "name": "Brandon Herrera",
+        "party": "REP",
+        "person_id": 38369
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38369
+      }
+     ],
+     "race_id": 17548,
+     "seat_name": "District 23",
+     "created_at": "2026-03-12 13:01:02 UTC",
+     "politician": null,
+     "population": "v",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 227746,
+     "sample_size": 521,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "91354",
+   "pollster_id": "940",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": 38110,
+   "state": "Texas",
+   "start_date": "2025-12-08",
+   "end_date": "2025-12-14",
+   "filter_value": "house_general",
+   "race_id": 17711,
+   "url": "https://files.constantcontact.com/8005845f901/565d8d9f-534a-4a04-a493-f4ad8adfd248.pdf?rdr=true",
+   "pollster": {
+    "pollster_id": 940,
+    "name": "Lake Research",
+    "display_name": "Lake Research Partners",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": [
+     {
+      "name": "Christian Menefee",
+      "partisan": "DEM",
+      "display_name": "Christian Menefee",
+      "sponsor_candidate_id": 38110
+     }
+    ]
+   },
+   "questions": [
+    {
+     "url": "https://files.constantcontact.com/8005845f901/565d8d9f-534a-4a04-a493-f4ad8adfd248.pdf?rdr=true",
+     "cycle": 2025,
+     "party": "DEM",
+     "stage": "runoff",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Menefee",
+       "answer_id": 23466,
+       "candidate": {
+        "name": "Christian Menefee",
+        "party": "DEM",
+        "person_id": 38110
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38110
+      },
+      {
+       "pct": 30,
+       "party": "DEM",
+       "answer": "Edwards",
+       "answer_id": 23467,
+       "candidate": {
+        "name": "Amanda K. Edwards",
+        "party": "DEM",
+        "person_id": 38112
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38112
+      }
+     ],
+     "race_id": 17711,
+     "seat_name": "District 18",
+     "created_at": "2025-12-18 01:20:33 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 225786,
+     "sample_size": 437,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "90861",
+   "pollster_id": "500",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2025-10-07",
+   "end_date": "2025-10-11",
+   "filter_value": "house_general",
+   "race_id": 17711,
+   "url": "https://www.uh.edu/hobby/cd18/",
+   "pollster": {
+    "pollster_id": 500,
+    "name": "U. Houston/YouGov",
+    "display_name": "University of Houston Hobby School of Public Affairs/YouGov",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.uh.edu/hobby/cd18/",
+     "cycle": 2025,
+     "party": "DEM",
+     "stage": "runoff",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Menefee",
+       "answer_id": 23412,
+       "candidate": {
+        "name": "Christian Menefee",
+        "party": "DEM",
+        "person_id": 38110
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38110
+      },
+      {
+       "pct": 26,
+       "party": "DEM",
+       "answer": "Jones",
+       "answer_id": 23413,
+       "candidate": {
+        "name": "Jolanda Jones",
+        "party": "DEM",
+        "person_id": 38113
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38113
+      }
+     ],
+     "race_id": 17711,
+     "seat_name": "District 18",
+     "created_at": "2025-10-16 21:06:27 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 224214,
+     "sample_size": 1200,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    },
+    {
+     "url": "https://www.uh.edu/hobby/cd18/",
+     "cycle": 2025,
+     "party": "DEM",
+     "stage": "runoff",
+     "answers": [
+      {
+       "pct": 36,
+       "party": "DEM",
+       "answer": "Menefee",
+       "answer_id": 23410,
+       "candidate": {
+        "name": "Christian Menefee",
+        "party": "DEM",
+        "person_id": 38110
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38110
+      },
+      {
+       "pct": 34,
+       "party": "DEM",
+       "answer": "Edwards",
+       "answer_id": 23411,
+       "candidate": {
+        "name": "Amanda K. Edwards",
+        "party": "DEM",
+        "person_id": 38112
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38112
+      }
+     ],
+     "race_id": 17711,
+     "seat_name": "District 18",
+     "created_at": "2025-10-16 19:04:14 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 224213,
+     "sample_size": 1200,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    },
+    {
+     "url": "https://www.uh.edu/hobby/cd18/",
+     "cycle": 2025,
+     "party": "DEM",
+     "stage": "runoff",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "DEM",
+       "answer": "Edwards",
+       "answer_id": 23414,
+       "candidate": {
+        "name": "Amanda K. Edwards",
+        "party": "DEM",
+        "person_id": 38112
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38112
+      },
+      {
+       "pct": 26,
+       "party": "DEM",
+       "answer": "Jones",
+       "answer_id": 23415,
+       "candidate": {
+        "name": "Jolanda Jones",
+        "party": "DEM",
+        "person_id": 38113
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38113
+      }
+     ],
+     "race_id": 17711,
+     "seat_name": "District 18",
+     "created_at": "2025-10-16 21:06:28 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 224215,
+     "sample_size": 1200,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "90650",
+   "pollster_id": "383",
+   "sponsor_ids": "447",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2025-09-10",
+   "end_date": "2025-09-11",
+   "filter_value": "house_general",
+   "race_id": 17524,
+   "url": "https://www.the-downballot.com/p/morning-digest-why-democrats-think-be5",
+   "pollster": {
+    "pollster_id": 383,
+    "name": "PPP",
+    "display_name": "Public Policy Polling",
+    "partisan": "DEM",
+    "sponsors": [
+     {
+      "name": "House Majority PAC",
+      "internal": null,
+      "partisan": "DEM",
+      "sponsor_id": 447,
+      "display_name": "House Majority PAC (hybrid PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.the-downballot.com/p/morning-digest-why-democrats-think-be5",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 38,
+       "party": "DEM",
+       "answer": "Pulido",
+       "answer_id": 23400,
+       "candidate": {
+        "name": "Bobby Pulido",
+        "party": "DEM",
+        "person_id": 38244
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38244
+      },
+      {
+       "pct": 41,
+       "party": "REP",
+       "answer": "De La Cruz",
+       "answer_id": 23401,
+       "candidate": {
+        "name": "Monica De La Cruz",
+        "party": "REP",
+        "person_id": 38245
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38245
+      }
+     ],
+     "race_id": 17524,
+     "seat_name": "District 15",
+     "created_at": "2025-09-18 12:57:53 UTC",
+     "politician": null,
+     "population": "v",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 222658,
+     "sample_size": 533,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93589",
+   "pollster_id": "1810",
+   "sponsor_ids": "2090",
+   "sponsor_candidate_id": null,
+   "state": "Montana",
+   "start_date": "2026-09-19",
+   "end_date": "2026-09-24",
+   "filter_value": "house_general",
+   "race_id": 16987,
+   "url": "https://www.montanarightnow.com/elections/aaron-flint-sam-forstag-nearly-tied-for-montana-congressional-district-1/article_96a2f7e1-334a-46c7-9a92-84ccc4c44171.html",
+   "pollster": {
+    "pollster_id": 1810,
+    "name": "American Pulse",
+    "display_name": "American Pulse Research & Polling",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "KULR (NonStop Local Billings)",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2090,
+      "display_name": "KULR-TV (Billings, Mont.)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.montanarightnow.com/elections/aaron-flint-sam-forstag-nearly-tied-for-montana-congressional-district-1/article_96a2f7e1-334a-46c7-9a92-84ccc4c44171.html",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 45.4,
+       "party": "DEM",
+       "answer": "Forstag",
+       "answer_id": 24018,
+       "candidate": {
+        "name": "Sam Forstag",
+        "party": "DEM",
+        "person_id": 38505
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38505
+      },
+      {
+       "pct": 45.9,
+       "party": "REP",
+       "answer": "Flint",
+       "answer_id": 24019,
+       "candidate": {
+        "name": "Aaron Flint",
+        "party": "REP",
+        "person_id": 39696
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 39696
+      },
+      {
+       "pct": 5.4,
+       "party": "LIB",
+       "answer": "Sheedy",
+       "answer_id": 24020,
+       "candidate": {
+        "name": "Nick Sheedy",
+        "party": "LIB",
+        "person_id": 40240
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40240
+      }
+     ],
+     "race_id": 16987,
+     "seat_name": "District 1",
+     "created_at": "2026-09-28 18:55:23 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 233706,
+     "sample_size": 314,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93587",
+   "pollster_id": "204",
+   "sponsor_ids": "447",
+   "sponsor_candidate_id": null,
+   "state": "Ohio",
+   "start_date": "2026-09-22",
+   "end_date": "2026-09-24",
+   "filter_value": "house_general",
+   "race_id": 17336,
+   "url": "https://x.com/cjwarnke/status/2104619061556457603",
+   "pollster": {
+    "pollster_id": 204,
+    "name": "Hart Research Associates",
+    "display_name": "Hart Research Associates",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "House Majority PAC",
+      "internal": null,
+      "partisan": "DEM",
+      "sponsor_id": 447,
+      "display_name": "House Majority PAC (hybrid PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://x.com/cjwarnke/status/2104619061556457603",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 46,
+       "party": "DEM",
+       "answer": "Leonard",
+       "answer_id": 24016,
+       "candidate": {
+        "name": "Don Leonard",
+        "party": "DEM",
+        "person_id": 39871
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 39871
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "Carey",
+       "answer_id": 24017,
+       "candidate": {
+        "name": "Mike Carey",
+        "party": "REP",
+        "person_id": 39302
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 39302
+      }
+     ],
+     "race_id": 17336,
+     "seat_name": "District 15",
+     "created_at": "2026-09-28 18:48:05 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 233705,
+     "sample_size": 500,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93585",
+   "pollster_id": "2029",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Utah",
+   "start_date": "2026-09-21",
+   "end_date": "2026-09-23",
+   "filter_value": "house_general",
+   "race_id": 17599,
+   "url": "https://petercrosbyforcongress.org/press/late-september-internal-polling",
+   "pollster": {
+    "pollster_id": 2029,
+    "name": "Peter Crosby",
+    "display_name": "Peter Crosby",
+    "partisan": "DEM",
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://petercrosbyforcongress.org/press/late-september-internal-polling",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 31.96,
+       "party": "REP",
+       "answer": "Moore",
+       "answer_id": 24015,
+       "candidate": {
+        "name": "Blake Moore",
+        "party": "REP",
+        "person_id": 38989
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38989
+      },
+      {
+       "pct": 34.86,
+       "party": "DEM",
+       "answer": "Crosby",
+       "answer_id": 24014,
+       "candidate": {
+        "name": "Peter Crosby",
+        "party": "DEM",
+        "person_id": 39852
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 39852
+      }
+     ],
+     "race_id": 17599,
+     "seat_name": "District 2",
+     "created_at": "2026-09-28 15:53:53 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "U.S. House",
+     "question_id": 233704,
+     "sample_size": 657,
+     "filter_value": "house_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  }
+ ]
+}

@@ -35,6 +35,8 @@ class Ttls:
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
     fec_backoff: int = HOUR  # after the FEC's rate limit, stop asking for this long
+    polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
+    polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
 
 

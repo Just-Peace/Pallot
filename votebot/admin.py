@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .ballot import Services
 from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
-from .sources import ballotpedia, fec, photon, sos, tec, trackaipac
+from .sources import ballotpedia, fec, photon, polls, sos, tec, trackaipac
 from .text import display_date, display_time, iso_utc
 
 
@@ -69,9 +69,10 @@ SOURCES = (
         refresh_confirm="Refresh first asks the Texas Ethics Commission whether its data has changed. If it has, it "
         "downloads about 1 GB (a minute or two on a fast connection) and rebuilds the data. Continue?",
     ),
+    SourceInfo(polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,)),
 )
 BY_ID = {info.id: info for info in SOURCES}
-_SLOW = {"ballotpedia", "nominatim", "photon"}  # one request at a time when refreshing
+_SLOW = {"ballotpedia", "nominatim", "photon", "polls"}  # one request at a time when refreshing
 
 
 class AdminError(Exception):
@@ -150,6 +151,12 @@ class Admin:
             if until:
                 return (f"Paused until {display_time(until)} after Photon refused a request; "
                         "suggestions it already sent still show."), "warn"
+            return None, "info"
+        if source_id == polls.SOURCE:
+            until = self.svc.polls.paused_until()
+            if until:
+                return (f"Paused until {display_time(until)} after FiftyPlusOne refused a request; "
+                        "polls it already sent still show."), "warn"
             return None, "info"
         if source_id == fec.SOURCE:
             until = self.svc.fec.paused_until()

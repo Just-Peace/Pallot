@@ -25,8 +25,9 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "photon", "sos", "ballotpedia", "trackaipac", "fec", "tec"]
-    geocoding, photon, sos, _, tracker, fec, tec = overview["sources"]
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "photon", "sos", "ballotpedia", "trackaipac", "fec", "tec",
+                                                       "polls"]
+    geocoding, photon, sos, _, tracker, fec, tec, polls = overview["sources"]
     assert geocoding["toggleable"] is False and sos["enabled"] is True and photon["enabled"] is True
     assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
     assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"
@@ -35,6 +36,7 @@ def test_sources_overview(client):
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
     assert tec["notice"] and {"Snapshot", "Money raised since"} <= {f["label"] for f in tec["details"]}
+    assert (polls["label"], polls["toggleable"], polls["notice"]) == ("Polls (FiftyPlusOne)", True, None)
     shown = [s["notice"] or "" for s in overview["sources"]] + [f["value"] for s in overview["sources"] for f in s["details"]]
     assert not [text for text in shown if ISO_TIME.search(text)]
 

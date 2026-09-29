@@ -25,6 +25,7 @@ from .sources.census import Census
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.photon import Photon
+from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Sos
 from .sources.tec import Tec
@@ -73,6 +74,7 @@ def create_app(
                     ),
                     fec=Fec(cache, config.ttl, config.fec_api_key, today),
                     tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
+                    polls=Polls(cache, config.ttl, today),
                     today=today,
                 )
                 await asyncio.to_thread(svc.trackaipac.ensure_seeded)

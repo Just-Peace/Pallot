@@ -545,8 +545,10 @@ dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
   font-size: 0.7rem; background: var(--warn-soft); color: var(--warn); text-align: center; }
 .tab-panel { padding: 14px 0 6px; }
 
-.facts { display: grid; grid-template-columns: minmax(120px, max-content) 1fr; gap: 6px 16px; margin: 10px 0; }
-.facts dt { color: var(--muted); font-size: 0.88rem; }
+/* The labels' column fits the longest label, up to 40%: a long one (a pollster's full name)
+   wraps rather than squeezing the values. */
+.facts { display: grid; grid-template-columns: fit-content(40%) 1fr; gap: 6px 16px; margin: 10px 0; }
+.facts dt { min-width: 120px; color: var(--muted); font-size: 0.88rem; }
 .facts dd { margin: 0; overflow-wrap: anywhere; }
 
 .match { padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.9rem; margin: 8px 0; }
@@ -588,6 +590,21 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .compare-btn { color: var(--accent); border-color: var(--accent); }
 .compare-btn:hover:not(:disabled) { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--accent-soft); }
 .compare-btn .icon { width: 14px; height: 14px; }
+.badge.share-tag { margin-left: 6px; padding: 0 6px; font-size: 0.72rem; vertical-align: 1px; }
+
+/* A poll: one bar with a segment per candidate in their party colour and the rest
+   (undecided or other) left grey, then a legend. */
+.stack-bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--neutral-soft); }
+.stack-bar > span, .stack-legend li { --bar: var(--accent); }
+:is(.stack-bar, .stack-legend) :is([data-party="R"], [data-party="D"], [data-party="L"], [data-party="G"]) { --bar: var(--pick); }
+.stack-bar > span { flex: none; background: var(--bar); }
+.stack-bar > span + span { border-left: 2px solid var(--panel-2); }
+.stack-bar > .rest { background: transparent; }
+.stack-legend { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.88rem; }
+.stack-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.stack-legend strong { font-variant-numeric: tabular-nums; }
+.stack-legend .rest { color: var(--muted); }
+.stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
 
 /* ---- compare dialog ---- */
 

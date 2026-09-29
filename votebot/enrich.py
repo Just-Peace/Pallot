@@ -1,7 +1,7 @@
 """Attach every enabled source's cards to the ballot's candidates and races.
 
-Each source builds SourceCards keyed by candidate (the money sources also build one per
-race, comparing its candidates); a new source only needs its own cards() added here. The
+Each source builds SourceCards keyed by candidate (the money sources and polls also build
+one per race, comparing its candidates); a new source only needs its own cards() added here. The
 frontend renders any card the same way.
 """
 
@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 from .models import Race
 from .offices import OfficeScope
-from .sources import CardSet, ballotpedia, fec, sos, tec, trackaipac
+from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac
 from .sources.ballotpedia import BpBallot
 from .sources.sos import Election, Lookups
 
@@ -41,6 +41,7 @@ async def run(
     use_trackaipac: bool,
     use_fec: bool = False,
     use_tec: bool = False,
+    use_polls: bool = False,
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
@@ -64,6 +65,12 @@ async def run(
             outcome.warnings.append(f"Couldn't load FEC campaign finance ({exc}).")
     if use_tec:
         per_source.append(tec.cards(svc.tec, races, scopes or {}, county))
+    if use_polls:
+        try:
+            per_source.append(await polls.cards(svc.polls, races, day))
+        except polls.PollsUnavailable as exc:
+            outcome.errors[polls.SOURCE] = str(exc)
+            outcome.warnings.append(f"Couldn't load polls from FiftyPlusOne ({exc}).")
 
     for cards in per_source:
         outcome.notes += cards.notes

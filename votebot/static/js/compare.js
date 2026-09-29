@@ -6,7 +6,7 @@
 import { extLink, formatDate, h, slug } from "./dom.js";
 import { partyName } from "./labels.js";
 import { loadUi, saveUi } from "./picks.js";
-import { COUNT, DOLLARS, DOLLARS_SHORT, SHORT_DATE, comparable, howCounted, percent, renderTabs } from "./source-cards.js";
+import { COUNT, DOLLARS, DOLLARS_SHORT, SHORT_DATE, comparable, howCounted, percent, renderTabs, tagBadge } from "./source-cards.js";
 
 const SCALES = [["dollars", "Dollars"], ["share", "Share of their money"]];
 
@@ -81,7 +81,7 @@ function entryRow(entry, largest, byKey, what) {
     title: others.length === 1 ? `Also in ${others[0]}'s list` : others.length ? `Also in the lists of ${others.join(", ")}` : null,
   },
   h("span", { class: "cmp-entry-name" },
-    others.length ? h("span", { class: "cmp-flag", "aria-hidden": "true" }, "⇄") : null, entry.label),
+    others.length ? h("span", { class: "cmp-flag", "aria-hidden": "true" }, "⇄") : null, entry.label, tagBadge(entry)),
   h("span", { class: "cmp-amount", title: entry.amount != null ? DOLLARS.format(entry.amount) : null }, amountText(entry.amount, null)),
   note ? h("span", { class: "cmp-entry-note" }, note) : null,
   others.length ? h("span", { class: "cmp-also" }, `Also: ${others.join(", ")}`) : null,

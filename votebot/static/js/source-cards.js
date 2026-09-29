@@ -4,8 +4,10 @@
 import { extLink, formatDate, h, linkedText, safeUrl } from "./dom.js";
 import { icon } from "./icons.js";
 
-// The FAQ answers that say how each money source's figures are put together.
-const MONEY_FAQ = { fec: "faq.html#fec-money", tec: "faq.html#tec-money" };
+// The FAQ answers that say how each source's figures are put together.
+const MONEY_FAQ = { fec: "faq.html#fec-money", tec: "faq.html#tec-money", polls: "faq.html#polls" };
+// What a race card's date means ("reports through" for the money sources).
+const AS_OF_WORDS = { polls: "latest poll" };
 
 // " · How these figures are put together" after a money card's source line (a new tab, so
 // the ballot and any open dialog stay put); nothing for other sources.
@@ -56,6 +58,11 @@ export function percent(share) {
   return share < 0.01 ? "<1%" : `${Math.round(share * 100)}%`;
 }
 
+// A word such as "for" or "against", as a small badge in the row's tone.
+export function tagBadge(part) {
+  return part.tag ? h("span", { class: `badge share-tag tone-${part.tone || "neutral"}` }, part.tag) : null;
+}
+
 // One row of a breakdown: the label (with its note), a bar, and the amount. partyOf maps a
 // candidate key to their party, so a race comparison's bars take the party colours.
 function shareRow(part, scale, showPercent, partyOf) {
@@ -66,12 +73,42 @@ function shareRow(part, scale, showPercent, partyOf) {
   return h(
     "li",
     { class: `share${part.tone ? ` tone-${part.tone}` : ""}`, "data-party": party || null },
-    h("span", { class: "share-label" }, part.label, note ? h("span", { class: "share-note" }, note) : null),
+    h("span", { class: "share-label" }, part.label, tagBadge(part), note ? h("span", { class: "share-note" }, note) : null),
     h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width: ${width.toFixed(1)}%` })),
     h("span", { class: "share-amount" },
       part.amount == null ? "—" : DOLLARS.format(part.amount),
       showPercent && part.amount != null && scale > 0 ? h("span", { class: "share-pct" }, percent(part.amount / scale)) : null),
   );
+}
+
+const pct = (value) => `${Math.round(value)}%`;
+
+// A "percent" Breakdown (a poll): one bar with a segment per part and the rest left grey,
+// then a legend. Medians taken one candidate at a time can add up to a little over 100;
+// then the segments share the whole bar.
+function stackedBar(item, partyOf) {
+  const shown = item.parts.filter((p) => p.amount != null && p.amount > 0);
+  const sum = shown.reduce((total, p) => total + p.amount, 0);
+  const whole = Math.max(100, sum);
+  const rest = 100 - sum;
+  const described = [...shown.map((p) => `${p.label} ${pct(p.amount)}`), rest >= 0.5 ? `undecided or other ${pct(rest)}` : null];
+  const partyAttr = (part) => (part.candidate_key && partyOf ? partyOf(part.candidate_key) : null);
+  return [
+    h("div", { class: "stack-bar", role: "img", "aria-label": described.filter(Boolean).join(", ") },
+      shown.map((part) => h("span", {
+        "data-party": partyAttr(part), style: `width: ${((part.amount / whole) * 100).toFixed(1)}%`, title: `${part.label} ${pct(part.amount)}`,
+      })),
+      rest >= 0.5 ? h("span", { class: "rest", style: `width: ${rest.toFixed(1)}%`, title: `Undecided / other ${pct(rest)}` }) : null),
+    h("ul", { class: "stack-legend" },
+      item.parts.map((part) => h("li", { "data-party": partyAttr(part) },
+        h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
+        h("span", {}, part.label),
+        part.amount != null ? h("strong", {}, pct(part.amount)) : h("span", { class: "muted" }, part.note || "no figure"))),
+      rest >= 0.5
+        ? h("li", { class: "rest" }, h("span", { class: "cmp-swatch", "aria-hidden": "true" }), h("span", {}, "Undecided / other"),
+            h("strong", {}, pct(rest)))
+        : null),
+  ];
 }
 
 // A Breakdown: labelled bars. With a total they're shares of it (and show a %); without
@@ -84,7 +121,9 @@ export function breakdownBlock(item, partyOf = null, action = null) {
     "section",
     { class: "breakdown" },
     action ? h("div", { class: "breakdown-head" }, title, action) : title,
-    h("ul", { class: "breakdown-rows" }, item.parts.map((part) => shareRow(part, scale, Boolean(item.total), partyOf))),
+    item.unit === "percent"
+      ? stackedBar(item, partyOf)
+      : h("ul", { class: "breakdown-rows" }, item.parts.map((part) => shareRow(part, scale, Boolean(item.total), partyOf))),
     item.note ? h("p", { class: "fine" }, item.note) : null,
   );
 }
@@ -94,22 +133,23 @@ export function comparable(race) {
   return (race.cards || []).filter((card) => card.comparison?.candidates.length > 1);
 }
 
-// A race's money comparison (one per money source), shown above its candidates. With
-// ``onCompare``, the first one has a button for the Compare dialog.
+// A race's cards (money raised per money source, then polls), shown above its candidates.
+// With ``onCompare``, the first comparable one has a button for the Compare dialog.
 export function raceMoney(race, onCompare = null) {
   if (!race.cards?.length) return null;
   const partyOf = (key) => race.candidates.find((c) => c.key === key)?.party || null;
+  const [first] = comparable(race);
   let button = null;
-  if (onCompare && comparable(race).length) {
+  if (onCompare && first) {
     button = h("button", { type: "button", class: "icon-btn compare-btn with-icon" }, icon("bars"), "Compare candidates");
     button.addEventListener("click", onCompare);
   }
-  return race.cards.map((card, i) =>
+  return race.cards.map((card) =>
     h("div", { class: "race-money" },
-      card.breakdowns.map((b, j) => breakdownBlock(b, partyOf, i === 0 && j === 0 ? button : null)),
+      card.breakdowns.map((b, j) => breakdownBlock(b, partyOf, card === first && j === 0 ? button : null)),
       h("p", { class: "fine" },
         `From ${card.label}`,
-        card.as_of ? `, reports through ${formatDate(card.as_of, SHORT_DATE)}` : "",
+        card.as_of ? `, ${AS_OF_WORDS[card.source] || "reports through"} ${formatDate(card.as_of, SHORT_DATE)}` : "",
         card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
         howCounted(card))));
 }

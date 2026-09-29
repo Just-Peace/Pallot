@@ -1,10 +1,10 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, tec, trackaipac)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
-the address suggestions two (Photon).
+the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT))
 
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
-from votebot.sources import ballotpedia, census, fec, nominatim, photon, sos  # noqa: E402
+from votebot.sources import ballotpedia, census, fec, nominatim, photon, polls, sos  # noqa: E402
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -165,6 +165,25 @@ def record_fec(client: httpx.Client, key: str) -> None:
               "Set VOTEBOT_FEC_API_KEY, or run --only fec again in an hour.")
 
 
+def record_polls(client: httpx.Client) -> None:
+    """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
+    polls plus a few from other states."""
+    for kind in polls.KINDS:
+        rows, offset = [], 0
+        while True:
+            response = client.get(polls.API, headers=polls.HEADERS, params={
+                "offset": str(offset), "limit": str(polls.PAGE), "filterValue": kind, "sortBy": "created_at", "dir": "DESC"})
+            response.raise_for_status()
+            page = response.json().get("data") or []
+            rows += page
+            if len(page) < polls.PAGE:
+                break
+            offset += polls.PAGE
+        texas = [row for row in rows if row.get("state") == polls.STATE]
+        others = [row for row in rows if row.get("state") != polls.STATE][:3]
+        save(f"polls_{kind}.json", {"success": True, "count": len(texas + others), "data": texas + others})
+
+
 def record_tec() -> None:
     """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
     bundled = ROOT / "tec_cache" / "data"
@@ -194,7 +213,8 @@ def record_trackaipac() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "tec", "trackaipac"), help="record just this part")
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "tec", "trackaipac"),
+                        help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
     with httpx.Client(timeout=90, headers={"User-Agent": config.user_agent}, follow_redirects=True) as client:
@@ -204,6 +224,8 @@ def main(argv: list[str] | None = None) -> int:
             record_suggest(client)
         if only in (None, "fec"):
             record_fec(client, config.fec_api_key)
+        if only in (None, "polls"):
+            record_polls(client)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

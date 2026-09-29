@@ -45,7 +45,7 @@ def test_capitol_ballot(client):
     assert all(r["group"] == "local" for r in special["races"]) and any(r["seats"] > 1 for r in special["races"])
 
     paxton = senate["candidates"][0]
-    assert sources_of(paxton) == ["sos", "ballotpedia", "trackaipac", "fec"]
+    assert sources_of(paxton) == ["sos", "ballotpedia", "trackaipac", "fec", "polls"]
     tap = paxton["cards"][2]
     assert tap["match"]["confidence"] == "exact"
     watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
@@ -58,7 +58,7 @@ def test_capitol_ballot(client):
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "photon": None, "sos": "used", "ballotpedia": "used", "trackaipac": "used",
-                        "fec": "used", "tec": statuses["tec"]}  # suggestions are only asked for while typing
+                        "fec": "used", "tec": statuses["tec"], "polls": "used"}  # suggestions are only asked for while typing
     assert ballot["warnings"] == []
 
 
@@ -66,7 +66,7 @@ def test_federal_races_get_fec_money(client):
     ballot = get_ballot(client)
     senate, house = find_race(ballot, "U.S. Senator"), find_race(ballot, "U.S. Representative District 10")
 
-    [comparison] = senate["cards"]
+    comparison, _polls = senate["cards"]
     assert comparison["source"] == "fec" and comparison["url"].endswith("/elections/senate/TX/2026/")
     raised = {p["label"]: p["amount"] for p in comparison["breakdowns"][0]["parts"]}
     assert raised == {"Ken Paxton": 9248698.53, "James Talarico": 68560930.42, "Ted Brown": 7459.52}
@@ -76,7 +76,10 @@ def test_federal_races_get_fec_money(client):
     talarico = next(c for c in senate["candidates"] if c["name"] == "James Talarico")
     fec = next(card for card in talarico["cards"] if card["source"] == "fec")
     assert fec["match"]["confidence"] == "exact" and fec["as_of"] == "2026-06-30"
-    assert [b["text"] for b in fec["badges"]] == ["FEC: raised $68.6M", "Outside spending: $4.1M for · $705K against"]
+    assert [(b["text"], b["tone"]) for b in fec["badges"]] == [
+        ("FEC: raised $68.6M", "neutral"), ("Outside spending for: $4.1M", "info"), ("Outside spending against: $705K", "warn"),
+    ]
+    assert all("none of it went to the campaign" in b["hint"] for b in fec["badges"][1:])
     assert fec["badges"][0]["url"] == "https://www.fec.gov/data/candidate/S6TX00479/?cycle=2026&election_full=true"
     assert [b["title"] for b in fec["breakdowns"]] == [
         "Where the money came from", "Donations by size", "Where donors live", "Top donors' employers", "Outside spending",
@@ -113,7 +116,9 @@ def test_federal_race_comparison(client):
     assert sum(r["values"][1]["amount"] for r in home["rows"]) == pytest.approx(home["totals"][talarico])
     assert all(r["values"][1]["count"] for r in home["rows"])
     assert list(sections["Top donors' employers"]["columns"]) == [talarico]
-    assert {e["note"] for e in sections["Outside spending"]["columns"][talarico]} == {"for", "against"}
+    outside = sections["Outside spending"]["columns"][talarico]
+    assert {(e["tag"], e["tone"]) for e in outside} == {("for", "info"), ("against", "warn")}
+    assert not any(e["note"] for e in outside) and "None of this went to the campaigns" in sections["Outside spending"]["note"]
 
 
 def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, upstream):
@@ -157,7 +162,7 @@ def test_ballotpedia_off(client):
     assert "special" not in maybe
     assert last_use(client, "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
-    assert sources_of(senate["candidates"][0]) == ["sos", "trackaipac", "fec"]
+    assert sources_of(senate["candidates"][0]) == ["sos", "trackaipac", "fec", "polls"]
 
 
 def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):

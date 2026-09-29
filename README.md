@@ -21,7 +21,7 @@ Tests:
 ```bash
 uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's and tec_cache's own tests
 uv run pytest -m live                      # smoke tests against the real services (the FEC one needs an FEC key)
-uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|tec|trackaipac)
+uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|polls|tec|trackaipac)
 ```
 
 ## Using it
@@ -41,7 +41,8 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
   - the largest donors (the FEC groups them by employer);
   - outside spending.
 
-  **Compare candidates** on a race's money box puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together.
+  **Compare candidates** on a race's money box puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together. Outside spending is marked with a blue "for" or an amber "against" the candidate; none of it went to the campaign.
+- **Polls:** U.S. Senate, U.S. House and Governor races with public polls show one bar under the money box: each candidate's median share, in their party's colour, with the rest (undecided and others) in gray. The median is over each pollster's latest poll of the matchup actually on the ballot, likely voters where a poll asked them. Each candidate's **Polls** tab lists the polls. Most House districts have no polls, so they show no bar.
 - **Write-ins:** every race ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button
@@ -64,6 +65,7 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | from `trackaipac_cache/` (see below) |
 | FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. The shared `DEMO_KEY` only allows race totals; set `VOTEBOT_FEC_API_KEY` to a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/) for the rest |
 | Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | from `tec_cache/` (see below), built from TEC's nightly CSV export |
+| FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's |
 
 The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from numbers the voter types in; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot".
 
@@ -96,19 +98,20 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
   - address suggestions: 30 days
   - Ballotpedia: 24 hours
   - FEC: 7 days (a year for past elections)
+  - polls: 24 hours
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see `votebot/config.py`.
 - The Texas Ethics Commission data comes with VoteBot (`tec_cache/`), so lookups never contact TEC; it's only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - Concurrent identical requests share one fetch. If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup.
 - Only answers that succeed are cached. A source that fails before answering once has nothing to fall back on.
-- If Ballotpedia or Photon refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If Ballotpedia, Photon or FiftyPlusOne refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address, `scripts/record_fixtures.py` and the live tests included.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
 
 The **Settings** page (`settings.html`, linked from the left pane):
 - picks the web search engine;
-- turns address suggestions, Texas SOS, Ballotpedia, TrackAIPAC, the FEC and the Texas Ethics Commission on or off;
+- turns address suggestions, Texas SOS, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source, plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
@@ -154,7 +157,7 @@ votebot/
   http_cache.py     persistent request cache       enrich.py   adds each source's cards to candidates
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
-  sources/          census, nominatim, photon, sboe, sos, ballotpedia, trackaipac, fec, tec
+  sources/          census, nominatim, photon, sboe, sos, ballotpedia, trackaipac, fec, tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
                     compare.py: the Compare dialog's sections, shared by the FEC and TEC)
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,

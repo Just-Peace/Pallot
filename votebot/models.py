@@ -47,17 +47,20 @@ class Share(BaseModel):
     count: int | None = None
     note: str | None = None
     tone: Tone | None = None
+    tag: str | None = None  # a word shown as a badge in the row's tone ("for", "against")
     candidate_key: str | None = None  # in a race comparison, whose row this is (for the party colour)
 
 
 class Breakdown(BaseModel):
     """Money split into parts, drawn as labelled bars. With a ``total`` the bars are shares
-    of it (and show a %); without one they are scaled to the largest part."""
+    of it (and show a %); without one they are scaled to the largest part. In "percent"
+    the amounts are percentages of one whole (a poll), drawn as a single stacked bar."""
 
     title: str
     parts: list[Share] = Field(default_factory=list)
     total: float | None = None
     note: str | None = None
+    unit: Literal["dollars", "percent"] = "dollars"
 
 
 class CompareValue(BaseModel):

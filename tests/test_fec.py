@@ -157,5 +157,5 @@ def test_the_key_is_sent_but_never_stored(make_app, upstream, tmp_path):
 def test_fec_off(client):
     client.put("/api/sources/fec", json={"enabled": False})
     ballot = get_ballot(client)
-    assert not find_race(ballot, "U.S. Senator")["cards"]
+    assert [card["source"] for card in find_race(ballot, "U.S. Senator")["cards"]] == ["polls"]
     assert last_use(client, "fec")["status"] == "off"

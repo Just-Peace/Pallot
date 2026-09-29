@@ -29,6 +29,16 @@ def test_trackaipac_badge_per_list_without_money_when_none_is_shown():
     assert all(b.url for b in badges) and not any(b.hint for b in badges)
 
 
+def test_trackaipac_notes_link_to_the_site_not_to_votebot():
+    person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"], "listings": [listing(
+        "watchlist", 0, notes=["[This candidate is pro-israel.](/james-talarico)",
+                               "Said so [on X](https://x.com/someone/status/1) and [here](/endorsements)."])]}
+    assert trackaipac.card(person, EXACT, "2026-09-27").quotes == [
+        "[This candidate is pro-israel.](https://www.trackaipac.com/james-talarico)",
+        "Said so [on X](https://x.com/someone/status/1) and [here](https://www.trackaipac.com/endorsements).",
+    ]
+
+
 def test_ballotpedia_profile_badge_links_to_the_profile():
     race = BpRace(1, "U.S. Senate Texas", "State", "Texas", "federal", 1, "https://ballotpedia.org/race", ())
     with_survey = BpCandidate(7, "Ken Paxton", "R", "Republican Party", False, False, "On the Ballot",
