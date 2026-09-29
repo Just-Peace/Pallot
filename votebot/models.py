@@ -258,6 +258,16 @@ class ElectionDate(BaseModel):
     has_primaries: bool
 
 
+class AddressSuggestion(BaseModel):
+    label: str  # "1100 Congress Avenue, Austin, TX 78701"
+    street_only: bool  # only the street is known there: the house number is the one typed
+
+
+class SuggestResult(BaseModel):
+    enabled: bool  # suggestions are on in Settings
+    suggestions: list[AddressSuggestion]
+
+
 class CacheStatus(BaseModel):
     entries: int
     bytes: int
@@ -278,6 +288,7 @@ class SourceStatus(BaseModel):
     details: list[Fact]
     refresh_label: str
     clear_label: str
+    refresh_confirm: str | None = None  # asked before refreshing, when a refresh sends or downloads a lot
     notice: str | None = None  # one line shown under the description, e.g. what the source is missing
     notice_tone: Tone = "info"
     last_use: SourceUse | None = None  # in the last lookup

@@ -1,9 +1,10 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, tec, trackaipac)
 
-The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia).
+The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
+the address suggestions two (Photon).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -29,7 +30,7 @@ sys.path.insert(0, str(ROOT))
 
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
-from votebot.sources import ballotpedia, census, fec, nominatim, sos  # noqa: E402
+from votebot.sources import ballotpedia, census, fec, nominatim, photon, sos  # noqa: E402
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -50,6 +51,9 @@ TRACKAIPAC_PEOPLE = (
 FEC_CYCLE = 2026
 FEC_RACES = ("TX-SEN", "TX-10")  # the Capitol ballot's federal races
 FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
+# What a voter might have typed so far: an address OpenStreetMap has only the street of,
+# and a street name that other streets' house numbers also match.
+SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}
 
 
 def save(name: str, data: object) -> None:
@@ -110,6 +114,14 @@ def record_ballots(client: httpx.Client) -> None:
         save(f"ballotpedia_{name}.json",
              get(ballotpedia.URL, params={"long": f"{lon:.5f}", "lat": f"{lat:.5f}", "include_volunteer": "true"},
                  headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"}))
+
+
+def record_suggest(client: httpx.Client) -> None:
+    for name, text in SUGGEST.items():
+        response = client.get(photon.URL, params={"q": photon.normalize(text), "limit": "10", "lang": "en",
+                                                  "bbox": photon.TEXAS_BBOX})
+        response.raise_for_status()
+        save(f"photon_{name}.json", response.json())
 
 
 def record_fec(client: httpx.Client, key: str) -> None:
@@ -182,12 +194,14 @@ def record_trackaipac() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "fec", "tec", "trackaipac"), help="record just this part")
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "tec", "trackaipac"), help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
     with httpx.Client(timeout=90, headers={"User-Agent": config.user_agent}, follow_redirects=True) as client:
         if only in (None, "ballots"):
             record_ballots(client)
+        if only in (None, "suggest"):
+            record_suggest(client)
         if only in (None, "fec"):
             record_fec(client, config.fec_api_key)
     if only in (None, "tec"):

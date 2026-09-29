@@ -6,7 +6,7 @@
 import { extLink, formatDate, h, slug } from "./dom.js";
 import { partyName } from "./labels.js";
 import { loadUi, saveUi } from "./picks.js";
-import { COUNT, DOLLARS, DOLLARS_SHORT, SHORT_DATE, comparable, percent, renderTabs } from "./source-cards.js";
+import { COUNT, DOLLARS, DOLLARS_SHORT, SHORT_DATE, comparable, howCounted, percent, renderTabs } from "./source-cards.js";
 
 const SCALES = [["dollars", "Dollars"], ["share", "Share of their money"]];
 
@@ -138,7 +138,8 @@ function comparisonPanel(race) {
       h("p", { class: "fine" },
         `From ${card.label}`,
         card.as_of ? `, reports through ${formatDate(card.as_of, SHORT_DATE)}` : "",
-        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null));
+        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
+        howCounted(card)));
   };
 }
 

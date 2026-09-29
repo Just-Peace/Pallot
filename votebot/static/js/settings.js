@@ -5,7 +5,7 @@
 
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
-import { formatBytes, formatDate, h, relativeTime } from "./dom.js";
+import { formatBytes, formatDate, h, linkedText, relativeTime } from "./dom.js";
 import { clearBrowserData, clearPicksAndNotes, markSettingsChanged } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 
@@ -89,6 +89,7 @@ function sourceRow(source) {
   });
 
   refreshButton.addEventListener("click", async () => {
+    if (source.refresh_confirm && !confirm(source.refresh_confirm)) return; // it sends or downloads a lot
     refreshButton.disabled = true;
     clearButton.disabled = true;
     refreshButton.textContent = "Refreshing…";
@@ -131,7 +132,7 @@ function sourceRow(source) {
         ? h("label", { class: "switch", for: `toggle-${source.id}` }, toggle, name)
         : h("span", { class: "source-name-wrap" }, name, h("span", { class: "pill" }, "Always on"))),
     h("p", { class: "source-desc" }, source.description),
-    source.notice ? h("p", { class: `source-notice tone-${source.notice_tone || "info"}` }, source.notice) : null,
+    source.notice ? h("p", { class: `source-notice tone-${source.notice_tone || "info"}` }, linkedText(source.notice)) : null,
     cacheLine(source),
     detailList(source),
     lastUseLine(source),
@@ -175,7 +176,9 @@ function initSearchEngine() {
 }
 
 document.querySelector("#clear-all").addEventListener("click", async () => {
-  if (!confirm("Clear every cache? The next lookups will fetch everything again.")) return;
+  if (!confirm("Clear everything the server saved from every source, and reset TrackAIPAC and the Texas Ethics Commission "
+    + "to the data that came with VoteBot? A refreshed Texas Ethics Commission snapshot is thrown away. "
+    + "The next lookups will fetch everything again.")) return;
   try {
     const { message } = await api.post("/api/cache/clear");
     await load();

@@ -12,6 +12,7 @@ import { Picks, WRITE_IN, loadLastLookup, saveAddressCard, saveLastLookup, setti
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
 import { badgeList, raceMoney, renderTabs } from "./source-cards.js";
+import { attachSuggestions } from "./suggest.js";
 
 const $ = (selector) => document.querySelector(selector);
 const form = $("#lookup-form");
@@ -584,6 +585,7 @@ form.addEventListener("submit", (event) => {
   lookup(readForm());
 });
 electionSelect.addEventListener("change", syncPartyField);
+attachSuggestions(addressInput);
 
 hydrateIcons();
 

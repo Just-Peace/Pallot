@@ -19,7 +19,7 @@ from fastapi.testclient import TestClient
 
 from votebot.api import create_app
 from votebot.config import Config
-from votebot.sources import ballotpedia
+from votebot.sources import ballotpedia, photon
 from votebot.sources.census import normalize_address
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -33,6 +33,7 @@ ADDRESSES = {
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
 }
+SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}  # as in scripts/record_fixtures.py
 
 
 def load(name: str) -> Any:
@@ -90,6 +91,7 @@ class Upstream:
         self.ballotpedia_status: int | None = None
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
+        self.photon_status: int | None = None  # e.g. 429 when Photon throttles us
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
     def count(self, host_part: str) -> int:
@@ -133,6 +135,11 @@ class Upstream:
             if params["lat"] == f"{lat:.5f}" and params["long"] == f"{lon:.5f}":
                 return _file("ballotpedia_capitol.json")
             return httpx.Response(200, json={"success": True, "data": {"districts": [], "elections": []}})
+        if url.host == "photon.komoot.io":
+            if self.photon_status:
+                return httpx.Response(self.photon_status)
+            name = next((name for name, text in SUGGEST.items() if photon.normalize(text) == params["q"]), None)
+            return _file(f"photon_{name}.json") if name else httpx.Response(200, json={"type": "FeatureCollection", "features": []})
         if url.host == "data.capitol.texas.gov":
             return httpx.Response(200, content=sboe_zip())
         if url.host == "api.open.fec.gov":

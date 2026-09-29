@@ -56,9 +56,9 @@ def test_capitol_ballot(client):
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia
 
-    statuses = {s["id"]: s["last_use"]["status"] for s in client.get("/api/sources").json()["sources"]}
-    assert statuses == {"geocoding": "used", "sos": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
-                        "tec": statuses["tec"]}
+    statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
+    assert statuses == {"geocoding": "used", "photon": None, "sos": "used", "ballotpedia": "used", "trackaipac": "used",
+                        "fec": "used", "tec": statuses["tec"]}  # suggestions are only asked for while typing
     assert ballot["warnings"] == []
 
 

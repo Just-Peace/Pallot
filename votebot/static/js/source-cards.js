@@ -4,6 +4,16 @@
 import { extLink, formatDate, h, linkedText, safeUrl } from "./dom.js";
 import { icon } from "./icons.js";
 
+// The FAQ answers that say how each money source's figures are put together.
+const MONEY_FAQ = { fec: "faq.html#fec-money", tec: "faq.html#tec-money" };
+
+// " · How these figures are put together" after a money card's source line (a new tab, so
+// the ballot and any open dialog stay put); nothing for other sources.
+export function howCounted(card) {
+  const href = MONEY_FAQ[card.source];
+  return href ? [" · ", extLink(href, "How these figures are put together")] : null;
+}
+
 // A badge with a url links to that source's page for the candidate (opens a new tab).
 function badge(item, source) {
   const title = [item.hint, source ? `From ${source}` : null].filter(Boolean).join(" · ") || null;
@@ -100,7 +110,8 @@ export function raceMoney(race, onCompare = null) {
       h("p", { class: "fine" },
         `From ${card.label}`,
         card.as_of ? `, reports through ${formatDate(card.as_of, SHORT_DATE)}` : "",
-        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null)));
+        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
+        howCounted(card))));
 }
 
 export function cardPanel(card) {
@@ -118,7 +129,8 @@ export function cardPanel(card) {
       : null,
     (card.breakdowns || []).map((b) => breakdownBlock(b)),
     card.links.length ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label)))) : null,
-    h("p", { class: "fine" }, asOf(card), card.as_of && card.url ? " · " : null, card.url ? extLink(card.url, `Open ${card.label}`) : null),
+    h("p", { class: "fine" }, asOf(card), card.as_of && card.url ? " · " : null, card.url ? extLink(card.url, `Open ${card.label}`) : null,
+      howCounted(card)),
   );
 }
 

@@ -32,6 +32,7 @@ from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
 from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
+from .sources.photon import Photon
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
 from .sources.tec import Tec
@@ -70,6 +71,7 @@ class Services:
     cache: HttpCache
     census: Census
     nominatim: Nominatim
+    photon: Photon
     sboe: SboeMap
     sos: Sos
     ballotpedia: Ballotpedia

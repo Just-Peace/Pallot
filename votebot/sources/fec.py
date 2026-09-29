@@ -20,7 +20,7 @@ from ..config import DEMO_KEY, Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, last_first, match_person
 from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard
-from ..text import display_date, display_office, display_org, display_person, iso_utc, money, money_short
+from ..text import display_date, display_office, display_org, display_person, display_time, money, money_short
 from . import CardSet, compare
 
 SOURCE = "fec"
@@ -126,7 +126,7 @@ class Fec:
                 return await self.cache.get_json(SOURCE, spec, ttl=ttl)
             except UpstreamError as exc:
                 if exc.until:  # paused: nothing cached for this request
-                    raise FecUnavailable(f"paused until {iso_utc(exc.until)} after reaching the FEC's rate limit") from exc
+                    raise FecUnavailable(f"paused until {display_time(exc.until)} after reaching the FEC's rate limit") from exc
                 if exc.status == 429:
                     raise FecUnavailable("reached the FEC's rate limit") from exc
                 if exc.status == 403:
@@ -213,7 +213,8 @@ def _sizes(rows: list[dict[str, Any]] | None) -> Breakdown | None:
         title="Donations by size",
         parts=parts,
         total=sum(p.amount or 0 for p in parts),
-        note="Donations from individuals, grouped by how much each donor gave. The smallest group includes unitemized donations.",
+        note="Donations from individuals, each by its own amount. The smallest group includes the small donations "
+        "campaigns don't itemize.",
     )
 
 
@@ -413,7 +414,7 @@ def comparison(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details:
         compare.bars("Where the money came from",
                      each(lambda k: _where_from(more[k].totals or {}, money_of[k].raised, span))),
         compare.bars("Donations by size", each(lambda k: _sizes(more[k].sizes)),
-                     note="Donations from individuals, grouped by how much each donor gave. The smallest group includes "
+                     note="Donations from individuals, each by its own amount. The smallest group includes the small "
                      "unitemized donations."),
         compare.bars("Where donors live", each(lambda k: _home_or_away(more[k].states, home, home_name)),
                      note="Itemized donations from individuals (over $200 in total from one donor), by the donor's state."),

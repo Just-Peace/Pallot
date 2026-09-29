@@ -1,14 +1,17 @@
 // JSON calls to the VoteBot backend, with FastAPI's error detail surfaced as the message.
 
-async function request(method, url, body) {
+// ``signal`` (an AbortController's) cancels the call; the AbortError is passed on as it is.
+async function request(method, url, body, { signal } = {}) {
   let response;
   try {
     response = await fetch(url, {
       method,
       headers: body === undefined ? {} : { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
+      signal,
     });
-  } catch {
+  } catch (error) {
+    if (error.name === "AbortError") throw error;
     throw new Error("Can't reach the VoteBot server. Is it still running?");
   }
   const data = await response.json().catch(() => null);
@@ -23,7 +26,7 @@ async function request(method, url, body) {
 }
 
 export const api = {
-  get: (url) => request("GET", url),
+  get: (url, options) => request("GET", url, undefined, options),
   post: (url, body = {}) => request("POST", url, body),
   put: (url, body) => request("PUT", url, body),
 };

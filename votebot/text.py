@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import email.utils
 import re
 
 _LOWER_WORDS = {"OF", "THE", "AT", "AND", "FOR", "IN", "ON", "TO"}
@@ -116,3 +117,23 @@ def display_date(value: str | dt.date | None) -> str | None:
         except ValueError:
             return None
     return f"{value:%b} {value.day}, {value.year}" if value else None
+
+
+def display_time(value: float | str | None) -> str | None:
+    """A moment in the server's local time, which is the voter's when VoteBot runs on their
+    computer: a timestamp, or "2026-09-28T18:25:03+00:00" (no zone means UTC), or an HTTP
+    date ("Mon, 28 Sep 2026 18:18:01 GMT") -> "Sep 28, 2026, 1:25 PM"."""
+    if value is None or value == "":
+        return None
+    if isinstance(value, str):
+        try:
+            moment = dt.datetime.fromisoformat(value)
+        except ValueError:
+            try:
+                moment = email.utils.parsedate_to_datetime(value)
+            except (TypeError, ValueError):
+                return None
+        moment = (moment if moment.tzinfo else moment.replace(tzinfo=dt.timezone.utc)).astimezone()
+    else:
+        moment = dt.datetime.fromtimestamp(value)
+    return f"{moment:%b} {moment.day}, {moment.year}, {moment.hour % 12 or 12}:{moment:%M} {'AM' if moment.hour < 12 else 'PM'}"

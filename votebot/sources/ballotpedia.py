@@ -20,7 +20,7 @@ from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, match_unique
 from ..models import Badge, Fact, Link, Match, Race, SourceCard
-from ..text import iso_utc
+from ..text import display_time, iso_utc
 
 SOURCE = "ballotpedia"
 LABEL = "Ballotpedia"
@@ -240,7 +240,7 @@ class Ballotpedia:
             got = await self.cache.get_json(SOURCE, spec, ttl=self.ttl.ballotpedia)
         except UpstreamError as exc:
             if exc.until:
-                raise BallotpediaUnavailable(f"paused until {iso_utc(exc.until)} after Ballotpedia refused a request") from exc
+                raise BallotpediaUnavailable(f"paused until {display_time(exc.until)} after Ballotpedia refused a request") from exc
             raise BallotpediaUnavailable(str(exc)) from exc
         return parse(got.value, day, got.fetched_at)
 
