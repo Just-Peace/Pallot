@@ -6,6 +6,11 @@ time. A row keeps the request itself and the lifetimes it was stored with, so re
 can re-issue it without knowing what it was for. Decoded values also sit in a small
 in-memory LRU, which matters for the 2.6 MB statewide candidate list.
 
+When a request fails, its last good copy is served (marked stale) and the source isn't
+asked for it again for ``retry_after`` seconds. A source can also be paused as a whole
+when it answers with certain statuses (Ballotpedia refusing us, the FEC's rate limit):
+while paused, whatever is stored is served and nothing is fetched, not even by refresh().
+
 Cached values are shared between callers: treat them as read-only.
 """
 
@@ -21,9 +26,11 @@ import time
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Collection
 
 import httpx
+
+from .text import iso_utc
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS responses (
@@ -80,12 +87,14 @@ class Cached:
 
 
 class UpstreamError(Exception):
-    """A source could not be reached and nothing was cached to fall back on."""
+    """A source could not be reached, or is paused (``until``), and nothing was cached to
+    fall back on."""
 
-    def __init__(self, source: str, message: str, status: int | None = None):
+    def __init__(self, source: str, message: str, status: int | None = None, until: float | None = None):
         super().__init__(f"{source}: {message}")
         self.source = source
         self.status = status
+        self.until = until
 
 
 @dataclass
@@ -94,8 +103,13 @@ class CallStats:
 
     external_calls: int = 0
     cache_hits: int = 0
+    calls: dict[str, int] = field(default_factory=dict)  # source -> external calls
     stale_sources: set[str] = field(default_factory=set)
     oldest: dict[str, float] = field(default_factory=dict)  # source -> oldest fetched_at used
+
+    def called(self, source: str) -> None:
+        self.external_calls += 1
+        self.calls[source] = self.calls.get(source, 0) + 1
 
     def used(self, source: str, fetched_at: float) -> None:
         self.oldest[source] = min(fetched_at, self.oldest.get(source, fetched_at))
@@ -129,6 +143,8 @@ class RefreshReport:
     refreshed: int
     failed: int
     errors: tuple[str, ...] = ()
+    skipped: int = 0  # not asked, because the source is paused
+    paused_until: float | None = None
 
 
 def value_is_empty(value: Any, path: tuple[str, ...] = ()) -> bool:
@@ -150,9 +166,22 @@ def describe_error(exc: Exception) -> str:
     return f"bad response ({type(exc).__name__})"
 
 
+def _status(exc: Exception) -> int | None:
+    return exc.response.status_code if isinstance(exc, httpx.HTTPStatusError) else None
+
+
+def _retry_flag(key: str) -> str:
+    return f"retry:{key}"
+
+
+def _pause_flag(source: str) -> str:
+    return f"paused:{source}"
+
+
 class HttpCache:
     """``source_headers`` are added to every request of that source when it is sent, and are
-    never stored or part of the cache key: that's where API keys go."""
+    never stored or part of the cache key: that's where API keys go. ``retry_after`` is how
+    long a failed request keeps serving its old copy before the source is asked again."""
 
     def __init__(
         self,
@@ -162,6 +191,7 @@ class HttpCache:
         min_interval: dict[str, float] | None = None,
         source_headers: dict[str, dict[str, str]] | None = None,
         memory_items: int = 32,
+        retry_after: float = 0.0,
         clock: Callable[[], float] = time.time,
     ):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -179,6 +209,8 @@ class HttpCache:
         self._source_headers = {source: dict(headers) for source, headers in (source_headers or {}).items()}
         self._last_call: dict[str, float] = {}
         self._throttle_locks: dict[str, asyncio.Lock] = {}
+        self._retry_after = retry_after
+        self._pause_on: dict[str, tuple[frozenset[int], float]] = {}
 
     def close(self) -> None:
         self._db.close()
@@ -196,13 +228,20 @@ class HttpCache:
 
         ``empty_ttl`` applies instead of ``ttl`` when the value (or its part at
         ``empty_at``) is empty. If a fetch fails, the expired copy is returned marked
-        stale; UpstreamError only when there is no copy at all. Concurrent calls for the
-        same request share one fetch.
+        stale, and keeps being returned without asking for ``retry_after``; UpstreamError
+        only when there is no copy at all. While the source is paused: the stored copy,
+        fresh or not, or UpstreamError with ``until``. Concurrent calls for the same
+        request share one fetch.
         """
         key = spec.key
         meta = self._meta(key)
         if meta and meta[1] > self._clock():
             return self._hit(source, Cached(self._value(key, meta[0]), meta[0]))
+        until = self.paused_until(source)
+        if meta and (until or self.flag_until(_retry_flag(key))):
+            return self._hit(source, Cached(self._value(key, meta[0]), meta[0], stale=True))
+        if until:
+            raise UpstreamError(source, f"paused until {iso_utc(until)}", until=until)
 
         task = self._inflight.get(key)
         joined = task is not None
@@ -213,17 +252,17 @@ class HttpCache:
         result = await asyncio.shield(task)
         return self._hit(source, result) if joined else result
 
-    def cached(self, source: str, spec: RequestSpec) -> Cached | None:
-        """The stored copy of ``spec`` without asking the source (marked stale once it has
-        expired), or None if there isn't one. For sources that are pausing their requests."""
-        meta = self._meta(spec.key)
-        if meta is None:
-            return None
-        stale = meta[1] <= self._clock()
-        stats = current_calls()
-        if stale and stats:
-            stats.stale_sources.add(source)
-        return self._hit(source, Cached(self._value(spec.key, meta[0]), meta[0], stale=stale))
+    def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
+        """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
+        self._pause_on[source] = (frozenset(statuses), seconds)
+
+    def paused_until(self, source: str) -> float | None:
+        return self.flag_until(_pause_flag(source))
+
+    def _refused(self, source: str, exc: Exception) -> None:
+        rule = self._pause_on.get(source)
+        if rule and _status(exc) in rule[0]:
+            self.set_flag(_pause_flag(source), source, rule[1])
 
     def _settle(self, key: str, task: asyncio.Future[Cached]) -> None:
         self._inflight.pop(key, None)
@@ -237,10 +276,12 @@ class HttpCache:
         try:
             value = await self._request(source, spec)
         except (httpx.HTTPError, ValueError) as exc:
+            self._refused(source, exc)
             meta = self._meta(spec.key)
             if meta is None:
-                status = exc.response.status_code if isinstance(exc, httpx.HTTPStatusError) else None
-                raise UpstreamError(source, describe_error(exc), status) from exc
+                raise UpstreamError(source, describe_error(exc), _status(exc)) from exc
+            if self._retry_after:
+                self.set_flag(_retry_flag(spec.key), source, self._retry_after)
             if stats:
                 stats.stale_sources.add(source)
                 stats.used(source, meta[0])
@@ -255,7 +296,7 @@ class HttpCache:
         await self._throttle(source)
         stats = current_calls()
         if stats:
-            stats.external_calls += 1
+            stats.called(source)
         headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
         response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=headers)
         response.raise_for_status()
@@ -277,6 +318,8 @@ class HttpCache:
         if stats:
             stats.cache_hits += 1
             stats.used(source, cached.fetched_at)
+            if cached.stale:
+                stats.stale_sources.add(source)
         return cached
 
     # -- storage -----------------------------------------------------------------
@@ -325,6 +368,7 @@ class HttpCache:
                     ttl, empty_ttl, json.dumps(list(empty_at)), len(text.encode("utf-8")),
                 ),
             )
+            self._db.execute("DELETE FROM flags WHERE name = ?", (_retry_flag(spec.key),))
         self._remember(spec.key, now, value)
 
     # -- Settings page -----------------------------------------------------------
@@ -354,27 +398,41 @@ class HttpCache:
         return removed
 
     async def refresh(self, source: str, *, concurrency: int = 3) -> RefreshReport:
-        """Re-fetch every stored request for ``source``; failures keep their old copy."""
+        """Re-fetch every stored request for ``source``; failures keep their old copy. While
+        the source is paused (also when a refusal pauses it partway through), the rest are
+        skipped rather than asked."""
         with self._lock:
             rows = self._db.execute(
                 "SELECT request, ttl, empty_ttl, empty_at FROM responses WHERE source = ?", (source,)
             ).fetchall()
         gate = asyncio.Semaphore(max(1, concurrency))
+        skipped = 0
 
         async def one(request: str, ttl: float, empty_ttl: float | None, empty_at: str) -> str | None:
+            nonlocal skipped
             spec = RequestSpec.loads(request)
             async with gate:
+                if self.paused_until(source):
+                    skipped += 1
+                    return None
                 try:
                     value = await self._request(source, spec)
                 except (httpx.HTTPError, ValueError) as exc:
+                    self._refused(source, exc)
                     return f"{spec.url}: {describe_error(exc)}"
             self._store(spec, source, value, self._clock(), ttl, empty_ttl, tuple(json.loads(empty_at)))
             return None
 
         errors = [e for e in await asyncio.gather(*(one(*row) for row in rows)) if e]
-        return RefreshReport(refreshed=len(rows) - len(errors), failed=len(errors), errors=tuple(errors[:3]))
+        return RefreshReport(
+            refreshed=len(rows) - len(errors) - skipped,
+            failed=len(errors),
+            errors=tuple(errors[:3]),
+            skipped=skipped,
+            paused_until=self.paused_until(source),
+        )
 
-    # -- flags (e.g. "Ballotpedia refused us, pause until …") --------------------
+    # -- flags: sources paused after a refusal, requests waiting to be retried ------
 
     def set_flag(self, name: str, source: str, ttl: float) -> None:
         with self._lock:

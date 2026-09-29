@@ -1,5 +1,5 @@
 // The web search behind each candidate's "Web search" link. The engine is a per-browser
-// choice from the Settings pane; Google unless changed.
+// choice on the Settings page; Google unless changed.
 
 import { loadUi, saveUi } from "./picks.js";
 

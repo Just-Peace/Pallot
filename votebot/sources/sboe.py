@@ -168,7 +168,7 @@ class SboeMap:
         """Fetch the map, check it parses into all districts, then replace the stored copy."""
         stats = current_calls()
         if stats:
-            stats.external_calls += 1
+            stats.called("sboe")
         response = await self._client.get(KML_URL, follow_redirects=True)
         response.raise_for_status()
         districts = await asyncio.to_thread(parse_zip, response.content)

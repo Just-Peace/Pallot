@@ -2,10 +2,11 @@
 
 One call per congressional race lists everyone who filed for that seat with their totals.
 That is enough for the race's money comparison and works with the shared DEMO_KEY. With
-a free api.data.gov key (VOTEBOT_FEC_API_KEY), each candidate on the ballot gets five more
-calls: where the money came from, donation sizes, donors' states, donors' employers, and
-outside spending for and against. Everything goes through HttpCache for a week; the key
-travels in a header that HttpCache never stores.
+a free key (VOTEBOT_FEC_API_KEY, from https://api.open.fec.gov/developers/), each candidate
+on the ballot gets five more calls: where the money came from, donation sizes, donors'
+states, donors' employers, and outside spending for and against. Everything goes through
+HttpCache for a week; the key travels in a header that HttpCache never stores. A 429 (the
+rate limit) pauses the FEC for an hour, serving only what's cached meanwhile.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ import datetime as dt
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from ..config import Ttls
+from ..config import DEMO_KEY, Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, last_first, match_person
 from ..models import Badge, Breakdown, Fact, Link, Match, Race, Share, SourceCard
@@ -30,13 +31,12 @@ DESCRIPTION = (
 )
 API = "https://api.open.fec.gov/v1"
 SITE = "https://www.fec.gov/data"
-DEMO_KEY = "DEMO_KEY"
-LIMIT_FLAG = "fec:limited"
+KEY_SIGNUP = "https://api.open.fec.gov/developers/"
 HOUSE_DISCLOSURES = "https://disclosures-clerk.house.gov/FinancialDisclosure"
 SENATE_DISCLOSURES = "https://efdsearch.senate.gov/search/"
 KEY_NOTE = (
     "Federal races show FEC totals only. For where each candidate's money comes from, set VOTEBOT_FEC_API_KEY "
-    "to a free key from api.data.gov and restart VoteBot."
+    f"to a free key from {KEY_SIGNUP} and restart VoteBot."
 )
 
 _PARTIES = (("DEMOCRAT", "D"), ("REPUBLICAN", "R"), ("LIBERTARIAN", "L"), ("GREEN", "G"), ("INDEPENDENT", "I"))
@@ -50,7 +50,7 @@ _NOT_EMPLOYERS = {
 
 
 class FecUnavailable(Exception):
-    """The FEC couldn't be asked (hourly limit, refused key, down) and nothing was cached."""
+    """The FEC couldn't be asked (rate limit, refused key, down) and nothing was cached."""
 
 
 def cycle_of(day: dt.date) -> int:
@@ -111,28 +111,24 @@ class Fec:
         self.keyed = bool(api_key) and api_key != DEMO_KEY
         self.today = today
         self._gate = asyncio.Semaphore(4)
+        cache.pause_on(SOURCE, (429,), ttl.fec_backoff)
 
     def paused_until(self) -> float | None:
-        return self.cache.flag_until(LIMIT_FLAG)
+        return self.cache.paused_until(SOURCE)
 
     def lifetime(self, day: dt.date | None) -> float:
         return self.ttl.past_election if day and day < self.today() else self.ttl.fec
 
     async def _get(self, path: str, params: dict[str, str], ttl: float) -> Cached:
         spec = RequestSpec("GET", f"{API}{path}", params=params)
-        until = self.paused_until()
-        if until:  # over the hourly limit: what we have, or nothing
-            cached = self.cache.cached(SOURCE, spec)
-            if cached:
-                return cached
-            raise FecUnavailable(f"paused until {iso_utc(until)} after reaching the FEC's hourly limit")
         async with self._gate:
             try:
                 return await self.cache.get_json(SOURCE, spec, ttl=ttl)
             except UpstreamError as exc:
+                if exc.until:  # paused: nothing cached for this request
+                    raise FecUnavailable(f"paused until {iso_utc(exc.until)} after reaching the FEC's rate limit") from exc
                 if exc.status == 429:
-                    self.cache.set_flag(LIMIT_FLAG, SOURCE, self.ttl.fec_backoff)
-                    raise FecUnavailable("reached the FEC's hourly request limit") from exc
+                    raise FecUnavailable("reached the FEC's rate limit") from exc
                 if exc.status == 403:
                     raise FecUnavailable("the FEC refused the API key; check VOTEBOT_FEC_API_KEY") from exc
                 raise FecUnavailable(str(exc)) from exc

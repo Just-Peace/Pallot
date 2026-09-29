@@ -158,10 +158,13 @@ class ElectionRef(BaseModel):
 
 
 class SourceUse(BaseModel):
+    """How one lookup used a source ("stale": it served a copy it couldn't refresh)."""
+
     id: str
     label: str
     status: Literal["used", "off", "error", "stale", "unused"]
-    as_of: str | None = None
+    as_of: str | None = None  # the oldest data it served
+    calls: int = 0  # external requests it made (0: everything came from the cache)
     message: str | None = None
 
 
@@ -169,6 +172,12 @@ class Meta(BaseModel):
     external_calls: int
     cache_hits: int
     elapsed_ms: int
+
+
+class LastLookup(Meta):
+    """The latest ballot lookup since VoteBot started, for the Settings page."""
+
+    at: str
 
 
 class Ballot(BaseModel):
@@ -181,7 +190,6 @@ class Ballot(BaseModel):
     measures: list[Measure]
     notes: list[str]
     warnings: list[str]
-    sources: list[SourceUse]
     meta: Meta
 
 
@@ -217,6 +225,7 @@ class SourceStatus(BaseModel):
     label: str
     description: str
     toggleable: bool
+    resettable: bool  # comes with a bundled snapshot: "clear" resets to it
     enabled: bool
     busy: bool
     cache: CacheStatus
@@ -225,11 +234,13 @@ class SourceStatus(BaseModel):
     clear_label: str
     notice: str | None = None  # one line shown under the description, e.g. what the source is missing
     notice_tone: Tone = "info"
+    last_use: SourceUse | None = None  # in the last lookup
 
 
 class SourcesOverview(BaseModel):
     sources: list[SourceStatus]
     total_bytes: int
+    last_lookup: LastLookup | None = None
 
 
 class SourceToggle(BaseModel):

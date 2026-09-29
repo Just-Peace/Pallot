@@ -13,7 +13,7 @@ import asyncio
 import datetime as dt
 import time
 import zipfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable
 
 import httpx
@@ -22,8 +22,8 @@ from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .models import (
-    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionRef, Location, MaybeSection,
-    Measure, Meta, Race, SourceUse,
+    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionRef, LastLookup, Location,
+    MaybeSection, Measure, Meta, Race, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Settings
@@ -33,7 +33,7 @@ from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.sboe import SboeMap
-from .sources.sos import Election, Lookups, Sos, still_running
+from .sources.sos import Election, Lookups, Sos, find_county, still_running
 from .sources.tec import Tec
 from .sources.trackaipac import TrackAipac
 from .text import display_office, display_person, iso_utc
@@ -77,6 +77,8 @@ class Services:
     fec: Fec
     tec: Tec
     today: Callable[[], dt.date] = dt.date.today
+    last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
+    last_uses: dict[str, SourceUse] = field(default_factory=dict)
 
 
 @dataclass
@@ -248,8 +250,8 @@ class _Builder:
             every_race,
             elections={e.id: e for e, _ in sos_data.orders} if sos_data else {},
             ballot_rows=self.ballot_rows,
-            bp_ballot=bp_ballot if self.use_bp else None,
-            use_sos=sos_data is not None,
+            bp_ballot=bp_ballot,
+            sos_lookups=sos_data.lookups if sos_data else None,
             use_trackaipac=self.use_tap,
             use_fec=self.use_fec,
             use_tec=self.use_tec,
@@ -266,6 +268,13 @@ class _Builder:
             refs = [election_ref(e) for e, _ in sos_data.orders if e.id in used]
         else:
             refs = [ElectionRef(name="Ballotpedia sample ballot", date=ballot_day.isoformat() if ballot_day else None)]
+        meta = Meta(
+            external_calls=self.calls.external_calls,
+            cache_hits=self.calls.cache_hits,
+            elapsed_ms=int((time.monotonic() - self.started) * 1000),
+        )
+        self.svc.last_lookup = LastLookup(at=iso_utc(time.time()), **meta.model_dump())
+        self.svc.last_uses = {use.id: use for use in self._sources(location)}
         return Ballot(
             election_date=ballot_day.isoformat() if ballot_day else None,
             elections=refs,
@@ -279,12 +288,7 @@ class _Builder:
             ],
             notes=self.notes,
             warnings=self.warnings,
-            sources=self._sources(location),
-            meta=Meta(
-                external_calls=self.calls.external_calls,
-                cache_hits=self.calls.cache_hits,
-                elapsed_ms=int((time.monotonic() - self.started) * 1000),
-            ),
+            meta=meta,
         )
 
     # -- gathering -----------------------------------------------------------------
@@ -317,9 +321,8 @@ class _Builder:
     async def _sos(self, elections: list[Election], place: Place) -> SosData | None:
         sos = self.svc.sos
         try:
-            county_id, counties, lookups = await asyncio.gather(
-                sos.county_id(place.county, place.county_fips), sos.counties(), sos.lookups()
-            )
+            counties, lookups = await asyncio.gather(sos.counties(), sos.lookups())
+            county_id = find_county(counties, place.county, place.county_fips)
             if county_id is None:
                 self.warnings.append(f"Texas SOS doesn't list {place.county} County.")
                 return None
@@ -470,44 +473,41 @@ class _Builder:
                     )
 
     def _sources(self, location: Location) -> list[SourceUse]:
+        """How this lookup used each source, for the Settings page."""
+
         def status(source_id: str, label: str, on: bool, tags: tuple[str, ...]) -> SourceUse:
             if not on:
                 return SourceUse(id=source_id, label=label, status="off")
+            calls = sum(self.calls.calls.get(t, 0) for t in tags)
             if source_id in self.errors:
-                return SourceUse(id=source_id, label=label, status="error", message=self.errors[source_id])
+                return SourceUse(id=source_id, label=label, status="error", calls=calls, message=self.errors[source_id])
             used = [self.calls.oldest[t] for t in tags if t in self.calls.oldest]
             if not used:
-                return SourceUse(id=source_id, label=label, status="unused")
+                return SourceUse(id=source_id, label=label, status="unused", calls=calls)
             stale = any(t in self.calls.stale_sources for t in tags)
-            return SourceUse(id=source_id, label=label, status="stale" if stale else "used", as_of=iso_utc(min(used)))
+            return SourceUse(
+                id=source_id, label=label, status="stale" if stale else "used", as_of=iso_utc(min(used)), calls=calls
+            )
 
-        geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim"))
+        def snapshot(source_id: str, label: str, on: bool, document: Callable[[], dict[str, Any]]) -> SourceUse:
+            if not on:
+                return SourceUse(id=source_id, label=label, status="off")
+            taken = document().get("snapshot")
+            return SourceUse(
+                id=source_id,
+                label=label,
+                status="used" if taken else "unused",
+                as_of=taken,
+                message=None if taken else f"no {label} data yet; refresh it in Settings",
+            )
+
+        geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim", "sboe"))
         geocoding.message = "OpenStreetMap + US Census" if location.geocoder == "nominatim" else "US Census"
-        tracker = SourceUse(id="trackaipac", label="TrackAIPAC", status="off")
-        if self.use_tap:
-            snapshot = self.svc.trackaipac.document().get("snapshot")
-            tracker = SourceUse(
-                id="trackaipac",
-                label="TrackAIPAC",
-                status="used" if snapshot else "unused",
-                as_of=snapshot,
-                message=None if snapshot else "no TrackAIPAC data yet; refresh it in Settings",
-            )
-        ethics = SourceUse(id="tec", label="Texas Ethics Commission", status="off")
-        if self.use_tec:
-            snapshot = self.svc.tec.document().get("snapshot")
-            ethics = SourceUse(
-                id="tec",
-                label="Texas Ethics Commission",
-                status="used" if snapshot else "unused",
-                as_of=snapshot,
-                message=None if snapshot else "no TEC snapshot yet; refresh it in Settings",
-            )
         return [
             geocoding,
             status("sos", "Texas SOS", self.use_sos, ("sos",)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
-            tracker,
+            snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             status("fec", "FEC", self.use_fec, ("fec",)),
-            ethics,
+            snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
         ]

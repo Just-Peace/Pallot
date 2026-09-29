@@ -100,6 +100,64 @@ async def test_failed_refresh_serves_the_old_copy(tmp_path):
     assert stats.stale_sources == {"demo"}
 
 
+async def test_a_failed_request_is_not_retried_for_a_while(tmp_path):
+    clock = Clock()
+    with respx.mock() as router:
+        route = router.get(URL).mock(
+            side_effect=[httpx.Response(200, json={"v": "old"}), httpx.Response(503), httpx.Response(200, json={"v": "new"})]
+        )
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, retry_after=300, clock=clock)
+            await cache.get_json("demo", SPEC, ttl=60)
+            clock.now += 120
+            assert (await cache.get_json("demo", SPEC, ttl=60)).stale  # the 503: the old copy
+            clock.now += 200
+            stats = track_calls()
+            again = await cache.get_json("demo", SPEC, ttl=60)  # within retry_after: not asked
+            assert again.value == {"v": "old"} and again.stale
+            assert stats.external_calls == 0 and stats.stale_sources == {"demo"}
+            clock.now += 101
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": "new"}
+    assert route.call_count == 3
+
+
+async def test_a_refusal_pauses_the_source_even_with_a_copy(tmp_path):
+    clock = Clock()
+    other = RequestSpec("GET", URL, params={"q": "other"})
+    with respx.mock() as router:
+        route = router.get(URL).mock(side_effect=[httpx.Response(200, json={"v": 1}), httpx.Response(429)])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            cache.pause_on("demo", {429}, 3600)
+            await cache.get_json("demo", SPEC, ttl=60)
+            clock.now += 120
+            assert (await cache.get_json("demo", SPEC, ttl=60)).stale  # the 429: the old copy, and a pause
+            assert cache.paused_until("demo") == clock.now + 3600
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": 1}  # paused: still served
+            with pytest.raises(UpstreamError) as caught:
+                await cache.get_json("demo", other, ttl=60)  # paused, and nothing stored for it
+            assert caught.value.until == clock.now + 3600
+    assert route.call_count == 2
+
+
+async def test_refresh_stops_when_the_source_pauses(tmp_path):
+    clock = Clock()
+    specs = [RequestSpec("GET", URL, params={"q": str(n)}) for n in range(3)]
+    with respx.mock() as router:
+        route = router.get(URL).mock(side_effect=[*(httpx.Response(200, json={"n": n}) for n in range(3)), httpx.Response(429)])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            cache.pause_on("demo", {429}, 3600)
+            for spec in specs:
+                await cache.get_json("demo", spec, ttl=60)
+            report = await cache.refresh("demo", concurrency=1)
+            assert (report.refreshed, report.failed, report.skipped) == (0, 1, 2)
+            assert report.paused_until == clock.now + 3600
+            again = await cache.refresh("demo")
+            assert (again.refreshed, again.failed, again.skipped) == (0, 0, 3)
+    assert route.call_count == 4
+
+
 async def test_failure_with_nothing_cached_raises(tmp_path):
     with respx.mock() as router:
         router.get(URL).mock(return_value=httpx.Response(403))

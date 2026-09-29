@@ -1,4 +1,4 @@
-"""FEC: matching the ballot to the FEC's lists, the shared DEMO_KEY, the hourly limit, and
+"""FEC: matching the ballot to the FEC's lists, the shared DEMO_KEY, the rate limit, and
 keeping the API key out of the cache."""
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ from votebot.matching import NameIndex, last_first, match_person
 from votebot.sources import fec
 from votebot.text import display_org, money, money_short
 
-from .conftest import FEC_KEY, find_race, get_ballot, load
+from .conftest import FEC_KEY, find_race, get_ballot, last_use, load
 
 
 def test_names_written_last_name_first():
@@ -93,21 +93,38 @@ def test_hourly_limit_pauses_the_fec_and_keeps_the_ballot(make_app, upstream):
         ballot = get_ballot(client)
         assert find_race(ballot, "U.S. Senator")["candidates"]
         assert any("FEC" in w for w in ballot["warnings"])
-        assert next(s for s in ballot["sources"] if s["id"] == "fec")["status"] == "error"
+        assert last_use(client, "fec")["status"] == "error"
         asked = upstream.count("open.fec.gov")
         upstream.fec_status = None
         again = get_ballot(client)  # paused: nothing cached, so no FEC cards, and no new request
         assert upstream.count("open.fec.gov") == asked
         assert any("paused" in w for w in again["warnings"])
         overview = client.get("/api/sources").json()
-    assert "hourly limit" in next(s for s in overview["sources"] if s["id"] == "fec")["notice"]
+    assert "rate limit" in next(s for s in overview["sources"] if s["id"] == "fec")["notice"]
+
+
+def test_a_rate_limit_on_a_cached_answer_pauses_the_fec_too(make_app, upstream, tmp_path):
+    with TestClient(make_app()) as client:
+        get_ballot(client)
+    with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
+        db.execute("UPDATE responses SET expires_at = 0 WHERE source = 'fec'")
+    upstream.fec_status = 429
+    with TestClient(make_app()) as client:
+        ballot = get_ballot(client)  # the old copies still show, and the FEC is paused
+        asked = upstream.count("open.fec.gov")
+        assert asked and find_race(ballot, "U.S. Senator")["cards"]
+        assert "rate limit" in next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "fec")["notice"]
+        with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
+            db.execute("DELETE FROM flags WHERE name LIKE 'retry:%'")  # only the pause holds the FEC back now
+        get_ballot(client)
+        assert upstream.count("open.fec.gov") == asked
 
 
 def test_paused_fec_still_serves_what_it_has(make_app, upstream, tmp_path):
     with TestClient(make_app()) as client:
         get_ballot(client)
     with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
-        db.execute("INSERT INTO flags (name, source, expires_at) VALUES ('fec:limited', 'fec', 9e12)")
+        db.execute("INSERT INTO flags (name, source, expires_at) VALUES ('paused:fec', 'fec', 9e12)")
     with TestClient(make_app()) as client:
         ballot = get_ballot(client)
     senate = find_race(ballot, "U.S. Senator")
@@ -134,4 +151,4 @@ def test_fec_off(client):
     client.put("/api/sources/fec", json={"enabled": False})
     ballot = get_ballot(client)
     assert not find_race(ballot, "U.S. Senator")["cards"]
-    assert next(s for s in ballot["sources"] if s["id"] == "fec")["status"] == "off"
+    assert last_use(client, "fec")["status"] == "off"

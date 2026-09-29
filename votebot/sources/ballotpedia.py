@@ -27,7 +27,7 @@ LABEL = "Ballotpedia"
 DESCRIPTION = "Ballotpedia's sample ballot: local races, precincts and candidate profiles (unofficial endpoint, personal use)."
 URL = "https://api4.ballotpedia.org/myvote_redistricting_with_historical"
 ORIGIN = "https://sblv3.ballotpedia.org"
-BACKOFF_FLAG = "ballotpedia:blocked"
+REFUSALS = (401, 403, 429)  # answers that pause Ballotpedia for Ttls.ballotpedia_backoff
 
 PARTY_CODES = {
     "Republican Party": "R",
@@ -67,7 +67,6 @@ class BpCandidate:
 class BpRace:
     id: int
     office: str
-    office_type: str | None
     district_type: str
     district_name: str
     group: str  # a ballot group, or "special" for special districts
@@ -97,12 +96,10 @@ class BpMeasure:
 @dataclass(frozen=True)
 class BpBallot:
     day: dt.date | None
-    complete: bool
     races: tuple[BpRace, ...]
     measures: tuple[BpMeasure, ...]
     precincts: dict[str, int]
     fetched_at: float
-    stale: bool
 
 
 def _date(text: str | None) -> dt.date | None:
@@ -180,7 +177,6 @@ def _race(raw: dict[str, Any], district_type: str, district_name: str) -> BpRace
     return BpRace(
         id=raw["id"],
         office=name,
-        office_type=office.get("type"),
         district_type=district_type,
         district_name=district_name,
         group=_group(district_type, office, name),
@@ -200,7 +196,7 @@ def _measure(raw: dict[str, Any], district_name: str) -> BpMeasure:
     )
 
 
-def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float, stale: bool) -> BpBallot:
+def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float) -> BpBallot:
     elections = ((payload or {}).get("data") or {}).get("elections") or []
     dated = [(e, _date(e.get("date"))) for e in elections]
     if day:
@@ -209,7 +205,7 @@ def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float, stale
         upcoming = sorted((d, i) for i, (_, d) in enumerate(dated) if d)
         chosen = dated[upcoming[0][1]][0] if upcoming else (elections[0] if elections else None)
     if chosen is None:
-        return BpBallot(day, False, (), (), {}, fetched_at, stale)
+        return BpBallot(day, (), (), {}, fetched_at)
     races: list[BpRace] = []
     measures: list[BpMeasure] = []
     precincts: dict[str, int] = {}
@@ -220,24 +216,20 @@ def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float, stale
             precincts.update(precincts_in(district_name))
         races += [_race(r, district_type, district_name) for r in district.get("races") or []]
         measures += [_measure(m, district_name) for m in district.get("ballot_measures") or []]
-    return BpBallot(
-        _date(chosen.get("date")), bool(chosen.get("candidate_lists_complete")),
-        tuple(races), tuple(measures), precincts, fetched_at, stale,
-    )
+    return BpBallot(_date(chosen.get("date")), tuple(races), tuple(measures), precincts, fetched_at)
 
 
 class Ballotpedia:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
+        cache.pause_on(SOURCE, REFUSALS, ttl.ballotpedia_backoff)
 
     def paused_until(self) -> float | None:
-        return self.cache.flag_until(BACKOFF_FLAG)
+        return self.cache.paused_until(SOURCE)
 
     async def ballot(self, lat: float, lon: float, day: dt.date | None = None) -> BpBallot:
-        until = self.paused_until()
-        if until:
-            raise BallotpediaUnavailable(f"paused until {iso_utc(until)} after Ballotpedia refused a request")
+        """The sample ballot at this point (from cache, also while paused if we have it)."""
         spec = RequestSpec(
             "GET",
             URL,
@@ -247,10 +239,10 @@ class Ballotpedia:
         try:
             got = await self.cache.get_json(SOURCE, spec, ttl=self.ttl.ballotpedia)
         except UpstreamError as exc:
-            if exc.status in (401, 403, 429):
-                self.cache.set_flag(BACKOFF_FLAG, SOURCE, self.ttl.ballotpedia_backoff)
+            if exc.until:
+                raise BallotpediaUnavailable(f"paused until {iso_utc(exc.until)} after Ballotpedia refused a request") from exc
             raise BallotpediaUnavailable(str(exc)) from exc
-        return parse(got.value, day, got.fetched_at, got.stale)
+        return parse(got.value, day, got.fetched_at)
 
 
 def card(candidate: BpCandidate, race: BpRace, fetched_at: float, match: Match | None) -> SourceCard:

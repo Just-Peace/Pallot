@@ -15,7 +15,7 @@ from .conftest import load
 
 @pytest.fixture(scope="module")
 def ballot():
-    return parse(load("ballotpedia_capitol.json"), dt.date(2026, 11, 3), fetched_at=0.0, stale=False)
+    return parse(load("ballotpedia_capitol.json"), dt.date(2026, 11, 3), fetched_at=0.0)
 
 
 def test_local_races_and_special_districts_are_separated(ballot):
@@ -44,7 +44,7 @@ def test_race_details(ballot):
 
 
 def test_a_date_with_no_ballotpedia_election_gives_an_empty_ballot():
-    empty = parse(load("ballotpedia_capitol.json"), dt.date(2030, 1, 1), fetched_at=0.0, stale=False)
+    empty = parse(load("ballotpedia_capitol.json"), dt.date(2030, 1, 1), fetched_at=0.0)
     assert empty.races == () and empty.precincts == {}
 
 
@@ -60,3 +60,17 @@ async def test_refusal_pauses_further_calls(tmp_path):
             with pytest.raises(BallotpediaUnavailable, match="paused"):
                 await source.ballot(30.27, -97.74)
     assert route.call_count == 1
+
+
+@pytest.mark.anyio
+async def test_a_paused_ballotpedia_still_serves_what_it_has(tmp_path):
+    with respx.mock() as router:
+        route = router.get(URL).mock(side_effect=[httpx.Response(200, json=load("ballotpedia_capitol.json")), httpx.Response(403)])
+        async with httpx.AsyncClient() as client:
+            source = Ballotpedia(HttpCache(tmp_path / "c.sqlite3", client), Ttls())
+            first = await source.ballot(30.27, -97.74, dt.date(2026, 11, 3))
+            with pytest.raises(BallotpediaUnavailable):
+                await source.ballot(29.76, -95.37)  # somewhere else: refused, which pauses Ballotpedia
+            assert source.paused_until() is not None
+            again = await source.ballot(30.27, -97.74, dt.date(2026, 11, 3))
+    assert again.races == first.races and route.call_count == 2

@@ -9,8 +9,9 @@ It runs locally as one Python process (FastAPI) serving a plain HTML/JS page. Th
 Needs [uv](https://docs.astral.sh/uv/) (`curl -LsSf https://astral.sh/uv/install.sh | sh`).
 
 ```bash
-uv sync          # creates .venv with VoteBot, its dependencies and the dev tools, pinned by uv.lock
-uv run votebot   # serves http://127.0.0.1:8000 (options: --port 8000, --reload)
+uv sync                 # creates .venv with VoteBot, its dependencies and the dev tools, pinned by uv.lock
+cp .env.example .env    # optional: put your free FEC key in it (see Configuration)
+uv run votebot          # serves http://127.0.0.1:8000 (options: --port 8000, --reload)
 ```
 
 Keep the default `127.0.0.1` binding, because the Settings actions have no login.
@@ -19,7 +20,7 @@ Tests:
 
 ```bash
 uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's and tec_cache's own tests
-uv run pytest -m live                      # smoke tests against the real services (the FEC one needs VOTEBOT_FEC_API_KEY)
+uv run pytest -m live                      # smoke tests against the real services (the FEC one needs an FEC key)
 uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|tec|trackaipac)
 ```
 
@@ -57,7 +58,7 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct; candidate profiles | **unofficial** endpoint that needs Ballotpedia's own origin header. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | from `trackaipac_cache/` (see below) |
-| FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. The shared `DEMO_KEY` only allows race totals; set `VOTEBOT_FEC_API_KEY` to a free [api.data.gov](https://api.data.gov/signup/) key for the rest |
+| FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. The shared `DEMO_KEY` only allows race totals; set `VOTEBOT_FEC_API_KEY` to a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/) for the rest |
 | Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | from `tec_cache/` (see below), built from TEC's nightly CSV export |
 
 The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from numbers the voter types in; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot".
@@ -79,7 +80,7 @@ Candidates are matched across sources by name, with seat and party as corroborat
 
 ## Caching
 
-Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `data/cache.sqlite3`. Looking up the same address again makes **zero** external calls, even after a restart. Each ballot response reports `meta.external_calls`, and the status line under the lookup shows it.
+Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `data/cache.sqlite3`. Looking up the same address again makes **zero** external calls, even after a restart. Each `/api/ballot` response reports `meta.external_calls`, and Settings shows the last lookup's, source by source.
 
 - Lifetimes:
   - reference data: 30 days
@@ -88,19 +89,23 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
   - geocodes: 30 days
   - Ballotpedia: 24 hours
   - FEC: 7 days (a year for past elections)
+  - after a failed request: its old copy is served for 15 minutes before the source is asked again
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see `votebot/config.py`.
 - The Texas Ethics Commission data comes with VoteBot (`tec_cache/`), so lookups never contact TEC; it's only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
-- Concurrent identical requests share one fetch. If a refresh fails, the old copy is shown with a "data as of" note.
-- If Ballotpedia refuses a request, VoteBot stops asking it for an hour.
-- If the FEC says its hourly limit is reached, VoteBot stops asking it for an hour, and shows what it already has meanwhile.
+- Concurrent identical requests share one fetch. If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup.
+- Only answers that succeed are cached. A source that fails before answering once has nothing to fall back on.
+- If Ballotpedia refuses a request, VoteBot stops asking it for an hour. Ballots it already sent still show.
+- If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address, `scripts/record_fixtures.py` and the live tests included.
+- Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
 
 The **Settings** page (`settings.html`, linked from the left pane):
 - picks the web search engine;
 - turns Texas SOS, Ballotpedia, TrackAIPAC, the FEC and the Texas Ethics Commission on or off;
-- says whether the FEC is using your key and how old the Texas Ethics Commission snapshot is;
+- says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
+- shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source, plus "Clear all caches";
-- has a button to delete your picks, notes and remembered address from the browser.
+- has "Clear my picks & notes", and "Clear all browser data", which also forgets your address and search engine.
 
 When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
@@ -124,12 +129,12 @@ When you go back to your ballot after changing a setting, it reloads with the ne
 
 ## Configuration
 
-Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/votebot uv run votebot`.
+Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/votebot uv run votebot`, or in a `.env` file in the project folder: `cp .env.example .env` and fill it in. VoteBot reads `.env` at startup, and git ignores it. Variables already set in the environment win over `.env`.
 
 | Variable | Default |
 |---|---|
 | `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE map, TrackAIPAC and TEC data; git-ignored) |
-| `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals. Get a free key at [api.data.gov](https://api.data.gov/signup/). It's only sent to the FEC, in a header, and never saved |
+| `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and VoteBot never writes it anywhere |
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper)` (Nominatim requires an identifying one) |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_TTL_*` | cache lifetimes, see above |
@@ -143,6 +148,7 @@ votebot/
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
   sources/          census, nominatim, sboe, sos, ballotpedia, trackaipac, fec, tec
+                    (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share)
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
                     css/app.css, js/ (ballot.js, settings.js, page.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)

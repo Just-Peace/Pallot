@@ -65,6 +65,20 @@ def still_running(row: dict[str, Any]) -> bool:
     return row.get("cdDeclarationStatus") not in _GONE
 
 
+def find_county(counties: dict[str, int], name: str | None, fips: str | None) -> int | None:
+    """The SOS id of a county, from Sos.counties(), by name or else by its FIPS code."""
+    if name:
+        wanted = name.upper().removesuffix(" COUNTY").replace(" ", "")
+        for county, county_id in counties.items():
+            if county.replace(" ", "") == wanted:  # "DE WITT" vs "DeWitt"
+                return county_id
+    if fips and fips.isdigit():  # SOS numbers counties alphabetically, as Texas's odd FIPS codes do
+        guess = (int(fips) + 1) // 2
+        if guess in counties.values():
+            return guess
+    return None
+
+
 class Sos:
     def __init__(self, cache: HttpCache, ttl: Ttls, today: Callable[[], dt.date] = dt.date.today):
         self.cache = cache
@@ -105,19 +119,6 @@ class Sos:
         """County name in capitals ("TRAVIS") -> the SOS county id."""
         got = await self._get(f"{SYSTEM}/getAllRegions", self.ttl.sos_reference)
         return {row["txName"].upper(): row["idRegion"] for row in got.value or [] if row.get("txName") and row.get("idRegion")}
-
-    async def county_id(self, name: str | None, fips: str | None) -> int | None:
-        counties = await self.counties()
-        if name:
-            wanted = name.upper().removesuffix(" COUNTY").replace(" ", "")
-            for county, county_id in counties.items():
-                if county.replace(" ", "") == wanted:  # "DE WITT" vs "DeWitt"
-                    return county_id
-        if fips and fips.isdigit():  # SOS numbers counties alphabetically, as Texas's odd FIPS codes do
-            guess = (int(fips) + 1) // 2
-            if guess in counties.values():
-                return guess
-        return None
 
     async def lookups(self) -> Lookups:
         parties, filing, declaration = await asyncio.gather(
@@ -198,7 +199,11 @@ def card(row: dict[str, Any], lookups: Lookups, fetched_at: float | None) -> Sou
 
 
 async def cards(
-    sos: Sos, elections: dict[int, Election], candidates: list[Candidate], ballot_rows: dict[str, dict[str, Any]]
+    sos: Sos,
+    elections: dict[int, Election],
+    candidates: list[Candidate],
+    ballot_rows: dict[str, dict[str, Any]],
+    lookups: Lookups,
 ) -> dict[str, SourceCard]:
     """A card per state-listed candidate, from the (cached) statewide list of their election,
     falling back to what the ballot-order row had."""
@@ -211,7 +216,6 @@ async def cards(
             wanted[election_id].append(candidate)
     if not wanted:
         return {}
-    lookups = await sos.lookups()
     lists = await asyncio.gather(*(sos.candidates(elections[e]) for e in wanted), return_exceptions=True)
     out = {}
     for election_id, got in zip(wanted, lists):

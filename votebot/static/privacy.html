@@ -93,7 +93,7 @@
             </tbody>
           </table>
         </div>
-        <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins, collapsed races and last lookup. Clearing this site's data in your browser deletes all of it, your search engine included. Private windows forget everything when they close.</p>
+        <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins and collapsed races, and "Clear all browser data" deletes everything above, your last lookup and search engine included. Private windows forget everything when they close.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="lookups">
@@ -168,8 +168,13 @@
               </tr>
               <tr>
                 <th scope="row">The FEC key, if one is set</th>
-                <td data-label="Where">Only the <code>VOTEBOT_FEC_API_KEY</code> environment variable. VoteBot never writes it to disk.</td>
+                <td data-label="Where">The <code>VOTEBOT_FEC_API_KEY</code> environment variable, or the <code>.env</code> file in VoteBot's folder if whoever runs VoteBot put it there. VoteBot only reads it and never writes it anywhere.</td>
                 <td data-label="Kept until">Whoever runs VoteBot removes it</td>
+              </tr>
+              <tr>
+                <th scope="row">How the last ballot lookup went, for Settings: when, how many requests it sent each source and how old their data was; not the address</th>
+                <td data-label="Where">Memory only</td>
+                <td data-label="Kept until">The next lookup replaces it, or VoteBot stops</td>
               </tr>
               <tr>
                 <th scope="row">Which sources are on</th>

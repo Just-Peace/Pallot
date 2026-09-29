@@ -24,6 +24,16 @@ export const STATES = {
   },
 };
 
+// The voter's districts in one line: "U.S. House 10 · State Senate 14 · … · JP 5" (the
+// print sheet passes precinct: " Pct" for "JP Pct 5").
+export function districtLine(d, { precinct = "" } = {}) {
+  return [
+    d.cd && `U.S. House ${d.cd}`, d.sd && `State Senate ${d.sd}`, d.hd && `State House ${d.hd}`, d.sboe && `SBOE ${d.sboe}`,
+    d.commissioner && `Commissioner${precinct} ${d.commissioner}`, d.jp && `JP${precinct} ${d.jp}`,
+    d.constable && `Constable${precinct} ${d.constable}`,
+  ].filter(Boolean).join(" · ");
+}
+
 const PARTY_NAMES = { R: "Republican", D: "Democratic", L: "Libertarian", G: "Green", I: "Independent", W: "Write-in" };
 
 export function partyName(candidate) {

@@ -64,6 +64,12 @@ export class Picks {
     return this.data.writeIns?.[raceKey] || "";
   }
 
+  // The write-in as the collapsed race and the print sheet show it; ``blank`` until a name is typed.
+  writeInLabel(raceKey, blank) {
+    const name = this.writeIn(raceKey).trim();
+    return name ? `${name} (write-in)` : blank;
+  }
+
   setWriteIn(raceKey, name) {
     this.data.writeIns ||= {};
     if (name.trim()) this.data.writeIns[raceKey] = name;
@@ -127,12 +133,25 @@ export function settingsStamp() {
   }
 }
 
-export function clearAllPicks() {
+// "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
+// races. The remembered address stays.
+export function clearPicksAndNotes() {
   memory = {};
   try {
     localStorage.removeItem(PICKS_KEY);
-    localStorage.removeItem(LOOKUP_KEY);
-    localStorage.removeItem(ADDRESS_CARD_KEY);
+  } catch {
+    // nothing stored
+  }
+}
+
+// "Clear all browser data" in Settings: everything VoteBot keeps in this browser, the remembered
+// address and the search engine included. Every key it uses starts with "votebot.".
+export function clearBrowserData() {
+  memory = {};
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith("votebot.")) localStorage.removeItem(key);
+    }
   } catch {
     // nothing stored
   }

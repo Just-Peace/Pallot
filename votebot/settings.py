@@ -28,6 +28,3 @@ class Settings:
             raise KeyError(source_id)
         self._sources[source_id] = enabled
         write_text_atomic(self.path, json.dumps({"sources": self._sources}, indent=2) + "\n")
-
-    def sources(self) -> dict[str, bool]:
-        return dict(self._sources)

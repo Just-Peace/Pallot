@@ -1,4 +1,4 @@
-"""Settings-page API, elections list, TrackAIPAC data and static pages."""
+"""Settings-page API, elections list and static pages."""
 
 from __future__ import annotations
 
@@ -25,9 +25,24 @@ def test_sources_overview(client):
     geocoding, sos, _, tracker, fec, tec = overview["sources"]
     assert geocoding["toggleable"] is False and sos["enabled"] is True
     assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"
+    assert tracker["resettable"] and tec["resettable"] and not sos["resettable"]
+    assert overview["last_lookup"] is None and sos["last_use"] is None
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
     assert tec["notice"] and {"Snapshot", "Money raised since"} <= {f["label"] for f in tec["details"]}
+
+
+def test_settings_shows_the_last_lookup(client):
+    get_ballot(client)
+    first = {s["id"]: s for s in client.get("/api/sources").json()["sources"]}
+    assert first["sos"]["last_use"]["calls"] > 0 and first["sos"]["cache"]["entries"] > 0
+    get_ballot(client)
+    overview = client.get("/api/sources").json()
+    assert overview["last_lookup"]["external_calls"] == 0 and overview["last_lookup"]["cache_hits"] > 0
+    rows = {s["id"]: s for s in overview["sources"]}
+    assert rows["sos"]["last_use"]["status"] == "used" and rows["sos"]["last_use"]["calls"] == 0
+    assert rows["trackaipac"]["last_use"]["as_of"] == load("trackaipac/current.json")["snapshot"]
+    assert overview["total_bytes"] > 0
 
 
 def test_toggles_persist_across_restarts(make_app, tmp_path):
@@ -77,9 +92,10 @@ def test_trackaipac_refresh_and_reset(make_app, tmp_path):
         assert message.startswith("updated")
         current = tmp_path / "data" / "trackaipac" / "current.json"
         current.write_text(json.dumps({"snapshot": "edited", "candidates": []}))
-        assert client.get("/api/sources/trackaipac/data").json()["snapshot"] == "edited"
+        tracker = client.app.state.svc.trackaipac
+        assert tracker.document()["snapshot"] == "edited"
         assert client.post("/api/sources/trackaipac/clear").status_code == 200
-        assert client.get("/api/sources/trackaipac/data").json()["snapshot"] == load("trackaipac/current.json")["snapshot"]
+        assert tracker.document()["snapshot"] == load("trackaipac/current.json")["snapshot"]
 
 
 def test_trackaipac_refresh_failure_changes_nothing(make_app):
@@ -89,6 +105,8 @@ def test_trackaipac_refresh_failure_changes_nothing(make_app):
     with TestClient(make_app(refresh=broken)) as client:
         response = client.post("/api/sources/trackaipac/refresh")
         assert response.status_code == 502 and "nothing changed" in response.json()["detail"]
+        tracker = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "trackaipac")
+    assert tracker["notice_tone"] == "warn" and "site is down" in tracker["notice"]
 
 
 def test_a_second_refresh_while_one_runs_is_refused(make_app):
@@ -109,15 +127,6 @@ def test_a_second_refresh_while_one_runs_is_refused(make_app):
         worker.join(5)
     assert second.status_code == 409
     assert results["first"].status_code == 200
-
-
-def test_trackaipac_data_with_etag(client):
-    response = client.get("/api/sources/trackaipac/data?state=tx")
-    body = response.json()
-    assert body["candidates"] and {p["state"] for p in body["candidates"]} == {"TX"}
-    etag = response.headers["etag"]
-    assert client.get("/api/sources/trackaipac/data?state=tx", headers={"If-None-Match": etag}).status_code == 304
-    assert client.get("/api/sources/trackaipac/data").headers["etag"] != etag
 
 
 PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]

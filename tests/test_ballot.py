@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from .conftest import ADDRESSES, candidate_names, find_race, get_ballot
+from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, last_use
 
 
 def sources_of(candidate):
@@ -56,7 +56,7 @@ def test_capitol_ballot(client):
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia
 
-    statuses = {s["id"]: s["status"] for s in ballot["sources"]}
+    statuses = {s["id"]: s["last_use"]["status"] for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "sos": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
                         "tec": statuses["tec"]}
     assert ballot["warnings"] == []
@@ -130,7 +130,7 @@ def test_ballotpedia_off(client):
     maybe = {s["id"]: [r["name"] for r in s["races"]] for s in ballot["maybe"]}
     assert "Justice of the Peace Precinct 5" in maybe["precinct"]
     assert "special" not in maybe
-    assert next(s for s in ballot["sources"] if s["id"] == "ballotpedia")["status"] == "off"
+    assert last_use(client, "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
     assert sources_of(senate["candidates"][0]) == ["sos", "trackaipac", "fec"]
 
@@ -185,7 +185,7 @@ def test_ballotpedia_refusal_degrades_gracefully(client, upstream):
     ballot = get_ballot(client)
     assert find_race(ballot, "U.S. Senator")
     assert not find_race(ballot, "Austin City Council District 9")
-    assert next(s for s in ballot["sources"] if s["id"] == "ballotpedia")["status"] == "error"
+    assert last_use(client, "ballotpedia")["status"] == "error"
     assert any("Ballotpedia" in w for w in ballot["warnings"])
 
 
@@ -208,5 +208,24 @@ def test_state_site_down_later_serves_the_cached_copy(make_app, upstream, tmp_pa
     upstream.down.add("goelect.txelections.civixapps.com")
     with TestClient(make_app(config_dir)) as client:
         ballot = get_ballot(client)
+        asked = upstream.count("goelect")
+        get_ballot(client)  # the failed requests aren't retried yet: their old copies serve again
+        assert upstream.count("goelect") == asked
+        sos = last_use(client, "sos")
     assert find_race(ballot, "U.S. Senator")
-    assert next(s for s in ballot["sources"] if s["id"] == "sos")["status"] == "stale"
+    assert sos["status"] == "stale" and sos["calls"] == 0
+
+
+def test_a_ballot_reads_each_state_list_once(client, monkeypatch):
+    cache = client.app.state.svc.cache
+    asked: list[str] = []
+    original = cache.get_json
+
+    async def counting(source, spec, **kwargs):
+        asked.append(spec.url)
+        return await original(source, spec, **kwargs)
+
+    monkeypatch.setattr(cache, "get_json", counting)
+    get_ballot(client)
+    for suffix in ("getAllRegions", "getPoliticalParties", "getCandidateStatus", "getDeclarationStatus"):
+        assert sum(url.endswith(suffix) for url in asked) == 1, suffix
