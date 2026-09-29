@@ -160,6 +160,16 @@ def placement(scope: OfficeScope, districts: Districts) -> str:
     return "include"
 
 
+def _placeable(row: dict[str, Any]) -> bool:
+    """A statewide-list race whose reach is known without a county: federal, statewide, or
+    a district the voter's address gives (U.S. House, Legislature, SBOE), which placement()
+    then checks."""
+    office_type = row.get("cdOfficeType")
+    if office_type in ("FD", "SW"):
+        return True
+    return office_type == "SR" and classify(row.get("txOfficeName") or "", office_type).kind in DISTRICT_KINDS
+
+
 def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
     return (
         row.get("nbOfficeTypeOrder") or 99,
@@ -342,17 +352,23 @@ class _Builder:
 
     async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
         """The county's ballot order; when that's empty (special elections), the statewide
-        candidate list trimmed to races that can reach this county."""
+        candidate list trimmed to the races it can place (_placeable). It names no county
+        for judicial, DA or county races, so those are left out, with a note, rather than
+        shown to every county."""
         rows = (await self.svc.sos.ballot_order(election, county_id)).value or []
         if rows:
             return rows
-        everyone = (await self.svc.sos.candidates(election)).value or []
+        running = [r for r in (await self.svc.sos.candidates(election)).value or [] if still_running(r)]
         wanted = (county or "").upper()
-        return [
-            r for r in everyone
-            if still_running(r)
-            and (r.get("cdOfficeType") in ("FD", "SW", "SR") or (r.get("txCountyName") or "").upper() == wanted)
-        ]
+        kept = [r for r in running if _placeable(r) or (r.get("txCountyName") or "").upper() == wanted]
+        if len(kept) < len(running):
+            where = f"{county} County" if county else "your county"
+            self.notes.append(
+                f"Texas SOS has no {where} ballot for the {display_office(election.name)}. Its statewide list doesn't "
+                "say which counties judicial, district attorney and county races cover, so those aren't listed; "
+                "check your county's sample ballot."
+            )
+        return kept
 
     async def _sboe(self, place: Place) -> int | None:
         try:

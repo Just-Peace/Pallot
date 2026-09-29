@@ -20,7 +20,7 @@ FEC_KEY = load_config().fec_api_key  # from the environment or .env
 
 
 def test_capitol_ballot_live(tmp_path):
-    with TestClient(create_app(Config(data_dir=tmp_path / "data", fec_api_key=FEC_KEY))) as client:
+    with TestClient(create_app(Config(data_dir=tmp_path / "data", fec_api_key=FEC_KEY, allowed_hosts=("testserver",)))) as client:
         response = client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"})
         assert response.status_code == 200, response.text
         ballot = response.json()
@@ -60,7 +60,7 @@ def test_tec_export_still_has_what_we_read():
 
 
 def test_photon_suggestions_live(tmp_path):
-    with TestClient(create_app(Config(data_dir=tmp_path / "data"))) as client:
+    with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
         found = client.get("/api/suggest", params={"q": "1001 preston st houston"}).json()
     assert found["enabled"] and any("Preston" in s["label"] and "Houston" in s["label"] for s in found["suggestions"])
 

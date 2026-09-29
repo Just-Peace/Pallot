@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import ipaddress
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Collection
+from urllib.parse import urlsplit
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request, Response
@@ -32,6 +34,39 @@ from .sources.tec import Tec
 from .sources.trackaipac import TrackAipac
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+
+
+def _hostname(host: str) -> str:
+    """"LocalHost:8000" -> "localhost", "[::1]:8000" -> "::1"; "" if it can't be read."""
+    try:
+        return urlsplit(f"//{host}").hostname or ""
+    except ValueError:
+        return ""
+
+
+def host_allowed(host: str, allowed: Collection[str]) -> bool:
+    """localhost, any IP address (how other devices reach the Docker image), or a name in
+    ``allowed``. Any other name may be DNS rebinding: an attacker's domain pointed at this
+    machine, which makes the attacker's page the same origin as VoteBot."""
+    name = _hostname(host)
+    if "*" in allowed or name == "localhost" or (name and name in allowed):
+        return True
+    try:
+        ipaddress.ip_address(name)
+    except ValueError:
+        return False
+    return True
+
+
+def from_another_site(request: Request) -> bool:
+    """A request another page started in the voter's browser: a form or fetch() from any
+    other website, or from another port on this machine (same site, not same origin)."""
+    site = request.headers.get("sec-fetch-site")
+    if site is not None and site not in ("same-origin", "none"):
+        return True
+    origin = request.headers.get("origin")
+    return origin is not None and urlsplit(origin).netloc.lower() != request.headers.get("host", "").lower()
 
 
 def create_app(
@@ -92,6 +127,20 @@ def create_app(
 
     def admin(request: Request) -> Admin:
         return request.app.state.admin
+
+    @app.middleware("http")
+    async def own_pages_only(request: Request, call_next: Callable[[Request], Any]) -> Response:
+        """Settings has no login, so its actions must only come from VoteBot's own pages."""
+        host = request.headers.get("host", "")
+        if not host_allowed(host, config.allowed_hosts):
+            return JSONResponse(
+                {"detail": f"VoteBot doesn't answer to the name {_hostname(host) or '(none)'}. "
+                           "To use it, add it to VOTEBOT_ALLOWED_HOSTS."},
+                status_code=400,
+            )
+        if request.method not in SAFE_METHODS and from_another_site(request):
+            return JSONResponse({"detail": "Refused: this request came from another website."}, status_code=403)
+        return await call_next(request)
 
     @app.exception_handler(AdminError)
     async def admin_error(_request: Request, exc: AdminError) -> JSONResponse:

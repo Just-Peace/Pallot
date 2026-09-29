@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
+import httpx
+
 from .ballot import Services
+from .http_cache import describe_error
 from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
 from .sources import ballotpedia, fec, photon, polls, sos, tec, trackaipac
 from .text import display_date, display_time, iso_utc
@@ -245,8 +249,13 @@ class Admin:
                 paused_until = paused_until or report.paused_until
             message = f"Refreshed {refreshed} cached response{'s' if refreshed != 1 else ''}."
             if source_id == "geocoding":
-                await self.svc.sboe.download()
-                message += " Re-downloaded the State Board of Education map."
+                try:
+                    await self.svc.sboe.download()
+                except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile) as exc:  # nothing was replaced
+                    kept = "kept the old one" if self.svc.sboe.downloaded_at() else "the next lookup will try again"
+                    message += f" Couldn't re-download the State Board of Education map ({describe_error(exc)}); {kept}."
+                else:
+                    message += " Re-downloaded the State Board of Education map."
             if failed:
                 message += f" {failed} failed and kept their old copy ({'; '.join(errors)})."
             if paused_until:

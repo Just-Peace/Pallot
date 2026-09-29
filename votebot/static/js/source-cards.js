@@ -113,7 +113,7 @@ function stackedBar(item, partyOf) {
 
 // A Breakdown: labelled bars. With a total they're shares of it (and show a %); without
 // one they're scaled to the largest part. ``action`` goes at the right of the title.
-export function breakdownBlock(item, partyOf = null, action = null) {
+function breakdownBlock(item, partyOf = null, action = null) {
   const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
   const scale = item.total || largest;
   const title = h("h4", { class: "breakdown-title" }, item.title);
@@ -154,7 +154,7 @@ export function raceMoney(race, onCompare = null) {
         howCounted(card))));
 }
 
-export function cardPanel(card) {
+function cardPanel(card) {
   return h(
     "div",
     { class: "card-panel" },

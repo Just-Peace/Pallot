@@ -9,6 +9,7 @@ import threading
 import pytest
 from fastapi.testclient import TestClient
 
+from votebot.api import host_allowed
 from votebot.text import display_time
 
 from .conftest import get_ballot, load
@@ -100,6 +101,42 @@ def test_clear_everything(client):
     assert client.post("/api/cache/clear").status_code == 200
     overview = client.get("/api/sources").json()
     assert all(s["cache"]["entries"] == 0 for s in overview["sources"])
+
+
+def test_a_failed_sboe_download_keeps_the_old_map(client, upstream, tmp_path):
+    get_ballot(client)
+    upstream.down.add("data.capitol.texas.gov")
+    response = client.post("/api/sources/geocoding/refresh")
+    assert response.status_code == 200
+    message = response.json()["message"]
+    assert message.startswith("Refreshed")
+    assert "Couldn't re-download the State Board of Education map (HTTP 500); kept the old one." in message
+    assert (tmp_path / "data" / "plane2106_kml.zip").exists()
+
+
+def test_other_websites_cant_use_the_settings_actions(client):
+    get_ballot(client)
+    for headers in (
+        {"Sec-Fetch-Site": "cross-site", "Origin": "https://evil.example"},
+        {"Sec-Fetch-Site": "same-site", "Origin": "http://testserver:3000"},  # another port on this machine
+        {"Origin": "https://evil.example"},  # a browser that doesn't send Sec-Fetch-Site
+        {"Origin": "null"},  # a sandboxed page
+    ):
+        response = client.post("/api/cache/clear", headers=headers)
+        assert response.status_code == 403 and "another website" in response.json()["detail"], headers
+    assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["cache"]["entries"] > 0
+    own_page = {"Sec-Fetch-Site": "same-origin", "Origin": "http://testserver"}
+    assert client.post("/api/cache/clear", headers=own_page).status_code == 200
+    assert client.get("/api/sources", headers={"Sec-Fetch-Site": "cross-site"}).status_code == 200  # CORS hides the answer
+
+
+def test_only_localhost_ip_addresses_and_allowed_names_are_answered(client):
+    for host in ("localhost:8000", "127.0.0.1:8000", "192.168.1.20:8000", "[::1]:8000"):
+        assert client.get("/api/sources", headers={"Host": host}).status_code == 200, host
+    response = client.get("/", headers={"Host": "rebind.evil.example:8000"})  # DNS rebinding
+    assert response.status_code == 400 and "VOTEBOT_ALLOWED_HOSTS" in response.json()["detail"]
+    assert host_allowed("nas.local:8000", ("nas.local",)) and host_allowed("anything.example", ("*",))
+    assert not host_allowed("nas.local", ()) and not host_allowed("", ()) and not host_allowed("[::1", ())
 
 
 def test_trackaipac_refresh_and_reset(make_app, tmp_path):

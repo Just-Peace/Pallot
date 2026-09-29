@@ -27,6 +27,6 @@ async function request(method, url, body, { signal } = {}) {
 
 export const api = {
   get: (url, options) => request("GET", url, undefined, options),
-  post: (url, body = {}) => request("POST", url, body),
+  post: (url, body = {}, options) => request("POST", url, body, options),
   put: (url, body) => request("PUT", url, body),
 };

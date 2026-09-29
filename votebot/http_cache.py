@@ -86,6 +86,13 @@ class Cached:
     stale: bool = False  # the refresh failed and this is the last good copy
 
 
+@dataclass(frozen=True)
+class _Stored:
+    fetched_at: float
+    expires_at: float
+    value: Any
+
+
 class UpstreamError(Exception):
     """A source could not be reached, or is paused (``until``), and nothing was cached to
     fall back on."""
@@ -234,12 +241,12 @@ class HttpCache:
         request share one fetch.
         """
         key = spec.key
-        meta = self._meta(key)
-        if meta and meta[1] > self._clock():
-            return self._hit(source, Cached(self._value(key, meta[0]), meta[0]))
+        stored = self._load(key)
+        if stored and stored.expires_at > self._clock():
+            return self._hit(source, Cached(stored.value, stored.fetched_at))
         until = self.paused_until(source)
-        if meta and (until or self.flag_until(_retry_flag(key))):
-            return self._hit(source, Cached(self._value(key, meta[0]), meta[0], stale=True))
+        if stored and (until or self.flag_until(_retry_flag(key))):
+            return self._hit(source, Cached(stored.value, stored.fetched_at, stale=True))
         if until:
             raise UpstreamError(source, f"paused until {iso_utc(until)}", until=until)
 
@@ -277,15 +284,15 @@ class HttpCache:
             value = await self._request(source, spec)
         except (httpx.HTTPError, ValueError) as exc:
             self._refused(source, exc)
-            meta = self._meta(spec.key)
-            if meta is None:
+            stored = self._load(spec.key)
+            if stored is None:
                 raise UpstreamError(source, describe_error(exc), _status(exc)) from exc
             if self._retry_after:
                 self.set_flag(_retry_flag(spec.key), source, self._retry_after)
             if stats:
                 stats.stale_sources.add(source)
-                stats.used(source, meta[0])
-            return Cached(self._value(spec.key, meta[0]), meta[0], stale=True)
+                stats.used(source, stored.fetched_at)
+            return Cached(stored.value, stored.fetched_at, stale=True)
         now = self._clock()
         self._store(spec, source, value, now, ttl, empty_ttl, empty_at)
         if stats:
@@ -324,21 +331,26 @@ class HttpCache:
 
     # -- storage -----------------------------------------------------------------
 
-    def _meta(self, key: str) -> tuple[float, float] | None:
-        with self._lock:
-            row = self._db.execute("SELECT fetched_at, expires_at FROM responses WHERE key = ?", (key,)).fetchone()
-        return (row[0], row[1]) if row else None
-
-    def _value(self, key: str, fetched_at: float) -> Any:
+    def _load(self, key: str) -> _Stored | None:
+        """The stored copy, or None. Its times and value come from one query, so a Clear
+        from another process (or thread) can't remove the row in between. The value text is
+        only sent, and parsed, when the in-memory copy isn't this one."""
         hit = self._memory.get(key)
-        if hit and hit[0] == fetched_at:
-            self._memory.move_to_end(key)
-            return hit[1]
         with self._lock:
-            row = self._db.execute("SELECT value FROM responses WHERE key = ?", (key,)).fetchone()
-        value = json.loads(row[0])
+            row = self._db.execute(
+                "SELECT fetched_at, expires_at, CASE WHEN fetched_at = ? THEN NULL ELSE value END"
+                " FROM responses WHERE key = ?",
+                (hit[0] if hit else None, key),
+            ).fetchone()
+        if row is None:
+            return None
+        fetched_at, expires_at, text = row
+        if text is None:  # value is NOT NULL, so memory holds this very copy
+            self._memory.move_to_end(key)
+            return _Stored(fetched_at, expires_at, hit[1])
+        value = json.loads(text)
         self._remember(key, fetched_at, value)
-        return value
+        return _Stored(fetched_at, expires_at, value)
 
     def _remember(self, key: str, fetched_at: float, value: Any) -> None:
         self._memory[key] = (fetched_at, value)

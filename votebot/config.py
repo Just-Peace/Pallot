@@ -49,6 +49,9 @@ class Config:
     # A free key from https://api.open.fec.gov/developers/ (issued by api.data.gov); without
     # one, the shared DEMO_KEY. Only ever sent to the FEC, never written to disk.
     fec_api_key: str = field(default=DEMO_KEY, repr=False)
+    # Names VoteBot answers to besides localhost and IP addresses, such as a LAN name or a
+    # reverse proxy's domain ("*": any). Other names are refused, against DNS rebinding.
+    allowed_hosts: tuple[str, ...] = ()
 
     @property
     def cache_path(self) -> Path:
@@ -107,4 +110,7 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         http_timeout=float(env.get("VOTEBOT_HTTP_TIMEOUT") or Config.http_timeout),
         ttl=Ttls(**overrides),
         fec_api_key=(env.get("VOTEBOT_FEC_API_KEY") or "").strip() or DEMO_KEY,
+        allowed_hosts=tuple(
+            name.strip().lower() for name in (env.get("VOTEBOT_ALLOWED_HOSTS") or "").split(",") if name.strip()
+        ),
     )

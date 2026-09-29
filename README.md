@@ -96,7 +96,7 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | bundled with VoteBot, built from TEC's nightly CSV export (see [TrackAIPAC and TEC snapshots](#trackaipac-and-tec-snapshots)) |
 | FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API |
 
-The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from numbers the voter types in; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot".
+The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from numbers the voter types in; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". When Texas SOS has no ballot for the county, as for a special election, VoteBot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
 
 Campaign money covers congressional races (FEC) and state races (TEC), which includes:
 - statewide offices;
@@ -145,6 +145,8 @@ The **Settings** page, linked from the left pane:
 - has a refresh or clear button per source, plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
 - has "Clear my picks & notes", and "Clear all browser data", which also forgets your address and search engine.
 
+Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
+
 When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
 ## TrackAIPAC and TEC snapshots
@@ -166,12 +168,14 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 | `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and VoteBot never writes it anywhere |
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper)` (Nominatim requires an identifying one) |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
+| `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
 | `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching) |
 
 ### Docker
 
 - `compose.yaml` mounts `data/` (or the folder `VOTEBOT_DATA_DIR` names) at `/data`, so Docker and `uv run votebot` share the cache, settings, TrackAIPAC and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
 - It's published on every network interface. To keep it to this machine, change the `ports` line in `compose.yaml` to `"127.0.0.1:8000:8000"`. `VOTEBOT_PORT` in `.env` changes the port.
+- To open it by a name rather than an address (`http://nas.local:8000`, or through a reverse proxy), add the name to `VOTEBOT_ALLOWED_HOSTS` in `.env`. A reverse proxy must pass the original `Host` header on.
 - The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `VOTEBOT_UID` and `VOTEBOT_GID` in `.env`.
 - `.env` is passed in when the container starts, never built into the image.
 
