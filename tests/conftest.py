@@ -92,6 +92,8 @@ class Upstream:
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
         self.photon_status: int | None = None  # e.g. 429 when Photon throttles us
+        self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
+        self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
     def count(self, host_part: str) -> int:
@@ -144,6 +146,13 @@ class Upstream:
             return httpx.Response(200, content=sboe_zip())
         if url.host == "api.open.fec.gov":
             return self._fec(request)
+        if url.host == "fiftyplusone.news":
+            self.polls_agents.add(request.headers.get("user-agent"))
+            if self.polls_status:
+                return httpx.Response(self.polls_status, json={"error": "Forbidden"})
+            if params["offset"] != "0":  # every recorded list fits on its first page
+                return httpx.Response(200, json={"success": True, "data": []})
+            return _file(f"polls_{params['filterValue']}.json", default={"success": True, "data": []})
         raise AssertionError(f"unexpected request: {request.method} {url}")
 
     def _fec(self, request: httpx.Request) -> httpx.Response:

@@ -1,0 +1,3428 @@
+{
+ "success": true,
+ "count": 38,
+ "data": [
+  {
+   "poll_id": "93581",
+   "pollster_id": "1873",
+   "sponsor_ids": "2133",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-24",
+   "end_date": "2026-09-26",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.bigdatapoll.com/blog/lone-star-state-poll-talarico-paxton-in-close-race-us-senate-in-texas/",
+   "pollster": {
+    "pollster_id": 1873,
+    "name": "Big Data Poll",
+    "display_name": "Big Data Poll",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Public Polling Project",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2133,
+      "display_name": "Public Polling Project"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.bigdatapoll.com/blog/lone-star-state-poll-talarico-paxton-in-close-race-us-senate-in-texas/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44.2,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32906,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48.2,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32907,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 7.6,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32908,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-28 13:14:20 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233691,
+     "sample_size": 793,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    },
+    {
+     "url": "https://www.bigdatapoll.com/blog/lone-star-state-poll-talarico-paxton-in-close-race-us-senate-in-texas/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44.4,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32909,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48.9,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32910,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 6.6,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32911,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-28 13:14:21 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233692,
+     "sample_size": 698,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93579",
+   "pollster_id": "1947",
+   "sponsor_ids": "2305",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-22",
+   "end_date": "2026-09-24",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.politico.com/newsletters/playbook/2026/09/28/trumps-joes-exit-the-front-row-01094720",
+   "pollster": {
+    "pollster_id": 1947,
+    "name": "Stratus Intelligence",
+    "display_name": "Stratus Intelligence",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texans for a Conservative Majority",
+      "internal": false,
+      "partisan": "REP",
+      "sponsor_id": 2305,
+      "display_name": "Texans for a Conservative Majority (super PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.politico.com/newsletters/playbook/2026/09/28/trumps-joes-exit-the-front-row-01094720",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 45,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32904,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 50,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32905,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-28 13:14:14 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233684,
+     "sample_size": 865,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93558",
+   "pollster_id": "1464",
+   "sponsor_ids": "2190",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-19",
+   "end_date": "2026-09-22",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-in-texas-general-election-662",
+   "pollster": {
+    "pollster_id": 1464,
+    "name": "Slingshot Strategies",
+    "display_name": "Slingshot Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas Public Opinion Research",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2190,
+      "display_name": "Texas Public Opinion Research"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-in-texas-general-election-662",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 46,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32892,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 50,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32893,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 2,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32894,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-25 14:21:05 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233485,
+     "sample_size": 1007,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93518",
+   "pollster_id": "1975",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-17",
+   "end_date": "2026-09-20",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://maristpoll.marist.edu/polls/2026-midterm-elections-in-texas-september-2026/",
+   "pollster": {
+    "pollster_id": 1975,
+    "name": "Marist University",
+    "display_name": "Marist University",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://maristpoll.marist.edu/polls/2026-midterm-elections-in-texas-september-2026/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 49,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32847,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32848,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-23 10:26:45 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233317,
+     "sample_size": 1139,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93509",
+   "pollster_id": "1950",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-15",
+   "end_date": "2026-09-19",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.jordanresearchcenter.org/publications/tsusept2026-txsenate-governor-statewideraces",
+   "pollster": {
+    "pollster_id": 1950,
+    "name": "Texas Southern University",
+    "display_name": "Texas Southern University Barbara Jordan Public Policy Research and Survey Center",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.jordanresearchcenter.org/publications/tsusept2026-txsenate-governor-statewideraces",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 45,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32831,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32832,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 2,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32833,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-22 12:13:49 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233281,
+     "sample_size": 1800,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93466",
+   "pollster_id": "2008",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-08",
+   "end_date": "2026-09-11",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://sri.siena.edu/2026/09/17/hinojosa-now-leads-abbott-by-4-points-talarico-widens-lead-to-6-points/",
+   "pollster": {
+    "pollster_id": 2008,
+    "name": "ReconMR/Siena",
+    "display_name": "ReconMR/Siena University",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://sri.siena.edu/2026/09/17/hinojosa-now-leads-abbott-by-4-points-talarico-widens-lead-to-6-points/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 49,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32760,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32761,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 0,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32762,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-17 12:22:34 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233140,
+     "sample_size": 614,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93464",
+   "pollster_id": "1102",
+   "sponsor_ids": "1185",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-12",
+   "end_date": "2026-09-14",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://emersoncollegepolling.com/texas-2026-poll-talarico-and-paxton-in-dead-heat-abbott-maintains-edge/",
+   "pollster": {
+    "pollster_id": 1102,
+    "name": "Emerson",
+    "display_name": "Emerson College",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Nexstar",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 1185,
+      "display_name": "Nexstar"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://emersoncollegepolling.com/texas-2026-poll-talarico-and-paxton-in-dead-heat-abbott-maintains-edge/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 45.5,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32786,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48.7,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32787,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 1.7,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32788,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-17 12:21:59 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233136,
+     "sample_size": 1000,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93435",
+   "pollster_id": "289",
+   "sponsor_ids": "2464",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-08",
+   "end_date": "2026-09-10",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.nbcnews.com/politics/2026-election/texas-poll-james-talarico-holds-narrow-advantage-senate-greg-abbott-le-rcna598432",
+   "pollster": {
+    "pollster_id": 289,
+    "name": "Mason-Dixon",
+    "display_name": "Mason-Dixon Polling & Strategy",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Telemundo Texas",
+      "internal": false,
+      "partisan": null,
+      "sponsor_id": 2464,
+      "display_name": "Telemundo Texas"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.nbcnews.com/politics/2026-election/texas-poll-james-talarico-holds-narrow-advantage-senate-greg-abbott-le-rcna598432",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 41,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32746,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32747,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 1,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32748,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      },
+      {
+       "pct": 2,
+       "party": "W",
+       "answer": "Raphoon",
+       "answer_id": 32749,
+       "candidate": {
+        "name": "Jenn Mack",
+        "party": "W",
+        "person_id": 40138
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40138
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-15 15:37:51 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232995,
+     "sample_size": 625,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93423",
+   "pollster_id": "1890",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-09-12",
+   "end_date": "2026-09-13",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://socalstrategies.substack.com/p/new-socal-strategies-poll-james-talarico?r=8i4jqw&utm_campaign=post-expanded-share&utm_medium=web",
+   "pollster": {
+    "pollster_id": 1890,
+    "name": "SoCal Strategies",
+    "display_name": "SoCal Strategies",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://socalstrategies.substack.com/p/new-socal-strategies-poll-james-talarico?r=8i4jqw&utm_campaign=post-expanded-share&utm_medium=web",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32776,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 52,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32777,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-13 21:40:35 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232924,
+     "sample_size": 649,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93396",
+   "pollster_id": "1699",
+   "sponsor_ids": "42",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-30",
+   "end_date": "2026-09-01",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.aarp.org/pri/topics/voter-research/politics/2026-midterm-election-poll-texas/",
+   "pollster": {
+    "pollster_id": 1699,
+    "name": "Fabrizio/Impact",
+    "display_name": "Fabrizio, Lee & Associates/Impact Research",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "AARP",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 42,
+      "display_name": "AARP"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.aarp.org/pri/topics/voter-research/politics/2026-midterm-election-poll-texas/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 46,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32702,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32703,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-10 16:20:07 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232865,
+     "sample_size": 895,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93388",
+   "pollster_id": "568",
+   "sponsor_ids": "38",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-27",
+   "end_date": "2026-09-04",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.univision.com/noticias/politica/poll-univision-texas-2026",
+   "pollster": {
+    "pollster_id": 568,
+    "name": "YouGov",
+    "display_name": "YouGov",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Univision",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 38,
+      "display_name": "Univision"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.univision.com/noticias/politica/poll-univision-texas-2026",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 47,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32716,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 47,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32717,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-09 18:21:43 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232845,
+     "sample_size": 1000,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93336",
+   "pollster_id": "2005",
+   "sponsor_ids": "2456",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-26",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://overtoninsights.com/poll/september-2026/",
+   "pollster": {
+    "pollster_id": 2005,
+    "name": "Overton Insights",
+    "display_name": "Overton Insights",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas Public Policy Foundation",
+      "internal": false,
+      "partisan": null,
+      "sponsor_id": 2456,
+      "display_name": "Texas Public Policy Foundation"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://overtoninsights.com/poll/september-2026/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 48.8,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32686,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 51.2,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32687,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-09-02 12:31:53 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232684,
+     "sample_size": 1167,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93295",
+   "pollster_id": "1464",
+   "sponsor_ids": "2190",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-21",
+   "end_date": "2026-08-24",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-in-texas-general-election",
+   "pollster": {
+    "pollster_id": 1464,
+    "name": "Slingshot Strategies",
+    "display_name": "Slingshot Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas Public Opinion Research",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2190,
+      "display_name": "Texas Public Opinion Research"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-in-texas-general-election",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 42,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32651,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32652,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 1,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32653,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      },
+      {
+       "pct": 1,
+       "party": "W",
+       "answer": "Raphoon",
+       "answer_id": 32656,
+       "candidate": {
+        "name": "Jenn Mack",
+        "party": "W",
+        "person_id": 40138
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40138
+      },
+      {
+       "pct": 0,
+       "party": "IND",
+       "answer": "Chavez",
+       "answer_id": 32654,
+       "candidate": {
+        "name": "Elliot Chavez",
+        "party": "IND",
+        "person_id": 40431
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40431
+      },
+      {
+       "pct": 0,
+       "party": "IND",
+       "answer": "Padrino",
+       "answer_id": 32655,
+       "candidate": {
+        "name": "Blas Eugenio Padrino",
+        "party": "IND",
+        "person_id": 40432
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40432
+      },
+      {
+       "pct": 0,
+       "party": "IND",
+       "answer": "Richards",
+       "answer_id": 32657,
+       "candidate": {
+        "name": "Janis Richards",
+        "party": "IND",
+        "person_id": 40433
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40433
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-27 13:53:27 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232582,
+     "sample_size": 1000,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93272",
+   "pollster_id": "1928",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-05",
+   "end_date": "2026-08-13",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspolitics.utexas.edu/blog/new-ut-texas-politics-project-poll-finds-talarico-leading-paxton-abbott-leading-hinojosa-continued-resistance-to-data-centers-2",
+   "pollster": {
+    "pollster_id": 1928,
+    "name": "U. Texas/YouGov",
+    "display_name": "Texas Politics Project at the University of Texas/YouGov",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspolitics.utexas.edu/blog/new-ut-texas-politics-project-poll-finds-talarico-leading-paxton-abbott-leading-hinojosa-continued-resistance-to-data-centers-2",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 40,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32592,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32593,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 3,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32594,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-25 11:55:15 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232481,
+     "sample_size": 1218,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93133",
+   "pollster_id": "907",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": 38451,
+   "state": "Texas",
+   "start_date": "2026-08-04",
+   "end_date": "2026-08-09",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://x.com/XochitlHinojosa/status/2087874324963205404?s=20",
+   "pollster": {
+    "pollster_id": 907,
+    "name": "GBAO",
+    "display_name": "GBAO",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": [
+     {
+      "name": "Gina Hinojosa",
+      "partisan": "DEM",
+      "display_name": "Gina Hinojosa",
+      "sponsor_candidate_id": 38451
+     }
+    ]
+   },
+   "questions": [
+    {
+     "url": "https://x.com/XochitlHinojosa/status/2087874324963205404?s=20",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 48,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32556,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32557,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-13 14:09:16 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232121,
+     "sample_size": 1000,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93131",
+   "pollster_id": "1102",
+   "sponsor_ids": "1185",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-08-09",
+   "end_date": "2026-08-10",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://emersoncollegepolling.com/texas-2026-poll-paxton-and-talarico/",
+   "pollster": {
+    "pollster_id": 1102,
+    "name": "Emerson",
+    "display_name": "Emerson College",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Nexstar",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 1185,
+      "display_name": "Nexstar"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://emersoncollegepolling.com/texas-2026-poll-paxton-and-talarico/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 45,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32567,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48.5,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32568,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-13 12:19:47 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232120,
+     "sample_size": 1000,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93113",
+   "pollster_id": "1347",
+   "sponsor_ids": "1364",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-29",
+   "end_date": "2026-07-31",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.cygn.al/wp-content/uploads/2026/08/Abbott-Data-Center-Plan-Memo.pdf",
+   "pollster": {
+    "pollster_id": 1347,
+    "name": "Cygnal",
+    "display_name": "Cygnal",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "REP (partisan)",
+      "internal": null,
+      "partisan": "REP",
+      "sponsor_id": 1364,
+      "display_name": "Unknown Sponsor"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.cygn.al/wp-content/uploads/2026/08/Abbott-Data-Center-Plan-Memo.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 46,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32533,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32534,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-11 13:51:23 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232090,
+     "sample_size": 800,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93093",
+   "pollster_id": "2008",
+   "sponsor_ids": "2417",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-27",
+   "end_date": "2026-07-30",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://reconmr.com/wp-content/uploads/2026/08/Texas-Pulse-August-Release-August-7-2026-Final.pdf",
+   "pollster": {
+    "pollster_id": 2008,
+    "name": "ReconMR/Siena",
+    "display_name": "ReconMR/Siena University",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas A&M University Bush School of Government & Public Service",
+      "internal": false,
+      "partisan": null,
+      "sponsor_id": 2417,
+      "display_name": "Texas A&M University Bush School of Government & Public Service"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://reconmr.com/wp-content/uploads/2026/08/Texas-Pulse-August-Release-August-7-2026-Final.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 45,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32519,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32520,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 0,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32521,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-07 13:30:35 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 232049,
+     "sample_size": 619,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93052",
+   "pollster_id": "1950",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-27",
+   "end_date": "2026-07-30",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.jordanresearchcenter.org/publications/texas-statewide-august2026",
+   "pollster": {
+    "pollster_id": 1950,
+    "name": "Texas Southern University",
+    "display_name": "Texas Southern University Barbara Jordan Public Policy Research and Survey Center",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.jordanresearchcenter.org/publications/texas-statewide-august2026",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32516,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32517,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 3,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32518,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-04 12:47:59 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 231906,
+     "sample_size": 1200,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93039",
+   "pollster_id": "2012",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-30",
+   "end_date": "2026-07-31",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://drive.google.com/file/d/1t2mC4MFActxiBdx4ef_5crisXjD9xH7a/view",
+   "pollster": {
+    "pollster_id": 2012,
+    "name": "Wedgewood Polls",
+    "display_name": "Wedgewood Polls",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://drive.google.com/file/d/1t2mC4MFActxiBdx4ef_5crisXjD9xH7a/view",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32539,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 50,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32540,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-08-02 15:46:15 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 231862,
+     "sample_size": 800,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93016",
+   "pollster_id": "1597",
+   "sponsor_ids": "149",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-23",
+   "end_date": "2026-07-27",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.foxnews.com/politics/fox-news-poll-gop-divisions-shape-texas-senate-race",
+   "pollster": {
+    "pollster_id": 1597,
+    "name": "Beacon/Shaw",
+    "display_name": "Beacon Research/Shaw & Co. Research",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "FOX News",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 149,
+      "display_name": "Fox News"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.foxnews.com/politics/fox-news-poll-gop-divisions-shape-texas-senate-race",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 49,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32504,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 50,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32505,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-07-30 23:30:12 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 231792,
+     "sample_size": 1006,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92974",
+   "pollster_id": "1464",
+   "sponsor_ids": "2190",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-07-15",
+   "end_date": "2026-07-17",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talaricos-lead-over",
+   "pollster": {
+    "pollster_id": 1464,
+    "name": "Slingshot Strategies",
+    "display_name": "Slingshot Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas Public Opinion Research",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2190,
+      "display_name": "Texas Public Opinion Research"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talaricos-lead-over",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 42,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32455,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 45,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32456,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 1,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32457,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      },
+      {
+       "pct": 1,
+       "party": "W",
+       "answer": "Raphoon",
+       "answer_id": 32458,
+       "candidate": {
+        "name": "Jenn Mack",
+        "party": "W",
+        "person_id": 40138
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40138
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-07-28 11:59:43 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 231646,
+     "sample_size": 1048,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92788",
+   "pollster_id": "1977",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-06-19",
+   "end_date": "2026-06-27",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.nytimes.com/2026/06/30/us/politics/texas-senate-poll-talarico-paxton.html",
+   "pollster": {
+    "pollster_id": 1977,
+    "name": "Siena Univ/NYT",
+    "display_name": "The New York Times/Siena University",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.nytimes.com/2026/06/30/us/politics/texas-senate-poll-talarico-paxton.html",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32395,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 51,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32396,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-06-30 12:58:09 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 230870,
+     "sample_size": 656,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92732",
+   "pollster_id": "1928",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-06-05",
+   "end_date": "2026-06-12",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+   "pollster": {
+    "pollster_id": 1928,
+    "name": "U. Texas/YouGov",
+    "display_name": "Texas Politics Project at the University of Texas/YouGov",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 40,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32334,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 47,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32335,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 1,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32336,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-06-23 12:56:18 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 230665,
+     "sample_size": 1200,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92730",
+   "pollster_id": "1890",
+   "sponsor_ids": "2170",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-06-21",
+   "end_date": "2026-06-21",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://socalstrategies.substack.com/p/ken-paxton-leads-narrow-texas-senate",
+   "pollster": {
+    "pollster_id": 1890,
+    "name": "SoCal Strategies",
+    "display_name": "SoCal Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Red Eagle Politics",
+      "internal": null,
+      "partisan": "REP",
+      "sponsor_id": 2170,
+      "display_name": "Red Eagle Politics"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://socalstrategies.substack.com/p/ken-paxton-leads-narrow-texas-senate",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 42.21,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32358,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 53.9,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32359,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-06-22 23:08:03 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 230660,
+     "sample_size": 800,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92633",
+   "pollster_id": "2008",
+   "sponsor_ids": "2417",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-06-01",
+   "end_date": "2026-06-04",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://reconmr.com/texas-pulse/",
+   "pollster": {
+    "pollster_id": 2008,
+    "name": "ReconMR/Siena",
+    "display_name": "ReconMR/Siena University",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas A&M University Bush School of Government & Public Service",
+      "internal": false,
+      "partisan": null,
+      "sponsor_id": 2417,
+      "display_name": "Texas A&M University Bush School of Government & Public Service"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://reconmr.com/texas-pulse/",
+     "cycle": 2026,
+     "party": "REP",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32315,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32313,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 0,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32314,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-06-09 14:02:26 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 230282,
+     "sample_size": 807,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92542",
+   "pollster_id": "1464",
+   "sponsor_ids": "2190",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-05-27",
+   "end_date": "2026-05-28",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+   "pollster": {
+    "pollster_id": 1464,
+    "name": "Slingshot Strategies",
+    "display_name": "Slingshot Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas Public Opinion Research",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2190,
+      "display_name": "Texas Public Opinion Research"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 41,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32303,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32304,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 1,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32305,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      },
+      {
+       "pct": 1,
+       "party": "W",
+       "answer": "Raphoon",
+       "answer_id": 32306,
+       "candidate": {
+        "name": "Jenn Mack",
+        "party": "W",
+        "person_id": 40138
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40138
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-05-30 02:17:15 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 229981,
+     "sample_size": 1670,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92510",
+   "pollster_id": "383",
+   "sponsor_ids": "2349",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-05-22",
+   "end_date": "2026-05-23",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.politico.com/news/2026/05/27/talarico-exclusive-interview-paxton-fundraising-texas-00937600",
+   "pollster": {
+    "pollster_id": 383,
+    "name": "PPP",
+    "display_name": "Public Policy Polling",
+    "partisan": "DEM",
+    "sponsors": [
+     {
+      "name": "Lone Star Rising PAC",
+      "internal": false,
+      "partisan": "DEM",
+      "sponsor_id": 2349,
+      "display_name": "Lone Star Rising PAC (super PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.politico.com/news/2026/05/27/talarico-exclusive-interview-paxton-fundraising-texas-00937600",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 44,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32281,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32282,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-05-27 12:35:46 UTC",
+     "politician": null,
+     "population": "v",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 229888,
+     "sample_size": 643,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92413",
+   "pollster_id": "2000",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-04-22",
+   "end_date": "2026-05-06",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.jordanresearchcenter.org/publications/tsutexasnov2026",
+   "pollster": {
+    "pollster_id": 2000,
+    "name": "Texas Southern University/YouGov",
+    "display_name": "Texas Southern University Barbara Jordan Public Policy Research and Survey Center/YouGov",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.jordanresearchcenter.org/publications/tsutexasnov2026",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32242,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32243,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-05-18 12:24:50 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 229527,
+     "sample_size": 1223,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92254",
+   "pollster_id": "1928",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-04-10",
+   "end_date": "2026-04-20",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://texaspolitics.utexas.edu/blog/april-polling-war-and-surging-gas-prices-fuel-another-negative-turn-in-texans-views-of-the-economy-2",
+   "pollster": {
+    "pollster_id": 1928,
+    "name": "U. Texas/YouGov",
+    "display_name": "Texas Politics Project at the University of Texas/YouGov",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://texaspolitics.utexas.edu/blog/april-polling-war-and-surging-gas-prices-fuel-another-negative-turn-in-texans-views-of-the-economy-2",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 38,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32220,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 44,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32221,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-04-29 13:50:36 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 228982,
+     "sample_size": 1200,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "92228",
+   "pollster_id": "1464",
+   "sponsor_ids": "2190",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-04-17",
+   "end_date": "2026-04-20",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.texastribune.org/2026/04/28/texas-us-senate-poll-talarico-cornyn-paxton-2026-midterms/",
+   "pollster": {
+    "pollster_id": 1464,
+    "name": "Slingshot Strategies",
+    "display_name": "Slingshot Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Texas Public Opinion Research",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 2190,
+      "display_name": "Texas Public Opinion Research"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.texastribune.org/2026/04/28/texas-us-senate-poll-talarico-cornyn-paxton-2026-midterms/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32218,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 48,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32219,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-04-28 12:51:31 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 228895,
+     "sample_size": 1018,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "91791",
+   "pollster_id": "1474",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-02-13",
+   "end_date": "2026-02-22",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.uttyler.edu/academics/colleges-schools/arts-sciences/departments/political-science/files/ut-tyler-poll-cor-feb-2026-poll-final-topline-report.pdf",
+   "pollster": {
+    "pollster_id": 1474,
+    "name": "University of Texas at Tyler",
+    "display_name": "University of Texas at Tyler Center for Opinion Research",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.uttyler.edu/academics/colleges-schools/arts-sciences/departments/political-science/files/ut-tyler-poll-cor-feb-2026-poll-final-topline-report.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 41,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32096,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32097,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-02-27 20:03:39 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 227422,
+     "sample_size": 1117,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    },
+    {
+     "url": "https://www.uttyler.edu/academics/colleges-schools/arts-sciences/departments/political-science/files/ut-tyler-poll-cor-feb-2026-poll-final-topline-report.pdf",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 39,
+       "party": "DEM",
+       "answer": "Bell",
+       "answer_id": 32098,
+       "candidate": {
+        "name": "Chris Bell",
+        "party": "DEM",
+        "person_id": 38453
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38453
+      },
+      {
+       "pct": 51,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32099,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-02-27 20:03:39 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 227423,
+     "sample_size": 1117,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "91660",
+   "pollster_id": "907",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": 38451,
+   "state": "Texas",
+   "start_date": "2026-01-26",
+   "end_date": "2026-02-03",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.the-downballot.com/p/morning-digest-how-maine-democrats",
+   "pollster": {
+    "pollster_id": 907,
+    "name": "GBAO",
+    "display_name": "GBAO",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": [
+     {
+      "name": "Gina Hinojosa",
+      "partisan": "DEM",
+      "display_name": "Gina Hinojosa",
+      "sponsor_candidate_id": 38451
+     }
+    ]
+   },
+   "questions": [
+    {
+     "url": "https://www.the-downballot.com/p/morning-digest-how-maine-democrats",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 43,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32058,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32059,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 6,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32060,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-02-12 13:35:35 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 226941,
+     "sample_size": 1000,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "91582",
+   "pollster_id": "500",
+   "sponsor_ids": null,
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-01-20",
+   "end_date": "2026-01-31",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://www.uh.edu/hobby/primary2026/",
+   "pollster": {
+    "pollster_id": 500,
+    "name": "U. Houston/YouGov",
+    "display_name": "University of Houston Hobby School of Public Affairs/YouGov",
+    "partisan": null,
+    "sponsors": [],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.uh.edu/hobby/primary2026/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 42,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32037,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 49,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32038,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      },
+      {
+       "pct": 3,
+       "party": "LIB",
+       "answer": "Dixon",
+       "answer_id": 32039,
+       "candidate": {
+        "name": "Pat Dixon",
+        "party": "LIB",
+        "person_id": 38575
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38575
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-02-11 14:27:01 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 226934,
+     "sample_size": 1502,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "91442",
+   "pollster_id": "1102",
+   "sponsor_ids": "1185",
+   "sponsor_candidate_id": null,
+   "state": "Texas",
+   "start_date": "2026-01-10",
+   "end_date": "2026-01-12",
+   "filter_value": "governor_general",
+   "race_id": 16213,
+   "url": "https://emersoncollegepolling.com/texas-2026-poll/",
+   "pollster": {
+    "pollster_id": 1102,
+    "name": "Emerson",
+    "display_name": "Emerson College",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Nexstar",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 1185,
+      "display_name": "Nexstar"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://emersoncollegepolling.com/texas-2026-poll/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 42.3,
+       "party": "DEM",
+       "answer": "Hinojosa",
+       "answer_id": 32001,
+       "candidate": {
+        "name": "Gina Hinojosa",
+        "party": "DEM",
+        "person_id": 38451
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38451
+      },
+      {
+       "pct": 50.2,
+       "party": "REP",
+       "answer": "Abbott",
+       "answer_id": 32002,
+       "candidate": {
+        "name": "Greg Abbott",
+        "party": "REP",
+        "person_id": 38493
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 38493
+      }
+     ],
+     "race_id": 16213,
+     "seat_name": "Governor",
+     "created_at": "2026-01-15 14:20:07 UTC",
+     "politician": null,
+     "population": "rv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 226113,
+     "sample_size": 1165,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93591",
+   "pollster_id": "1365",
+   "sponsor_ids": "2396",
+   "sponsor_candidate_id": null,
+   "state": "Florida",
+   "start_date": "2026-09-25",
+   "end_date": "2026-09-27",
+   "filter_value": "governor_general",
+   "race_id": 10927,
+   "url": "https://changeresearch.com/research/2026/2026-09-28-florida-aapor-methodology-statement",
+   "pollster": {
+    "pollster_id": 1365,
+    "name": "Change Research",
+    "display_name": "Change Research",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Freedom Project USA",
+      "internal": false,
+      "partisan": null,
+      "sponsor_id": 2396,
+      "display_name": "Freedom Project USA"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://changeresearch.com/research/2026/2026-09-28-florida-aapor-methodology-statement",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 46,
+       "party": "REP",
+       "answer": "Donalds",
+       "answer_id": 32918,
+       "candidate": {
+        "name": "Byron Donalds",
+        "party": "REP",
+        "person_id": 31708
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 31708
+      },
+      {
+       "pct": 48,
+       "party": "DEM",
+       "answer": "Jolly",
+       "answer_id": 32917,
+       "candidate": {
+        "name": "David Jolly",
+        "party": "DEM",
+        "person_id": 37997
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 37997
+      }
+     ],
+     "race_id": 10927,
+     "seat_name": "Governor",
+     "created_at": "2026-09-28 21:15:36 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233721,
+     "sample_size": 1063,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93577",
+   "pollster_id": "67",
+   "sponsor_ids": "475",
+   "sponsor_candidate_id": null,
+   "state": "Vermont",
+   "start_date": "2026-09-10",
+   "end_date": "2026-09-21",
+   "filter_value": "governor_general",
+   "race_id": 16214,
+   "url": "https://www.vermontpublic.org/local-news/2026-09-28/vermont-general-election-poll-results-2026",
+   "pollster": {
+    "pollster_id": 67,
+    "name": "Braun",
+    "display_name": "Braun Research",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Vermont Public Radio",
+      "internal": null,
+      "partisan": null,
+      "sponsor_id": 475,
+      "display_name": "Vermont Public Radio"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://www.vermontpublic.org/local-news/2026-09-28/vermont-general-election-poll-results-2026",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 32,
+       "party": "DEM",
+       "answer": "Janoo",
+       "answer_id": 32899,
+       "candidate": {
+        "name": "Amanda Janoo",
+        "party": "DEM",
+        "person_id": 40246
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40246
+      },
+      {
+       "pct": 42,
+       "party": "REP",
+       "answer": "Scott",
+       "answer_id": 32900,
+       "candidate": {
+        "name": "Phil Scott",
+        "party": "REP",
+        "person_id": 40247
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40247
+      },
+      {
+       "pct": 0,
+       "party": "PAJ",
+       "answer": "Goodband",
+       "answer_id": 32901,
+       "candidate": {
+        "name": "June Goodband",
+        "party": "PAJ",
+        "person_id": 40248
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40248
+      },
+      {
+       "pct": 1,
+       "party": "OTH",
+       "answer": "Roy",
+       "answer_id": 32903,
+       "candidate": {
+        "name": "Dean Roy",
+        "party": "OTH",
+        "person_id": 40249
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40249
+      },
+      {
+       "pct": 2,
+       "party": "IND",
+       "answer": "Judd",
+       "answer_id": 32902,
+       "candidate": {
+        "name": "Brian Judd",
+        "party": "IND",
+        "person_id": 40474
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40474
+      }
+     ],
+     "race_id": 16214,
+     "seat_name": "Governor",
+     "created_at": "2026-09-28 13:14:30 UTC",
+     "politician": null,
+     "population": "a",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233697,
+     "sample_size": 817,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    },
+    {
+     "url": "https://www.vermontpublic.org/local-news/2026-09-28/vermont-general-election-poll-results-2026",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 34,
+       "party": "DEM",
+       "answer": "Janoo",
+       "answer_id": 32912,
+       "candidate": {
+        "name": "Amanda Janoo",
+        "party": "DEM",
+        "person_id": 40246
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40246
+      },
+      {
+       "pct": 44,
+       "party": "REP",
+       "answer": "Scott",
+       "answer_id": 32913,
+       "candidate": {
+        "name": "Phil Scott",
+        "party": "REP",
+        "person_id": 40247
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40247
+      },
+      {
+       "pct": 0,
+       "party": "PAJ",
+       "answer": "Goodband",
+       "answer_id": 32914,
+       "candidate": {
+        "name": "June Goodband",
+        "party": "PAJ",
+        "person_id": 40248
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40248
+      },
+      {
+       "pct": 1,
+       "party": "OTH",
+       "answer": "Roy",
+       "answer_id": 32916,
+       "candidate": {
+        "name": "Dean Roy",
+        "party": "OTH",
+        "person_id": 40249
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40249
+      },
+      {
+       "pct": 2,
+       "party": "IND",
+       "answer": "Judd",
+       "answer_id": 32915,
+       "candidate": {
+        "name": "Brian Judd",
+        "party": "IND",
+        "person_id": 40474
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 40474
+      }
+     ],
+     "race_id": 16214,
+     "seat_name": "Governor",
+     "created_at": "2026-09-28 13:18:55 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233699,
+     "sample_size": 732,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  },
+  {
+   "poll_id": "93564",
+   "pollster_id": "1765",
+   "sponsor_ids": "2149",
+   "sponsor_candidate_id": null,
+   "state": "Michigan",
+   "start_date": "2026-09-15",
+   "end_date": "2026-09-19",
+   "filter_value": "governor_general",
+   "race_id": 16198,
+   "url": "https://washingtonreporter.news/exclusive-mike-rogers-leads-in-michigan-john-james-nearly-tied-poll-shows/",
+   "pollster": {
+    "pollster_id": 1765,
+    "name": "Torchlight Strategies",
+    "display_name": "Torchlight Strategies",
+    "partisan": null,
+    "sponsors": [
+     {
+      "name": "Common Sense for America PAC",
+      "internal": null,
+      "partisan": "REP",
+      "sponsor_id": 2149,
+      "display_name": "Common Sense for America (PAC)"
+     }
+    ],
+    "sponsors_candidates": []
+   },
+   "questions": [
+    {
+     "url": "https://washingtonreporter.news/exclusive-mike-rogers-leads-in-michigan-john-james-nearly-tied-poll-shows/",
+     "cycle": 2026,
+     "party": "DEM",
+     "stage": "general",
+     "answers": [
+      {
+       "pct": 41.1,
+       "party": "REP",
+       "answer": "James",
+       "answer_id": 32898,
+       "candidate": {
+        "name": "John James",
+        "party": "REP",
+        "person_id": 37838
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 37838
+      },
+      {
+       "pct": 42.2,
+       "party": "DEM",
+       "answer": "Benson",
+       "answer_id": 32897,
+       "candidate": {
+        "name": "Jocelyn Benson",
+        "party": "DEM",
+        "person_id": 37848
+       },
+       "horserace": true,
+       "institution": null,
+       "candidate_id": 37848
+      }
+     ],
+     "race_id": 16198,
+     "seat_name": "Governor",
+     "created_at": "2026-09-25 19:33:06 UTC",
+     "politician": null,
+     "population": "lv",
+     "institution": null,
+     "office_type": "Governor",
+     "question_id": 233654,
+     "sample_size": 643,
+     "filter_value": "governor_general",
+     "politician_id": null,
+     "subpopulation": null
+    }
+   ]
+  }
+ ]
+}

@@ -36,14 +36,16 @@ export function extLink(url, label, props = {}) {
   return h("a", { href, ...(external ? { target: "_blank", rel: "noopener noreferrer" } : {}), ...props }, label);
 }
 
-// Text that may contain markdown-style [label](url) links (TrackAIPAC notes do).
+// Text that may contain markdown-style [label](url) links (TrackAIPAC notes do). Only full
+// URLs become links: a bare path would resolve against VoteBot itself.
 export function linkedText(text) {
   const parts = [];
   const pattern = /\[([^\]]+)\]\(([^)\s]+)\)/g;
   let last = 0;
   let match;
   while ((match = pattern.exec(text))) {
-    parts.push(text.slice(last, match.index), extLink(match[2], match[1]));
+    const [, label, url] = match;
+    parts.push(text.slice(last, match.index), /^(https?:\/\/|mailto:)/i.test(url) ? extLink(url, label) : label);
     last = pattern.lastIndex;
   }
   parts.push(text.slice(last));

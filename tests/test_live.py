@@ -13,7 +13,7 @@ from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
 from votebot.api import create_app
 from votebot.config import DEMO_KEY, Config, load_config
-from votebot.sources import fec
+from votebot.sources import fec, polls
 
 pytestmark = pytest.mark.live
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
@@ -63,3 +63,14 @@ def test_photon_suggestions_live(tmp_path):
     with TestClient(create_app(Config(data_dir=tmp_path / "data"))) as client:
         found = client.get("/api/suggest", params={"q": "1001 preston st houston"}).json()
     assert found["enabled"] and any("Preston" in s["label"] and "Houston" in s["label"] for s in found["suggestions"])
+
+
+def test_polls_live():
+    """FiftyPlusOne still answers a browser's User-Agent, in the shape polls.py reads."""
+    response = httpx.get(polls.API, headers=polls.HEADERS, timeout=60, params={
+        "offset": "0", "limit": str(polls.PAGE), "filterValue": polls.SENATE, "sortBy": "created_at", "dir": "DESC"})
+    response.raise_for_status()
+    texas = [row for row in response.json()["data"] if row.get("state") == polls.STATE]
+    assert texas and texas[0]["pollster_id"] and texas[0]["end_date"]
+    answers = [a for row in texas for q in row["questions"] for a in q["answers"]]
+    assert any(a["candidate"]["name"] and isinstance(a["pct"], (int, float)) for a in answers)

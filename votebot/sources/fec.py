@@ -263,6 +263,13 @@ def _employers(rows: list[dict[str, Any]] | None, cycle: int) -> Breakdown | Non
     )
 
 
+_OUTSIDE_NOTE = (
+    "None of this went to the campaign: groups it doesn't control spent it on their own ads, mail and so on, for or "
+    "against this candidate (independent expenditures reported to the FEC)."
+)
+_OUTSIDE_HINT = "Spent by groups the campaign doesn't control, on their own ads and mail; none of it went to the campaign"
+
+
 def _outside(rows: list[dict[str, Any]] | None) -> Breakdown | None:
     rows = sorted((r for r in rows or [] if _number(r.get("total"))), key=lambda r: -_number(r["total"]))
     if not rows:
@@ -273,15 +280,10 @@ def _outside(rows: list[dict[str, Any]] | None) -> Breakdown | None:
         parts.append(Share(
             label=display_org(r.get("committee_name") or "Unnamed committee"),
             amount=_number(r["total"]),
-            note="for" if support else "against",
+            tag="for" if support else "against",
             tone="info" if support else "warn",
         ))
-    return Breakdown(
-        title="Outside spending",
-        parts=parts,
-        note="Independent expenditures reported to the FEC by groups the campaign doesn't control, for or against this "
-        "candidate.",
-    )
+    return Breakdown(title="Outside spending", parts=parts, note=_OUTSIDE_NOTE)
 
 
 def _for_against(rows: list[dict[str, Any]] | None) -> tuple[float, float]:
@@ -291,14 +293,14 @@ def _for_against(rows: list[dict[str, Any]] | None) -> tuple[float, float]:
     return total("S"), total("O")
 
 
-def _outside_badge(rows: list[dict[str, Any]] | None, url: str) -> Badge | None:
+def _outside_badges(rows: list[dict[str, Any]] | None, url: str) -> list[Badge]:
+    """One badge for outside spending for the candidate (blue), one for against (amber)."""
     support, oppose = _for_against(rows)
-    pieces = [f"{money_short(support)} for" if support else None, f"{money_short(oppose)} against" if oppose else None]
-    text = " · ".join(p for p in pieces if p)
-    if not text:
-        return None
-    return Badge(text=f"Outside spending: {text}", tone="info", url=url,
-                 hint="Independent expenditures by groups outside the campaign, reported to the FEC")
+    return [
+        Badge(text=f"Outside spending {side}: {money_short(amount)}", tone=tone, url=url, hint=_OUTSIDE_HINT)
+        for side, amount, tone in (("for", support, "info"), ("against", oppose, "warn"))
+        if amount
+    ]
 
 
 @dataclass
@@ -342,8 +344,7 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
             hint=f"Raised by the campaign for the {cycle} election ({span})"
             + (f", from reports through {display_date(through)}" if through else ""),
         ))
-    if outside := _outside_badge(details.outside, page):
-        badges.append(outside)
+    badges += _outside_badges(details.outside, page)
 
     facts = [
         Fact(label="Raised", value=money(raised) or ""),
@@ -422,7 +423,8 @@ def comparison(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details:
                         note="Donations from individuals, grouped by the employer they listed; these are employees' own "
                         "donations, not the employers'."),
         compare.columns("Outside spending", each(lambda k: compare.named(_outside(more[k].outside))),
-                        note="Independent expenditures by groups the campaigns don't control, for or against each candidate."),
+                        note="None of this went to the campaigns: groups they don't control spent it on their own ads, "
+                        "mail and so on, for or against each candidate."),
     ]
     return Comparison(
         candidates=keys,

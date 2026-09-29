@@ -33,6 +33,7 @@ from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.photon import Photon
+from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
 from .sources.tec import Tec
@@ -78,6 +79,7 @@ class Services:
     trackaipac: TrackAipac
     fec: Fec
     tec: Tec
+    polls: Polls
     today: Callable[[], dt.date] = dt.date.today
     last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
     last_uses: dict[str, SourceUse] = field(default_factory=dict)
@@ -186,6 +188,7 @@ class _Builder:
         self.use_tap = svc.settings.enabled("trackaipac")
         self.use_fec = svc.settings.enabled("fec")
         self.use_tec = svc.settings.enabled("tec")
+        self.use_polls = svc.settings.enabled("polls")
         self.notes: list[str] = []
         self.warnings: list[str] = []
         self.errors: dict[str, str] = {}
@@ -257,6 +260,7 @@ class _Builder:
             use_trackaipac=self.use_tap,
             use_fec=self.use_fec,
             use_tec=self.use_tec,
+            use_polls=self.use_polls,
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,
@@ -512,4 +516,5 @@ class _Builder:
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             status("fec", "FEC", self.use_fec, ("fec",)),
             snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
+            status("polls", "Polls", self.use_polls, ("polls",)),
         ]

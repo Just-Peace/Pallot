@@ -217,7 +217,7 @@
               <dt>Top donors' employers</dt>
               <dd>Individuals' itemized donations, added up by the employer each donor wrote down. An individual can give a federal candidate only a few thousand dollars, so employers say more than a list of donors would. The eight largest are shown, leaving out answers that name no employer ("Retired", "Self-employed", "None" and the like). These are employees' own donations, not the employers', and they cover only the current two-year period, even for the Senate.</dd>
               <dt>Outside spending</dt>
-              <dd>Independent expenditures: money groups spent on the race without working with the campaign, such as super PAC ads, as the groups reported it to the FEC. Each is marked for or against the candidate; the ten largest spenders are shown.</dd>
+              <dd>Independent expenditures: money groups spent on the race without working with the campaign, such as super PAC ads, as the groups reported it to the FEC. None of it went to the campaign. Each is marked with a blue "for" or an amber "against" the candidate; the ten largest spenders are shown.</dd>
             </dl>
 
             <h3>How fresh it is</h3>
@@ -295,7 +295,7 @@
         <details class="faq">
           <summary>What is "outside spending"?</summary>
           <div class="faq-body">
-            <p>Money spent on a race by groups the campaign doesn't control, such as super PACs buying ads. For Congress, the FEC records whether each group spent for or against the candidate. The Texas Ethics Commission records which candidate the spending was about, but not whether it was for or against them.</p>
+            <p>Money spent on a race by groups the campaign doesn't control, such as super PACs buying ads. It isn't given to the campaign: the groups spend it themselves. For Congress, the FEC records whether each group spent for or against the candidate, and VoteBot marks it with a blue "for" or an amber "against". The Texas Ethics Commission records which candidate the spending was about, but not whether it was for or against them.</p>
           </div>
         </details>
 
@@ -323,6 +323,20 @@
           <summary>Why does the FEC tab show only totals?</summary>
           <div class="faq-body">
             <p>VoteBot is using the FEC's shared demonstration key, which allows only a few requests an hour. Whoever runs VoteBot can get a free key from the <a href="https://api.open.fec.gov/developers/" target="_blank" rel="noopener noreferrer">OpenFEC developers page</a>, set it as <code>VOTEBOT_FEC_API_KEY</code> (in the environment or VoteBot's <code>.env</code> file), and restart VoteBot. Settings says which key is in use.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="polls">
+          <summary>Where do the poll numbers come from?</summary>
+          <div class="faq-body">
+            <p>From public polls collected by <a href="https://fiftyplusone.news" target="_blank" rel="noopener noreferrer">FiftyPlusOne</a>, for the U.S. Senate, U.S. House and Governor races. They are polls, not a forecast or a chance of winning.</p>
+            <ul>
+              <li>Only questions that pit the candidates on your ballot against each other count. An early poll of a matchup that didn't happen (another nominee) is left out.</li>
+              <li>Each pollster counts once, with its latest poll, so a firm that polls every week doesn't outweigh the rest. When a poll asked both likely and registered voters, the likely voters' answer counts.</li>
+              <li>Each candidate's number is the median of their share across those polls. The grey rest of the bar is undecided voters and others.</li>
+              <li>Most U.S. House districts have no public polls at all, so their races show no poll bar.</li>
+              <li>The poll lists are fetched at most once a day. A candidate's Polls tab lists every poll used, with a link to it.</li>
+            </ul>
           </div>
         </details>
       </section>

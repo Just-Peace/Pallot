@@ -10,9 +10,11 @@ to the 2026 ballot goes by name first (see matching.match_trackaipac).
 from __future__ import annotations
 
 import asyncio
+import re
 import shutil
 from pathlib import Path
 from typing import Any, Callable
+from urllib.parse import urljoin
 
 import trackaipac_cache
 
@@ -35,6 +37,13 @@ _CATEGORY_BADGES = {
     "endorsed": ("TrackAIPAC endorsed", "good"),
     "congress": ("TrackAIPAC: member of Congress", "info"),
 }
+_LINK = re.compile(r"(\[[^\]]+\]\()([^)\s]+)(\))")  # a markdown link: [label](target)
+
+
+def _absolute_links(text: str) -> str:
+    """The site's notes link to its own pages by path ("/james-talarico"); point those at
+    trackaipac.com, not at wherever VoteBot runs. Full URLs are left as they are."""
+    return _LINK.sub(lambda m: m[1] + urljoin(SITE + "/", m[2]) + m[3], text)
 
 
 class TrackAipac(BundledSnapshot):
@@ -110,7 +119,7 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
         if item.get("election_date"):
             facts.append(Fact(label="Election date", value=item["election_date"]))
 
-    quotes = [note for item in listings for note in item.get("notes") or []]
+    quotes = [_absolute_links(note) for item in listings for note in item.get("notes") or []]
 
     links = [Link(label=f"TrackAIPAC {CATEGORY_NAMES[c]} page", url=CATEGORY_PAGES[c]) for c in categories]
     for item in listings:
