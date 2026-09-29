@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VoteBot · FAQ</title>
-  <meta name="description" content="Answers about VoteBot: what's on your ballot, where candidate information comes from, and where your picks are kept.">
+  <meta name="description" content="Answers about VoteBot: what's on your ballot, where candidate information comes from, how the money figures are put together, and where your picks are kept.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/app.css">
   <script type="module" src="js/page.js"></script>
@@ -50,7 +50,7 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>Frequently asked questions</h1>
-        <p class="lede">How VoteBot finds your ballot, where its information comes from, and where your picks are kept.</p>
+        <p class="lede">How VoteBot finds your ballot, where its information comes from, how the money figures are put together, and where your picks are kept.</p>
       </header>
 
       <section class="faq-group" aria-labelledby="ballot">
@@ -67,7 +67,16 @@
           <summary>How does VoteBot know what's on my ballot?</summary>
           <div class="faq-body">
             <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's map gives your State Board of Education district.</p>
-            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. Ballotpedia adds city council, school board and special district races, and tells VoteBot your precincts.</p>
+            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and tells VoteBot your precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="suggestions">
+          <summary>Why does VoteBot suggest addresses as I type?</summary>
+          <div class="faq-body">
+            <p>To save typing and catch misspellings. Once you've typed a house number and a few letters of the street, VoteBot asks Photon, an address search built on OpenStreetMap, for matching Texas addresses. Picking one only fills in the box: press "Show my ballot" as usual.</p>
+            <p>"Street only" means OpenStreetMap knows the street but not your house, so the suggestion keeps the number you typed. Check it before you look up your ballot.</p>
+            <p>What you type is sent to Photon through the VoteBot server, which keeps a copy so the same text isn't sent twice. To stop that, turn off "Address suggestions" in <a href="settings.html">Settings</a>; your browser's own address autofill then works as before. <a href="privacy.html#lookups">Privacy</a> has the details.</p>
           </div>
         </details>
 
@@ -90,7 +99,7 @@
           <summary>What does "Depends on your precinct" mean?</summary>
           <div class="faq-body">
             <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your precinct, and the Census doesn't say which precinct you're in. VoteBot uses Ballotpedia's answer when it has one.</p>
-            <p>Otherwise those races are listed under "Depends on your precinct". Your precinct numbers are printed on your voter registration certificate; enter them there to narrow the list.</p>
+            <p>Otherwise those races are listed under "Depends on your precinct". Your precinct numbers are printed on your voter registration certificate; enter them in that section of your ballot to narrow the list.</p>
           </div>
         </details>
 
@@ -122,16 +131,156 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission. A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
+            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
           </div>
         </details>
 
         <details class="faq">
+          <summary>Does VoteBot recommend candidates?</summary>
+          <div class="faq-body">
+            <p>No. It puts what its sources say side by side. Your picks and notes are yours alone, and they stay in your browser.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="matches">
+          <summary>What's the difference between "Matched" and "Likely match"?</summary>
+          <div class="faq-body">
+            <p>Sources spell names differently, so VoteBot matches a candidate across sources by name and uses the seat and party to confirm it. "Matched" means the source's entry is this candidate. "Likely match" (a "?" on the tab) means it's probably the same person but not certain, so check it. When a match is ambiguous, VoteBot leaves it out rather than guess.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>What is TrackAIPAC, and why does it show members of Congress as "likely"?</summary>
+          <div class="faq-body">
+            <p>TrackAIPAC tracks money and endorsements from pro-Israel lobby groups for congressional candidates.</p>
+            <p>It lists members of Congress by the seat they hold now. Texas redrew its congressional districts in 2025, so someone running for a different seat in 2026 shows as a likely match unless TrackAIPAC's entry mentions the new seat.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>How up to date is the information?</summary>
+          <div class="faq-body">
+            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, candidates and Ballotpedia, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
+            <p>TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot and are only fetched again when you press Refresh; Settings shows how old each one is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
+            <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="paused">
+          <summary>Why is a source paused?</summary>
+          <div class="faq-body">
+            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia and Photon (address suggestions) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>Meanwhile, whatever the source already sent still shows. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="faq-group" aria-labelledby="money">
+        <h2 class="group-title" id="money">Campaign money</h2>
+
+        <details class="faq" id="money-sources">
           <summary>Where do the money figures come from?</summary>
           <div class="faq-body">
-            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission); candidates for state offices, the Legislature, the State Board of Education, the courts and district attorney report to the Texas Ethics Commission.</p>
-            <p>"Raised" is what the candidate's campaign reported receiving. For Congress it covers the whole election period: two years for the House, six for the Senate. For state offices it counts the reports since the last November general election, so the earliest may reach back a few months before it. "Cash on hand" is from the candidate's latest report, and the date shown is when that report ends, not when VoteBot fetched it.</p>
-            <p>A candidate's details break the money down: small and large donations, individuals and political action committees (PACs), where donors live, and the largest donors. For Congress, the largest donors are grouped by the employer each donor listed, because an individual can give a federal candidate at most a few thousand dollars.</p>
+            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission). Candidates for statewide office, the Legislature, the State Board of Education, the appeals and district courts, and district attorney report to the Texas Ethics Commission.</p>
+            <p>"Raised" is what the candidate's campaign reported receiving. For Congress it covers the whole election period: two years for the House, six for the Senate. For state offices it counts the reports since the last even-year November general election, and the date is shown next to the figures. "Cash on hand" is from the candidate's latest report, and the date shown is when that report ends, not when VoteBot fetched it.</p>
+            <p>A candidate's details break the money down: small and large donations, individuals and political action committees (PACs), where donors live, and the largest donors. The next two answers say exactly how VoteBot puts the figures together, for <a href="#fec-money">the FEC</a> and for <a href="#tec-money">the Texas Ethics Commission</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="fec-money">
+          <summary>How are the FEC figures put together?</summary>
+          <div class="faq-body">
+            <p>VoteBot asks the FEC's public API, <a href="https://api.open.fec.gov/developers/" target="_blank" rel="noopener noreferrer">OpenFEC</a>, which serves the reports campaigns file with the FEC. Every figure is the FEC's own; VoteBot only picks them and groups them as described here.</p>
+
+            <h3>Which campaigns</h3>
+            <ul>
+              <li>Your U.S. House district comes from the Census geocoder. The Senate race is statewide.</li>
+              <li>The FEC counts money in two-year periods named for their even year: 2026 covers 2025–26. VoteBot asks for the whole election, which for a Senate seat means the six years since that seat was last up.</li>
+              <li>One request per race lists everyone who filed for that seat, with their totals, including people who lost the primary. VoteBot matches them to the candidates on your ballot by name, with party and seat to confirm (see <a href="#matches">"Matched" and "Likely match"</a>). A campaign the FEC lists under two candidate IDs is counted once.</li>
+              <li>With a free FEC key, each candidate on your ballot takes five more requests for the breakdowns below. Without one, only the totals show.</li>
+            </ul>
+
+            <h3>What each figure is</h3>
+            <dl>
+              <dt>Raised</dt>
+              <dd>Everything the campaign reported receiving: donations, the candidate's own money and loans, transfers from other committees, refunds and interest.</dd>
+              <dt>Spent</dt>
+              <dd>Everything the campaign reported paying out.</dd>
+              <dt>Cash on hand and debts owed</dt>
+              <dd>At the end of the campaign's latest report. The date shown is when that report ends.</dd>
+              <dt>Where the money came from</dt>
+              <dd>Raised, split into individuals giving $200 or less (which campaigns don't have to itemize), individuals giving more, PACs and other committees, party committees, the candidate (gifts and loans), transfers from joint fundraising and other campaign committees, and "other receipts": what's left, such as other loans, refunds and interest.</dd>
+              <dt>Donations by size</dt>
+              <dd>Individuals' donations, each by its own amount: $200 and under, $200.01–$499.99, $500–$999.99, $1,000–$1,999.99, and $2,000 and over. The smallest group includes the unitemized money.</dd>
+              <dt>Where donors live</dt>
+              <dd>Itemized donations from individuals, by the state in the donor's address: the candidate's own state, the next three, and all the others together. Unitemized money has no address, so it isn't in this one.</dd>
+              <dt>Top donors' employers</dt>
+              <dd>Individuals' itemized donations, added up by the employer each donor wrote down. An individual can give a federal candidate only a few thousand dollars, so employers say more than a list of donors would. The eight largest are shown, leaving out answers that name no employer ("Retired", "Self-employed", "None" and the like). These are employees' own donations, not the employers', and they cover only the current two-year period, even for the Senate.</dd>
+              <dt>Outside spending</dt>
+              <dd>Independent expenditures: money groups spent on the race without working with the campaign, such as super PAC ads, as the groups reported it to the FEC. Each is marked for or against the candidate; the ten largest spenders are shown.</dd>
+            </dl>
+
+            <h3>How fresh it is</h3>
+            <ul>
+              <li>VoteBot keeps the FEC's answers for 7 days, then asks again. Refresh on the FEC in <a href="settings.html">Settings</a> asks right away.</li>
+              <li>A report shows up in the FEC's API once the FEC has processed it, so the newest one may not be counted yet. The "reports through" date says which report the figures reach.</li>
+            </ul>
+
+            <h3>What it doesn't catch</h3>
+            <ul>
+              <li>Donors who give $200 or less in total don't have to be itemized, so there's no name, employer or state for that money.</li>
+              <li>Employers are added up as donors wrote them: "Dell", "Dell Inc." and "Dell Technologies" count as three employers.</li>
+              <li>Outside spending covers only what groups reported to the FEC as independent expenditures.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq" id="tec-money">
+          <summary>How are the Texas Ethics Commission figures put together?</summary>
+          <div class="faq-body">
+            <p>The Texas Ethics Commission publishes every campaign finance report filed with it as one download (about 1 GB), updated nightly. VoteBot boils it down to a much smaller summary, which comes with VoteBot and is rebuilt only when you press Refresh on the Texas Ethics Commission in <a href="settings.html">Settings</a>. Settings shows the date of the summary and the date its money starts from.</p>
+
+            <h3>Which candidates</h3>
+            <ul>
+              <li>Candidates and officeholders, judges included. PACs and parties are left out: their own money isn't counted, only what they give to candidates.</li>
+              <li>VoteBot matches them to your ballot by name, with the office and district they told the Texas Ethics Commission they're running for or hold to confirm it. The short name a filer goes by counts too, so "Bob" finds a Robert.</li>
+            </ul>
+
+            <h3>Which reports</h3>
+            <ul>
+              <li><strong>Counted:</strong> candidates' and officeholders' regular reports (such as the semiannual ones, those due 30 and 8 days before an election, and runoff reports) and final reports, for periods ending after the last even-year November general election. For races in 2025–26, that's from November 6, 2024 on; the first report can reach back a few months before that.</li>
+              <li>When a report was corrected, only the corrected version counts.</li>
+              <li><strong>Left out:</strong> special pre-election reports (filed daily just before an election) and special-session reports, because the same money is reported again on the next regular report; and reports that aren't about raising money for the office, such as those on leftover contributions or a race for Speaker of the House.</li>
+            </ul>
+
+            <h3>What each figure is</h3>
+            <dl>
+              <dt>Raised</dt>
+              <dd>The total contributions on those reports' cover sheets, small unitemized donations included.</dd>
+              <dt>Spent</dt>
+              <dd>The total expenditures on the same reports.</dd>
+              <dt>Cash on hand and outstanding loans</dt>
+              <dd>From the latest report. The date shown is when that report ends.</dd>
+              <dt>Where the money came from</dt>
+              <dd>Raised, split into small donations that don't have to be itemized, itemized donations from individuals, itemized donations from PACs, businesses and other groups, and whatever is left ("other contributions").</dd>
+              <dt>Itemized donations by size</dt>
+              <dd>Each itemized donation by its own amount: under $500, $500 to $4,999, $5,000 to $24,999, $25,000 to $99,999, and $100,000 and over.</dd>
+              <dt>Where donors live</dt>
+              <dd>Itemized donations by the state in the donor's address: Texas, other states, or no address given.</dd>
+              <dt>Largest donors</dt>
+              <dd>The ten largest itemized donors, their donations added up by name and state and shown as written on their latest donation, with the city and the employer or occupation they gave.</dd>
+              <dt>Outside spending naming this candidate</dt>
+              <dd>Direct campaign expenditures that others reported making in this candidate's race since the same date, added up by spender; the ten largest are shown. Spending first reported on a daily pre-election report is left out, because it's reported again later.</dd>
+            </dl>
+
+            <h3>What it doesn't catch</h3>
+            <ul>
+              <li>Texas has no contribution limits for most state offices, so one donor can give a lot; judicial races do have limits.</li>
+              <li>Donors are added up by name as written: "Bob Smith" and "Robert Smith" in the same state are two donors, and two different people with the same name in the same state are one.</li>
+              <li>The Texas Ethics Commission doesn't record whether outside spending supported or opposed the candidate.</li>
+              <li>The summary is only as new as its date in Settings. Reports filed since then appear after a Refresh.</li>
+              <li>Officeholders' personal financial statements aren't online. Each candidate's Texas Ethics Commission tab links to how to request one.</li>
+            </ul>
           </div>
         </details>
 
@@ -150,6 +299,19 @@
           </div>
         </details>
 
+        <details class="faq" id="no-money">
+          <summary>Why doesn't a candidate show any money?</summary>
+          <div class="faq-body">
+            <p>A race's money box lists every candidate on your ballot, and "not found in FEC data" or "not found in TEC data" means VoteBot found no reports for them. Usually that's because:</p>
+            <ul>
+              <li>they haven't filed a report yet, or haven't raised or spent enough to have to (a congressional campaign starts reporting to the FEC after $5,000);</li>
+              <li>their name is written differently in the reports than on the ballot, and VoteBot leaves out a match it isn't sure of;</li>
+              <li>for state races, the Texas Ethics Commission summary is older than their first report: press Refresh on it in <a href="settings.html">Settings</a>.</li>
+            </ul>
+            <p>The "Open FEC" or "Open TEC" link under the money box goes to the source's own search, where you can try other spellings.</p>
+          </div>
+        </details>
+
         <details class="faq">
           <summary>Why don't county, city or school candidates show any money?</summary>
           <div class="faq-body">
@@ -157,48 +319,10 @@
           </div>
         </details>
 
-        <details class="faq">
+        <details class="faq" id="fec-key">
           <summary>Why does the FEC tab show only totals?</summary>
           <div class="faq-body">
             <p>VoteBot is using the FEC's shared demonstration key, which allows only a few requests an hour. Whoever runs VoteBot can get a free key from the <a href="https://api.open.fec.gov/developers/" target="_blank" rel="noopener noreferrer">OpenFEC developers page</a>, set it as <code>VOTEBOT_FEC_API_KEY</code> (in the environment or VoteBot's <code>.env</code> file), and restart VoteBot. Settings says which key is in use.</p>
-          </div>
-        </details>
-
-        <details class="faq">
-          <summary>Does VoteBot recommend candidates?</summary>
-          <div class="faq-body">
-            <p>No. It puts what its sources say side by side. Your picks and notes are yours alone, and they stay in your browser.</p>
-          </div>
-        </details>
-
-        <details class="faq">
-          <summary>What's the difference between "Matched" and "Likely match"?</summary>
-          <div class="faq-body">
-            <p>Sources spell names differently, so VoteBot matches a candidate across sources by name and uses the seat and party to confirm it. "Matched" means the source's entry is this candidate. "Likely match" (a "?" on the tab) means it's probably the same person but not certain, so check it. When a match is ambiguous, VoteBot leaves it out rather than guess.</p>
-          </div>
-        </details>
-
-        <details class="faq">
-          <summary>What is TrackAIPAC, and why does it show members of Congress as "likely"?</summary>
-          <div class="faq-body">
-            <p>TrackAIPAC tracks money and endorsements from pro-Israel lobby groups for congressional candidates.</p>
-            <p>It lists members of Congress by the seat they hold now. Texas redrew its congressional districts in 2025, so someone running for a different seat in 2026 shows as a likely match unless TrackAIPAC's entry mentions the new seat.</p>
-          </div>
-        </details>
-
-        <details class="faq">
-          <summary>How up to date is the information?</summary>
-          <div class="faq-body">
-            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, candidates and Ballotpedia, after 7 days for the FEC, and after 30 days for address lookups. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
-            <p>The Texas Ethics Commission's data comes with VoteBot and is only fetched again when you press Refresh; Settings shows how old it is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
-            <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
-          </div>
-        </details>
-
-        <details class="faq">
-          <summary>Why is Ballotpedia paused?</summary>
-          <div class="faq-body">
-            <p>If Ballotpedia refuses a request, VoteBot stops asking it for an hour rather than keep trying. Addresses it already answered for still show its races; for others, your ballot is built from the other sources in the meantime.</p>
           </div>
         </details>
       </section>
@@ -233,7 +357,7 @@
           <summary>How do I delete my picks and my address?</summary>
           <div class="faq-body">
             <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes and write-ins from this browser, and "Clear all browser data" also deletes your remembered address and search engine. "Clear picks" at the top of your ballot clears just that election's picks and notes.</p>
-            <p>The VoteBot server also keeps a copy of address lookups. <a href="privacy.html#server">Privacy</a> explains how to clear it.</p>
+            <p>The VoteBot server also keeps a copy of address lookups and suggestions. <a href="privacy.html#server">Privacy</a> explains how to clear it.</p>
           </div>
         </details>
       </section>

@@ -178,7 +178,7 @@ p { margin: 0 0 0.75em; }
 /* ---- forms and buttons ---- */
 
 .lookup-form { display: grid; gap: 12px; }
-.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field { position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .field.small { min-width: 150px; flex: 1 1 150px; }
 label { font-weight: 600; font-size: 0.9rem; }
 
@@ -192,6 +192,20 @@ input[type="text"], input[type="number"], select, textarea {
   width: 100%;
 }
 textarea { resize: vertical; min-height: 60px; }
+
+/* Address suggestions: a list under the address box while typing (suggest.js). */
+.suggestions {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 30; margin-top: 4px;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16); overflow: hidden;
+}
+.suggestions ul { list-style: none; margin: 0; padding: 4px 0; }
+.suggestion { padding: 7px 11px; cursor: pointer; font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.suggestion:hover, .suggestion[aria-selected="true"] { background: var(--accent-soft); }
+.suggestion[aria-selected="true"] { box-shadow: inset 3px 0 0 var(--accent); }
+.suggestion-hint { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid var(--line-strong); border-radius: 999px;
+  font-size: 0.7rem; color: var(--muted); white-space: nowrap; vertical-align: 1px; }
+.suggestions-credit { margin: 0; padding: 5px 11px 7px; border-top: 1px solid var(--line); font-size: 0.72rem; color: var(--muted); }
 input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 
 .btn {
@@ -309,6 +323,15 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .faq > summary:hover { color: var(--accent); }
 .faq-body { padding: 0 16px 14px 42px; }
 .faq-body p { max-width: 72ch; }
+.faq-body h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  margin: 1.4em 0 0.5em; }
+.faq-body ul { max-width: 72ch; padding-left: 20px; margin: 0 0 0.75em; }
+.faq-body li + li { margin-top: 5px; }
+/* "What each figure is": the figure's name, then what it counts */
+.faq-body dl { max-width: 72ch; margin: 0 0 0.75em; }
+.faq-body dt { font-weight: 650; }
+.faq-body dd { margin: 2px 0 10px; }
+.faq-body > :last-child { margin-bottom: 0; }
 .faq-body p:last-child { margin-bottom: 0; }
 
 /* ---- settings page ---- */

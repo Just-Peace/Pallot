@@ -14,7 +14,7 @@ cp .env.example .env    # optional: put your free FEC key in it (see Configurati
 uv run votebot          # serves http://127.0.0.1:8000 (options: --port 8000, --reload)
 ```
 
-Keep the default `127.0.0.1` binding, because the Settings actions have no login.
+Keep the default `127.0.0.1` binding (there is a `--host` option, but don't change it), because the Settings actions have no login.
 
 Tests:
 
@@ -28,6 +28,7 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
 
 - **Left pane**, the same on every page:
   - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with your county and districts. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+  - while you type an address, **suggestions** from Photon appear under the box: ↑/↓ and Enter pick one, which only fills the box in. "Street only" means OpenStreetMap has the street but not that house number, so the suggestion keeps the number you typed. Turn them off in Settings to get the browser's own address autofill back.
   - on the ballot, the list of sections, with how many races in each you've picked
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
 - **Top of the ballot:** a progress bar that stays in view, plus Collapse all, Expand all, Clear picks and Print my picks.
@@ -39,6 +40,8 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
   - where donors live;
   - the largest donors (the FEC groups them by employer);
   - outside spending.
+
+  **Compare candidates** on a race's money box puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together.
 - **Write-ins:** every race ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button
@@ -54,6 +57,7 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 |---|---|---|
 | US Census geocoder | address → county, U.S. House, State Senate and State House districts | already on the 2026 maps (120th Congress, 2026 legislative districts) |
 | OpenStreetMap Nominatim | fallback when the Census can't match an address | results flagged as approximate unless they hit a building |
+| Photon (photon.komoot.io) | address suggestions while typing | OpenStreetMap data; free for reasonable use, no key. Nominatim's policy forbids search-as-you-type. Only results on a street matching what was typed are kept; without the house in OpenStreetMap, the typed number goes on the street |
 | Texas Legislative Council map (PLANE2106) | State Board of Education district | downloaded once, point-in-polygon in pure Python |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct; candidate profiles | **unofficial** endpoint that needs Ballotpedia's own origin header. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
@@ -71,6 +75,8 @@ Campaign money covers congressional races (FEC) and state races (TEC), which inc
 - district attorneys.
 
 County candidates (county courts at law included), precinct, city and school candidates file with their county or city, so their races show none.
+
+What "raised" covers (the FAQ's "How are the FEC figures put together?" and "How are the Texas Ethics Commission figures put together?" go through every figure):
 - **TEC totals:** the reports whose period ends after the last November general election, excluding daily pre-election and special-session reports, whose money is reported again later.
 - **FEC totals:** the whole election period (two years for the House, six for the Senate).
 
@@ -86,7 +92,8 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
   - reference data: 30 days
   - elections, ballot order and statewide candidate lists: 24 hours (a year for past elections)
   - empty ballot orders: 6 hours
-  - geocodes: 30 days
+  - geocodes: 30 days (an address that wasn't found: 1 day)
+  - address suggestions: 30 days
   - Ballotpedia: 24 hours
   - FEC: 7 days (a year for past elections)
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
@@ -95,16 +102,16 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - Concurrent identical requests share one fetch. If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup.
 - Only answers that succeed are cached. A source that fails before answering once has nothing to fall back on.
-- If Ballotpedia refuses a request, VoteBot stops asking it for an hour. Ballots it already sent still show.
+- If Ballotpedia or Photon refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address, `scripts/record_fixtures.py` and the live tests included.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
 
 The **Settings** page (`settings.html`, linked from the left pane):
 - picks the web search engine;
-- turns Texas SOS, Ballotpedia, TrackAIPAC, the FEC and the Texas Ethics Commission on or off;
+- turns address suggestions, Texas SOS, Ballotpedia, TrackAIPAC, the FEC and the Texas Ethics Commission on or off;
 - says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source, plus "Clear all caches";
+- has a refresh or clear button per source, plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
 - has "Clear my picks & notes", and "Clear all browser data", which also forgets your address and search engine.
 
 When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
@@ -147,10 +154,12 @@ votebot/
   http_cache.py     persistent request cache       enrich.py   adds each source's cards to candidates
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
-  sources/          census, nominatim, sboe, sos, ballotpedia, trackaipac, fec, tec
-                    (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share)
+  sources/          census, nominatim, photon, sboe, sos, ballotpedia, trackaipac, fec, tec
+                    (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
+                    compare.py: the Compare dialog's sections, shared by the FEC and TEC)
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
-                    css/app.css, js/ (ballot.js, settings.js, page.js, source-cards.js, print.js, …)
+                    css/app.css, js/ (ballot.js, suggest.js, compare.js, settings.js, page.js,
+                    source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
@@ -162,9 +171,10 @@ tests/              VoteBot tests + tests/trackaipac/ + tests/tec/
 Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, links and match confidence. A source can also add a card to a race, such as the money comparison. The page renders them all generically, as badges on the candidate row, a tab in Details, and a block at the top of the race. So a new source only needs:
 
 1. A module in `votebot/sources/` that fetches through `HttpCache` and builds cards.
-2. A line in `enrich.py`.
-3. An entry in `admin.py` so it appears in Settings.
-4. A row in the tables on `static/privacy.html` (what the source is sent and kept) and `static/about.html`.
+2. A field on `Services` in `ballot.py`, created in `api.py`'s startup.
+3. A line in `enrich.py`.
+4. An entry in `admin.py` so it appears in Settings, and one in `DEFAULT_SOURCES` in `settings.py` if it can be turned off.
+5. A row in the tables on `static/privacy.html` (what the source is sent and kept) and `static/about.html`, and an answer in `static/faq.html` if it raises a question.
 
 ## Not built yet
 

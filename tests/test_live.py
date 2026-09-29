@@ -57,3 +57,9 @@ def test_tec_export_still_has_what_we_read():
             header = next(csv.reader(lines(chunks)))
             break
     assert set(REQUIRED["filers"]) <= set(header)
+
+
+def test_photon_suggestions_live(tmp_path):
+    with TestClient(create_app(Config(data_dir=tmp_path / "data"))) as client:
+        found = client.get("/api/suggest", params={"q": "1001 preston st houston"}).json()
+    assert found["enabled"] and any("Preston" in s["label"] and "Houston" in s["label"] for s in found["suggestions"])

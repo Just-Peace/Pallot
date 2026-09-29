@@ -9,7 +9,11 @@ import threading
 import pytest
 from fastapi.testclient import TestClient
 
+from votebot.text import display_time
+
 from .conftest import get_ballot, load
+
+ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't have to read
 
 
 def test_elections_list(client):
@@ -21,15 +25,25 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "sos", "ballotpedia", "trackaipac", "fec", "tec"]
-    geocoding, sos, _, tracker, fec, tec = overview["sources"]
-    assert geocoding["toggleable"] is False and sos["enabled"] is True
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "photon", "sos", "ballotpedia", "trackaipac", "fec", "tec"]
+    geocoding, photon, sos, _, tracker, fec, tec = overview["sources"]
+    assert geocoding["toggleable"] is False and sos["enabled"] is True and photon["enabled"] is True
+    assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
     assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"
     assert tracker["resettable"] and tec["resettable"] and not sos["resettable"]
     assert overview["last_lookup"] is None and sos["last_use"] is None
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
     assert tec["notice"] and {"Snapshot", "Money raised since"} <= {f["label"] for f in tec["details"]}
+    shown = [s["notice"] or "" for s in overview["sources"]] + [f["value"] for s in overview["sources"] for f in s["details"]]
+    assert not [text for text in shown if ISO_TIME.search(text)]
+
+
+def test_times_are_shown_as_people_write_them():
+    shown = display_time("2026-09-28T18:25:03+00:00")
+    assert re.fullmatch(r"[A-Z][a-z]{2} \d{1,2}, \d{4}, \d{1,2}:\d{2} [AP]M", shown)
+    assert display_time("Mon, 28 Sep 2026 18:25:03 GMT") == shown == display_time(1790619903.0)
+    assert display_time(None) is None and display_time("never") is None
 
 
 def test_settings_shows_the_last_lookup(client):

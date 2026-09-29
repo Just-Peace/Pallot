@@ -18,12 +18,13 @@ from .admin import Admin, AdminError
 from .ballot import BallotError, Services, build_ballot, election_dates
 from .config import Config, load_config
 from .http_cache import HttpCache, UpstreamError
-from .models import ActionResult, Ballot, BallotRequest, ElectionDate, SourcesOverview, SourceToggle
+from .models import ActionResult, Ballot, BallotRequest, ElectionDate, SourcesOverview, SourceToggle, SuggestResult
 from .settings import Settings
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
+from .sources.photon import Photon
 from .sources.sboe import SboeMap
 from .sources.sos import Sos
 from .sources.tec import Tec
@@ -52,7 +53,7 @@ def create_app(
             cache = HttpCache(
                 config.cache_path,
                 client,
-                min_interval={"nominatim": 1.0, "ballotpedia": 1.0, "fec": 0.1},
+                min_interval={"nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1},
                 source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
                 retry_after=config.ttl.retry_after,
             )
@@ -63,6 +64,7 @@ def create_app(
                     cache=cache,
                     census=Census(cache, config.ttl),
                     nominatim=Nominatim(cache, config.ttl),
+                    photon=Photon(cache, config.ttl),
                     sboe=SboeMap(config.sboe_path, client),
                     sos=Sos(cache, config.ttl, today),
                     ballotpedia=Ballotpedia(cache, config.ttl),
@@ -104,6 +106,19 @@ def create_app(
             raise HTTPException(502, f"Texas SOS isn't responding ({exc}).") from exc
         response.headers["Cache-Control"] = "private, max-age=600"
         return dates
+
+    @app.get("/api/suggest", response_model=SuggestResult)
+    async def suggest(request: Request, q: str = "") -> SuggestResult:
+        """Addresses for what's in the address box so far. With an empty ``q`` it only says
+        whether suggestions are on. Nothing here is worth an error: a failure is no suggestions."""
+        svc = services(request)
+        if not svc.settings.enabled("photon"):
+            return SuggestResult(enabled=False, suggestions=[])
+        try:
+            found = await svc.photon.suggest(q[:200])
+        except UpstreamError:
+            found = []
+        return SuggestResult(enabled=True, suggestions=found)
 
     @app.post("/api/ballot", response_model=Ballot)
     async def ballot(body: BallotRequest, request: Request) -> Ballot:
