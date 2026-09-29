@@ -40,7 +40,7 @@ PFS_INFO = "https://www.ethics.state.tx.us/resources/FAQs/FAQ_PFS.php"
 LOCAL_ZIP = "TEC_CF_CSV.zip"
 STATE_GROUPS = ("state", "legislature", "judicial")
 # Answers that say nothing: left out of a donor's line ("Retired" as an occupation stays).
-_NO_ANSWER = frozenset({"", "-", "N/A", "NA", "NONE", "NOT APPLICABLE", "REQUESTED", "INFORMATION REQUESTED",
+_NO_ANSWER = frozenset({"", "-", "N/A", "NA", "NONE", "NULL", "NOT APPLICABLE", "REQUESTED", "INFORMATION REQUESTED",
                         "INFORMATION REQUESTED PER BEST EFFORTS", "BEST EFFORTS"})
 _NOT_EMPLOYERS = _NO_ANSWER | {"NOT EMPLOYED", "UNEMPLOYED", "RETIRED", "SELF", "SELF EMPLOYED", "SELF-EMPLOYED",
                                "HOMEMAKER", "STUDENT"}

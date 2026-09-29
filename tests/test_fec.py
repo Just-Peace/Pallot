@@ -72,6 +72,12 @@ def test_money_for_badges():
     assert display_org("NRCC") == "NRCC" and display_org("TEXANS FOR SENATOR JOHN CORNYN INC.") == "Texans for Senator John Cornyn Inc."
 
 
+def test_employers_that_say_nothing_are_left_out():
+    rows = [{"employer": "NULL", "total": 1100000.0, "count": 686}, {"employer": "Not employed", "total": 900.0},
+            {"employer": "UNIVERSITY OF TEXAS", "total": 83800.0, "count": 522}]
+    assert [p.label for p in fec._employers(rows, 2026).parts] == ["University of Texas"]
+
+
 def test_demo_key_shows_totals_only(make_app, upstream):
     with TestClient(make_app(fec_key="DEMO_KEY")) as client:
         ballot = get_ballot(client)
