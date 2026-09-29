@@ -31,6 +31,8 @@
             <p class="address-line" id="address-line"></p>
             <p class="muted small" id="address-sub"></p>
             <p class="districts" id="address-districts"></p>
+            <p class="districts" id="address-precincts" hidden></p>
+            <div id="precinct-edit" hidden></div>
             <button class="link-btn with-icon" id="change-address" type="button"><span data-icon="edit"></span>Change</button>
           </div>
           <form id="lookup-form" class="lookup-form">
@@ -79,7 +81,7 @@
     <main id="main" class="content">
       <section id="welcome" class="panel welcome" aria-labelledby="welcome-title">
         <h1 id="welcome-title">Your ballot, race by race</h1>
-        <p class="lede">Enter your home address in the left pane to see every race you'll vote in.</p>
+        <p class="lede">Enter your home address to see every race you'll vote in.</p>
         <ol class="steps">
           <li><strong>Compare sources.</strong> Each candidate shows what the state's filings, Ballotpedia and TrackAIPAC say, how much money they've raised and from whom, plus a web search.</li>
           <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
@@ -87,19 +89,39 @@
         </ol>
       </section>
 
+      <section id="loading" class="loading" hidden>
+        <p class="loading-line"><strong>Looking up your ballot…</strong> The first lookup of an address can take several seconds while VoteBot asks its sources. After that it's saved, so looking it up again is instant.</p>
+        <div aria-hidden="true">
+          <div class="race skeleton"></div>
+          <div class="race skeleton"></div>
+          <div class="race skeleton"></div>
+          <div class="race skeleton"></div>
+        </div>
+      </section>
+
       <section id="result" hidden>
         <header class="ballot-head">
           <h1>Your ballot</h1>
           <p class="muted" id="ballot-sub"></p>
         </header>
-        <div class="progress-strip">
+        <div class="progress-strip" id="progress-strip">
           <div class="progress-info">
             <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
             <p class="progress" id="progress" aria-live="polite"></p>
+            <button class="btn small" id="next-race" type="button" title="Or press j and k to move from race to race">Next race to pick</button>
           </div>
-          <div class="button-row">
-            <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
-            <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
+          <div class="button-row ballot-tools" id="ballot-tools">
+            <details class="menu" id="view-menu">
+              <summary class="btn ghost small">View</summary>
+              <div class="menu-panel">
+                <div class="button-row">
+                  <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
+                  <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
+                </div>
+                <label class="check"><input type="checkbox" id="collapse-on-pick"> Collapse a race when I pick</label>
+                <label class="check"><input type="checkbox" id="hide-picked"> Only races I haven't picked</label>
+              </div>
+            </details>
             <button class="btn ghost small" id="clear-picks" type="button">Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
           </div>
@@ -124,6 +146,11 @@
   <dialog id="print-dialog" class="small-dialog" aria-labelledby="print-title">
     <form method="dialog">
       <h2 id="print-title">Print my picks</h2>
+      <fieldset class="print-layout">
+        <legend>Layout</legend>
+        <label class="check"><input type="radio" name="print-layout" value="page" checked> Full page</label>
+        <label class="check"><input type="radio" name="print-layout" value="wallet" id="print-wallet"> Wallet card: a small card to cut out and fold, without notes</label>
+      </fieldset>
       <label class="check"><input type="checkbox" id="print-notes" checked> Include my notes</label>
       <label class="check"><input type="checkbox" id="print-blank"> Include races I haven't picked, as blank lines</label>
       <p class="muted">Bring the printout with you: many polling places don't allow phones in the voting booth. To keep a copy, choose "Save as PDF" as the printer.</p>

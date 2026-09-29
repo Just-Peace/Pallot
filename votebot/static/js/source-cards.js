@@ -16,20 +16,37 @@ export function howCounted(card) {
   return href ? [" · ", extLink(href, "How these figures are put together")] : null;
 }
 
-// A badge with a url links to that source's page for the candidate (opens a new tab).
-function badge(item, source) {
-  const title = [item.hint, source ? `From ${source}` : null].filter(Boolean).join(" · ") || null;
+const isLikely = (card) => card.match?.confidence === "likely";
+
+// The "?" on a tab, badge or button whose source only likely matched the candidate.
+export function likelyFlag(title = "Likely match") {
+  return h("span", { class: "likely-flag", title }, "?");
+}
+
+// A badge with a url links to that source's page for the candidate (opens a new tab). On
+// the candidate row it carries its ``card``: the source's name, and for a likely match a
+// note, plus a "?" on the ``first`` of that source's badges.
+function badge(item, card = null, first = false) {
+  const likely = card && isLikely(card);
+  const title = [item.hint, card ? `From ${card.label}` : null, likely ? "Likely match: see Details" : null]
+    .filter(Boolean).join(" · ") || null;
+  const flag = likely && first ? likelyFlag("Likely match: see Details") : null;
   const href = safeUrl(item.url);
   return h("li", {}, href
     ? h("a", { class: `badge badge-link tone-${item.tone}`, href, target: "_blank", rel: "noopener noreferrer", title },
-        item.text, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗"))
-    : h("span", { class: `badge tone-${item.tone}`, title }, item.text));
+        item.text, flag, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗"))
+    : h("span", { class: `badge tone-${item.tone}`, title }, item.text, flag));
 }
 
 // Highlights from every source, shown under the candidate's name.
 export function badgeList(candidate) {
-  const items = candidate.cards.flatMap((card) => card.badges.map((b) => badge(b, card.label)));
+  const items = candidate.cards.flatMap((card) => card.badges.map((b, i) => badge(b, card, i === 0)));
   return items.length ? h("ul", { class: "badges", "aria-label": "Highlights from sources" }, items) : null;
+}
+
+// The sources that only likely matched the candidate and have no badge to flag it on.
+export function likelyUnflagged(candidate) {
+  return candidate.cards.filter((card) => isLikely(card) && !card.badges.length).map((card) => card.label);
 }
 
 function matchNote(card) {
@@ -186,7 +203,7 @@ export function renderTabs(container, cards, idPrefix, panelFor = cardPanel) {
       "button",
       { class: "tab", type: "button", role: "tab", id: tabId, "aria-controls": panelId, "aria-selected": String(i === 0), tabindex: i === 0 ? "0" : "-1" },
       card.label,
-      card.match && card.match.confidence !== "exact" ? h("span", { class: "tab-flag", title: "Likely match" }, "?") : null,
+      isLikely(card) ? likelyFlag() : null,
     );
     const panel = h("div", { class: "tab-panel", role: "tabpanel", id: panelId, "aria-labelledby": tabId, tabindex: "0", hidden: i !== 0 }, panelFor(card));
     tabs.push(tab);

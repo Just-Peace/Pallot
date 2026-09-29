@@ -1,8 +1,9 @@
 // The address card under "Your ballot" in the left pane, on every page: the address with
 // its city, county and districts. The ballot page fills it after each lookup and remembers
-// it; the other pages show the remembered one.
+// it; the other pages show the remembered one. On a phone the top bar's button shows it too.
 
 import { loadAddressCard, loadLastLookup } from "./picks.js";
+import { setTopBarAddress } from "./topbar.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -11,6 +12,7 @@ export function showAddress({ address, place = "", districts = "", matched = "" 
   $("#address-line").title = matched;
   $("#address-sub").textContent = place;
   $("#address-districts").textContent = districts;
+  setTopBarAddress(address);
 }
 
 // The remembered card for this address, or just the address if the card is for another one.
@@ -25,4 +27,5 @@ export function showRememberedAddress() {
   $("#address-card").hidden = !address;
   $("#no-address").hidden = Boolean(address);
   if (address) showAddress(rememberedCard(address));
+  else setTopBarAddress("");
 }
