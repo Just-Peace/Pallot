@@ -1,6 +1,6 @@
 # Developing VoteBot
 
-How VoteBot works inside, and how to test and change it. To run it, see the [README's quick start](README.md#quick-start).
+How VoteBot works inside, and how to test and change it. To run it, see the [README's quick start](README.md#quick-start). The rules for a change (branches, commits, which docs to update) are in [AGENTS.md](AGENTS.md), and known bugs and planned work in [ROADMAP.md](ROADMAP.md).
 
 VoteBot is one Python process (FastAPI) serving a plain HTML/JS page from `votebot/static/`. There's no frontend build step and no database server: everything it keeps is files in `data/`.
 
