@@ -19,9 +19,9 @@ from typing import Any, Callable
 from ..config import DEMO_KEY, Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, last_first, match_person
-from ..models import Badge, Breakdown, Fact, Link, Match, Race, Share, SourceCard
+from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard
 from ..text import display_date, display_office, display_org, display_person, iso_utc, money, money_short
-from . import CardSet
+from . import CardSet, compare
 
 SOURCE = "fec"
 LABEL = "FEC"
@@ -236,6 +236,20 @@ def _states(rows: list[dict[str, Any]] | None, home: str) -> Breakdown | None:
     )
 
 
+def _home_or_away(rows: list[dict[str, Any]] | None, home: str, home_name: str) -> Breakdown | None:
+    """Donors in the candidate's own state and everywhere else: the same two parts for every
+    candidate, where _states lists each one's own top states."""
+    rows = [r for r in rows or [] if _number(r.get("total"))]
+    if not rows:
+        return None
+    parts = []
+    for label, group in ((home_name, [r for r in rows if r.get("state") == home]),
+                         ("Other states", [r for r in rows if r.get("state") != home])):
+        counts = [r["count"] for r in group if isinstance(r.get("count"), int)]
+        parts.append(Share(label=label, amount=sum(_number(r["total"]) or 0 for r in group), count=sum(counts) if counts else None))
+    return Breakdown(title="Where donors live", parts=parts, total=sum(p.amount or 0 for p in parts))
+
+
 def _employers(rows: list[dict[str, Any]] | None, cycle: int) -> Breakdown | None:
     named = [r for r in rows or [] if (r.get("employer") or "").strip().upper() not in _NOT_EMPLOYERS and _number(r.get("total"))]
     if not named:
@@ -269,9 +283,15 @@ def _outside(rows: list[dict[str, Any]] | None) -> Breakdown | None:
     )
 
 
+def _for_against(rows: list[dict[str, Any]] | None) -> tuple[float, float]:
+    """Outside spending in all: (for the candidate, against them)."""
+    def total(side: str) -> float:
+        return sum(_number(r.get("total")) or 0 for r in rows or [] if r.get("support_oppose_indicator") == side)
+    return total("S"), total("O")
+
+
 def _outside_badge(rows: list[dict[str, Any]] | None, url: str) -> Badge | None:
-    support = sum(_number(r.get("total")) or 0 for r in rows or [] if r.get("support_oppose_indicator") == "S")
-    oppose = sum(_number(r.get("total")) or 0 for r in rows or [] if r.get("support_oppose_indicator") == "O")
+    support, oppose = _for_against(rows)
     pieces = [f"{money_short(support)} for" if support else None, f"{money_short(oppose)} against" if oppose else None]
     text = " · ".join(p for p in pieces if p)
     if not text:
@@ -280,17 +300,35 @@ def _outside_badge(rows: list[dict[str, Any]] | None, url: str) -> Badge | None:
                  hint="Independent expenditures by groups outside the campaign, reported to the FEC")
 
 
+@dataclass
+class Money:
+    """A campaign's totals: from its totals call when there was one, else the race list's row."""
+
+    raised: float | None
+    spent: float | None
+    cash: float | None
+    debts: float | None
+    through: str | None  # the end of the latest report
+
+    @classmethod
+    def of(cls, row: dict[str, Any], totals: dict[str, Any]) -> Money:
+        return cls(
+            raised=_number(totals.get("receipts"), row.get("total_receipts")),
+            spent=_number(totals.get("disbursements"), row.get("total_disbursements")),
+            cash=_number(totals.get("last_cash_on_hand_end_period"), row.get("cash_on_hand_end_period")),
+            debts=_number(totals.get("last_debts_owed_by_committee")),
+            through=(totals.get("coverage_end_date") or row.get("coverage_end_date") or "")[:10] or None,
+        )
+
+
 def card(row: dict[str, Any], match: Match | None, details: Details | None, *, seat: str, cycle: int) -> SourceCard:
     """One candidate's FEC card: the race list's totals, and with ``details`` the breakdowns."""
     details = details or Details()
     totals = details.totals or {}
     candidate_id = row["candidate_id"]
     page = candidate_page(candidate_id, cycle)
-    raised = _number(totals.get("receipts"), row.get("total_receipts"))
-    spent = _number(totals.get("disbursements"), row.get("total_disbursements"))
-    cash = _number(totals.get("last_cash_on_hand_end_period"), row.get("cash_on_hand_end_period"))
-    debts = _number(totals.get("last_debts_owed_by_committee"))
-    through = (totals.get("coverage_end_date") or row.get("coverage_end_date") or "")[:10] or None
+    campaign = Money.of(row, totals)
+    raised, spent, cash, debts, through = campaign.raised, campaign.spent, campaign.cash, campaign.debts, campaign.through
     report = totals.get("last_report_type_full")
     committee, committee_id = row.get("candidate_pcc_name"), row.get("candidate_pcc_id")
     span = period(seat, cycle)
@@ -347,8 +385,54 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
     )
 
 
-def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int) -> SourceCard:
-    """The race comparison: what each candidate on the ballot has raised."""
+def comparison(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: dict[str, Details]) -> Comparison:
+    """The race's candidates side by side (the Compare dialog). ``details`` is keyed by FEC
+    candidate ID; without it (no API key) only the race list's totals compare."""
+    seat = race.seat or ""
+    home = seat.partition("-")[0]
+    span = period(seat, cycle)
+    keys = [c.key for c in race.candidates if c.key in rows]
+    more = {key: details.get(rows[key]["candidate_id"]) or Details() for key in keys}
+    money_of = {key: Money.of(rows[key], more[key].totals or {}) for key in keys}
+    sides = {key: _for_against(more[key].outside) if more[key].outside is not None else (None, None) for key in keys}
+    home_name = next((r["state_full"] for d in more.values() for r in d.states or []
+                      if r.get("state") == home and r.get("state_full")), home)
+
+    def each(value: Callable[[str], Any]) -> dict[str, Any]:
+        return {key: value(key) for key in keys}
+
+    sections = [
+        compare.figures("Totals", [
+            compare.row("Raised", each(lambda k: money_of[k].raised)),
+            compare.row("Spent", each(lambda k: money_of[k].spent)),
+            compare.row("Cash on hand", each(lambda k: money_of[k].cash)),
+            compare.row("Debts owed", each(lambda k: money_of[k].debts)),
+            compare.row("Outside spending for them", each(lambda k: sides[k][0])),
+            compare.row("Outside spending against them", each(lambda k: sides[k][1])),
+        ], note=f"For the {cycle} election ({span}); cash on hand and debts at each campaign's latest report."),
+        compare.bars("Where the money came from",
+                     each(lambda k: _where_from(more[k].totals or {}, money_of[k].raised, span))),
+        compare.bars("Donations by size", each(lambda k: _sizes(more[k].sizes)),
+                     note="Donations from individuals, grouped by how much each donor gave. The smallest group includes "
+                     "unitemized donations."),
+        compare.bars("Where donors live", each(lambda k: _home_or_away(more[k].states, home, home_name)),
+                     note="Itemized donations from individuals (over $200 in total from one donor), by the donor's state."),
+        compare.columns("Top donors' employers", each(lambda k: compare.named(_employers(more[k].employers, cycle))),
+                        note="Donations from individuals, grouped by the employer they listed; these are employees' own "
+                        "donations, not the employers'."),
+        compare.columns("Outside spending", each(lambda k: compare.named(_outside(more[k].outside))),
+                        note="Independent expenditures by groups the campaigns don't control, for or against each candidate."),
+    ]
+    return Comparison(
+        candidates=keys,
+        as_of={key: money_of[key].through for key in keys if money_of[key].through},
+        sections=[s for s in sections if s],
+    )
+
+
+def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: dict[str, Details] | None = None) -> SourceCard:
+    """The race comparison: what each candidate on the ballot has raised, and (for Compare)
+    everything else side by side."""
     through = max((row.get("coverage_end_date") or "")[:10] for row in rows.values()) or None
     parts = []
     for candidate in race.candidates:
@@ -369,6 +453,7 @@ def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int) -> Source
         url=race_page(race.seat or "", cycle),
         as_of=through,
         breakdowns=[Breakdown(title=f"Money raised for the {cycle} election ({period(race.seat or '', cycle)})", parts=parts)],
+        comparison=comparison(race, rows, cycle, details or {}),
     )
 
 
@@ -397,6 +482,7 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
         out.warnings.append(f"Some federal races have no FEC data ({failures[0]}).")
 
     matched: list[tuple[str, str, dict[str, Any], Match]] = []  # candidate key, seat, FEC row, match
+    compared: list[tuple[Race, dict[str, dict[str, Any]]]] = []  # races with anyone found, and their rows
     for race in federal:
         rows = lists.get(race.seat or "")
         if not rows:
@@ -418,13 +504,15 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
                 found_rows[candidate.key] = found[0]
                 matched.append((candidate.key, race.seat or "", found[0], found[1]))
         if found_rows:
-            out.races[race.key] = race_card(race, found_rows, cycle)
+            compared.append((race, found_rows))
 
     details: dict[str, Details] = {}
     if fec.keyed and matched:
         wanted = {row["candidate_id"]: row for _, _, row, _ in matched}
         got = await asyncio.gather(*(fec.details(row, cycle, ttl) for row in wanted.values()))
         details = dict(zip(wanted, got))
+    for race, found_rows in compared:
+        out.races[race.key] = race_card(race, found_rows, cycle, details)
     for key, seat, row, match in matched:
         out.candidates[key] = card(row, match, details.get(row["candidate_id"]), seat=seat, cycle=cycle)
     if matched and not fec.keyed:

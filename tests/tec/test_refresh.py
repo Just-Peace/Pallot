@@ -56,6 +56,7 @@ def test_first_refresh_builds_the_snapshot(server, tmp_path):
     }
     assert jane["by_kind"] == {"INDIVIDUAL": {"amount": 3100.0, "count": 3}, "ENTITY": {"amount": 500.0, "count": 1}}
     assert jane["by_state"] == {"TX": 2900.0, "other": 700.0}
+    assert jane["by_state_count"] == {"TX": 3, "other": 1}
     assert [s["amount"] for s in jane["sizes"]] == [400.0, 3200.0, 0.0, 0.0, 0.0]
     smith, *others = jane["top_donors"]
     assert smith == {"name": "Pat Smith", "kind": "INDIVIDUAL", "city": "AUSTIN", "state": "TX", "employer": "ACME",
@@ -64,6 +65,7 @@ def test_first_refresh_builds_the_snapshot(server, tmp_path):
 
     [outside] = doc["outside"]
     assert outside["name"] == "Jane Doe" and outside["total"] == 2300.0  # not the daily or too-early ones
+    assert outside["count"] == 3
     assert outside["spenders"] == [{"name": "Texans for Jane", "amount": 2000.0, "count": 2},
                                    {"name": "Other Group", "amount": 300.0, "count": 1}]
     assert by_id(doc, "00000003")["totals"]["raised"] == 600.0  # judicial candidates count too

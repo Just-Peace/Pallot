@@ -4,6 +4,7 @@
 
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
+import { openCompare } from "./compare.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyPill } from "./labels.js";
@@ -26,6 +27,7 @@ const welcome = $("#welcome");
 const result = $("#result");
 const jump = $("#jump");
 const details = $("#details");
+const compareDialog = $("#compare");
 const printDialog = $("#print-dialog");
 
 let ballot = null;
@@ -266,7 +268,8 @@ function raceCard(race) {
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)));
-  const card = collapsibleCard(race.key, { title: race.name, meta: meta.join(" · "), body: [raceMoney(race), body], headExtras: [clearButton] });
+  const money = raceMoney(race, () => openCompare(compareDialog, race));
+  const card = collapsibleCard(race.key, { title: race.name, meta: meta.join(" · "), body: [money, body], headExtras: [clearButton] });
 
   redraw.set(race.key, () => {
     const picked = picks.picked(race.key);
@@ -551,9 +554,11 @@ function openDetails(race, candidate) {
   closeButton.focus();
 }
 
-details.addEventListener("click", (event) => {
-  if (event.target === details) details.close(); // click on the backdrop
-});
+for (const dialog of [details, compareDialog]) {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close(); // click on the backdrop
+  });
+}
 
 // ---- print / clear / expand ---------------------------------------------------------
 

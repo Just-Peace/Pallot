@@ -22,11 +22,11 @@ from typing import Any, Callable
 import tec_cache
 from tec_cache.models import SIZE_BUCKETS
 
-from ..matching import NameIndex, match_person
-from ..models import Badge, Breakdown, Fact, Link, Match, Race, Share, SourceCard
+from ..matching import NameIndex, full_key, match_person
+from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard
 from ..offices import OfficeScope
 from ..text import display_date, display_office, display_org, money, money_short
-from . import CardSet
+from . import CardSet, compare
 from .snapshot import BundledSnapshot, summary_of
 
 SOURCE = "tec"
@@ -249,17 +249,18 @@ def _where_from(filer: dict[str, Any], raised: float) -> Breakdown | None:
     if not raised:
         return None
     kinds = filer.get("by_kind") or {}
+    individuals, groups = kinds.get("INDIVIDUAL") or {}, kinds.get("ENTITY") or {}
     parts = [
-        ("Small donations (unitemized)", (filer.get("totals") or {}).get("unitemized")),
-        ("Individuals", (kinds.get("INDIVIDUAL") or {}).get("amount")),
-        ("PACs, businesses and other groups", (kinds.get("ENTITY") or {}).get("amount")),
+        ("Small donations (unitemized)", (filer.get("totals") or {}).get("unitemized"), None),
+        ("Individuals", individuals.get("amount"), individuals.get("count")),
+        ("PACs, businesses and other groups", groups.get("amount"), groups.get("count")),
     ]
-    other = raised - sum(amount or 0 for _, amount in parts)
+    other = raised - sum(amount or 0 for _, amount, _ in parts)
     if other >= 1:
-        parts.append(("Other contributions", other))
+        parts.append(("Other contributions", other, None))
     return Breakdown(
         title="Where the money came from",
-        parts=[Share(label=label, amount=amount) for label, amount in parts if amount and amount >= 1],
+        parts=[Share(label=label, amount=amount, count=count) for label, amount, count in parts if amount and amount >= 1],
         total=raised,
     )
 
@@ -309,13 +310,18 @@ def _sizes(filer: dict[str, Any]) -> Breakdown | None:
 
 
 def _states(filer: dict[str, Any]) -> Breakdown | None:
-    places = filer.get("by_state") or {}
-    parts = [Share(label=label, amount=places.get(key)) for key, label in
+    places, counts = filer.get("by_state") or {}, filer.get("by_state_count") or {}  # older snapshots have no counts
+    parts = [Share(label=label, amount=places.get(key), count=counts.get(key)) for key, label in
              (("TX", "Texas"), ("other", "Other states"), ("unknown", "No address given")) if places.get(key)]
     if not parts:
         return None
     return Breakdown(title="Where donors live", parts=parts, total=sum(p.amount or 0 for p in parts),
                      note="Itemized donations, by the donor's address.")
+
+
+def _spender(spender: dict[str, Any]) -> Share:
+    name = spender["name"]
+    return Share(label=display_org(name) if name.isupper() else name, amount=spender.get("amount"), count=spender.get("count"))
 
 
 def _outside(entry: dict[str, Any] | None) -> Breakdown | None:
@@ -324,8 +330,7 @@ def _outside(entry: dict[str, Any] | None) -> Breakdown | None:
         return None
     return Breakdown(
         title="Outside spending naming this candidate",
-        parts=[Share(label=display_org(s["name"]) if s["name"].isupper() else s["name"], amount=s.get("amount"), count=s.get("count"))
-               for s in spenders],
+        parts=[_spender(s) for s in spenders],
         note="Direct campaign expenditures that groups reported to the TEC as made for this candidate's race. "
         "The TEC doesn't record whether they supported or opposed the candidate.",
     )
@@ -386,8 +391,58 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
     )
 
 
-def race_card(race: Race, filers: dict[str, dict[str, Any]], window: str | None) -> SourceCard:
-    """The race comparison: what each candidate on the ballot has raised since the window start."""
+def _donor_name(donor: dict[str, Any]) -> str:
+    """Who a donor is across candidates' lists: the TEC's donors are added up by name and
+    state, so two Pat Smiths in different states stay apart."""
+    return f"{full_key(donor.get('name') or '')}|{(donor.get('state') or '').upper()}"
+
+
+def comparison(race: Race, filers: dict[str, dict[str, Any]], outside: dict[str, dict[str, Any]], window: str | None) -> Comparison:
+    """The race's candidates side by side (the Compare dialog): totals, the categories their
+    money splits into, and their largest donors and outside spenders in columns."""
+    keys = [c.key for c in race.candidates if c.key in filers]
+    totals = {key: filers[key].get("totals") or {} for key in keys}
+    sizes = {key: filers[key].get("sizes") or [] for key in keys}
+    spenders = {key: (outside.get(key) or {}).get("spenders") or [] for key in keys}
+
+    def each(value: Callable[[str], Any]) -> dict[str, Any]:
+        return {key: value(key) for key in keys}
+
+    sections = [
+        compare.figures("Totals", [
+            compare.row("Raised", each(lambda k: totals[k].get("raised"))),
+            compare.row("Spent", each(lambda k: totals[k].get("spent"))),
+            compare.row("Cash on hand", each(lambda k: totals[k].get("cash"))),
+            compare.row("Outstanding loans", each(lambda k: totals[k].get("loans"))),
+            compare.row("Itemized donations", each(lambda k: sum(s.get("amount") or 0 for s in sizes[k])),
+                        each(lambda k: sum(s.get("count") or 0 for s in sizes[k]))),
+            compare.row("Outside spending naming them", each(lambda k: (outside.get(k) or {}).get("total") or 0.0),
+                        each(lambda k: (outside.get(k) or {}).get("count", 0 if k not in outside else None)),
+                        counted="expenditure"),  # older snapshots have no count
+        ], note=f"Raised, spent and itemized donations since {_since(window)}; cash on hand and loans at each "
+           "candidate's latest report. Outside spending is what groups reported spending in the candidate's race."),
+        compare.bars("Where the money came from", each(lambda k: _where_from(filers[k], totals[k].get("raised") or 0.0))),
+        compare.bars("Itemized donations by size", each(lambda k: _sizes(filers[k])),
+                     note="Each itemized donation by its amount; small unitemized donations aren't listed one by one."),
+        compare.bars("Where donors live", each(lambda k: _states(filers[k])), note="Itemized donations, by the donor's address."),
+        compare.columns("Largest donors", each(lambda k: [(_donor(d), _donor_name(d)) for d in filers[k].get("top_donors") or []]),
+                        note="Each candidate's largest itemized donors, added up by donor name and state."),
+        compare.columns("Outside spending naming them", each(lambda k: [(_spender(s), full_key(s["name"])) for s in spenders[k]]),
+                        note="The TEC doesn't record whether the spending supported or opposed the candidate.",
+                        counted="expenditure"),
+    ]
+    return Comparison(
+        candidates=keys,
+        as_of={key: totals[key]["as_of"] for key in keys if totals[key].get("as_of")},
+        sections=[s for s in sections if s],
+    )
+
+
+def race_card(
+    race: Race, filers: dict[str, dict[str, Any]], window: str | None, outside: dict[str, dict[str, Any]] | None = None
+) -> SourceCard:
+    """The race comparison: what each candidate on the ballot has raised since the window
+    start, and (for Compare) everything else side by side."""
     through = max(((f.get("totals") or {}).get("as_of") or "") for f in filers.values()) or None
     parts = []
     for candidate in race.candidates:
@@ -410,6 +465,7 @@ def race_card(race: Race, filers: dict[str, dict[str, Any]], window: str | None)
         url=SEARCH,
         as_of=through,
         breakdowns=[Breakdown(title=f"Money raised since {_since(window)}", parts=parts)],
+        comparison=comparison(race, filers, outside or {}, window),
     )
 
 
@@ -428,6 +484,7 @@ def cards(tec: Tec, races: list[Race], scopes: dict[str, OfficeScope], county: s
         if race.group == "federal" or (seat is None and race.group not in STATE_GROUPS):
             continue
         found_rows: dict[str, dict[str, Any]] = {}
+        found_outside: dict[str, dict[str, Any]] = {}
         for candidate in race.candidates:
             found = match_person(
                 filers, candidate.name, None, seat,
@@ -439,6 +496,8 @@ def cards(tec: Tec, races: list[Race], scopes: dict[str, OfficeScope], county: s
             outside = match_person(spending, candidate.name, None, seat, seats_of=_seats)
             out.candidates[candidate.key] = card(found[0], found[1], outside[0] if outside else None, window=window)
             found_rows[candidate.key] = found[0]
+            if outside:
+                found_outside[candidate.key] = outside[0]
         if found_rows:
-            out.races[race.key] = race_card(race, found_rows, window)
+            out.races[race.key] = race_card(race, found_rows, window, found_outside)
     return out

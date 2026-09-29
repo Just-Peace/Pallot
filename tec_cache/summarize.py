@@ -89,12 +89,13 @@ def summarize(db: sqlite3.Connection, window: dt.date) -> dict[str, Any]:
         if ident in filers:
             filers[ident].setdefault("by_kind", {})[kind] = {"amount": _money(total), "count": count}
 
-    for ident, where, total in db.execute(
-        "SELECT filer, CASE WHEN state = 'TX' THEN 'TX' WHEN state = '' THEN 'unknown' ELSE 'other' END, SUM(amount)"
+    for ident, where, total, count in db.execute(
+        "SELECT filer, CASE WHEN state = 'TX' THEN 'TX' WHEN state = '' THEN 'unknown' ELSE 'other' END, SUM(amount), COUNT(*)"
         " FROM kept GROUP BY 1, 2"
     ):
         if ident in filers:
             filers[ident].setdefault("by_state", {})[where] = _money(total)
+            filers[ident].setdefault("by_state_count", {})[where] = count
 
     bucket = "CASE " + " ".join(f"WHEN amount >= {floor} THEN {i}" for i, (floor, _) in reversed(list(enumerate(SIZE_BUCKETS)))) + " END"
     for ident, index, total, count in db.execute(f"SELECT filer, {bucket}, SUM(amount), COUNT(*) FROM kept GROUP BY 1, 2"):
@@ -134,6 +135,7 @@ def summarize(db: sqlite3.Connection, window: dt.date) -> dict[str, Any]:
             "hold": _office(hold_office, hold_district, hold_place, ""),
         }))
         entry["total"] = _money(entry.get("total", 0) + (total or 0))
+        entry["count"] = entry.get("count", 0) + count  # every expenditure, where "spenders" keeps the largest spenders
         spenders[key].append({"name": spender, "amount": _money(total), "count": count})
     for key, entry in outside.items():
         merged: dict[str, dict[str, Any]] = {}
