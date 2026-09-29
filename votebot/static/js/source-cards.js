@@ -2,6 +2,7 @@
 // here (as badges on the candidate row and a tab in Details) without any code change.
 
 import { extLink, formatDate, h, linkedText, safeUrl } from "./dom.js";
+import { icon } from "./icons.js";
 
 // A badge with a url links to that source's page for the candidate (opens a new tab).
 function badge(item, source) {
@@ -31,15 +32,16 @@ function matchNote(card) {
   );
 }
 
-const SHORT_DATE = { month: "short", day: "numeric", year: "numeric" };
-const DOLLARS = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-const COUNT = new Intl.NumberFormat("en-US");
+export const SHORT_DATE = { month: "short", day: "numeric", year: "numeric" };
+export const DOLLARS = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+export const DOLLARS_SHORT = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 });
+export const COUNT = new Intl.NumberFormat("en-US");
 
 function asOf(card) {
   return card.as_of ? `Data as of ${formatDate(card.as_of, SHORT_DATE)}` : null;
 }
 
-function percent(share) {
+export function percent(share) {
   if (share <= 0) return "0%";
   return share < 0.01 ? "<1%" : `${Math.round(share * 100)}%`;
 }
@@ -63,26 +65,38 @@ function shareRow(part, scale, showPercent, partyOf) {
 }
 
 // A Breakdown: labelled bars. With a total they're shares of it (and show a %); without
-// one they're scaled to the largest part.
-export function breakdownBlock(item, partyOf = null) {
+// one they're scaled to the largest part. ``action`` goes at the right of the title.
+export function breakdownBlock(item, partyOf = null, action = null) {
   const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
   const scale = item.total || largest;
+  const title = h("h4", { class: "breakdown-title" }, item.title);
   return h(
     "section",
     { class: "breakdown" },
-    h("h4", { class: "breakdown-title" }, item.title),
+    action ? h("div", { class: "breakdown-head" }, title, action) : title,
     h("ul", { class: "breakdown-rows" }, item.parts.map((part) => shareRow(part, scale, Boolean(item.total), partyOf))),
     item.note ? h("p", { class: "fine" }, item.note) : null,
   );
 }
 
-// A race's money comparison (one per money source), shown above its candidates.
-export function raceMoney(race) {
+// The race cards whose source can put two or more of its candidates side by side.
+export function comparable(race) {
+  return (race.cards || []).filter((card) => card.comparison?.candidates.length > 1);
+}
+
+// A race's money comparison (one per money source), shown above its candidates. With
+// ``onCompare``, the first one has a button for the Compare dialog.
+export function raceMoney(race, onCompare = null) {
   if (!race.cards?.length) return null;
   const partyOf = (key) => race.candidates.find((c) => c.key === key)?.party || null;
-  return race.cards.map((card) =>
+  let button = null;
+  if (onCompare && comparable(race).length) {
+    button = h("button", { type: "button", class: "icon-btn compare-btn with-icon" }, icon("bars"), "Compare candidates");
+    button.addEventListener("click", onCompare);
+  }
+  return race.cards.map((card, i) =>
     h("div", { class: "race-money" },
-      card.breakdowns.map((b) => breakdownBlock(b, partyOf)),
+      card.breakdowns.map((b, j) => breakdownBlock(b, partyOf, i === 0 && j === 0 ? button : null)),
       h("p", { class: "fine" },
         `From ${card.label}`,
         card.as_of ? `, reports through ${formatDate(card.as_of, SHORT_DATE)}` : "",
@@ -108,8 +122,8 @@ export function cardPanel(card) {
   );
 }
 
-// WAI-ARIA tabs: one per card, arrow keys move between them.
-export function renderTabs(container, cards, idPrefix) {
+// WAI-ARIA tabs: one per card, arrow keys move between them. ``panelFor`` draws a card's panel.
+export function renderTabs(container, cards, idPrefix, panelFor = cardPanel) {
   const tablist = h("div", { class: "tabs", role: "tablist", "aria-label": "Sources" });
   const tabs = [];
   const panels = [];
@@ -122,7 +136,7 @@ export function renderTabs(container, cards, idPrefix) {
       card.label,
       card.match && card.match.confidence !== "exact" ? h("span", { class: "tab-flag", title: "Likely match" }, "?") : null,
     );
-    const panel = h("div", { class: "tab-panel", role: "tabpanel", id: panelId, "aria-labelledby": tabId, tabindex: "0", hidden: i !== 0 }, cardPanel(card));
+    const panel = h("div", { class: "tab-panel", role: "tabpanel", id: panelId, "aria-labelledby": tabId, tabindex: "0", hidden: i !== 0 }, panelFor(card));
     tabs.push(tab);
     panels.push(panel);
   });

@@ -91,6 +91,31 @@ def test_federal_races_get_fec_money(client):
     assert not [card for race in ballot["races"] if not race["seat"] for card in race["cards"] if card["source"] == "fec"]
 
 
+def test_federal_race_comparison(client):
+    senate = find_race(get_ballot(client), "U.S. Senator")
+    paxton, talarico, brown = keys = [c["key"] for c in senate["candidates"]]
+    comparison = senate["cards"][0]["comparison"]
+    assert comparison["candidates"] == keys and comparison["as_of"][talarico] == "2026-06-30"
+    sections = {s["title"]: s for s in comparison["sections"]}
+    assert list(sections) == ["Totals", "Where the money came from", "Donations by size", "Where donors live",
+                              "Top donors' employers", "Outside spending"]
+
+    totals = {r["label"]: [v["amount"] for v in r["values"]] for r in sections["Totals"]["rows"]}
+    assert totals["Raised"] == [9248698.53, 68560930.42, 7459.52]
+    assert totals["Outside spending for them"][1] == pytest.approx(4.1e6, rel=0.05)
+    assert totals["Outside spending against them"][1] == pytest.approx(705e3, rel=0.01)
+
+    where = sections["Where the money came from"]
+    assert [v["amount"] for v in where["rows"][0]["values"]][::2] == [None, None]  # only Talarico's details were recorded
+    assert where["totals"] == {talarico: 68560930.42}
+    home = sections["Where donors live"]
+    assert [r["label"] for r in home["rows"]] == ["Texas", "Other states"]
+    assert sum(r["values"][1]["amount"] for r in home["rows"]) == pytest.approx(home["totals"][talarico])
+    assert all(r["values"][1]["count"] for r in home["rows"])
+    assert list(sections["Top donors' employers"]["columns"]) == [talarico]
+    assert {e["note"] for e in sections["Outside spending"]["columns"][talarico]} == {"for", "against"}
+
+
 def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, upstream):
     with TestClient(make_app()) as client:
         first = get_ballot(client)

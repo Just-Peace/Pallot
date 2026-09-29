@@ -39,7 +39,7 @@ def jane(**extra):
 
 
 OUTSIDE = {"name": "Jane Doe", "first": "Jane", "last": "Doe", "seek": {"office": "STATEREP", "district": "49"},
-           "total": 2300.0, "spenders": [{"name": "Texans for Jane", "amount": 2000.0, "count": 2},
+           "total": 2300.0, "count": 3, "spenders": [{"name": "Texans for Jane", "amount": 2000.0, "count": 2},
                                         {"name": "Other Group", "amount": 300.0, "count": 1}]}
 
 
@@ -125,6 +125,59 @@ def test_cards_for_a_state_race(tmp_path):
     assert [(p.label, p.amount, p.note) for p in money.parts] == [
         ("Janie Doe", 4000.0, "$7K on hand"), ("Juan Perez", None, "not found in TEC data")]
     assert rep.key in cards.races and jp.key not in cards.races
+
+
+def juan():
+    return {
+        "id": "00000009", "type": "COH", "name": "Juan Perez", "first": "Juan", "last": "Perez",
+        "seek": {"office": "STATEREP", "district": "49"},
+        "totals": {"raised": 1000.0, "unitemized": 0.0, "spent": 100.0, "cash": 900.0, "reports": 1, "as_of": "2025-01-15"},
+        "by_kind": {"INDIVIDUAL": {"amount": 750.0, "count": 2}, "ENTITY": {"amount": 250.0, "count": 1}},
+        "by_state": {"TX": 1000.0}, "by_state_count": {"TX": 3},
+        "sizes": [{"amount": 1000.0, "count": 3}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0},
+                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
+        "top_donors": [{"name": "Pat Smith", "kind": "INDIVIDUAL", "city": "Fresno", "state": "CA", "amount": 750.0, "count": 2},
+                       {"name": "TEACHERS PAC", "kind": "ENTITY", "city": "Austin", "state": "TX", "amount": 250.0, "count": 1}],
+    }
+
+
+def test_race_comparison(tmp_path):
+    source = tec.Tec(tmp_path / "data", bundled_dir=snapshot_dir(tmp_path, [jane(), juan()], [OUTSIDE]))
+    source.ensure_seeded()
+    rep = race("State Representative District 49", ["Jane Doe", "Juan Perez", "Kim Lee"])
+    cards = tec.cards(source, [rep], {rep.key: classify("STATE REPRESENTATIVE DISTRICT 49", "SR")}, "Travis")
+    jane_key, juan_key, _ = (c.key for c in rep.candidates)
+
+    comparison = cards.races[rep.key].comparison
+    assert comparison.candidates == [jane_key, juan_key]  # not Kim Lee, who hasn't filed
+    assert comparison.as_of == {jane_key: "2025-06-30", juan_key: "2025-01-15"}
+    sections = {s.title: s for s in comparison.sections}
+    assert list(sections) == ["Totals", "Where the money came from", "Itemized donations by size", "Where donors live",
+                              "Largest donors", "Outside spending naming them"]
+
+    totals = {r.label: [(v.amount, v.count) for v in r.values] for r in sections["Totals"].rows}
+    assert totals == {
+        "Raised": [(4000.0, None), (1000.0, None)], "Spent": [(700.0, None), (100.0, None)],
+        "Cash on hand": [(7000.0, None), (900.0, None)], "Outstanding loans": [(1000.0, None), (None, None)],
+        "Itemized donations": [(3600.0, 4), (1000.0, 3)], "Outside spending naming them": [(2300.0, 3), (0.0, 0)],
+    }
+    where = sections["Where the money came from"]
+    assert [r.label for r in where.rows] == ["Small donations (unitemized)", "Individuals", "PACs, businesses and other groups"]
+    assert [(v.amount, v.count) for v in where.rows[1].values] == [(3100.0, 3), (750.0, 2)]
+    assert [v.amount for v in where.rows[0].values] == [400.0, 0.0]  # Juan has none
+    assert where.totals == {jane_key: 4000.0, juan_key: 1000.0}
+    assert [(v.amount, v.count) for v in sections["Where donors live"].rows[0].values] == [(2900.0, None), (1000.0, 3)]
+
+    donors = sections["Largest donors"].columns
+    assert [(d.label, d.shared_with) for d in donors[jane_key]] == [
+        ("Pat Smith", []), ("Teachers PAC", [juan_key]), ("Lee Far", [])]  # Juan's Pat Smith lives in California
+    assert [(d.label, d.shared_with) for d in donors[juan_key]] == [("Pat Smith", []), ("Teachers PAC", [jane_key])]
+    assert donors[jane_key][1].match_key == donors[juan_key][1].match_key and donors[jane_key][0].match_key is None
+    assert list(sections["Outside spending naming them"].columns) == [jane_key]
+
+    # The Details tab's breakdown shows how many donations, too.
+    where_from = cards.candidates[jane_key].breakdowns[0]
+    assert [p.count for p in where_from.parts] == [None, 3, 1]
 
 
 def test_same_name_for_another_seat_is_only_likely(tmp_path):

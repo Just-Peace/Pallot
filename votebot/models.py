@@ -60,6 +60,51 @@ class Breakdown(BaseModel):
     note: str | None = None
 
 
+class CompareValue(BaseModel):
+    """One candidate's figure in a comparison row; ``amount`` is None when the source has no
+    figure for them (0 means it has one, and it's nothing)."""
+
+    candidate_key: str
+    amount: float | None = None
+    count: int | None = None
+
+
+class CompareRow(BaseModel):
+    """A category every candidate shares ("Individuals"), with a bar per candidate."""
+
+    label: str
+    values: list[CompareValue]
+    counted: str | None = None  # what the counts count, when not the section's
+
+
+class CompareEntry(Share):
+    """A named donor or spender in one candidate's column."""
+
+    shared_with: list[str] = Field(default_factory=list)  # other candidates whose column has this name
+    match_key: str | None = None  # the same for this name in every column it's in (set when shared)
+
+
+class CompareSection(BaseModel):
+    """One breakdown with the race's candidates side by side: grouped bars (``rows``) for the
+    categories they share, or a column per candidate (``columns``) for named donors and
+    spenders. ``totals`` holds each candidate's whole that the rows are shares of."""
+
+    title: str
+    note: str | None = None
+    counted: str = "donation"  # what the counts count, singular
+    rows: list[CompareRow] = Field(default_factory=list)
+    totals: dict[str, float] = Field(default_factory=dict)
+    columns: dict[str, list[CompareEntry]] = Field(default_factory=dict)
+
+
+class Comparison(BaseModel):
+    """A race's candidates compared by one money source (on the race's SourceCard)."""
+
+    candidates: list[str]  # keys of the race's candidates this source has, in ballot order
+    as_of: dict[str, str] = Field(default_factory=dict)  # candidate key -> their reports' end date
+    sections: list[CompareSection] = Field(default_factory=list)
+
+
 class SourceCard(BaseModel):
     """One source's information about one candidate (or, in Race.cards, about a race). The
     frontend renders every card the same way, so a new source only has to produce these."""
@@ -76,6 +121,7 @@ class SourceCard(BaseModel):
     quotes: list[str] = Field(default_factory=list)
     breakdowns: list[Breakdown] = Field(default_factory=list)
     links: list[Link] = Field(default_factory=list)
+    comparison: Comparison | None = None  # race cards only: the candidates side by side
 
 
 class Candidate(BaseModel):
