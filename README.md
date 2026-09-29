@@ -177,12 +177,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 
 ## Not built yet
 
-The research phase:
-- each candidate's top three views (LLM plus web search)
-- chances of winning (race ratings, district partisan lean)
-- incumbents' voting records
-- campaign money for county, city and school races, which file locally (the City of Austin publishes its own data)
-- lobby spending on state officeholders (TEC lobby reports), late-filing fines, and fundraising over time
+Known bugs, planned improvements and features, and UI ideas are in [ROADMAP.md](ROADMAP.md).
 
 ## Working on VoteBot
 
