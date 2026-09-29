@@ -27,6 +27,11 @@ def test_no_file_or_an_empty_key_means_demo_key(tmp_path, monkeypatch):
     assert load_config(env_file=tmp_path / ".env").fec_api_key == DEMO_KEY
 
 
+def test_allowed_hosts_are_a_comma_separated_list():
+    assert load_config({"VOTEBOT_ALLOWED_HOSTS": " VoteBot.lan, nas.local ,"}).allowed_hosts == ("votebot.lan", "nas.local")
+    assert load_config({}).allowed_hosts == ()
+
+
 def test_an_explicit_mapping_ignores_the_env_file(tmp_path):
     (tmp_path / ".env").write_text("VOTEBOT_FEC_API_KEY=from-file\n", encoding="utf-8")
     assert load_config({}, env_file=tmp_path / ".env").fec_api_key == DEMO_KEY

@@ -3,7 +3,6 @@
 What to fix, tidy up and build next, then what's already done. The open items come from a review of the whole codebase in September 2026. `trackaipac_cache/` and `tec_cache/` were only skimmed, since they're libraries copied into this repo. For how VoteBot works inside, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 - [Bugs](#bugs)
-- [Dead code](#dead-code)
 - [Improvements](#improvements)
 - [Tooling](#tooling)
 - [Features](#features)
@@ -14,56 +13,11 @@ What to fix, tidy up and build next, then what's already done. The open items co
 
 Most severe first.
 
-### 1. Any web page can trigger the Settings actions
+### 1. An abort during the body read comes back as `null` (minor)
 
-The Settings actions have no login (the README says so). But the problem is bigger than someone on the network using them: any web page open in the voter's browser can use them too.
+`request()` in [static/js/api.js:17](votebot/static/js/api.js#L17) reads the body with `response.json().catch(() => null)`. So when a call is aborted after its headers arrived but before its body did, it returns `null` instead of throwing the AbortError. `lookup()` in `ballot.js` checks its signal, so it's safe. But `ask()` in [static/js/suggest.js:86](votebot/static/js/suggest.js#L86) destructures the `null`, catches the TypeError and closes the suggestion box while the voter's newer request is still on its way, so the box can flicker.
 
-`POST /api/sources/{id}/refresh`, `POST /api/sources/{id}/clear` and `POST /api/cache/clear` take no body. So a cross-site `<form method="post">` or a `fetch(..., { mode: "no-cors" })` reaches them without a CORS preflight. A malicious page could start the Texas Ethics Commission refresh (a 1 GB download) or wipe every cache. It could also refresh Photon, which sends every saved address text to it again. The Docker default publishes VoteBot on every interface, which makes it easier to reach. DNS rebinding also gets around a plain `Origin` check, because the attacker's name resolves to VoteBot's own address.
-
-Fix, in [votebot/api.py](votebot/api.py):
-- A middleware that refuses non-GET `/api/` requests when `Sec-Fetch-Site` is `cross-site`, or when `Origin` doesn't match `Host`.
-- A `Host` allowlist against DNS rebinding: `localhost`, IP literals (which covers the LAN addresses Docker users type in), plus a new `VOTEBOT_ALLOWED_HOSTS` for anyone who uses a hostname.
-- Tests in [tests/test_api.py](tests/test_api.py).
-
-### 2. An SBOE refresh failure is a bare server error
-
-In Settings, Refresh on "Address lookup & districts" calls `sboe.download()` without catching anything ([votebot/admin.py:247](votebot/admin.py#L247)). A network error or a bad zip becomes an HTTP 500, so the page shows "Request failed (500)" and loses the "Refreshed N cached responses" message.
-
-Fix: catch `httpx.HTTPError`, `ValueError` and `zipfile.BadZipFile`, and add "Couldn't re-download the State Board of Education map (…); kept the old one." to the message.
-
-### 3. Overlapping ballot lookups can show a stale ballot
-
-`lookup()` in [static/js/ballot.js:100](votebot/static/js/ballot.js#L100) doesn't cancel a lookup already in flight. The precinct form's "Update my ballot" button also stays enabled during a lookup. When two lookups overlap, the older one can finish last and replace the newer ballot.
-
-Fix: `lookup()` aborts the previous request with an AbortController, or ignores a response that isn't from the latest request. For the AbortController, `api.post` needs the `signal` option that `api.get` already has ([static/js/api.js](votebot/static/js/api.js)).
-
-### 4. Special elections may list other regions' races (plausible; needs a fixture)
-
-When a county has no ballot order (as in some special elections), `_rows` ([votebot/ballot.py:343](votebot/ballot.py#L343)) falls back to the statewide candidate list. It keeps every row whose office type is `FD`, `SW` or `SR`, whatever its county. `classify` turns a state-regional (`SR`) office that matches no pattern into `whole_county`, and `placement` then includes it. So a special election for a district judge or district attorney elsewhere in Texas could show on this voter's ballot.
-
-The existing test (`test_special_election_comes_from_the_statewide_list_when_the_county_has_no_ballot_order`) only covers a State House seat, which the district filter catches.
-
-Next step: record a fixture with an `SR` special election and see what the ballot shows. If the bug is real, keep only the `SR` rows whose county matches, or whose district is known to include this county.
-
-### 5. Clearing the cache during a lookup can crash the lookup
-
-`HttpCache.get_json` reads a row's metadata (`_meta`) and then its value (`_value`, [votebot/http_cache.py:332](votebot/http_cache.py#L332)) in two separate queries. If Clear runs in Settings between the two, `_value` gets no row and raises `TypeError`, and the lookup fails with a 500.
-
-Fix: read the metadata and the value in one query, and treat a missing row as a cache miss.
-
-## Dead code
-
-A sweep of every Python definition, JS export and CSS class found little:
-
-- [static/js/dom.js](votebot/static/js/dom.js), `h()`: the `text`, `dataset` and `on…` prop branches are never used.
-- [static/js/source-cards.js](votebot/static/js/source-cards.js): `breakdownBlock` and `cardPanel` are exported but only used inside that file.
-- API fields the page never reads:
-  - `Candidate.ballot_name` and `ballot_position`
-  - `Location.school_district`, `lat`, `lon` and `geocoder`
-  - `Districts.precinct_source` and `county_id`
-
-  `precinct_source` and `school_district` are worth showing (see [UI and UX](#ui-and-ux)). The rest are cheap to keep, and some are checked in tests, so drop them only if the payload matters.
-- Python: nothing unreferenced.
+Fix: in `request()`, rethrow an AbortError from `response.json()` and turn only other errors into `null`.
 
 ## Improvements
 
@@ -81,7 +35,7 @@ None of them depends on another. Start them together with `asyncio.gather`, then
 ### 2. Keep heavy work off the event loop
 
 Several steps block the server while they run:
-- `HttpCache` parses and serializes JSON and talks to SQLite synchronously (`_value`, `_store`). Some payloads are large: the statewide candidate list is 2.6 MB and a poll page up to 800 KB.
+- `HttpCache` parses and serializes JSON and talks to SQLite synchronously (`_load`, `_store`). Some payloads are large: the statewide candidate list is 2.6 MB and a poll page up to 800 KB.
 - The Texas Ethics Commission snapshot is 2.8 MB, parsed on first use and after every refresh (`BundledSnapshot.document()`).
 - SBOE point-in-polygon (`sboe.locate`) runs on the event loop.
 - `Admin.overview()` walks the snapshot folders on every Settings load.
@@ -290,7 +244,7 @@ What's been built so far, oldest first, taken from the git history. Each group i
 - [x] A Docker image built in two stages from `uv.lock`, running as a non-root user. `compose.yaml` shares `data/` with `uv run votebot`.
 - [x] The README is about using VoteBot, with a Quick start at the top; working on VoteBot moves to DEVELOPMENT.md.
 
-### Roadmap and rules for coding agents (Sep 29, branch `docs/roadmap-and-agents`)
+### Roadmap and rules for coding agents ([#9](https://github.com/Fahd-Siddiqui/VoteBot/pull/9), Sep 29)
 
 - [x] This roadmap, from a review of the whole codebase: bugs, dead code, improvements, tooling, features, UI and UX ideas, and what's done.
 - [x] AGENTS.md, the rules for working on VoteBot:
@@ -303,3 +257,15 @@ What's been built so far, oldest first, taken from the git history. Each group i
 
   CLAUDE.md loads it for Claude Code.
 - [x] The README's "Not built yet" list moved into the roadmap's features.
+
+### Roadmap bugs and dead code (Sep 29, branch `fix/roadmap-bugs`)
+
+- [x] Other websites can no longer use the Settings actions from the voter's browser. A POST or PUT that another page started is refused (`Sec-Fetch-Site`, `Origin`). So is any request whose `Host` isn't `localhost`, an IP address or a name in the new `VOTEBOT_ALLOWED_HOSTS`, which stops DNS rebinding.
+- [x] When Refresh can't download the State Board of Education map again, its message says so and the old map is kept. It used to fail with "Request failed (500)".
+- [x] A new ballot lookup cancels one still running, so an older answer can't replace a newer ballot.
+- [x] When a county has no ballot order, the statewide candidate list no longer puts judge and DA races from elsewhere in Texas on the ballot. It only keeps races it can place (federal, statewide, congressional, legislative, SBOE), and a note says the others aren't listed.
+- [x] The cache reads a row's times and value in one query, and a missing row is a cache miss. So a Clear in another process can't crash a lookup halfway through. Within one process this couldn't happen yet; it could once cache work moves to threads ([Improvement 2](#2-keep-heavy-work-off-the-event-loop)).
+- [x] Dead code removed: `h()`'s unused `text`, `dataset` and `on…` props, and the `export` on two functions only `source-cards.js` uses. The API fields the page doesn't read stay on purpose:
+  - they're small;
+  - the tests check them;
+  - `precinct_source` and `school_district` are planned for the UI (see [UI and UX](#ui-and-ux)).

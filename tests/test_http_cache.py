@@ -158,6 +158,25 @@ async def test_refresh_stops_when_the_source_pauses(tmp_path):
     assert route.call_count == 4
 
 
+async def test_a_clear_while_a_row_is_read_is_not_an_error(tmp_path):
+    """Another process on the same file clears the cache just as a row is read: the reader
+    gets the copy it read, not a crash."""
+    with respx.mock() as router:
+        route = router.get(URL).mock(return_value=httpx.Response(200, json={"v": 1}))
+        async with httpx.AsyncClient() as client:
+            writer = HttpCache(tmp_path / "c.sqlite3", client)
+            await writer.get_json("demo", SPEC, ttl=60)
+
+            class ClearingClock(Clock):  # get_json asks the time right after reading the row
+                def __call__(self) -> float:
+                    writer.clear("demo")
+                    return super().__call__()
+
+            reader = HttpCache(tmp_path / "c.sqlite3", client, clock=ClearingClock())  # nothing in memory yet
+            assert (await reader.get_json("demo", SPEC, ttl=60)).value == {"v": 1}
+    assert route.call_count == 1
+
+
 async def test_failure_with_nothing_cached_raises(tmp_path):
     with respx.mock() as router:
         router.get(URL).mock(return_value=httpx.Response(403))

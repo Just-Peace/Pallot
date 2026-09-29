@@ -94,6 +94,7 @@ class Upstream:
         self.photon_status: int | None = None  # e.g. 429 when Photon throttles us
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
+        self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
     def count(self, host_part: str) -> int:
@@ -127,6 +128,9 @@ class Upstream:
             if path.endswith("getCandidateBallotOrder"):
                 return _file(f"sos_ballot_{body['electionId']}_{body['countyId']}.json", default=[])
             if path.endswith("findQualifiedCandidates"):
+                extra = self.extra_candidates.get(body["electionId"])
+                if extra:
+                    return httpx.Response(200, json=load(f"sos_candidates_{body['electionId']}.json") + extra)
                 return _file(f"sos_candidates_{body['electionId']}.json", default=[])
         if url.host == "api4.ballotpedia.org":
             if self.ballotpedia_status:
@@ -198,7 +202,7 @@ class FakeTecResult:
 @pytest.fixture
 def make_app(tmp_path, upstream):
     """make_app(data_dir=None, refresh=None, tec_refresh=None, fec_key=FEC_KEY) -> a new app;
-    call again on the same dir to 'restart'."""
+    call again on the same dir to 'restart'. It answers to TestClient's host name, testserver."""
     refreshed: list[Path] = []
     tec_refreshed: list[dict[str, Any]] = []
 
@@ -212,7 +216,7 @@ def make_app(tmp_path, upstream):
 
     def build(data_dir: Path | None = None, refresh=None, tec_refresh=None, fec_key: str = FEC_KEY):
         return create_app(
-            Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key),
+            Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, allowed_hosts=("testserver",)),
             today=lambda: TODAY,
             trackaipac_bundled=FIXTURES / "trackaipac",
             trackaipac_refresh=refresh or fake_refresh,

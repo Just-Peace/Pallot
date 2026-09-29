@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, last_use
+from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, last_use, load
 
 
 def sources_of(candidate):
@@ -151,6 +151,18 @@ def test_special_election_comes_from_the_statewide_list_when_the_county_has_no_b
     assert race["candidates"] and all(c["ballot_position"] is None for c in race["candidates"])
     assert "2026 Special Election House District 93" in [e["name"] for e in ballot["elections"]]
     assert not find_race(ballot, "State Representative District 49")  # the Capitol's own district is filtered out
+
+
+def test_the_statewide_list_leaves_out_races_it_cant_place(client, upstream):
+    """It names no county for a district judge, so one elsewhere in Texas mustn't reach this ballot."""
+    judge = {**load("sos_candidates_66734.json")[0], "idOffice": 999999, "idCandidate": 999999,
+             "txOfficeName": "DISTRICT JUDGE, 999TH JUDICIAL DISTRICT - UNEXPIRED TERM", "txFullNameBallot": "PAT ELSEWHERE"}
+    upstream.extra_candidates[66734] = [judge]
+    ballot = get_ballot(client, "hd93")
+    everyone = [c["name"] for r in ballot["races"] + [r for s in ballot["maybe"] for r in s["races"]] for c in r["candidates"]]
+    assert everyone and not [name for name in everyone if "ELSEWHERE" in name.upper()]
+    assert find_race(ballot, "State Representative District 93")  # district races still come through
+    assert any("doesn't say which counties judicial" in note for note in ballot["notes"])
 
 
 def test_ballotpedia_off(client):

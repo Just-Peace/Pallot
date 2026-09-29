@@ -34,6 +34,7 @@ const printDialog = $("#print-dialog");
 let ballot = null;
 let picks = null;
 let lastRequest = null;
+let pendingLookup = null; // the AbortController of the lookup still running
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
 
@@ -97,12 +98,18 @@ function readForm() {
 }
 
 // keepForm: leave the address form open afterwards ("Change" on another page opened it).
+// A new lookup cancels one still running, so an older answer can't replace a newer ballot.
 async function lookup(request, { keepForm = false } = {}) {
+  pendingLookup?.abort();
+  const controller = new AbortController();
+  pendingLookup = controller;
   lastRequest = request;
   setStatus("Looking up your ballot…", "busy");
   submitButton.disabled = true;
   try {
-    ballot = await api.post("/api/ballot", request);
+    const found = await api.post("/api/ballot", request, { signal: controller.signal });
+    if (controller.signal.aborted) return; // cancelled as its answer arrived
+    ballot = found;
     saveLastLookup(request);
     picks = new Picks(ballot.election_date);
     render();
@@ -110,10 +117,14 @@ async function lookup(request, { keepForm = false } = {}) {
     if (keepForm) cancelButton.hidden = false;
     else showForm(false);
   } catch (error) {
+    if (controller.signal.aborted) return;
     setStatus(error.message, "error");
     if (!ballot) showForm(true);
   } finally {
-    submitButton.disabled = false;
+    if (pendingLookup === controller) {
+      pendingLookup = null;
+      submitButton.disabled = false;
+    }
   }
 }
 

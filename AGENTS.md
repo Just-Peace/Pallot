@@ -84,7 +84,7 @@ How to write them:
   - Ballotpedia's endpoint is unofficial and for personal use only.
 - **Match across sources by name, with seat and party as corroboration** (`votebot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
-- **Settings has no login.** Keep `uv run votebot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`.
+- **Settings has no login.** Keep `uv run votebot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
 - **Don't reinstall `trackaipac_cache` from its own repo.** It's a copy of the maintainer's library, and edits here aren't synced back.
 - **Bundled snapshots** (`trackaipac_cache/data/`, `tec_cache/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run tec-cache refresh`). Never edit them by hand.
 

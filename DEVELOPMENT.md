@@ -17,6 +17,11 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
 
 Keep the default `127.0.0.1` binding (there is a `--host` option, but don't change it), because the Settings actions have no login. The Docker image is the one exception: it binds `0.0.0.0` inside the container, and `compose.yaml` decides where that's published.
 
+A middleware in `api.py` guards the Settings actions from the voter's own browser:
+- It answers only to `localhost`, IP addresses and the names in `VOTEBOT_ALLOWED_HOSTS`. Any other `Host` could be DNS rebinding, which makes an attacker's page the same origin as VoteBot.
+- It refuses a POST or PUT that another page started: `Sec-Fetch-Site` other than `same-origin`, or an `Origin` that isn't the `Host`. That includes another port on localhost.
+- The tests' `make_app` allows `testserver`, TestClient's host name.
+
 The live tests and `record_fixtures.py` call the real services. With `DEMO_KEY`, the FEC's rate limit is shared by everything on your IP address, VoteBot itself included.
 
 ## Layout
