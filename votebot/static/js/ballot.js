@@ -7,6 +7,7 @@ import { api } from "./api.js";
 import { openCompare } from "./compare.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
+import { keyDatesCard } from "./key-dates.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyPill } from "./labels.js";
 import {
   Picks, WRITE_IN, loadLastLookup, loadUi, saveAddressCard, saveLastLookup, saveUi, settingsStamp,
@@ -167,6 +168,7 @@ function render() {
   redraw.clear();
   renderAddress();
   renderHeader();
+  renderKeyDates();
   renderMessages();
   renderGroups();
   renderMaybe();
@@ -223,6 +225,13 @@ function renderHeader() {
     [formatDate(ballot.election_date), ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · "),
     ...(site ? [" · Official info: ", extLink(site.url, site.label)] : []),
   );
+}
+
+function renderKeyDates() {
+  const card = $("#key-dates");
+  const contents = keyDatesCard(ballot);
+  card.replaceChildren(...(contents || []).filter(Boolean));
+  card.hidden = !contents;
 }
 
 const showPickedButton = h("button", { type: "button", class: "link-btn" }, "Show them");

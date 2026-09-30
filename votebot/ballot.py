@@ -22,15 +22,17 @@ from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .models import (
-    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionRef, LastLookup, Location,
+    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionRef, KeyDates, LastLookup, Location,
     MaybeSection, Measure, Meta, Race, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Settings
+from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
 from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.fec import Fec
+from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.photon import Photon
 from .sources.polls import Polls
@@ -80,6 +82,7 @@ class Services:
     fec: Fec
     tec: Tec
     polls: Polls
+    key_dates: KeyDatesPage
     today: Callable[[], dt.date] = dt.date.today
     last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
     last_uses: dict[str, SourceUse] = field(default_factory=dict)
@@ -101,6 +104,21 @@ def election_ref(election: Election) -> ElectionRef:
         type=election.type,
         date=election.day.isoformat() if election.day else None,
         party=election.party,
+    )
+
+
+def key_dates_of(found: Deadlines) -> KeyDates:
+    def iso(day: dt.date | None) -> str | None:
+        return day.isoformat() if day else None
+
+    return KeyDates(
+        election=found.name,
+        election_day=found.day.isoformat(),
+        register_by=iso(found.register_by),
+        mail_apply_by=iso(found.mail_apply_by),
+        early_voting_start=iso(found.early_start),
+        early_voting_end=iso(found.early_end),
+        source_url=key_dates_source.URL,
     )
 
 
@@ -199,6 +217,7 @@ class _Builder:
         self.use_fec = svc.settings.enabled("fec")
         self.use_tec = svc.settings.enabled("tec")
         self.use_polls = svc.settings.enabled("polls")
+        self.use_key_dates = svc.settings.enabled(key_dates_source.SOURCE)
         self.notes: list[str] = []
         self.warnings: list[str] = []
         self.errors: dict[str, str] = {}
@@ -218,9 +237,10 @@ class _Builder:
             )
 
         elections, day = await self._elections()
-        sos_data, bp_ballot = await asyncio.gather(
+        sos_data, bp_ballot, deadlines = await asyncio.gather(
             self._sos(elections, place) if elections else _nothing(),
             self._ballotpedia(place, day) if self.use_bp else _nothing(),
+            self._key_dates() if self.use_key_dates else _nothing(),
         )
         if sos_data is None and not (bp_ballot and bp_ballot.races):
             if "sos" in self.errors:
@@ -260,6 +280,7 @@ class _Builder:
         ]
         every_race = races + [race for section in maybe for race in section.races]
         ballot_day = day or (bp_ballot.day if bp_ballot else None)
+        found = next((d for d in deadlines or () if d.day == ballot_day), None)
         outcome = await enrich.run(
             self.svc,
             every_race,
@@ -294,6 +315,7 @@ class _Builder:
         return Ballot(
             election_date=ballot_day.isoformat() if ballot_day else None,
             elections=refs,
+            key_dates=key_dates_of(found) if found else None,
             location=location,
             districts=districts,
             races=races,
@@ -387,6 +409,15 @@ class _Builder:
         if not ballot.races and day:
             self.notes.append(f"Ballotpedia has nothing for {day:%b %d, %Y} at this address yet.")
         return ballot
+
+    async def _key_dates(self) -> list[Deadlines]:
+        try:
+            return await self.svc.key_dates.deadlines()
+        except UpstreamError as exc:
+            self.errors[key_dates_source.SOURCE] = str(exc).removeprefix(f"{key_dates_source.SOURCE}: ")
+            self.notes.append("Couldn't load the key dates (registration, early voting) from the Texas Secretary of "
+                              "State; see VoteTexas.gov.")
+            return []
 
     # -- building races ----------------------------------------------------------------
 
@@ -528,6 +559,7 @@ class _Builder:
         return [
             geocoding,
             status("sos", "Texas SOS", self.use_sos, ("sos",)),
+            status(key_dates_source.SOURCE, key_dates_source.LABEL, self.use_key_dates, (key_dates_source.SOURCE,)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             status("fec", "FEC", self.use_fec, ("fec",)),

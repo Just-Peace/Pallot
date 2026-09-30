@@ -206,6 +206,18 @@ class ElectionRef(BaseModel):
     party: str | None = None
 
 
+class KeyDates(BaseModel):
+    """One election's deadlines (ISO dates), from the Texas SOS's Important Election Dates page."""
+
+    election: str  # the page's name for it: "Uniform Election Date", "Primary Runoff Election"
+    election_day: str
+    register_by: str | None = None
+    mail_apply_by: str | None = None  # the application must arrive (not be postmarked) by then
+    early_voting_start: str | None = None
+    early_voting_end: str | None = None
+    source_url: str
+
+
 class SourceUse(BaseModel):
     """How one lookup used a source ("stale": it served a copy it couldn't refresh)."""
 
@@ -232,6 +244,7 @@ class LastLookup(Meta):
 class Ballot(BaseModel):
     election_date: str | None
     elections: list[ElectionRef]
+    key_dates: KeyDates | None = None  # none when the source is off, or has no election on this date
     location: Location
     districts: Districts
     races: list[Race]

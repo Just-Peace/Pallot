@@ -50,7 +50,7 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>Frequently asked questions</h1>
-        <p class="lede">How VoteBot finds your ballot, where its information comes from, how the money figures are put together, and where your picks are kept.</p>
+        <p class="lede">How VoteBot finds your ballot and the dates to vote, where its information comes from, how the money figures are put together, and where your picks are kept.</p>
       </header>
 
       <section class="faq-group" aria-labelledby="ballot">
@@ -126,6 +126,41 @@
         </details>
       </section>
 
+      <section class="faq-group" aria-labelledby="when">
+        <h2 class="group-title" id="when">When and where to vote</h2>
+
+        <details class="faq" id="key-dates">
+          <summary>Where do the dates under "When to vote" come from?</summary>
+          <div class="faq-body">
+            <p>From the Texas Secretary of State's <a href="https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml" target="_blank" rel="noopener noreferrer">Important Election Dates</a> page, which lists each election's last day to register, early voting and mail-ballot deadline. VoteBot shows the dates of the election on your ballot, and checks the page again once a day. The next date still to come is in bold; past ones are dimmed.</p>
+            <p>Early voting's places and hours are set by each county, so check with your county elections office. On Election Day, polls are open 7 a.m. to 7 p.m.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="calendar">
+          <summary>How do I add the dates to my calendar?</summary>
+          <div class="faq-body">
+            <p>Click the calendar icon next to a date to download that date as a calendar file (<code>.ics</code>), or "Add all to calendar" for every date still to come; then open the file with your calendar app. Each date is an all-day event, with no place, since VoteBot doesn't know your polling place. If you add a date twice, your calendar updates the event rather than adding a copy.</p>
+            <p>"Add all" leaves out the mail-ballot deadline, since most voters can't vote by mail; its own icon is under "Voting by mail?".</p>
+          </div>
+        </details>
+
+        <details class="faq" id="polling-place">
+          <summary>Why doesn't VoteBot show my polling place?</summary>
+          <div class="faq-body">
+            <p>Texas has no public way to look up a polling place by address. The state's My Voter Portal shows yours, but only after you log in with your name, date of birth and county, which VoteBot won't ask for. "Am I registered?" opens the portal, and "Where to vote" links to the list of county elections offices, which publish their polling places before each election. During early voting you can vote at any early-voting place in your county, and many counties let you do the same on Election Day.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="vote-by-mail">
+          <summary>Can I vote by mail?</summary>
+          <div class="faq-body">
+            <p>In Texas, only if you're 65 or older, sick or disabled, away from your county for all of early voting and Election Day, expecting to give birth around Election Day, or in jail but still eligible to vote. Everyone else votes in person, early or on Election Day, which is why "Voting by mail?" starts closed.</p>
+            <p>Your application must reach your county's early voting clerk by the deadline shown there: received, not postmarked. The Texas Secretary of State explains <a href="https://www.sos.state.tx.us/elections/voter/reqabbm.shtml" target="_blank" rel="noopener noreferrer">how to apply</a>.</p>
+          </div>
+        </details>
+      </section>
+
       <section class="faq-group" aria-labelledby="candidates">
         <h2 class="group-title" id="candidates">Candidates and sources</h2>
 
@@ -161,7 +196,7 @@
         <details class="faq">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, candidates and Ballotpedia, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
+            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
             <p>TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot and are only fetched again when you press Refresh; Settings shows how old each one is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
           </div>
@@ -170,7 +205,7 @@
         <details class="faq" id="paused">
           <summary>Why is a source paused?</summary>
           <div class="faq-body">
-            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia and Photon (address suggestions) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia, Photon (address suggestions), FiftyPlusOne (polls) and the Texas Secretary of State's dates page when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
             <p>Meanwhile, whatever the source already sent still shows. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
           </div>
         </details>
@@ -355,7 +390,7 @@
         <details class="faq">
           <summary>How do I take my picks to the polls?</summary>
           <div class="faq-body">
-            <p>Use "Print my picks" at the top of your ballot. A full page can include your notes, and blank lines for races you haven't picked. A wallet card is a small card, about 3.5 inches wide, to cut out along its dashed edge and fold; it leaves notes out. Both start with the election day. To keep a copy on your computer, choose "Save as PDF" as the printer.</p>
+            <p>Use "Print my picks" at the top of your ballot. A full page can include your notes, and blank lines for races you haven't picked. A wallet card is a small card, about 3.5 inches wide, to cut out along its dashed edge and fold; it leaves notes out. Both start with the election day and the early-voting dates. To keep a copy on your computer, choose "Save as PDF" as the printer.</p>
             <p>Bring it on paper: phones can't be used at the voting station in Texas.</p>
           </div>
         </details>

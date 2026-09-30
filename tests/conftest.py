@@ -94,6 +94,7 @@ class Upstream:
         self.photon_status: int | None = None  # e.g. 429 when Photon throttles us
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
+        self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
@@ -157,6 +158,11 @@ class Upstream:
             if params["offset"] != "0":  # every recorded list fits on its first page
                 return httpx.Response(200, json={"success": True, "data": []})
             return _file(f"polls_{params['filterValue']}.json", default={"success": True, "data": []})
+        if url.host == "www.sos.state.tx.us" and url.path == "/elections/voter/important-election-dates.shtml":
+            if self.key_dates_status:
+                return httpx.Response(self.key_dates_status)
+            return httpx.Response(200, content=(FIXTURES / "sos_key_dates.html").read_bytes(),
+                                  headers={"content-type": "text/html"})
         raise AssertionError(f"unexpected request: {request.method} {url}")
 
     def _fec(self, request: httpx.Request) -> httpx.Response:
