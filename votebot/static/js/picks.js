@@ -91,11 +91,25 @@ export class Picks {
     writeAll();
   }
 
+  // Clears the picks, notes and write-ins (not the collapsed races), and returns them for restore().
   clear() {
+    const { races, notes, writeIns = {} } = this.data;
     this.data.races = {};
     this.data.notes = {};
     this.data.writeIns = {};
     writeAll();
+    return { races, notes, writeIns };
+  }
+
+  // Puts back what clear() returned: "Undo" after "Clear picks".
+  restore({ races, notes, writeIns }) {
+    Object.assign(this.data, { races, notes, writeIns });
+    writeAll();
+  }
+
+  // Whether there's anything for clear() to clear.
+  isEmpty() {
+    return [this.data.races, this.data.notes, this.data.writeIns || {}].every((part) => !Object.keys(part).length);
   }
 }
 
@@ -133,27 +147,51 @@ export function settingsStamp() {
   }
 }
 
-// "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
-// races. The remembered address stays.
-export function clearPicksAndNotes() {
-  memory = {};
+// Removes ``keys`` from storage and returns what they held, for restoreBrowserData().
+function removeStored(keys) {
+  const removed = {};
   try {
-    localStorage.removeItem(PICKS_KEY);
-  } catch {
-    // nothing stored
-  }
-}
-
-// "Clear all browser data" in Settings: everything VoteBot keeps in this browser, the remembered
-// address and the search engine included. Every key it uses starts with "votebot.".
-export function clearBrowserData() {
-  memory = {};
-  try {
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith("votebot.")) localStorage.removeItem(key);
+    for (const key of keys) {
+      const value = localStorage.getItem(key);
+      if (value === null) continue;
+      removed[key] = value;
+      localStorage.removeItem(key);
     }
   } catch {
     // nothing stored
+  }
+  return removed;
+}
+
+// "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
+// races. The remembered address stays. Returns what was removed, for Undo.
+export function clearPicksAndNotes() {
+  memory = {};
+  return removeStored([PICKS_KEY]);
+}
+
+// "Clear all browser data" in Settings: everything VoteBot keeps in this browser, the remembered
+// address and the search engine included. Every key it uses starts with "votebot.". Returns
+// what was removed, for Undo. The settings stamp stays: it isn't the voter's, and the caller
+// renews it.
+export function clearBrowserData() {
+  memory = {};
+  let keys = [];
+  try {
+    keys = Object.keys(localStorage).filter((key) => key.startsWith("votebot.") && key !== SETTINGS_CHANGED_KEY);
+  } catch {
+    // nothing stored
+  }
+  return removeStored(keys);
+}
+
+// Undo in Settings: puts back what clearPicksAndNotes() or clearBrowserData() removed.
+export function restoreBrowserData(removed) {
+  memory = null; // read the picks again
+  try {
+    for (const [key, value] of Object.entries(removed)) localStorage.setItem(key, value);
+  } catch {
+    // storage unavailable: there was nothing to put back
   }
 }
 

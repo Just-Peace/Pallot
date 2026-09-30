@@ -6,15 +6,15 @@
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { formatBytes, formatDate, h, linkedText, relativeTime } from "./dom.js";
-import { clearBrowserData, clearPicksAndNotes, markSettingsChanged } from "./picks.js";
+import { clearBrowserData, clearPicksAndNotes, markSettingsChanged, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
+import { showToast } from "./toast.js";
 
 const list = document.querySelector("#source-list");
 const summary = document.querySelector("#sources-summary");
 const searchSelect = document.querySelector("#search-engine");
 const searchStatus = document.querySelector("#search-status");
 const sourcesStatus = document.querySelector("#sources-status");
-const picksStatus = document.querySelector("#picks-status");
 let pollTimer = null; // re-checks the sources while one is refreshing (the TEC's takes minutes)
 
 function say(status, message, kind = "ok") {
@@ -188,20 +188,38 @@ document.querySelector("#clear-all").addEventListener("click", async () => {
   }
 });
 
-document.querySelector("#clear-my-picks").addEventListener("click", () => {
-  if (!confirm("Delete all your picks, notes and write-ins from this browser?")) return;
-  clearPicksAndNotes();
+// What's kept in this browser is cleared at once, with Undo to put it back (the server's copies
+// above can't be put back, so those still ask first).
+function clearInBrowser(clear, message, nothing) {
+  const removed = clear();
   markSettingsChanged();
-  say(picksStatus, "Your picks, notes and write-ins were removed from this browser.");
+  showBrowserData();
+  if (!Object.keys(removed).length) {
+    showToast(nothing);
+    return;
+  }
+  showToast(message, {
+    label: "Undo",
+    run: () => {
+      restoreBrowserData(removed);
+      markSettingsChanged(); // an open ballot reloads again, with them back
+      showBrowserData();
+    },
+  });
+}
+
+// The parts of this page that show what the browser keeps: the address and the search engine.
+function showBrowserData() {
+  showRememberedAddress();
+  searchSelect.value = currentEngine().id;
+}
+
+document.querySelector("#clear-my-picks").addEventListener("click", () => {
+  clearInBrowser(clearPicksAndNotes, "Your picks, notes and write-ins were removed from this browser.", "There were no picks or notes to clear.");
 });
 
 document.querySelector("#clear-browser-data").addEventListener("click", () => {
-  if (!confirm("Delete everything VoteBot keeps in this browser: your picks, notes, write-ins, address and search engine?")) return;
-  clearBrowserData();
-  markSettingsChanged();
-  showRememberedAddress();
-  searchSelect.value = currentEngine().id;
-  say(picksStatus, "Everything VoteBot kept in this browser was removed.");
+  clearInBrowser(clearBrowserData, "Everything VoteBot kept in this browser was removed.", "VoteBot had nothing saved in this browser.");
 });
 
 // Back from the ballot, the browser may show this page as it was left; a lookup since then has

@@ -98,7 +98,7 @@ Up to ten, roughly in order of value to a voter. Items marked *(README)* were on
    - the key dates: registration deadline, early voting, the last day to apply to vote by mail;
    - a link to check your registration;
    - the county elections office, with its sample ballot;
-   - early-voting and election-day locations;
+   - early-voting and election-day locations, also on the printed sheet and the wallet card;
    - an `.ics` file to add the dates to a calendar.
 2. **Incumbents' voting records** *(README)*. For Congress, the Congress.gov API, which takes the same api.data.gov key as the FEC. For the Texas Legislature, Open States.
 3. **District lean and past results** *(README: chances of winning)*. The Texas Legislative Council publishes election results for each district plan, on the same portal as the SBOE map. Show the last results for each seat (for example "2024: R+12 in this district"), plus race ratings where they're open.
@@ -120,24 +120,9 @@ Up to ten, roughly in order of value to a voter. Items marked *(README)* were on
 
 ## UI and UX
 
-- **Phones:** below 960px, the whole left pane (address, sections, links) sits above the ballot, so the races start a screen or more down. Make it a compact top bar with the address behind a button, and keep the section chips sticky.
-- **Progress includes propositions:** the bar counts races only. Show "5 of 12 races · 1 of 2 propositions", or count both in one bar.
-- **Where the precincts came from:** say "Precincts from Ballotpedia · edit" when they didn't come from the voter (`precinct_source`), and show the school district on the address card (`school_district`). The server already sends both.
-- **Precinct prompt at the top:** when races are waiting under "Depends on your precinct", show a line at the top of the ballot that jumps to the precinct form.
-- **Getting through a long ballot:**
-  - a "Next race to pick" button;
-  - `j`/`k` to move between races;
-  - an option to collapse a race once it's picked;
-  - a filter that shows only unpicked races.
-- **Details dialog:**
-  - previous and next buttons, to read the candidates in a race one after another without closing the dialog;
-  - on the candidate row, a "?" when a source's match is only "likely", as the tab already shows.
-- **First lookup:** a lookup whose data isn't cached can take several seconds. Show a skeleton ballot and a line saying later lookups are instant.
-- **Undo instead of confirm:** "Clear picks" could clear at once and offer Undo, rather than asking first.
 - **Offline:** make VoteBot installable (a web app manifest and a service worker), keeping the last ballot, picks and notes for use without a connection. For example, in line at the polls.
-- **Print:**
-  - a compact wallet-size layout;
-  - the election date and, once feature 1 exists, the polling place on the sheet.
+
+  Deferred, because browsers only run a service worker on `https://` or on `localhost`. A phone that reaches the Docker image at `http://<LAN address>:8000` would get nothing from it; it would need HTTPS in front of VoteBot (Caddy, or Tailscale serve), and the README would have to explain that. Until then, the printed sheet and the wallet card cover the polls.
 
 ## Done
 
@@ -258,7 +243,7 @@ What's been built so far, oldest first, taken from the git history. Each group i
   CLAUDE.md loads it for Claude Code.
 - [x] The README's "Not built yet" list moved into the roadmap's features.
 
-### Roadmap bugs and dead code (Sep 29, branch `fix/roadmap-bugs`)
+### Roadmap bugs and dead code ([#10](https://github.com/Fahd-Siddiqui/VoteBot/pull/10), Sep 29)
 
 - [x] Other websites can no longer use the Settings actions from the voter's browser. A POST or PUT that another page started is refused (`Sec-Fetch-Site`, `Origin`). So is any request whose `Host` isn't `localhost`, an IP address or a name in the new `VOTEBOT_ALLOWED_HOSTS`, which stops DNS rebinding.
 - [x] When Refresh can't download the State Board of Education map again, its message says so and the old map is kept. It used to fail with "Request failed (500)".
@@ -269,3 +254,21 @@ What's been built so far, oldest first, taken from the git history. Each group i
   - they're small;
   - the tests check them;
   - `precinct_source` and `school_district` are planned for the UI (see [UI and UX](#ui-and-ux)).
+
+### UI and UX (Sep 29, branch `feat/ui-ux`)
+
+- [x] On a phone or a narrow window, the left pane is a one-line top bar, with the address and the pages each behind a button (`topbar.js`, added to every page from JS). On the ballot, the section chips stay in view in the sticky strip, with the progress and Next; View, Clear picks and Print sit under the heading.
+- [x] The progress counts propositions too: "5 of 12 races · 1 of 2 propositions", in one bar.
+- [x] The address card shows the school district. On the ballot it also says where the precincts came from ("Precincts from Ballotpedia" or "Precincts you entered"), with Edit to change them, even when no race is waiting on them.
+- [x] When races depend on the voter's precinct, a line at the top of the ballot links to the precinct form.
+- [x] Getting through a long ballot:
+  - "Next race to pick" opens the next unpicked race and goes to it;
+  - `j`/`k` move between races;
+  - a View menu holds Collapse all, Expand all, "Collapse a race when I pick" and "Only races I haven't picked". A race picked while the filter is on stays until the filter runs again, so it doesn't vanish mid-pick.
+- [x] Details: ‹ and › step through a race's candidates without closing it. A "?" now marks a likely match on the candidate's row too: on that source's first badge, or on the Details button when the source has no badge.
+- [x] A lookup that takes more than a moment shows a skeleton ballot, and a line saying later lookups of the address are instant.
+- [x] "Clear picks" on the ballot, and "Clear my picks & notes" and "Clear all browser data" in Settings, clear at once and offer Undo for 10 seconds (`toast.js`). Clearing what the server saved still asks first, since it can't be put back.
+- [x] The section on screen is marked in the section list as you scroll; on a phone the chip row scrolls to it.
+- [x] Fixed: after a lookup failed, the precinct forms looked up the address that failed, because `lastRequest` was set before the answer came back. The ballot now keeps the request behind the ballot on screen (`shownRequest`), set only when a lookup succeeds.
+- [x] Print: a wallet card to cut out and fold, and "Election day: <weekday, date>" at the top of both layouts. The polling place waits for [Feature 1](#features).
+- [x] Offline is deferred, with the reason written in [UI and UX](#ui-and-ux).

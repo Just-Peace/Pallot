@@ -55,12 +55,20 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
 
 ## Using it
 
-- **Left pane**, the same on every page:
-  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with your county and districts. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+- **Left pane**, the same on every page. On a phone or a narrow window it's a **top bar** instead, with your address and the pages each behind a button.
+  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with your county, districts and school district. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+  - on the ballot, the card also says where your county precincts came from ("Precincts from Ballotpedia" or "Precincts you entered"), and **Edit** changes them.
   - while you type an address, **suggestions** from Photon appear under the box: ↑/↓ and Enter pick one, which only fills the box in. "Street only" means OpenStreetMap has the street but not that house number, so the suggestion keeps the number you typed. Turn them off in Settings to get the browser's own address autofill back.
-  - on the ballot, the list of sections, with how many races in each you've picked
+  - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
-- **Top of the ballot:** a progress bar that stays in view, plus Collapse all, Expand all, Clear picks and Print my picks.
+- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant.
+- **Top of the ballot**, staying in view as you scroll:
+  - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
+  - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
+  - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
+  - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
+  - **Print my picks** (below).
+- **Precincts:** when some races depend on your precinct, a line at the top of the ballot links to the form for your precinct numbers.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
 - **Money:** congressional and state races show what each candidate has raised, above the candidates. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source breaks it down:
@@ -76,8 +84,11 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
 - **Each candidate has:**
   - a pick button
   - a note
-  - **Details**, with one tab per source
+  - **Details**, with one tab per source. **‹** and **›** step through the race's other candidates without closing it.
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
+
+  A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
+- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day.
 
 Picks, notes and collapsed races are kept in the browser's `localStorage`, never on the server.
 
@@ -143,7 +154,7 @@ The **Settings** page, linked from the left pane:
 - says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source, plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
-- has "Clear my picks & notes", and "Clear all browser data", which also forgets your address and search engine.
+- has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
 Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
 

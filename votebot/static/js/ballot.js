@@ -1,6 +1,6 @@
 // The ballot page. The left pane holds "Your ballot" with your address under it, the list of
-// sections, and links to the other pages at the bottom; the main area has the progress strip
-// and the races, each one collapsible.
+// sections, and links to the other pages at the bottom (on a phone, a top bar; see topbar.js);
+// the main area has the progress strip and the races, each one collapsible.
 
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
@@ -8,11 +8,15 @@ import { openCompare } from "./compare.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyPill } from "./labels.js";
-import { Picks, WRITE_IN, loadLastLookup, saveAddressCard, saveLastLookup, settingsStamp } from "./picks.js";
+import {
+  Picks, WRITE_IN, loadLastLookup, loadUi, saveAddressCard, saveLastLookup, saveUi, settingsStamp,
+} from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
-import { badgeList, raceMoney, renderTabs } from "./source-cards.js";
+import { badgeList, likelyFlag, likelyUnflagged, raceMoney, renderTabs } from "./source-cards.js";
 import { attachSuggestions } from "./suggest.js";
+import { hideToast, showToast } from "./toast.js";
+import { openPanel } from "./topbar.js";
 
 const $ = (selector) => document.querySelector(selector);
 const form = $("#lookup-form");
@@ -25,7 +29,12 @@ const cancelButton = $("#cancel-change");
 const addressCard = $("#address-card");
 const statusBox = $("#status");
 const welcome = $("#welcome");
+const loading = $("#loading");
 const result = $("#result");
+const strip = $("#progress-strip");
+const tools = $("#ballot-tools");
+const viewMenu = $("#view-menu");
+const nextButton = $("#next-race");
 const jump = $("#jump");
 const details = $("#details");
 const compareDialog = $("#compare");
@@ -33,16 +42,20 @@ const printDialog = $("#print-dialog");
 
 let ballot = null;
 let picks = null;
-let lastRequest = null;
+let shownRequest = null; // the request behind the ballot on screen, not one that failed since
 let pendingLookup = null; // the AbortController of the lookup still running
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
+let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
+let currentSection = null; // the id of the section marked as the one on screen
+let lastJumped = null; // the race "Next race to pick" went to last
 
 // ---- status line (only while working, or when something went wrong) -------------------
 
 function setStatus(message, kind = "info") {
   statusBox.className = `status status-${kind}`;
   statusBox.textContent = message || "";
+  if (message && kind === "error") openPanel("address"); // on a phone, the line is in that panel
 }
 
 // ---- the address: a saved card, or the form ------------------------------------------
@@ -51,6 +64,7 @@ function showForm(show) {
   form.hidden = !show;
   addressCard.hidden = show;
   cancelButton.hidden = !ballot;
+  openPanel(show ? "address" : null);
   if (show) addressInput.focus();
 }
 
@@ -93,23 +107,26 @@ function readForm() {
   const request = { address: addressInput.value.trim() };
   if (electionSelect.value) request.election_date = electionSelect.value;
   if (!partyField.hidden && partySelect.value) request.party = partySelect.value;
-  if (lastRequest?.precincts && lastRequest.address === request.address) request.precincts = lastRequest.precincts;
+  if (shownRequest?.precincts && shownRequest.address === request.address) request.precincts = shownRequest.precincts;
   return request;
 }
 
 // keepForm: leave the address form open afterwards ("Change" on another page opened it).
+// keepBallot: leave the ballot showing meanwhile (new precincts), rather than a skeleton.
 // A new lookup cancels one still running, so an older answer can't replace a newer ballot.
-async function lookup(request, { keepForm = false } = {}) {
+async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
   pendingLookup?.abort();
   const controller = new AbortController();
   pendingLookup = controller;
-  lastRequest = request;
   setStatus("Looking up your ballot…", "busy");
   submitButton.disabled = true;
+  // Only a lookup that isn't cached takes long enough to see this.
+  const skeleton = keepBallot ? null : setTimeout(() => showLoading(true), 300);
   try {
     const found = await api.post("/api/ballot", request, { signal: controller.signal });
     if (controller.signal.aborted) return; // cancelled as its answer arrived
     ballot = found;
+    shownRequest = request;
     saveLastLookup(request);
     picks = new Picks(ballot.election_date);
     render();
@@ -118,13 +135,29 @@ async function lookup(request, { keepForm = false } = {}) {
     else showForm(false);
   } catch (error) {
     if (controller.signal.aborted) return;
+    showLoading(false);
     setStatus(error.message, "error");
     if (!ballot) showForm(true);
   } finally {
+    clearTimeout(skeleton);
     if (pendingLookup === controller) {
       pendingLookup = null;
       submitButton.disabled = false;
     }
+  }
+}
+
+// A skeleton ballot, saying a first lookup takes a while, in place of the ballot or the welcome.
+function showLoading(show) {
+  loading.hidden = !show;
+  jump.hidden = show || !ballot; // the sections are the old ballot's
+  if (show) {
+    welcome.hidden = true;
+    result.hidden = true;
+  } else if (ballot) {
+    result.hidden = false;
+  } else {
+    welcome.hidden = false;
   }
 }
 
@@ -139,21 +172,49 @@ function render() {
   renderMaybe();
   renderMeasures();
   renderSections();
+  applyHidePicked();
   updateProgress();
+  loading.hidden = true;
   welcome.hidden = true;
   result.hidden = false;
+  markCurrentSection();
 }
 
 function renderAddress() {
   const { location, districts: d } = ballot;
+  const school = location.school_district?.replace(/\bIndependent School District\b/, "ISD");
   const card = {
-    address: lastRequest.address,
+    address: shownRequest.address,
     place: [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
-    districts: districtLine(d),
+    districts: [districtLine(d), school].filter(Boolean).join(" · "),
     matched: location.matched_address || "",
   };
   showAddress(card);
   saveAddressCard(card); // the other pages show it too
+  renderPrecinctNote();
+}
+
+const PRECINCTS_FROM = { ballotpedia: "Precincts from Ballotpedia", you: "Precincts you entered" };
+
+// Under the districts: where the precinct numbers came from, and a form to change them (with
+// every precinct known there's no "Depends on your precinct" section, and so no other form).
+function renderPrecinctNote() {
+  const note = $("#address-precincts");
+  const editor = $("#precinct-edit");
+  const from = PRECINCTS_FROM[ballot.districts.precinct_source];
+  note.hidden = !from;
+  editor.hidden = true;
+  editor.replaceChildren();
+  if (!from) return;
+  const edit = h("button", { type: "button", class: "link-btn", "aria-expanded": "false", "aria-controls": editor.id }, "Edit");
+  edit.addEventListener("click", () => {
+    const opening = editor.hidden;
+    editor.replaceChildren(opening ? precinctForm() : "");
+    editor.hidden = !opening;
+    edit.setAttribute("aria-expanded", String(opening));
+    if (opening) editor.querySelector("input").focus();
+  });
+  note.replaceChildren(from, " · ", edit);
 }
 
 function renderHeader() {
@@ -164,11 +225,31 @@ function renderHeader() {
   );
 }
 
+const showPickedButton = h("button", { type: "button", class: "link-btn" }, "Show them");
+const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
+
 function renderMessages() {
+  const precinct = ballot.maybe.find((section) => section.id === "precinct");
   $("#messages").replaceChildren(
+    ...(precinct ? [precinctPrompt(precinct)] : []),
+    hidingNote,
     ...ballot.warnings.map((w) => h("p", { class: "notice notice-warn" }, w)),
     ...ballot.notes.map((n) => h("p", { class: "notice" }, n)),
   );
+}
+
+// At the top of the ballot while races wait on the voter's precincts: a link to their form.
+function precinctPrompt(section) {
+  const count = section.races.length;
+  const link = h("a", { href: "#maybe-precinct" }, "Enter your precinct numbers");
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    const field = $("#maybe-precinct input");
+    field.scrollIntoView({ block: "center" });
+    field.focus({ preventScroll: true });
+  });
+  return h("p", { class: "notice" },
+    `${count} ${count === 1 ? "race depends" : "races depend"} on your precinct. `, link, " to see which are on your ballot.");
 }
 
 function renderGroups() {
@@ -189,27 +270,45 @@ function renderGroups() {
 // The left pane's list of sections, each with how many of its races are picked.
 function renderSections() {
   sectionCounts = [];
+  sectionLinks = [];
+  currentSection = null;
   const items = [];
   const add = (id, label, keys, maybe = false) => {
     const count = h("span", { class: "count" });
+    const link = h("a", { href: `#${id}`, class: maybe ? "maybe-link" : null }, h("span", {}, label), count);
     sectionCounts.push({ element: count, keys, maybe });
-    items.push(h("li", {}, h("a", { href: `#${id}`, class: maybe ? "maybe-link" : null }, h("span", {}, label), count)));
+    sectionLinks.push({ id, link });
+    items.push(h("li", {}, link));
   };
   for (const group of GROUP_ORDER) {
     const keys = ballot.races.filter((r) => r.group === group).map((r) => r.key);
     if (keys.length) add(`group-${group}`, GROUP_LABELS[group], keys);
   }
   for (const section of ballot.maybe) add(`maybe-${section.id}`, section.title, section.races.map((r) => r.key), true);
-  if (ballot.measures.length) add("measures-section", "Propositions", ballot.measures.map((m) => `measure:${m.key}`));
+  if (ballot.measures.length) add("measures-section", "Propositions", measureKeysOf(ballot));
   $("#jump-list").replaceChildren(...items);
   jump.hidden = !items.length;
 }
 
+const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
+
+// "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
+// that may not be on the ballot aren't counted.
 function updateProgress() {
-  const done = ballot.races.filter((r) => picks.picked(r.key).length).length;
-  const total = ballot.races.length;
-  $("#progress").textContent = `${done} of ${total} races picked`;
-  $("#progress-bar").style.width = `${total ? Math.round((done / total) * 100) : 0}%`;
+  const countPicked = (keys) => keys.filter((k) => picks.picked(k).length).length;
+  const raceKeys = ballot.races.map((r) => r.key);
+  const measureKeys = measureKeysOf(ballot);
+  const done = countPicked(raceKeys);
+  const decided = countPicked(measureKeys);
+  $("#progress").textContent = [
+    `${done} of ${plural(raceKeys.length, "race")}`,
+    measureKeys.length ? `${decided} of ${plural(measureKeys.length, "proposition")}` : null,
+  ].filter(Boolean).join(" · ");
+  const total = raceKeys.length + measureKeys.length;
+  $("#progress-bar").style.width = `${total ? Math.round(((done + decided) / total) * 100) : 0}%`;
+  const left = done + decided < total;
+  nextButton.disabled = !left;
+  nextButton.textContent = left ? "Next race to pick" : "All picked ✓";
   for (const { element, keys, maybe } of sectionCounts) {
     const picked = keys.filter((k) => picks.picked(k).length).length;
     element.textContent = maybe ? (picked ? `${picked} picked` : String(keys.length)) : `${picked}/${keys.length}`;
@@ -362,6 +461,7 @@ function candidateRow(race, candidate) {
   const save = () => {
     clearTimeout(timer);
     picks.setNote(candidate.key, textarea.value);
+    hideToast(); // an Undo of "Clear picks" would now lose this
     noteButton.classList.toggle("has-note", Boolean(textarea.value.trim()));
     saved.textContent = "Saved";
     setTimeout(() => { saved.textContent = ""; }, 1500);
@@ -373,9 +473,11 @@ function candidateRow(race, candidate) {
   textarea.addEventListener("change", save); // on leaving the box, e.g. for another page
 
   const sources = candidate.cards.length;
+  const unflagged = likelyUnflagged(candidate); // likely matches with no badge to show the "?"
   const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources },
-    sources ? `Details · ${sources} source${sources === 1 ? "" : "s"}` : "No details");
-  detailsButton.addEventListener("click", () => openDetails(race, candidate));
+    sources ? `Details · ${plural(sources, "source")}` : "No details",
+    unflagged.length ? likelyFlag(`Likely match: ${unflagged.join(", ")}`) : null);
+  detailsButton.addEventListener("click", () => showDetails(race, race.candidates.indexOf(candidate)));
 
   return h(
     "li",
@@ -444,12 +546,24 @@ function choose(race, key, checked) {
   let keys = picks.picked(race.key).filter((k) => k !== key);
   if (checked) keys = race.seats > 1 ? [...keys, key] : [key];
   picks.set(race.key, keys);
-  refresh(race.key);
+  // A write-in doesn't fold the race: its name box would go while the voter types.
+  settle(race.key, checked && key !== WRITE_IN && keys.length >= race.seats);
 }
 
 function refresh(key) {
+  hideToast(); // an Undo of "Clear picks" would now lose this change
   redraw.get(key)?.();
   updateProgress();
+}
+
+// After a pick that fills the race: with "Collapse a race when I pick" (View), fold the race to
+// one line, and bring its heading back into view if that left it above the strip.
+function settle(key, filled) {
+  const fold = filled && loadUi().collapseOnPick;
+  if (fold) picks.setCollapsed(key, true);
+  refresh(key);
+  const card = fold ? cardFor(key) : null;
+  if (card && card.getBoundingClientRect().top < strip.getBoundingClientRect().bottom) card.scrollIntoView({ block: "start" });
 }
 
 function setAllCollapsed(collapsed) {
@@ -477,7 +591,7 @@ function precinctForm() {
       const value = parseInt(data.get(key), 10);
       if (value > 0) precincts[key] = value;
     }
-    lookup({ ...lastRequest, precincts });
+    lookup({ ...shownRequest, precincts }, { keepBallot: true });
   });
   return precinctForm;
 }
@@ -500,7 +614,7 @@ function measureCard(measure) {
     const input = h("input", { type: "radio", name, id: `${name}-${value}`, value });
     input.addEventListener("change", () => {
       picks.set(key, [value]);
-      refresh(key);
+      settle(key, true);
     });
     return { value, input, label: h("label", { class: "measure-option", for: `${name}-${value}` }, input, label) };
   });
@@ -520,6 +634,8 @@ function measureCard(measure) {
   return card.article;
 }
 
+const measureKeysOf = (b) => b.measures.map((m) => `measure:${m.key}`);
+
 function renderMeasures() {
   $("#measures").replaceChildren(
     ballot.measures.length
@@ -531,7 +647,10 @@ function renderMeasures() {
 
 // ---- details dialog -----------------------------------------------------------------
 
-function openDetails(race, candidate) {
+// One of a race's candidates, by ``index``. ‹ and › step through the others without closing
+// the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
+function showDetails(race, index, focus = null) {
+  const candidate = race.candidates[index];
   const pickButton = h("button", { type: "button", class: "btn primary" });
   const syncPickButton = () => {
     const on = picks.isPicked(race.key, candidate.key);
@@ -547,23 +666,39 @@ function openDetails(race, candidate) {
   pickButton.disabled = multiFull;
 
   const tabs = h("div", { class: "details-tabs" });
-  renderTabs(tabs, candidate.cards, `d-${slug(candidate.key)}`);
+  if (candidate.cards.length) renderTabs(tabs, candidate.cards, `d-${slug(candidate.key)}`);
+  else tabs.append(h("p", { class: "muted details-empty" }, "No source has details on this candidate yet."));
   const closeButton = h("button", { type: "button", class: "icon-btn close", "aria-label": "Close" }, "✕");
   closeButton.addEventListener("click", () => details.close());
+
+  const count = race.candidates.length;
+  const step = (offset, label, symbol) => {
+    const other = race.candidates[index + offset];
+    const button = h("button", {
+      type: "button", class: "icon-btn step", disabled: !other,
+      "aria-label": other ? `${label} candidate: ${other.name}` : `No ${label.toLowerCase()} candidate`,
+      title: other ? other.name : null,
+    }, symbol);
+    button.addEventListener("click", () => showDetails(race, index + offset, label.toLowerCase()));
+    return button;
+  };
+  const steps = count > 1 ? { previous: step(-1, "Previous", "‹"), next: step(1, "Next", "›") } : {};
 
   details.replaceChildren(
     h("div", { class: "details-head" },
       avatar(candidate, "large"),
       h("div", { class: "details-title" },
         h("h2", { id: "details-name" }, candidate.name),
-        h("p", { class: "muted" }, race.name),
+        h("p", { class: "muted" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
         h("p", { class: "cand-sub" }, partyPill(candidate), candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null)),
-      closeButton),
+      h("div", { class: "details-nav" }, steps.previous, steps.next, closeButton)),
     tabs,
     h("div", { class: "details-foot" }, searchLink(race, candidate, "btn ghost", `Search the web for ${candidate.name} ↗`), pickButton),
   );
-  details.showModal();
-  closeButton.focus();
+  if (!details.open) details.showModal();
+  details.scrollTop = 0;
+  const pressed = steps[focus];
+  (pressed && !pressed.disabled ? pressed : closeButton).focus();
 }
 
 for (const dialog of [details, compareDialog]) {
@@ -572,22 +707,201 @@ for (const dialog of [details, compareDialog]) {
   });
 }
 
-// ---- print / clear / expand ---------------------------------------------------------
+// ---- print / clear ------------------------------------------------------------------
 
+const walletChoice = $("#print-wallet");
+for (const radio of printDialog.querySelectorAll('input[name="print-layout"]')) {
+  radio.addEventListener("change", () => { $("#print-notes").disabled = walletChoice.checked; }); // notes don't fit
+}
 $("#print-btn").addEventListener("click", () => printDialog.showModal());
 printDialog.addEventListener("close", () => {
   if (printDialog.returnValue !== "print" || !ballot) return;
-  buildPrintSheet(ballot, picks, { includeNotes: $("#print-notes").checked, includeBlank: $("#print-blank").checked });
+  const wallet = walletChoice.checked;
+  buildPrintSheet(ballot, picks, { includeNotes: $("#print-notes").checked && !wallet, includeBlank: $("#print-blank").checked, wallet });
   setTimeout(() => window.print(), 50);
 });
+
+// Clears at once, and offers to put everything back.
 $("#clear-picks").addEventListener("click", () => {
-  if (ballot && confirm("Clear all your picks and notes for this election?")) {
-    picks.clear();
-    render();
+  if (!ballot) return;
+  if (picks.isEmpty()) {
+    showToast("No picks or notes to clear.");
+    return;
+  }
+  const cleared = picks.clear();
+  render();
+  showToast("Cleared your picks and notes.", {
+    label: "Undo",
+    run: () => {
+      picks.restore(cleared);
+      render();
+    },
+  });
+});
+
+// ---- view: collapse, only unpicked races, next race, j/k -----------------------------
+
+const setView = (pref, value) => saveUi({ ...loadUi(), [pref]: value });
+
+// "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
+// until this runs again (switching it on, a new ballot), so it doesn't vanish mid-pick.
+function applyHidePicked() {
+  const on = Boolean(loadUi().hidePicked);
+  for (const card of result.querySelectorAll(".race")) {
+    card.classList.toggle("hidden-picked", on && picks.picked(card.dataset.race).length > 0);
+  }
+  $("#hide-picked").checked = on;
+  hidingNote.hidden = !on;
+  viewMenu.classList.toggle("filtered", on);
+}
+
+function setHidePicked(on) {
+  setView("hidePicked", on);
+  if (!ballot) return;
+  applyHidePicked();
+  markCurrentSection(); // the marked section may have gone
+}
+
+$("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
+showPickedButton.addEventListener("click", () => setHidePicked(false));
+$("#collapse-on-pick").checked = Boolean(loadUi().collapseOnPick);
+$("#collapse-on-pick").addEventListener("change", (event) => setView("collapseOnPick", event.target.checked));
+$("#expand-all").addEventListener("click", () => {
+  setAllCollapsed(false);
+  viewMenu.open = false;
+});
+$("#collapse-all").addEventListener("click", () => {
+  setAllCollapsed(true);
+  viewMenu.open = false;
+});
+
+// The View menu closes like a menu: a click elsewhere, or Esc.
+document.addEventListener("click", (event) => {
+  if (viewMenu.open && !viewMenu.contains(event.target)) viewMenu.open = false;
+});
+viewMenu.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !viewMenu.open) return;
+  event.preventDefault();
+  viewMenu.open = false;
+  viewMenu.querySelector("summary").focus();
+});
+
+function cardFor(key) {
+  return result.querySelector(`.race[data-race="${CSS.escape(key)}"]`);
+}
+
+// Scrolls a race's card to just below the strip and focuses its heading. ``open`` expands
+// it first if it's collapsed.
+function goTo(card, { open = false } = {}) {
+  const key = card.dataset.race;
+  if (open && picks.isCollapsed(key)) {
+    picks.setCollapsed(key, false);
+    redraw.get(key)?.();
+  }
+  card.scrollIntoView({ block: "start" });
+  card.querySelector(".race-toggle").focus({ preventScroll: true });
+}
+
+// The first race or proposition without a pick, after the one in focus (or the one it went
+// to last), round to the start. The races that may not be on the ballot are skipped, as the
+// progress skips them.
+nextButton.addEventListener("click", () => {
+  if (!ballot) return;
+  const keys = [...ballot.races.map((r) => r.key), ...measureKeysOf(ballot)];
+  const from = keys.indexOf(document.activeElement?.closest(".race")?.dataset.race ?? lastJumped) + 1;
+  for (let i = 0; i < keys.length; i += 1) {
+    const key = keys[(from + i) % keys.length];
+    if (!picks.picked(key).length) {
+      lastJumped = key;
+      goTo(cardFor(key), { open: true });
+      return;
+    }
   }
 });
-$("#expand-all").addEventListener("click", () => setAllCollapsed(false));
-$("#collapse-all").addEventListener("click", () => setAllCollapsed(true));
+
+// j and k: the next and previous race on the page, from the one in focus, or else from the
+// one at the top of the window. Typing in a box, or an open dialog, leaves them alone.
+document.addEventListener("keydown", (event) => {
+  if (!ballot || result.hidden || (event.key !== "j" && event.key !== "k")) return;
+  if (event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented || document.querySelector("dialog[open]")) return;
+  if (event.target.closest?.('textarea, select, [contenteditable], input:not([type="radio"]):not([type="checkbox"])')) return;
+  const cards = [...result.querySelectorAll(".race")].filter((card) => card.offsetParent !== null);
+  let index = cards.indexOf(document.activeElement?.closest(".race"));
+  if (index < 0) {
+    const top = strip.getBoundingClientRect().bottom;
+    let below = cards.findIndex((card) => card.getBoundingClientRect().top >= top - 1);
+    if (below < 0) below = cards.length;
+    index = event.key === "j" ? below - 1 : below; // so j lands on that race and k on the one before
+  }
+  const target = cards[index + (event.key === "j" ? 1 : -1)];
+  if (!target) return;
+  event.preventDefault();
+  goTo(target);
+});
+
+// ---- phones ---------------------------------------------------------------------------
+
+// On a phone (or a narrow window) the section chips join the sticky strip, and View, Clear
+// picks and Print move under the heading, where they scroll away. So what stays in view is
+// the progress, Next and the sections.
+const narrow = matchMedia("(max-width: 960px)");
+function placeForWidth() {
+  if (narrow.matches) {
+    strip.append(jump);
+    $(".ballot-head").after(tools);
+  } else {
+    $(".side-bottom").before(jump);
+    strip.append(tools);
+  }
+}
+narrow.addEventListener("change", placeForWidth);
+placeForWidth();
+
+// Links to a section, Next and j/k scroll to just below the strip, however tall it is.
+new ResizeObserver(() => {
+  document.documentElement.style.scrollPaddingTop = `${strip.offsetHeight + 12}px`;
+}).observe(strip);
+
+// ---- the section on screen ------------------------------------------------------------
+
+// Marks the section on screen in the section list: the last one whose top has gone under the
+// strip (the first until then, the last at the foot of the page). Where the list is a row of
+// chips (a phone), the row scrolls sideways to show it.
+function markCurrentSection() {
+  if (!ballot || result.hidden) return;
+  const shown = sectionLinks.filter(({ id }) => document.getElementById(id)?.offsetParent); // not hidden by the filter
+  if (!shown.length) return;
+  const line = strip.getBoundingClientRect().bottom + 8;
+  let current = shown[0];
+  for (const entry of shown) {
+    if (document.getElementById(entry.id).getBoundingClientRect().top <= line) current = entry;
+  }
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) current = shown[shown.length - 1];
+  if (current.id === currentSection) return;
+  currentSection = current.id;
+  for (const { link } of sectionLinks) {
+    if (link === current.link) link.setAttribute("aria-current", "true");
+    else link.removeAttribute("aria-current");
+  }
+  const row = current.link.closest(".jump-list");
+  if (row.scrollWidth > row.clientWidth) {
+    const [chip, box] = [current.link.getBoundingClientRect(), row.getBoundingClientRect()];
+    if (chip.left < box.left || chip.right > box.right) row.scrollLeft += chip.left - box.left - 16;
+  }
+}
+
+// At most once a frame while scrolling.
+let marking = false;
+function markSoon() {
+  if (marking) return;
+  marking = true;
+  requestAnimationFrame(() => {
+    marking = false;
+    markCurrentSection();
+  });
+}
+addEventListener("scroll", markSoon, { passive: true });
+addEventListener("resize", markSoon);
 
 // ---- start --------------------------------------------------------------------------
 
@@ -626,6 +940,8 @@ async function start() {
     showAddress(rememberedCard(initial.address));
     form.hidden = true;
     addressCard.hidden = false;
+  } else {
+    openPanel("address"); // on a phone, the form is the first thing to fill in
   }
   if (changing) showForm(true);
   await loadElections(initial?.election_date);

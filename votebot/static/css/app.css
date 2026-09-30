@@ -174,6 +174,8 @@ p { margin: 0 0 0.75em; }
 .address-card .muted { margin: 0; }
 .districts { font-size: 0.8rem; color: var(--muted); margin: 8px 0 6px; }
 .districts:empty { display: none; }
+.districts .link-btn { font-size: inherit; padding: 0; }
+#precinct-edit .precinct-form { gap: 8px; margin: 4px 0 10px; }
 
 /* ---- forms and buttons ---- */
 
@@ -277,6 +279,8 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 .jump-list a.maybe-link { color: var(--muted); }
 .jump-list .count { color: var(--muted); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .jump-list .count.complete { color: var(--good); font-weight: 700; }
+/* the section on screen (ballot.js marks it as you scroll) */
+.jump-list a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
 
 /* ---- left pane: links to the pages ---- */
 
@@ -287,6 +291,16 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 .site-nav .icon { width: 16px; height: 16px; color: var(--muted); }
 .site-nav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
 .site-nav a[aria-current="page"] .icon { color: var(--accent); }
+
+/* ---- left pane: the top bar's buttons on narrow screens (topbar.js) ---- */
+
+.topbar-buttons { display: none; }
+.topbar-btn { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font: inherit; font-size: 0.88rem; font-weight: 600;
+  color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.topbar-btn:hover { border-color: var(--line-strong); background: var(--neutral-soft); }
+.topbar-btn .icon { width: 16px; height: 16px; color: var(--accent); }
+.topbar-btn[aria-expanded="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.topbar-address { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---- pages other than the ballot ---- */
 
@@ -391,10 +405,47 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .bar { flex: 1; height: 8px; border-radius: 999px; background: var(--neutral-soft); overflow: hidden; }
 .bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.2s; }
 .progress { margin: 0; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+#next-race { flex: none; }
+
+/* The View menu: a <details> whose panel drops down over the ballot. A dot on it while picked
+   races are hidden. */
+.menu { position: relative; }
+.menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
+.menu > summary::-webkit-details-marker { display: none; }
+.menu > summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg); }
+.menu.filtered > summary::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.menu-panel { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max-content; max-width: min(300px, calc(100vw - 32px));
+  padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16); }
+.menu-panel .check { font-size: 0.9rem; }
+
+/* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
+   section stays, for its explanation and precinct form). */
+.race.hidden-picked { display: none; }
+.group:not(.maybe):not(:has(.race:not(.hidden-picked))) { display: none; }
+
+/* While a lookup runs: a skeleton ballot under a line about first lookups. */
+.loading-line { color: var(--muted); max-width: 70ch; margin: 8px 0 16px; }
+.loading-line strong { color: var(--text); }
+.race.skeleton { height: 76px; background: linear-gradient(100deg, var(--panel) 35%, var(--neutral-soft) 50%, var(--panel) 65%) 0 0 / 300% 100%;
+  animation: shimmer 1.4s ease-in-out infinite; }
+.race.skeleton:nth-child(2) { height: 150px; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .race.skeleton { animation: none; } }
+
+/* A message at the foot of the window ("Cleared your picks and notes. Undo"; toast.js). Empty,
+   it's invisible but stays in the page, so each new message is announced. */
+.toast { position: fixed; left: 50%; bottom: 20px; z-index: 40; transform: translateX(-50%); display: flex; align-items: center; gap: 16px;
+  width: max-content; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: var(--radius-sm); background: var(--text); color: var(--bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); font-size: 0.92rem; }
+.toast:empty { opacity: 0; pointer-events: none; }
+.toast .link-btn { color: inherit; font-size: inherit; font-weight: 700; text-decoration: underline; }
 
 .notice { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--info); border-radius: var(--radius-sm);
   padding: 10px 14px; margin: 12px 0 0; }
 .notice-warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.notice .link-btn { font-size: inherit; padding: 0; text-decoration: underline; }
 
 .group { margin: 22px 0 8px; }
 .group-title { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }
@@ -534,6 +585,10 @@ dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
 .details-title h2 { margin: 0 0 2px; }
 .details-title p { margin: 0 0 4px; }
 .icon-btn.close { font-size: 1rem; padding: 4px 10px; }
+/* ‹ and › step through the race's candidates */
+.details-nav { display: flex; align-items: center; gap: 6px; flex: none; }
+.icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
+.details-empty { margin: 14px 0; }
 .details-tabs { padding: 0 20px; }
 .details-foot { padding: 12px 20px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 
@@ -541,8 +596,10 @@ dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
 .tab { font: inherit; font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
   padding: 10px 12px 8px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
-.tab-flag { display: inline-block; margin-left: 6px; width: 16px; height: 16px; line-height: 16px; border-radius: 50%;
-  font-size: 0.7rem; background: var(--warn-soft); color: var(--warn); text-align: center; }
+/* "?": a source only likely matched this candidate (on its tab, badges and Details button) */
+.likely-flag { display: inline-block; margin-left: 6px; width: 16px; height: 16px; line-height: 16px; border-radius: 50%;
+  font-size: 0.7rem; font-weight: 700; background: var(--warn-soft); color: var(--warn); text-align: center; }
+.badge .likely-flag { margin-left: 2px; width: 14px; height: 14px; line-height: 14px; box-shadow: 0 0 0 1px var(--warn); }
 .tab-panel { padding: 14px 0 6px; }
 
 /* The labels' column fits the longest label, up to 40%: a long one (a pollster's full name)
@@ -674,26 +731,42 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .small-dialog form { padding: 20px; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
 .check input { margin-top: 4px; accent-color: var(--accent); }
+.print-layout { border: 0; margin: 0 0 6px; padding: 0; }
+.print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 
-/* ---- narrower screens: the left pane moves above the ballot ---- */
+/* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
+   its two buttons (topbar.js); on the ballot the section chips join the sticky strip ---- */
 
 @media (max-width: 960px) {
   .app { display: block; }
   .sidebar { position: static; height: auto; overflow: visible; border-right: 0; border-bottom: 1px solid var(--line); }
+  .side-inner { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 0; padding: 10px 16px; }
+  .brand { font-size: 1.2rem; }
+  .logo { width: 24px; height: 24px; }
+  .topbar-buttons { display: flex; flex: 1 1 0; justify-content: flex-end; gap: 8px; min-width: 0; }
+  .side-inner > :not(.brand, .topbar-buttons) { flex: 1 1 100%; }
+  .sidebar:not([data-open="address"]) .side-address, .sidebar:not([data-open="menu"]) .site-nav { display: none; }
+  .side-address { margin-top: 0; padding-bottom: 6px; }
+  .side-bottom { margin-top: 0; }
   .content { padding: 20px 16px 32px; }
   .jump-list { display: flex; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
   .jump-list a { flex: none; border: 1px solid var(--line); border-radius: 999px; white-space: nowrap; }
-  .site-nav ul { display: flex; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
-  .site-nav a { flex: none; border: 1px solid var(--line); border-radius: 999px; white-space: nowrap; }
+  .jump-list a[aria-current] { border-color: var(--accent); }
+  .progress-strip .side-section { flex: 1 1 100%; min-width: 0; border-top: 0; padding-top: 0; }
+  .progress-strip .side-title { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0; } /* sr-only: the chips say what they are */
+  .ballot-tools { margin: 12px 0 4px; }
 }
 
 @media (max-width: 640px) {
   h1 { font-size: 1.45rem; }
   .panel, .welcome { padding: 16px; }
   .progress-strip { gap: 8px; padding: 8px 0; }
-  .progress-strip .button-row { flex-wrap: nowrap; overflow-x: auto; width: 100%; }
   .progress-strip .btn.small { padding: 5px 10px; font-size: 0.8rem; }
-  .progress-strip #print-btn { order: -1; } /* the main action first when the row scrolls */
+  /* the bar on a line of its own, the count (wrapping if need be) and Next under it */
+  .progress-info { flex-wrap: wrap; row-gap: 6px; }
+  .progress-info .bar { flex: 1 1 100%; }
+  .progress { flex: 1 1 0; min-width: 0; white-space: normal; font-size: 0.85rem; }
   .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
   .race-status { max-width: none; }
   .cand-actions { margin-left: 30px; }
@@ -755,4 +828,14 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   .print-sheet th { font-size: 9pt; text-transform: uppercase; color: #333; }
   .print-sheet td.blank { border-bottom: 1px solid #000; min-width: 45%; }
   .print-sheet footer { margin-top: 14pt; border-top: 1px solid #000; padding-top: 6pt; }
+  .print-sheet .election-day { font-weight: 700; }
+  /* the wallet card: cut along the dashed edge, and fold it if it's long */
+  .print-sheet .wallet-card { width: 3.5in; padding: 8pt 9pt; border: 1px dashed #000; font-size: 7.5pt; line-height: 1.3; }
+  .print-sheet .wallet-card h1 { font-size: 10pt; margin: 0 0 2pt; }
+  .print-sheet .wallet-card .wallet-day { font-size: 8pt; font-weight: 700; margin: 0 0 4pt; padding-bottom: 4pt; border-bottom: 1px solid #000; }
+  .print-sheet .wallet-card h2 { font-size: 6.5pt; margin: 5pt 0 1pt; }
+  .print-sheet .wallet-card .wallet-line { margin: 0 0 1.5pt; break-inside: avoid; }
+  .print-sheet .wallet-pick { font-weight: 700; }
+  .print-sheet .wallet-pick.blank { display: inline-block; width: 1.2in; border-bottom: 0.5pt solid #000; }
+  .print-sheet .wallet-card .wallet-foot { margin: 5pt 0 0; font-size: 6pt; color: #333; }
 }

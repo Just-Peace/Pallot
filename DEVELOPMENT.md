@@ -37,7 +37,7 @@ votebot/
                     compare.py: the Compare dialog's sections, shared by the FEC and TEC)
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
                     css/app.css, js/ (ballot.js, suggest.js, compare.js, settings.js, page.js,
-                    source-cards.js, print.js, …)
+                    topbar.js, toast.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
@@ -61,6 +61,12 @@ Notes on how each source is called, beyond the README's table:
 - **Ballotpedia:** an unofficial endpoint that needs Ballotpedia's own origin header.
 - **FiftyPlusOne:** the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's.
 - **State-specific text** (the official elections site, the print sheet's voting rules) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
+
+## The pages
+
+At 960px and less (a phone), the left pane becomes a top bar. `topbar.js` adds its two buttons (the address and Menu) to whichever page loads it, so the five pages' copies of the left pane stay the same. On the ballot, `placeForWidth()` in `ballot.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. A `ResizeObserver` keeps `scroll-padding-top` at the strip's height, so links, Next and `j`/`k` land below it. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `votebot.ui.v1`.
+
+Clearing what the voter keeps in the browser (Clear picks on the ballot, and the two Clear buttons in Settings) happens at once, then `toast.js` offers Undo for 10 seconds. The clear functions in `picks.js` return what they removed, for Undo to put back. Clearing what the server saved can't be undone, so those buttons still ask first.
 
 ## trackaipac_cache
 
