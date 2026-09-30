@@ -2,16 +2,18 @@
 
 Each source builds SourceCards keyed by candidate (the money sources and polls also build
 one per race, comparing its candidates); a new source only needs its own cards() added here. The
-frontend renders any card the same way.
+frontend renders any card the same way, in the order they're attached: CARD_ORDER is the order
+of the tabs in Details and of the badges on a candidate's row.
 """
 
 from __future__ import annotations
 
+import asyncio
 import datetime as dt
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Awaitable
 
-from .models import Race
+from .models import Race, SourceCard
 from .offices import OfficeScope
 from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac
 from .sources.ballotpedia import BpBallot
@@ -19,6 +21,12 @@ from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
     from .ballot import Services
+
+CARD_ORDER = (fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE)
+UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
+    fec.SOURCE: (fec.FecUnavailable, "Couldn't load FEC campaign finance ({})."),
+    polls.SOURCE: (polls.PollsUnavailable, "Couldn't load polls from FiftyPlusOne ({})."),
+}
 
 
 @dataclass
@@ -28,6 +36,10 @@ class Outcome:
     warnings: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     errors: dict[str, str] = field(default_factory=dict)  # source id -> why it failed
+
+
+async def _candidate_cards(found: Awaitable[dict[str, SourceCard]]) -> CardSet:
+    return CardSet(candidates=await found)
 
 
 async def run(
@@ -47,32 +59,35 @@ async def run(
     county: str | None = None,
 ) -> Outcome:
     """Add cards in place; say what failed. ``sos_lookups`` is None when the ballot didn't
-    come from Texas SOS."""
+    come from Texas SOS. Every source is asked at once (the ones without I/O in a thread),
+    and nothing touches the races until they've all answered."""
     candidates = [c for race in races for c in race.candidates]
-    outcome = Outcome()
-    per_source: list[CardSet] = []
+    jobs: dict[str, Awaitable[CardSet]] = {}
     if sos_lookups and elections:
-        per_source.append(CardSet(candidates=await sos.cards(svc.sos, elections, candidates, ballot_rows, sos_lookups)))
+        jobs[sos.SOURCE] = _candidate_cards(sos.cards(svc.sos, elections, candidates, ballot_rows, sos_lookups))
     if bp_ballot is not None:
-        per_source.append(CardSet(candidates=ballotpedia.cards(bp_ballot, races)))
+        jobs[ballotpedia.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=ballotpedia.cards(bp_ballot, races)))
     if use_trackaipac:
-        per_source.append(CardSet(candidates=trackaipac.cards(svc.trackaipac, races)))
+        jobs[trackaipac.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races)))
     if use_fec:
-        try:
-            per_source.append(await fec.cards(svc.fec, races, day))
-        except fec.FecUnavailable as exc:
-            outcome.errors[fec.SOURCE] = str(exc)
-            outcome.warnings.append(f"Couldn't load FEC campaign finance ({exc}).")
+        jobs[fec.SOURCE] = fec.cards(svc.fec, races, day)
     if use_tec:
-        per_source.append(tec.cards(svc.tec, races, scopes or {}, county))
+        jobs[tec.SOURCE] = asyncio.to_thread(tec.cards, svc.tec, races, scopes or {}, county, bp_ballot)
     if use_polls:
-        try:
-            per_source.append(await polls.cards(svc.polls, races, day))
-        except polls.PollsUnavailable as exc:
-            outcome.errors[polls.SOURCE] = str(exc)
-            outcome.warnings.append(f"Couldn't load polls from FiftyPlusOne ({exc}).")
+        jobs[polls.SOURCE] = polls.cards(svc.polls, races, day)
+    answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 
-    for cards in per_source:
+    outcome = Outcome()
+    for source in CARD_ORDER:
+        if source not in answers:
+            continue
+        cards = answers[source]
+        if source in UNAVAILABLE and isinstance(cards, UNAVAILABLE[source][0]):
+            outcome.errors[source] = str(cards)
+            outcome.warnings.append(UNAVAILABLE[source][1].format(cards))
+            continue
+        if isinstance(cards, BaseException):
+            raise cards
         outcome.notes += cards.notes
         outcome.warnings += cards.warnings
         for candidate in candidates:

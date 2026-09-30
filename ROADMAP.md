@@ -7,6 +7,8 @@ What to fix, tidy up and build next, then what's already done. The open items co
 - [Tooling](#tooling)
 - [Features](#features)
 - [UI and UX](#ui-and-ux)
+- [Reviews](#reviews)
+- [Spot checks](#spot-checks)
 - [Done](#done)
 
 ## Bugs
@@ -19,50 +21,15 @@ Most severe first.
 
 Fix: in `request()`, rethrow an AbortError from `response.json()` and turn only other errors into `null`.
 
+### 2. County courts on Ballotpedia-only ballots get Texas Ethics Commission matches by name (minor)
+
+With Texas SOS off, Ballotpedia lists county courts at law and probate courts ("Travis County Court at Law No. 1") under "Judicial District", so their races are in the `judicial` group. `bp_seat` finds no seat for them, and `tec.cards` ([votebot/sources/tec.py:545](votebot/sources/tec.py#L545)) still matches their candidates by name against every filer in Texas, since `judicial` is one of the state groups. Their judges file with the county, and the Texas SOS path leaves those races out, so a namesake elsewhere in Texas could show up as a "likely" TEC card.
+
+Fix: in `tec.cards`, skip a Ballotpedia race whose office is a county court or a probate court, as `tec_seat` does for the SOS's county courts.
+
 ## Improvements
 
-Structural changes, not micro-optimizations.
-
-### 1. Ask the enrichment sources at the same time
-
-`enrich.run` ([votebot/enrich.py:54](votebot/enrich.py#L54)) waits for each source before asking the next:
-1. the Texas SOS statewide candidate list;
-2. the FEC: one call per race, plus five per candidate with a key;
-3. FiftyPlusOne's poll pages: 500 polls a page, nationwide.
-
-None of them depends on another. Start them together with `asyncio.gather`, then add their cards in the current fixed order, because card order is the order of the tabs in Details. This speeds up a lookup whose data isn't cached yet, which is when a lookup is slow.
-
-### 2. Keep heavy work off the event loop
-
-Several steps block the server while they run:
-- `HttpCache` parses and serializes JSON and talks to SQLite synchronously (`_load`, `_store`). Some payloads are large: the statewide candidate list is 2.6 MB and a poll page up to 800 KB.
-- The Texas Ethics Commission snapshot is 2.8 MB, parsed on first use and after every refresh (`BundledSnapshot.document()`).
-- SBOE point-in-polygon (`sboe.locate`) runs on the event loop.
-- `Admin.overview()` walks the snapshot folders on every Settings load.
-
-While one of these runs, every other request waits, such as address suggestions typed in another tab during a first lookup. Move the big ones to `asyncio.to_thread`. The SQLite connection already allows other threads and has a lock.
-
-### 3. One table for the "paused" notices
-
-`Admin._notice` ([votebot/admin.py:141](votebot/admin.py#L141)) repeats the same "Paused until … after X refused a request; what it already sent still shows" block for Ballotpedia, Photon, FiftyPlusOne and the FEC. Give each source its wording in one table (or on `SourceInfo`) and build the notice once.
-
-### 4. Share the page chrome
-
-The sidebar is copied into all five pages (`index`, `settings`, `faq`, `about`, `privacy`), and so is the favicon's data URI. The sidebar holds the brand, the navigation and the address card. The copies have started to drift. On the ballot page, the footer's list of sources and the welcome steps don't mention the polls. Render the shared parts from `page.js` (or a small `chrome.js`), so a new link or source is added once.
-
-### 5. Seats for Texas Ethics Commission matches on Ballotpedia-only ballots
-
-With Texas SOS off, races come from Ballotpedia and have no `OfficeScope`. `tec.cards` ([votebot/sources/tec.py:472](votebot/sources/tec.py#L472)) then gets no seat, and matches state candidates by name against every filer in Texas. Such a match is only ever "likely", but a seat makes it "exact" and rules out namesakes.
-
-Fix: work the seat out from Ballotpedia's district type and name. For example, a State House District 49 race gives `STATEREP:49`.
-
-### 6. Cache housekeeping (low priority)
-
-Expired rows stay in `cache.sqlite3` forever, as the copy to serve when a source is down. For Photon's half-typed addresses and for addresses that weren't found, that old copy is no use. At startup:
-- delete rows of those sources that expired long ago (say 30 days);
-- delete expired rows from `flags`.
-
-This keeps the file, and what it holds about typed addresses, small.
+Nothing open right now.
 
 ## Tooling
 
@@ -145,6 +112,71 @@ Roughly in order of value to a voter. Items marked *(README)* were on the README
 - **Offline:** make VoteBot installable (a web app manifest and a service worker), keeping the last ballot, picks and notes for use without a connection. For example, in line at the polls.
 
   Deferred, because browsers only run a service worker on `https://` or on `localhost`. A phone that reaches the Docker image at `http://<LAN address>:8000` would get nothing from it; it would need HTTPS in front of VoteBot (Caddy, or Tailscale serve), and the README would have to explain that. Until then, the printed sheet and the wallet card cover the polls.
+
+## Reviews
+
+Whole-codebase reviews, to run once the open work above has settled. Each one reads the code afresh and files what it finds in this roadmap's sections (Bugs, Improvements, Tooling, Features, UI and UX), with `file:line` and a suggested fix.
+
+1. **Backend.** All of `votebot/` except `static/`, plus `trackaipac_cache/` and `tec_cache/`, which the September review only skimmed:
+   - correctness against each source's real answers, and how old the recorded fixtures are;
+   - `HttpCache`: lifetimes, pauses, the zero-calls rule on a repeat lookup, and the work done in threads;
+   - matching: exact or likely, and namesakes;
+   - dead code, duplication, type hints, and the tests' coverage and speed.
+2. **Frontend code.** `votebot/static/js/`, `css/app.css` and the five pages:
+   - module structure, shared helpers, and dead exports and CSS classes;
+   - API data inserted with `h()`, never `innerHTML`, and links built with `safeUrl`/`extLink`;
+   - what's kept in `localStorage` (versions, Undo), event listeners, and redraws;
+   - accessibility in the markup: landmarks, labels, focus order, `aria-*`.
+3. **UX.** The voter's whole journey, at desktop and phone widths, in light and dark mode:
+   - a first visit: entering an address, suggestions, errors, and the first lookup's wait;
+   - working through the ballot: Next, the section chips, picks, notes, write-ins, Details and Compare;
+   - When to vote, Your districts, the printed sheet and the wallet card; then Settings, FAQ, About and Privacy;
+   - wording, visual hierarchy, contrast, tap targets, and use with a keyboard or screen reader.
+4. **Security.**
+   - the Settings actions, which have no login: the `Host` and cross-site checks in `api.py`, and the `127.0.0.1` binding;
+   - keys: the FEC key only ever in `source_headers`, never in the cache, a log line or an error;
+   - what reaches the page from the sources: cross-site scripting through `h()`, `linkedText` and `safeUrl`;
+   - outbound requests: whether anything the voter types could send a request somewhere unintended, and the `.ics` endpoint's inputs;
+   - the Docker image (non-root user, what's copied in), and dependencies in `uv.lock` with known vulnerabilities.
+
+## Spot checks
+
+The tests only check VoteBot against recorded answers (`tests/fixtures/`). These checks compare what it shows with the sources' own websites. Run them before an election, and after a change to how a source is read.
+
+What to check, for each address:
+1. **The ballot against VoteTexas.gov:** the county, the districts (U.S. House, State Senate, State House, SBOE), the commissioner and JP precincts, every race, and each candidate's name, party and ballot order. Compare with My Voter Portal (**Am I registered?**), which shows the voter's county, precinct and districts, and with the county's sample ballot, which VoteTexas.gov links to.
+2. **The ballot against Ballotpedia:** the same, against Ballotpedia's sample ballot for the address. Also compare the city, school and special-district races, the city council district, and how each candidate's name is written.
+3. **TrackAIPAC:** each badge and its Israel-lobby total, against the candidate's entry on trackaipac.com (Candidates, Endorsements or Congress). The snapshot's date is in Settings.
+4. **Campaign finance:** raised, spent and cash on hand for a few candidates, plus one breakdown each (donation sizes, largest donors):
+   - congressional candidates, against their page on fec.gov for the whole election (2021–2026 for the Senate);
+   - state candidates, against their reports in the Texas Ethics Commission's campaign finance search: the latest report's cash on hand, and the reports added up since the date the card gives.
+5. **Polls:** each poll in a race's Polls tab (pollster, dates, sample, each candidate's share), against FiftyPlusOne. Then work out the bar's median by hand from each pollster's latest poll.
+
+Before comparing, press Refresh on the source in Settings, or allow for its "data as of" date: a copy can be up to a day old, and a week for the FEC. File each mismatch under [Bugs](#bugs), with:
+- the address;
+- what VoteBot showed;
+- what the source's site showed, with a link;
+- the "data as of" date.
+
+### 1. By hand
+
+- Use your own address, since only you can log in to My Voter Portal, and the Capitol (1100 Congress Ave, Austin, TX 78701).
+- Check in the running app, at what a voter sees: the ballot, Your districts, the badges, Details, Compare and the poll bars.
+- Note the date of each pass here.
+
+### 2. By an LLM
+
+A repeatable pass for a coding agent with web access:
+- Run VoteBot on a copy of `data/` (`VOTEBOT_DATA_DIR=<copy> uv run votebot --port 8765`). Read each ballot as JSON with `POST /api/ballot` and `{"address": …}`: the figures are in each card's `facts`, `badges` and `breakdowns`, and in the race cards.
+- Use only the public addresses in `tests/conftest.py` (the Capitol, UT Austin, downtown Houston, north Austin), never the maintainer's own.
+- Skip My Voter Portal, which needs a name and a date of birth. For check 1, use the county's published sample ballot (from the county elections office, on the SOS's county list), and say in the report that the portal wasn't checked.
+- Read each source's public pages, one request at a time and within their terms:
+  - Ballotpedia's pages for the races, not its API;
+  - fec.gov;
+  - the TEC's search;
+  - trackaipac.com;
+  - fiftyplusone.news.
+- Report a table for each address: the check, what VoteBot says, what the source says, the link, and whether they match. File each mismatch under Bugs, as [AGENTS.md](AGENTS.md) describes.
 
 ## Done
 
@@ -271,7 +303,7 @@ What's been built so far, oldest first, taken from the git history. Each group i
 - [x] When Refresh can't download the State Board of Education map again, its message says so and the old map is kept. It used to fail with "Request failed (500)".
 - [x] A new ballot lookup cancels one still running, so an older answer can't replace a newer ballot.
 - [x] When a county has no ballot order, the statewide candidate list no longer puts judge and DA races from elsewhere in Texas on the ballot. It only keeps races it can place (federal, statewide, congressional, legislative, SBOE), and a note says the others aren't listed.
-- [x] The cache reads a row's times and value in one query, and a missing row is a cache miss. So a Clear in another process can't crash a lookup halfway through. Within one process this couldn't happen yet; it could once cache work moves to threads ([Improvement 2](#2-keep-heavy-work-off-the-event-loop)).
+- [x] The cache reads a row's times and value in one query, and a missing row is a cache miss. So a Clear in another process can't crash a lookup halfway through. Within one process this couldn't happen yet; it could once cache work moved to threads, which [#14](https://github.com/Fahd-Siddiqui/VoteBot/pull/14) did.
 - [x] Dead code removed: `h()`'s unused `text`, `dataset` and `on…` props, and the `export` on two functions only `source-cards.js` uses. The API fields the page doesn't read stay on purpose:
   - they're small;
   - the tests check them;
@@ -324,3 +356,25 @@ The "when" half of [Feature 1](#features). "Where" isn't possible yet, because T
   - VoteTexas.gov moved from the line under the heading to the card's links, next to "Am I registered?".
 - [x] AGENTS.md: a roadmap group is headed with the pull request's assumed number, one more than the last one on `develop`, rather than the branch; the When to vote group above now links #12.
 - [x] Two features added to the roadmap for later: [your election precinct](#features), with what was found about the Texas Legislative Council's VTD map, and a [map of your districts](#features).
+
+### Faster lookups, shared page chrome, and the top of the ballot ([#14](https://github.com/Fahd-Siddiqui/VoteBot/pull/14), Sep 30)
+
+The six improvements from the September review, UI feedback on the top of the ballot, and the order of the tabs in Details.
+- [x] The card sources are asked at once (`enrich.run`, `asyncio.gather`): on a lookup that isn't cached yet, the Texas SOS candidate list, the FEC and FiftyPlusOne no longer wait for each other. A source that can't answer is still a warning, not a failed lookup.
+- [x] Heavy work runs off the event loop, so other requests (suggestions typed in another tab, Settings) aren't held up:
+  - `HttpCache` reads and writes rows in worker threads, with its lock guarding the connection and the in-memory copies;
+  - the TrackAIPAC and TEC snapshots are read under a lock, so threads parse each version once and never read one that Reset is still copying;
+  - the SBOE point-in-polygon test, and the card builders with no I/O (Ballotpedia, TrackAIPAC, the TEC);
+  - the Settings routes that only touch files are plain functions, which FastAPI runs in its thread pool.
+
+  Parsing a big JSON value still holds the GIL; the gain is in the SQLite and file I/O and the Python work around it. A cached lookup takes as long as before: about 0.45 s for the Capitol with an FEC key, on this branch and on `develop`.
+- [x] "Paused until …" in Settings is built in one place, from each source's wording on `SourceInfo` (`Pause`). The five sources' `paused_until()` methods, which only Settings used, are gone.
+- [x] `chrome.js` draws the left pane on every page from one list of pages, so the five copies in the HTML are gone, and the favicon is one `favicon.svg`. On a phone, the empty pane already has the top bar's height, so nothing moves when it's drawn. It's drawn in the browser rather than templated on the server, since the pages are static files and need their scripts anyway. The ballot's footer and welcome steps now mention the polls.
+- [x] On a ballot from Ballotpedia alone (Texas SOS off), a state race's seat for the TEC match comes from Ballotpedia's district type and office name (`bp_seat`), so a match can be exact, and a namesake elsewhere in Texas is ruled out. On the Capitol's ballot, Greg Abbott, Catherine Mauzy, Darlene Byrne and Scott Brister went from likely to exact.
+- [x] At startup, the cache deletes Photon's rows and the addresses the Census or Nominatim didn't find, once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`), and expired flags, then runs `VACUUM` if anything went. Addresses that were found stay, as the copy to use when the Census is down.
+- [x] When to vote: **Am I registered?**, **Where to vote** and **Add all to calendar** are a row of buttons under the dates, where "Where to vote" used to be plain text before a link, on one cramped line. VoteTexas.gov moved to the card's source line. The two cards at the top are as tall as each other, with their source lines at the foot.
+- [x] "State Senate District 14 (yours) isn't up for election" moved from a box above the races into Your districts: the district is grey, with a line under the row. The API sends it as `districts.not_up`.
+- [x] The tabs in Details, and the badges on a candidate's row, come in one order: the money (the FEC, or the TEC for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC (`CARD_ORDER` in `enrich.py`), and Details opens on the first. The order is set on the server, so the API's card order stays the order shown.
+- [x] A [Reviews](#reviews) section in this roadmap: backend, frontend code, UX and security.
+- [x] A [Spot checks](#spot-checks) section: the ballot against VoteTexas.gov and Ballotpedia, and the TrackAIPAC, campaign finance and poll figures against their sites, once by hand and once by an LLM.
+- [x] Found along the way: [Bug 2](#bugs), county courts on Ballotpedia-only ballots.

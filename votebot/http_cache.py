@@ -245,7 +245,7 @@ class HttpCache:
         request share one fetch.
         """
         key = spec.key
-        stored = self._load(key)
+        stored = await asyncio.to_thread(self._load, key)
         if stored and stored.expires_at > self._clock():
             return self._hit(source, Cached(stored.value, stored.fetched_at))
         until = self.paused_until(source)
@@ -292,7 +292,7 @@ class HttpCache:
             value = await self._request(source, spec)
         except (httpx.HTTPError, ValueError) as exc:
             self._refused(source, exc)
-            stored = self._load(spec.key)
+            stored = await asyncio.to_thread(self._load, spec.key)
             if stored is None:
                 raise UpstreamError(source, describe_error(exc), _status(exc)) from exc
             if self._retry_after:
@@ -302,7 +302,7 @@ class HttpCache:
                 stats.used(source, stored.fetched_at)
             return Cached(stored.value, stored.fetched_at, stale=True)
         now = self._clock()
-        self._store(spec, source, value, now, ttl, empty_ttl, empty_at)
+        await asyncio.to_thread(self._store, spec, source, value, now, ttl, empty_ttl, empty_at)
         if stats:
             stats.used(source, now)
         return Cached(value, now)
@@ -343,24 +343,26 @@ class HttpCache:
         """The stored copy, or None. Its times and value come from one query, so a Clear
         from another process (or thread) can't remove the row in between. The value text is
         only sent, and parsed, when the in-memory copy isn't this one."""
-        hit = self._memory.get(key)
         with self._lock:
+            hit = self._memory.get(key)
             row = self._db.execute(
                 "SELECT fetched_at, expires_at, CASE WHEN fetched_at = ? THEN NULL ELSE value END"
                 " FROM responses WHERE key = ?",
                 (hit[0] if hit else None, key),
             ).fetchone()
+            if row is not None and row[2] is None:  # value is NOT NULL, so memory holds this very copy
+                self._memory.move_to_end(key)
+                return _Stored(row[0], row[1], hit[1])
         if row is None:
             return None
         fetched_at, expires_at, text = row
-        if text is None:  # value is NOT NULL, so memory holds this very copy
-            self._memory.move_to_end(key)
-            return _Stored(fetched_at, expires_at, hit[1])
         value = json.loads(text)
-        self._remember(key, fetched_at, value)
+        with self._lock:
+            self._remember(key, fetched_at, value)
         return _Stored(fetched_at, expires_at, value)
 
     def _remember(self, key: str, fetched_at: float, value: Any) -> None:
+        """Keep a decoded value in memory; the caller holds self._lock."""
         self._memory[key] = (fetched_at, value)
         self._memory.move_to_end(key)
         while len(self._memory) > self._memory_items:
@@ -389,7 +391,7 @@ class HttpCache:
                 ),
             )
             self._db.execute("DELETE FROM flags WHERE name = ?", (_retry_flag(spec.key),))
-        self._remember(spec.key, now, value)
+            self._remember(spec.key, now, value)
 
     # -- Settings page -----------------------------------------------------------
 
@@ -414,7 +416,33 @@ class HttpCache:
             else:
                 removed = self._db.execute("DELETE FROM responses WHERE source = ?", (source,)).rowcount
                 self._db.execute("DELETE FROM flags WHERE source = ?", (source,))
-        self._memory.clear()
+            self._memory.clear()
+        return removed
+
+    def prune(self, sources: Collection[str], misses: Collection[str], older_than: float) -> int:
+        """Delete what's no use even as a fallback, once it has been expired for ``older_than``
+        seconds: every row of ``sources`` (what was typed for suggestions), and the empty
+        answers of ``misses`` (addresses that weren't found), told apart by the shorter
+        empty_ttl they were stored with. Expired flags go too. Returns the rows deleted."""
+        cutoff = self._clock() - older_than
+        with self._lock:
+            removed = 0
+            if sources:
+                removed += self._db.execute(
+                    f"DELETE FROM responses WHERE expires_at < ? AND source IN ({','.join('?' * len(sources))})",
+                    (cutoff, *sources),
+                ).rowcount
+            if misses:
+                removed += self._db.execute(
+                    "DELETE FROM responses WHERE expires_at < ? AND empty_ttl < ttl"
+                    " AND ABS(expires_at - fetched_at - empty_ttl) < 1"
+                    f" AND source IN ({','.join('?' * len(misses))})",
+                    (cutoff, *misses),
+                ).rowcount
+            self._db.execute("DELETE FROM flags WHERE expires_at <= ?", (self._clock(),))
+            if removed:
+                self._db.execute("VACUUM")
+                self._memory.clear()
         return removed
 
     async def refresh(self, source: str, *, concurrency: int = 3) -> RefreshReport:
@@ -440,7 +468,9 @@ class HttpCache:
                 except (httpx.HTTPError, ValueError) as exc:
                     self._refused(source, exc)
                     return f"{spec.url}: {describe_error(exc)}"
-            self._store(spec, source, value, self._clock(), ttl, empty_ttl, tuple(json.loads(empty_at)))
+            await asyncio.to_thread(
+                self._store, spec, source, value, self._clock(), ttl, empty_ttl, tuple(json.loads(empty_at))
+            )
             return None
 
         errors = [e for e in await asyncio.gather(*(one(*row) for row in rows)) if e]

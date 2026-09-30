@@ -5,52 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VoteBot · Privacy</title>
   <meta name="description" content="What VoteBot sends, what it keeps, where, and for how long.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/app.css">
   <script type="module" src="js/page.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to the policy</a>
   <div class="app">
-    <aside class="sidebar" aria-label="Your ballot, address and pages">
-      <div class="side-inner">
-        <a class="brand" href="./">
-          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
-          <span class="brand-name">Vote<span>Bot</span></span>
-        </a>
-
-        <nav class="side-section site-nav" aria-label="Your ballot">
-          <ul>
-            <li><a href="./"><span data-icon="ballot"></span>Your ballot</a></li>
-          </ul>
-        </nav>
-
-        <section class="side-address" aria-labelledby="address-title">
-          <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
-          <div class="address-card" id="address-card" hidden>
-            <p class="address-line" id="address-line"></p>
-            <p class="muted small" id="address-sub"></p>
-            <a class="link-btn with-icon" href="./#change"><span data-icon="edit"></span>Change</a>
-          </div>
-          <p class="muted small" id="no-address"><a href="./">Enter your address</a> to see your ballot.</p>
-        </section>
-
-        <nav class="side-section site-nav side-bottom" aria-label="Settings and information">
-          <ul>
-            <li><a href="settings.html"><span data-icon="settings"></span>Settings</a></li>
-            <li><a href="faq.html"><span data-icon="help"></span>FAQ</a></li>
-            <li><a href="about.html"><span data-icon="info"></span>About</a></li>
-            <li><a href="privacy.html" aria-current="page"><span data-icon="shield"></span>Privacy</a></li>
-          </ul>
-        </nav>
-      </div>
-    </aside>
+    <aside class="sidebar" aria-label="Your ballot, address and pages"></aside>
 
     <main id="main" class="content">
       <header class="page-head">
         <h1>Privacy</h1>
         <p class="lede">VoteBot has no accounts, cookies, ads or analytics. This page lists what it sends, what it keeps, where, and for how long.</p>
-        <p class="updated">Last updated 29 September 2026</p>
+        <p class="updated">Last updated 30 September 2026</p>
       </header>
 
       <section class="panel prose" aria-labelledby="summary">
@@ -59,7 +27,7 @@
           <li>Your picks, notes and write-ins stay in your browser. They're never sent anywhere.</li>
           <li>To find your ballot, VoteBot sends your address to the US Census geocoder, and its location to Ballotpedia if Ballotpedia is on.</li>
           <li>While you type your address, VoteBot sends what you've typed so far to Photon for suggestions, unless you turn them off in <a href="settings.html">Settings</a>.</li>
-          <li>The VoteBot server keeps a copy of those lookups and suggestions, so the same text doesn't have to be sent again, until they're cleared in <a href="settings.html">Settings</a>.</li>
+          <li>The VoteBot server keeps a copy of those lookups and suggestions, so the same text doesn't have to be sent again, until they're cleared in <a href="settings.html">Settings</a>. Suggestions, and addresses that weren't found, are deleted by themselves the first time VoteBot starts after they're two months old (one month, if nothing was found).</li>
         </ul>
       </section>
 
@@ -159,12 +127,12 @@
               <tr>
                 <th scope="row">Address lookups: each address as sent to the Census or Nominatim, with the answer (map coordinates, county and districts)</th>
                 <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared. After 30 days (1 day if the address wasn't found), the next lookup of that address asks again and replaces the copy.</td>
+                <td data-label="Kept until">Cleared. After 30 days (1 day if the address wasn't found), the next lookup of that address asks again and replaces the copy. An address that wasn't found is deleted the first time VoteBot starts 31 days or more after the lookup.</td>
               </tr>
               <tr>
                 <th scope="row">Address suggestions: each text sent to Photon, with the addresses it suggested</th>
                 <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared. After 30 days (1 day if nothing was found), typing the same text asks again and replaces the copy.</td>
+                <td data-label="Kept until">Cleared, or deleted the first time VoteBot starts 60 days or more after it was sent (31 if nothing was found). Before then, typing the same text again after 30 days (1 day if nothing was found) asks again and replaces the copy.</td>
               </tr>
               <tr>
                 <th scope="row">Ballotpedia lookups: the location asked about, with its races and candidates</th>
@@ -199,7 +167,7 @@
             </tbody>
           </table>
         </div>
-        <p><strong>The times above only decide when VoteBot asks a source again. They don't delete anything:</strong> an address, or what you typed, stays in the server's copy until it's cleared.</p>
+        <p><strong>Apart from suggestions and addresses that weren't found, the times above only decide when VoteBot asks a source again. They don't delete anything:</strong> an address that was found stays in the server's copy until it's cleared, as the copy to use when the Census doesn't answer.</p>
         <p>To clear it, go to <a href="settings.html">Settings</a>. Clear on "Address lookup &amp; districts" deletes every saved address lookup, Clear on "Address suggestions" deletes everything saved from the address box, Clear on Ballotpedia deletes its saved lookups, and "Clear all caches" deletes everything saved from every source. You can also stop VoteBot and delete its data folder (<code>data/</code>, unless <code>VOTEBOT_DATA_DIR</code> points elsewhere).</p>
         <p>Addresses travel in the body of requests, which isn't logged. If something goes wrong, though, an error report in the log can include the request VoteBot was making, address included.</p>
       </section>

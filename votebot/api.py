@@ -22,7 +22,7 @@ from .config import Config, load_config
 from .http_cache import HttpCache, UpstreamError
 from .models import ActionResult, Ballot, BallotRequest, ElectionDate, SourcesOverview, SourceToggle, SuggestResult
 from .settings import Settings
-from .sources import key_dates
+from .sources import census, key_dates, nominatim, photon
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.fec import Fec
@@ -95,6 +95,9 @@ def create_app(
                 retry_after=config.ttl.retry_after,
             )
             try:
+                await asyncio.to_thread(
+                    cache.prune, {photon.SOURCE}, {census.SOURCE, nominatim.SOURCE}, config.ttl.prune_after
+                )
                 svc = Services(
                     config=config,
                     settings=Settings(config.settings_path),
@@ -199,11 +202,11 @@ def create_app(
             raise HTTPException(exc.status, exc.message) from exc
 
     @app.get("/api/sources", response_model=SourcesOverview)
-    async def sources(request: Request) -> SourcesOverview:
+    def sources(request: Request) -> SourcesOverview:
         return admin(request).overview()
 
     @app.put("/api/sources/{source_id}", response_model=SourcesOverview)
-    async def toggle(source_id: str, body: SourceToggle, request: Request) -> SourcesOverview:
+    def toggle(source_id: str, body: SourceToggle, request: Request) -> SourcesOverview:
         admin(request).set_enabled(source_id, body.enabled)
         return admin(request).overview()
 
@@ -212,11 +215,11 @@ def create_app(
         return await admin(request).refresh(source_id)
 
     @app.post("/api/sources/{source_id}/clear", response_model=ActionResult)
-    async def clear(source_id: str, request: Request) -> ActionResult:
+    def clear(source_id: str, request: Request) -> ActionResult:
         return admin(request).clear(source_id)
 
     @app.post("/api/cache/clear", response_model=ActionResult)
-    async def clear_all(request: Request) -> ActionResult:
+    def clear_all(request: Request) -> ActionResult:
         return admin(request).clear_all()
 
     app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")

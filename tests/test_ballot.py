@@ -14,6 +14,10 @@ def sources_of(candidate):
     return [card["source"] for card in candidate["cards"]]
 
 
+def card_of(candidate, source):
+    return next(card for card in candidate["cards"] if card["source"] == source)
+
+
 def test_capitol_ballot(client):
     ballot = get_ballot(client)
 
@@ -36,7 +40,8 @@ def test_capitol_ballot(client):
     assert [r["name"] for r in ballot["races"] if r["name"].startswith("State Representative")] == ["State Representative District 49"]
     assert [r["name"] for r in ballot["races"] if "Board of Education" in r["name"]] == ["Member, State Board of Education, District 5"]
     assert not [r for r in ballot["races"] if r["name"].startswith("State Senator")]
-    assert any("State Senate District 14" in note for note in ballot["notes"])
+    assert d["not_up"] == ["sd"]  # shown in Your districts, not as a note
+    assert not [note for note in ballot["notes"] if "up for election" in note]
 
     assert find_race(ballot, "Justice of the Peace Precinct 5")
     assert not [r for r in ballot["races"] if "Constable" in r["name"]]  # precinct 4's race isn't ours
@@ -48,14 +53,14 @@ def test_capitol_ballot(client):
     assert all(r["group"] == "local" for r in special["races"]) and any(r["seats"] > 1 for r in special["races"])
 
     paxton = senate["candidates"][0]
-    assert sources_of(paxton) == ["sos", "ballotpedia", "trackaipac", "fec", "polls"]
-    tap = paxton["cards"][2]
+    assert sources_of(paxton) == ["fec", "sos", "polls", "ballotpedia", "trackaipac"]  # the tabs in Details
+    tap = card_of(paxton, "trackaipac")
     assert tap["match"]["confidence"] == "exact"
     watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
     assert watchlist["text"] == "TrackAIPAC watchlist $0" and watchlist["url"].endswith("/candidates")
-    profile = next(b for b in paxton["cards"][1]["badges"] if b["text"] == "Ballotpedia profile")
+    profile = next(b for b in card_of(paxton, "ballotpedia")["badges"] if b["text"] == "Ballotpedia profile")
     assert profile["url"].startswith("https://ballotpedia.org/")
-    sos_card = paxton["cards"][0]
+    sos_card = card_of(paxton, "sos")
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia
 
@@ -178,7 +183,7 @@ def test_ballotpedia_off(client):
     assert "special" not in maybe
     assert last_use(client, "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
-    assert sources_of(senate["candidates"][0]) == ["sos", "trackaipac", "fec", "polls"]
+    assert sources_of(senate["candidates"][0]) == ["fec", "sos", "polls", "trackaipac"]
 
 
 def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):

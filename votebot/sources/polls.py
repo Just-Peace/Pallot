@@ -61,9 +61,6 @@ class Polls:
         self.today = today
         cache.pause_on(SOURCE, REFUSALS, ttl.polls_backoff)
 
-    def paused_until(self) -> float | None:
-        return self.cache.paused_until(SOURCE)
-
     async def _page(self, kind: str, offset: int) -> list[dict[str, Any]]:
         params = {"offset": str(offset), "limit": str(PAGE), "filterValue": kind, "sortBy": "created_at", "dir": "DESC"}
         try:

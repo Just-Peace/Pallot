@@ -117,9 +117,6 @@ class Photon:
         self.ttl = ttl
         cache.pause_on(SOURCE, REFUSALS, ttl.suggest_backoff)
 
-    def paused_until(self) -> float | None:
-        return self.cache.paused_until(SOURCE)
-
     async def suggest(self, text: str) -> list[AddressSuggestion]:
         """Up to five addresses for ``text``; nothing is sent unless it looks like the start
         of one. Raises UpstreamError if Photon can't be asked and nothing is cached."""

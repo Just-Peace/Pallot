@@ -113,9 +113,6 @@ class Fec:
         self._gate = asyncio.Semaphore(4)
         cache.pause_on(SOURCE, (429,), ttl.fec_backoff)
 
-    def paused_until(self) -> float | None:
-        return self.cache.paused_until(SOURCE)
-
     def lifetime(self, day: dt.date | None) -> float:
         return self.ttl.past_election if day and day < self.today() else self.ttl.fec
 

@@ -27,6 +27,7 @@ from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Shar
 from ..offices import OfficeScope
 from ..text import display_date, display_office, display_org, money, money_short
 from . import CardSet, compare
+from .ballotpedia import BpBallot, BpRace
 from .snapshot import BundledSnapshot, summary_of
 
 SOURCE = "tec"
@@ -138,6 +139,62 @@ def tec_seat(scope: OfficeScope, county: str | None) -> str | None:
     if "DISTRICT JUDGE" in name and district:
         return f"JUDGEDIST:{int(district.group(1))}"
     return None  # county courts at law file with the county too (TEC's data has one such judge, ever)
+
+
+_BP_LEGISLATURE = {"State Legislative (Lower)": "STATEREP", "State Legislative (Upper)": "STATESEN"}
+_BP_STATEWIDE = (
+    (r"^LIEUTENANT GOVERNOR\b", "LTGOVERNOR"),
+    (r"^GOVERNOR\b", "GOVERNOR"),
+    (r"^ATTORNEY GENERAL\b", "ATTYGEN"),
+    (r"\bCOMPTROLLER\b", "COMPTROLLER"),
+    (r"\bLAND COMMISSIONER\b|\bGENERAL LAND OFFICE\b", "LANDCOMM"),
+    (r"\bAGRICULTURE\b", "AGRICULTUR"),
+    (r"\bRAILROAD COMMISSION", "RRCOMM"),
+    (r"\bSUPREME COURT\b.*\bCHIEF JUSTICE\b", "CHIEFJUSTICE_SC"),
+    (r"\bCOURT OF CRIMINAL APPEALS\b.*\bPRESIDING JUDGE\b", "PRESIDINGJUDGE_COCA"),
+)
+_ORDINALS = {word: n for n, word in enumerate(
+    ("FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "SEVENTH", "EIGHTH", "NINTH", "TENTH", "ELEVENTH",
+     "TWELFTH", "THIRTEENTH", "FOURTEENTH", "FIFTEENTH"), start=1)}
+
+
+def bp_seat(race: BpRace, county: str | None) -> str | None:
+    """The seat of a Ballotpedia race (for ballots without Texas SOS), spelled as seat_key
+    spells TEC's offices: "Texas House of Representatives District 49" -> "STATEREP:49",
+    "Texas Third District Court of Appeals Chief Justice" -> "CHIEFJUSTICE_COA:3". None for
+    what TEC doesn't cover, or can't be told."""
+    if race.district_type in _BP_LEGISLATURE:
+        number = _num(race.district_name)
+        return f"{_BP_LEGISLATURE[race.district_type]}:{number}" if number else None
+    name = re.sub(r"^TEXAS\s+|\s+OF TEXAS$", "", " ".join(race.office.upper().split()))
+    if "STATE BOARD OF EDUCATION" in name:
+        return f"STATEEDU:{_num(name)}" if _num(name) else None
+    for pattern, code in _BP_STATEWIDE:
+        if re.search(pattern, name):
+            return code
+    place = re.search(r"\bPLACE (\d+)", name)
+    place_no = str(int(place.group(1))) if place else ""
+    if name.startswith("SUPREME COURT"):
+        return f"JUSTICE_SC:{place_no}" if place_no else None
+    if name.startswith("COURT OF CRIMINAL APPEALS"):
+        return f"JUDGE_COCA:{place_no}" if place_no else None
+    appeals = re.search(r"\b(\w+) (?:DISTRICT )?COURT OF APPEALS\b", name)
+    if appeals:
+        word = appeals.group(1)
+        number = _ORDINALS.get(word) or (int(_num(word)) if _num(word) else None)
+        if number is None:
+            return None
+        if "CHIEF JUSTICE" in name:
+            return f"CHIEFJUSTICE_COA:{number}"
+        return f"JUSTICE_COA:{number}:{place_no}" if place_no else None
+    if "CRIMINAL DISTRICT ATTORNEY" in name:
+        return f"CRIMINAL_DISTATTY:{(county or '').upper()}" if county else None
+    district = re.search(r"\b(\d+)(?:ST|ND|RD|TH)? (?:JUDICIAL )?DISTRICT\b", name)
+    if district and "DISTRICT ATTORNEY" in name:
+        return f"DISTATTY:{int(district.group(1))}"
+    if district and name.endswith("DISTRICT COURT") and "CRIMINAL" not in name:
+        return f"JUDGEDIST:{int(district.group(1))}"
+    return None
 
 
 def _seats(entry: dict[str, Any]) -> set[str]:
@@ -469,18 +526,22 @@ def race_card(
     )
 
 
-def cards(tec: Tec, races: list[Race], scopes: dict[str, OfficeScope], county: str | None) -> CardSet:
+def cards(
+    tec: Tec, races: list[Race], scopes: dict[str, OfficeScope], county: str | None, bp_ballot: BpBallot | None = None
+) -> CardSet:
     """Cards for candidates in state races (statewide, legislature, SBOE, appellate and
-    district courts, DAs) found in the snapshot, and a money comparison for each such race."""
+    district courts, DAs) found in the snapshot, and a money comparison for each such race.
+    A race's seat comes from its Texas SOS office (``scopes``), or else from Ballotpedia's."""
     document = tec.document()
     out = CardSet()
     if not document.get("filers"):
         return out
     window = (document.get("window") or {}).get("start")
     filers, spending = tec.name_index(), tec.outside_index()
+    bp_races = {f"bp:{r.id}": r for r in bp_ballot.races} if bp_ballot else {}
     for race in races:
-        scope = scopes.get(race.key)
-        seat = tec_seat(scope, county) if scope else None
+        scope, bp_race = scopes.get(race.key), bp_races.get(race.key)
+        seat = tec_seat(scope, county) if scope else bp_seat(bp_race, county) if bp_race else None
         if race.group == "federal" or (seat is None and race.group not in STATE_GROUPS):
             continue
         found_rows: dict[str, dict[str, Any]] = {}

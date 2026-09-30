@@ -16,6 +16,14 @@ from .text import display_date, display_time, iso_utc
 
 
 @dataclass(frozen=True)
+class Pause:
+    """How Settings words a pause: "Paused until <time> after <after>; <kept>."."""
+
+    after: str
+    kept: str
+
+
+@dataclass(frozen=True)
 class SourceInfo:
     id: str
     label: str
@@ -26,6 +34,7 @@ class SourceInfo:
     clear_label: str = "Clear cache"
     resettable: bool = False  # a bundled snapshot rather than cached responses: "clear" resets to it
     refresh_confirm: str | None = None  # asked before refreshing: what a refresh sends or downloads
+    pause: Pause | None = None  # the source can be paused after refusing a request (HttpCache.pause_on)
 
 
 SOURCES = (
@@ -47,10 +56,17 @@ SOURCES = (
         (photon.SOURCE,),
         refresh_confirm="Refresh sends everything saved from the address box to Photon again, one request every half "
         "second. Continue?",
+        pause=Pause("Photon refused a request", "suggestions it already sent still show"),
     ),
     SourceInfo(sos.SOURCE, "Texas Secretary of State", sos.DESCRIPTION, True, (sos.SOURCE,)),
-    SourceInfo(key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,)),
-    SourceInfo(ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,)),
+    SourceInfo(
+        key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,),
+        pause=Pause("the Texas SOS website refused a request", "dates it already sent still show"),
+    ),
+    SourceInfo(
+        ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,),
+        pause=Pause("Ballotpedia refused a request", "ballots it already sent still show"),
+    ),
     SourceInfo(
         trackaipac.SOURCE,
         "TrackAIPAC",
@@ -61,7 +77,10 @@ SOURCES = (
         clear_label="Reset to bundled snapshot",
         resettable=True,
     ),
-    SourceInfo(fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,)),
+    SourceInfo(
+        fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
+        pause=Pause("reaching the FEC's rate limit", "what it already sent still shows"),
+    ),
     SourceInfo(
         tec.SOURCE,
         "Texas Ethics Commission",
@@ -74,7 +93,10 @@ SOURCES = (
         refresh_confirm="Refresh first asks the Texas Ethics Commission whether its data has changed. If it has, it "
         "downloads about 1 GB (a minute or two on a fast connection) and rebuilds the data. Continue?",
     ),
-    SourceInfo(polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,)),
+    SourceInfo(
+        polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,),
+        pause=Pause("FiftyPlusOne refused a request", "polls it already sent still show"),
+    ),
 )
 BY_ID = {info.id: info for info in SOURCES}
 _SLOW = {"ballotpedia", "nominatim", "photon", "polls"}  # one request at a time when refreshing
@@ -124,7 +146,7 @@ class Admin:
             oldest=iso_utc(min(oldest)) if oldest else None,
             newest=iso_utc(max(newest)) if newest else None,
         )
-        notice, tone = self._notice(info.id)
+        notice, tone = self._notice(info)
         return SourceStatus(
             id=info.id,
             label=info.label,
@@ -143,36 +165,20 @@ class Admin:
             last_use=self.svc.last_uses.get(info.id),
         )
 
-    def _notice(self, source_id: str) -> tuple[str | None, Tone]:
+    def _paused(self, info: SourceInfo) -> str | None:
+        """ "Paused until …" while the source is paused after refusing a request."""
+        if info.pause is None:
+            return None
+        until = max(filter(None, (self.svc.cache.paused_until(tag) for tag in info.cache_tags)), default=None)
+        if until is None:
+            return None
+        return f"Paused until {display_time(until)} after {info.pause.after}; {info.pause.kept}."
+
+    def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
         """One line under the source's description: what it's missing, or where its data stands."""
-        if source_id == ballotpedia.SOURCE:
-            until = self.svc.ballotpedia.paused_until()
-            if until:
-                return (f"Paused until {display_time(until)} after Ballotpedia refused a request; "
-                        "ballots it already sent still show."), "warn"
-            return None, "info"
-        if source_id == photon.SOURCE:
-            until = self.svc.photon.paused_until()
-            if until:
-                return (f"Paused until {display_time(until)} after Photon refused a request; "
-                        "suggestions it already sent still show."), "warn"
-            return None, "info"
-        if source_id == polls.SOURCE:
-            until = self.svc.polls.paused_until()
-            if until:
-                return (f"Paused until {display_time(until)} after FiftyPlusOne refused a request; "
-                        "polls it already sent still show."), "warn"
-            return None, "info"
-        if source_id == key_dates.SOURCE:
-            until = self.svc.key_dates.paused_until()
-            if until:
-                return (f"Paused until {display_time(until)} after the Texas SOS website refused a request; "
-                        "dates it already sent still show."), "warn"
-            return None, "info"
+        source_id = info.id
+        paused = self._paused(info)
         if source_id == fec.SOURCE:
-            until = self.svc.fec.paused_until()
-            paused = (f"Paused until {display_time(until)} after reaching the FEC's rate limit; "
-                      "what it already sent still shows.") if until else ""
             if not self.svc.fec.keyed:
                 return " ".join(filter(None, (
                     paused,
@@ -181,6 +187,8 @@ class Admin:
                     "VoteBot.",
                 ))), "warn"
             return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
+        if paused:
+            return paused, "warn"
         if source_id in (trackaipac.SOURCE, tec.SOURCE):
             snapshot = self.svc.trackaipac if source_id == trackaipac.SOURCE else self.svc.tec
             if snapshot.last_error:

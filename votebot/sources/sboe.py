@@ -153,7 +153,7 @@ class SboeMap:
         self._lock = asyncio.Lock()
 
     async def district_at(self, lat: float, lon: float) -> int | None:
-        return locate(await self._load(), lat, lon)
+        return await asyncio.to_thread(locate, await self._load(), lat, lon)
 
     async def _load(self) -> list[District]:
         if self._districts is None:

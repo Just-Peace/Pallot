@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VoteBot · Your ballot</title>
   <meta name="description" content="See every race on your ballot, research candidates across sources, pick, take notes and print your picks.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/app.css">
   <script type="module" src="js/ballot.js"></script>
 </head>
@@ -13,66 +13,35 @@
   <a class="skip" href="#main">Skip to the ballot</a>
   <div class="app">
     <aside class="sidebar" aria-label="Your ballot, address and pages">
-      <div class="side-inner">
-        <a class="brand" href="./">
-          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
-          <span class="brand-name">Vote<span>Bot</span></span>
-        </a>
-
-        <nav class="side-section site-nav" aria-label="Your ballot">
-          <ul>
-            <li><a href="./" aria-current="page"><span data-icon="ballot"></span>Your ballot</a></li>
-          </ul>
-        </nav>
-
-        <section class="side-address" aria-labelledby="address-title">
-          <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
-          <div class="address-card" id="address-card" hidden>
-            <p class="address-line" id="address-line"></p>
-            <p class="muted small" id="address-sub"></p>
-            <button class="link-btn with-icon" id="change-address" type="button"><span data-icon="edit"></span>Change</button>
-          </div>
-          <form id="lookup-form" class="lookup-form">
-            <div class="field">
-              <label for="address">Home address</label>
-              <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
-                     placeholder="1100 Congress Ave, Austin, TX 78701">
-            </div>
-            <div class="field">
-              <label for="election">Election</label>
-              <select id="election"><option value="">Next election</option></select>
-            </div>
-            <div class="field" id="party-field" hidden>
-              <label for="party">Primary ballot</label>
-              <select id="party">
-                <option value="">Choose a party</option>
-                <option value="D">Democratic</option>
-                <option value="R">Republican</option>
-              </select>
-            </div>
-            <div class="button-row">
-              <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
-              <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
-            </div>
-            <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and its location to Ballotpedia, if it's on) to find your districts, and is remembered in this browser. As you type, it's also sent to Photon for suggestions, unless they're off in Settings. More in <a href="privacy.html">Privacy</a>.</p>
-          </form>
-          <p id="status" class="status" role="status" aria-live="polite"></p>
-        </section>
-
-        <nav class="side-section" id="jump" aria-labelledby="jump-title" hidden>
-          <h2 class="side-title" id="jump-title"><span data-icon="list"></span>Sections</h2>
-          <ul class="jump-list" id="jump-list"></ul>
-        </nav>
-
-        <nav class="side-section site-nav side-bottom" aria-label="Settings and information">
-          <ul>
-            <li><a href="settings.html"><span data-icon="settings"></span>Settings</a></li>
-            <li><a href="faq.html"><span data-icon="help"></span>FAQ</a></li>
-            <li><a href="about.html"><span data-icon="info"></span>About</a></li>
-            <li><a href="privacy.html"><span data-icon="shield"></span>Privacy</a></li>
-          </ul>
-        </nav>
-      </div>
+      <form id="lookup-form" class="lookup-form" data-slot="address">
+        <div class="field">
+          <label for="address">Home address</label>
+          <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
+                 placeholder="1100 Congress Ave, Austin, TX 78701">
+        </div>
+        <div class="field">
+          <label for="election">Election</label>
+          <select id="election"><option value="">Next election</option></select>
+        </div>
+        <div class="field" id="party-field" hidden>
+          <label for="party">Primary ballot</label>
+          <select id="party">
+            <option value="">Choose a party</option>
+            <option value="D">Democratic</option>
+            <option value="R">Republican</option>
+          </select>
+        </div>
+        <div class="button-row">
+          <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
+          <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
+        </div>
+        <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and its location to Ballotpedia, if it's on) to find your districts, and is remembered in this browser. As you type, it's also sent to Photon for suggestions, unless they're off in Settings. More in <a href="privacy.html">Privacy</a>.</p>
+      </form>
+      <p id="status" data-slot="address" class="status" role="status" aria-live="polite"></p>
+      <nav class="side-section" id="jump" aria-labelledby="jump-title" hidden>
+        <h2 class="side-title" id="jump-title"><span data-icon="list"></span>Sections</h2>
+        <ul class="jump-list" id="jump-list"></ul>
+      </nav>
     </aside>
 
     <main id="main" class="content">
@@ -80,7 +49,7 @@
         <h1 id="welcome-title">Your ballot, race by race</h1>
         <p class="lede">Enter your home address to see every race you'll vote in.</p>
         <ol class="steps">
-          <li><strong>Compare sources.</strong> Each candidate shows what the state's filings, Ballotpedia and TrackAIPAC say, how much money they've raised and from whom, plus a web search.</li>
+          <li><strong>Compare sources.</strong> Each candidate shows how much money they've raised and from whom, what the state's filings, Ballotpedia and TrackAIPAC say, and where they stand in public polls, plus a web search.</li>
           <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
           <li><strong>Know the dates.</strong> The top of the ballot has the last day to register, early voting and Election Day, to add to your calendar.</li>
           <li><strong>Print your picks</strong> and take the sheet with you to vote.</li>
@@ -136,7 +105,7 @@
 
       <footer class="site-footer">
         <p>VoteBot is an unofficial helper. Always check the official sample ballot from your county elections office.
-          Data from the US Census, state election and legislative offices, Ballotpedia, TrackAIPAC, the FEC and the Texas Ethics Commission; each candidate's details say which source said what.</p>
+          Data from the US Census, state election and legislative offices, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and FiftyPlusOne's polls; each candidate's details say which source said what.</p>
       </footer>
     </main>
   </div>

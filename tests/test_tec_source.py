@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 from votebot.models import Candidate, Race
 from votebot.offices import classify
 from votebot.sources import tec
+from votebot.sources.ballotpedia import BpBallot, BpRace, parse
 
 from .conftest import FIXTURES, get_ballot, load
 
@@ -74,6 +75,49 @@ def snapshot_dir(tmp_path, filers, outside=()):
 )
 def test_ballot_offices_as_tec_seats(office, office_type, county, seat):
     assert tec.tec_seat(classify(office, office_type, {"TRAVIS"}), county) == seat
+
+
+def bp_race(office, district_type="State", district_name="Texas", race_id=1):
+    return BpRace(id=race_id, office=office, district_type=district_type, district_name=district_name, group="state",
+                  seats=1, url=None, candidates=())
+
+
+@pytest.mark.parametrize(
+    ("office", "district_type", "district_name", "seat"),
+    [
+        ("Governor of Texas", "State", "Texas", "GOVERNOR"),
+        ("Lieutenant Governor of Texas", "State", "Texas", "LTGOVERNOR"),
+        ("Attorney General of Texas", "State", "Texas", "ATTYGEN"),
+        ("Texas Comptroller of Public Accounts", "State", "Texas", "COMPTROLLER"),
+        ("Texas Land Commissioner", "State", "Texas", "LANDCOMM"),
+        ("Texas Commissioner of Agriculture", "State", "Texas", "AGRICULTUR"),
+        ("Texas Railroad Commission", "State", "Texas", "RRCOMM"),
+        ("Texas Supreme Court Place 1 Chief Justice", "State", "Texas", "CHIEFJUSTICE_SC"),
+        ("Texas Supreme Court Place 7", "State", "Texas", "JUSTICE_SC:7"),
+        ("Texas Court of Criminal Appeals Place 3", "State", "Texas", "JUDGE_COCA:3"),
+        ("Texas Fifteenth District Court of Appeals Chief Justice", "State", "Texas", "CHIEFJUSTICE_COA:15"),
+        ("Texas Fifteenth District Court of Appeals Place 2", "State", "Texas", "JUSTICE_COA:15:2"),
+        ("Texas Third District Court of Appeals Chief Justice", "Judicial District", "Texas Appellate Court District 3",
+         "CHIEFJUSTICE_COA:3"),
+        ("Texas 147th District Court", "Judicial District", "Texas District 147", "JUDGEDIST:147"),
+        ("Texas 53rd District Attorney", "Judicial District", "Texas District 53", "DISTATTY:53"),
+        ("Texas House of Representatives District 49", "State Legislative (Lower)",
+         "Texas House of Representatives District 49", "STATEREP:49"),
+        ("Texas State Senate District 14", "State Legislative (Upper)", "Texas State Senate District 14", "STATESEN:14"),
+        ("Texas State Board of Education District 5", "State subdivision", "Texas State Board of Education District 5",
+         "STATEEDU:5"),
+        ("Travis County Court at Law No. 7", "Judicial District", "Travis County Court at Law, Texas", None),
+        ("Travis County Judge", "County", "Travis", None),
+    ],
+)
+def test_ballotpedia_offices_as_tec_seats(office, district_type, district_name, seat):
+    assert tec.bp_seat(bp_race(office, district_type, district_name), "Travis") == seat
+
+
+def test_every_state_office_on_the_capitol_ballotpedia_ballot_has_a_seat():
+    ballot = parse(load("ballotpedia_capitol.json"), None, fetched_at=0.0)
+    state = [r for r in ballot.races if r.group in tec.STATE_GROUPS and "County" not in r.office]
+    assert state and [r.office for r in state if not tec.bp_seat(r, "Travis")] == []
 
 
 def test_tec_offices_as_seats():
@@ -200,6 +244,19 @@ def test_two_filers_with_the_name_are_told_apart_by_seat(tmp_path):
     assert not tec.cards(source, [unknown_seat], {}, "Travis").candidates  # two Jane Does and no seat to decide
 
 
+def test_a_ballotpedia_race_takes_its_seat_from_ballotpedia(tmp_path):
+    other = jane(id="00000002", seek={"office": "STATEREP", "district": "12"}, totals={"raised": 1.0})
+    source = tec.Tec(tmp_path / "data", bundled_dir=snapshot_dir(tmp_path, [jane(), other]))
+    source.ensure_seeded()
+    district = "Texas House of Representatives District 49"
+    ballot = BpBallot(None, (bp_race(district, "State Legislative (Lower)", district, race_id=7),), (), {}, 0.0)
+    rep = race(district, ["Jane Doe"], key="bp:7")
+    card = tec.cards(source, [rep], {}, "Travis", ballot).candidates["bp:7:0"]
+    assert (card.match.confidence, card.match.method) == ("exact", "full name + seat STATEREP:49")
+    assert card.facts[-1].value == "00000001"  # not the Jane Doe in District 12
+    assert not tec.cards(source, [rep], {}, "Travis").candidates  # with no seat, two Jane Does and nothing to decide
+
+
 def test_no_snapshot_means_no_cards(tmp_path):
     source = tec.Tec(tmp_path / "data", bundled_dir=tmp_path / "missing")
     assert not source.ensure_seeded()
@@ -244,3 +301,20 @@ def test_capitol_ballot_state_races_get_tec_money(client):
     assert with_tec and all(r["group"] in ("state", "legislature", "judicial") for r in with_tec)
     assert not [r for r in ballot["races"] if r["group"] in ("federal", "precinct", "local")
                 and any(c["source"] == "tec" for cand in r["candidates"] for c in cand["cards"])]
+    with_money = [cand for r in with_tec for cand in r["candidates"] if any(c["source"] == "tec" for c in cand["cards"])]
+    assert with_money and all(cand["cards"][0]["source"] == "tec" for cand in with_money)  # the money tab comes first
+
+
+def test_a_ballotpedia_only_ballot_matches_tec_filers_by_seat(client):
+    client.put("/api/sources/sos", json={"enabled": False})
+    ballot = get_ballot(client)
+    for office, name, seat in (
+        ("Governor of Texas", "Greg Abbott", "GOVERNOR"),
+        ("Texas 419th District Court", "Catherine Mauzy", "JUDGEDIST:419"),
+        ("Texas Third District Court of Appeals Chief Justice", "Darlene Byrne", "CHIEFJUSTICE_COA:3"),
+        ("Texas Fifteenth District Court of Appeals Chief Justice", "Scott Brister", "CHIEFJUSTICE_COA:15"),
+    ):
+        race_ = next(r for r in ballot["races"] if r["name"] == office)
+        candidate = next(c for c in race_["candidates"] if c["name"] == name)
+        match = next(card for card in candidate["cards"] if card["source"] == "tec")["match"]
+        assert match["confidence"] == "exact" and match["method"].endswith(f"+ seat {seat}"), (office, match)

@@ -9,7 +9,7 @@ import respx
 from votebot.config import Ttls
 from votebot.http_cache import HttpCache
 from votebot.sources.ballotpedia import (
-    URL, Ballotpedia, BallotpediaUnavailable, council_district_in, parse, precincts_in,
+    SOURCE, URL, Ballotpedia, BallotpediaUnavailable, council_district_in, parse, precincts_in,
 )
 
 from .conftest import load
@@ -66,7 +66,7 @@ async def test_refusal_pauses_further_calls(tmp_path):
             source = Ballotpedia(HttpCache(tmp_path / "c.sqlite3", client), Ttls())
             with pytest.raises(BallotpediaUnavailable):
                 await source.ballot(30.27, -97.74)
-            assert source.paused_until() is not None
+            assert source.cache.paused_until(SOURCE) is not None
             with pytest.raises(BallotpediaUnavailable, match="paused"):
                 await source.ballot(30.27, -97.74)
     assert route.call_count == 1
@@ -81,6 +81,6 @@ async def test_a_paused_ballotpedia_still_serves_what_it_has(tmp_path):
             first = await source.ballot(30.27, -97.74, dt.date(2026, 11, 3))
             with pytest.raises(BallotpediaUnavailable):
                 await source.ballot(29.76, -95.37)  # somewhere else: refused, which pauses Ballotpedia
-            assert source.paused_until() is not None
+            assert source.cache.paused_until(SOURCE) is not None
             again = await source.ballot(30.27, -97.74, dt.date(2026, 11, 3))
     assert again.races == first.races and route.call_count == 2

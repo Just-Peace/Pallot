@@ -40,6 +40,7 @@ class Ttls:
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
     key_dates_backoff: int = HOUR  # after that page is refused us, stop asking for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
+    prune_after: int = 30 * DAY  # at startup, delete suggestions and addresses not found that expired this long ago
 
 
 @dataclass(frozen=True)
