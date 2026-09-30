@@ -30,10 +30,12 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "photon", "sos", "key_dates", "ballotpedia", "trackaipac",
-                                                       "fec", "tec", "polls"]
-    geocoding, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "tigerweb", "osm_tiles", "photon", "sos", "key_dates",
+                                                       "ballotpedia", "trackaipac", "fec", "tec", "polls"]
+    geocoding, outlines, tiles, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert tiles["refreshable"] is False and all(s["refreshable"] for s in overview["sources"] if s is not tiles)
     assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
+    assert (outlines["label"], outlines["enabled"], outlines["refresh_confirm"]) == ("District map (US Census TIGERweb)", True, None)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and photon["enabled"] is True
     assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
     assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"
@@ -228,11 +230,11 @@ def test_a_refusal_pauses_ballotpedia_and_settings_says_until_when(client, upstr
 def test_startup_deletes_old_suggestions_and_addresses_not_found(make_app, tmp_path):
     long_ago = time.time() - 90 * DAY
     cache = HttpCache(tmp_path / "data" / "cache.sqlite3", httpx.AsyncClient(), clock=lambda: long_ago)
-    for source, q, value in (("photon", "1100 congress", {"features": [1]}), ("census", "nowhere", {"result": {}}),
-                             ("census", "capitol", {"result": {"addressMatches": [1]}})):
+    for source, q, value in (("photon", "1100 congress", {"features": [1]}), ("osm_tiles", "12/940/1686", "iVBORw=="),
+                             ("census", "nowhere", {"result": {}}), ("census", "capitol", {"result": {"addressMatches": [1]}})):
         cache._store(RequestSpec("GET", "https://example.test/", params={"q": q}), source, value, long_ago,
                      30 * DAY, DAY, ("result", "addressMatches"))
     cache.close()
     with TestClient(make_app()) as client:
         rows = {s["id"]: s["cache"]["entries"] for s in client.get("/api/sources").json()["sources"]}
-    assert (rows["photon"], rows["geocoding"]) == (0, 1)  # the address that was found stays, as a fallback
+    assert (rows["photon"], rows["osm_tiles"], rows["geocoding"]) == (0, 0, 1)  # the address found stays, as a fallback

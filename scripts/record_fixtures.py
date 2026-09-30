@@ -1,11 +1,12 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, tec, trackaipac)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race),
-the key dates one (the Texas SOS's Important Election Dates page, kept as served).
+the key dates one (the Texas SOS's Important Election Dates page, kept as served), and the
+district outlines four (TIGERweb's layer list, and the Capitol's three districts).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -31,7 +32,7 @@ sys.path.insert(0, str(ROOT))
 
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
-from votebot.sources import ballotpedia, census, fec, key_dates, nominatim, photon, polls, sos  # noqa: E402
+from votebot.sources import ballotpedia, census, fec, key_dates, nominatim, photon, polls, sos, tigerweb  # noqa: E402
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -55,6 +56,7 @@ FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
 # What a voter might have typed so far: an address OpenStreetMap has only the street of,
 # and a street name that other streets' house numbers also match.
 SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}
+OUTLINES = {"cd": 10, "sd": 14, "hd": 49}  # the Capitol's districts
 
 
 def save(name: str, data: object) -> None:
@@ -195,6 +197,21 @@ def record_key_dates(client: httpx.Client) -> None:
     print(f"{path.name}: {path.stat().st_size:,} bytes ({response.headers.get('content-type')})")
 
 
+def record_tigerweb(client: httpx.Client) -> None:
+    """TIGERweb's layer list, then the Capitol's districts, sent as VoteBot sends them."""
+
+    def get(spec) -> dict:
+        response = client.get(spec.url, params=spec.params)
+        response.raise_for_status()
+        return response.json()
+
+    index = get(tigerweb.index_spec())
+    save("tigerweb_layers.json", index)
+    for kind, number in OUTLINES.items():
+        save(f"tigerweb_{tigerweb.geoid(kind, number)}.json",
+             get(tigerweb.outline_spec(tigerweb.layer_id(index, kind), kind, number)))
+
+
 def record_tec() -> None:
     """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
     bundled = ROOT / "tec_cache" / "data"
@@ -224,7 +241,7 @@ def record_trackaipac() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tec", "trackaipac"),
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "tec", "trackaipac"),
                         help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
@@ -239,6 +256,8 @@ def main(argv: list[str] | None = None) -> int:
             record_polls(client)
         if only in (None, "key_dates"):
             record_key_dates(client)
+        if only in (None, "tigerweb"):
+            record_tigerweb(client)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

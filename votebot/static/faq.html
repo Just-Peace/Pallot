@@ -71,6 +71,17 @@
           </div>
         </details>
 
+        <details class="faq" id="district-map">
+          <summary>What does the map of my districts show?</summary>
+          <div class="faq-body">
+            <p>The map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts, and a pin at your address, which the map opens centred on. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own colour and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
+            <p>Drag the map to move it, and zoom with + and −, or with the scroll wheel once you've clicked the map, so scrolling the page never zooms it by accident. On a phone, use two fingers to move or zoom it; one finger scrolls the page.</p>
+            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. VoteBot sends it only each district's number, never your address. The State Board of Education outline comes from the Texas Legislative Council's map, which VoteBot already keeps. The outlines are simplified to about 50 meters, so if you live near a boundary, go by the district numbers, which come from the full maps.</p>
+            <p>The street map comes from OpenStreetMap. The VoteBot server asks for the map tiles of the area you look at, which shows OpenStreetMap roughly where your address is, and keeps them for a week, so looking again asks nothing. Turn "Street map" off in <a href="settings.html">Settings</a> to see the outlines alone, or "District map" off to leave out the Census's outlines.</p>
+            <p>Clicking the map's heading folds it away, as with a race, until you click it again; this browser remembers which you chose. While the map is folded, nothing is fetched for it.</p>
+          </div>
+        </details>
+
         <details class="faq">
           <summary>Why are some races under "Special districts" or "Couldn't confirm"?</summary>
           <div class="faq-body">
@@ -172,7 +183,7 @@
         <details class="faq" id="paused">
           <summary>Why is a source paused?</summary>
           <div class="faq-body">
-            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia, Photon (address suggestions), FiftyPlusOne (polls) and the Texas Secretary of State's dates page when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia, Photon (address suggestions), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map) and OpenStreetMap's tile server (the street map) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
             <p>Meanwhile, whatever the source already sent still shows. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
           </div>
         </details>

@@ -69,7 +69,7 @@ class Census:
         return parse_geographies(geographies, lat, lon, None)
 
 
-def _vintage(layer_name: str) -> int:
+def vintage(layer_name: str) -> int:
     """Leading number of a layer name ("120th Congressional…", "2026 State…"), newest first."""
     match = re.match(r"(\d+)", layer_name)
     return int(match.group(1)) if match else 0
@@ -79,7 +79,7 @@ def _layer(geographies: dict[str, list[dict[str, Any]]], needle: str) -> dict[st
     names = [name for name, entries in geographies.items() if needle.lower() in name.lower() and entries]
     if not names:
         return None
-    return geographies[max(names, key=_vintage)][0]
+    return geographies[max(names, key=vintage)][0]
 
 
 def _number(entry: dict[str, Any] | None) -> int | None:

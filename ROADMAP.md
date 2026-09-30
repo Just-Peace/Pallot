@@ -27,6 +27,12 @@ With Texas SOS off, Ballotpedia lists county courts at law and probate courts ("
 
 Fix: in `tec.cards`, skip a Ballotpedia race whose office is a county court or a probate court, as `tec_seat` does for the SOS's county courts.
 
+### 3. No State Board of Education district with Texas SOS off (minor)
+
+The SBOE lookup (`_sboe`, [votebot/ballot.py:407](votebot/ballot.py#L407)) only runs inside the Texas SOS path, alongside the county's ballot order ([ballot.py:379](votebot/ballot.py#L379)), and `Districts.sboe` is taken from its result ([ballot.py:269](votebot/ballot.py#L269)). So with Texas SOS off, or when the SOS doesn't know the county, Your districts shows "SBOE —" and the district map has no SBOE outline, although the PLANE2106 map is on the server and always on.
+
+Fix: in `_Builder.run`, start `_sboe(place)` beside the SOS and Ballotpedia work rather than inside `_sos`, and set `sboe=` from it whatever the SOS answered.
+
 ## Improvements
 
 Nothing open right now.
@@ -97,15 +103,8 @@ Roughly in order of value to a voter. Items marked *(README)* were on the README
     - **The server ignores `Range`,** so it's one streaming GET for the whole zip.
 
     How to build it: its own source in Settings, with an on/off switch, a Refresh that asks first (about 45 MB), and Clear. The index is cached through `HttpCache` for a week. The zip is downloaded into `data/vtds/` like the SBOE map, and again only when the index shows a newer one. A lookup keeps the voter's county, then the polygons whose bounding box holds the point, then does an even-odd ray cast, off the event loop. Nothing is guessed near a boundary.
-12. **Map of your districts.** A **Map** button on the Your districts card opens a small map, with the address as a pin and the outline of each district: U.S. House, State Senate, State House, SBOE, and the election precinct once [Feature 11](#features) is built. Picking a district on the card highlights it.
-    - **Where the outlines come from:**
-      - SBOE, from the PLANE2106 map VoteBot already downloads;
-      - U.S. House, State Senate and State House, from the Census's TIGERweb REST service (one cached request per district, with simplified geometry), or from the Texas Legislative Council's plan files on the same portal as PLANE2106;
-      - the election precinct, from the VTD map.
-    - **Constraints:**
-      - Nothing is loaded from a CDN, so a map library such as Leaflet would be copied into `static/`, with a `package-data` pattern for its files.
-      - OpenStreetMap tiles would send the voter's area to the tile server. That would go in `privacy.html`, need an on/off switch, and follow OSM's tile usage policy and attribution.
-    - **A lighter first version:** draw the outlines as inline SVG with no tiles, which sends nothing anywhere, and link out to OpenStreetMap for the full map.
+
+    Then draw the precinct on the map of your districts: a `precinct` kind in `GET /api/district-outlines` (`outlines.py`), its polygons simplified like the SBOE's (`sboe.simplify`), and a fifth colour and dash in `district-map.js` and `app.css`, checked like the other four.
 
 ## UI and UX
 
@@ -378,3 +377,35 @@ The six improvements from the September review, UI feedback on the top of the ba
 - [x] A [Reviews](#reviews) section in this roadmap: backend, frontend code, UX and security.
 - [x] A [Spot checks](#spot-checks) section: the ballot against VoteTexas.gov and Ballotpedia, and the TrackAIPAC, campaign finance and poll figures against their sites, once by hand and once by an LLM.
 - [x] Found along the way: [Bug 2](#bugs), county courts on Ballotpedia-only ballots.
+
+### Map of your districts ([#15](https://github.com/Fahd-Siddiqui/VoteBot/pull/15), Sep 30)
+
+What was Feature 12: a street map with the voter's districts on it, always under the two cards at the top of the ballot.
+- [x] The map (`district-map.js`, drawn by Leaflet): OpenStreetMap's street map, the outline of each district (U.S. House, State Senate, State House, SBOE) and a pin at the address. Drag, **+**/**−**, the arrow keys, and the scroll wheel once the map has been clicked, so scrolling the page never zooms it by accident. On a touch screen, two fingers move and zoom it and one scrolls the page. A scale in miles, and OpenStreetMap's attribution.
+- [x] It opens centred on the address, zoomed so the smallest district fits around it (zooms 10 to 14). Right above the map, a button per district with a sample of its line is the legend: picking one, or clicking its line on the map, highlights it and zooms to it, and picking it again, or the pin button under + and −, goes back to the address. Hovering over a line names the district. Focus stays on the button, and on a phone the map scrolls into view. A precinct update leaves the map where the voter left it. The Your districts card stays as it was.
+- [x] The map's heading folds it away, with the same chevron as a race's heading. It's shown by default, and the choice is remembered in the browser with the other view choices. While it's folded, nothing is fetched for it.
+- [x] The outlines come from `GET /api/district-outlines` (`outlines.py`), which the page asks once the ballot is on screen, so a ballot lookup waits for nothing new. A second request for the same districts makes 0 external calls.
+  - U.S. House, State Senate and State House from the Census's TIGERweb (`sources/tigerweb.py`): the service's layer list, then one request per district by GEOID, simplified on the server to about 50 m. Its layers are found by name, as the geocoder's are, so they follow the same maps. A new source in Settings, "District map (US Census TIGERweb)", with an on/off switch, Refresh and Clear; cached for 30 days (`VOTEBOT_TTL_OUTLINES`) and paused for an hour after a 403 or 429.
+  - SBOE from the PLANE2106 map already kept for the lookup, simplified with Douglas–Peucker (`sboe.simplify`) once per district: the largest goes from 42,704 points to 4,639.
+  - An outline that's off or can't be had is a note under the map, never a failed request.
+- [x] The street map's tiles come from OpenStreetMap through the server (`GET /api/tiles/{z}/{x}/{y}.png`, `sources/osm_tiles.py`), following its tile usage policy:
+  - a User-Agent that names VoteBot and links to it (the default `VOTEBOT_USER_AGENT` now includes the project's URL);
+  - each tile kept 7 days (`VOTEBOT_TTL_TILES`), and a day in the browser;
+  - only the tiles being looked at: its Settings row, "Street map (OpenStreetMap)", has an on/off switch and Clear but no Refresh (`SourceInfo.refreshable`), since a bulk re-download isn't allowed;
+  - paused for an hour after a 403, 418 or 429;
+  - only zooms 5 to 18 over Texas and 2° around it, so VoteBot can't be used as a tile proxy for anywhere else, and a view near the state line still has streets.
+
+  `HttpCache` keeps an image as base64 text (`get_bytes`, `RequestSpec.as_bytes`), and old tiles are deleted at startup like address suggestions.
+- [x] Leaflet 1.9.4 is copied into `static/vendor/leaflet/` (its ES module build, CSS and licence, checked against npm's hash), with a `package-data` pattern, and imported only once there's a ballot. `.map-canvas` is its own stacking context, so Leaflet's controls stay under the sticky strip. In dark mode, the tiles are inverted.
+- [x] Decisions:
+  - always shown rather than behind a Map button, which was easy to miss (the first version of this branch had one, over a plain SVG drawing);
+  - the district buttons right above the map rather than on the Your districts card, which was too far from it, and left the card as it was;
+  - OpenStreetMap's tiles through the server, rather than straight from the browser: the server keeps them, as the policy asks, repeat views make no calls, and OpenStreetMap never sees the voter's browser. The street map is on by default, with its switch in Settings, and Privacy says what it sends;
+  - Leaflet, copied in, rather than a map drawn by hand: dragging, pinch zoom and keyboard use it has already got right;
+  - TIGERweb rather than the Texas Legislative Council's plan files: one small cached request per district, from the same maps as the geocoder, instead of three large downloads;
+  - a panel under both cards, so the two cards stay as tall as each other;
+  - it opens centred on the address, close enough to read the streets, rather than fitted to all four districts, which put the address off to one side at a regional scale;
+  - outlines simplified to about 50 m, both TIGERweb's and the SBOE's, so shared boundaries still meet when zoomed to a State House district;
+  - four colours with no party blue or red (violet, orange, teal, plum), checked for colour blindness across every pair and for 3:1 contrast against the panel colour in light and dark mode, each with its own dash (solid, dashed, dotted, dash-dot) and a halo in the panel colour, so the contrast holds over the streets.
+- [x] README, DEVELOPMENT, FAQ ("What does the map of my districts show?", and TIGERweb and OpenStreetMap's tile server in "Why is a source paused?"), About, Privacy, AGENTS.md (a rule for OpenStreetMap's tiles, and where a copied-in library goes) and the welcome steps updated. `scripts/record_fixtures.py --only tigerweb` records the new fixtures.
+- [x] Found along the way: [Bug 3](#bugs), no SBOE district with Texas SOS off.

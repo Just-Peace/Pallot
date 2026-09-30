@@ -11,7 +11,7 @@ import httpx
 from .ballot import Services
 from .http_cache import describe_error
 from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
-from .sources import ballotpedia, fec, key_dates, photon, polls, sos, tec, trackaipac
+from .sources import ballotpedia, fec, key_dates, osm_tiles, photon, polls, sos, tec, tigerweb, trackaipac
 from .text import display_date, display_time, iso_utc
 
 
@@ -35,6 +35,7 @@ class SourceInfo:
     resettable: bool = False  # a bundled snapshot rather than cached responses: "clear" resets to it
     refresh_confirm: str | None = None  # asked before refreshing: what a refresh sends or downloads
     pause: Pause | None = None  # the source can be paused after refusing a request (HttpCache.pause_on)
+    refreshable: bool = True  # False: no Refresh, since a bulk re-download isn't allowed (OpenStreetMap's tiles)
 
 
 SOURCES = (
@@ -47,6 +48,15 @@ SOURCES = (
         ("census", "nominatim"),
         refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
         "Nominatim the ones the Census couldn't match), and downloads the State Board of Education map again. Continue?",
+    ),
+    SourceInfo(
+        tigerweb.SOURCE, "District map (US Census TIGERweb)", tigerweb.DESCRIPTION, True, (tigerweb.SOURCE,),
+        pause=Pause("the Census's map service refused a request", "outlines it already sent still show"),
+    ),
+    SourceInfo(
+        osm_tiles.SOURCE, "Street map (OpenStreetMap)", osm_tiles.DESCRIPTION, True, (osm_tiles.SOURCE,),
+        pause=Pause("OpenStreetMap's tile server refused a request", "tiles it already sent still show"),
+        refreshable=False,
     ),
     SourceInfo(
         photon.SOURCE,
@@ -160,6 +170,7 @@ class Admin:
             refresh_label=info.refresh_label,
             clear_label=info.clear_label,
             refresh_confirm=info.refresh_confirm,
+            refreshable=info.refreshable,
             notice=notice,
             notice_tone=tone,
             last_use=self.svc.last_uses.get(info.id),
@@ -238,6 +249,8 @@ class Admin:
 
     async def refresh(self, source_id: str) -> ActionResult:
         info = self._info(source_id)
+        if not info.refreshable:
+            raise AdminError(400, f"{info.label} is only fetched as you look at it, never all at once.")
         if source_id in self._busy:
             raise AdminError(409, f"{info.label} is already refreshing.")
         self._busy.add(source_id)

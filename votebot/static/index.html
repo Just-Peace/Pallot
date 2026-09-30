@@ -6,6 +6,7 @@
   <title>VoteBot · Your ballot</title>
   <meta name="description" content="See every race on your ballot, research candidates across sources, pick, take notes and print your picks.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="css/app.css">
   <script type="module" src="js/ballot.js"></script>
 </head>
@@ -51,7 +52,7 @@
         <ol class="steps">
           <li><strong>Compare sources.</strong> Each candidate shows how much money they've raised and from whom, what the state's filings, Ballotpedia and TrackAIPAC say, and where they stand in public polls, plus a web search.</li>
           <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
-          <li><strong>Know the dates.</strong> The top of the ballot has the last day to register, early voting and Election Day, to add to your calendar.</li>
+          <li><strong>Know the dates and your districts.</strong> The top of the ballot has the last day to register, early voting and Election Day, to add to your calendar, and your districts, with a map of them.</li>
           <li><strong>Print your picks</strong> and take the sheet with you to vote.</li>
         </ol>
       </section>
@@ -96,6 +97,7 @@
         <div class="ballot-top">
           <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
+          <section class="district-map" id="district-map" aria-labelledby="district-map-title" hidden></section>
         </div>
         <div id="messages"></div>
         <div id="groups"></div>

@@ -32,12 +32,14 @@ votebot/
   http_cache.py     persistent request cache       enrich.py   adds each source's cards to candidates
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
-  ics.py            calendar files of key dates
-  sources/          census, nominatim, photon, sboe, sos, key_dates, ballotpedia, trackaipac, fec, tec, polls
+  ics.py            calendar files of key dates    outlines.py the district map's outlines
+  sources/          census, nominatim, photon, sboe, tigerweb, osm_tiles, sos, key_dates, ballotpedia, trackaipac, fec,
+                    tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
                     compare.py: the Compare dialog's sections, shared by the FEC and TEC)
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html, favicon.svg,
-                    css/app.css, js/ (ballot.js, key-dates.js, suggest.js, compare.js, settings.js,
+                    vendor/leaflet/ (Leaflet 1.9.4, copied in), css/app.css,
+                    js/ (ballot.js, key-dates.js, district-map.js, suggest.js, compare.js, settings.js,
                     chrome.js, page.js, topbar.js, toast.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
@@ -52,14 +54,14 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 
 - Concurrent identical requests share one fetch.
 - Only answers that succeed are cached.
-- `get_json` stores the parsed JSON. `get_text` stores a web page's body as a string (`RequestSpec.as_text`), so Refresh fetches it as text again.
+- `get_json` stores the parsed JSON. `get_text` stores a web page's body as a string (`RequestSpec.as_text`), so Refresh fetches it as text again. `get_bytes` stores an image (the street map's tiles) as base64 text (`RequestSpec.as_bytes`).
 - The lifetimes are `Ttls` in `votebot/config.py`, each overridable with `VOTEBOT_TTL_<NAME>`.
 - Reading and writing a row (`_load`, `_store`) runs in a worker thread (`asyncio.to_thread`), and `self._lock` guards the SQLite connection and the in-memory copies. SQLite and file I/O release the GIL, so other requests (address suggestions typed during a first lookup, say) go on meanwhile. `json.loads` of a big value (the 2.6 MB candidate list) still holds the GIL while it parses, in C.
-- Expired rows stay, as the copy to serve when a source is down. At startup, `prune()` deletes what's no use even then, once it's been expired for `Ttls.prune_after` (30 days): Photon's rows (half-typed addresses), census and Nominatim rows stored with their shorter "not found" lifetime, and expired flags. It runs `VACUUM` when it deleted anything, so the typed text doesn't linger in free pages.
+- Expired rows stay, as the copy to serve when a source is down. At startup, `prune()` deletes what's no use even then, once it's been expired for `Ttls.prune_after` (30 days): Photon's rows (half-typed addresses) and the street map's tiles, census and Nominatim rows stored with their shorter "not found" lifetime, and expired flags. It runs `VACUUM` when it deleted anything, so the typed text doesn't linger in free pages.
 
 Other work that would hold up the server runs in threads too:
 - `enrich.run` asks every card source at once (`asyncio.gather`); the ones with no I/O (Ballotpedia, TrackAIPAC, the TEC) build their cards in threads. The cards are then attached in `CARD_ORDER`, which is the order of the tabs in Details and of the badges on a candidate's row: the money (FEC or TEC), Texas SOS, polls, Ballotpedia, TrackAIPAC.
-- The SBOE point-in-polygon test (`SboeMap.district_at`).
+- The SBOE point-in-polygon test (`SboeMap.district_at`), and simplifying an SBOE district for the map (`SboeMap.outline`).
 - `BundledSnapshot` (TrackAIPAC, TEC) is read from threads, so a lock makes each version of `current.json` parse once, and keeps a Reset's copy from being read half-written.
 - The Settings routes that only touch files (`GET /api/sources`, the on/off switch, Clear, Clear all) are plain `def`, which FastAPI runs in its thread pool.
 
@@ -68,6 +70,16 @@ Other work that would hold up the server runs in threads too:
 Notes on how each source is called, beyond the README's table:
 - **Photon:** Nominatim's policy forbids search-as-you-type, hence Photon for suggestions. Only results on a street matching what was typed are kept; without the house in OpenStreetMap, the typed number goes on the street.
 - **SBOE districts:** point-in-polygon in pure Python over the PLANE2106 map, downloaded once into `data/`.
+- **District outlines** (`GET /api/district-outlines?cd=&sd=&hd=&sboe=`, `outlines.py`), asked by the page once the ballot is on screen, so a ballot lookup never waits on them. A missing outline is a note in the answer, never a failed request. The answer's `street_map` says whether the street map is on.
+  - U.S. House, State Senate and State House come from the Census's TIGERweb (`sources/tigerweb.py`), one cached request per district plus the service's layer list. Its "Current" service has the geocoder's maps under the same names ("120th Congressional Districts", "2026 State Legislative Districts - Upper"), so a layer is found by the end of its name, newest vintage first, which skips each one's "… Labels" twin. A district is asked by GEOID: `48` plus the number in 2 digits for Congress, 3 for the Legislature. The query asks for Esri JSON in lon/lat (`outSR=4326`), simplified on the server with `maxAllowableOffset` of 0.0005° (about 50 m); TX-10 is about 2,200 points. The rings come as one list, outer rings and holes alike, which the map fills even-odd.
+  - SBOE comes from the PLANE2106 map already kept for the lookup, simplified to the same 0.0005° with Douglas–Peucker (`sboe.simplify`), once per district. The full map has 264,000 points; simplified, its largest district has about 4,600.
+- **Street map** (`GET /api/tiles/{z}/{x}/{y}.png`, `sources/osm_tiles.py`): OpenStreetMap's standard tiles, which the server fetches for the browser and keeps. Its [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) sets the rules:
+  - a User-Agent that names the app and a way to reach it (`Config.user_agent` includes the project's URL);
+  - each tile kept at least 7 days (`Ttls.tiles`); the browser also keeps a tile for a day (`Cache-Control`);
+  - only the tiles someone is looking at: no prefetching, and no bulk re-download, so its Settings row has Clear but no Refresh (`SourceInfo.refreshable`), and `POST …/refresh` answers 400;
+  - the attribution on the map, bottom right.
+
+  The server only fetches zooms 5 to 18 over Texas and 2° around it (`osm_tiles.wanted`), so VoteBot can't be used as a tile proxy for anywhere else, while a view near the state line still has streets; the page's map keeps to the same box (`maxBounds`). A 403, 418 or 429 pauses it for an hour.
 - **Key dates:** the Texas SOS's "Important Election Dates" page (`sources/key_dates.py`), fetched as text and parsed with the standard library's `HTMLParser`. Each election is a `<table class="norm-5px">`, titled by its `summary` attribute or its heading row ("Tuesday, November 3, 2026 - Uniform Election Date"); the ballot takes the table whose date is its election day. Its quirks:
   - earlier years' tables are still in the page, inside HTML comments, which the parser skips;
   - labels vary between tables ("First Day of Early Voting" or "… by Personal Appearance"), so a row is known by how its label starts, and look-alikes ("Last Day for Candidates … to Register to Vote", "First day to apply for a ballot by mail") are left out;
@@ -85,7 +97,16 @@ Every page has an empty `<aside class="sidebar">`, and `chrome.js` draws the lef
 
 At 960px and less (a phone), the left pane becomes a top bar. `chrome.js` then calls `initTopBar()` in `topbar.js`, which adds its two buttons (the address and Menu). The empty aside is already the closed bar's height, so the page doesn't move when it's drawn. On the ballot, `placeForWidth()` in `ballot.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. A `ResizeObserver` keeps `scroll-padding-top` at the strip's height, so links, Next and `j`/`k` land below it. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `votebot.ui.v1`.
 
-Under the strip, `.ballot-top` holds When to vote (`key-dates.js`) and Your districts (`renderDistricts()` in `ballot.js`), side by side when there's room and stacked on a phone (flex-wrap, 340px each at least). The strip comes first so that Next and the section chips stay on a phone's first screen. The precinct form lives in the districts card, open by itself while a race waits on a missing number. It always sends both numbers, `null` for an empty field: `_precincts()` in `ballot.py` reads the request with `exclude_unset`, so a `null` clears Ballotpedia's number while a missing key keeps it. A JP number also sets the constable, and the other way round (`_jp_is_constable`), since each justice precinct elects one of each.
+Under the strip, `.ballot-top` holds When to vote (`key-dates.js`) and Your districts (`renderDistricts()` in `ballot.js`), side by side when there's room and stacked on a phone (flex-wrap, 340px each at least). The map of your districts (`district-map.js`) is always under them, the full width, so the cards stay as tall as each other. Right above it, a row of buttons, one per district, is its legend and picks a district; picking only flips `aria-pressed`, so focus stays on the button. Leaflet draws it:
+- `vendor/leaflet/` holds Leaflet 1.9.4's ES module build, its CSS and its licence, copied from the npm package (checked against the registry's hash), with only the source-map comment removed. `district-map.js` imports it with `import()` once there's a ballot, so the other pages never load it.
+- The card's heading is a button that folds the map away, with a race's chevron (`.map-toggle`, `.district-map.collapsed`), remembered as `showMap` in `votebot.ui.v1` (shown when unset). While it's folded, nothing is fetched or drawn: `syncMap` only notes the new districts, and showing the map loads and draws them, at the map's real size.
+- The map is made once and kept: a precinct update leaves it where the voter left it; new districts load new outlines and go back to the address. The outlines are fetched once per set of districts and kept for the page's life.
+- It opens centred on the pin, zoomed so the smallest district's outline fits around it, within zooms 10 to 14 (`fitView`, `HOME_ZOOM`), so the streets are always readable. A picked district fills the map instead; picking it again, or the pin button under + and −, goes back.
+- `.map-canvas` is its own stacking context (`z-index: 0`), so Leaflet's panes and controls (z-index up to 1000) stay under the sticky strip.
+- It never traps the page's scrolling: the scroll wheel zooms only while the map has focus (after a click), and on a touch screen (`pointer: coarse`) dragging is off, so one finger scrolls the page and two move and zoom the map.
+- Each district has its colour (`--map-cd`, `--map-sd`, `--map-hd`, `--map-sboe`, checked for colour blindness and for 3:1 contrast against `--panel`) and its own dash, so it's never told apart by colour alone. Under each line, a wider halo in `--panel`'s colour keeps that contrast over the streets, and is what the pointer hits: hovering shows the district's name, and a click picks it. In dark mode, the tiles are inverted with a CSS filter.
+
+The strip comes first so that Next and the section chips stay on a phone's first screen. The precinct form lives in the districts card, open by itself while a race waits on a missing number. It always sends both numbers, `null` for an empty field: `_precincts()` in `ballot.py` reads the request with `exclude_unset`, so a `null` clears Ballotpedia's number while a missing key keeps it. A JP number also sets the constable, and the other way round (`_jp_is_constable`), since each justice precinct elects one of each.
 
 Clearing what the voter keeps in the browser (Clear picks on the ballot, and the two Clear buttons in Settings) happens at once, then `toast.js` offers Undo for 10 seconds. The clear functions in `picks.js` return what they removed, for Undo to put back. Clearing what the server saved can't be undone, so those buttons still ask first.
 
@@ -110,7 +131,7 @@ Clearing what the voter keeps in the browser (Clear picks on the ballot, and the
 ## Docker image
 
 - The `Dockerfile` installs VoteBot as a regular (not editable) package into `/app/.venv`, from `uv.lock` with `--locked` and without the dev tools. After changing dependencies in `pyproject.toml`, run `uv lock`, or the build fails.
-- Because the install isn't editable, the static files and the bundled snapshots reach the image only as package data (`[tool.setuptools.package-data]` in `pyproject.toml`). A new kind of file, such as an image under `votebot/static/`, needs a pattern there. Otherwise it works with `uv run` but is missing from the container.
+- Because the install isn't editable, the static files and the bundled snapshots reach the image only as package data (`[tool.setuptools.package-data]` in `pyproject.toml`). A new kind of file, such as an image under `votebot/static/`, needs a pattern there (Leaflet's files have `static/vendor/*/*`). Otherwise it works with `uv run` but is missing from the container.
 - `.dockerignore` keeps `.env`, `data/`, the tests and scripts out of the build. The image has VoteBot and its locked dependencies, not the dev tools or tests.
 - Everything VoteBot writes goes under `VOTEBOT_DATA_DIR` (`/data` in the container); a TEC refresh stages its work in `/tmp`.
 

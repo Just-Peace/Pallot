@@ -39,6 +39,10 @@ class Ttls:
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
     key_dates_backoff: int = HOUR  # after that page is refused us, stop asking for this long
+    outlines: int = 30 * DAY  # TIGERweb's district outlines for the map, as long as the geocoder's districts
+    outlines_backoff: int = HOUR  # after TIGERweb refuses us, stop asking for this long
+    tiles: int = 7 * DAY  # OpenStreetMap's map tiles: its tile usage policy asks for at least 7 days
+    tiles_backoff: int = HOUR  # after OpenStreetMap's tile server refuses us, stop asking for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # at startup, delete suggestions and addresses not found that expired this long ago
 
@@ -46,7 +50,8 @@ class Ttls:
 @dataclass(frozen=True)
 class Config:
     data_dir: Path = PROJECT_DIR / "data"
-    user_agent: str = "VoteBot/0.1 (personal ballot helper)"
+    # Names VoteBot to every source; OpenStreetMap's tile policy asks for a way to reach it too.
+    user_agent: str = "VoteBot/0.1 (personal ballot helper; +https://github.com/Fahd-Siddiqui/VoteBot)"
     http_timeout: float = 30.0
     ttl: Ttls = field(default_factory=Ttls)
     # A free key from https://api.open.fec.gov/developers/ (issued by api.data.gov); without
