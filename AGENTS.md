@@ -93,7 +93,7 @@ How to write them:
   - Every source appears in Settings with Refresh and Clear, and gets an on/off switch (`DEFAULT_SOURCES` in `votebot/settings.py`) unless the ballot can't work without it.
 - **Keys stay out of the cache.** API keys go in `HttpCache`'s `source_headers`, never in a `RequestSpec`, a cache key, a log line or an error message.
 - **Be gentle with the sources:**
-  - Throttle with `min_interval`, and pause a source when it refuses a request (`pause_on`).
+  - Throttle with `MIN_INTERVAL` in `api.py`, and pause a source when it refuses a request (`pause_on`).
   - Never fetch TEC's zip in a loop or in many ranges: its server blocks an IP after a burst. Use one streaming request, or `--zip` with a copy you downloaded.
   - FiftyPlusOne answers 403 unless the request carries browser headers.
   - Nominatim forbids search-as-you-type, which is why Photon does the suggestions.
@@ -111,7 +111,7 @@ How to write them:
 
 - `uv run pytest` passes. It runs offline, against the recorded responses in `tests/fixtures/`.
   - Run the whole suite once, just before the feature's commit, and only when code changed. A change to Markdown files only (README, DEVELOPMENT, ROADMAP, AGENTS) needs no test run.
-  - While working, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. The whole suite takes about two minutes.
+  - While working, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. The whole suite runs in parallel, one worker per CPU, and takes about 30 seconds.
   - Add tests for new behaviour, mocking HTTP with `respx`.
   - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|fec|polls|tec|trackaipac`.
 - `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address.

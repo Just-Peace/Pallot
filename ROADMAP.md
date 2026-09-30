@@ -21,18 +21,7 @@ Nothing open right now.
 
 ## Tooling
 
-### 1. Faster tests
-
-The offline suite takes about two minutes: 297 tests ran in 115 s on the development machine. Measure first with `uv run pytest --durations=20`. The likely causes:
-- **Real throttling.** Each test's app uses `HttpCache`'s real `min_interval`, so its waits between calls to one source really happen. For the FEC that's 0.1 s between calls, and a ballot lookup with an FEC key makes dozens of calls. Most ballot tests start with an empty cache, so each one waits seconds.
-
-  Fix: let `create_app` take the intervals, and have the tests' `make_app` pass none. Keep one test that checks the throttling itself.
-- **A new app for every test.** Each one copies the TrackAIPAC and TEC fixture snapshots into a new data folder and parses them again. Tests that only read could share one app per module.
-- **One process.** Each test has its own temporary data folder, so the tests could run in parallel with `pytest-xdist` (`-n auto`).
-
-Aim for under 30 seconds, so running the whole suite before every commit stays cheap.
-
-### 2. GitHub Actions
+### 1. GitHub Actions
 
 Nothing runs the tests automatically yet. Add a workflow under `.github/workflows/`:
 - **The tests.** On every pull request into `develop` and every push to it, run `uv sync --locked`, then `uv run pytest`.
@@ -402,3 +391,16 @@ The three minor bugs found while building #14 and #15.
   - Bug 2 is fixed in `tec.cards`, as suggested. Moving Ballotpedia's county courts to the `county` group would also have moved them on the ballot.
   - "SBOE seat not up" (`not_up`) still comes only from the Texas SOS's races, as for the State Senate.
   - The branch is `fix/three-roadmap-bugs`, since `fix/roadmap-bugs` is #10's.
+
+### Faster tests ([#17](https://github.com/Fahd-Siddiqui/VoteBot/pull/17), Sep 30)
+
+What was Tooling 1. On the development machine (8 cores, the repo on WSL's `/mnt/c`), the offline suite took 163 s for 386 tests. It now takes 25 to 29 s, and 68 s in one process (`-n 0`).
+- [x] No waits between calls in the tests. The intervals are a constant (`MIN_INTERVAL` in `api.py`) that `create_app` takes as `min_interval`, and the tests' `make_app` passes none. That was about 96 s: a first Capitol lookup makes 28 FEC calls, which queued at 0.1 s each, so every ballot test waited about 2.4 s. `test_calls_to_one_source_are_spaced_out` checks the throttling itself, and the live tests keep the real intervals.
+- [x] The tests run in parallel with `pytest-xdist`, one worker per CPU (`-n auto --dist loadgroup` in `addopts`). The live tests share one worker (`xdist_group("live")`), so the real services still get one call at a time.
+- [x] `conftest.py` reads each recorded response once per process (`fixture_bytes`), along with the Capitol's point and the made-up SBOE zip. That saves about 70 ms on a first lookup, since reading a file on `/mnt/c` takes a few milliseconds.
+- [x] Decisions:
+  - No shared app per module. 75 of the app tests count calls starting from an empty cache, or make a source fail, so a shared app would make them depend on the order they run in, and that order changes under xdist. After the other changes it would have saved about 2 s.
+  - `-n auto` is the default, so the plain `uv run pytest` that AGENTS.md asks for is the fast one. 4, 6 and 8 workers took about the same time here: past 4, what limits the run is the laptop's CPU clock and `/mnt/c`.
+  - Two slow parts are left as they are:
+    - Each new app still builds the TEC name index, since that's production code.
+    - trackaipac_cache's refresh tests (about 0.8 s each, 14 s in all) still parse their 1 MB page every time, since the library is a copy of the maintainer's.

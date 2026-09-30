@@ -1,11 +1,13 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
-served through respx, and a VoteBot app on a temp data dir with "today" pinned, an FEC
-API key, and the TrackAIPAC and Texas Ethics Commission fixture snapshots."""
+served through respx, and a VoteBot app on a temp data dir with "today" pinned, no waits
+between calls to a source, an FEC API key, and the TrackAIPAC and Texas Ethics Commission
+fixture snapshots."""
 
 from __future__ import annotations
 
 import copy
 import datetime as dt
+import functools
 import io
 import json
 import re
@@ -38,10 +40,21 @@ SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}  # 
 PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only its bytes matter
 
 
+@functools.cache
+def fixture_bytes(name: str) -> bytes | None:
+    """A recorded response, read from disk once per process; None if there's no such file."""
+    path = FIXTURES / name
+    return path.read_bytes() if path.exists() else None
+
+
 def load(name: str) -> Any:
-    return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
+    raw = fixture_bytes(name)
+    if raw is None:
+        raise AssertionError(f"no fixture {name}")
+    return json.loads(raw)
 
 
+@functools.cache
 def capitol_point() -> tuple[float, float]:
     coords = load("census_capitol.json")["result"]["addressMatches"][0]["coordinates"]
     return coords["y"], coords["x"]
@@ -55,6 +68,7 @@ def hd93_census() -> dict[str, Any]:
     return data
 
 
+@functools.cache
 def sboe_zip() -> bytes:
     """A 15-district map: District 5 boxes in Austin, District 4 boxes in downtown Houston,
     the rest are tiny squares far away."""
@@ -76,12 +90,12 @@ def sboe_zip() -> bytes:
 
 
 def _file(name: str, default: Any = None) -> httpx.Response:
-    path = FIXTURES / name
-    if not path.exists():
+    raw = fixture_bytes(name)
+    if raw is None:
         if default is None:
             raise AssertionError(f"no fixture {name}")
         return httpx.Response(200, json=default)
-    return httpx.Response(200, content=path.read_bytes(), headers={"content-type": "application/json"})
+    return httpx.Response(200, content=raw, headers={"content-type": "application/json"})
 
 
 class Upstream:
@@ -166,7 +180,7 @@ class Upstream:
         if url.host == "www.sos.state.tx.us" and url.path == "/elections/voter/important-election-dates.shtml":
             if self.key_dates_status:
                 return httpx.Response(self.key_dates_status)
-            return httpx.Response(200, content=(FIXTURES / "sos_key_dates.html").read_bytes(),
+            return httpx.Response(200, content=fixture_bytes("sos_key_dates.html"),
                                   headers={"content-type": "text/html"})
         if url.host == "tigerweb.geo.census.gov":
             if self.tigerweb_status:
@@ -245,6 +259,7 @@ def make_app(tmp_path, upstream):
             trackaipac_refresh=refresh or fake_refresh,
             tec_bundled=FIXTURES / "tec",
             tec_refresh=tec_refresh or fake_tec_refresh,
+            min_interval={},
         )
 
     build.refreshed = refreshed
