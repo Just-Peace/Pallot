@@ -14,7 +14,10 @@ async function request(method, url, body, { signal } = {}) {
     if (error.name === "AbortError") throw error;
     throw new Error("Can't reach the VoteBot server. Is it still running?");
   }
-  const data = await response.json().catch(() => null);
+  const data = await response.json().catch((error) => {
+    if (error.name === "AbortError") throw error;
+    return null;
+  });
   if (!response.ok) {
     const detail = data?.detail;
     const message = Array.isArray(detail)

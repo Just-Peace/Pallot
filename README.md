@@ -137,7 +137,7 @@ Campaign money covers congressional races (FEC) and state races (TEC), which inc
 - appellate and district courts;
 - district attorneys.
 
-County candidates (county courts at law included), precinct, city and school candidates file with their county or city, so their races show none.
+County candidates (county courts at law and probate courts included), precinct, city and school candidates file with their county or city, so their races show none.
 
 What "raised" covers (the FAQ's "How are the FEC figures put together?" and "How are the Texas Ethics Commission figures put together?" go through every figure):
 - **TEC totals:** the reports whose period ends after the last November general election, excluding daily pre-election and special-session reports, whose money is reported again later.

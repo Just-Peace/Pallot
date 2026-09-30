@@ -13,25 +13,7 @@ What to fix, tidy up and build next, then what's already done. The open items co
 
 ## Bugs
 
-Most severe first.
-
-### 1. An abort during the body read comes back as `null` (minor)
-
-`request()` in [static/js/api.js:17](votebot/static/js/api.js#L17) reads the body with `response.json().catch(() => null)`. So when a call is aborted after its headers arrived but before its body did, it returns `null` instead of throwing the AbortError. `lookup()` in `ballot.js` checks its signal, so it's safe. But `ask()` in [static/js/suggest.js:86](votebot/static/js/suggest.js#L86) destructures the `null`, catches the TypeError and closes the suggestion box while the voter's newer request is still on its way, so the box can flicker.
-
-Fix: in `request()`, rethrow an AbortError from `response.json()` and turn only other errors into `null`.
-
-### 2. County courts on Ballotpedia-only ballots get Texas Ethics Commission matches by name (minor)
-
-With Texas SOS off, Ballotpedia lists county courts at law and probate courts ("Travis County Court at Law No. 1") under "Judicial District", so their races are in the `judicial` group. `bp_seat` finds no seat for them, and `tec.cards` ([votebot/sources/tec.py:545](votebot/sources/tec.py#L545)) still matches their candidates by name against every filer in Texas, since `judicial` is one of the state groups. Their judges file with the county, and the Texas SOS path leaves those races out, so a namesake elsewhere in Texas could show up as a "likely" TEC card.
-
-Fix: in `tec.cards`, skip a Ballotpedia race whose office is a county court or a probate court, as `tec_seat` does for the SOS's county courts.
-
-### 3. No State Board of Education district with Texas SOS off (minor)
-
-The SBOE lookup (`_sboe`, [votebot/ballot.py:407](votebot/ballot.py#L407)) only runs inside the Texas SOS path, alongside the county's ballot order ([ballot.py:379](votebot/ballot.py#L379)), and `Districts.sboe` is taken from its result ([ballot.py:269](votebot/ballot.py#L269)). So with Texas SOS off, or when the SOS doesn't know the county, Your districts shows "SBOE —" and the district map has no SBOE outline, although the PLANE2106 map is on the server and always on.
-
-Fix: in `_Builder.run`, start `_sboe(place)` beside the SOS and Ballotpedia work rather than inside `_sos`, and set `sboe=` from it whatever the SOS answered.
+Nothing open right now.
 
 ## Improvements
 
@@ -376,7 +358,7 @@ The six improvements from the September review, UI feedback on the top of the ba
 - [x] The tabs in Details, and the badges on a candidate's row, come in one order: the money (the FEC, or the TEC for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC (`CARD_ORDER` in `enrich.py`), and Details opens on the first. The order is set on the server, so the API's card order stays the order shown.
 - [x] A [Reviews](#reviews) section in this roadmap: backend, frontend code, UX and security.
 - [x] A [Spot checks](#spot-checks) section: the ballot against VoteTexas.gov and Ballotpedia, and the TrackAIPAC, campaign finance and poll figures against their sites, once by hand and once by an LLM.
-- [x] Found along the way: [Bug 2](#bugs), county courts on Ballotpedia-only ballots.
+- [x] Found along the way: county courts on Ballotpedia-only ballots, fixed in [#16](#roadmap-bugs-13-16-sep-30).
 
 ### Map of your districts ([#15](https://github.com/Fahd-Siddiqui/VoteBot/pull/15), Sep 30)
 
@@ -408,4 +390,15 @@ What was Feature 12: a street map with the voter's districts on it, always under
   - outlines simplified to about 50 m, both TIGERweb's and the SBOE's, so shared boundaries still meet when zoomed to a State House district;
   - four colours with no party blue or red (violet, orange, teal, plum), checked for colour blindness across every pair and for 3:1 contrast against the panel colour in light and dark mode, each with its own dash (solid, dashed, dotted, dash-dot) and a halo in the panel colour, so the contrast holds over the streets.
 - [x] README, DEVELOPMENT, FAQ ("What does the map of my districts show?", and TIGERweb and OpenStreetMap's tile server in "Why is a source paused?"), About, Privacy, AGENTS.md (a rule for OpenStreetMap's tiles, and where a copied-in library goes) and the welcome steps updated. `scripts/record_fixtures.py --only tigerweb` records the new fixtures.
-- [x] Found along the way: [Bug 3](#bugs), no SBOE district with Texas SOS off.
+- [x] Found along the way: no SBOE district with Texas SOS off, fixed in [#16](#roadmap-bugs-13-16-sep-30).
+
+### Roadmap bugs 1–3 ([#16](https://github.com/Fahd-Siddiqui/VoteBot/pull/16), Sep 30)
+
+The three minor bugs found while building #14 and #15.
+- [x] An address-suggestion call cancelled after its headers arrived, but before its body did, no longer comes back as `null`. `request()` in `api.js` now passes on the AbortError from `response.json()`, and still turns other errors into `null`. So the suggestion box no longer closes, and flickers, while the voter's newer request is on its way.
+- [x] On a ballot from Ballotpedia alone (Texas SOS off), county courts at law and probate courts no longer get a Texas Ethics Commission card matched by name. Ballotpedia lists them as judicial districts, but their judges file with the county, so a namesake elsewhere in Texas could show up as a "likely" match. `tec.cards` now leaves them out (`_BP_COUNTY_COURT`), as it does the Texas SOS's county courts. Criminal district courts are state courts, so they keep their TEC cards.
+- [x] The State Board of Education district is known whichever ballot source is on. The lookup (`_sboe`) runs beside the Texas SOS and Ballotpedia work instead of inside the SOS path, so with Texas SOS off, or when the SOS doesn't list the county, Your districts shows the SBOE district and the map draws its outline. `SosData.sboe` is gone. When the map can't be loaded, the warning now says the SBOE district isn't known, which is true on both paths.
+- [x] Decisions:
+  - Bug 2 is fixed in `tec.cards`, as suggested. Moving Ballotpedia's county courts to the `county` group would also have moved them on the ballot.
+  - "SBOE seat not up" (`not_up`) still comes only from the Texas SOS's races, as for the State Senate.
+  - The branch is `fix/three-roadmap-bugs`, since `fix/roadmap-bugs` is #10's.

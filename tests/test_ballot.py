@@ -191,6 +191,7 @@ def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):
     ballot = get_ballot(client)
     assert upstream.count("goelect") == 0
     assert ballot["elections"][0]["name"] == "Ballotpedia sample ballot"
+    assert ballot["districts"]["sboe"] == 5  # from the SBOE map, which doesn't need Texas SOS
     senate = find_race(ballot, "U.S. Senate Texas")
     assert senate["seat"] == "TX-SEN" and senate["candidates"][0]["ballot_position"] is None
     assert any(c["write_in"] for c in senate["candidates"])

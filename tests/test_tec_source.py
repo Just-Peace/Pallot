@@ -257,6 +257,28 @@ def test_a_ballotpedia_race_takes_its_seat_from_ballotpedia(tmp_path):
     assert not tec.cards(source, [rep], {}, "Travis").candidates  # with no seat, two Jane Does and nothing to decide
 
 
+@pytest.mark.parametrize(
+    ("office", "district_name", "matched"),
+    [
+        ("Travis County Court at Law No. 1", "Travis County Court at Law, Texas", False),
+        ("Travis County Probate Court No. 1", "Travis County Probate Court, Texas", False),
+        ("Harris County Criminal Court at Law No. 5", "Harris County Criminal Court at Law, Texas", False),
+        ("Dallas County Criminal District Court No. 3", "Dallas County Criminal District Court 3", True),  # a state court
+    ],
+)
+def test_ballotpedia_county_courts_get_no_tec_card(tmp_path, office, district_name, matched):
+    """Ballotpedia lists them as judicial districts, but their judges file with the county, so
+    a Jane Doe elsewhere in Texas mustn't be matched to one by name."""
+    source = tec.Tec(tmp_path / "data", bundled_dir=snapshot_dir(tmp_path, [jane()]))
+    source.ensure_seeded()
+    ballot = BpBallot(None, (bp_race(office, "Judicial District", district_name, race_id=7),), (), {}, 0.0)
+    court = race(office, ["Jane Doe"], group="judicial", key="bp:7")
+    cards = tec.cards(source, [court], {}, "Dallas" if office.startswith("Dallas") else "Travis", ballot)
+    assert ("bp:7:0" in cards.candidates) is matched
+    if matched:
+        assert cards.candidates["bp:7:0"].match.confidence == "likely"
+
+
 def test_no_snapshot_means_no_cards(tmp_path):
     source = tec.Tec(tmp_path / "data", bundled_dir=tmp_path / "missing")
     assert not source.ensure_seeded()

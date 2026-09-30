@@ -153,6 +153,7 @@ _BP_STATEWIDE = (
     (r"\bSUPREME COURT\b.*\bCHIEF JUSTICE\b", "CHIEFJUSTICE_SC"),
     (r"\bCOURT OF CRIMINAL APPEALS\b.*\bPRESIDING JUDGE\b", "PRESIDINGJUDGE_COCA"),
 )
+_BP_COUNTY_COURT = re.compile(r"\bCOUNTY (?:CIVIL |CRIMINAL )?COURT\b|\bPROBATE COURT\b", re.IGNORECASE)
 _ORDINALS = {word: n for n, word in enumerate(
     ("FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "SEVENTH", "EIGHTH", "NINTH", "TENTH", "ELEVENTH",
      "TWELFTH", "THIRTEENTH", "FOURTEENTH", "FIFTEENTH"), start=1)}
@@ -531,7 +532,9 @@ def cards(
 ) -> CardSet:
     """Cards for candidates in state races (statewide, legislature, SBOE, appellate and
     district courts, DAs) found in the snapshot, and a money comparison for each such race.
-    A race's seat comes from its Texas SOS office (``scopes``), or else from Ballotpedia's."""
+    A race's seat comes from its Texas SOS office (``scopes``), or else from Ballotpedia's.
+    Ballotpedia lists county and probate courts as judicial districts, but their judges file
+    with the county, so those races are left out as the SOS's county courts are."""
     document = tec.document()
     out = CardSet()
     if not document.get("filers"):
@@ -542,7 +545,8 @@ def cards(
     for race in races:
         scope, bp_race = scopes.get(race.key), bp_races.get(race.key)
         seat = tec_seat(scope, county) if scope else bp_seat(bp_race, county) if bp_race else None
-        if race.group == "federal" or (seat is None and race.group not in STATE_GROUPS):
+        local = race.group not in STATE_GROUPS or bool(bp_race and _BP_COUNTY_COURT.search(bp_race.office))
+        if race.group == "federal" or (seat is None and local):
             continue
         found_rows: dict[str, dict[str, Any]] = {}
         found_outside: dict[str, dict[str, Any]] = {}
