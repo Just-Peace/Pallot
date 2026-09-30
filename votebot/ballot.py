@@ -1,8 +1,8 @@
 """Assemble one voter's ballot from the enabled sources.
 
-Official path: the Census gives the county and districts, the SBOE map adds the State
-Board of Education district, and the county's Texas SOS ballot order is filtered down to
-those districts. Ballotpedia adds city/school races and the voter's precincts, or supplies
+The Census gives the county and districts, and the SBOE map adds the State Board of
+Education district, whichever ballot source is on. Official path: the county's Texas SOS
+ballot order is filtered down to those districts. Ballotpedia adds city/school races and the voter's precincts, or supplies
 the whole ballot when the state source is off. Then every candidate gets a card from each
 enabled source (enrich.py).
 """
@@ -97,7 +97,6 @@ class Services:
 class SosData:
     county_id: int
     county_names: set[str]
-    sboe: int | None
     lookups: Lookups
     orders: list[tuple[Election, list[dict[str, Any]]]]
 
@@ -250,10 +249,11 @@ class _Builder:
             )
 
         elections, day = await self._elections()
-        sos_data, bp_ballot, deadlines = await asyncio.gather(
+        sos_data, bp_ballot, deadlines, sboe = await asyncio.gather(
             self._sos(elections, place) if elections else _nothing(),
             self._ballotpedia(place, day) if self.use_bp else _nothing(),
             self._key_dates() if self.use_key_dates else _nothing(),
+            self._sboe(place),
         )
         if sos_data is None and not (bp_ballot and bp_ballot.races):
             if "sos" in self.errors:
@@ -268,7 +268,7 @@ class _Builder:
             cd=place.cd,
             sd=place.sd,
             hd=place.hd,
-            sboe=sos_data.sboe if sos_data else None,
+            sboe=sboe,
             city_council=bp_ballot.city_council if bp_ballot else None,
             precinct_source=precinct_source,
             **precincts,
@@ -378,13 +378,11 @@ class _Builder:
             if county_id is None:
                 self.warnings.append(f"Texas SOS doesn't list {place.county} County.")
                 return None
-            *orders, sboe = await asyncio.gather(
-                *(self._rows(e, county_id, place.county) for e in elections), self._sboe(place)
-            )
+            orders = await asyncio.gather(*(self._rows(e, county_id, place.county) for e in elections))
         except UpstreamError as exc:
             self.errors["sos"] = str(exc)
             return None
-        return SosData(county_id, set(counties), sboe, lookups, list(zip(elections, orders)))
+        return SosData(county_id, set(counties), lookups, list(zip(elections, orders)))
 
     async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
         """The county's ballot order; when that's empty (special elections), the statewide
@@ -410,7 +408,7 @@ class _Builder:
         try:
             return await self.svc.sboe.district_at(place.lat, place.lon)
         except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile):
-            self.warnings.append("Couldn't load the State Board of Education map; SBOE races are listed as unconfirmed.")
+            self.warnings.append("Couldn't load the State Board of Education map, so your SBOE district isn't known.")
             return None
 
     async def _ballotpedia(self, place: Place, day: dt.date | None) -> BpBallot | None:
