@@ -8,7 +8,8 @@ from pathlib import Path
 from .fsutil import write_text_atomic
 
 DEFAULT_SOURCES: dict[str, bool] = {
-    "photon": True, "sos": True, "ballotpedia": True, "trackaipac": True, "fec": True, "tec": True, "polls": True,
+    "photon": True, "sos": True, "key_dates": True, "ballotpedia": True, "trackaipac": True, "fec": True, "tec": True,
+    "polls": True,
 }
 
 

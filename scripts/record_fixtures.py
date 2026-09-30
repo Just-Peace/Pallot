@@ -1,10 +1,11 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tec, trackaipac)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
-the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race).
+the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race),
+the key dates one (the Texas SOS's Important Election Dates page, kept as served).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -30,7 +31,7 @@ sys.path.insert(0, str(ROOT))
 
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
-from votebot.sources import ballotpedia, census, fec, nominatim, photon, polls, sos  # noqa: E402
+from votebot.sources import ballotpedia, census, fec, key_dates, nominatim, photon, polls, sos  # noqa: E402
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -184,6 +185,16 @@ def record_polls(client: httpx.Client) -> None:
         save(f"polls_{kind}.json", {"success": True, "count": len(texas + others), "data": texas + others})
 
 
+def record_key_dates(client: httpx.Client) -> None:
+    """The Important Election Dates page, byte for byte: the tests parse the real thing,
+    earlier years' commented-out tables included."""
+    response = client.get(key_dates.URL)
+    response.raise_for_status()
+    path = FIXTURES / "sos_key_dates.html"
+    path.write_bytes(response.content)
+    print(f"{path.name}: {path.stat().st_size:,} bytes ({response.headers.get('content-type')})")
+
+
 def record_tec() -> None:
     """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
     bundled = ROOT / "tec_cache" / "data"
@@ -213,7 +224,7 @@ def record_trackaipac() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "tec", "trackaipac"),
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tec", "trackaipac"),
                         help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
@@ -226,6 +237,8 @@ def main(argv: list[str] | None = None) -> int:
             record_fec(client, config.fec_api_key)
         if only in (None, "polls"):
             record_polls(client)
+        if only in (None, "key_dates"):
+            record_key_dates(client)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

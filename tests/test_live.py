@@ -13,7 +13,7 @@ from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
 from votebot.api import create_app
 from votebot.config import DEMO_KEY, Config, load_config
-from votebot.sources import fec, polls
+from votebot.sources import fec, key_dates, polls
 
 pytestmark = pytest.mark.live
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
@@ -74,3 +74,12 @@ def test_polls_live():
     assert texas and texas[0]["pollster_id"] and texas[0]["end_date"]
     answers = [a for row in texas for q in row["questions"] for a in q["answers"]]
     assert any(a["candidate"]["name"] and isinstance(a["pct"], (int, float)) for a in answers)
+
+
+def test_key_dates_live():
+    """The Texas SOS's Important Election Dates page still parses into elections with deadlines."""
+    response = httpx.get(key_dates.URL, timeout=60, follow_redirects=True)
+    response.raise_for_status()
+    found = key_dates.parse(response.text)
+    assert found and all(d.register_by and d.register_by < d.day for d in found)
+    assert any(d.early_start and d.early_end and d.mail_apply_by for d in found)

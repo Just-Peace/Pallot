@@ -37,6 +37,8 @@ class Ttls:
     fec_backoff: int = HOUR  # after the FEC's rate limit, stop asking for this long
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
+    key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
+    key_dates_backoff: int = HOUR  # after that page is refused us, stop asking for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
 
 

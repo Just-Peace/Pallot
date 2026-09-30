@@ -15,13 +15,14 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import __version__
+from . import __version__, ics
 from .admin import Admin, AdminError
 from .ballot import BallotError, Services, build_ballot, election_dates
 from .config import Config, load_config
 from .http_cache import HttpCache, UpstreamError
 from .models import ActionResult, Ballot, BallotRequest, ElectionDate, SourcesOverview, SourceToggle, SuggestResult
 from .settings import Settings
+from .sources import key_dates
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.fec import Fec
@@ -110,6 +111,7 @@ def create_app(
                     fec=Fec(cache, config.ttl, config.fec_api_key, today),
                     tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                     polls=Polls(cache, config.ttl, today),
+                    key_dates=key_dates.KeyDatesPage(cache, config.ttl),
                     today=today,
                 )
                 await asyncio.to_thread(svc.trackaipac.ensure_seeded)
@@ -157,6 +159,24 @@ def create_app(
             raise HTTPException(502, f"Texas SOS isn't responding ({exc}).") from exc
         response.headers["Cache-Control"] = "private, max-age=600"
         return dates
+
+    @app.get("/api/key-dates.ics")
+    async def key_dates_calendar(request: Request, date: dt.date, event: ics.EventId | None = None) -> Response:
+        """The key dates of the election on ``date`` as a calendar file: the one ``event``, or
+        every date still to come (see ics.calendar)."""
+        svc = services(request)
+        if not svc.settings.enabled(key_dates.SOURCE):
+            raise HTTPException(404, "Key dates are turned off in Settings.")
+        try:
+            found = await svc.key_dates.on(date)
+        except UpstreamError as exc:
+            raise HTTPException(502, f"The Texas Secretary of State's website isn't responding ({exc}).") from exc
+        body = found and ics.calendar(found, today=svc.today(), stamp=dt.datetime.now(dt.timezone.utc), only=event)
+        if not body:
+            raise HTTPException(404, "The Texas Secretary of State lists no such date for this election.")
+        name = f"texas-election-{date.isoformat()}{f'-{event}' if event else ''}.ics"
+        return Response(body, media_type="text/calendar; charset=utf-8",
+                        headers={"Content-Disposition": f'attachment; filename="{name}"'})
 
     @app.get("/api/suggest", response_model=SuggestResult)
     async def suggest(request: Request, q: str = "") -> SuggestResult:

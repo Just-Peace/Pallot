@@ -24,7 +24,7 @@ import sqlite3
 import threading
 import time
 from collections import OrderedDict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Callable, Collection
 
@@ -61,16 +61,20 @@ class RequestSpec:
     params: dict[str, str] | None = None
     json: Any = None
     headers: dict[str, str] | None = None
+    as_text: bool = False  # the body as text (a web page), not parsed as JSON
 
     @property
     def key(self) -> str:
         """Identity of the request; headers are not part of it."""
         identity = {"method": self.method.upper(), "url": self.url, "params": self.params, "json": self.json}
+        if self.as_text:  # only when set, so the keys of JSON requests stay what they were
+            identity["as_text"] = True
         return hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
     def dumps(self) -> str:
         return json.dumps(
-            {"method": self.method, "url": self.url, "params": self.params, "json": self.json, "headers": self.headers},
+            {"method": self.method, "url": self.url, "params": self.params, "json": self.json, "headers": self.headers,
+             "as_text": self.as_text},
             sort_keys=True,
         )
 
@@ -259,6 +263,10 @@ class HttpCache:
         result = await asyncio.shield(task)
         return self._hit(source, result) if joined else result
 
+    async def get_text(self, source: str, spec: RequestSpec, *, ttl: float) -> Cached:
+        """get_json for a web page: the value is the response body as a string."""
+        return await self.get_json(source, replace(spec, as_text=True), ttl=ttl)
+
     def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
         """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
         self._pause_on[source] = (frozenset(statuses), seconds)
@@ -307,7 +315,7 @@ class HttpCache:
         headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
         response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=headers)
         response.raise_for_status()
-        return response.json()
+        return response.text if spec.as_text else response.json()
 
     async def _throttle(self, source: str) -> None:
         interval = self._min_interval.get(source)

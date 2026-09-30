@@ -11,7 +11,7 @@ import httpx
 from .ballot import Services
 from .http_cache import describe_error
 from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
-from .sources import ballotpedia, fec, photon, polls, sos, tec, trackaipac
+from .sources import ballotpedia, fec, key_dates, photon, polls, sos, tec, trackaipac
 from .text import display_date, display_time, iso_utc
 
 
@@ -49,6 +49,7 @@ SOURCES = (
         "second. Continue?",
     ),
     SourceInfo(sos.SOURCE, "Texas Secretary of State", sos.DESCRIPTION, True, (sos.SOURCE,)),
+    SourceInfo(key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,)),
     SourceInfo(ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,)),
     SourceInfo(
         trackaipac.SOURCE,
@@ -161,6 +162,12 @@ class Admin:
             if until:
                 return (f"Paused until {display_time(until)} after FiftyPlusOne refused a request; "
                         "polls it already sent still show."), "warn"
+            return None, "info"
+        if source_id == key_dates.SOURCE:
+            until = self.svc.key_dates.paused_until()
+            if until:
+                return (f"Paused until {display_time(until)} after the Texas SOS website refused a request; "
+                        "dates it already sent still show."), "warn"
             return None, "info"
         if source_id == fec.SOURCE:
             until = self.svc.fec.paused_until()

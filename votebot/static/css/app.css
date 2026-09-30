@@ -387,6 +387,30 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .ballot-head h1 { margin: 0; }
 .ballot-head p { margin: 2px 0 0; }
 
+/* When to vote (key-dates.js): a date per line, the next one in bold, past ones dimmed; the
+   mail-ballot deadline apart, under a closed "Voting by mail?". */
+.key-dates { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px;
+  margin: 14px 0 4px; }
+.key-dates h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
+  margin: 0 0 8px; }
+.key-date-list { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 20px; margin: 0 0 10px; }
+.key-date { display: contents; }
+.key-date dt { color: var(--muted); }
+.key-date dd { margin: 0; }
+.key-date.next dt, .key-date.next dd { color: var(--text); font-weight: 700; }
+.key-date.passed dt, .key-date.passed dd { color: var(--muted); opacity: 0.75; }
+.key-date .when { margin-left: 10px; font-size: 0.85rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.key-date.passed .when { color: inherit; font-weight: 400; }
+.cal-link { display: inline-flex; vertical-align: -2px; margin-left: 5px; padding: 1px; color: var(--muted); }
+.cal-link:hover { color: var(--accent); }
+.cal-link .icon, .key-links .icon { width: 15px; height: 15px; }
+.key-links { margin: 0; font-size: 0.9rem; }
+.key-links a.with-icon { gap: 5px; vertical-align: bottom; }
+.mail-voting { margin-top: 8px; font-size: 0.9rem; }
+.mail-voting > summary { cursor: pointer; color: var(--accent); font-weight: 600; width: max-content; }
+.mail-voting p { margin: 6px 0 0; max-width: 70ch; }
+.key-dates .fine { margin-top: 10px; }
+
 .progress-strip {
   position: sticky;
   top: 0;
@@ -833,6 +857,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   .print-sheet .wallet-card { width: 3.5in; padding: 8pt 9pt; border: 1px dashed #000; font-size: 7.5pt; line-height: 1.3; }
   .print-sheet .wallet-card h1 { font-size: 10pt; margin: 0 0 2pt; }
   .print-sheet .wallet-card .wallet-day { font-size: 8pt; font-weight: 700; margin: 0 0 4pt; padding-bottom: 4pt; border-bottom: 1px solid #000; }
+  .print-sheet .wallet-early { font-weight: 400; }
   .print-sheet .wallet-card h2 { font-size: 6.5pt; margin: 5pt 0 1pt; }
   .print-sheet .wallet-card .wallet-line { margin: 0 0 1.5pt; break-inside: avoid; }
   .print-sheet .wallet-pick { font-weight: 700; }

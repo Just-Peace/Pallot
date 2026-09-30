@@ -62,6 +62,11 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
 - **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant.
+- **When to vote**, under the ballot's heading:
+  - the election's key dates from the Texas Secretary of State: the last day to register, early voting, and Election Day with the polls' hours. The next date still to come is in bold with how far off it is ("in 6 days"); past ones are dimmed.
+  - a calendar icon next to each date downloads it as a calendar file (`.ics`), and **Add all to calendar** downloads every date still to come. The events are all-day and have no place, since polling places aren't known. Importing a file again updates its events rather than adding copies.
+  - **Am I registered?** opens the state's My Voter Portal, which also shows your polling place once you log in. **Where to vote** links to the list of county elections offices.
+  - **Voting by mail?**, closed at first, says who can vote by mail in Texas and when the application must arrive (received, not postmarked), with its own calendar icon.
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
@@ -88,7 +93,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
   A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
-- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day.
+- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day and the early-voting dates.
 
 Picks, notes and collapsed races are kept in the browser's `localStorage`, never on the server.
 
@@ -101,6 +106,7 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | Photon (photon.komoot.io) | address suggestions while typing | OpenStreetMap data; free for reasonable use, no key |
 | Texas Legislative Council map (PLANE2106) | State Board of Education district | downloaded once |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
+| Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
 | Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with VoteBot (see [TrackAIPAC and TEC snapshots](#trackaipac-and-tec-snapshots)) |
 | FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. Without your own key, race totals only (see [The FEC key](#the-fec-key-optional)) |
@@ -137,12 +143,13 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - Ballotpedia: 24 hours
   - FEC: 7 days (a year for past elections)
   - polls: 24 hours
+  - key election dates: 24 hours
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
 - The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
-- If Ballotpedia, Photon or FiftyPlusOne refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If Ballotpedia, Photon, FiftyPlusOne or the Texas SOS's dates page refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
 
@@ -150,7 +157,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 
 The **Settings** page, linked from the left pane:
 - picks the web search engine;
-- turns address suggestions, Texas SOS, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
+- turns address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source, plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
@@ -180,7 +187,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper)` (Nominatim requires an identifying one) |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching) |
+| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, and `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request |
 
 ### Docker
 

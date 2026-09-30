@@ -2,6 +2,7 @@
 // page, or a wallet card to cut out.
 
 import { formatDate, h } from "./dom.js";
+import { earlyVotingText } from "./key-dates.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyName } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 
@@ -37,6 +38,12 @@ function electionLine(ballot) {
   return [day, ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · ");
 }
 
+// "Early voting: Mon, Oct 19 – Fri, Oct 30 · Polls open 7 a.m. – 7 p.m. on Election Day"
+function whenLine(ballot) {
+  const hours = STATES[ballot.location.state]?.pollHours;
+  return [earlyVotingText(ballot), hours && `Polls open ${hours} on Election Day`].filter(Boolean).join(" · ");
+}
+
 // The races to print, per section: those picked, and with ``includeBlank`` the rest (except
 // the ones that may not be on the ballot).
 function printedSections(ballot, picks, includeBlank) {
@@ -57,7 +64,8 @@ function printedMeasures(ballot, picks, includeBlank) {
 const voteText = (vote) => (vote === "for" ? "For" : "Against");
 
 // A card about 3.5 inches wide, to cut out along its dashed edge (and fold, if it's long):
-// the election day, then a line per race with the pick. No notes: they don't fit.
+// the election day and early voting, then a line per race with the pick. No notes: they
+// don't fit.
 function walletCard(ballot, picks, includeBlank) {
   const blocks = printedSections(ballot, picks, includeBlank).map(({ title, races }) => [
     h("h2", {}, title),
@@ -74,9 +82,10 @@ function walletCard(ballot, picks, includeBlank) {
       h("span", { class: "wallet-race" }, m.title, ": "),
       h("span", { class: vote ? "wallet-pick" : "wallet-pick blank" }, vote ? voteText(vote) : "")))]);
   }
+  const early = earlyVotingText(ballot, { short: true });
   return h("div", { class: "wallet-card" },
     h("h1", {}, "My ballot picks"),
-    h("p", { class: "wallet-day" }, electionLine(ballot)),
+    h("p", { class: "wallet-day" }, electionLine(ballot), early ? [h("br"), h("span", { class: "wallet-early" }, early)] : null),
     blocks.length ? blocks : h("p", {}, "No picks yet."),
     h("p", { class: "wallet-foot" }, `Made with VoteBot on ${formatDate(new Date().toISOString())}. Unofficial.`));
 }
@@ -122,11 +131,13 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
   const state = STATES[ballot.location.state];
   const tips = state?.printTips ?? ["Bring this sheet with you: many polling places don't allow phones in the voting booth."];
   const districts = districtLine(ballot.districts, { precinct: " Pct" });
+  const when = whenLine(ballot);
 
   sheet.replaceChildren(
     h("header", {},
       h("h1", {}, "My ballot picks"),
       h("p", { class: "election-day" }, electionLine(ballot)),
+      when ? h("p", {}, when) : null,
       h("p", {}, ballot.location.matched_address || ballot.location.input_address),
       districts ? h("p", { class: "small" }, districts) : null),
     ...(rows ? tables : [h("p", {}, "No picks yet. Pick candidates on the ballot page, then print again.")]),

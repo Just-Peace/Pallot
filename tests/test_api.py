@@ -26,9 +26,10 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "photon", "sos", "ballotpedia", "trackaipac", "fec", "tec",
-                                                       "polls"]
-    geocoding, photon, sos, _, tracker, fec, tec, polls = overview["sources"]
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "photon", "sos", "key_dates", "ballotpedia", "trackaipac",
+                                                       "fec", "tec", "polls"]
+    geocoding, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and photon["enabled"] is True
     assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
     assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"

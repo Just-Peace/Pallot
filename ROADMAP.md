@@ -94,12 +94,12 @@ Nothing runs the tests automatically yet. Add a workflow under `.github/workflow
 
 Up to ten, roughly in order of value to a voter. Items marked *(README)* were on the README's old "Not built yet" list.
 
-1. **Where and when to vote.** Right on the ballot page:
-   - the key dates: registration deadline, early voting, the last day to apply to vote by mail;
-   - a link to check your registration;
-   - the county elections office, with its sample ballot;
-   - early-voting and election-day locations, also on the printed sheet and the wallet card;
-   - an `.ics` file to add the dates to a calendar.
+1. **Where to vote.** "When to vote" is done (under [Done](#done)); what's left:
+   - **The county elections office**, with its sample ballot. The SOS publishes every county's elections official (name, address, phone, email) on [county.shtml](https://www.sos.state.tx.us/elections/voter/county.shtml), also as a spreadsheet (`election-duties-1.xlsx`), with no website column. Read it like the key dates (one cached page, `HttpCache.get_text`), and show the voter's county on the When to vote card instead of the link to the whole list.
+   - **Early-voting and Election Day locations**, also on the printed sheet and the wallet card. There's no free statewide lookup by address:
+     - My Voter Portal shows a voter's polling place only after a login with name and date of birth.
+     - Google's Civic Information API (`voterinfo`) still returns `pollingLocations` and `earlyVoteSites`. But it needs a key, its Texas coverage is uncertain, and it only fills in days before an election. If it's added, make it optional (like the FEC key), with the county office as the fallback.
+     - Counties publish their own lists, in different formats (Harris has an ArcGIS layer, most have PDFs or web apps). Not worth a scraper per county.
 2. **Incumbents' voting records** *(README)*. For Congress, the Congress.gov API, which takes the same api.data.gov key as the FEC. For the Texas Legislature, Open States.
 3. **District lean and past results** *(README: chances of winning)*. The Texas Legislative Council publishes election results for each district plan, on the same portal as the SBOE map. Show the last results for each seat (for example "2024: R+12 in this district"), plus race ratings where they're open.
 4. **Each candidate's top views** *(README)*. Opt-in, using an LLM with web search. A short summary with every claim cited, cached per candidate, and refreshed only on request.
@@ -255,7 +255,7 @@ What's been built so far, oldest first, taken from the git history. Each group i
   - the tests check them;
   - `precinct_source` and `school_district` are planned for the UI (see [UI and UX](#ui-and-ux)).
 
-### UI and UX (Sep 29, branch `feat/ui-ux`)
+### UI and UX ([#11](https://github.com/Fahd-Siddiqui/VoteBot/pull/11), Sep 29)
 
 - [x] On a phone or a narrow window, the left pane is a one-line top bar, with the address and the pages each behind a button (`topbar.js`, added to every page from JS). On the ballot, the section chips stay in view in the sticky strip, with the progress and Next; View, Clear picks and Print sit under the heading.
 - [x] The progress counts propositions too: "5 of 12 races · 1 of 2 propositions", in one bar.
@@ -272,3 +272,16 @@ What's been built so far, oldest first, taken from the git history. Each group i
 - [x] Fixed: after a lookup failed, the precinct forms looked up the address that failed, because `lastRequest` was set before the answer came back. The ballot now keeps the request behind the ballot on screen (`shownRequest`), set only when a lookup succeeds.
 - [x] Print: a wallet card to cut out and fold, and "Election day: <weekday, date>" at the top of both layouts. The polling place waits for [Feature 1](#features).
 - [x] Offline is deferred, with the reason written in [UI and UX](#ui-and-ux).
+
+### When to vote (Sep 29, branch `feat/when-to-vote`)
+
+The "when" half of [Feature 1](#features). "Where" isn't possible yet, because Texas's polling-place lookup needs a login.
+- [x] Key election dates from the Texas SOS's [Important Election Dates](https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml) page (`sources/key_dates.py`): the last day to register, early voting, and the last day for a mail-ballot application to arrive, for every election on the page. The page is read as text through `HttpCache` (new `get_text`), cached for a day, and parsed with the standard library. It has an on/off switch, Refresh and Clear in Settings, and pauses for an hour after a refusal. votetexas.gov was the other candidate, but it shows only day and month for the next election.
+- [x] "When to vote" at the top of the ballot (`key-dates.js`), as a compact list:
+  - register by, early voting, and Election Day with the polls' hours;
+  - the next date still to come in bold with how far off it is ("in 6 days"), and past ones dimmed;
+  - "Am I registered?" (My Voter Portal), "Where to vote" (the SOS's list of county elections offices), and the source.
+- [x] The mail-ballot deadline sits apart, in a closed "Voting by mail?" with who qualifies and how to apply, since most Texans can't vote by mail. It's never the bold "next" date, and "Add all to calendar" leaves it out.
+- [x] Calendar files (`GET /api/key-dates.ics`, `ics.py`): one per date from its calendar icon, or every date still to come with "Add all to calendar". The events are all-day, have no place, and have fixed UIDs, so adding a file again updates its events. votetexas.gov has no `.ics` of its own.
+- [x] Print: the full page and the wallet card add the early-voting dates under the election day, and the full page adds the polls' hours.
+- [x] FAQ: a "When and where to vote" group (where the dates come from, calendar files, why there's no polling place, voting by mail). README, DEVELOPMENT, About, Privacy and the welcome steps updated. The FAQ's "Why is a source paused?" now names FiftyPlusOne too, which it had left out.

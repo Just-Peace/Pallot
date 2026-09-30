@@ -57,8 +57,9 @@ def test_capitol_ballot(client):
     assert paxton["photo_url"]  # from Ballotpedia
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
-    assert statuses == {"geocoding": "used", "photon": None, "sos": "used", "ballotpedia": "used", "trackaipac": "used",
-                        "fec": "used", "tec": statuses["tec"], "polls": "used"}  # suggestions are only asked for while typing
+    assert statuses == {"geocoding": "used", "photon": None, "sos": "used", "key_dates": "used", "ballotpedia": "used",
+                        "trackaipac": "used", "fec": "used", "tec": statuses["tec"],
+                        "polls": "used"}  # suggestions are only asked for while typing
     assert ballot["warnings"] == []
 
 

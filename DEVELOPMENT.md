@@ -12,7 +12,7 @@ VoteBot is one Python process (FastAPI) serving a plain HTML/JS page from `voteb
 uv run votebot --reload                    # restart on code changes
 uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's and tec_cache's own tests
 uv run pytest -m live                      # smoke tests against the real services (the FEC one needs an FEC key)
-uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|polls|tec|trackaipac)
+uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|polls|key_dates|tec|trackaipac)
 ```
 
 Keep the default `127.0.0.1` binding (there is a `--host` option, but don't change it), because the Settings actions have no login. The Docker image is the one exception: it binds `0.0.0.0` inside the container, and `compose.yaml` decides where that's published.
@@ -32,12 +32,13 @@ votebot/
   http_cache.py     persistent request cache       enrich.py   adds each source's cards to candidates
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
-  sources/          census, nominatim, photon, sboe, sos, ballotpedia, trackaipac, fec, tec, polls
+  ics.py            calendar files of key dates
+  sources/          census, nominatim, photon, sboe, sos, key_dates, ballotpedia, trackaipac, fec, tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
                     compare.py: the Compare dialog's sections, shared by the FEC and TEC)
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
-                    css/app.css, js/ (ballot.js, suggest.js, compare.js, settings.js, page.js,
-                    topbar.js, toast.js, source-cards.js, print.js, …)
+                    css/app.css, js/ (ballot.js, key-dates.js, suggest.js, compare.js, settings.js,
+                    page.js, topbar.js, toast.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
@@ -51,6 +52,7 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 
 - Concurrent identical requests share one fetch.
 - Only answers that succeed are cached.
+- `get_json` stores the parsed JSON. `get_text` stores a web page's body as a string (`RequestSpec.as_text`), so Refresh fetches it as text again.
 - The lifetimes are `Ttls` in `votebot/config.py`, each overridable with `VOTEBOT_TTL_<NAME>`.
 
 ## Sources
@@ -58,9 +60,15 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 Notes on how each source is called, beyond the README's table:
 - **Photon:** Nominatim's policy forbids search-as-you-type, hence Photon for suggestions. Only results on a street matching what was typed are kept; without the house in OpenStreetMap, the typed number goes on the street.
 - **SBOE districts:** point-in-polygon in pure Python over the PLANE2106 map, downloaded once into `data/`.
+- **Key dates:** the Texas SOS's "Important Election Dates" page (`sources/key_dates.py`), fetched as text and parsed with the standard library's `HTMLParser`. Each election is a `<table class="norm-5px">`, titled by its `summary` attribute or its heading row ("Tuesday, November 3, 2026 - Uniform Election Date"); the ballot takes the table whose date is its election day. Its quirks:
+  - earlier years' tables are still in the page, inside HTML comments, which the parser skips;
+  - labels vary between tables ("First Day of Early Voting" or "… by Personal Appearance"), so a row is known by how its label starts, and look-alikes ("Last Day for Candidates … to Register to Vote", "First day to apply for a ballot by mail") are left out;
+  - a date cell can add a footnote, a note or a time after the date, so the first full date in it is taken.
+
+  `GET /api/key-dates.ics?date=…[&event=…]` builds the calendar files (`ics.py`). Without `event`, the mail-ballot deadline is left out, since most voters can't vote by mail.
 - **Ballotpedia:** an unofficial endpoint that needs Ballotpedia's own origin header.
 - **FiftyPlusOne:** the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's.
-- **State-specific text** (the official elections site, the print sheet's voting rules) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
+- **State-specific text** (the official elections site, the registration check, who can vote by mail, the polls' hours, the print sheet's voting rules) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
 
 ## The pages
 
