@@ -36,9 +36,9 @@ votebot/
   sources/          census, nominatim, photon, sboe, sos, key_dates, ballotpedia, trackaipac, fec, tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
                     compare.py: the Compare dialog's sections, shared by the FEC and TEC)
-  static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html,
+  static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html, favicon.svg,
                     css/app.css, js/ (ballot.js, key-dates.js, suggest.js, compare.js, settings.js,
-                    page.js, topbar.js, toast.js, source-cards.js, print.js, …)
+                    chrome.js, page.js, topbar.js, toast.js, source-cards.js, print.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
@@ -54,6 +54,14 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 - Only answers that succeed are cached.
 - `get_json` stores the parsed JSON. `get_text` stores a web page's body as a string (`RequestSpec.as_text`), so Refresh fetches it as text again.
 - The lifetimes are `Ttls` in `votebot/config.py`, each overridable with `VOTEBOT_TTL_<NAME>`.
+- Reading and writing a row (`_load`, `_store`) runs in a worker thread (`asyncio.to_thread`), and `self._lock` guards the SQLite connection and the in-memory copies. SQLite and file I/O release the GIL, so other requests (address suggestions typed during a first lookup, say) go on meanwhile. `json.loads` of a big value (the 2.6 MB candidate list) still holds the GIL while it parses, in C.
+- Expired rows stay, as the copy to serve when a source is down. At startup, `prune()` deletes what's no use even then, once it's been expired for `Ttls.prune_after` (30 days): Photon's rows (half-typed addresses), census and Nominatim rows stored with their shorter "not found" lifetime, and expired flags. It runs `VACUUM` when it deleted anything, so the typed text doesn't linger in free pages.
+
+Other work that would hold up the server runs in threads too:
+- `enrich.run` asks every card source at once (`asyncio.gather`); the ones with no I/O (Ballotpedia, TrackAIPAC, the TEC) build their cards in threads. The cards are then attached in `CARD_ORDER`, which is the order of the tabs in Details and of the badges on a candidate's row: the money (FEC or TEC), Texas SOS, polls, Ballotpedia, TrackAIPAC.
+- The SBOE point-in-polygon test (`SboeMap.district_at`).
+- `BundledSnapshot` (TrackAIPAC, TEC) is read from threads, so a lock makes each version of `current.json` parse once, and keeps a Reset's copy from being read half-written.
+- The Settings routes that only touch files (`GET /api/sources`, the on/off switch, Clear, Clear all) are plain `def`, which FastAPI runs in its thread pool.
 
 ## Sources
 
@@ -67,12 +75,15 @@ Notes on how each source is called, beyond the README's table:
 
   `GET /api/key-dates.ics?date=…[&event=…]` builds the calendar files (`ics.py`). Without `event`, the mail-ballot deadline is left out, since most voters can't vote by mail.
 - **Ballotpedia:** an unofficial endpoint that needs Ballotpedia's own origin header.
+- **TEC seats:** a Texas SOS race's seat comes from its office (`tec_seat`); on a ballot from Ballotpedia alone, from Ballotpedia's district type and office name (`bp_seat`: "State Legislative (Lower)" and "District 49" is `STATEREP:49`, "Texas Third District Court of Appeals Chief Justice" is `CHIEFJUSTICE_COA:3`). Without a seat, a match by name is only ever "likely".
 - **FiftyPlusOne:** the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's.
 - **State-specific text** (the official elections site, the registration check, who can vote by mail, the polls' hours, the print sheet's voting rules) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
 
 ## The pages
 
-At 960px and less (a phone), the left pane becomes a top bar. `topbar.js` adds its two buttons (the address and Menu) to whichever page loads it, so the five pages' copies of the left pane stay the same. On the ballot, `placeForWidth()` in `ballot.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. A `ResizeObserver` keeps `scroll-padding-top` at the strip's height, so links, Next and `j`/`k` land below it. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `votebot.ui.v1`.
+Every page has an empty `<aside class="sidebar">`, and `chrome.js` draws the left pane into it: the brand, "Your ballot", the address card, and the other pages from its `PAGES` list, marking the current one. The ballot page puts its own parts in the aside: the form and status line (`data-slot="address"`) go under the address card, and the section list (`#jump`) above the other pages. `page.js` and `ballot.js` import `chrome.js` first, so the pane exists before their own code looks for it. The favicon is `favicon.svg`.
+
+At 960px and less (a phone), the left pane becomes a top bar. `chrome.js` then calls `initTopBar()` in `topbar.js`, which adds its two buttons (the address and Menu). The empty aside is already the closed bar's height, so the page doesn't move when it's drawn. On the ballot, `placeForWidth()` in `ballot.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. A `ResizeObserver` keeps `scroll-padding-top` at the strip's height, so links, Next and `j`/`k` land below it. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `votebot.ui.v1`.
 
 Under the strip, `.ballot-top` holds When to vote (`key-dates.js`) and Your districts (`renderDistricts()` in `ballot.js`), side by side when there's room and stacked on a phone (flex-wrap, 340px each at least). The strip comes first so that Next and the section chips stay on a phone's first screen. The precinct form lives in the districts card, open by itself while a race waits on a missing number. It always sends both numbers, `null` for an empty field: `_precincts()` in `ballot.py` reads the request with `exclude_unset`, so a `null` clears Ballotpedia's number while a missing key keeps it. A JP number also sets the constable, and the other way round (`_jp_is_constable`), since each justice precinct elects one of each.
 
@@ -109,6 +120,6 @@ Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, 
 
 1. A module in `votebot/sources/` that fetches through `HttpCache` and builds cards.
 2. A field on `Services` in `ballot.py`, created in `api.py`'s startup.
-3. A line in `enrich.py`.
+3. A job in `enrich.py`, and its place in `CARD_ORDER` (where its tab goes in Details). A `cards()` without I/O runs through `asyncio.to_thread`.
 4. An entry in `admin.py` so it appears in Settings, and one in `DEFAULT_SOURCES` in `settings.py` if it can be turned off.
 5. A row in the tables on `static/privacy.html` (what the source is sent and kept) and `static/about.html`, and an answer in `static/faq.html` if it raises a question.

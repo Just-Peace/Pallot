@@ -17,8 +17,14 @@ export const STATES = {
   TX: {
     site: { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
     // My Voter Portal: a login with name and date of birth, which also shows the voter's polling place
-    registration: { label: "Am I registered?", url: "https://goelect.txelections.civixapps.com/ivis-mvp-ui/#/login" },
-    countyOffices: { label: "county elections offices", url: "https://www.sos.state.tx.us/elections/voter/county.shtml" },
+    registration: {
+      label: "Am I registered?", url: "https://goelect.txelections.civixapps.com/ivis-mvp-ui/#/login",
+      hint: "My Voter Portal (Texas SOS): your registration, and your polling place once you log in",
+    },
+    countyOffices: {
+      label: "Where to vote", url: "https://www.sos.state.tx.us/elections/voter/county.shtml",
+      hint: "Every county's elections office (Texas SOS); yours publishes where and when you can vote",
+    },
     mailApply: { label: "How to apply", url: "https://www.sos.state.tx.us/elections/voter/reqabbm.shtml" },
     mailEligibility: "Only if you're 65 or older, sick or disabled, away from your county for all of early voting and "
       + "Election Day, expecting to give birth around Election Day, or in jail but still eligible to vote.",

@@ -235,9 +235,6 @@ class Ballotpedia:
         self.ttl = ttl
         cache.pause_on(SOURCE, REFUSALS, ttl.ballotpedia_backoff)
 
-    def paused_until(self) -> float | None:
-        return self.cache.paused_until(SOURCE)
-
     async def ballot(self, lat: float, lon: float, day: dt.date | None = None) -> BpBallot:
         """The sample ballot at this point (from cache, also while paused if we have it)."""
         spec = RequestSpec(

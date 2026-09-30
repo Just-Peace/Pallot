@@ -140,6 +140,8 @@ p { margin: 0 0 0.75em; }
   background: var(--panel);
   border-right: 1px solid var(--line);
 }
+/* chrome.js draws the pane; until then, the page's own parts of it (the ballot's form) stay hidden. */
+.sidebar > :not(.side-inner) { display: none; }
 /* A column: "Your ballot" and the address at the top, Settings, FAQ, About and Privacy at the foot. */
 .side-inner { display: flex; flex-direction: column; gap: 18px; min-height: 100%; padding: 20px 20px 24px; }
 .brand { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem;
@@ -383,13 +385,13 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .ballot-head h1 { margin: 0; }
 .ballot-head p { margin: 2px 0 0; }
 
-.ballot-top { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px; margin: 8px 0 4px; }
+.ballot-top { display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; margin: 8px 0 4px; }
 .key-dates, .districts-card { display: flex; flex-direction: column; min-width: 0; background: var(--panel);
   border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; }
 .key-dates, .districts-card { flex: 1 1 340px; }
 .key-dates h2, .districts-card h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
   color: var(--muted); margin: 0 0 8px; }
-.key-dates .fine, .districts-card .fine { margin-top: 10px; }
+.key-dates .fine, .districts-card .fine { margin-top: auto; padding-top: 10px; }
 
 /* When to vote (key-dates.js): a date per line, the next one in bold, past ones in grey; the
    mail-ballot deadline apart, under a closed "Voting by mail?". */
@@ -403,17 +405,19 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .key-date.passed .when { color: inherit; font-weight: 400; }
 .cal-link { display: inline-flex; vertical-align: -2px; margin: -3.5px -3.5px -3.5px 1.5px; padding: 4.5px; color: var(--muted); }
 .cal-link:hover { color: var(--accent); }
-.cal-link .icon, .key-links .icon { width: 15px; height: 15px; }
-.key-links { margin: 0; font-size: 0.9rem; }
-.key-links a.with-icon { gap: 5px; vertical-align: bottom; }
-.mail-voting { margin-top: 8px; font-size: 0.9rem; }
+.cal-link .icon, .key-actions .icon { width: 15px; height: 15px; }
+.key-actions { margin: 2px 0 0; }
+.key-actions .btn { flex: 1 1 auto; justify-content: center; }
+.key-actions .icon { color: var(--accent); }
+.mail-voting { margin-top: 10px; font-size: 0.9rem; }
 .mail-voting > summary { cursor: pointer; color: var(--accent); font-weight: 600; width: max-content; }
 .mail-voting p { margin: 6px 0 0; max-width: 70ch; }
 
 .district-line { margin: 0 0 4px; font-size: 0.93rem; color: var(--muted); }
 .district { white-space: nowrap; }
 .district strong { color: var(--text); font-weight: 650; }
-.district strong.unknown { color: var(--muted); font-weight: 400; }
+.district strong.unknown, .district.not-up strong { color: var(--muted); font-weight: 400; }
+.district-note { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); }
 .district abbr { text-decoration: none; }
 .district-edit { margin-left: 4px; }
 .district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
@@ -777,7 +781,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 
 @media (max-width: 960px) {
   .app { display: block; }
-  .sidebar { position: static; height: auto; overflow: visible; border-right: 0; border-bottom: 1px solid var(--line); }
+  /* min-height: the closed top bar's height, so the page doesn't move when chrome.js draws it */
+  .sidebar { position: static; height: auto; min-height: 56px; overflow: visible; border-right: 0; border-bottom: 1px solid var(--line); }
   .side-inner { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 0; padding: 10px 16px; }
   .brand { font-size: 1.2rem; }
   .logo { width: 24px; height: 24px; }

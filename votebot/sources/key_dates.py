@@ -136,9 +136,6 @@ class KeyDatesPage:
         self._parsed: tuple[float, list[Deadlines]] | None = None
         cache.pause_on(SOURCE, REFUSALS, ttl.key_dates_backoff)
 
-    def paused_until(self) -> float | None:
-        return self.cache.paused_until(SOURCE)
-
     async def deadlines(self) -> list[Deadlines]:
         """Every election on the page, parsed once per fetched copy. UpstreamError when the
         page can't be had and nothing is cached."""

@@ -1,7 +1,7 @@
 // "When to vote" at the top of the ballot: the election's key dates from the Texas SOS
-// (ballot.key_dates), each with a calendar file, and the state's links for checking your
-// registration and finding where to vote. The mail-ballot deadline sits apart, in a closed
-// "Voting by mail?", since most voters can't vote by mail.
+// (ballot.key_dates), each with a calendar file, then a row of buttons: check your
+// registration, find where to vote, add every date to a calendar. The mail-ballot deadline
+// sits apart, in a closed "Voting by mail?", since most voters can't vote by mail.
 
 import { extLink, formatDate, h } from "./dom.js";
 import { icon } from "./icons.js";
@@ -92,19 +92,25 @@ export function keyDatesCard(ballot) {
   const dates = ballot.key_dates;
   const upcoming = dates && [dates.register_by, dates.early_voting_start, dates.early_voting_end, dates.election_day]
     .some((iso) => iso && daysUntil(iso) >= 0);
-  const links = [
-    state.site ? extLink(state.site.url, state.site.label) : null,
-    extLink(state.registration.url, state.registration.label),
-    ["Where to vote: ", extLink(state.countyOffices.url, state.countyOffices.label)],
-    upcoming ? h("a", { class: "with-icon", href: calendarHref(dates.election_day), download: "" }, icon("calendar"), "Add all to calendar") : null,
-  ].filter(Boolean);
+  const action = (link, iconName) =>
+    extLink(link.url, [icon(iconName), link.label], { class: "btn ghost small with-icon", title: link.hint });
+  const actions = [
+    action(state.registration, "user-check"),
+    action(state.countyOffices, "pin"),
+    upcoming
+      ? h("a", { class: "btn ghost small with-icon", href: calendarHref(dates.election_day), download: "" },
+        icon("calendar"), "Add all to calendar")
+      : null,
+  ];
+  const more = state.site ? [" More at ", extLink(state.site.url, state.site.label), "."] : [];
   return [
     h("h2", { id: "key-dates-title" }, "When to vote"),
     dates ? h("dl", { class: "key-date-list" }, dateRows(dates, state)) : null,
-    h("p", { class: "key-links" }, links.map((link, i) => [i ? " · " : "", link])),
+    h("div", { class: "button-row key-actions" }, actions),
     mailVoting(dates, state),
-    dates ? h("p", { class: "fine" }, "Dates from the ", extLink(dates.source_url, "Texas Secretary of State"),
-      ". Your county sets the places and hours for early voting.") : null,
+    h("p", { class: "fine" },
+      dates ? ["Dates from the ", extLink(dates.source_url, "Texas Secretary of State"), ". "] : null,
+      "Your county elections office sets where and when you vote.", more),
   ];
 }
 

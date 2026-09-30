@@ -67,18 +67,18 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
-- Under it, two cards, side by side on a wide screen and one above the other on a phone.
+- Under it, two cards, side by side (and as tall as each other) on a wide screen, and one above the other on a phone.
 - **When to vote:**
   - the election's key dates from the Texas Secretary of State: the last day to register, early voting, and Election Day with the polls' hours. The next date still to come is in bold with how far off it is ("in 6 days"); past ones are in grey.
   - a calendar icon next to each date downloads it as a calendar file (`.ics`), and **Add all to calendar** downloads every date still to come. The events are all-day and have no place, since polling places aren't known. Importing a file again updates its events rather than adding copies.
-  - **VoteTexas.gov** is the state's voter site. **Am I registered?** opens its My Voter Portal, which also shows your polling place once you log in. **Where to vote** links to the list of county elections offices.
+  - three buttons under the dates: **Am I registered?** opens the state's My Voter Portal, which also shows your polling place once you log in; **Where to vote** opens the list of county elections offices, since each county sets its own polling places; **Add all to calendar** (above). The card's source line links to **VoteTexas.gov**, the state's voter site.
   - **Voting by mail?**, closed at first, says who can vote by mail in Texas and when the application must arrive (received, not postmarked), with its own calendar icon.
 - **Your districts**, like your voter registration certificate, in three lines:
   - U.S. House, State Senate, State House and State Board of Education;
   - your county, with your commissioner precinct and your justice of the peace precinct (which is also your constable's);
   - your city, city council district and school district.
 
-  The precincts and the city council district come from Ballotpedia, when it has them. **Edit** changes the precincts, and **Use Ballotpedia's numbers** puts its numbers back. When races depend on a precinct VoteBot doesn't know, the fields are already open, and the card says which number to enter from your voter registration certificate. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to your precinct's races. If the address could only be placed approximately, the card says to check the districts.
+  A State Senate or State Board of Education seat that isn't up this time is in grey, with a line saying so ("State Senate 14 isn't up for election this time"). The precincts and the city council district come from Ballotpedia, when it has them. **Edit** changes the precincts, and **Use Ballotpedia's numbers** puts its numbers back. When races depend on a precinct VoteBot doesn't know, the fields are already open, and the card says which number to enter from your voter registration certificate. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to your precinct's races. If the address could only be placed approximately, the card says to check the districts.
 - **Precincts:** until your precincts are known, the races that depend on them are listed under "Depends on your precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
@@ -95,7 +95,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
 - **Each candidate has:**
   - a pick button
   - a note
-  - **Details**, with one tab per source. **‹** and **›** step through the race's other candidates without closing it.
+  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia and TrackAIPAC. It opens on the first. The badges on the candidate's row come in the same order. **‹** and **›** step through the race's other candidates without closing it.
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
   A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
@@ -134,7 +134,7 @@ What "raised" covers (the FAQ's "How are the FEC figures put together?" and "How
 - **TEC totals:** the reports whose period ends after the last November general election, excluding daily pre-election and special-session reports, whose money is reported again later.
 - **FEC totals:** the whole election period (two years for the House, six for the Senate).
 
-Candidates are matched across sources by name, with seat and party as corroboration. Every match is labelled **exact** or **likely**, and ambiguous ones are left unmatched. TrackAIPAC lists members of Congress by their current seat, so a 2026 seat change after the 2025 redistricting shows up as "likely" unless TrackAIPAC's entry mentions the new seat.
+Candidates are matched across sources by name, with seat and party as corroboration. Every match is labelled **exact** or **likely**, and ambiguous ones are left unmatched. With Texas SOS off, a state race's seat for the Texas Ethics Commission match comes from Ballotpedia's district ("Texas House of Representatives District 49" is State Representative, District 49), so a namesake elsewhere in Texas isn't taken for the candidate. TrackAIPAC lists members of Congress by their current seat, so a 2026 seat change after the 2025 redistricting shows up as "likely" unless TrackAIPAC's entry mentions the new seat.
 
 ## Caching
 
@@ -151,6 +151,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - polls: 24 hours
   - key election dates: 24 hours
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
+  - address suggestions, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
 - The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
@@ -193,7 +194,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper)` (Nominatim requires an identifying one) |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, and `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request |
+| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
 
 ### Docker
 

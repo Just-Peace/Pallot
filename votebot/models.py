@@ -197,6 +197,7 @@ class Districts(BaseModel):
     jp: int | None = None
     constable: int | None = None
     precinct_source: str | None = None  # "you" or "ballotpedia"
+    not_up: list[str] = Field(default_factory=list)  # the voter's districts ("sd", "sboe") whose seat isn't on this ballot
 
 
 class ElectionRef(BaseModel):

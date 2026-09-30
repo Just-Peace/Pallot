@@ -1,7 +1,9 @@
-// The ballot page. The left pane holds "Your ballot" with your address under it, the list of
-// sections, and links to the other pages at the bottom (on a phone, a top bar; see topbar.js);
-// the main area has the progress strip and the races, each one collapsible.
+// The ballot page. The left pane (chrome.js) holds "Your ballot" with your address and this
+// page's form under it, the list of sections, and links to the other pages at the bottom (on a
+// phone, a top bar; see topbar.js); the main area has the progress strip and the races, each
+// one collapsible.
 
+import "./chrome.js";
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { openCompare } from "./compare.js";
@@ -196,11 +198,19 @@ function renderAddress() {
   saveAddressCard(card); // the other pages show it too
 }
 
-function district(label, value) {
+function district(label, value, { notUp = false } = {}) {
   const shown = value == null
     ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, "not known"))
     : h("strong", {}, value);
-  return h("span", { class: "district" }, label ? [label, " "] : null, shown);
+  return h("span", { class: notUp ? "district not-up" : "district", title: notUp ? "Not up for election this time" : null },
+    label ? [label, " "] : null, shown);
+}
+
+const NOT_UP_LABELS = { sd: "State Senate", sboe: "SBOE" };
+function notUpNote(d) {
+  const names = (d.not_up || []).filter((kind) => d[kind] != null).map((kind) => `${NOT_UP_LABELS[kind]} ${d[kind]}`);
+  if (!names.length) return null;
+  return h("p", { class: "district-note" }, `${names.join(" and ")} ${names.length > 1 ? "aren't" : "isn't"} up for election this time.`);
 }
 
 function districtRow(...items) {
@@ -232,12 +242,14 @@ function renderDistricts() {
 
   const fromBallotpedia = [d.precinct_source === "ballotpedia" && "precincts", d.city_council && "city council"]
     .filter(Boolean).join(" and ");
+  const notUp = new Set(d.not_up || []);
   $("#districts-card").replaceChildren(...[
     h("h2", { id: "districts-card-title" }, "Your districts"),
     districtRow(
-      district("U.S. House", d.cd), district("State Senate", d.sd), district("State House", d.hd),
-      district(h("abbr", { title: "State Board of Education" }, "SBOE"), d.sboe),
+      district("U.S. House", d.cd), district("State Senate", d.sd, { notUp: notUp.has("sd") }), district("State House", d.hd),
+      district(h("abbr", { title: "State Board of Education" }, "SBOE"), d.sboe, { notUp: notUp.has("sboe") }),
     ),
+    notUpNote(d),
     countyRow,
     districtRow(
       location.city && district(null, location.city),

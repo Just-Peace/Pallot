@@ -1,14 +1,11 @@
 // Phones and narrow windows (960px and less): the left pane becomes a one-line top bar, with
-// the address and the page links each behind a button. The buttons are added from here, so
-// the five pages' copies of the left pane stay as they are; wider, the CSS hides them.
+// the address and the page links each behind a button. chrome.js draws the pane, then calls
+// initTopBar() to add the two buttons; wider, the CSS hides them.
 
 import { h } from "./dom.js";
 import { icon } from "./icons.js";
 
-const sidebar = document.querySelector(".sidebar");
-const addressPanel = sidebar?.querySelector(".side-address");
-const navs = [...(sidebar?.querySelectorAll(".site-nav") || [])];
-
+let sidebar = null;
 const addressLabel = h("span", { class: "topbar-address" }, "Your address");
 const buttons = {
   address: h("button", { type: "button", class: "topbar-btn", "aria-expanded": "false" }, icon("pin"), addressLabel),
@@ -29,7 +26,11 @@ export function setTopBarAddress(address) {
   buttons.address.title = address || "";
 }
 
-if (sidebar && addressPanel) {
+export function initTopBar(pane) {
+  const addressPanel = pane.querySelector(".side-address");
+  const navs = [...pane.querySelectorAll(".site-nav")];
+  if (!addressPanel) return;
+  sidebar = pane;
   addressPanel.id ||= "side-address";
   navs.forEach((nav, i) => { nav.id ||= `site-nav-${i + 1}`; });
   buttons.address.setAttribute("aria-controls", addressPanel.id);

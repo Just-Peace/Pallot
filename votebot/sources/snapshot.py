@@ -1,7 +1,8 @@
 """A data set that ships inside a package in this repo (trackaipac_cache, tec_cache) and is
 copied into VoteBot's data folder on first use. Lookups read the copy, reloading it when
 its file changes; only Refresh in Settings fetches anything, and Reset goes back to the
-bundled one.
+bundled one. Lookups and Settings read it from worker threads, so a lock makes them parse
+each version once and never read a file that Reset is still copying.
 """
 
 from __future__ import annotations
@@ -9,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import json
 import shutil
+import threading
 from importlib import resources
 from pathlib import Path
 from types import ModuleType
@@ -43,6 +45,7 @@ class BundledSnapshot:
         self._bundled_dir = bundled_dir
         self._doc: tuple[tuple[int, int], dict[str, Any]] | None = None
         self._indexes: dict[str, NameIndex] = {}
+        self._lock = threading.RLock()
         self.last_error: str | None = None  # why the last refresh failed, for Settings
 
     @property
@@ -60,21 +63,23 @@ class BundledSnapshot:
 
     def ensure_seeded(self) -> bool:
         """Copy in the package's bundled snapshot if we have no data yet; True if copied."""
-        if self.current_path.exists():
-            return False
-        with self._bundled() as source:
-            if not (source / "current.json").exists():
+        with self._lock:
+            if self.current_path.exists():
                 return False
-            shutil.copytree(source, self.data_dir, dirs_exist_ok=True)
-        return True
+            with self._bundled() as source:
+                if not (source / "current.json").exists():
+                    return False
+                shutil.copytree(source, self.data_dir, dirs_exist_ok=True)
+            return True
 
     def reset(self) -> None:
         """Throw away refreshed data and go back to the bundled snapshot."""
-        self._discard()
-        self._doc = None
-        self._indexes = {}
-        self.last_error = None
-        self.ensure_seeded()
+        with self._lock:
+            self._discard()
+            self._doc = None
+            self._indexes = {}
+            self.last_error = None
+            self.ensure_seeded()
 
     def _discard(self) -> None:
         raise NotImplementedError
@@ -103,13 +108,14 @@ class BundledSnapshot:
 
     def document(self) -> dict[str, Any]:
         """The parsed current.json, re-read only when the file changed."""
-        signature = self._signature()
-        if signature is None:
-            return dict(self.EMPTY)
-        if self._doc is None or self._doc[0] != signature:
-            self._doc = (signature, json.loads(self.current_path.read_text(encoding="utf-8")))
-            self._indexes = {}
-        return self._doc[1]
+        with self._lock:
+            signature = self._signature()
+            if signature is None:
+                return dict(self.EMPTY)
+            if self._doc is None or self._doc[0] != signature:
+                self._doc = (signature, json.loads(self.current_path.read_text(encoding="utf-8")))
+                self._indexes = {}
+            return self._doc[1]
 
     def meta(self) -> dict[str, Any]:
         try:
@@ -119,7 +125,8 @@ class BundledSnapshot:
 
     def _index(self, key: str, build: Callable[[dict[str, Any]], NameIndex]) -> NameIndex:
         """A name index over the document, built once per version of the file."""
-        document = self.document()  # (re)loads, clearing the indexes when the file changed
-        if key not in self._indexes:
-            self._indexes[key] = build(document)
-        return self._indexes[key]
+        with self._lock:
+            document = self.document()  # (re)loads, clearing the indexes when the file changed
+            if key not in self._indexes:
+                self._indexes[key] = build(document)
+            return self._indexes[key]

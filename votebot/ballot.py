@@ -522,10 +522,12 @@ class _Builder:
         return sorted(races, key=lambda r: GROUPS.index(r.group))
 
     def _district_notes(self, districts: Districts, elections: list[Election]) -> None:
-        for kind in ("sd", "sboe"):
-            number = getattr(districts, kind)
-            if number and (kind, number) not in self.included:
-                self.notes.append(f"{KIND_LABELS[kind]} District {number} (yours) isn't up for election on this ballot.")
+        """Say which of the voter's districts have no race here: State Senate and SBOE seats
+        that aren't up (shown in Your districts), and U.S. House and State House races that
+        should be in a general election but weren't found (a warning)."""
+        districts.not_up = [
+            kind for kind in ("sd", "sboe") if getattr(districts, kind) and (kind, getattr(districts, kind)) not in self.included
+        ]
         if any(e.type == "GE" for e in elections):
             for kind in ("cd", "hd"):  # every one of these seats is up in a general election
                 number = getattr(districts, kind)

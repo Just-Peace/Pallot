@@ -5,46 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VoteBot · FAQ</title>
   <meta name="description" content="Answers about VoteBot: what's on your ballot, where candidate information comes from, how the money figures are put together, and where your picks are kept.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b5a8a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/app.css">
   <script type="module" src="js/page.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to the questions</a>
   <div class="app">
-    <aside class="sidebar" aria-label="Your ballot, address and pages">
-      <div class="side-inner">
-        <a class="brand" href="./">
-          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/></svg>
-          <span class="brand-name">Vote<span>Bot</span></span>
-        </a>
-
-        <nav class="side-section site-nav" aria-label="Your ballot">
-          <ul>
-            <li><a href="./"><span data-icon="ballot"></span>Your ballot</a></li>
-          </ul>
-        </nav>
-
-        <section class="side-address" aria-labelledby="address-title">
-          <h2 class="side-title" id="address-title"><span data-icon="pin"></span>Your address</h2>
-          <div class="address-card" id="address-card" hidden>
-            <p class="address-line" id="address-line"></p>
-            <p class="muted small" id="address-sub"></p>
-            <a class="link-btn with-icon" href="./#change"><span data-icon="edit"></span>Change</a>
-          </div>
-          <p class="muted small" id="no-address"><a href="./">Enter your address</a> to see your ballot.</p>
-        </section>
-
-        <nav class="side-section site-nav side-bottom" aria-label="Settings and information">
-          <ul>
-            <li><a href="settings.html"><span data-icon="settings"></span>Settings</a></li>
-            <li><a href="faq.html" aria-current="page"><span data-icon="help"></span>FAQ</a></li>
-            <li><a href="about.html"><span data-icon="info"></span>About</a></li>
-            <li><a href="privacy.html"><span data-icon="shield"></span>Privacy</a></li>
-          </ul>
-        </nav>
-      </div>
-    </aside>
+    <aside class="sidebar" aria-label="Your ballot, address and pages"></aside>
 
     <main id="main" class="content">
       <header class="page-head">
@@ -195,7 +163,7 @@
         <details class="faq">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, you'll see its last copy with a "data as of" note.</p>
+            <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, you'll see its last copy with a "data as of" note. Address suggestions, and addresses that weren't found, are no use as an old copy, so VoteBot deletes them the first time it starts once they've been expired for 30 days.</p>
             <p>TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot and are only fetched again when you press Refresh; Settings shows how old each one is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
           </div>

@@ -5,11 +5,15 @@ from __future__ import annotations
 import json
 import re
 import threading
+import time
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
 from votebot.api import host_allowed
+from votebot.config import DAY
+from votebot.http_cache import HttpCache, RequestSpec
 from votebot.text import display_time
 
 from .conftest import get_ballot, load
@@ -186,19 +190,49 @@ def test_a_second_refresh_while_one_runs_is_refused(make_app):
 PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]
 
 
-@pytest.mark.parametrize("path", ["/", "/js/ballot.js", "/js/settings.js", "/js/page.js", "/js/address.js", "/js/icons.js", "/js/search.js", "/js/topbar.js", "/js/toast.js", "/css/app.css"])
+@pytest.mark.parametrize("path", ["/", "/favicon.svg", "/js/ballot.js", "/js/settings.js", "/js/page.js", "/js/chrome.js",
+                                  "/js/address.js", "/js/icons.js", "/js/search.js", "/js/topbar.js", "/js/toast.js",
+                                  "/css/app.css"])
 def test_static_pages(client, path):
     assert client.get(path).status_code == 200
 
 
 @pytest.mark.parametrize("page", PAGES)
-def test_every_page_has_the_same_left_pane_and_its_files_exist(client, page):
+def test_every_page_leaves_its_left_pane_to_chrome_js_and_its_files_exist(client, page):
     html = client.get(f"/{page}").text
-    navs = re.findall(r'<nav class="side-section site-nav[^"]*".*?</nav>', html, re.S)
-    # "Your ballot" at the top with the address under it; the other pages at the bottom
-    assert [re.findall(r'href="([^"]+)"', nav) for nav in navs] == [PAGES[:1], PAGES[1:]]
-    assert html.index(navs[0]) < html.index('id="address-card"') < html.index(navs[1])
-    assert re.findall(r'href="([^"]+)" aria-current="page"', "".join(navs)) == [page]
+    aside = re.search(r'<aside class="sidebar"[^>]*>(.*?)</aside>', html, re.S).group(1)
+    if page == "./":  # the ballot's own parts of the pane: its form and status line, and the section list
+        assert aside.count('data-slot="address"') == 2 and 'id="jump"' in aside and "address-card" not in aside
+    else:
+        assert not aside.strip()
+    assert f'<script type="module" src="js/{"ballot" if page == "./" else "page"}.js"></script>' in html
+    assert '<link rel="icon" href="favicon.svg" type="image/svg+xml">' in html
     local = {ref.split("#")[0] for ref in re.findall(r'(?:href|src)="([^"#:][^":]*)"', html)}
     for ref in local:
         assert client.get(f"/{ref}").status_code == 200, ref
+
+
+def test_the_left_pane_links_every_page(client):
+    chrome = client.get("/js/chrome.js").text
+    assert set(PAGES) <= set(re.findall(r'href: "([^"]+)"', chrome))
+
+
+def test_a_refusal_pauses_ballotpedia_and_settings_says_until_when(client, upstream):
+    upstream.ballotpedia_status = 403
+    get_ballot(client)  # from Texas SOS alone
+    row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "ballotpedia")
+    assert row["notice_tone"] == "warn" and row["notice"].startswith("Paused until ")
+    assert row["notice"].endswith(" after Ballotpedia refused a request; ballots it already sent still show.")
+
+
+def test_startup_deletes_old_suggestions_and_addresses_not_found(make_app, tmp_path):
+    long_ago = time.time() - 90 * DAY
+    cache = HttpCache(tmp_path / "data" / "cache.sqlite3", httpx.AsyncClient(), clock=lambda: long_ago)
+    for source, q, value in (("photon", "1100 congress", {"features": [1]}), ("census", "nowhere", {"result": {}}),
+                             ("census", "capitol", {"result": {"addressMatches": [1]}})):
+        cache._store(RequestSpec("GET", "https://example.test/", params={"q": q}), source, value, long_ago,
+                     30 * DAY, DAY, ("result", "addressMatches"))
+    cache.close()
+    with TestClient(make_app()) as client:
+        rows = {s["id"]: s["cache"]["entries"] for s in client.get("/api/sources").json()["sources"]}
+    assert (rows["photon"], rows["geocoding"]) == (0, 1)  # the address that was found stays, as a fallback
