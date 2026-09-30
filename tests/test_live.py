@@ -16,7 +16,7 @@ from votebot.config import DEMO_KEY, Config, load_config
 from votebot.sources import fec, key_dates, polls
 from votebot.sources.sboe import _inside
 
-pytestmark = pytest.mark.live
+pytestmark = [pytest.mark.live, pytest.mark.xdist_group("live")]  # one worker, so one call at a time
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
 
 

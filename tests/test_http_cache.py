@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import time
 
 import httpx
 import pytest
@@ -99,6 +100,26 @@ async def test_concurrent_requests_share_one_fetch(tmp_path):
             results = await asyncio.gather(*(cache.get_json("demo", SPEC, ttl=60) for _ in range(10)))
     assert {r.value["ok"] for r in results} == {True}
     assert route.call_count == 1
+
+
+async def test_calls_to_one_source_are_spaced_out(tmp_path):
+    asked: list[tuple[str, float]] = []
+
+    def answer(request):
+        asked.append((request.url.params["q"], time.monotonic()))
+        return httpx.Response(200, json={})
+
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=answer)
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, min_interval={"demo": 0.2})
+            await asyncio.gather(
+                *(cache.get_json("demo", RequestSpec("GET", URL, params={"q": f"demo{n}"}), ttl=60) for n in range(3)),
+                cache.get_json("other", RequestSpec("GET", URL, params={"q": "other"}), ttl=60),
+            )
+    assert [q for q, _ in asked].index("other") <= 1  # another source doesn't wait behind demo's queue
+    demo = [at for q, at in asked if q.startswith("demo")]
+    assert len(demo) == 3 and all(later - earlier >= 0.18 for earlier, later in zip(demo, demo[1:]))
 
 
 async def test_failed_refresh_serves_the_old_copy(tmp_path):

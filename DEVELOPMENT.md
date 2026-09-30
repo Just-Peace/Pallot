@@ -6,11 +6,12 @@ VoteBot is one Python process (FastAPI) serving a plain HTML/JS page from `voteb
 
 ## Commands
 
-`uv sync` installs VoteBot with the dev tools (pytest, respx), pinned by `uv.lock`.
+`uv sync` installs VoteBot with the dev tools (pytest, pytest-xdist, respx), pinned by `uv.lock`.
 
 ```bash
 uv run votebot --reload                    # restart on code changes
 uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's and tec_cache's own tests
+uv run pytest -n 0 --pdb                   # the same in one process, to use the debugger or see print()
 uv run pytest -m live                      # smoke tests against the real services (the FEC one needs an FEC key)
 uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|fec|polls|key_dates|tec|trackaipac)
 ```
@@ -23,6 +24,12 @@ A middleware in `api.py` guards the Settings actions from the voter's own browse
 - The tests' `make_app` allows `testserver`, TestClient's host name.
 
 The live tests and `record_fixtures.py` call the real services. With `DEMO_KEY`, the FEC's rate limit is shared by everything on your IP address, VoteBot itself included.
+
+How the tests run:
+- **In parallel.** `pytest-xdist` runs one worker per CPU (`-n auto --dist loadgroup` in `pyproject.toml`). Each test has its own data folder under `tmp_path`, so no test depends on another.
+- **The live tests, one at a time.** They share one worker (`xdist_group("live")`), so the real services never get more than one call at once.
+- **Without throttling waits.** The tests' `make_app` passes `min_interval={}`, so the calls to a source aren't spaced out. `test_calls_to_one_source_are_spaced_out` in `test_http_cache.py` checks the throttling itself. `uv run votebot` and the live tests use the real intervals, `MIN_INTERVAL` in `api.py`.
+- **Fixtures read once.** `conftest.py` keeps each recorded response in memory (`fixture_bytes`) for the rest of the run.
 
 ## Layout
 

@@ -23,7 +23,7 @@ trackaipac-cache = "trackaipac_cache.__main__:main"
 tec-cache = "tec_cache.__main__:main"
 
 [dependency-groups]
-dev = ["pytest>=8", "respx>=0.21"]  # installed by `uv sync`
+dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21"]  # installed by `uv sync`
 
 [tool.setuptools]
 packages = ["votebot", "votebot.sources", "trackaipac_cache", "tec_cache"]
@@ -36,6 +36,6 @@ tec_cache = ["data/*.json"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = '-m "not live"'
+addopts = '-m "not live" -n auto --dist loadgroup'
 markers = ["live: calls the real external APIs (run with: uv run pytest -m live)"]
 filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]

@@ -7,7 +7,7 @@ import datetime as dt
 import ipaddress
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Callable, Collection
+from typing import Any, Callable, Collection, Mapping
 from urllib.parse import urlsplit
 
 import httpx
@@ -41,6 +41,7 @@ from .sources.trackaipac import TrackAipac
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+MIN_INTERVAL = {"nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25}
 
 
 def _hostname(host: str) -> str:
@@ -83,6 +84,7 @@ def create_app(
     trackaipac_bundled: Path | None = None,
     tec_refresh: Callable[..., Any] | None = None,
     tec_bundled: Path | None = None,
+    min_interval: Mapping[str, float] = MIN_INTERVAL,
 ) -> FastAPI:
     config = config or load_config()
 
@@ -95,7 +97,7 @@ def create_app(
             cache = HttpCache(
                 config.cache_path,
                 client,
-                min_interval={"nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25},
+                min_interval=dict(min_interval),
                 source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
                 retry_after=config.ttl.retry_after,
             )
