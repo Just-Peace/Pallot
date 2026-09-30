@@ -172,10 +172,6 @@ p { margin: 0 0 0.75em; }
 .address-card { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; }
 .address-line { font-weight: 650; margin: 0 0 2px; overflow-wrap: anywhere; }
 .address-card .muted { margin: 0; }
-.districts { font-size: 0.8rem; color: var(--muted); margin: 8px 0 6px; }
-.districts:empty { display: none; }
-.districts .link-btn { font-size: inherit; padding: 0; }
-#precinct-edit .precinct-form { gap: 8px; margin: 4px 0 10px; }
 
 /* ---- forms and buttons ---- */
 
@@ -387,21 +383,25 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .ballot-head h1 { margin: 0; }
 .ballot-head p { margin: 2px 0 0; }
 
-/* When to vote (key-dates.js): a date per line, the next one in bold, past ones dimmed; the
+.ballot-top { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px; margin: 8px 0 4px; }
+.key-dates, .districts-card { display: flex; flex-direction: column; min-width: 0; background: var(--panel);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; }
+.key-dates, .districts-card { flex: 1 1 340px; }
+.key-dates h2, .districts-card h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--muted); margin: 0 0 8px; }
+.key-dates .fine, .districts-card .fine { margin-top: 10px; }
+
+/* When to vote (key-dates.js): a date per line, the next one in bold, past ones in grey; the
    mail-ballot deadline apart, under a closed "Voting by mail?". */
-.key-dates { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px;
-  margin: 14px 0 4px; }
-.key-dates h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
-  margin: 0 0 8px; }
 .key-date-list { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 20px; margin: 0 0 10px; }
 .key-date { display: contents; }
 .key-date dt { color: var(--muted); }
 .key-date dd { margin: 0; }
 .key-date.next dt, .key-date.next dd { color: var(--text); font-weight: 700; }
-.key-date.passed dt, .key-date.passed dd { color: var(--muted); opacity: 0.75; }
+.key-date.passed dt, .key-date.passed dd { color: var(--muted); }
 .key-date .when { margin-left: 10px; font-size: 0.85rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
 .key-date.passed .when { color: inherit; font-weight: 400; }
-.cal-link { display: inline-flex; vertical-align: -2px; margin-left: 5px; padding: 1px; color: var(--muted); }
+.cal-link { display: inline-flex; vertical-align: -2px; margin: -3.5px -3.5px -3.5px 1.5px; padding: 4.5px; color: var(--muted); }
 .cal-link:hover { color: var(--accent); }
 .cal-link .icon, .key-links .icon { width: 15px; height: 15px; }
 .key-links { margin: 0; font-size: 0.9rem; }
@@ -409,7 +409,22 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .mail-voting { margin-top: 8px; font-size: 0.9rem; }
 .mail-voting > summary { cursor: pointer; color: var(--accent); font-weight: 600; width: max-content; }
 .mail-voting p { margin: 6px 0 0; max-width: 70ch; }
-.key-dates .fine { margin-top: 10px; }
+
+.district-line { margin: 0 0 4px; font-size: 0.93rem; color: var(--muted); }
+.district { white-space: nowrap; }
+.district strong { color: var(--text); font-weight: 650; }
+.district strong.unknown { color: var(--muted); font-weight: 400; }
+.district abbr { text-decoration: none; }
+.district-edit { margin-left: 4px; }
+.district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
+  background: var(--warn-soft); color: var(--warn); }
+.precinct-prompt .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
+.precinct-form { margin: 10px 0 0; }
+.precinct-form fieldset { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 10px; padding: 0; border: 0; }
+.precinct-field { flex: 0 1 auto; font-size: 0.85rem; }
+.precinct-field input { width: 7ch; padding: 6px 8px; }
+.precinct-form .button-row { align-items: center; }
+.precinct-link { margin: 0 0 12px; }
 
 .progress-strip {
   position: sticky;
@@ -445,7 +460,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .menu-panel .check { font-size: 0.9rem; }
 
 /* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
-   section stays, for its explanation and precinct form). */
+   section stays, for its explanation and its link to the precinct form). */
 .race.hidden-picked { display: none; }
 .group:not(.maybe):not(:has(.race:not(.hidden-picked))) { display: none; }
 
@@ -580,7 +595,6 @@ a.badge-link:hover { text-decoration: underline; filter: brightness(0.96); }
 .note label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
 .saved { font-size: 0.8rem; color: var(--good); margin-left: 4px; }
 
-.precinct-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin: 12px 0 16px; }
 
 .measure .race-body p { margin: 6px 0; }
 .measure-options { display: flex; gap: 10px; margin-top: 8px; }

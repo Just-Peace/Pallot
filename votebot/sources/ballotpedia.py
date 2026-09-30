@@ -100,6 +100,7 @@ class BpBallot:
     measures: tuple[BpMeasure, ...]
     precincts: dict[str, int]
     fetched_at: float
+    city_council: str | None = None
 
 
 def _date(text: str | None) -> dt.date | None:
@@ -147,6 +148,12 @@ def precincts_in(district_name: str) -> dict[str, int]:
     if "constable" in name:
         found["constable"] = number
     return found
+
+
+def council_district_in(district_name: str) -> str | None:
+    name = district_name.strip()
+    match = re.search(r"\bcouncil\s+(\S.*)$", name, re.IGNORECASE)
+    return match.group(1) if match else name or None
 
 
 def _candidate(raw: dict[str, Any]) -> BpCandidate | None:
@@ -209,14 +216,17 @@ def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float) -> Bp
     races: list[BpRace] = []
     measures: list[BpMeasure] = []
     precincts: dict[str, int] = {}
+    city_council: str | None = None
     for district in chosen.get("districts") or []:
         district_type = district.get("type") or ""
         district_name = district.get("name") or ""
         if district_type == "County subdivision":
             precincts.update(precincts_in(district_name))
+        elif district_type == "City-town subdivision":
+            city_council = city_council or council_district_in(district_name)
         races += [_race(r, district_type, district_name) for r in district.get("races") or []]
         measures += [_measure(m, district_name) for m in district.get("ballot_measures") or []]
-    return BpBallot(_date(chosen.get("date")), tuple(races), tuple(measures), precincts, fetched_at)
+    return BpBallot(_date(chosen.get("date")), tuple(races), tuple(measures), precincts, fetched_at, city_council)
 
 
 class Ballotpedia:

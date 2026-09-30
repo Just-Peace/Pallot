@@ -30,9 +30,6 @@
           <div class="address-card" id="address-card" hidden>
             <p class="address-line" id="address-line"></p>
             <p class="muted small" id="address-sub"></p>
-            <p class="districts" id="address-districts"></p>
-            <p class="districts" id="address-precincts" hidden></p>
-            <div id="precinct-edit" hidden></div>
             <button class="link-btn with-icon" id="change-address" type="button"><span data-icon="edit"></span>Change</button>
           </div>
           <form id="lookup-form" class="lookup-form">
@@ -105,7 +102,6 @@
           <h1>Your ballot</h1>
           <p class="muted" id="ballot-sub"></p>
         </header>
-        <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
         <div class="progress-strip" id="progress-strip">
           <div class="progress-info">
             <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
@@ -127,6 +123,10 @@
             <button class="btn ghost small" id="clear-picks" type="button">Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
           </div>
+        </div>
+        <div class="ballot-top">
+          <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
+          <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
         </div>
         <div id="messages"></div>
         <div id="groups"></div>

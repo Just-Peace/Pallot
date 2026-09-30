@@ -5,6 +5,8 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
+from votebot.ballot import _jp_is_constable
+
 from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, last_use, load
 
 
@@ -20,6 +22,7 @@ def test_capitol_ballot(client):
     d = ballot["districts"]
     assert (d["county_id"], d["cd"], d["sd"], d["hd"], d["sboe"]) == (227, 10, 14, 49, 5)
     assert (d["jp"], d["constable"], d["commissioner"], d["precinct_source"]) == (5, 5, None, "ballotpedia")
+    assert d["city_council"] == "District 9"
     assert ballot["location"]["county"] == "Travis" and ballot["location"]["city"] == "Austin"
     assert (ballot["location"]["state"], ballot["location"]["state_name"]) == ("TX", "Texas")
 
@@ -203,6 +206,27 @@ def test_entered_precincts_narrow_the_ballot(client):
     assert not find_race(ballot, "County Commissioner Precinct 4")
     assert ballot["districts"]["precinct_source"] == "you"
     assert "precinct" not in [s["id"] for s in ballot["maybe"]]
+
+
+def test_an_emptied_precinct_overrides_ballotpedia(client):
+    ballot = get_ballot(client, precincts={"commissioner": None, "jp": None})
+    d = ballot["districts"]
+    assert (d["jp"], d["constable"], d["commissioner"], d["precinct_source"]) == (None, None, None, "you")
+    assert find_race(ballot, "Justice of the Peace Precinct 5", maybe=True)
+    assert not find_race(ballot, "Justice of the Peace Precinct 5")
+
+
+def test_one_number_for_jp_and_constable(client):
+    d = get_ballot(client, precincts={"jp": 3})["districts"]
+    assert (d["jp"], d["constable"], d["precinct_source"]) == (3, 3, "you")
+    assert _jp_is_constable({"constable": 4}) == {"constable": 4, "jp": 4}
+    assert _jp_is_constable({"jp": None}) == {"jp": None, "constable": None}
+    assert _jp_is_constable({"jp": 2, "constable": None}) == {"jp": 2, "constable": None}
+
+
+def test_commissioner_precincts_run_one_to_four(client):
+    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"], "precincts": {"commissioner": 5}})
+    assert response.status_code == 422
 
 
 def test_nominatim_fallback_is_marked_approximate(client):

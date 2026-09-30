@@ -8,7 +8,9 @@ import respx
 
 from votebot.config import Ttls
 from votebot.http_cache import HttpCache
-from votebot.sources.ballotpedia import URL, Ballotpedia, BallotpediaUnavailable, parse, precincts_in
+from votebot.sources.ballotpedia import (
+    URL, Ballotpedia, BallotpediaUnavailable, council_district_in, parse, precincts_in,
+)
 
 from .conftest import load
 
@@ -34,6 +36,14 @@ def test_precincts_come_from_county_subdivisions(ballot):
     assert precincts_in("Travis County") == {}
 
 
+def test_city_council_district_comes_from_city_subdivisions(ballot):
+    assert ballot.city_council == "District 9"
+    assert council_district_in("Houston City Council District C") == "District C"
+    assert council_district_in("Round Rock City Council Place 3") == "Place 3"
+    assert council_district_in("Ward 2") == "Ward 2"
+    assert council_district_in("") is None
+
+
 def test_race_details(ballot):
     senate = next(r for r in ballot.races if r.office == "U.S. Senate Texas")
     assert senate.group == "federal" and senate.seat == "TX-SEN"
@@ -45,7 +55,7 @@ def test_race_details(ballot):
 
 def test_a_date_with_no_ballotpedia_election_gives_an_empty_ballot():
     empty = parse(load("ballotpedia_capitol.json"), dt.date(2030, 1, 1), fetched_at=0.0)
-    assert empty.races == () and empty.precincts == {}
+    assert empty.races == () and empty.precincts == {} and empty.city_council is None
 
 
 @pytest.mark.anyio

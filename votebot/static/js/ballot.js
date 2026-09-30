@@ -6,9 +6,9 @@ import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { openCompare } from "./compare.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
-import { hydrateIcons } from "./icons.js";
+import { hydrateIcons, icon } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
-import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyPill } from "./labels.js";
+import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
 import {
   Picks, WRITE_IN, loadLastLookup, loadUi, saveAddressCard, saveLastLookup, saveUi, settingsStamp,
 } from "./picks.js";
@@ -50,6 +50,7 @@ let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
 let currentSection = null; // the id of the section marked as the one on screen
 let lastJumped = null; // the race "Next race to pick" went to last
+let editingPrecincts = false;
 
 // ---- status line (only while working, or when something went wrong) -------------------
 
@@ -130,6 +131,7 @@ async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
     shownRequest = request;
     saveLastLookup(request);
     picks = new Picks(ballot.election_date);
+    editingPrecincts = false;
     render();
     setStatus("");
     if (keepForm) cancelButton.hidden = false;
@@ -169,6 +171,7 @@ function render() {
   renderAddress();
   renderHeader();
   renderKeyDates();
+  renderDistricts();
   renderMessages();
   renderGroups();
   renderMaybe();
@@ -183,44 +186,127 @@ function render() {
 }
 
 function renderAddress() {
-  const { location, districts: d } = ballot;
-  const school = location.school_district?.replace(/\bIndependent School District\b/, "ISD");
+  const { location } = ballot;
   const card = {
     address: shownRequest.address,
     place: [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
-    districts: [districtLine(d), school].filter(Boolean).join(" · "),
     matched: location.matched_address || "",
   };
   showAddress(card);
   saveAddressCard(card); // the other pages show it too
-  renderPrecinctNote();
 }
 
-const PRECINCTS_FROM = { ballotpedia: "Precincts from Ballotpedia", you: "Precincts you entered" };
+function district(label, value) {
+  const shown = value == null
+    ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, "not known"))
+    : h("strong", {}, value);
+  return h("span", { class: "district" }, label ? [label, " "] : null, shown);
+}
 
-// Under the districts: where the precinct numbers came from, and a form to change them (with
-// every precinct known there's no "Depends on your precinct" section, and so no other form).
-function renderPrecinctNote() {
-  const note = $("#address-precincts");
-  const editor = $("#precinct-edit");
-  const from = PRECINCTS_FROM[ballot.districts.precinct_source];
-  note.hidden = !from;
-  editor.hidden = true;
-  editor.replaceChildren();
-  if (!from) return;
-  const edit = h("button", { type: "button", class: "link-btn", "aria-expanded": "false", "aria-controls": editor.id }, "Edit");
-  edit.addEventListener("click", () => {
-    const opening = editor.hidden;
-    editor.replaceChildren(opening ? precinctForm() : "");
-    editor.hidden = !opening;
-    edit.setAttribute("aria-expanded", String(opening));
-    if (opening) editor.querySelector("input").focus();
+function districtRow(...items) {
+  const shown = items.filter(Boolean);
+  return shown.length ? h("p", { class: "district-line" }, shown.map((item, i) => [i ? " · " : "", item])) : null;
+}
+
+function renderDistricts() {
+  const { location, districts: d } = ballot;
+  const jp = d.jp ?? d.constable;
+  const waiting = ballot.maybe.find((section) => section.id === "precinct");
+  const missing = [d.commissioner == null && "commissioner", jp == null && "justice of the peace"].filter(Boolean);
+  const prompted = Boolean(waiting) && missing.length > 0;
+  const school = location.school_district?.replace(/\bIndependent School District\b/, "ISD");
+
+  const countyRow = districtRow(
+    location.county && h("span", { class: "district" }, h("strong", {}, location.county), " County"),
+    district("Commissioner", d.commissioner),
+    district([h("abbr", { title: "Justice of the Peace" }, "JP"), " & Constable"], jp),
+  );
+  if (!prompted) {
+    const edit = h("button", {
+      type: "button", class: "link-btn with-icon district-edit", id: "districts-edit",
+      "aria-expanded": String(editingPrecincts), "aria-controls": "precinct-form",
+    }, icon("edit"), missing.length === 2 ? "Add precincts" : "Edit");
+    edit.addEventListener("click", () => setEditingPrecincts(!editingPrecincts));
+    countyRow.append(" ", edit);
+  }
+
+  const fromBallotpedia = [d.precinct_source === "ballotpedia" && "precincts", d.city_council && "city council"]
+    .filter(Boolean).join(" and ");
+  $("#districts-card").replaceChildren(...[
+    h("h2", { id: "districts-card-title" }, "Your districts"),
+    districtRow(
+      district("U.S. House", d.cd), district("State Senate", d.sd), district("State House", d.hd),
+      district(h("abbr", { title: "State Board of Education" }, "SBOE"), d.sboe),
+    ),
+    countyRow,
+    districtRow(
+      location.city && district(null, location.city),
+      d.city_council && district("City council", d.city_council),
+      school && district(null, school),
+    ),
+    location.approximate
+      ? h("p", { class: "district-warn" }, "Approximate address: check these against your voter registration certificate.")
+      : null,
+    prompted ? precinctPrompt(waiting, missing) : null,
+    prompted || editingPrecincts ? precinctForm() : null,
+    h("p", { class: "fine" }, "Districts from the US Census and the Texas Legislative Council.",
+      fromBallotpedia ? ` ${fromBallotpedia[0].toUpperCase()}${fromBallotpedia.slice(1)} from Ballotpedia.` : "",
+      d.precinct_source === "you" ? " Precincts you entered." : ""),
+  ].filter(Boolean));
+  $("#districts-card").hidden = false;
+}
+
+function precinctPrompt(waiting, missing) {
+  const count = waiting.races.length;
+  const one = missing.length === 1;
+  const see = h("button", { type: "button", class: "link-btn" }, one && count === 1 ? "See it" : "See them");
+  see.addEventListener("click", () => {
+    const first = $("#maybe-precinct .race");
+    if (first) goTo(first);
   });
-  note.replaceChildren(from, " · ", edit);
+  return h("p", { class: "precinct-prompt" },
+    `Enter ${one ? `your ${missing[0]} precinct` : "your precincts"} from your voter registration certificate. `,
+    `${count} ${count === 1 ? "race depends" : "races depend"} on ${one ? "it" : "them"}. `, see);
+}
+
+function firstEmptyPrecinct() {
+  const inputs = [...document.querySelectorAll("#precinct-form input")];
+  return inputs.find((input) => !input.value) ?? inputs[0];
+}
+
+function setEditingPrecincts(on) {
+  editingPrecincts = on;
+  renderDistricts();
+  (on ? firstEmptyPrecinct() : $("#districts-edit"))?.focus();
+}
+
+function openPrecincts() {
+  if (!$("#precinct-form")) {
+    editingPrecincts = true;
+    renderDistricts();
+  }
+  const field = firstEmptyPrecinct();
+  field.scrollIntoView({ block: "center" });
+  field.focus({ preventScroll: true });
+}
+
+async function updatePrecincts(precincts) {
+  const { precincts: _previous, ...request } = shownRequest;
+  if (precincts) request.precincts = precincts;
+  const before = ballot;
+  await lookup(request, { keepBallot: true });
+  if (ballot === before) return;
+  ($("#districts-edit") ?? firstEmptyPrecinct())?.focus();
+  const waiting = ballot.maybe.some((section) => section.id === "precinct");
+  const target = waiting ? "#maybe-precinct .race" : "#group-precinct .race";
+  const show = { label: "Show", run: () => { const first = $(target); if (first) goTo(first); } };
+  showToast(waiting ? "Your ballot is updated. Some races still depend on your precinct." : "Your ballot now has your precinct's races.",
+    $(target) ? show : null);
 }
 
 function renderHeader() {
-  const site = STATES[ballot.location.state]?.site;
+  const state = STATES[ballot.location.state];
+  const site = state?.registration ? null : state?.site;
   $("#ballot-sub").replaceChildren(
     [formatDate(ballot.election_date), ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · "),
     ...(site ? [" · Official info: ", extLink(site.url, site.label)] : []),
@@ -238,27 +324,11 @@ const showPickedButton = h("button", { type: "button", class: "link-btn" }, "Sho
 const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
 
 function renderMessages() {
-  const precinct = ballot.maybe.find((section) => section.id === "precinct");
   $("#messages").replaceChildren(
-    ...(precinct ? [precinctPrompt(precinct)] : []),
     hidingNote,
     ...ballot.warnings.map((w) => h("p", { class: "notice notice-warn" }, w)),
     ...ballot.notes.map((n) => h("p", { class: "notice" }, n)),
   );
-}
-
-// At the top of the ballot while races wait on the voter's precincts: a link to their form.
-function precinctPrompt(section) {
-  const count = section.races.length;
-  const link = h("a", { href: "#maybe-precinct" }, "Enter your precinct numbers");
-  link.addEventListener("click", (event) => {
-    event.preventDefault();
-    const field = $("#maybe-precinct input");
-    field.scrollIntoView({ block: "center" });
-    field.focus({ preventScroll: true });
-  });
-  return h("p", { class: "notice" },
-    `${count} ${count === 1 ? "race depends" : "races depend"} on your precinct. `, link, " to see which are on your ballot.");
 }
 
 function renderGroups() {
@@ -584,25 +654,43 @@ function setAllCollapsed(collapsed) {
 
 function precinctForm() {
   const d = ballot.districts;
-  const field = (name, label) =>
-    h("label", { class: "field small" }, label,
-      h("input", { type: "number", min: "1", max: "99", inputmode: "numeric", name, value: d[name] ?? null }));
-  const precinctForm = h("form", { class: "precinct-form" },
-    field("commissioner", "Commissioner precinct"),
-    field("jp", "Justice of the Peace precinct"),
-    field("constable", "Constable precinct"),
-    h("button", { class: "btn", type: "submit" }, "Update my ballot"));
-  precinctForm.addEventListener("submit", (event) => {
+  const field = (name, label, max, value) =>
+    h("label", { class: "field precinct-field" }, label,
+      h("input", { type: "number", min: "1", max, inputmode: "numeric", name, value: value ?? null }));
+  const buttons = [h("button", { class: "btn small primary", type: "submit" }, "Update my ballot")];
+  if (editingPrecincts) {
+    const cancel = h("button", { class: "btn small ghost", type: "button" }, "Cancel");
+    cancel.addEventListener("click", () => setEditingPrecincts(false));
+    buttons.push(cancel);
+  }
+  if (d.precinct_source === "you") {
+    const reset = h("button", { class: "link-btn", type: "button" }, "Use Ballotpedia's numbers");
+    reset.addEventListener("click", () => updatePrecincts(null));
+    buttons.push(reset);
+  }
+  const form = h("form", { class: "precinct-form", id: "precinct-form" },
+    h("fieldset", {},
+      h("legend", { class: "sr-only" }, "Your precincts"),
+      field("commissioner", "Commissioner", "4", d.commissioner),
+      field("jp", "Justice of the Peace & Constable", "99", d.jp ?? d.constable)),
+    h("div", { class: "button-row" }, buttons));
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const data = new FormData(precinctForm);
-    const precincts = {};
-    for (const key of ["commissioner", "jp", "constable"]) {
+    const data = new FormData(form);
+    const number = (key) => {
       const value = parseInt(data.get(key), 10);
-      if (value > 0) precincts[key] = value;
-    }
-    lookup({ ...shownRequest, precincts }, { keepBallot: true });
+      return value > 0 ? value : null;
+    };
+    const jp = number("jp");
+    updatePrecincts({ commissioner: number("commissioner"), jp, constable: jp });
   });
-  return precinctForm;
+  return form;
+}
+
+function precinctLink() {
+  const button = h("button", { type: "button", class: "link-btn" }, "Enter your precinct numbers");
+  button.addEventListener("click", openPrecincts);
+  return h("p", { class: "precinct-link" }, button);
 }
 
 function renderMaybe() {
@@ -611,7 +699,7 @@ function renderMaybe() {
       h("section", { class: "group maybe", id: `maybe-${section.id}`, "aria-labelledby": `maybe-${section.id}-title` },
         h("h2", { class: "group-title", id: `maybe-${section.id}-title` }, section.title),
         h("p", { class: "muted explain" }, section.explanation),
-        section.id === "precinct" ? precinctForm() : null,
+        section.id === "precinct" ? precinctLink() : null,
         section.races.map(raceCard))),
   );
 }
