@@ -243,6 +243,21 @@ class LastLookup(Meta):
     at: str
 
 
+class Outline(BaseModel):
+    """One district's shape for the map: rings of (lon, lat), outer rings and holes alike."""
+
+    kind: Literal["cd", "sd", "hd", "sboe"]  # as in Districts
+    number: int
+    rings: list[list[tuple[float, float]]]
+
+
+class DistrictOutlines(BaseModel):
+    outlines: list[Outline]  # in the order asked: U.S. House, State Senate, State House, SBOE
+    notes: list[str]  # outlines that are off or couldn't be had
+    street_map: bool  # whether the street map (/api/tiles) is on
+    meta: Meta
+
+
 class Ballot(BaseModel):
     election_date: str | None
     elections: list[ElectionRef]
@@ -307,6 +322,7 @@ class SourceStatus(BaseModel):
     refresh_label: str
     clear_label: str
     refresh_confirm: str | None = None  # asked before refreshing, when a refresh sends or downloads a lot
+    refreshable: bool = True  # False: no Refresh (OpenStreetMap's tiles may only be fetched as they're viewed)
     notice: str | None = None  # one line shown under the description, e.g. what the source is missing
     notice_tone: Tone = "info"
     last_use: SourceUse | None = None  # in the last lookup

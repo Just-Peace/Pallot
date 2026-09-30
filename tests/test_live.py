@@ -14,6 +14,7 @@ from tec_cache.remote_zip import RemoteZip
 from votebot.api import create_app
 from votebot.config import DEMO_KEY, Config, load_config
 from votebot.sources import fec, key_dates, polls
+from votebot.sources.sboe import _inside
 
 pytestmark = pytest.mark.live
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
@@ -83,3 +84,28 @@ def test_key_dates_live():
     found = key_dates.parse(response.text)
     assert found and all(d.register_by and d.register_by < d.day for d in found)
     assert any(d.early_start and d.early_end and d.mail_apply_by for d in found)
+
+
+def test_district_outlines_live(tmp_path):
+    """TIGERweb still names its layers as the geocoder does, and the Capitol's districts come back
+    as rings around it; asked again, from the cache."""
+    with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
+        params = {"cd": 10, "sd": 14, "hd": 49, "sboe": 5}
+        got = client.get("/api/district-outlines", params=params).json()
+        again = client.get("/api/district-outlines", params=params).json()
+    assert [o["kind"] for o in got["outlines"]] == ["cd", "sd", "hd", "sboe"] and got["notes"] == []
+    lat, lon = 30.27644, -97.73975  # the Capitol, as the Census places it
+    assert all(sum(_inside(lon, lat, ring) for ring in o["rings"]) % 2 for o in got["outlines"])
+    assert again["meta"]["external_calls"] == 0
+
+
+def test_street_map_tile_live(tmp_path):
+    """One OpenStreetMap tile over Austin, through VoteBot, which OpenStreetMap still serves to
+    VoteBot's User-Agent; asked again, from the cache."""
+    with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
+        first = client.get("/api/tiles/12/935/1686.png")
+        again = client.get("/api/tiles/12/935/1686.png")
+        cached = client.get("/api/sources").json()["sources"]
+    assert first.status_code == 200, first.text
+    assert first.content.startswith(b"\x89PNG") and again.content == first.content
+    assert next(s for s in cached if s["id"] == "osm_tiles")["cache"]["entries"] == 1

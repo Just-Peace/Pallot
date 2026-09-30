@@ -72,7 +72,7 @@ How to write them:
   - dataclasses for internal shapes, and Pydantic models only in `votebot/models.py` (what the API returns);
   - short docstrings that say what and why, as dense as the neighbouring ones.
 - **Frontend:**
-  - Plain ES modules in `votebot/static/js/`, with no build step, no framework, and nothing loaded from a CDN (icons are inline SVG).
+  - Plain ES modules in `votebot/static/js/`, with no build step, no framework, and nothing loaded from a CDN (icons are inline SVG). A library the page can't do without is copied into `votebot/static/vendor/`, with its licence, as Leaflet is for the map.
   - Insert data from the API as text with `h()` (`dom.js`), never through `innerHTML`.
   - Build links with `safeUrl`/`extLink`.
 - **Dependencies:**
@@ -98,6 +98,7 @@ How to write them:
   - FiftyPlusOne answers 403 unless the request carries browser headers.
   - Nominatim forbids search-as-you-type, which is why Photon does the suggestions.
   - Ballotpedia's endpoint is unofficial and for personal use only.
+  - OpenStreetMap's tiles come through the server and are kept at least 7 days, fetched only as the voter looks at them. Never prefetch them or re-download them in bulk, which its tile policy forbids: that's why the street map has Clear in Settings but no Refresh.
 - **Match across sources by name, with seat and party as corroboration** (`votebot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
 - **Settings has no login.** Keep `uv run votebot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.

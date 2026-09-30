@@ -3,7 +3,8 @@
 One SQLite row per distinct request (method + URL + params + body), tagged with the
 source that made it, so the Settings page can show, clear or refresh one source at a
 time. A row keeps the request itself and the lifetimes it was stored with, so refresh()
-can re-issue it without knowing what it was for. Decoded values also sit in a small
+can re-issue it without knowing what it was for. A value is parsed JSON, a web page's text
+(get_text) or an image as base64 (get_bytes). Decoded values also sit in a small
 in-memory LRU, which matters for the 2.6 MB statewide candidate list.
 
 When a request fails, its last good copy is served (marked stale) and the source isn't
@@ -17,6 +18,7 @@ Cached values are shared between callers: treat them as read-only.
 from __future__ import annotations
 
 import asyncio
+import base64
 import contextvars
 import hashlib
 import json
@@ -62,6 +64,7 @@ class RequestSpec:
     json: Any = None
     headers: dict[str, str] | None = None
     as_text: bool = False  # the body as text (a web page), not parsed as JSON
+    as_bytes: bool = False  # the body as bytes (an image), stored as base64 text
 
     @property
     def key(self) -> str:
@@ -69,12 +72,14 @@ class RequestSpec:
         identity = {"method": self.method.upper(), "url": self.url, "params": self.params, "json": self.json}
         if self.as_text:  # only when set, so the keys of JSON requests stay what they were
             identity["as_text"] = True
+        if self.as_bytes:
+            identity["as_bytes"] = True
         return hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
     def dumps(self) -> str:
         return json.dumps(
             {"method": self.method, "url": self.url, "params": self.params, "json": self.json, "headers": self.headers,
-             "as_text": self.as_text},
+             "as_text": self.as_text, "as_bytes": self.as_bytes},
             sort_keys=True,
         )
 
@@ -267,6 +272,11 @@ class HttpCache:
         """get_json for a web page: the value is the response body as a string."""
         return await self.get_json(source, replace(spec, as_text=True), ttl=ttl)
 
+    async def get_bytes(self, source: str, spec: RequestSpec, *, ttl: float) -> Cached:
+        """get_json for an image: the value is the response body as bytes."""
+        got = await self.get_json(source, replace(spec, as_bytes=True), ttl=ttl)
+        return replace(got, value=base64.b64decode(got.value))
+
     def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
         """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
         self._pause_on[source] = (frozenset(statuses), seconds)
@@ -315,6 +325,8 @@ class HttpCache:
         headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
         response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=headers)
         response.raise_for_status()
+        if spec.as_bytes:
+            return base64.b64encode(response.content).decode("ascii")
         return response.text if spec.as_text else response.json()
 
     async def _throttle(self, source: str) -> None:

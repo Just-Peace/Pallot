@@ -67,7 +67,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
-- Under it, two cards, side by side (and as tall as each other) on a wide screen, and one above the other on a phone.
+- Under it, two cards, side by side (and as tall as each other) on a wide screen, and one above the other on a phone, then the map of your districts.
 - **When to vote:**
   - the election's key dates from the Texas Secretary of State: the last day to register, early voting, and Election Day with the polls' hours. The next date still to come is in bold with how far off it is ("in 6 days"); past ones are in grey.
   - a calendar icon next to each date downloads it as a calendar file (`.ics`), and **Add all to calendar** downloads every date still to come. The events are all-day and have no place, since polling places aren't known. Importing a file again updates its events rather than adding copies.
@@ -79,6 +79,13 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - your city, city council district and school district.
 
   A State Senate or State Board of Education seat that isn't up this time is in grey, with a line saying so ("State Senate 14 isn't up for election this time"). The precincts and the city council district come from Ballotpedia, when it has them. **Edit** changes the precincts, and **Use Ballotpedia's numbers** puts its numbers back. When races depend on a precinct VoteBot doesn't know, the fields are already open, and the card says which number to enter from your voter registration certificate. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to your precinct's races. If the address could only be placed approximately, the card says to check the districts.
+
+- **Map of your districts:** a street map from OpenStreetMap with the outline of each district, in its own colour and line (solid, dashed, dotted, or dashes and dots), and a pin at your address. It opens centred on your address, close enough to see your streets.
+  - Right above the map, a button for each district, with a sample of its line: pick one, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Hover over a line to see which district it is.
+  - Drag the map to move it, and zoom with **+** and **−**, or with the scroll wheel once you've clicked the map (so scrolling the page never zooms it by accident). On a phone, move and zoom it with two fingers; one finger scrolls the page. With the map selected, the arrow keys move it.
+  - The outlines are simplified to about 50 m, so near a boundary, go by the district numbers.
+  - The street map's tiles come from OpenStreetMap through the VoteBot server, which keeps them. Turn the street map off in Settings to see the outlines alone.
+  - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's shown at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
 - **Precincts:** until your precincts are known, the races that depend on them are listed under "Depends on your precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
@@ -110,7 +117,9 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | US Census geocoder | address → county, U.S. House, State Senate and State House districts | already on the 2026 maps (120th Congress, 2026 legislative districts) |
 | OpenStreetMap Nominatim | fallback when the Census can't match an address | results flagged as approximate unless they hit a building |
 | Photon (photon.komoot.io) | address suggestions while typing | OpenStreetMap data; free for reasonable use, no key |
-| Texas Legislative Council map (PLANE2106) | State Board of Education district | downloaded once |
+| Texas Legislative Council map (PLANE2106) | State Board of Education district, and its outline on the map | downloaded once |
+| US Census TIGERweb | the outlines of your U.S. House, State Senate and State House districts, for the map | one request per district, with its number and never your address |
+| OpenStreetMap tiles (tile.openstreetmap.org) | the street map under the outlines | through the VoteBot server, only the tiles of the area you look at, following OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); drawn with [Leaflet](https://leafletjs.com), which comes with VoteBot |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
 | Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct and city council district; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
@@ -150,13 +159,15 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - FEC: 7 days (a year for past elections)
   - polls: 24 hours
   - key election dates: 24 hours
+  - district outlines for the map: 30 days
+  - street map tiles: 7 days, the least OpenStreetMap's policy allows
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
-  - address suggestions, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
+  - address suggestions, street map tiles, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
 - The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
-- If Ballotpedia, Photon, FiftyPlusOne or the Texas SOS's dates page refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If Ballotpedia, Photon, FiftyPlusOne, the Texas SOS's dates page, TIGERweb or OpenStreetMap's tile server refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
 
@@ -164,10 +175,10 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 
 The **Settings** page, linked from the left pane:
 - picks the web search engine;
-- turns address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
+- turns the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source, plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
+- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
 - has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
 Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
@@ -191,10 +202,10 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 |---|---|
 | `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE map, TrackAIPAC and TEC data; git-ignored) |
 | `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and VoteBot never writes it anywhere |
-| `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper)` (Nominatim requires an identifying one) |
+| `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper; +https://github.com/Fahd-Siddiqui/VoteBot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
+| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `VOTEBOT_TTL_OUTLINES` for the district map's outlines, `VOTEBOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks), and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
 
 ### Docker
 

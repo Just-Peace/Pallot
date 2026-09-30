@@ -4,7 +4,7 @@ import httpx
 import pytest
 import respx
 
-from votebot.sources.sboe import KML_URL, District, Polygon, SboeMap, locate, parse_zip
+from votebot.sources.sboe import KML_URL, District, Polygon, SboeMap, locate, outline, parse_zip, simplify
 
 from .conftest import sboe_zip
 
@@ -60,3 +60,26 @@ async def test_a_broken_download_is_not_saved(tmp_path):
             with pytest.raises(Exception):
                 await sboe.district_at(30.2747, -97.7403)
     assert not (tmp_path / "map.zip").exists()
+
+
+def test_simplify_drops_what_the_eye_would_not_see():
+    ring = [(0.0, 0.0), (0.5, 0.0), (1.0, 0.0004), (1.0, 1.0), (0.5, 1.001), (0.0, 1.0), (0.0, 0.0)]
+    assert simplify(ring, 0.0005) == [(0.0, 0.0), (1.0, 0.0004), (1.0, 1.0), (0.5, 1.001), (0.0, 1.0), (0.0, 0.0)]
+    assert simplify(ring, 0.01) == [(0.0, 0.0), (1.0, 0.0004), (1.0, 1.0), (0.0, 1.0), (0.0, 0.0)]
+    assert simplify([(1.123456, 2.0)], 0.1) == [(1.12346, 2.0)]
+
+
+def test_outline_keeps_holes():
+    assert outline(districts()[0], 0.0005) == [SQUARE, HOLE]
+
+
+@pytest.mark.anyio
+async def test_outline_of_a_district(tmp_path):
+    with respx.mock() as router:
+        router.get(KML_URL).mock(return_value=httpx.Response(200, content=sboe_zip()))
+        async with httpx.AsyncClient() as client:
+            sboe = SboeMap(tmp_path / "map.zip", client)
+            first = await sboe.outline(5, 0.0005)
+            assert first == [[(-98.2, 30.0), (-97.4, 30.0), (-97.4, 30.7), (-98.2, 30.7), (-98.2, 30.0)]]
+            assert await sboe.outline(5, 0.0005) is first  # simplified once
+            assert await sboe.outline(16, 0.0005) is None

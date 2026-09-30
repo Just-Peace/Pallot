@@ -126,6 +126,42 @@ def _distance_m(lat: float, lon: float, ring: Ring) -> float:
     return best
 
 
+def _offset(point: tuple[float, float], start: tuple[float, float], end: tuple[float, float]) -> float:
+    """Distance from the point to the segment, in degrees (as TIGERweb's maxAllowableOffset)."""
+    (px, py), (ax, ay), (bx, by) = point, start, end
+    dx, dy = bx - ax, by - ay
+    length = dx * dx + dy * dy
+    t = 0.0 if length == 0 else max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / length))
+    return math.hypot(px - ax - t * dx, py - ay - t * dy)
+
+
+def simplify(ring: Ring, tolerance: float) -> Ring:
+    """Douglas–Peucker: the fewest points that stay within ``tolerance`` of the ring, keeping
+    its first and last points (so a closed ring stays closed), rounded to about 1 m."""
+    if len(ring) < 3:
+        return [(round(x, 5), round(y, 5)) for x, y in ring]
+    keep = [False] * len(ring)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(ring) - 1)]
+    while stack:
+        first, last = stack.pop()
+        worst, index = 0.0, 0
+        for i in range(first + 1, last):
+            distance = _offset(ring[i], ring[first], ring[last])
+            if distance > worst:
+                worst, index = distance, i
+        if worst > tolerance:
+            keep[index] = True
+            stack += [(first, index), (index, last)]
+    return [(round(x, 5), round(y, 5)) for (x, y), kept in zip(ring, keep) if kept]
+
+
+def outline(district: District, tolerance: float) -> list[Ring]:
+    """The district's outer rings and holes, simplified; rings that shrink below a triangle go."""
+    found = (simplify(ring, tolerance) for poly in district.polygons for ring in (poly.outer, *poly.holes))
+    return [ring for ring in found if len(ring) >= 4]
+
+
 def locate(districts: list[District], lat: float, lon: float, tolerance_m: float = TOLERANCE_M) -> int | None:
     for district in districts:
         for poly in district.polygons:
@@ -150,10 +186,21 @@ class SboeMap:
         self.path = path
         self._client = client
         self._districts: list[District] | None = None
+        self._outlines: dict[tuple[int, float], list[Ring]] = {}
         self._lock = asyncio.Lock()
 
     async def district_at(self, lat: float, lon: float) -> int | None:
         return await asyncio.to_thread(locate, await self._load(), lat, lon)
+
+    async def outline(self, number: int, tolerance: float) -> list[Ring] | None:
+        """The district's rings for the map, simplified once and kept; None if there's no such district."""
+        key = (number, tolerance)
+        if key not in self._outlines:
+            district = next((d for d in await self._load() if d.number == number), None)
+            if district is None:
+                return None
+            self._outlines[key] = await asyncio.to_thread(outline, district, tolerance)
+        return self._outlines[key]
 
     async def _load(self) -> list[District]:
         if self._districts is None:
@@ -176,9 +223,11 @@ class SboeMap:
             raise ValueError(f"{PLAN} map has {len(districts)} districts, expected {DISTRICT_COUNT}")
         write_bytes_atomic(self.path, response.content)
         self._districts = districts
+        self._outlines = {}
 
     def clear(self) -> None:
         self._districts = None
+        self._outlines = {}
         self.path.unlink(missing_ok=True)
 
     def downloaded_at(self) -> float | None:

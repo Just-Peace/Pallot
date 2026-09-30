@@ -34,11 +34,13 @@ from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.fec import Fec
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
+from .sources.osm_tiles import Tiles
 from .sources.photon import Photon
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
 from .sources.tec import Tec
+from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .text import display_office, display_person, iso_utc
 
@@ -84,6 +86,8 @@ class Services:
     tec: Tec
     polls: Polls
     key_dates: KeyDatesPage
+    tigerweb: Tigerweb
+    tiles: Tiles
     today: Callable[[], dt.date] = dt.date.today
     last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
     last_uses: dict[str, SourceUse] = field(default_factory=dict)

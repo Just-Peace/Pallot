@@ -7,6 +7,7 @@ import "./chrome.js";
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { openCompare } from "./compare.js";
+import { syncMap } from "./district-map.js";
 import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons, icon } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
@@ -174,6 +175,7 @@ function render() {
   renderHeader();
   renderKeyDates();
   renderDistricts();
+  syncMap(ballot);
   renderMessages();
   renderGroups();
   renderMaybe();

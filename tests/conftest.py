@@ -8,6 +8,7 @@ import copy
 import datetime as dt
 import io
 import json
+import re
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -34,6 +35,7 @@ ADDRESSES = {
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
 }
 SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}  # as in scripts/record_fixtures.py
+PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only its bytes matter
 
 
 def load(name: str) -> Any:
@@ -95,6 +97,9 @@ class Upstream:
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
+        self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
+        self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
+        self.tile_agents: set[str | None] = set()  # the User-Agents the tile server was sent
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
@@ -163,6 +168,18 @@ class Upstream:
                 return httpx.Response(self.key_dates_status)
             return httpx.Response(200, content=(FIXTURES / "sos_key_dates.html").read_bytes(),
                                   headers={"content-type": "text/html"})
+        if url.host == "tigerweb.geo.census.gov":
+            if self.tigerweb_status:
+                return httpx.Response(self.tigerweb_status)
+            if url.path.endswith("/MapServer"):
+                return _file("tigerweb_layers.json")
+            geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"]).group(1)
+            return _file(f"tigerweb_{geoid}.json", default={"features": []})
+        if url.host == "tile.openstreetmap.org":
+            self.tile_agents.add(request.headers.get("user-agent"))
+            if self.tiles_status:
+                return httpx.Response(self.tiles_status)
+            return httpx.Response(200, content=PNG, headers={"content-type": "image/png"})
         raise AssertionError(f"unexpected request: {request.method} {url}")
 
     def _fec(self, request: httpx.Request) -> httpx.Response:

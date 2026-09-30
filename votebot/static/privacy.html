@@ -27,6 +27,7 @@
           <li>Your picks, notes and write-ins stay in your browser. They're never sent anywhere.</li>
           <li>To find your ballot, VoteBot sends your address to the US Census geocoder, and its location to Ballotpedia if Ballotpedia is on.</li>
           <li>While you type your address, VoteBot sends what you've typed so far to Photon for suggestions, unless you turn them off in <a href="settings.html">Settings</a>.</li>
+          <li>For the map of your districts, VoteBot sends the US Census your district numbers, never your address, and asks OpenStreetMap for the street map of the area you look at, unless you turn the street map off in <a href="settings.html">Settings</a>.</li>
           <li>The VoteBot server keeps a copy of those lookups and suggestions, so the same text doesn't have to be sent again, until they're cleared in <a href="settings.html">Settings</a>. Suggestions, and addresses that weren't found, are deleted by themselves the first time VoteBot starts after they're two months old (one month, if nothing was found).</li>
         </ul>
       </section>
@@ -54,7 +55,7 @@
                 <td data-label="Kept until">Your next lookup replaces it; kept until you clear it</td>
               </tr>
               <tr>
-                <th scope="row">Your web search engine, and view choices: Dollars or Share in Compare, collapsing a race when you pick, and hiding the races you've picked</th>
+                <th scope="row">Your web search engine, and view choices: Dollars or Share in Compare, collapsing a race when you pick, hiding the races you've picked, and hiding the map of your districts</th>
                 <td data-label="Why">Your choices in Settings and on the ballot</td>
                 <td data-label="Kept until">You clear this site's data in your browser</td>
               </tr>
@@ -75,6 +76,16 @@
                 <th scope="row">US Census Bureau geocoder</th>
                 <td data-label="What it's sent">Your address</td>
                 <td data-label="When">An address the server hasn't looked up in the last 30 days</td>
+              </tr>
+              <tr>
+                <th scope="row">US Census Bureau TIGERweb, for the map of your districts</th>
+                <td data-label="What it's sent">Your U.S. House, State Senate and State House district numbers, never your address</td>
+                <td data-label="When">When your ballot is shown, for a district the server hasn't asked about in the last 30 days, if the district map is on</td>
+              </tr>
+              <tr>
+                <th scope="row">OpenStreetMap's tile server, for the street map</th>
+                <td data-label="What it's sent">Which map tiles to send: squares of the map around the area you look at, which show roughly where your address is. It sees the server's internet address, and VoteBot's name.</td>
+                <td data-label="When">When the map shows a tile the server hasn't fetched in the last 7 days, if the street map is on</td>
               </tr>
               <tr>
                 <th scope="row">OpenStreetMap Nominatim</th>
@@ -104,8 +115,8 @@
             </tbody>
           </table>
         </div>
-        <p>Refresh in Settings sends the saved requests again: refreshing "Address lookup &amp; districts" re-sends every address in the server's copy, refreshing "Address suggestions" re-sends everything saved from the address box, and refreshing Ballotpedia re-sends every saved location.</p>
-        <p>Five sources never receive anything about you. The Texas Legislative Council's district map is downloaded once and searched on the server. TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot, and are only fetched again from trackaipac.com or the Texas Ethics Commission when you press Refresh in Settings. FiftyPlusOne's poll lists cover the whole country and are the same for everyone, so the server downloads them (at most once a day, if Polls is on) and picks out your races itself. The key election dates come from one page on the Texas Secretary of State's website, the same for everyone, which the server downloads at most once a day if the key dates are on.</p>
+        <p>Refresh in Settings sends the saved requests again: refreshing "Address lookup &amp; districts" re-sends every address in the server's copy, refreshing "Address suggestions" re-sends everything saved from the address box, refreshing "District map" re-sends every saved district number (the street map can't be refreshed: OpenStreetMap asks that its tiles only be fetched as they're viewed), and refreshing Ballotpedia re-sends every saved location.</p>
+        <p>Five sources never receive anything about you. The Texas Legislative Council's district map is downloaded once, and the server finds your State Board of Education district in it and draws its outline from it. TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot, and are only fetched again from trackaipac.com or the Texas Ethics Commission when you press Refresh in Settings. FiftyPlusOne's poll lists cover the whole country and are the same for everyone, so the server downloads them (at most once a day, if Polls is on) and picks out your races itself. The key election dates come from one page on the Texas Secretary of State's website, the same for everyone, which the server downloads at most once a day if the key dates are on.</p>
         <p>Each service decides what it keeps of the requests it receives, under its own privacy policy.</p>
       </section>
 
@@ -114,7 +125,7 @@
         <ul>
           <li><strong>Candidate photos</strong> come from Ballotpedia's image server when Ballotpedia is on. Like any site you load an image from, it sees your internet address. VoteBot tells your browser not to say which page the photo is on.</li>
           <li><strong>Links you open</strong>, such as a candidate's web search, a source's page or a campaign website, go straight from your browser to that site. A web search sends the search engine you chose the candidate's name, office, place and election year.</li>
-          <li>Everything else, including the pages, scripts and icons, comes from the VoteBot server. So do the calendar files of the key dates, which hold the election's dates and links, not your address.</li>
+          <li>Everything else, including the pages, scripts and icons, comes from the VoteBot server. So do the calendar files of the key dates, which hold the election's dates and links, not your address. The street map's tiles come through the server too, so OpenStreetMap never sees your browser. Leaflet, the program that draws the map, comes with VoteBot.</li>
         </ul>
       </section>
 
@@ -138,6 +149,16 @@
                 <th scope="row">Ballotpedia lookups: the location asked about, with its races and candidates</th>
                 <td data-label="Where"><code>data/cache.sqlite3</code></td>
                 <td data-label="Kept until">Cleared. After 24 hours, the next lookup there asks again and replaces the copy.</td>
+              </tr>
+              <tr>
+                <th scope="row">District outlines: each district asked about, with its outline</th>
+                <td data-label="Where"><code>data/cache.sqlite3</code></td>
+                <td data-label="Kept until">Cleared. After 30 days, showing that district's map asks again and replaces the copy.</td>
+              </tr>
+              <tr>
+                <th scope="row">Street map tiles: the squares of the map that were looked at</th>
+                <td data-label="Where"><code>data/cache.sqlite3</code></td>
+                <td data-label="Kept until">Cleared, or deleted the first time VoteBot starts 37 days or more after it was fetched. Before then, looking at the same place after 7 days asks again and replaces the copy.</td>
               </tr>
               <tr>
                 <th scope="row">Elections, key election dates, candidates, campaign finance (the FEC's answers and the Texas Ethics Commission's data), polls, the district map and TrackAIPAC's data; nothing about you</th>

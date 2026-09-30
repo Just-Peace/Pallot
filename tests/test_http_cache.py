@@ -35,6 +35,21 @@ async def test_second_call_comes_from_the_cache(tmp_path):
     assert (stats.external_calls, stats.cache_hits) == (1, 1)
 
 
+async def test_images_are_kept_as_bytes(tmp_path):
+    png = b"\x89PNG\r\n\x1a\n\x00\xff"
+    with respx.mock() as router:
+        route = router.get(URL).mock(return_value=httpx.Response(200, content=png, headers={"content-type": "image/png"}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            assert (await cache.get_bytes("demo", SPEC, ttl=60)).value == png
+            again = await HttpCache(tmp_path / "c.sqlite3", client).get_bytes("demo", SPEC, ttl=60)  # a restart
+            assert again.value == png and route.call_count == 1
+            assert (await cache.refresh("demo")).refreshed == 1  # re-fetched as bytes
+            assert (await cache.get_bytes("demo", SPEC, ttl=60)).value == png
+    assert SPEC.key != RequestSpec("GET", URL, params={"q": "x"}, as_bytes=True).key
+    assert RequestSpec.loads(RequestSpec("GET", URL, as_bytes=True).dumps()).as_bytes
+
+
 async def test_cache_survives_a_restart(tmp_path):
     with respx.mock() as router:
         route = router.get(URL).mock(return_value=httpx.Response(200, json=[1, 2, 3]))

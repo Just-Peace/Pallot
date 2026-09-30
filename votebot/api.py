@@ -11,7 +11,7 @@ from typing import Any, Callable, Collection
 from urllib.parse import urlsplit
 
 import httpx
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -20,18 +20,23 @@ from .admin import Admin, AdminError
 from .ballot import BallotError, Services, build_ballot, election_dates
 from .config import Config, load_config
 from .http_cache import HttpCache, UpstreamError
-from .models import ActionResult, Ballot, BallotRequest, ElectionDate, SourcesOverview, SourceToggle, SuggestResult
+from .models import (
+    ActionResult, Ballot, BallotRequest, DistrictOutlines, ElectionDate, SourcesOverview, SourceToggle, SuggestResult,
+)
+from .outlines import district_outlines
 from .settings import Settings
-from .sources import census, key_dates, nominatim, photon
+from .sources import census, key_dates, nominatim, osm_tiles, photon
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
+from .sources.osm_tiles import Tiles
 from .sources.photon import Photon
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Sos
 from .sources.tec import Tec
+from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -90,13 +95,14 @@ def create_app(
             cache = HttpCache(
                 config.cache_path,
                 client,
-                min_interval={"nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1},
+                min_interval={"nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25},
                 source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
                 retry_after=config.ttl.retry_after,
             )
             try:
                 await asyncio.to_thread(
-                    cache.prune, {photon.SOURCE}, {census.SOURCE, nominatim.SOURCE}, config.ttl.prune_after
+                    cache.prune, {photon.SOURCE, osm_tiles.SOURCE}, {census.SOURCE, nominatim.SOURCE},
+                    config.ttl.prune_after,
                 )
                 svc = Services(
                     config=config,
@@ -115,6 +121,8 @@ def create_app(
                     tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                     polls=Polls(cache, config.ttl, today),
                     key_dates=key_dates.KeyDatesPage(cache, config.ttl),
+                    tigerweb=Tigerweb(cache, config.ttl),
+                    tiles=Tiles(cache, config.ttl),
                     today=today,
                 )
                 await asyncio.to_thread(svc.trackaipac.ensure_seeded)
@@ -180,6 +188,31 @@ def create_app(
         name = f"texas-election-{date.isoformat()}{f'-{event}' if event else ''}.ics"
         return Response(body, media_type="text/calendar; charset=utf-8",
                         headers={"Content-Disposition": f'attachment; filename="{name}"'})
+
+    @app.get("/api/district-outlines", response_model=DistrictOutlines)
+    async def outlines(
+        request: Request,
+        cd: int | None = Query(None, ge=1, le=38),
+        sd: int | None = Query(None, ge=1, le=31),
+        hd: int | None = Query(None, ge=1, le=150),
+        sboe: int | None = Query(None, ge=1, le=15),
+    ) -> DistrictOutlines:
+        """The outlines of the voter's Texas districts, for the map on Your districts."""
+        return await district_outlines(services(request), {"cd": cd, "sd": sd, "hd": hd, "sboe": sboe})
+
+    @app.get("/api/tiles/{z}/{x}/{y}.png")
+    async def tile(request: Request, z: int, x: int, y: int) -> Response:
+        """One OpenStreetMap tile for the street map, kept by the server (see sources/osm_tiles.py)."""
+        svc = services(request)
+        if not svc.settings.enabled(osm_tiles.SOURCE):
+            raise HTTPException(404, "The street map is turned off in Settings.")
+        if not osm_tiles.wanted(z, x, y):
+            raise HTTPException(404, "VoteBot only shows the street map over Texas.")
+        try:
+            body = await svc.tiles.tile(z, x, y)
+        except UpstreamError as exc:
+            raise HTTPException(502, f"OpenStreetMap's tile server isn't responding ({exc}).") from exc
+        return Response(body, media_type="image/png", headers={"Cache-Control": "private, max-age=86400"})
 
     @app.get("/api/suggest", response_model=SuggestResult)
     async def suggest(request: Request, q: str = "") -> SuggestResult:

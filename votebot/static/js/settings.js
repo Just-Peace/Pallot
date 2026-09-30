@@ -136,7 +136,7 @@ function sourceRow(source) {
     cacheLine(source),
     detailList(source),
     lastUseLine(source),
-    h("div", { class: "source-actions" }, refreshButton, clearButton),
+    h("div", { class: "source-actions" }, source.refreshable ? refreshButton : null, clearButton),
     result,
   );
 }
