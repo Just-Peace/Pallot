@@ -192,6 +192,7 @@ class Districts(BaseModel):
     sd: int | None = None
     hd: int | None = None
     sboe: int | None = None
+    city_council: str | None = None
     commissioner: int | None = None
     jp: int | None = None
     constable: int | None = None
@@ -256,7 +257,7 @@ class Ballot(BaseModel):
 
 
 class PrecinctInput(BaseModel):
-    commissioner: int | None = Field(default=None, ge=1, le=99)
+    commissioner: int | None = Field(default=None, ge=1, le=4)
     jp: int | None = Field(default=None, ge=1, le=99)
     constable: int | None = Field(default=None, ge=1, le=99)
 

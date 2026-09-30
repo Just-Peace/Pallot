@@ -45,8 +45,9 @@ from .text import display_office, display_person, iso_utc
 MAYBE_SECTIONS = {
     "precinct": (
         "Depends on your precinct",
-        "These races are only on some ballots in {county} County. Your commissioner, justice of the peace and "
-        "constable precincts are printed on your voter registration certificate; enter them to narrow this list.",
+        "These races are only on some ballots in {county} County. Your commissioner and justice of the peace "
+        "precincts are printed on your voter registration certificate; enter them under Your districts at the top "
+        "of your ballot to narrow this list.",
     ),
     "unconfirmed": (
         "Couldn't confirm",
@@ -188,6 +189,14 @@ def _placeable(row: dict[str, Any]) -> bool:
     return office_type == "SR" and classify(row.get("txOfficeName") or "", office_type).kind in DISTRICT_KINDS
 
 
+def _jp_is_constable(precincts: dict[str, int | None]) -> dict[str, int | None]:
+    filled = dict(precincts)
+    for kind, twin in (("jp", "constable"), ("constable", "jp")):
+        if kind in filled and twin not in filled:
+            filled[twin] = filled[kind]
+    return filled
+
+
 def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
     return (
         row.get("nbOfficeTypeOrder") or 99,
@@ -233,7 +242,7 @@ class _Builder:
         if location.approximate:
             self.warnings.append(
                 f"We could only place this address approximately ({location.matched_address}), "
-                "so double-check the districts below."
+                "so double-check Your districts at the top of your ballot."
             )
 
         elections, day = await self._elections()
@@ -256,6 +265,7 @@ class _Builder:
             sd=place.sd,
             hd=place.hd,
             sboe=sos_data.sboe if sos_data else None,
+            city_council=bp_ballot.city_council if bp_ballot else None,
             precinct_source=precinct_source,
             **precincts,
         )
@@ -422,8 +432,8 @@ class _Builder:
     # -- building races ----------------------------------------------------------------
 
     def _precincts(self, bp_ballot: BpBallot | None) -> tuple[dict[str, int | None], str | None]:
-        given = self.request.precincts.model_dump(exclude_none=True) if self.request.precincts else {}
-        from_bp = dict(bp_ballot.precincts) if bp_ballot else {}
+        given = _jp_is_constable(self.request.precincts.model_dump(exclude_unset=True) if self.request.precincts else {})
+        from_bp = _jp_is_constable(dict(bp_ballot.precincts) if bp_ballot else {})
         merged = {**from_bp, **given}
         source = "you" if given else "ballotpedia" if from_bp else None
         return {kind: merged.get(kind) for kind in PRECINCT_KINDS}, source

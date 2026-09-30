@@ -204,7 +204,7 @@ export function saveLastLookup(request) {
 }
 
 // What the left pane's address card shows for the last lookup (the address, its city and
-// county, its districts), so every page can show it without looking the address up again.
+// county), so every page can show it without looking the address up again.
 export function saveAddressCard(card) {
   try {
     localStorage.setItem(ADDRESS_CARD_KEY, JSON.stringify(card));

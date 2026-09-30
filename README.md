@@ -56,24 +56,30 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
 ## Using it
 
 - **Left pane**, the same on every page. On a phone or a narrow window it's a **top bar** instead, with your address and the pages each behind a button.
-  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with your county, districts and school district. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
-  - on the ballot, the card also says where your county precincts came from ("Precincts from Ballotpedia" or "Precincts you entered"), and **Edit** changes them.
+  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with its city and county. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
   - while you type an address, **suggestions** from Photon appear under the box: ↑/↓ and Enter pick one, which only fills the box in. "Street only" means OpenStreetMap has the street but not that house number, so the suggestion keeps the number you typed. Turn them off in Settings to get the browser's own address autofill back.
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
 - **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant.
-- **When to vote**, under the ballot's heading:
-  - the election's key dates from the Texas Secretary of State: the last day to register, early voting, and Election Day with the polls' hours. The next date still to come is in bold with how far off it is ("in 6 days"); past ones are dimmed.
-  - a calendar icon next to each date downloads it as a calendar file (`.ics`), and **Add all to calendar** downloads every date still to come. The events are all-day and have no place, since polling places aren't known. Importing a file again updates its events rather than adding copies.
-  - **Am I registered?** opens the state's My Voter Portal, which also shows your polling place once you log in. **Where to vote** links to the list of county elections offices.
-  - **Voting by mail?**, closed at first, says who can vote by mail in Texas and when the application must arrive (received, not postmarked), with its own calendar icon.
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
   - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
-- **Precincts:** when some races depend on your precinct, a line at the top of the ballot links to the form for your precinct numbers.
+- Under it, two cards, side by side on a wide screen and one above the other on a phone.
+- **When to vote:**
+  - the election's key dates from the Texas Secretary of State: the last day to register, early voting, and Election Day with the polls' hours. The next date still to come is in bold with how far off it is ("in 6 days"); past ones are in grey.
+  - a calendar icon next to each date downloads it as a calendar file (`.ics`), and **Add all to calendar** downloads every date still to come. The events are all-day and have no place, since polling places aren't known. Importing a file again updates its events rather than adding copies.
+  - **VoteTexas.gov** is the state's voter site. **Am I registered?** opens its My Voter Portal, which also shows your polling place once you log in. **Where to vote** links to the list of county elections offices.
+  - **Voting by mail?**, closed at first, says who can vote by mail in Texas and when the application must arrive (received, not postmarked), with its own calendar icon.
+- **Your districts**, like your voter registration certificate, in three lines:
+  - U.S. House, State Senate, State House and State Board of Education;
+  - your county, with your commissioner precinct and your justice of the peace precinct (which is also your constable's);
+  - your city, city council district and school district.
+
+  The precincts and the city council district come from Ballotpedia, when it has them. **Edit** changes the precincts, and **Use Ballotpedia's numbers** puts its numbers back. When races depend on a precinct VoteBot doesn't know, the fields are already open, and the card says which number to enter from your voter registration certificate. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to your precinct's races. If the address could only be placed approximately, the card says to check the districts.
+- **Precincts:** until your precincts are known, the races that depend on them are listed under "Depends on your precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
 - **Money:** congressional and state races show what each candidate has raised, above the candidates. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source breaks it down:
@@ -107,13 +113,13 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | Texas Legislative Council map (PLANE2106) | State Board of Education district | downloaded once |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
-| Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
+| Ballotpedia | city council, school board and special-district races; JP/constable/commissioner precinct and city council district; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with VoteBot (see [TrackAIPAC and TEC snapshots](#trackaipac-and-tec-snapshots)) |
 | FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. Without your own key, race totals only (see [The FEC key](#the-fec-key-optional)) |
 | Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | bundled with VoteBot, built from TEC's nightly CSV export (see [TrackAIPAC and TEC snapshots](#trackaipac-and-tec-snapshots)) |
 | FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API |
 
-The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from numbers the voter types in; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". When Texas SOS has no ballot for the county, as for a special election, VoteBot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
+The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from the numbers the voter enters under Your districts, where one number covers both the JP and the constable, since each justice precinct elects one of each; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". When Texas SOS has no ballot for the county, as for a special election, VoteBot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
 
 Campaign money covers congressional races (FEC) and state races (TEC), which includes:
 - statewide offices;

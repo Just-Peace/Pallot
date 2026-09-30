@@ -92,7 +92,7 @@ Nothing runs the tests automatically yet. Add a workflow under `.github/workflow
 
 ## Features
 
-Up to ten, roughly in order of value to a voter. Items marked *(README)* were on the README's old "Not built yet" list.
+Roughly in order of value to a voter. Items marked *(README)* were on the README's old "Not built yet" list.
 
 1. **Where to vote.** "When to vote" is done (under [Done](#done)); what's left:
    - **The county elections office**, with its sample ballot. The SOS publishes every county's elections official (name, address, phone, email) on [county.shtml](https://www.sos.state.tx.us/elections/voter/county.shtml), also as a spreadsheet (`election-duties-1.xlsx`), with no website column. Read it like the key dates (one cached page, `HttpCache.get_text`), and show the voter's county on the When to vote card instead of the link to the whole list.
@@ -117,6 +117,28 @@ Up to ten, roughly in order of value to a voter. Items marked *(README)* were on
     - district maps the Census doesn't cover (Texas's SBOE map, for example).
 
     A second state can then be added without touching the Texas code.
+11. **Your election precinct.** The "Pct 227" on a voter registration certificate, shown as "Precinct 227" on the Your districts card and as "Pct 227" on the printed sheet. What was found:
+    - **The Census doesn't have it.** The geocoder's "Current" vintage has no voting-district layer (see `tests/fixtures/census_capitol.json`).
+    - **The Texas Legislative Council publishes it.** Its dataset `vtds` on data.capitol.texas.gov, the portal the SBOE map comes from, has VTDs, "the census geographic equivalent of county election precincts". The newest, `VTDs_24PG.zip` (46.6 MB, 9,712 precincts, modified 2025-01-29), matches the precincts of the 2024 primary and general elections. Counties may have changed some since, especially after the 2025 congressional map, so say which elections the number is from, and that the certificate wins.
+    - **Its API finds the newest map.** The portal is CKAN: `https://data.capitol.texas.gov/api/3/action/package_show?id=vtds` lists the resources (`name`, `format` "SHP", `url`, `created`, `last_modified`, `size`), so a `VTDs_26…` is picked up without a code change.
+    - **The file is a shapefile, not KML.**
+      - The zip holds `.shp` (73 MB unzipped, polygons), `.shx` and `.dbf`.
+      - The `.dbf` fields are `CNTY`, `VTD` ("0011"), `CNTYKEY`, `VTDKEY` and `CNTYVTD`.
+      - `CNTY` is the county's alphabetical number, the same as the SOS's `county_id`, and equals `(county FIPS + 1) / 2` (Travis: 227).
+      - A precinct in pieces is suffixed ("0001A", "0001B"), so show the VTD without its suffix or leading zeros.
+    - **It's in the Texas State Mapping System (EPSG:3081).** That's a Lambert conformal conic on NAD83 (GRS 1980), with central meridian −100°, standard parallels 27°25′ and 34°55′, latitude of origin 31°10′, and false easting and northing of 1,000,000 m. The projection is a short formula, so no GIS library is needed.
+    - **The server ignores `Range`,** so it's one streaming GET for the whole zip.
+
+    How to build it: its own source in Settings, with an on/off switch, a Refresh that asks first (about 45 MB), and Clear. The index is cached through `HttpCache` for a week. The zip is downloaded into `data/vtds/` like the SBOE map, and again only when the index shows a newer one. A lookup keeps the voter's county, then the polygons whose bounding box holds the point, then does an even-odd ray cast, off the event loop. Nothing is guessed near a boundary.
+12. **Map of your districts.** A **Map** button on the Your districts card opens a small map, with the address as a pin and the outline of each district: U.S. House, State Senate, State House, SBOE, and the election precinct once [Feature 11](#features) is built. Picking a district on the card highlights it.
+    - **Where the outlines come from:**
+      - SBOE, from the PLANE2106 map VoteBot already downloads;
+      - U.S. House, State Senate and State House, from the Census's TIGERweb REST service (one cached request per district, with simplified geometry), or from the Texas Legislative Council's plan files on the same portal as PLANE2106;
+      - the election precinct, from the VTD map.
+    - **Constraints:**
+      - Nothing is loaded from a CDN, so a map library such as Leaflet would be copied into `static/`, with a `package-data` pattern for its files.
+      - OpenStreetMap tiles would send the voter's area to the tile server. That would go in `privacy.html`, need an on/off switch, and follow OSM's tile usage policy and attribution.
+    - **A lighter first version:** draw the outlines as inline SVG with no tiles, which sends nothing anywhere, and link out to OpenStreetMap for the full map.
 
 ## UI and UX
 
@@ -273,7 +295,7 @@ What's been built so far, oldest first, taken from the git history. Each group i
 - [x] Print: a wallet card to cut out and fold, and "Election day: <weekday, date>" at the top of both layouts. The polling place waits for [Feature 1](#features).
 - [x] Offline is deferred, with the reason written in [UI and UX](#ui-and-ux).
 
-### When to vote (Sep 29, branch `feat/when-to-vote`)
+### When to vote ([#12](https://github.com/Fahd-Siddiqui/VoteBot/pull/12), Sep 29)
 
 The "when" half of [Feature 1](#features). "Where" isn't possible yet, because Texas's polling-place lookup needs a login.
 - [x] Key election dates from the Texas SOS's [Important Election Dates](https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml) page (`sources/key_dates.py`): the last day to register, early voting, and the last day for a mail-ballot application to arrive, for every election on the page. The page is read as text through `HttpCache` (new `get_text`), cached for a day, and parsed with the standard library. It has an on/off switch, Refresh and Clear in Settings, and pauses for an hour after a refusal. votetexas.gov was the other candidate, but it shows only day and month for the next election.
@@ -285,3 +307,20 @@ The "when" half of [Feature 1](#features). "Where" isn't possible yet, because T
 - [x] Calendar files (`GET /api/key-dates.ics`, `ics.py`): one per date from its calendar icon, or every date still to come with "Add all to calendar". The events are all-day, have no place, and have fixed UIDs, so adding a file again updates its events. votetexas.gov has no `.ics` of its own.
 - [x] Print: the full page and the wallet card add the early-voting dates under the election day, and the full page adds the polls' hours.
 - [x] FAQ: a "When and where to vote" group (where the dates come from, calendar files, why there's no polling place, voting by mail). README, DEVELOPMENT, About, Privacy and the welcome steps updated. The FAQ's "Why is a source paused?" now names FiftyPlusOne too, which it had left out.
+
+### Your districts ([#13](https://github.com/Fahd-Siddiqui/VoteBot/pull/13), Sep 29)
+
+- [x] "Your districts" at the top of the ballot, like a voter registration certificate, in three lines: U.S. House, State Senate, State House and SBOE; the county with its commissioner and JP & constable precincts; the city, city council district and school district. "—" marks a district that isn't known. An approximate address gets a line saying to check the districts.
+- [x] The city council district, from Ballotpedia's "City-town subdivision" (`council_district_in`), in the API's `districts.city_council`.
+- [x] The precinct form moved from "Depends on your precinct" and the address card into Your districts. It's open by itself while races wait on a missing number, and says which one to enter from the voter registration certificate; otherwise **Edit** opens it. After **Update my ballot**, a toast offers **Show**, which goes to the precinct's races. "Depends on your precinct" keeps a link up to the form, and the line above the races that linked to it is gone.
+- [x] One number for the JP and the constable, since each justice precinct elects one of each (`_jp_is_constable`). The commissioner precinct only takes 1 to 4 (`PrecinctInput`).
+- [x] A precinct from Ballotpedia can be cleared: the form sends `null` for an empty field, and `_precincts()` reads the request with `exclude_unset`. **Use Ballotpedia's numbers** puts them back.
+- [x] The two cards sit under the sticky strip, so "Next race to pick" and the section chips stay on a phone's first screen, and side by side on a wide screen. They share one panel style.
+- [x] The address card in the left pane shows the address, city and county, without the districts, which Your districts now shows.
+- [x] When to vote, from a UX review:
+  - past dates are grey without being faded, for contrast (about 6.3:1 in light mode instead of 3.6:1);
+  - the calendar icons have a 24×24px tap area, with no layout shift;
+  - "Where to vote" links to "county elections offices", since the page is the statewide list;
+  - VoteTexas.gov moved from the line under the heading to the card's links, next to "Am I registered?".
+- [x] AGENTS.md: a roadmap group is headed with the pull request's assumed number, one more than the last one on `develop`, rather than the branch; the When to vote group above now links #12.
+- [x] Two features added to the roadmap for later: [your election precinct](#features), with what was found about the Texas Legislative Council's VTD map, and a [map of your districts](#features).
