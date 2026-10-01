@@ -870,8 +870,10 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   .side-address { margin-top: 0; padding-bottom: 6px; }
   .side-bottom { margin-top: 0; }
   .content { padding: 20px 16px 32px; }
-  .jump-list { display: flex; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
-  .jump-list a { flex: none; border: 1px solid var(--line); border-radius: 999px; white-space: nowrap; }
+  .jump-list { display: flex; align-items: center; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
+  /* a chip as wide as the row at most: a long title ("Depends on your commissioner or JP precinct") wraps */
+  .jump-list li { flex: none; max-width: 100%; }
+  .jump-list a { border: 1px solid var(--line); border-radius: 999px; }
   .jump-list a[aria-current] { border-color: var(--accent); }
   .progress-strip .side-section { flex: 1 1 100%; min-width: 0; border-top: 0; padding-top: 0; }
   .progress-strip .side-title { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;

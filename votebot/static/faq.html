@@ -34,7 +34,7 @@
           <summary>How does VoteBot know what's on my ballot?</summary>
           <div class="faq-body">
             <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's maps give your State Board of Education district and your election precinct.</p>
-            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and tells VoteBot your precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
+            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and tells VoteBot your commissioner and JP precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
           </div>
         </details>
 
@@ -63,10 +63,10 @@
         </details>
 
         <details class="faq">
-          <summary>What does "Depends on your precinct" mean?</summary>
+          <summary>What does "Depends on your commissioner or JP precinct" mean?</summary>
           <div class="faq-body">
-            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your precinct, and the Census doesn't say which precinct you're in. VoteBot uses Ballotpedia's answer when it has one.</p>
-            <p>Otherwise those races are listed under "Depends on your precinct". Your precinct numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
+            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. VoteBot uses Ballotpedia's answer when it has one.</p>
+            <p>Otherwise those races are listed under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
             <p>The small print under "Your districts" says where the numbers came from: Ballotpedia, or you. If Ballotpedia's are wrong, "Edit" lets you change them or empty them, and "Use Ballotpedia's numbers" puts them back.</p>
           </div>
         </details>
@@ -85,7 +85,7 @@
           <summary>Is my election precinct the same as my commissioner or JP precinct?</summary>
           <div class="faq-body">
             <p>No. Your election precinct, the "Pct" on your certificate, is a small area, usually a few neighborhoods. Commissioner and justice of the peace precincts are much larger: every county has four commissioner precincts and a handful of JP precincts, and they decide which commissioner, JP and constable races are on your ballot.</p>
-            <p>Each election precinct lies inside one commissioner precinct and one JP precinct, but VoteBot has no list of which, so it can't fill those in from your election precinct. Enter them from the same certificate under "Your districts" (see "Depends on your precinct").</p>
+            <p>Each election precinct lies inside one commissioner precinct and one JP precinct, but VoteBot has no list of which, so it can't fill those in from your election precinct. Enter them from the same certificate under "Your districts" (see "Depends on your commissioner or JP precinct").</p>
           </div>
         </details>
 

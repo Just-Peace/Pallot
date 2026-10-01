@@ -8,7 +8,7 @@ export const GROUP_LABELS = {
   legislature: "Legislature & State Board of Education",
   judicial: "Courts & district offices",
   county: "County",
-  precinct: "Your precinct",
+  precinct: "Your commissioner & JP precincts",
   local: "City & school district",
 };
 
