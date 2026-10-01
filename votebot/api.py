@@ -25,7 +25,7 @@ from .models import (
 )
 from .outlines import district_outlines
 from .settings import Settings
-from .sources import census, key_dates, nominatim, osm_tiles, photon
+from .sources import census, key_dates, nominatim, osm_tiles, suggestions
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
@@ -33,10 +33,10 @@ from .sources.election_precincts import ElectionPrecincts
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
-from .sources.photon import Photon
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Sos
+from .sources.suggestions import Suggestions
 from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
@@ -44,7 +44,7 @@ from .sources.trackaipac import TrackAipac
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
 MIN_INTERVAL = {
-    "nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
+    "nominatim": 1.0, "suggestions": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
     "sboe": 1.0, "county_precincts": 0.25,
 }
 
@@ -109,7 +109,7 @@ def create_app(
             election_precincts = ElectionPrecincts(cache, config.ttl, config.election_precincts_dir)
             try:
                 await asyncio.to_thread(
-                    cache.prune, {photon.SOURCE, osm_tiles.SOURCE}, {census.SOURCE, nominatim.SOURCE},
+                    cache.prune, {suggestions.SOURCE, osm_tiles.SOURCE}, {census.SOURCE, nominatim.SOURCE},
                     config.ttl.prune_after,
                 )
                 svc = Services(
@@ -118,7 +118,7 @@ def create_app(
                     cache=cache,
                     census=Census(cache, config.ttl),
                     nominatim=Nominatim(cache, config.ttl),
-                    photon=Photon(cache, config.ttl),
+                    suggestions=Suggestions(cache, config.ttl),
                     sboe=SboeMap(cache, config.ttl, config.sboe_path),
                     election_precincts=election_precincts,
                     county_precincts=CountyPrecincts(cache, config.ttl, election_precincts),
@@ -235,10 +235,10 @@ def create_app(
         """Addresses for what's in the address box so far. With an empty ``q`` it only says
         whether suggestions are on. Nothing here is worth an error: a failure is no suggestions."""
         svc = services(request)
-        if not svc.settings.enabled("photon"):
+        if not svc.settings.enabled(suggestions.SOURCE):
             return SuggestResult(enabled=False, suggestions=[])
         try:
-            found = await svc.photon.suggest(q[:200])
+            found = await svc.suggestions.suggest(q[:200])
         except UpstreamError:
             found = []
         return SuggestResult(enabled=True, suggestions=found)

@@ -333,17 +333,17 @@ async def test_prune_forgets_old_suggestions_and_addresses_not_found(tmp_path):
         def store(source, q, value, ttl=10, empty_ttl=None, empty_at=()):
             cache._store(RequestSpec("GET", URL, params={"q": q}), source, value, clock.now, ttl, empty_ttl, empty_at)
 
-        store("photon", "old", {"features": [1]})
+        store("suggestions", "old", {"data": {"Results": [1]}})
         store("census", "not found", [], ttl=100, empty_ttl=10)
         store("census", "found", [1], ttl=100, empty_ttl=10)
         store("demo", "other source", [1])
-        cache.set_flag("paused:photon", "photon", 5)
+        cache.set_flag("paused:suggestions", "suggestions", 5)
         clock.now += 170
-        store("photon", "expired lately", {"features": []})  # expires at +180, less than 50 s before the cutoff
+        store("suggestions", "expired lately", {"data": {"Results": []}})  # expires at +180, less than 50 s before the cutoff
         clock.now += 30
 
-        assert cache.prune({"photon"}, {"census"}, older_than=50) == 2
-        assert [cache.stats(s).entries for s in ("photon", "census", "demo")] == [1, 1, 1]
+        assert cache.prune({"suggestions"}, {"census"}, older_than=50) == 2
+        assert [cache.stats(s).entries for s in ("suggestions", "census", "demo")] == [1, 1, 1]
         assert cache._db.execute("SELECT value FROM responses WHERE source = 'census'").fetchone()[0] == "[1]"  # the found one
         assert cache._db.execute("SELECT COUNT(*) FROM flags").fetchone()[0] == 0
-        assert cache.prune({"photon"}, {"census"}, older_than=50) == 0
+        assert cache.prune({"suggestions"}, {"census"}, older_than=50) == 0

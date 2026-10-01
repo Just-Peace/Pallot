@@ -104,8 +104,8 @@ How to write them:
   - Throttle with `MIN_INTERVAL` in `api.py`, and pause a source when it refuses a request (`pause_on`).
   - Never fetch TEC's zip in a loop or in many ranges: its server blocks an IP after a burst. Use one streaming request, or `--zip` with a copy you downloaded.
   - FiftyPlusOne answers 403 unless the request carries browser headers.
-  - Nominatim forbids search-as-you-type, which is why Photon does the suggestions.
-  - Ballotpedia's endpoint is unofficial and for personal use only.
+  - Nominatim forbids search-as-you-type, which is why Ballotpedia's address search does the suggestions.
+  - Ballotpedia's endpoints (the ballot and the address search) are unofficial and for personal use only.
   - OpenStreetMap's tiles come through the server and are kept at least 7 days, fetched only as the voter looks at them. Never prefetch them or re-download them in bulk, which its tile policy forbids: that's why the street map has Clear in Settings but no Refresh.
   - The Texas Legislative Council's precinct map (about 45 MB) is downloaded only when its portal's index lists a newer one, one download at a time, never in a loop. A map that fails isn't started again by a lookup until the index lists a changed one, or for a week (15 minutes while none is kept). Tests make the map up (`conftest.py`); only the live test downloads the real one.
 - **Match across sources by name, with seat and party as corroboration** (`votebot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.

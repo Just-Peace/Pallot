@@ -1,0 +1,37 @@
+{
+ "success": true,
+ "data": {
+  "$metadata": {
+   "httpStatusCode": 200,
+   "requestId": "vu2Y6HpYFWSRVDQ3V42e6w",
+   "attempts": 1,
+   "totalRetryDelay": 0
+  },
+  "Results": [
+   {
+    "Text": "1100 Congress Ave, Austin, TX, 78701, USA",
+    "PlaceId": "AQAEALkA7madqce0G7lBS2GVoQmGKgQ48a7SGJk9go6mQ1hFPdSje42l1iut6fmP0EXQF4D5QywcO5KzAc0G4E5_F-nYuuEdYKgsQlKVm5lH7WHXwad2AQlzZ4TkTiR3Pj_PZHE962toURKoncsz1FAqgARq9MTq9WhdFJagyOSmfLRHqtwtDuvOXQRiQbsidYK9gXVR6yPUFhMRZICq7RQetUyNJXE-goAa1oZ3hAsaXfP3YDBTZnls2AW9v13gdprJ3NL3KSmm8fNu__WBELibDxfnxhoeScC9DM7ehg"
+   },
+   {
+    "Text": "1100 Congress Ave, Houston, TX, 77002, USA",
+    "PlaceId": "AQAEAKkAoziBkJ3mRxCMhBHEh0J3UauVXh5dvayN4CdmL1oxMT4AsW68cn7ederfqWU4o5QWzlWTYsCheiT9VdVwNZT22QFZjDhVK3DQiX4KbUp_AGZP7wvyXvyY9eWq7Ij3WFzczGkzUR1o3d-FrvfQmPHohdqNEpe91Bt2u8JVtpdnu6qQs_--wvcqxR0Y-7WwJWvLnmhqBTk1MVrexGQ4QSfC-V93ClPHZUCaB2TsZ8agQWHzCAd1_HOvG5F1tytbnZPrqYpZy44TPqvU"
+   },
+   {
+    "Text": "1100 Congress Ave S, Austin, TX, 78704, USA",
+    "PlaceId": "AQAEAKkA9z_gv56J5WFIET0EyTxa50hJ2iqHB-Y7Npm9F3wX_km57mhuGe7z4S2lHNMblTxGAcIamz2sJtDJO9c_JW1EvejEivl6AHZ7LMGvLohSrQeLjeh1Wbygz2a9Zv_-RLLzSLlJxBkvdFYzdmq1bgXbsDSPANYfc_97inCCMXdeNmS9Ud8lBqqrD5buHDvvb0qDQcM_TrsZ0ElGUbb5v1rtnh2A49XxZpJGx_PImn_MuzfCLBWnRQRPheUUVdeyjzJOFlS6ThDQCwsD"
+   }
+  ],
+  "Summary": {
+   "DataSource": "Esri",
+   "FilterCategories": [
+    "AddressType"
+   ],
+   "FilterCountries": [
+    "USA"
+   ],
+   "MaxResults": 5,
+   "Text": "tx 1100 congress ave"
+  }
+ },
+ "message": null
+}

@@ -41,9 +41,8 @@
         <details class="faq" id="suggestions">
           <summary>Why does VoteBot suggest addresses as I type?</summary>
           <div class="faq-body">
-            <p>To save typing and catch misspellings. Once you've typed a house number and a few letters of the street, VoteBot asks Photon, an address search built on OpenStreetMap, for matching Texas addresses. Picking one only fills in the box: press "Show my ballot" as usual.</p>
-            <p>"Street only" means OpenStreetMap knows the street but not your house, so the suggestion keeps the number you typed. Check it before you look up your ballot.</p>
-            <p>What you type is sent to Photon through the VoteBot server, which keeps a copy so the same text isn't sent twice. To stop that, turn off "Address suggestions" in <a href="settings.html">Settings</a>; your browser's own address autofill then works as before. <a href="privacy.html#lookups">Privacy</a> has the details.</p>
+            <p>To save typing and catch misspellings. Once you've typed a house number and a few letters of the street, VoteBot asks Ballotpedia's address search for matching Texas addresses. Picking one only fills in the box: press "Show my ballot" as usual.</p>
+            <p>What you type is sent to Ballotpedia through the VoteBot server, with "tx" added so the search looks in Texas. The server keeps a copy so the same text isn't sent twice. To stop that, turn off "Address suggestions" in <a href="settings.html">Settings</a>; your browser's own address autofill then works as before. <a href="privacy.html#lookups">Privacy</a> has the details.</p>
           </div>
         </details>
 
@@ -214,7 +213,7 @@
         <details class="faq" id="paused">
           <summary>Why is a source paused?</summary>
           <div class="faq-body">
-            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia, Photon (address suggestions), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map) and the Texas Legislative Council's portal (the precinct and SBOE maps) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia (its ballot and its address search, each on its own), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map) and the Texas Legislative Council's portal (the precinct and SBOE maps) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
             <p>Meanwhile, whatever the source already sent still shows. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
           </div>
         </details>

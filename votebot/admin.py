@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from .ballot import Services
 from .models import ActionResult, CacheStatus, SourcesOverview, SourceStatus, Tone
 from .sources import (
-    KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, photon,
-    polls, sos, tec, tigerweb, trackaipac,
+    KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls,
+    sos, suggestions, tec, tigerweb, trackaipac,
 )
 from .text import display_size, display_time, iso_utc
 
@@ -78,14 +78,14 @@ SOURCES = (
         refreshable=False,
     ),
     SourceInfo(
-        photon.SOURCE,
-        "Address suggestions",
-        photon.DESCRIPTION,
+        suggestions.SOURCE,
+        "Address suggestions (Ballotpedia)",
+        suggestions.DESCRIPTION,
         True,
-        (photon.SOURCE,),
-        refresh_confirm="Refresh sends everything saved from the address box to Photon again, one request every half "
-        "second. Continue?",
-        pause=Pause("Photon refused a request", "suggestions it already sent still show"),
+        (suggestions.SOURCE,),
+        refresh_confirm="Refresh sends everything saved from the address box to Ballotpedia again, one request every "
+        "half second. Continue?",
+        pause=Pause("Ballotpedia refused an address search", "suggestions it already sent still show"),
     ),
     SourceInfo(sos.SOURCE, "Texas Secretary of State", sos.DESCRIPTION, True, (sos.SOURCE,)),
     SourceInfo(
@@ -130,7 +130,7 @@ SOURCES = (
     ),
 )
 BY_ID = {info.id: info for info in SOURCES}
-_SLOW = {"ballotpedia", "nominatim", "photon", "polls"}  # one request at a time when refreshing
+_SLOW = {"ballotpedia", "nominatim", "polls", "suggestions"}  # one request at a time when refreshing
 
 
 class AdminError(Exception):

@@ -215,8 +215,6 @@ textarea { resize: vertical; min-height: 60px; }
 .suggestion { padding: 7px 11px; cursor: pointer; font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
 .suggestion:hover, .suggestion[aria-selected="true"] { background: var(--accent-soft); }
 .suggestion[aria-selected="true"] { box-shadow: inset 3px 0 0 var(--accent); }
-.suggestion-hint { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid var(--line-strong); border-radius: 999px;
-  font-size: 0.7rem; color: var(--muted); white-space: nowrap; vertical-align: 1px; }
 .suggestions-credit { margin: 0; padding: 5px 11px 7px; border-top: 1px solid var(--line); font-size: 0.72rem; color: var(--muted); }
 input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 

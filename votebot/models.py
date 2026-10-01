@@ -317,8 +317,7 @@ class ElectionDate(BaseModel):
 
 
 class AddressSuggestion(BaseModel):
-    label: str  # "1100 Congress Avenue, Austin, TX 78701"
-    street_only: bool  # only the street is known there: the house number is the one typed
+    label: str  # "1100 Congress Ave, Austin, TX 78701"
 
 
 class SuggestResult(BaseModel):

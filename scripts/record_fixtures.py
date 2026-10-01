@@ -4,7 +4,7 @@
     python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, tec, trackaipac)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
-the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race),
+the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
 the key dates one (the Texas SOS's Important Election Dates page, kept as served), the
 district outlines four (TIGERweb's layer list, and the Capitol's three districts), and the
 election precincts one (the Texas Legislative Council portal's list of precinct maps; the
@@ -38,7 +38,8 @@ sys.path.insert(0, str(ROOT))
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
 from votebot.sources import (  # noqa: E402
-    ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, photon, polls, sos, tigerweb,
+    ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, polls, sos, suggestions,
+    tigerweb,
 )
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
@@ -60,9 +61,9 @@ TRACKAIPAC_PEOPLE = (
 FEC_CYCLE = 2026
 FEC_RACES = ("TX-SEN", "TX-10")  # the Capitol ballot's federal races
 FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
-# What a voter might have typed so far: an address OpenStreetMap has only the street of,
-# and a street name that other streets' house numbers also match.
-SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}
+# What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
+# a street that's only in Austin.
+SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
 OUTLINES = {"cd": 10, "sd": 14, "hd": 49}  # the Capitol's districts
 PRECINCT_COUNTIES = {"travis": 453, "harris": 201}  # the fixture addresses' counties, by FIPS code
 
@@ -129,10 +130,10 @@ def record_ballots(client: httpx.Client) -> None:
 
 def record_suggest(client: httpx.Client) -> None:
     for name, text in SUGGEST.items():
-        response = client.get(photon.URL, params={"q": photon.normalize(text), "limit": "10", "lang": "en",
-                                                  "bbox": photon.TEXAS_BBOX})
+        response = client.get(suggestions.URL, params={"location": suggestions.query(suggestions.normalize(text))},
+                              headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"})
         response.raise_for_status()
-        save(f"photon_{name}.json", response.json())
+        save(f"suggestions_{name}.json", response.json())
 
 
 def record_fec(client: httpx.Client, key: str) -> None:
