@@ -1,5 +1,5 @@
-// Address suggestions under the address box as the voter types. They come from Photon
-// (OpenStreetMap data) through the VoteBot server, which caches them. A WAI-ARIA combobox:
+// Address suggestions under the address box as the voter types. They come from Ballotpedia's
+// address search (Esri data) through the VoteBot server, which caches them. A WAI-ARIA combobox:
 // ↑/↓ move through the list, Enter or a click picks, Esc closes. Picking only fills the
 // box; the voter still presses "Show my ballot". With suggestions off in Settings the box is
 // left as it was, with the browser's own address autofill.
@@ -7,7 +7,7 @@
 import { api } from "./api.js";
 import { h } from "./dom.js";
 
-const MIN_LENGTH = 5; // the server doesn't ask Photon about less
+const MIN_LENGTH = 5; // the server doesn't ask Ballotpedia about less
 const WAIT_MS = 300; // after the last keystroke
 
 export async function attachSuggestions(input) {
@@ -19,7 +19,7 @@ export async function attachSuggestions(input) {
 
   const list = h("ul", { id: `${input.id}-suggestions`, role: "listbox", "aria-label": "Suggested addresses" });
   const box = h("div", { class: "suggestions", hidden: true },
-    list, h("p", { class: "suggestions-credit" }, "Suggestions from Photon · © OpenStreetMap contributors"));
+    list, h("p", { class: "suggestions-credit" }, "Suggestions from Ballotpedia · Esri data"));
   input.after(box);
   // Our list replaces the browser's autofill, which would open on top of it.
   input.setAttribute("autocomplete", "off");
@@ -62,10 +62,7 @@ export async function attachSuggestions(input) {
     }
     options = suggestions.map((suggestion, i) => {
       const element = h("li", { id: `${list.id}-${i}`, class: "suggestion", role: "option", "aria-selected": "false" },
-        suggestion.label,
-        suggestion.street_only
-          ? h("span", { class: "suggestion-hint", title: "OpenStreetMap has the street but not this house number: check it" }, "street only")
-          : null);
+        suggestion.label);
       // pointerdown, not click: the box keeps its focus, so blur doesn't close the list first.
       element.addEventListener("pointerdown", (event) => {
         event.preventDefault();

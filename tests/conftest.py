@@ -24,7 +24,7 @@ from fastapi.testclient import TestClient
 
 from votebot.api import create_app
 from votebot.config import Config
-from votebot.sources import ballotpedia, photon
+from votebot.sources import ballotpedia, suggestions
 from votebot.sources.census import normalize_address
 from votebot.sources.election_precincts import read_prj
 
@@ -39,7 +39,7 @@ ADDRESSES = {
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
 }
-SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}  # as in scripts/record_fixtures.py
+SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}  # as in scripts/record_fixtures.py
 PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only its bytes matter
 
 
@@ -252,7 +252,7 @@ class Upstream:
         self.ballotpedia_status: int | None = None
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
-        self.photon_status: int | None = None  # e.g. 429 when Photon throttles us
+        self.suggestions_status: int | None = None  # e.g. 429 when Ballotpedia's address search throttles us
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
@@ -315,6 +315,14 @@ class Upstream:
                 if extra:
                     return httpx.Response(200, json=load(f"sos_candidates_{body['electionId']}.json") + extra)
                 return _file(f"sos_candidates_{body['electionId']}.json", default=[])
+        if url.host == "api4.ballotpedia.org" and url.path == "/address_autocomplete":
+            if self.suggestions_status:
+                return httpx.Response(self.suggestions_status)
+            if request.headers.get("origin") != ballotpedia.ORIGIN:
+                return httpx.Response(403, json={"success": False, "data": {}, "message": "Insufficient privileges."})
+            name = next((name for name, text in SUGGEST.items()
+                         if suggestions.query(suggestions.normalize(text)) == params["location"]), None)
+            return _file(f"suggestions_{name}.json") if name else httpx.Response(200, json={"success": True, "data": {"Results": []}})
         if url.host == "api4.ballotpedia.org":
             if self.ballotpedia_status:
                 return httpx.Response(self.ballotpedia_status)
@@ -324,11 +332,6 @@ class Upstream:
             if params["lat"] == f"{lat:.5f}" and params["long"] == f"{lon:.5f}":
                 return _file("ballotpedia_capitol.json")
             return httpx.Response(200, json={"success": True, "data": {"districts": [], "elections": []}})
-        if url.host == "photon.komoot.io":
-            if self.photon_status:
-                return httpx.Response(self.photon_status)
-            name = next((name for name, text in SUGGEST.items() if photon.normalize(text) == params["q"]), None)
-            return _file(f"photon_{name}.json") if name else httpx.Response(200, json={"type": "FeatureCollection", "features": []})
         if url.host == "data.capitol.texas.gov":
             if url.path.endswith("/package_show") or "/download/precincts" in url.path:
                 if self.precincts_status:

@@ -1,0 +1,29 @@
+{
+ "success": true,
+ "data": {
+  "$metadata": {
+   "httpStatusCode": 200,
+   "requestId": "vu2ZHzu3PrvoQvYCsopyfQ",
+   "attempts": 1,
+   "totalRetryDelay": 0
+  },
+  "Results": [
+   {
+    "Text": "4512 Duval St, Austin, TX, 78751, USA",
+    "PlaceId": "AQAEAKkApLaMREZdcuwiYG0QifjizrYGM9fG67a3zJJicAfyxRbe1e7LMkzJUm1JrvDIUEFCAVMHNxzbknHoa2uDXnVzxAxsK46voNpU72u5R0I2CAXoPNVgmUllsnqMEZA6pDdKyv0E_w7xT_rDGKYRKKBpq3KUvWdXxwp1hVrB5N9FcXC3zh7E2u-PXBh5TSCJuAsSIRzSFmZyUKMtvee7XhJ1wIB3ahaWKMgLTlZWcjOKHzZmnrzXdro7HgpgvfC8dNOBXp7zM2TL1ABs"
+   }
+  ],
+  "Summary": {
+   "DataSource": "Esri",
+   "FilterCategories": [
+    "AddressType"
+   ],
+   "FilterCountries": [
+    "USA"
+   ],
+   "MaxResults": 5,
+   "Text": "tx 4512 duval st"
+  }
+ },
+ "message": null
+}

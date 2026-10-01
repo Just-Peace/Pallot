@@ -30,7 +30,7 @@ class Ttls:
     geocode: int = 30 * DAY
     geocode_miss: int = DAY
     suggest: int = 30 * DAY  # address suggestions as you type
-    suggest_backoff: int = HOUR  # after Photon refuses us, stop asking for this long
+    suggest_backoff: int = HOUR  # after Ballotpedia refuses an address search, stop asking for this long
     ballotpedia: int = DAY
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks

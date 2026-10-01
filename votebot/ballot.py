@@ -39,10 +39,10 @@ from .sources.fec import Fec
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
-from .sources.photon import Photon
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
+from .sources.suggestions import Suggestions
 from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
@@ -81,7 +81,7 @@ class Services:
     cache: HttpCache
     census: Census
     nominatim: Nominatim
-    photon: Photon
+    suggestions: Suggestions
     sboe: SboeMap
     election_precincts: ElectionPrecincts
     county_precincts: CountyPrecincts

@@ -42,7 +42,7 @@ votebot/
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
   ics.py            calendar files of key dates    outlines.py the district map's outlines
-  sources/          census, nominatim, photon, sboe, election_precincts, county_precincts, tigerweb, osm_tiles, sos,
+  sources/          census, nominatim, suggestions, sboe, election_precincts, county_precincts, tigerweb, osm_tiles, sos,
                     key_dates, ballotpedia, trackaipac, fec, tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
                     compare.py: the Compare dialog's sections, shared by the FEC and TEC)
@@ -67,7 +67,7 @@ Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `dat
 - `download` streams a file too big for the database (the precinct and SBOE maps) into a path: the same pause, throttling, call count and refusals as `get_json`, refused past `max_bytes` or when a redirect leaves `hosts`, but nothing is stored, so whoever keeps the file decides when it's fetched again. `peek` reads a stored copy without asking anyone, for Settings' plain-function routes.
 - The lifetimes are `Ttls` in `votebot/config.py`, each overridable with `VOTEBOT_TTL_<NAME>`.
 - Reading and writing a row (`_load`, `_store`) runs in a worker thread (`asyncio.to_thread`), and `self._lock` guards the SQLite connection and the in-memory copies. SQLite and file I/O release the GIL, so other requests (address suggestions typed during a first lookup, say) go on meanwhile. `json.loads` of a big value (the 2.6 MB candidate list) still holds the GIL while it parses, in C.
-- Expired rows stay, as the copy to serve when a source is down. At startup, `prune()` deletes what's no use even then, once it's been expired for `Ttls.prune_after` (30 days): Photon's rows (half-typed addresses) and the street map's tiles, census and Nominatim rows stored with their shorter "not found" lifetime, and expired flags. It runs `VACUUM` when it deleted anything, so the typed text doesn't linger in free pages.
+- Expired rows stay, as the copy to serve when a source is down. At startup, `prune()` deletes what's no use even then, once it's been expired for `Ttls.prune_after` (30 days): the address suggestions' rows (half-typed addresses) and the street map's tiles, census and Nominatim rows stored with their shorter "not found" lifetime, and expired flags. It runs `VACUUM` when it deleted anything, so the typed text doesn't linger in free pages.
 
 Other work that would hold up the server runs in threads too:
 - `enrich.run` asks every card source at once (`asyncio.gather`); the ones with no I/O (Ballotpedia, TrackAIPAC, the TEC) build their cards in threads. The cards are then attached in `CARD_ORDER`, which is the order of the tabs in Details and of the badges on a candidate's row: the money (FEC or TEC), Texas SOS, polls, Ballotpedia, TrackAIPAC.
@@ -79,7 +79,7 @@ Other work that would hold up the server runs in threads too:
 ## Sources
 
 Notes on how each source is called, beyond the README's table:
-- **Photon:** Nominatim's policy forbids search-as-you-type, hence Photon for suggestions. Only results on a street matching what was typed are kept; without the house in OpenStreetMap, the typed number goes on the street.
+- **Address suggestions** (`sources/suggestions.py`): Nominatim's policy forbids search-as-you-type, hence Ballotpedia's `address_autocomplete`, the search behind its own widget (Esri data). It needs Ballotpedia's origin header, searches the whole US and answers five addresses at most, so `tx ` goes in front of what was typed (unless it already says `tx` or `texas`; on the end, Esri no longer reads the half-typed last word as a prefix, and `1100 congr tx` finds nothing) and anything outside Texas is dropped. It only finds addresses, so text is sent only once it's a house number and three more characters (`wanted`). It's its own source, with its own switch, cache and pause, apart from the ballot's endpoint.
 - **SBOE districts:** point-in-polygon in pure Python over the PLANE2106 map, downloaded once into `data/`. It runs for every ballot, beside the Texas SOS and Ballotpedia work, so a ballot from Ballotpedia alone still has the voter's SBOE district.
   - The first lookup downloads the map through `HttpCache.download` (refused past 20 MB or off the portal), checks it has all 15 districts, then moves it into place. A download that fails, for any reason (a broken KML is a `ValueError`), isn't tried again by a lookup for 15 minutes (`Ttls.retry_after`): a flag in the cache (`failed:sboe`), which Clear removes, so a lookup while the portal is down makes no external calls. A 403 or 429 pauses it for `Ttls.election_precincts_backoff` instead, the same portal's lifetime as the precinct map's. Refresh always tries. `SboeMap` keeps its own flags, under `sboe`, which isn't one of the Address lookup row's `cache_tags`: a pause there would read as if the Census were paused.
 - **Election precincts** (`sources/election_precincts.py`): the Texas Legislative Council's maps of every county's voting precincts, the `precincts` dataset on its CKAN portal (data.capitol.texas.gov).
@@ -109,7 +109,7 @@ Notes on how each source is called, beyond the README's table:
   - a date cell can add a footnote, a note or a time after the date, so the first full date in it is taken.
 
   `GET /api/key-dates.ics?date=…[&event=…]` builds the calendar files (`ics.py`). Without `event`, the mail-ballot deadline is left out, since most voters can't vote by mail.
-- **Ballotpedia:** an unofficial endpoint that needs Ballotpedia's own origin header.
+- **Ballotpedia:** unofficial endpoints (the ballot, and the address search for suggestions) that need Ballotpedia's own origin header.
 - **TEC seats:** a Texas SOS race's seat comes from its office (`tec_seat`); on a ballot from Ballotpedia alone, from Ballotpedia's district type and office name (`bp_seat`: "State Legislative (Lower)" and "District 49" is `STATEREP:49`, "Texas Third District Court of Appeals Chief Justice" is `CHIEFJUSTICE_COA:3`). Without a seat, a match by name is only ever "likely". Ballotpedia lists county courts at law and probate courts as judicial districts, but their judges file with the county, so those races get no TEC card (`_BP_COUNTY_COURT`), as the Texas SOS's county courts don't.
 - **FiftyPlusOne:** the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's.
 - **State-specific text** (the official elections site, the registration check, who can vote by mail, the polls' hours, the print sheet's voting rules) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.

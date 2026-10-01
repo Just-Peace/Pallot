@@ -73,7 +73,7 @@ def test_tec_export_still_has_what_we_read():
     assert set(REQUIRED["filers"]) <= set(header)
 
 
-def test_photon_suggestions_live(tmp_path):
+def test_suggestions_live(tmp_path):
     with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
         found = client.get("/api/suggest", params={"q": "1001 preston st houston"}).json()
     assert found["enabled"] and any("Preston" in s["label"] and "Houston" in s["label"] for s in found["suggestions"])

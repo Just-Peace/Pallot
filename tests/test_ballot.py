@@ -72,7 +72,7 @@ def test_capitol_ballot(client):
     assert paxton["photo_url"]  # from Ballotpedia
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
-    assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "photon": None, "sos": "used",
+    assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
                         "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
                         "tec": statuses["tec"], "polls": "used", "election_precincts": "used",
                         "county_precincts": "used"}
