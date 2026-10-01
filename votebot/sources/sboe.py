@@ -3,7 +3,7 @@
 The Census geocoder doesn't cover SBOE districts, and counties like Harris are split
 across several, so we look the point up ourselves: the KML is plain lat/lon, which keeps
 this to a ray-casting point-in-polygon test with no GIS libraries. The map is downloaded
-once into the data folder and kept.
+once into the data folder, through HttpCache.download, and kept.
 """
 
 from __future__ import annotations
@@ -11,22 +11,30 @@ from __future__ import annotations
 import asyncio
 import io
 import math
+import os
 import re
 import xml.etree.ElementTree as ET
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlsplit
 
-import httpx
+from ..config import Ttls
+from ..http_cache import HttpCache, RequestSpec, UpstreamError
+from ..models import Fact, Tone
+from ..text import display_size, display_time
+from . import RefreshFailed
 
-from ..fsutil import write_bytes_atomic
-from ..http_cache import current_calls
-
+SOURCE = "sboe"
 PLAN = "PLANE2106"
 KML_URL = (
     "https://data.capitol.texas.gov/dataset/ad1ae979-6df9-4322-98cf-6771cc67f02d"
     "/resource/a8a7daf2-ab21-4742-bf56-e1ab697580ea/download/plane2106_kml.zip"
 )
+HOST = urlsplit(KML_URL).hostname
+REFUSALS = (403, 429)  # answers that pause the portal for Ttls.election_precincts_backoff
+MAX_BYTES = 20 * 1_048_576  # the map is about 1.9 MB
+FAILED_FLAG = f"failed:{SOURCE}"
 DISTRICT_COUNT = 15
 TOLERANCE_M = 200  # geocoders can land a few meters off; accept the nearest district within this
 
@@ -68,7 +76,10 @@ def _bbox(ring: Ring) -> BBox:
 
 
 def parse_kml(data: bytes) -> list[District]:
-    root = ET.fromstring(data)
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError as exc:  # a SyntaxError, which callers wouldn't expect
+        raise ValueError(f"{PLAN} map isn't valid KML ({exc})") from None
     districts = []
     for placemark in (el for el in root.iter() if _local(el.tag) == "Placemark"):
         name = next((el.text or "" for el in placemark if _local(el.tag) == "name"), "")
@@ -97,6 +108,14 @@ def parse_zip(data: bytes) -> list[District]:
         if not names:
             raise ValueError(f"{PLAN} download has no .kml file")
         return parse_kml(archive.read(names[0]))
+
+
+def read_download(path: Path) -> list[District]:
+    """A downloaded map's districts, refused unless it has all of them."""
+    districts = parse_zip(path.read_bytes())
+    if len({d.number for d in districts}) != DISTRICT_COUNT:
+        raise ValueError(f"{PLAN} map has {len(districts)} districts, expected {DISTRICT_COUNT}")
+    return districts
 
 
 def _inside(lon: float, lat: float, ring: Ring) -> bool:
@@ -182,12 +201,20 @@ def locate(districts: list[District], lat: float, lon: float, tolerance_m: float
 
 
 class SboeMap:
-    def __init__(self, path: Path, client: httpx.AsyncClient):
+    """The map kept at ``path``, downloaded by the first lookup that needs it. One that fails
+    isn't downloaded again by a lookup for ``Ttls.retry_after``, and a refusal pauses the portal;
+    Refresh always tries."""
+
+    def __init__(self, cache: HttpCache, ttl: Ttls, path: Path):
+        self.cache = cache
+        self.ttl = ttl
         self.path = path
-        self._client = client
+        self.last_error: str | None = None  # why the last download failed, until one succeeds
         self._districts: list[District] | None = None
         self._outlines: dict[tuple[int, float], list[Ring]] = {}
         self._lock = asyncio.Lock()
+        self._downloading = False
+        cache.pause_on(SOURCE, REFUSALS, ttl.election_precincts_backoff)
 
     async def district_at(self, lat: float, lon: float) -> int | None:
         return await asyncio.to_thread(locate, await self._load(), lat, lon)
@@ -203,35 +230,103 @@ class SboeMap:
         return self._outlines[key]
 
     async def _load(self) -> list[District]:
+        """The districts, read once; with no map kept, downloaded, unless the last download
+        failed a short while ago (UpstreamError, without asking)."""
         if self._districts is None:
             async with self._lock:
                 if self._districts is None:
-                    if not self.path.exists():
-                        await self.download()
-                    self._districts = await asyncio.to_thread(parse_zip, self.path.read_bytes())
+                    if self.path.exists():
+                        self._districts = await asyncio.to_thread(parse_zip, self.path.read_bytes())
+                    elif until := self.cache.flag_until(FAILED_FLAG):
+                        raise UpstreamError(SOURCE, f"the last download failed ({self.last_error or 'see Settings'}); "
+                                                    f"VoteBot tries again after {display_time(until)}")
+                    else:
+                        await self._download()
         return self._districts
 
-    async def download(self) -> None:
-        """Fetch the map, check it parses into all districts, then replace the stored copy."""
-        stats = current_calls()
-        if stats:
-            stats.called("sboe")
-        response = await self._client.get(KML_URL, follow_redirects=True)
-        response.raise_for_status()
-        districts = await asyncio.to_thread(parse_zip, response.content)
-        if len({d.number for d in districts}) != DISTRICT_COUNT:
-            raise ValueError(f"{PLAN} map has {len(districts)} districts, expected {DISTRICT_COUNT}")
-        write_bytes_atomic(self.path, response.content)
-        self._districts = districts
-        self._outlines = {}
+    async def _download(self) -> None:
+        """Fetch the map, check it has every district, then put it in place of the one kept. On
+        any failure the map kept stays, and a lookup won't download it again for a while."""
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        part = self.path.with_name(f".{self.path.name}.part")
+        self._downloading = True
+        try:
+            await self.cache.download(SOURCE, RequestSpec("GET", KML_URL), part, max_bytes=MAX_BYTES, hosts={HOST})
+            districts = await asyncio.to_thread(read_download, part)
+            os.replace(part, self.path)
+        except UpstreamError as exc:
+            if exc.until is None:  # asked and failed; while paused, nothing was asked
+                self._failed(str(exc).removeprefix(f"{SOURCE}: "), refused=exc.status in REFUSALS)
+            raise
+        except (OSError, ValueError, zipfile.BadZipFile) as exc:
+            self._failed(str(exc))
+            raise
+        except Exception as exc:
+            error = ValueError(f"the map couldn't be read ({type(exc).__name__}: {exc})")
+            self._failed(str(error))
+            raise error from exc
+        finally:
+            part.unlink(missing_ok=True)
+            self._downloading = False
+        self.last_error = None
+        self._districts, self._outlines = districts, {}
 
-    def clear(self) -> None:
-        self._districts = None
-        self._outlines = {}
-        self.path.unlink(missing_ok=True)
+    def _failed(self, error: str, *, refused: bool = False) -> None:
+        """Remember why, and keep lookups from downloading again for a while (a refusal pauses
+        the portal instead)."""
+        self.last_error = error
+        if not refused:
+            self.cache.set_flag(FAILED_FLAG, SOURCE, self.ttl.retry_after)
 
-    def downloaded_at(self) -> float | None:
-        return self.path.stat().st_mtime if self.path.exists() else None
+    def _missing(self) -> str:
+        """When a lookup may download the map again, while none is kept."""
+        until = max(filter(None, (self.cache.flag_until(FAILED_FLAG), self.cache.paused_until(SOURCE))), default=None)
+        return f"lookups try again after {display_time(until)}" if until else "the next lookup tries again"
+
+    # -- Settings (KeptSource) ----------------------------------------------------------------
+
+    @property
+    def busy(self) -> bool:
+        return self._downloading
+
+    def notice(self) -> tuple[str, Tone] | None:
+        if self._downloading:
+            return "Downloading the State Board of Education map…", "info"
+        kept = self.path.exists()
+        if paused := self.cache.paused_until(SOURCE):
+            then = "the map kept still shows" if kept else "SBOE districts are missing until then"
+            return (f"The Texas Legislative Council's portal refused the State Board of Education map, so VoteBot "
+                    f"won't ask it again until {display_time(paused)}; {then}."), "warn"
+        if self.last_error:
+            then = "the map kept still shows" if kept else self._missing()
+            return f"The last download of the State Board of Education map failed ({self.last_error}); {then}.", "warn"
+        return None
+
+    def details(self) -> list[Fact]:
+        if not self.path.exists():
+            return [Fact(label="SBOE map", value="fetched on the first lookup")]
+        downloaded = display_time(self.path.stat().st_mtime)
+        return [Fact(label="SBOE map", value=f"downloaded {downloaded} · {display_size(self.size())}")]
 
     def size(self) -> int:
         return self.path.stat().st_size if self.path.exists() else 0
+
+    def refresh_size(self) -> int | None:
+        return None
+
+    async def refresh(self) -> str:
+        async with self._lock:
+            try:
+                await self._download()
+            except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
+                paused = exc.until if isinstance(exc, UpstreamError) else None
+                why = f"paused until {display_time(paused)}" if paused else self.last_error
+                kept = "kept the old one" if self.path.exists() else self._missing()
+                raise RefreshFailed(f"Couldn't re-download the State Board of Education map ({why}); {kept}.") from exc
+        return "Re-downloaded the State Board of Education map."
+
+    def clear(self) -> str:
+        self._districts, self._outlines, self.last_error = None, {}, None
+        self.path.unlink(missing_ok=True)
+        self.cache.clear(SOURCE)  # it keeps no responses, only its pause and retry flags
+        return "The State Board of Education map will be downloaded again on the next lookup."

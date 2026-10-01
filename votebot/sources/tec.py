@@ -23,9 +23,9 @@ import tec_cache
 from tec_cache.models import SIZE_BUCKETS
 
 from ..matching import NameIndex, full_key, match_person
-from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard
+from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard, Tone
 from ..offices import OfficeScope
-from ..text import display_date, display_office, display_org, money, money_short
+from ..text import display_date, display_office, display_org, display_time, money, money_short
 from . import CardSet, compare
 from .ballotpedia import BpBallot, BpRace
 from .snapshot import BundledSnapshot, summary_of
@@ -229,6 +229,7 @@ class Tec(BundledSnapshot):
     """The snapshot: {"snapshot", "window", "filers", "outside", ...}."""
 
     EMPTY = {"snapshot": None, "filers": [], "outside": []}
+    LABEL = "Texas Ethics Commission"
 
     def __init__(
         self,
@@ -271,6 +272,26 @@ class Tec(BundledSnapshot):
             detail = err.decode("utf-8", "replace").strip().removeprefix("error: ")
             raise TecRefreshError(detail or f"tec_cache exited with code {process.returncode}")
         return out.decode("utf-8", "replace").strip()
+
+    def notice(self) -> tuple[str, Tone] | None:
+        """A failed refresh, or how old the snapshot is."""
+        if failed := super().notice():
+            return failed
+        document = self.document()
+        if not document.get("snapshot"):
+            return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
+        since = display_date((document.get("window") or {}).get("start"))
+        return f"Snapshot of {display_date(document['snapshot'])}: money raised since {since}.", "info"
+
+    def details(self) -> list[Fact]:
+        document, meta = self.document(), self.meta()
+        return [
+            Fact(label="Snapshot", value=display_date(document.get("snapshot")) or "none"),
+            Fact(label="Money raised since", value=display_date((document.get("window") or {}).get("start")) or "unknown"),
+            Fact(label="TEC data from", value=display_time(document.get("tec_updated")) or "unknown"),
+            Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
+            Fact(label="Candidates and officeholders", value=str(len(document.get("filers") or []))),
+        ]
 
     def name_index(self) -> NameIndex:
         return self._index("filers", lambda document: _people_index(document.get("filers") or []))

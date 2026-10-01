@@ -126,6 +126,21 @@ def test_a_failed_sboe_download_keeps_the_old_map(client, upstream, tmp_path):
     assert (tmp_path / "data" / "plane2106_kml.zip").exists()
 
 
+def test_sboe_portal_down_is_asked_once_until_clear(client, upstream):
+    client.put("/api/sources/election_precincts", json={"enabled": False})  # it asks the same portal
+    upstream.down.add("data.capitol.texas.gov")
+    first = get_ballot(client)
+    assert first["districts"]["sboe"] is None and any("State Board of Education map" in w for w in first["warnings"])
+    second = get_ballot(client)
+    assert upstream.count("plane2106_kml.zip") == 1 and second["meta"]["external_calls"] == 0
+    geocoding = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "geocoding")
+    assert geocoding["notice_tone"] == "warn"
+    assert geocoding["notice"].startswith("The last download of the State Board of Education map failed (HTTP 500)")
+    client.post("/api/sources/geocoding/clear")
+    upstream.down.clear()
+    assert get_ballot(client)["districts"]["sboe"] == 5 and upstream.count("plane2106_kml.zip") == 2
+
+
 def test_other_websites_cant_use_the_settings_actions(client):
     get_ballot(client)
     for headers in (

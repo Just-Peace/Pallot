@@ -20,7 +20,7 @@ import trackaipac_cache
 
 from ..matching import NameIndex, match_trackaipac
 from ..models import Badge, Fact, Link, Match, Race, SourceCard
-from ..text import money, web_url
+from ..text import display_date, display_time, money, web_url
 from .snapshot import BundledSnapshot, summary_of
 
 SOURCE = "trackaipac"
@@ -50,6 +50,7 @@ class TrackAipac(BundledSnapshot):
     """The package's current.json: every person with all their listings."""
 
     EMPTY = {"snapshot": None, "candidates": []}
+    LABEL = "TrackAIPAC"
 
     def __init__(
         self,
@@ -79,6 +80,19 @@ class TrackAipac(BundledSnapshot):
             return index
 
         return self._index(state, build)
+
+    def snapshot_date(self) -> str | None:
+        return self.meta().get("latest_snapshot")
+
+    def details(self) -> list[Fact]:
+        meta = self.meta()
+        return [
+            Fact(label="Snapshot", value=display_date(meta.get("latest_snapshot")) or "none"),
+            Fact(label="Last changed", value=display_time(meta.get("last_refresh")) or "never"),
+            Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
+            Fact(label="Texas entries", value=str(len(self.people("TX")))),
+            Fact(label="All entries", value=str(len(self.people()))),
+        ]
 
 
 def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCard:

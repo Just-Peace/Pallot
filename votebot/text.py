@@ -109,6 +109,11 @@ def money_short(amount: float | None) -> str | None:
     return f"{sign}${value:,.0f}"
 
 
+def display_size(num: int) -> str:
+    """Bytes on disk or to download: 1_911_097 -> "1.8 MB", 40_960 -> "40 KB"."""
+    return f"{num / 1_048_576:.1f} MB" if num >= 1_048_576 else f"{num / 1024:.0f} KB"
+
+
 def display_date(value: str | dt.date | None) -> str | None:
     """ "2026-06-30" or "2026-06-30T00:00:00" -> "Jun 30, 2026"."""
     if isinstance(value, str):

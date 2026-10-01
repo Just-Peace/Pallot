@@ -173,7 +173,8 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 - The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
-- If Ballotpedia, Photon, FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If Ballotpedia, Photon, FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. Refresh in Settings always tries.
 - If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. Refresh in Settings always tries.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
@@ -183,7 +184,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 The **Settings** page, linked from the left pane:
 - picks the web search engine;
 - turns election precincts, the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
-- says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
+- says whether the FEC is using your key, whether a source is paused, whether a map's last download failed, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
 - has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
@@ -212,7 +213,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper; +https://github.com/Fahd-Siddiqui/VoteBot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `VOTEBOT_TTL_OUTLINES` for the district map's outlines, `VOTEBOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `VOTEBOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request), `VOTEBOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks), and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
+| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `VOTEBOT_TTL_OUTLINES` for the district map's outlines, `VOTEBOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `VOTEBOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request, for both the precinct and SBOE maps), `VOTEBOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks), and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
 
 ### Docker
 

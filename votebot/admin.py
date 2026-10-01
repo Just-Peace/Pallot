@@ -2,19 +2,15 @@
 
 from __future__ import annotations
 
-import zipfile
 from dataclasses import dataclass
-from pathlib import Path
-
-import httpx
 
 from .ballot import Services
-from .http_cache import UpstreamError, describe_error
-from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
+from .models import ActionResult, CacheStatus, SourcesOverview, SourceStatus, Tone
 from .sources import (
-    ballotpedia, election_precincts, fec, key_dates, osm_tiles, photon, polls, sos, tec, tigerweb, trackaipac,
+    KeptSource, RefreshFailed, ballotpedia, election_precincts, fec, key_dates, osm_tiles, photon, polls, sos, tec,
+    tigerweb, trackaipac,
 )
-from .text import display_date, display_time, iso_utc
+from .text import display_size, display_time, iso_utc
 
 
 @dataclass(frozen=True)
@@ -38,6 +34,7 @@ class SourceInfo:
     refresh_confirm: str | None = None  # asked before refreshing: what a refresh sends or downloads
     pause: Pause | None = None  # the source can be paused after refusing a request (HttpCache.pause_on)
     refreshable: bool = True  # False: no Refresh, since a bulk re-download isn't allowed (OpenStreetMap's tiles)
+    kept: str | None = None  # the Services field of a source kept in files (KeptSource), asked for its row
 
 
 SOURCES = (
@@ -50,6 +47,7 @@ SOURCES = (
         ("census", "nominatim"),
         refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
         "Nominatim the ones the Census couldn't match), and downloads the State Board of Education map again. Continue?",
+        kept="sboe",
     ),
     SourceInfo(
         election_precincts.SOURCE,
@@ -60,6 +58,7 @@ SOURCES = (
         refresh_confirm="Refresh asks the Texas Legislative Council for its newest precinct map and, if it's newer than "
         "the one kept, downloads it ({size}). Continue?",
         pause=Pause("the Texas Legislative Council's portal refused a request", "the precinct map already kept still shows"),
+        kept="election_precincts",
     ),
     SourceInfo(
         tigerweb.SOURCE, "District map (US Census TIGERweb)", tigerweb.DESCRIPTION, True, (tigerweb.SOURCE,),
@@ -98,6 +97,7 @@ SOURCES = (
         refresh_label="Refresh from trackaipac.com",
         clear_label="Reset to bundled snapshot",
         resettable=True,
+        kept="trackaipac",
     ),
     SourceInfo(
         fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
@@ -114,6 +114,7 @@ SOURCES = (
         resettable=True,
         refresh_confirm="Refresh first asks the Texas Ethics Commission whether its data has changed. If it has, it "
         "downloads about 1 GB (a minute or two on a fast connection) and rebuilds the data. Continue?",
+        kept="tec",
     ),
     SourceInfo(
         polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,),
@@ -131,14 +132,6 @@ class AdminError(Exception):
         self.message = message
 
 
-def _size(num: int) -> str:
-    return f"{num / 1_048_576:.1f} MB" if num >= 1_048_576 else f"{num / 1024:.0f} KB"
-
-
-def _dir_bytes(path: Path) -> int:
-    return sum(p.stat().st_size for p in path.rglob("*") if p.is_file()) if path.exists() else 0
-
-
 class Admin:
     def __init__(self, svc: Services):
         self.svc = svc
@@ -149,26 +142,30 @@ class Admin:
             raise AdminError(404, f"Unknown source: {source_id}")
         return BY_ID[source_id]
 
+    def _kept(self, info: SourceInfo) -> KeptSource | None:
+        return getattr(self.svc, info.kept) if info.kept else None
+
+    def _all_kept(self) -> list[KeptSource]:
+        return [kept for info in SOURCES if (kept := self._kept(info))]
+
     def overview(self) -> SourcesOverview:
-        snapshots = _dir_bytes(self.svc.trackaipac.data_dir) + _dir_bytes(self.svc.tec.data_dir)
-        maps = self.svc.sboe.size() + self.svc.election_precincts.size()
         return SourcesOverview(
             sources=[self._status(info) for info in SOURCES],
-            total_bytes=self.svc.cache.file_bytes() + maps + snapshots,
+            total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._all_kept()),
             last_lookup=self.svc.last_lookup,
         )
 
-    def _running(self, source_id: str) -> bool:
-        """A refresh from Settings, or the precinct map downloading for a lookup."""
-        return source_id in self._busy or (
-            source_id == election_precincts.SOURCE and self.svc.election_precincts.downloading
-        )
+    def _running(self, info: SourceInfo) -> bool:
+        """A refresh from Settings, or a source kept in files downloading for a lookup."""
+        kept = self._kept(info)
+        return info.id in self._busy or (kept is not None and kept.busy)
 
     def _refresh_confirm(self, info: SourceInfo) -> str | None:
-        if info.id != election_precincts.SOURCE or info.refresh_confirm is None:
+        kept = self._kept(info)
+        if info.refresh_confirm is None or kept is None:
             return info.refresh_confirm
-        listed = self.svc.election_precincts.newest_listed()
-        return info.refresh_confirm.format(size=_size(listed.size) if listed else "a large file")
+        size = kept.refresh_size()
+        return info.refresh_confirm.format(size=display_size(size) if size else "a large file")
 
     def _status(self, info: SourceInfo) -> SourceStatus:
         stats = [self.svc.cache.stats(tag) for tag in info.cache_tags]
@@ -182,6 +179,7 @@ class Admin:
             newest=iso_utc(max(newest)) if newest else None,
         )
         notice, tone = self._notice(info)
+        kept = self._kept(info)
         return SourceStatus(
             id=info.id,
             label=info.label,
@@ -189,9 +187,9 @@ class Admin:
             toggleable=info.toggleable,
             resettable=info.resettable,
             enabled=self.svc.settings.enabled(info.id) if info.toggleable else True,
-            busy=self._running(info.id),
+            busy=self._running(info),
             cache=cache,
-            details=self._details(info.id),
+            details=kept.details() if kept else [],
             refresh_label=info.refresh_label,
             clear_label=info.clear_label,
             refresh_confirm=self._refresh_confirm(info),
@@ -212,9 +210,8 @@ class Admin:
 
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
         """One line under the source's description: what it's missing, or where its data stands."""
-        source_id = info.id
         paused = self._paused(info)
-        if source_id == fec.SOURCE:
+        if info.id == fec.SOURCE:
             if not self.svc.fec.keyed:
                 return " ".join(filter(None, (
                     paused,
@@ -225,65 +222,8 @@ class Admin:
             return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
         if paused:
             return paused, "warn"
-        if source_id == election_precincts.SOURCE:
-            precincts = self.svc.election_precincts
-            if precincts.downloading:
-                return "Downloading the precinct map…", "info"
-            if precincts.last_error:
-                kept = "the map kept still shows" if precincts.stored() else "Refresh tries again"
-                return f"The last download of the precinct map failed ({precincts.last_error}); {kept}.", "warn"
-        if source_id in (trackaipac.SOURCE, tec.SOURCE):
-            snapshot = self.svc.trackaipac if source_id == trackaipac.SOURCE else self.svc.tec
-            if snapshot.last_error:
-                return f"The last refresh failed and nothing changed: {snapshot.last_error}", "warn"
-        if source_id == tec.SOURCE:
-            document = self.svc.tec.document()
-            if not document.get("snapshot"):
-                return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
-            since = display_date((document.get("window") or {}).get("start"))
-            return f"Snapshot of {display_date(document['snapshot'])}: money raised since {since}.", "info"
-        return None, "info"
-
-    def _details(self, source_id: str) -> list[Fact]:
-        if source_id == "geocoding":
-            sboe = self.svc.sboe
-            downloaded = sboe.downloaded_at()
-            value = (
-                f"downloaded {display_time(downloaded)} · {_size(sboe.size())}"
-                if downloaded else "fetched on the first lookup"
-            )
-            return [Fact(label="SBOE map", value=value)]
-        if source_id == election_precincts.SOURCE:
-            precincts = self.svc.election_precincts
-            stored, listed = precincts.stored(), precincts.newest_listed()
-            kept = (
-                f"“{stored.resource.label}”, downloaded {display_time(stored.downloaded_at)} · {_size(precincts.size())}"
-                if stored else "downloaded on the first lookup"
-            )
-            return [
-                Fact(label="Map kept", value=kept),
-                Fact(label="Newest on the portal", value=f"“{listed.label}” · {_size(listed.size)}" if listed else "not asked yet"),
-            ]
-        if source_id == "trackaipac":
-            tracker = self.svc.trackaipac
-            meta = tracker.meta()
-            return [
-                Fact(label="Snapshot", value=display_date(meta.get("latest_snapshot")) or "none"),
-                Fact(label="Last changed", value=display_time(meta.get("last_refresh")) or "never"),
-                Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
-                Fact(label="Texas entries", value=str(len(tracker.people("TX")))),
-                Fact(label="All entries", value=str(len(tracker.people()))),
-            ]
-        if source_id == tec.SOURCE:
-            document, meta = self.svc.tec.document(), self.svc.tec.meta()
-            return [
-                Fact(label="Snapshot", value=display_date(document.get("snapshot")) or "none"),
-                Fact(label="Money raised since", value=display_date((document.get("window") or {}).get("start")) or "unknown"),
-                Fact(label="TEC data from", value=display_time(document.get("tec_updated")) or "unknown"),
-                Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
-                Fact(label="Candidates and officeholders", value=str(len(document.get("filers") or []))),
-            ]
-        return []
+        kept = self._kept(info)
+        return (kept.notice() if kept else None) or (None, "info")
 
     def set_enabled(self, source_id: str, enabled: bool) -> None:
         if not self._info(source_id).toggleable:
@@ -294,86 +234,63 @@ class Admin:
         info = self._info(source_id)
         if not info.refreshable:
             raise AdminError(400, f"{info.label} is only fetched as you look at it, never all at once.")
-        if self._running(source_id):
+        if self._running(info):
             raise AdminError(409, f"{info.label} is already refreshing.")
         self._busy.add(source_id)
         try:
-            if source_id == trackaipac.SOURCE:
-                try:
-                    return ActionResult(message=await self.svc.trackaipac.refresh())
-                except Exception as exc:  # the package raises FetchError/ValidationError without writing anything
-                    raise AdminError(502, f"TrackAIPAC refresh failed; nothing changed. {exc}") from exc
-            if source_id == tec.SOURCE:
-                try:
-                    return ActionResult(message=await self.svc.tec.refresh())
-                except Exception as exc:  # tec_cache writes nothing unless the whole refresh succeeds
-                    raise AdminError(502, f"Texas Ethics Commission refresh failed; nothing changed. {exc}") from exc
-            refreshed = failed = skipped = 0
-            errors: list[str] = []
-            paused_until: float | None = None
-            for tag in info.cache_tags:
-                report = await self.svc.cache.refresh(tag, concurrency=1 if tag in _SLOW else 3)
-                refreshed += report.refreshed
-                failed += report.failed
-                skipped += report.skipped
-                errors += report.errors
-                paused_until = paused_until or report.paused_until
-            message = f"Refreshed {refreshed} cached response{'s' if refreshed != 1 else ''}."
-            if source_id == "geocoding":
-                try:
-                    await self.svc.sboe.download()
-                except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile) as exc:  # nothing was replaced
-                    kept = "kept the old one" if self.svc.sboe.downloaded_at() else "the next lookup will try again"
-                    message += f" Couldn't re-download the State Board of Education map ({describe_error(exc)}); {kept}."
-                else:
-                    message += " Re-downloaded the State Board of Education map."
-            if source_id == election_precincts.SOURCE:
-                precincts = self.svc.election_precincts
-                try:
-                    message += f" {await precincts.update()}"
-                except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:  # nothing was replaced
-                    why = str(exc).removeprefix(f"{election_precincts.SOURCE}: ")
-                    kept = "kept the old one" if precincts.stored() else "the next lookup will try again later"
-                    message += f" Couldn't download the precinct map ({why}); {kept}."
-            if failed:
-                message += f" {failed} failed and kept their old copy ({'; '.join(errors)})."
-            if paused_until:
-                message += (f" {info.label} is paused until {display_time(paused_until)} after refusing a request"
-                            + (f", so {skipped} weren't asked." if skipped else "."))
-            return ActionResult(message=message)
+            return ActionResult(message=await self._refresh(info))
         finally:
             self._busy.discard(source_id)
 
+    async def _refresh(self, info: SourceInfo) -> str:
+        """Its cached responses, then what it keeps in files. When those files are all the row
+        has, a refresh that changed nothing is a 502; otherwise it's a sentence in the message."""
+        parts: list[str] = []
+        refreshed = failed = skipped = 0
+        errors: list[str] = []
+        paused_until: float | None = None
+        for tag in info.cache_tags:
+            report = await self.svc.cache.refresh(tag, concurrency=1 if tag in _SLOW else 3)
+            refreshed += report.refreshed
+            failed += report.failed
+            skipped += report.skipped
+            errors += report.errors
+            paused_until = paused_until or report.paused_until
+        if info.cache_tags:
+            parts.append(f"Refreshed {refreshed} cached response{'s' if refreshed != 1 else ''}.")
+        if kept := self._kept(info):
+            try:
+                parts.append(await kept.refresh())
+            except RefreshFailed as exc:
+                if not info.cache_tags:
+                    raise AdminError(502, str(exc)) from exc
+                parts.append(str(exc))
+        if failed:
+            parts.append(f"{failed} failed and kept their old copy ({'; '.join(errors)}).")
+        if paused_until:
+            parts.append(f"{info.label} is paused until {display_time(paused_until)} after refusing a request"
+                         + (f", so {skipped} weren't asked." if skipped else "."))
+        return " ".join(parts)
+
     def clear(self, source_id: str) -> ActionResult:
         info = self._info(source_id)
-        if self._running(source_id):
+        if self._running(info):
             raise AdminError(409, f"{info.label} is refreshing; try again when it's done.")
-        if source_id == trackaipac.SOURCE:
-            self.svc.trackaipac.reset()
-            snapshot = display_date(self.svc.trackaipac.meta().get("latest_snapshot")) or "none"
-            return ActionResult(message=f"Back to the snapshot bundled with trackaipac_cache ({snapshot}).")
-        if source_id == tec.SOURCE:
-            self.svc.tec.reset()
-            snapshot = display_date(self.svc.tec.document().get("snapshot")) or "none"
-            return ActionResult(message=f"Back to the snapshot bundled with tec_cache ({snapshot}).")
-        removed = sum(self.svc.cache.clear(tag) for tag in info.cache_tags)
-        message = f"Cleared {removed} cached response{'s' if removed != 1 else ''}."
-        if source_id == "geocoding":
-            self.svc.sboe.clear()
-            message += " The State Board of Education map will be downloaded again on the next lookup."
-        if source_id == election_precincts.SOURCE:
-            self.svc.election_precincts.clear()
-            message += " The precinct map will be downloaded again on the next lookup."
-        return ActionResult(message=message)
+        parts: list[str] = []
+        if info.cache_tags:
+            removed = sum(self.svc.cache.clear(tag) for tag in info.cache_tags)
+            parts.append(f"Cleared {removed} cached response{'s' if removed != 1 else ''}.")
+        if kept := self._kept(info):
+            parts.append(kept.clear())
+        return ActionResult(message=" ".join(parts))
 
     def clear_all(self) -> ActionResult:
-        if self._busy or self.svc.election_precincts.downloading:
+        kept = self._all_kept()
+        if self._busy or any(source.busy for source in kept):
             raise AdminError(409, "A refresh is running; try again when it's done.")
         removed = self.svc.cache.clear()
-        self.svc.sboe.clear()
-        self.svc.election_precincts.clear()
-        self.svc.trackaipac.reset()
-        self.svc.tec.reset()
+        for source in kept:
+            source.clear()
         return ActionResult(
             message=f"Cleared {removed} cached responses, the SBOE map and the precinct map, and reset TrackAIPAC and "
             "the Texas Ethics Commission data to their bundled snapshots."

@@ -35,7 +35,9 @@ from urllib.parse import urlsplit
 from ..config import Ttls
 from ..fsutil import write_text_atomic
 from ..http_cache import HttpCache, RequestSpec, UpstreamError, current_calls
-from ..text import display_time
+from ..models import Fact, Tone
+from ..text import display_size, display_time
+from . import RefreshFailed
 from .sboe import Ring, _inside, simplify
 
 SOURCE = "election_precincts"
@@ -489,7 +491,8 @@ class ElectionPrecincts:
         return sum(p.stat().st_size for p in self.folder.iterdir() if p.is_file())
 
     @property
-    def downloading(self) -> bool:
+    def busy(self) -> bool:
+        """A download running, whoever started it."""
         return self._task is not None and not self._task.done()
 
     def newest_listed(self) -> Resource | None:
@@ -497,7 +500,7 @@ class ElectionPrecincts:
         kept = self.cache.peek(index_spec())
         return newest(kept.value) if kept else None
 
-    def clear(self) -> None:
+    def clear(self) -> str:
         """Remove the map; the next lookup downloads it again. Settings refuses while downloading."""
         with self._lock:
             self._stored, self._index, self._outlines = None, None, {}
@@ -506,6 +509,7 @@ class ElectionPrecincts:
                     if path.is_file():
                         path.unlink(missing_ok=True)
         self.last_error = None
+        return "The precinct map will be downloaded again on the next lookup."
 
     def _tidy(self) -> None:
         """Remove what an interrupted download or swap left behind."""
@@ -515,6 +519,40 @@ class ElectionPrecincts:
             for path in self.folder.iterdir():
                 if path.is_file() and path.name not in keep:
                     path.unlink(missing_ok=True)
+
+    # -- Settings (KeptSource) ----------------------------------------------------------------
+
+    def notice(self) -> tuple[str, Tone] | None:
+        if self.busy:
+            return "Downloading the precinct map…", "info"
+        if self.last_error:
+            kept = "the map kept still shows" if self.stored() else "Refresh tries again"
+            return f"The last download of the precinct map failed ({self.last_error}); {kept}.", "warn"
+        return None
+
+    def details(self) -> list[Fact]:
+        stored, listed = self.stored(), self.newest_listed()
+        kept = (
+            f"“{stored.resource.label}”, downloaded {display_time(stored.downloaded_at)} · {display_size(self.size())}"
+            if stored else "downloaded on the first lookup"
+        )
+        return [
+            Fact(label="Map kept", value=kept),
+            Fact(label="Newest on the portal", value=f"“{listed.label}” · {display_size(listed.size)}" if listed else "not asked yet"),
+        ]
+
+    def refresh_size(self) -> int | None:
+        listed = self.newest_listed()
+        return listed.size if listed else None
+
+    async def refresh(self) -> str:
+        """update(), with a failure worded for Settings."""
+        try:
+            return await self.update()
+        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:  # nothing was replaced
+            why = str(exc).removeprefix(f"{SOURCE}: ")
+            kept = "kept the old one" if self.stored() else "the next lookup will try again later"
+            raise RefreshFailed(f"Couldn't download the precinct map ({why}); {kept}.") from exc
 
     # -- downloading ------------------------------------------------------------------------
 
@@ -558,7 +596,7 @@ class ElectionPrecincts:
         resource = await self._newest()
         if resource is None:
             raise ValueError("the Texas Legislative Council's portal lists no precinct map")
-        if self.downloading:  # only the lookup that starts it waits: a reload meanwhile goes on at once
+        if self.busy:  # only the lookup that starts it waits: a reload meanwhile goes on at once
             raise StillDownloading(resource.size)
         if self._failed(resource):
             until = self.cache.flag_until(_failed_flag(resource))
@@ -579,7 +617,7 @@ class ElectionPrecincts:
 
     def _start(self, resource: Resource) -> asyncio.Future[None]:
         """The download running, or a new one of ``resource``."""
-        if not self.downloading:
+        if not self.busy:
             self._task = asyncio.ensure_future(self._download(resource))
             self._task.add_done_callback(_retrieved)
         return self._task
