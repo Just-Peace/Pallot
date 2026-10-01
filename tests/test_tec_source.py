@@ -286,12 +286,12 @@ def test_no_snapshot_means_no_cards(tmp_path):
     assert not tec.cards(source, [rep], {}, "Travis").candidates
 
 
-def test_reset_keeps_a_downloaded_zip(tmp_path):
+def test_clear_keeps_a_downloaded_zip(tmp_path):
     source = tec.Tec(tmp_path / "data", bundled_dir=snapshot_dir(tmp_path, [jane()]))
     source.ensure_seeded()
     source.local_zip.write_bytes(b"zip")
     (tmp_path / "data" / "current.json").write_text('{"snapshot": "edited", "filers": []}', encoding="utf-8")
-    source.reset()
+    assert source.clear() == "Back to the snapshot bundled with tec_cache (Sep 27, 2026)."
     assert source.document()["snapshot"] == "2026-09-27" and source.local_zip.exists()
 
 

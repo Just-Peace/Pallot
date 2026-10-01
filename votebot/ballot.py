@@ -17,8 +17,6 @@ import zipfile
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-import httpx
-
 from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
@@ -414,7 +412,7 @@ class _Builder:
     async def _sboe(self, place: Place) -> int | None:
         try:
             return await self.svc.sboe.district_at(place.lat, place.lon)
-        except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile):
+        except (UpstreamError, ValueError, OSError, zipfile.BadZipFile):
             self.warnings.append("Couldn't load the State Board of Education map, so your SBOE district isn't known.")
             return None
 

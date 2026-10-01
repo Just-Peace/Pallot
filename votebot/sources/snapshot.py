@@ -1,8 +1,8 @@
 """A data set that ships inside a package in this repo (trackaipac_cache, tec_cache) and is
 copied into VoteBot's data folder on first use. Lookups read the copy, reloading it when
-its file changes; only Refresh in Settings fetches anything, and Reset goes back to the
-bundled one. Lookups and Settings read it from worker threads, so a lock makes them parse
-each version once and never read a file that Reset is still copying.
+its file changes; only Refresh in Settings fetches anything, and Reset (clear()) goes back
+to the bundled one. Lookups and Settings read it from worker threads, so a lock makes them
+parse each version once and never read a file that a Reset is still copying.
 """
 
 from __future__ import annotations
@@ -17,6 +17,9 @@ from types import ModuleType
 from typing import Any, Callable, ContextManager
 
 from ..matching import NameIndex
+from ..models import Fact, Tone
+from ..text import display_date
+from . import RefreshFailed
 
 
 def summary_of(result: Any) -> str:
@@ -26,10 +29,12 @@ def summary_of(result: Any) -> str:
 
 class BundledSnapshot:
     """``current.json`` and ``meta.json`` in ``data_dir``, seeded from ``package``/data (or
-    ``bundled_dir``, in tests). Subclasses say how to throw away refreshed data (_discard)
-    and how to refresh (_refresh)."""
+    ``bundled_dir``, in tests). Subclasses say how to throw away refreshed data (_discard),
+    how to refresh (_refresh) and what Settings shows (details)."""
 
     EMPTY: dict[str, Any] = {"snapshot": None}  # what document() returns before there's any data
+    LABEL = ""  # how Settings names it: "TrackAIPAC"
+    busy = False  # a refresh only runs from Settings, which keeps its own busy state
 
     def __init__(
         self,
@@ -72,7 +77,7 @@ class BundledSnapshot:
                 shutil.copytree(source, self.data_dir, dirs_exist_ok=True)
             return True
 
-    def reset(self) -> None:
+    def clear(self) -> str:
         """Throw away refreshed data and go back to the bundled snapshot."""
         with self._lock:
             self._discard()
@@ -80,6 +85,8 @@ class BundledSnapshot:
             self._indexes = {}
             self.last_error = None
             self.ensure_seeded()
+        snapshot = display_date(self.snapshot_date()) or "none"
+        return f"Back to the snapshot bundled with {self._package.__name__} ({snapshot})."
 
     def _discard(self) -> None:
         raise NotImplementedError
@@ -87,16 +94,19 @@ class BundledSnapshot:
     async def refresh(self) -> str:
         """Rebuild the snapshot (the package writes only after it validated what it fetched);
         returns the package's summary."""
-        self.ensure_seeded()
         try:
+            self.ensure_seeded()
             summary = await self._refresh()
-        except Exception as exc:
+        except Exception as exc:  # the package writes nothing unless the whole refresh succeeds
             self.last_error = str(exc)
-            raise
+            raise RefreshFailed(f"{self.LABEL} refresh failed; nothing changed. {exc}") from exc
         self.last_error = None
         return summary
 
     async def _refresh(self) -> str:
+        raise NotImplementedError
+
+    def details(self) -> list[Fact]:
         raise NotImplementedError
 
     def _signature(self) -> tuple[int, int] | None:
@@ -130,3 +140,19 @@ class BundledSnapshot:
             if key not in self._indexes:
                 self._indexes[key] = build(document)
             return self._indexes[key]
+
+    def snapshot_date(self) -> str | None:
+        return self.document().get("snapshot")
+
+    # -- Settings (KeptSource) ----------------------------------------------------------------
+
+    def notice(self) -> tuple[str, Tone] | None:
+        if self.last_error:
+            return f"The last refresh failed and nothing changed: {self.last_error}", "warn"
+        return None
+
+    def size(self) -> int:
+        return sum(p.stat().st_size for p in self.data_dir.rglob("*") if p.is_file()) if self.data_dir.exists() else 0
+
+    def refresh_size(self) -> int | None:
+        return None

@@ -44,6 +44,7 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
 MIN_INTERVAL = {
     "nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
+    "sboe": 1.0,
 }
 
 
@@ -117,7 +118,7 @@ def create_app(
                     census=Census(cache, config.ttl),
                     nominatim=Nominatim(cache, config.ttl),
                     photon=Photon(cache, config.ttl),
-                    sboe=SboeMap(config.sboe_path, client),
+                    sboe=SboeMap(cache, config.ttl, config.sboe_path),
                     election_precincts=election_precincts,
                     sos=Sos(cache, config.ttl, today),
                     ballotpedia=Ballotpedia(cache, config.ttl),

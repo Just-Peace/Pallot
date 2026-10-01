@@ -44,7 +44,7 @@ async def service(tmp_path: Path, **options):
 
 async def settled(precincts: ElectionPrecincts) -> None:
     """Wait for a download started in the background."""
-    while precincts.downloading:
+    while precincts.busy:
         await asyncio.sleep(0.01)
 
 
@@ -249,7 +249,7 @@ async def test_the_first_lookup_goes_on_while_the_map_downloads(tmp_path, upstre
     async with service(tmp_path, first_wait=0) as precincts:
         with pytest.raises(StillDownloading) as waiting:
             await precincts.at(TRAVIS, *census_points("capitol"))
-        assert waiting.value.size == len(election_precincts_zip()) and precincts.downloading
+        assert waiting.value.size == len(election_precincts_zip()) and precincts.busy
         await settled(precincts)
         assert (await precincts.at(TRAVIS, *census_points("capitol"))).found.name == "300"
     assert zips(upstream) == 1
@@ -380,7 +380,7 @@ async def test_shutting_down_mid_download_leaves_no_partial_file(tmp_path):
             while not list(precincts.folder.glob("*.part")):
                 await asyncio.sleep(0.01)
             await precincts.aclose()
-            assert list(precincts.folder.iterdir()) == [] and not precincts.downloading
+            assert list(precincts.folder.iterdir()) == [] and not precincts.busy
 
 
 @pytest.mark.anyio
