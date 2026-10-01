@@ -224,7 +224,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 
 ## Not built yet
 
-Known bugs, planned improvements and features, and UI ideas are in [ROADMAP.md](ROADMAP.md).
+Known bugs, planned improvements and features, and UI ideas are [GitHub issues](https://github.com/Fahd-Siddiqui/VoteBot/issues).
 
 ## Working on VoteBot
 

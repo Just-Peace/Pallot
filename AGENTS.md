@@ -4,24 +4,34 @@ Rules for coding agents (and people) changing VoteBot. Read these first:
 
 - [README.md](README.md) for what VoteBot does;
 - [DEVELOPMENT.md](DEVELOPMENT.md) for how it works inside;
-- [ROADMAP.md](ROADMAP.md) for known bugs and what's planned.
+- [GitHub issues](https://github.com/Fahd-Siddiqui/VoteBot/issues) for known bugs and what's planned (`gh issue list`).
 
 ## Workflow
 
-1. **Start from the roadmap.** Find the feature or fix in [ROADMAP.md](ROADMAP.md). If it isn't there, add it when you finish (step 4). Every piece of work should end up in the roadmap.
+1. **Start from an issue.** Find the feature or fix with `gh issue list` (and `--label bug`, `improvement`, …). Read it with `gh issue view <N>`. If there's none, open one first (see [Issues](#issues)). Every piece of work has an issue, so every pull request closes one.
 2. **Branch off** `develop`**.** Name the branch `feat/<topic>`, `fix/<topic>`, `docs/<topic>` or `refactor/<topic>`. Never commit to `develop` directly.
 3. Ensure optimal user experience UI/UX
 4. **Finish the whole change before committing:**
    - the code;
    - the tests (see [Before committing](#before-committing));
    - the docs (see [Docs to update](#docs-to-update));
-   - the dead code removed (see [Code](#code));
-   - `ROADMAP.md`: move the item to "Done" as `- [x]`, in a group for this change, headed with the feature's name, its pull request and the date, like `### Polls ([#7](https://github.com/Fahd-Siddiqui/VoteBot/pull/7), Sep 29)`. The pull request doesn't exist yet when you commit, so assume it's the next number in sequence: one more than the highest `(#N)` in `git log develop --oneline`. Don't use the branch name. If the pull request gets a different number, fix the heading. If the work wasn't in the roadmap, add it straight to "Done".
+   - the dead code removed (see [Code](#code)).
 5. **Make one commit per feature, with a Conventional Commits subject:**
    - The subject is `type: summary`, where `type` is one of `feat`, `fix`, `docs`, `refactor`, `perf`, `test` or `chore`. For example: `feat: poll bars from FiftyPlusOne`.
    - The body is bullets saying what changed and why, then a `Checked:` paragraph saying how it was verified (tests run, what was looked at in the app). Recent commits on `develop` follow this pattern.
    - If you committed along the way, fold everything into one commit before pushing: `git reset --soft $(git merge-base HEAD develop)`, then commit again. Don't use interactive rebase.
-6. **Push the branch** with `git push -u origin <branch>`. Pull requests go into `develop`, where they're squash-merged. After amending a commit on your own branch, use `git push --force-with-lease`, never a plain `--force`.
+6. **Push the branch** with `git push -u origin <branch>`, and open its pull request into `develop` (`gh pr create --base develop`), with `Closes #<issue>` in its description. Merging it then closes the issue and links the two. Pull requests are squash-merged. After amending a commit on your own branch, use `git push --force-with-lease`, never a plain `--force`.
+
+
+
+## Issues
+
+Every piece of work is a GitHub issue, labelled with its section.
+
+- Label it with its section: `bug`, `improvement`, `tooling`, `enhancement` (Features), `ui-ux`, `review` or `spot-check`. Add `deferred` when it's put off, and say why in the issue.
+- The title says what's wrong or what's wanted. The body says what it is and where it is (`file:line`), and suggests a fix.
+- Open one with `gh issue create --title … --label … --body-file …`.
+- `gh issue list --label bug` lists a section's open ones.
 
 
 
@@ -29,9 +39,7 @@ Rules for coding agents (and people) changing VoteBot. Read these first:
 
 While working on a feature, you may stumble on a bug, something odd, or an idea for another feature:
 
-- Add it to `ROADMAP.md`, in its section (Bugs, Improvements, Tooling, Features or UI and UX).
-  - Say what it is and where it is (`file:line`), and suggest a fix.
-  - It goes in the feature's commit.
+- Open an issue for it (see [Issues](#issues)).
   - Mention it when you report back.
 - Then carry on with the feature you're working on.
 - Don't go hunting for these.
@@ -53,7 +61,7 @@ Update the docs in the same commit as the change.
 | A page, or a link in the left pane                                        | `PAGES` in `votebot/static/js/chrome.js`, which draws the left pane on every page                                                        |
 | A new source, or what's sent to or kept from one                          | the tables in `votebot/static/privacy.html` and `votebot/static/about.html`; the footer and welcome steps in `votebot/static/index.html` |
 | A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `votebot/config.py`, and README's "Configuration"                                                  |
-| Any finished work, or something found along the way                       | `ROADMAP.md` (see [Workflow](#workflow) and [Things you notice along the way](#things-you-notice-along-the-way))                         |
+| Something found along the way                                             | a GitHub issue (see [Things you notice along the way](#things-you-notice-along-the-way))                                                 |
 
 
 How to write them:
@@ -111,7 +119,7 @@ How to write them:
 ## Before committing
 
 - `uv run pytest` passes. It runs offline, against the recorded responses in `tests/fixtures/`.
-  - Run the whole suite once, just before the feature's commit, and only when code changed. A change to Markdown files only (README, DEVELOPMENT, ROADMAP, AGENTS) needs no test run.
+  - Run the whole suite once, just before the feature's commit, and only when code changed. A change to Markdown files only (README, DEVELOPMENT, AGENTS) needs no test run.
   - While working, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. The whole suite runs in parallel, one worker per CPU, and takes about 30 seconds.
   - Add tests for new behaviour, mocking HTTP with `respx`.
   - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|tigerweb|election_precincts|tec|trackaipac`.
