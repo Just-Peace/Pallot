@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import io
+import threading
 import types
 import zipfile
 from pathlib import Path
@@ -70,6 +71,19 @@ def cut_short(zipped: bytes) -> bytes:
         for name, data in files.items():
             archive.writestr(name, data)
     return buffer.getvalue()
+
+
+def deflate64(zipped: bytes) -> bytes:
+    """The map with its .shp marked as Deflate64, a compression zipfile can't unpack."""
+    data, name = bytearray(zipped), b"Precincts26P.shp"
+    with zipfile.ZipFile(io.BytesIO(zipped)) as archive:
+        local = archive.getinfo(name.decode()).header_offset
+    data[local + 8:local + 10] = (9).to_bytes(2, "little")
+    central = data.find(b"PK\x01\x02")
+    while data[central + 46:central + 46 + len(name)] != name:
+        central = data.find(b"PK\x01\x02", central + 4)
+    data[central + 10:central + 12] = (9).to_bytes(2, "little")
+    return bytes(data)
 
 
 # -- the projection ---------------------------------------------------------------------------
@@ -191,6 +205,30 @@ async def test_an_outline_is_simplified_once_and_never_downloads(tmp_path, upstr
         assert await precincts.outline(TRAVIS, "9999") is None and await precincts.outline(HARRIS, "0300") is None
 
 
+@pytest.mark.anyio
+async def test_an_outline_from_a_map_cleared_meanwhile_isnt_kept(tmp_path, upstream, monkeypatch):
+    async with service(tmp_path) as precincts:
+        await precincts.at(TRAVIS, *census_points("capitol"))
+        simplify = ep.simplify
+
+        def cleared_meanwhile(ring, tolerance):
+            precincts.clear()  # as a Clear, or a newer map taking over, while the outline is worked out
+            return simplify(ring, tolerance)
+
+        monkeypatch.setattr(ep, "simplify", cleared_meanwhile)
+        assert await precincts.outline(TRAVIS, "0300")
+        monkeypatch.setattr(ep, "simplify", simplify)
+        assert await precincts.outline(TRAVIS, "0300") is None
+
+
+@pytest.mark.anyio
+async def test_the_map_kept_is_known_while_a_thread_reads_it(tmp_path, upstream):
+    async with service(tmp_path) as precincts:
+        await precincts.at(TRAVIS, *census_points("capitol"))
+        with precincts._lock:  # as while a lookup reads the map in its thread
+            assert await asyncio.wait_for(asyncio.to_thread(precincts.stored), 1)
+
+
 # -- downloading ------------------------------------------------------------------------------
 
 
@@ -252,6 +290,7 @@ async def test_a_newer_map_downloads_in_the_background(tmp_path, upstream):
     ("lines", "a shape of type 3, not polygons"),
     ("feet", "isn't in metres"),
     ("short", "cut short"),
+    ("deflate64", "couldn't be unpacked (NotImplementedError"),
 ])
 async def test_a_newer_map_that_fails_keeps_the_old_one_and_isnt_downloaded_again(tmp_path, upstream, broken, why):
     async with service(tmp_path) as precincts:
@@ -263,6 +302,7 @@ async def test_a_newer_map_that_fails_keeps_the_old_one_and_isnt_downloaded_agai
             "lines": precincts_zip(shape_type=3),
             "feet": precincts_zip(prj=PRJ.replace('UNIT["Meter",1.0]', 'UNIT["Foot_US",0.3048006096012192]')),
             "short": cut_short(election_precincts_zip()),
+            "deflate64": deflate64(election_precincts_zip()),
         }[broken]
         upstream.precinct_map = served
         listed = 1000 if broken == "size" else len(served)
@@ -294,17 +334,46 @@ async def test_with_no_map_a_failed_download_waits_before_trying_again(tmp_path,
 
 
 @pytest.mark.anyio
-async def test_shutting_down_mid_download_leaves_no_partial_file(tmp_path):
+async def test_with_no_map_one_that_cant_be_unpacked_is_a_failed_download(tmp_path, upstream):
+    upstream.precinct_map = deflate64(election_precincts_zip())
+    async with service(tmp_path) as precincts:
+        with pytest.raises(ValueError, match="couldn't be unpacked"):
+            await precincts.at(TRAVIS, *census_points("capitol"))
+        with pytest.raises(UpstreamError, match="the last download failed"):
+            await precincts.at(TRAVIS, *census_points("capitol"))
+        assert list(precincts.folder.iterdir()) == []
+    assert zips(upstream) == 1
+
+
+def stalled_portal(router: respx.MockRouter) -> None:
+    """The portal sends the map's first 1,000 bytes, then nothing more."""
     size = len(election_precincts_zip())
 
     async def stalled():
         yield election_precincts_zip()[:1000]
         await asyncio.Event().wait()
 
+    router.get(url__regex="package_show").mock(return_value=httpx.Response(200, json=precincts_index(size)))
+    router.get(url__regex="precincts26p").mock(
+        return_value=httpx.Response(200, content=stalled(), headers={"content-length": str(size)}))
+
+
+@pytest.mark.anyio
+async def test_only_the_lookup_that_starts_the_first_download_waits_for_it(tmp_path):
     with respx.mock() as router:
-        router.get(url__regex="package_show").mock(return_value=httpx.Response(200, json=precincts_index(size)))
-        router.get(url__regex="precincts26p").mock(
-            return_value=httpx.Response(200, content=stalled(), headers={"content-length": str(size)}))
+        stalled_portal(router)
+        async with service(tmp_path, first_wait=0) as precincts:
+            with pytest.raises(StillDownloading):
+                await precincts.at(TRAVIS, *census_points("capitol"))
+            precincts.first_wait = 30
+            with pytest.raises(StillDownloading):  # a reload meanwhile goes on at once
+                await asyncio.wait_for(precincts.at(TRAVIS, *census_points("capitol")), 1)
+
+
+@pytest.mark.anyio
+async def test_shutting_down_mid_download_leaves_no_partial_file(tmp_path):
+    with respx.mock() as router:
+        stalled_portal(router)
         async with service(tmp_path, first_wait=0) as precincts:
             with pytest.raises(StillDownloading):
                 await precincts.at(TRAVIS, *census_points("capitol"))
@@ -312,6 +381,30 @@ async def test_shutting_down_mid_download_leaves_no_partial_file(tmp_path):
                 await asyncio.sleep(0.01)
             await precincts.aclose()
             assert list(precincts.folder.iterdir()) == [] and not precincts.downloading
+
+
+@pytest.mark.anyio
+async def test_shutting_down_mid_unpack_finishes_the_map_and_removes_the_zip(tmp_path, upstream, monkeypatch):
+    unzipping, go_on = threading.Event(), threading.Event()
+    unzip = ElectionPrecincts._unzip
+
+    def held(self, resource, part):
+        unzipping.set()
+        go_on.wait(5)
+        unzip(self, resource, part)
+
+    monkeypatch.setattr(ElectionPrecincts, "_unzip", held)
+    async with service(tmp_path, first_wait=0) as precincts:
+        with pytest.raises(StillDownloading):
+            await precincts.at(TRAVIS, *census_points("capitol"))
+        await asyncio.to_thread(unzipping.wait, 5)
+        await precincts.aclose()  # a thread can't be stopped, so it goes on unpacking
+        go_on.set()
+        for _ in range(500):
+            if precincts.stored() and not list(precincts.folder.glob("*.part")):
+                break
+            await asyncio.sleep(0.01)
+        assert sorted(p.suffix for p in precincts.folder.iterdir()) == [".dbf", ".json", ".shp", ".shx"]
 
 
 # -- through the ballot and Settings ----------------------------------------------------------
@@ -361,6 +454,15 @@ def test_the_portal_down_with_no_map_is_a_warning(client, upstream):
     assert "Couldn't load the Texas Legislative Council's precinct map, so your election precinct isn't shown; it's on " \
            "your voter registration certificate." in ballot["warnings"]
     assert last_use(client, ep.SOURCE)["status"] == "error"
+
+
+def test_a_map_that_cant_be_unpacked_is_a_warning_not_a_failed_ballot(client, upstream):
+    upstream.precinct_map = deflate64(election_precincts_zip())
+    ballot = get_ballot(client)
+    assert ballot["districts"]["election_precinct"] is None and ballot["races"]
+    assert any(w.startswith("Couldn't load the Texas Legislative Council's precinct map") for w in ballot["warnings"])
+    get_ballot(client)
+    assert zips(upstream) == 1
 
 
 def test_a_refusal_pauses_the_portal(client, upstream):

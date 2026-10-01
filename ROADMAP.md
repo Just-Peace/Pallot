@@ -22,6 +22,9 @@ What to fix, tidy up and build next, then what's already done. The open items co
 1. **The SBOE plan and its link are written into the code** (`sources/sboe.py:25-29`: `PLAN = "PLANE2106"` and `KML_URL`). When the Legislature redraws the SBOE map, VoteBot keeps the old one until someone edits the code. Found while building [#18](#your-election-precinct-18-sep-30), whose precinct map is found through the portal's index instead.
 
    Suggested fix: take the plan's name from the newest `Precincts…_Districts` file in the `precincts` dataset (the same CKAN index the precinct map uses), whose column headers name the plans in force (today `PlanE2106`); then find that plan's KML through CKAN (`package_show?id=plane2106`). Don't take the newest `plane…` dataset: most plans on the portal are proposals that never passed. The 26P file is old-style `.xls`, so it needs a reader (the 24G one is `.xlsx`). The SBOE download could also move to `HttpCache.download` (see [Bugs](#bugs) 1).
+2. **Settings special-cases each source kept in files.** `Admin` (`votebot/admin.py`) handles the SBOE map, TrackAIPAC, the TEC and the election precinct map with `if source_id == …` in `_running`, `_refresh_confirm`, `_notice`, `_details`, `refresh`, `clear` and `clear_all` (lines 161-370). A new source kept in files has to join every one of those chains, and missing one gives it the wrong busy state, Refresh or Clear. Found in the review of [#18](#your-election-precinct-18-sep-30).
+
+   Suggested fix: a small protocol on those sources (`busy`, `notice()`, `details()`, `size()`, `refresh()`, `clear()`) that `Admin` calls for any source that has one, so a new one is added in one place. Do it with the SBOE fix ([Bugs](#bugs) 1, [Improvements](#improvements) 1), which would otherwise add more cases.
 
 ## Tooling
 
@@ -424,3 +427,15 @@ What was Feature 11: the "Pct" on a voter registration certificate.
   - The colour: the plan's dark gold failed the colour-blindness check against the State Senate's orange (ΔE00 5.0 in protanopia); olive is told apart from all four by its lightness, and no pair is worse than before.
   - On by default, like the other sources. The wallet card stays as it is.
 - [x] README, DEVELOPMENT, FAQ ("Where does my election precinct come from, and why might it be wrong?", "Is my election precinct the same as my commissioner or JP precinct?", and the portal in "Why is a source paused?"), About, Privacy, AGENTS.md (a rule for the precinct map, and every `--only` choice), `.env.example` and the welcome steps updated. `scripts/record_fixtures.py --only election_precincts` records the index; the tests make the map up.
+
+### Election precinct fixes from review ([#19](https://github.com/Fahd-Siddiqui/VoteBot/pull/19), Sep 30)
+
+Six bugs a code review of [#18](#your-election-precinct-18-sep-30) found in `sources/election_precincts.py`, each with a test that fails without its fix.
+- [x] **A map that can't be unpacked no longer fails the ballot.** Only the errors expected from a bad map were caught, so another one while unpacking (a Deflate64 member, `NotImplementedError`) failed the whole lookup with a 500, and set no failure flag, so the next lookup downloaded the 45 MB again. Any failure is now a failed map, and an unexpected one a `ValueError`, which the ballot shows as a warning.
+- [x] **Only the lookup that starts the first download waits for it.** Every lookup while it ran waited up to 20 s, the reload the note asks for included; a lookup that finds it running now goes on with the note at once.
+- [x] **The event loop no longer waits on a thread reading the map.** `stored()`, which the outline endpoint calls on the event loop, took the map's lock even when the map was known, so a lookup building the index after a restart held up every other request.
+- [x] **An outline from a map replaced meanwhile isn't kept.** It was stored after its thread returned, so a newer map or a Clear in between left the old precinct's outline in the new map's cache. It's now kept only if the map it came from is still the one kept.
+- [x] **Shutdown while the map unpacks.** The download was cancelled, and its zip removed, while the unpacking thread, which can't be cancelled, still read it (on Windows the removal failed and the zip stayed). The thread now removes the zip itself once it's done, so that map is finished rather than left in pieces.
+- [x] **The portal is throttled** like every other source (`MIN_INTERVAL` in `api.py`, 1 s), as AGENTS.md asks.
+- [x] Found along the way: [Improvements](#improvements) 2 (Settings special-cases each source kept in files), which the review also raised.
+- [x] Decisions: the review's other points stay as they are. Its comments match the neighbouring code's. Its repeated `str(exc).removeprefix(…)` would need a helper for errors that aren't `UpstreamError`, which isn't simpler. Settings' overview runs in FastAPI's thread pool, not on the event loop.
