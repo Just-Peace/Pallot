@@ -30,9 +30,13 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "tigerweb", "osm_tiles", "photon",
-                                                       "sos", "key_dates", "ballotpedia", "trackaipac", "fec", "tec", "polls"]
-    geocoding, precincts, outlines, tiles, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts", "tigerweb",
+                                                       "osm_tiles", "photon", "sos", "key_dates", "ballotpedia", "trackaipac",
+                                                       "fec", "tec", "polls"]
+    geocoding, precincts, county, outlines, tiles, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert (county["label"], county["toggleable"], county["enabled"], county["refresh_confirm"]) == (
+        "Commissioner & JP precincts (counties)", True, True, None)
+    assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
     assert (precincts["label"], precincts["toggleable"], precincts["enabled"], precincts["busy"], precincts["notice"]) == (
         "Election precincts (Texas Legislative Council)", True, True, False, None)
     assert "(a large file)" in precincts["refresh_confirm"]  # its size once VoteBot has seen the portal's list

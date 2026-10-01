@@ -1,14 +1,16 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, tec, trackaipac)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race),
 the key dates one (the Texas SOS's Important Election Dates page, kept as served), the
 district outlines four (TIGERweb's layer list, and the Capitol's three districts), and the
 election precincts one (the Texas Legislative Council portal's list of precinct maps; the
-tests make up the map itself).
+tests make up the map itself), and the county precincts four (Travis's and Harris's lists of their
+map services, and the service each county's list of election precincts is in; the tests make up
+the lists themselves, from the made-up map).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -24,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -35,7 +38,7 @@ sys.path.insert(0, str(ROOT))
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
 from votebot.sources import (  # noqa: E402
-    ballotpedia, census, election_precincts, fec, key_dates, nominatim, photon, polls, sos, tigerweb,
+    ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, photon, polls, sos, tigerweb,
 )
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
@@ -61,6 +64,7 @@ FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
 # and a street name that other streets' house numbers also match.
 SUGGEST = {"congress": "1100 congress ave austin", "duval": "4512 duval st"}
 OUTLINES = {"cd": 10, "sd": 14, "hd": 49}  # the Capitol's districts
+PRECINCT_COUNTIES = {"travis": 453, "harris": 201}  # the fixture addresses' counties, by FIPS code
 
 
 def save(name: str, data: object) -> None:
@@ -224,6 +228,25 @@ def record_election_precincts(client: httpx.Client) -> None:
     save("election_precincts_index.json", response.json())
 
 
+def record_county_precincts(client: httpx.Client) -> None:
+    """The fixture addresses' counties' lists of their map services, cut down to the services named
+    like the one VoteBot reads, and that service's layers, as VoteBot asks for them."""
+
+    def get(url: str) -> dict:
+        response = client.get(url, params={"f": "json"})
+        response.raise_for_status()
+        return response.json()
+
+    for name, fips in PRECINCT_COUNTIES.items():
+        layer = county_precincts.COUNTIES[fips].table.layer
+        listing = get(layer.folder)
+        services = [s for s in listing["services"] if re.fullmatch(layer.service, s["name"], re.IGNORECASE)]
+        save(f"county_precincts_{name}_services.json", {**listing, "services": services})
+        service = county_precincts.pick(services, layer.service, server=layer.server)
+        save(f"county_precincts_{name}_service.json",
+             get(f"{county_precincts.services_root(layer.folder)}/{service['name']}/{layer.server}"))
+
+
 def record_tec() -> None:
     """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
     bundled = ROOT / "tec_cache" / "data"
@@ -254,7 +277,7 @@ def record_trackaipac() -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
     parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "election_precincts",
-                                           "tec", "trackaipac"),
+                                           "county_precincts", "tec", "trackaipac"),
                         help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
@@ -273,6 +296,8 @@ def main(argv: list[str] | None = None) -> int:
             record_tigerweb(client)
         if only in (None, "election_precincts"):
             record_election_precincts(client)
+        if only in (None, "county_precincts"):
+            record_county_precincts(client)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

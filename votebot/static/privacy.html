@@ -108,6 +108,11 @@
                 <td data-label="When">At most once a day for each county and election</td>
               </tr>
               <tr>
+                <th scope="row">Your county's map server, in Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton counties</th>
+                <td data-label="What it's sent">Nothing about you: a request for the county's whole list of its election precincts, or its maps of its commissioner and JP precincts, which only shows that someone looked up an address in that county</td>
+                <td data-label="When">At most once a week for each county, when you look up an address there, if commissioner and JP precincts from the counties are on</td>
+              </tr>
+              <tr>
                 <th scope="row">FEC (Federal Election Commission)</th>
                 <td data-label="What it's sent">Your congressional races (state, district and election year) and the FEC's ID for each candidate in them, never your address. Also the FEC key VoteBot is set up with, which identifies whoever signed up for it at api.data.gov.</td>
                 <td data-label="When">A race or candidate the server hasn't asked about in the last 7 days, if the FEC is on</td>

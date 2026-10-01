@@ -28,6 +28,7 @@ from .settings import Settings
 from .sources import census, key_dates, nominatim, osm_tiles, photon
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
+from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
@@ -44,7 +45,7 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
 MIN_INTERVAL = {
     "nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
-    "sboe": 1.0,
+    "sboe": 1.0, "county_precincts": 0.25,
 }
 
 
@@ -120,6 +121,7 @@ def create_app(
                     photon=Photon(cache, config.ttl),
                     sboe=SboeMap(cache, config.ttl, config.sboe_path),
                     election_precincts=election_precincts,
+                    county_precincts=CountyPrecincts(cache, config.ttl, election_precincts),
                     sos=Sos(cache, config.ttl, today),
                     ballotpedia=Ballotpedia(cache, config.ttl),
                     trackaipac=TrackAipac(

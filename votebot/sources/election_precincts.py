@@ -38,7 +38,7 @@ from ..http_cache import HttpCache, RequestSpec, UpstreamError, current_calls
 from ..models import Fact, Tone
 from ..text import display_size, display_time
 from . import RefreshFailed
-from .sboe import Ring, _inside, simplify
+from .sboe import Ring, _inside, _offset, simplify
 
 SOURCE = "election_precincts"
 LABEL = "Election precincts"
@@ -239,6 +239,28 @@ def display_name(code: str) -> str:
     return (code.lstrip("0") or "0") if code.isdigit() else code
 
 
+def interior_points(rings: list[Ring], inset: float, *, most: int = 16) -> list[tuple[float, float]]:
+    """Points spread through the rings (even-odd), each at least ``inset`` from every edge, in the
+    rings' own units: a 9×9 grid over their box, or 27×27 when that finds none, at most ``most``
+    of them, taken evenly. Empty for a shape too small or narrow."""
+    xs = [x for ring in rings for x, _ in ring]
+    ys = [y for ring in rings for _, y in ring]
+    if not xs:
+        return []
+    x0, y0, x1, y1 = min(xs), min(ys), max(xs), max(ys)
+    edges = [(a, b) for ring in rings for a, b in zip(ring, [*ring[1:], ring[0]])]
+    for grid in (9, 27):
+        found = [
+            (x, y)
+            for i in range(grid) for j in range(grid)
+            if contains(rings, x := x0 + (i + 0.5) * (x1 - x0) / grid, y := y0 + (j + 0.5) * (y1 - y0) / grid)
+            and all(_offset((x, y), a, b) >= inset for a, b in edges)
+        ]
+        if found:
+            return found[::-(-len(found) // most)]
+    return []
+
+
 # -- the portal's index ---------------------------------------------------------------------
 
 
@@ -320,6 +342,7 @@ class Answer:
     found: Found | None = None
     between: tuple[str, ...] = ()  # the two precincts an address near a line could be in
     reason: str | None = None  # why nothing was found: "between" or "outside"
+    codes: tuple[str, ...] = ()  # as the map writes them: the precinct found, or the two near a line
 
 
 class StillDownloading(Exception):
@@ -384,6 +407,7 @@ class ElectionPrecincts:
         self._stored: Stored | None = None
         self._index: dict[int, list[Record]] | None = None
         self._outlines: dict[tuple[int, str], list[Ring]] = {}
+        self._interiors: dict[tuple[int, str, float], list[tuple[float, float]]] = {}
         self._task: asyncio.Future[None] | None = None
         cache.pause_on(SOURCE, REFUSALS, ttl.election_precincts_backoff)
         self._tidy()
@@ -407,6 +431,19 @@ class ElectionPrecincts:
         kept = self._outlines.get((county, code))
         return kept if kept is not None else await asyncio.to_thread(self._outline, county, code)
 
+    async def codes(self, county: int) -> frozenset[str]:
+        """The codes of the county's precincts on the map kept ("0300"). Raises ValueError when no
+        map is kept."""
+        return await asyncio.to_thread(self._codes, county)
+
+    async def interior(self, county: int, code: str, inset: float) -> list[tuple[float, float]]:
+        """Points spread through the precinct, each at least ``inset`` metres from its edges, as
+        (lon, lat): what a county's maps of its commissioner and JP precincts are checked
+        against. Worked out once from the full map and kept; empty when the precinct is too
+        small or narrow. Raises ValueError when no map is kept."""
+        kept = self._interiors.get((county, code, inset))
+        return kept if kept is not None else await asyncio.to_thread(self._interior, county, code, inset)
+
     def _locate(self, county: int, point: tuple[float, float], block: tuple[float, float] | None) -> Answer:
         with self._lock:
             stored, index = self._loaded()
@@ -426,11 +463,15 @@ class ElectionPrecincts:
         if len(mine) != 1 or len(theirs) != 1:
             return Answer(reason="outside")
         if mine != theirs:
-            return Answer(between=(display_name(*mine), display_name(*theirs)), reason="between")
+            return Answer(between=(display_name(*mine), display_name(*theirs)), reason="between",
+                          codes=(*mine, *theirs))
         (code,) = mine
-        return Answer(Found(code, display_name(code), county, stored.resource.label, stored.resource.primary))
+        found = Found(code, display_name(code), county, stored.resource.label, stored.resource.primary)
+        return Answer(found, codes=(code,))
 
-    def _outline(self, county: int, code: str) -> list[Ring] | None:
+    def _rings(self, county: int, code: str) -> tuple[Stored, list[Ring]] | None:
+        """The precinct's rings in the map's projection, from the full map; None when no map is
+        kept or it has no such precinct."""
         with self._lock:
             if self._stored_now() is None:
                 return None
@@ -439,13 +480,35 @@ class ElectionPrecincts:
             if not records:
                 return None
             with stored.file(self.folder, "shp").open("rb") as fh:
-                rings = [ring for r in records for ring in read_rings(fh, r.offset)]
+                return stored, [ring for r in records for ring in read_rings(fh, r.offset)]
+
+    def _outline(self, county: int, code: str) -> list[Ring] | None:
+        found = self._rings(county, code)
+        if found is None:
+            return None
+        stored, rings = found
         lonlat = ([stored.projection.unproject(x, y) for x, y in ring] for ring in rings)
-        found = [ring for ring in (simplify(ring, SIMPLIFY_DEG) for ring in lonlat) if len(ring) >= 4]
+        outline = [ring for ring in (simplify(ring, SIMPLIFY_DEG) for ring in lonlat) if len(ring) >= 4]
         with self._lock:
             if self._stored is stored:  # not when a newer map or a Clear came meanwhile
-                self._outlines[(county, code)] = found
-        return found
+                self._outlines[(county, code)] = outline
+        return outline
+
+    def _codes(self, county: int) -> frozenset[str]:
+        with self._lock:
+            _, index = self._loaded()
+            return frozenset(r.code for r in index.get(county, ()))
+
+    def _interior(self, county: int, code: str, inset: float) -> list[tuple[float, float]]:
+        found = self._rings(county, code)
+        if found is None:
+            raise ValueError(f"the precinct map has no precinct {code} in county {county}")
+        stored, rings = found
+        points = [stored.projection.unproject(x, y) for x, y in interior_points(rings, inset)]
+        with self._lock:
+            if self._stored is stored:
+                self._interiors[(county, code, inset)] = points
+        return points
 
     def _loaded(self) -> tuple[Stored, dict[int, list[Record]]]:
         """The map kept and its index, read once; the caller holds _lock."""
@@ -503,7 +566,7 @@ class ElectionPrecincts:
     def clear(self) -> str:
         """Remove the map; the next lookup downloads it again. Settings refuses while downloading."""
         with self._lock:
-            self._stored, self._index, self._outlines = None, None, {}
+            self._stored, self._index, self._outlines, self._interiors = None, None, {}, {}
             if self.folder.exists():
                 for path in self.folder.iterdir():
                     if path.is_file():
@@ -683,7 +746,7 @@ class ElectionPrecincts:
                 "resource": asdict(resource), "stem": stem, "downloaded_at": stored.downloaded_at,
                 "projection": asdict(projection),
             }, indent=1) + "\n")
-            self._stored, self._index, self._outlines = stored, index, {}
+            self._stored, self._index, self._outlines, self._interiors = stored, index, {}, {}
             if old and old.stem != stem:
                 for ext in SHAPEFILE:
                     old.file(self.folder, ext).unlink(missing_ok=True)

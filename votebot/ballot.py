@@ -2,7 +2,8 @@
 
 The Census gives the county and districts, the SBOE map adds the State Board of
 Education district, and the Texas Legislative Council's precinct map the election precinct,
-whichever ballot source is on. Official path: the county's Texas SOS
+whose county's records may settle the commissioner and JP precincts, whichever ballot source is
+on. Official path: the county's Texas SOS
 ballot order is filtered down to those districts. Ballotpedia adds city/school races and the voter's precincts, or supplies
 the whole ballot when the state source is off. Then every candidate gets a card from each
 enabled source (enrich.py).
@@ -21,16 +22,18 @@ from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .models import (
-    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionPrecinct, ElectionRef, KeyDates,
-    LastLookup, Location, MaybeSection, Measure, Meta, Race, SourceUse,
+    GROUPS, Ballot, BallotRequest, Candidate, CountySource, Districts, ElectionDate, ElectionPrecinct, ElectionRef,
+    KeyDates, LastLookup, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Settings
+from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
 from .sources.census import TEXAS_FIPS, Census, Place
+from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
 from .sources.fec import Fec
 from .sources.key_dates import Deadlines, KeyDatesPage
@@ -81,6 +84,7 @@ class Services:
     photon: Photon
     sboe: SboeMap
     election_precincts: ElectionPrecincts
+    county_precincts: CountyPrecincts
     sos: Sos
     ballotpedia: Ballotpedia
     trackaipac: TrackAipac
@@ -233,6 +237,7 @@ class _Builder:
         self.use_polls = svc.settings.enabled("polls")
         self.use_key_dates = svc.settings.enabled(key_dates_source.SOURCE)
         self.use_election_precincts = svc.settings.enabled(election_precincts_source.SOURCE)
+        self.use_county_precincts = self.use_election_precincts and svc.settings.enabled(county_precincts_source.SOURCE)
         self.notes: list[str] = []
         self.warnings: list[str] = []
         self.errors: dict[str, str] = {}
@@ -252,13 +257,14 @@ class _Builder:
             )
 
         elections, day = await self._elections()
-        sos_data, bp_ballot, deadlines, sboe, election_precinct = await asyncio.gather(
+        sos_data, bp_ballot, deadlines, sboe, found_precincts = await asyncio.gather(
             self._sos(elections, place) if elections else _nothing(),
             self._ballotpedia(place, day) if self.use_bp else _nothing(),
             self._key_dates() if self.use_key_dates else _nothing(),
             self._sboe(place),
-            self._election_precinct(place, location) if self.use_election_precincts else _nothing(),
+            self._precinct_and_county(place, location) if self.use_election_precincts else _nothing(),
         )
+        election_precinct, county = found_precincts or (None, None)
         if sos_data is None and not (bp_ballot and bp_ballot.races):
             if "sos" in self.errors:
                 raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.errors['sos']}).")
@@ -266,7 +272,7 @@ class _Builder:
         if self.use_sos and sos_data is None:
             self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
 
-        precincts, precinct_source = self._precincts(bp_ballot)
+        precincts, precinct_sources = self._precincts(bp_ballot, county)
         districts = Districts(
             county_id=sos_data.county_id if sos_data else None,
             cd=place.cd,
@@ -275,7 +281,9 @@ class _Builder:
             sboe=sboe,
             election_precinct=election_precinct,
             city_council=bp_ballot.city_council if bp_ballot else None,
-            precinct_source=precinct_source,
+            precinct_sources=precinct_sources,
+            county_source=CountySource(county=county.county.name, method=county.county.method)
+            if county and county.numbers else None,
             **precincts,
         )
 
@@ -416,27 +424,36 @@ class _Builder:
             self.warnings.append("Couldn't load the State Board of Education map, so your SBOE district isn't known.")
             return None
 
-    async def _election_precinct(self, place: Place, location: Location) -> ElectionPrecinct | None:
-        """The precinct from the Texas Legislative Council's map. None, with a note saying why, for
-        an approximate address (OpenStreetMap's street, where the block's point would agree with
-        it and look certain), one near a precinct line, or while the first map downloads."""
+    async def _precinct_and_county(
+        self, place: Place, location: Location
+    ) -> tuple[ElectionPrecinct | None, county_precincts_source.Found | None]:
+        precinct, codes = await self._election_precinct(place, location)
+        county = await self._county(place, codes) if self.use_county_precincts and codes else None
+        return precinct, county
+
+    async def _election_precinct(self, place: Place, location: Location) -> tuple[ElectionPrecinct | None, tuple[str, ...]]:
+        """The precinct from the Texas Legislative Council's map, and the codes of the precincts the
+        address may be in, for its county's records: the one found, or two near a line. No
+        precinct, with a note saying why, for an approximate address (OpenStreetMap's street,
+        where the block's point would agree with it and look certain), one near a precinct line,
+        or while the first map downloads."""
         if location.approximate:
             self.notes.append("Your address could only be placed approximately, so your election precinct isn't "
                               "shown; it's on your voter registration certificate.")
-            return None
+            return None, ()
         if not place.county_fips:
-            return None
+            return None, ()
         try:
             answer = await self.svc.election_precincts.at(int(place.county_fips), (place.lat, place.lon), place.block_point)
         except StillDownloading as exc:
             self.notes.append(f"Your election precinct will show once its map has downloaded ({exc.size / 1_048_576:.0f} "
                               "MB, the first time only). Reload the page in a minute.")
-            return None
+            return None, ()
         except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
             self.errors[election_precincts_source.SOURCE] = str(exc).removeprefix(f"{election_precincts_source.SOURCE}: ")
             self.warnings.append("Couldn't load the Texas Legislative Council's precinct map, so your election precinct "
                                  "isn't shown; it's on your voter registration certificate.")
-            return None
+            return None, ()
         found = answer.found
         if found is None:
             if answer.reason == "between":
@@ -446,10 +463,21 @@ class _Builder:
             else:
                 self.notes.append("Your address isn't inside one election precinct on the Texas Legislative Council's "
                                   "map; your voter registration certificate has it.")
-            return None
-        return ElectionPrecinct(
+            return None, answer.codes
+        precinct = ElectionPrecinct(
             name=found.name, code=found.code, county=found.county, map_label=found.label, primary_map=found.primary
         )
+        return precinct, answer.codes
+
+    async def _county(self, place: Place, codes: tuple[str, ...]) -> county_precincts_source.Found | None:
+        """What the county's records say for those precincts; None, with a note, when they can't be read."""
+        try:
+            return await self.svc.county_precincts.at(int(place.county_fips or 0), codes)
+        except (UpstreamError, OSError, ValueError) as exc:
+            self.errors[county_precincts_source.SOURCE] = str(exc).removeprefix(f"{county_precincts_source.SOURCE}: ")
+            self.notes.append(f"Couldn't read {place.county or 'your'} County's records of its election precincts, so they "
+                              "don't give your commissioner and JP precincts this time.")
+            return None
 
     async def _ballotpedia(self, place: Place, day: dt.date | None) -> BpBallot | None:
         try:
@@ -473,12 +501,36 @@ class _Builder:
 
     # -- building races ----------------------------------------------------------------
 
-    def _precincts(self, bp_ballot: BpBallot | None) -> tuple[dict[str, int | None], str | None]:
+    def _precincts(
+        self, bp_ballot: BpBallot | None, county: county_precincts_source.Found | None
+    ) -> tuple[dict[str, int | None], dict[str, PrecinctSource]]:
+        """Each precinct's number, and who gave it: the voter, then the county's records, then
+        Ballotpedia. A note when the county's records and Ballotpedia differ, or when the
+        county's records couldn't settle one that nothing else gives."""
         given = _jp_is_constable(self.request.precincts.model_dump(exclude_unset=True) if self.request.precincts else {})
+        from_county = _jp_is_constable(dict(county.numbers) if county else {})
         from_bp = _jp_is_constable(dict(bp_ballot.precincts) if bp_ballot else {})
-        merged = {**from_bp, **given}
-        source = "you" if given else "ballotpedia" if from_bp else None
-        return {kind: merged.get(kind) for kind in PRECINCT_KINDS}, source
+        numbers: dict[str, int | None] = {}
+        sources: dict[str, PrecinctSource] = {}
+        for kind in PRECINCT_KINDS:
+            for source, found in (("you", given), ("county", from_county), ("ballotpedia", from_bp)):
+                if kind in found:
+                    numbers[kind], sources[kind] = found[kind], source
+                    break
+            else:
+                numbers[kind] = None
+        if county:
+            name = county.county.name
+            for kind, what in county_precincts_source.KIND_NAMES.items():
+                theirs = from_bp.get(kind)
+                if sources.get(kind) == "county" and theirs is not None and theirs != from_county[kind]:
+                    self.notes.append(f"Ballotpedia puts this address in {what} precinct {theirs}, but {name} County's "
+                                      f"records say {from_county[kind]}, which this ballot uses. Your voter registration "
+                                      "certificate says which.")
+                if kind in county.unsettled and numbers[kind] is None and kind not in given:
+                    self.notes.append(f"{county.unsettled[kind]}, so VoteBot doesn't guess your {what} precinct; it's "
+                                      "on your voter registration certificate.")
+        return numbers, sources
 
     def _sos_races(self, data: SosData, districts: Districts) -> list[Race]:
         entries: list[tuple[tuple[int, int, int, str], Race]] = []
@@ -621,4 +673,6 @@ class _Builder:
             status("polls", "Polls", self.use_polls, ("polls",)),
             status(election_precincts_source.SOURCE, election_precincts_source.LABEL, self.use_election_precincts,
                    (election_precincts_source.SOURCE,)),
+            status(county_precincts_source.SOURCE, county_precincts_source.LABEL, self.use_county_precincts,
+                   (county_precincts_source.SOURCE,)),
         ]

@@ -215,6 +215,29 @@ function electionPrecinctSource(precinct) {
     + "your voter registration certificate wins if they differ.";
 }
 
+// Who gave the commissioner and JP precincts and the city council district, in a sentence each:
+// " Commissioner and JP precincts from Harris County's list of its election precincts. City council district from Ballotpedia."
+const PRECINCT_NAMES = { commissioner: "Commissioner", jp: "JP" };
+function precinctSources(d) {
+  const groups = new Map();
+  for (const kind of Object.keys(PRECINCT_NAMES)) {
+    const source = d.precinct_sources?.[kind];
+    const value = kind === "jp" ? d.jp ?? d.constable : d[kind];
+    if (source && (source === "you" || value != null)) groups.set(source, [...(groups.get(source) || []), PRECINCT_NAMES[kind]]);
+  }
+  const named = (names) => `${names.join(" and ")} ${names.length > 1 ? "precincts" : "precinct"}`;
+  const county = d.county_source;
+  const from = {
+    you: () => "you entered",
+    county: (names) => `from ${county?.county} County's ${county?.method === "table" ? "list of its election precincts"
+      : names.length > 1 ? "maps, which hold your whole election precinct" : "map, which holds your whole election precinct"}`,
+    ballotpedia: () => `${d.city_council ? "and city council district " : ""}from Ballotpedia`,
+  };
+  const parts = [...groups].map(([source, names]) => `${named(names)} ${from[source](names)}`);
+  if (d.city_council && !groups.has("ballotpedia")) parts.push("City council district from Ballotpedia");
+  return parts.map((part) => ` ${part}.`).join("");
+}
+
 const NOT_UP_LABELS = { sd: "State Senate", sboe: "SBOE" };
 function notUpNote(d) {
   const names = (d.not_up || []).filter((kind) => d[kind] != null).map((kind) => `${NOT_UP_LABELS[kind]} ${d[kind]}`);
@@ -251,8 +274,6 @@ function renderDistricts() {
     countyRow.append(" ", edit);
   }
 
-  const fromBallotpedia = [d.precinct_source === "ballotpedia" && "precincts", d.city_council && "city council"]
-    .filter(Boolean).join(" and ");
   const notUp = new Set(d.not_up || []);
   $("#districts-card").replaceChildren(...[
     h("h2", { id: "districts-card-title" }, "Your districts"),
@@ -273,9 +294,7 @@ function renderDistricts() {
     prompted ? precinctPrompt(waiting, missing) : null,
     prompted || editingPrecincts ? precinctForm() : null,
     h("p", { class: "fine" }, "Districts from the US Census and the Texas Legislative Council.",
-      precinct ? electionPrecinctSource(precinct) : "",
-      fromBallotpedia ? ` ${fromBallotpedia[0].toUpperCase()}${fromBallotpedia.slice(1)} from Ballotpedia.` : "",
-      d.precinct_source === "you" ? " Precincts you entered." : ""),
+      precinct ? electionPrecinctSource(precinct) : "", precinctSources(d)),
   ].filter(Boolean));
   $("#districts-card").hidden = false;
 }
@@ -693,8 +712,9 @@ function precinctForm() {
     cancel.addEventListener("click", () => setEditingPrecincts(false));
     buttons.push(cancel);
   }
-  if (d.precinct_source === "you") {
-    const reset = h("button", { class: "link-btn", type: "button" }, "Use Ballotpedia's numbers");
+  if (Object.values(d.precinct_sources || {}).includes("you")) {
+    const reset = h("button", { class: "link-btn", type: "button" },
+      d.county_source ? `Use ${d.county_source.county} County's numbers` : "Use Ballotpedia's numbers");
     reset.addEventListener("click", () => updatePrecincts(null));
     buttons.push(reset);
   }

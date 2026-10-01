@@ -197,6 +197,18 @@ class ElectionPrecinct(BaseModel):
     primary_map: bool  # a primary's map, which normally carries over to the general
 
 
+PrecinctSource = Literal["you", "county", "ballotpedia"]
+
+
+class CountySource(BaseModel):
+    """The county whose records gave commissioner and JP precincts: its list of its election
+    precincts ("table"), or its maps of its commissioner and JP precincts, laid over the voter's
+    election precinct ("maps")."""
+
+    county: str  # "Harris"
+    method: Literal["table", "maps"]
+
+
 class Districts(BaseModel):
     county_id: int | None = None
     cd: int | None = None
@@ -208,7 +220,8 @@ class Districts(BaseModel):
     commissioner: int | None = None
     jp: int | None = None
     constable: int | None = None
-    precinct_source: str | None = None  # "you" or "ballotpedia"
+    precinct_sources: dict[str, PrecinctSource] = Field(default_factory=dict)  # "commissioner", "jp", "constable" -> who gave it
+    county_source: CountySource | None = None  # when the county's records gave any, even ones the voter then changed
     not_up: list[str] = Field(default_factory=list)  # the voter's districts ("sd", "sboe") whose seat isn't on this ballot
 
 

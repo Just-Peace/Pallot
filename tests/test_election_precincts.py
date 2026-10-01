@@ -23,7 +23,7 @@ from votebot.sources.election_precincts import ElectionPrecincts, Lambert, Still
 
 from .conftest import (
     ANDERSON, HARRIS, HOLE, LINE, OVERLAP, PRJ, PROJECTION, TRAVIS, TWO_PIECES, census_points, election_precincts_zip,
-    get_ballot, last_use, load, nudge, precincts_index, precincts_zip,
+    get_ballot, last_use, load, middle, nudge, precincts_index, precincts_zip,
 )
 
 LABEL = "2026 Primary Election Voting Precincts"
@@ -168,7 +168,7 @@ def test_the_same_map_uploaded_again_is_newer():
 async def test_the_fixture_addresses_precincts(tmp_path, upstream):
     async with service(tmp_path) as precincts:
         capitol = await precincts.at(TRAVIS, *census_points("capitol"))
-        assert capitol == ep.Answer(ep.Found("0300", "300", TRAVIS, LABEL, True))
+        assert capitol == ep.Answer(ep.Found("0300", "300", TRAVIS, LABEL, True), codes=("0300",))
         assert (await precincts.at(TRAVIS, *census_points("ut"))).found.name == "312"
         assert (await precincts.at(HARRIS, *census_points("harris"))).found.name == "890"
         assert (await precincts.at(ANDERSON, *census_points("capitol"))).found.name == "1"  # the county decides
@@ -185,7 +185,8 @@ async def test_holes_pieces_lines_and_overlaps(tmp_path, upstream):
         assert (await at(HOLE, HOLE)).found.name == "401A"  # fills 0400's hole
         assert (await at(nudge(HOLE, 600), nudge(HOLE, 700))).found.name == "400"
         assert (await at(nudge(TWO_PIECES, 1000), nudge(TWO_PIECES, 1050))).found.name == "101"  # its second piece
-        assert await at(nudge(LINE, -10), nudge(LINE, 10)) == ep.Answer(between=("600", "601"), reason="between")
+        assert await at(nudge(LINE, -10), nudge(LINE, 10)) == ep.Answer(between=("600", "601"), reason="between",
+                                                                         codes=("0600", "0601"))
         assert await at(nudge(OVERLAP, 200), nudge(OVERLAP, 200)) == ep.Answer(reason="outside")  # in two at once
         assert await at(nudge(LINE, 5000), None) == ep.Answer(reason="outside")  # in none
 
@@ -203,6 +204,40 @@ async def test_an_outline_is_simplified_once_and_never_downloads(tmp_path, upstr
         assert await precincts.outline(TRAVIS, "0101") is pieces
         assert len(await precincts.outline(TRAVIS, "0400")) == 2  # the hole too
         assert await precincts.outline(TRAVIS, "9999") is None and await precincts.outline(HARRIS, "0300") is None
+
+
+def test_interior_points_stay_inside_and_away_from_the_edges():
+    square = [(0, 0), (0, 800), (800, 800), (800, 0), (0, 0)]
+    points = ep.interior_points([square], 50)
+    assert 1 <= len(points) <= 16 and all(50 <= x <= 750 and 50 <= y <= 750 for x, y in points)
+    hole = [(300, 300), (500, 300), (500, 500), (300, 500), (300, 300)]
+    assert all(not (250 < x < 550 and 250 < y < 550) for x, y in ep.interior_points([square, hole], 50))
+    assert ep.interior_points([[(0, 0), (0, 80), (80, 80), (80, 0), (0, 0)]], 50) == []  # too small for any
+    assert ep.interior_points([], 50) == []
+
+
+def test_a_narrow_precinct_gets_a_finer_grid():
+    """Two strips 160 m wide in an L: no point of the 9×9 grid is in one, so the 27×27 grid's are taken."""
+    corner = [(0, 0), (2970, 0), (2970, 160), (160, 160), (160, 2970), (0, 2970), (0, 0)]
+    points = ep.interior_points([corner], 50)
+    assert points and all(x >= 50 and y >= 50 and (x <= 110 or y <= 110) for x, y in points)
+
+
+@pytest.mark.anyio
+async def test_a_countys_codes_and_points_inside_a_precinct(tmp_path, upstream):
+    async with service(tmp_path) as precincts:
+        await precincts.at(TRAVIS, *census_points("capitol"))
+        assert await precincts.codes(TRAVIS) == {"0300", "0312", "0101", "0400", "401A", "0500", "0501", "0600", "0601"}
+        assert await precincts.codes(9999) == frozenset()
+        points = await precincts.interior(TRAVIS, "0300", 50)
+        assert 1 <= len(points) <= 16 and await precincts.interior(TRAVIS, "0300", 50) is points  # kept
+        lat, lon = middle(census_points("capitol"))
+        assert all(abs(x - lon) < 0.004 and abs(y - lat) < 0.004 for x, y in points)  # lon/lat, within its 800 m square
+        with pytest.raises(ValueError):
+            await precincts.interior(TRAVIS, "9999", 50)
+        precincts.clear()
+        with pytest.raises(ValueError):
+            await precincts.codes(TRAVIS)
 
 
 @pytest.mark.anyio

@@ -1,0 +1,23 @@
+{
+ "currentVersion": 11.2,
+ "folders": [
+  "AdMas",
+  "Big6",
+  "Hosted",
+  "PTE",
+  "Testing",
+  "UnregisteredAddresses",
+  "Utilities",
+  "VotingAddresses"
+ ],
+ "services": [
+  {
+   "name": "Precincts",
+   "type": "FeatureServer"
+  },
+  {
+   "name": "Precincts",
+   "type": "MapServer"
+  }
+ ]
+}

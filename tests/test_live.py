@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+from pathlib import Path
 
 import httpx
 import pytest
@@ -11,10 +12,11 @@ from fastapi.testclient import TestClient
 from tec_cache.models import ZIP_URL
 from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
-from votebot.api import create_app
+from votebot.api import MIN_INTERVAL, create_app
 from votebot.config import DEMO_KEY, Config, Ttls, load_config
 from votebot.http_cache import HttpCache, track_calls
 from votebot.sources import fec, key_dates, polls
+from votebot.sources.county_precincts import COUNTIES, CountyPrecincts
 from votebot.sources.election_precincts import ElectionPrecincts, read_dbf
 from votebot.sources.sboe import _inside
 
@@ -22,6 +24,12 @@ from .conftest import census_points
 
 pytestmark = [pytest.mark.live, pytest.mark.xdist_group("live")]  # one worker, so one call at a time
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
+
+
+@pytest.fixture(scope="module")
+def precinct_map_dir(tmp_path_factory) -> Path:
+    """One folder for the Texas Legislative Council's precinct map, so these tests download it once."""
+    return tmp_path_factory.mktemp("election_precincts")
 
 
 def test_capitol_ballot_live(tmp_path):
@@ -117,14 +125,14 @@ def test_street_map_tile_live(tmp_path):
 
 
 @pytest.mark.anyio
-async def test_election_precincts_live(tmp_path):
+async def test_election_precincts_live(tmp_path, precinct_map_dir):
     """The Texas Legislative Council's portal still lists its precinct maps, and the newest one (a
     single download, about 45 MB) reads as VoteBot expects: the recorded addresses land in their
     precincts, every precinct's code fits the outlines API, and a second lookup asks nothing."""
     async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
                                  timeout=60) as client:
         cache = HttpCache(tmp_path / "cache.sqlite3", client)
-        precincts = ElectionPrecincts(cache, Ttls(), tmp_path / "election_precincts", first_wait=600)
+        precincts = ElectionPrecincts(cache, Ttls(), precinct_map_dir, first_wait=600)
         try:
             found = {name: (await precincts.at(county, *census_points(name))).found
                      for name, county in (("capitol", 453), ("ut", 453), ("harris", 201))}
@@ -142,3 +150,32 @@ async def test_election_precincts_live(tmp_path):
     assert len(codes) > 9000 and all(1 <= len(code) <= 16 for code in codes)  # the outlines API's limit
     lat, lon = census_points("capitol")[0]
     assert sum(_inside(lon, lat, ring) for ring in outline) % 2
+
+
+@pytest.mark.anyio
+async def test_county_precincts_live(tmp_path, precinct_map_dir):
+    """Each county's records are still found by name and read as VoteBot expects, against the
+    precinct map: a list of exactly the map's precincts, or maps that settle most of a sample of
+    them, 20 spread through the county; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=60) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        precincts = ElectionPrecincts(cache, Ttls(), precinct_map_dir, first_wait=600)
+        counties = CountyPrecincts(cache, Ttls(), precincts)
+        try:
+            await precincts.at(453, *census_points("capitol"))  # the map, unless the test above kept it
+            settled, samples = {}, {}
+            for fips, county in COUNTIES.items():
+                codes = sorted(await precincts.codes(fips))
+                samples[fips] = codes[::max(1, len(codes) // 20)][:20]
+                kinds = 1 if county.table and not county.table.jp else 2  # Fort Bend's list has no JP precincts
+                found = [await counties.at(fips, (code,)) for code in samples[fips]]
+                settled[county.name] = (sum(len(f.numbers) == kinds for f in found), county.method)
+            stats = track_calls()
+            for fips, sample in samples.items():
+                await counties.at(fips, (sample[0],))
+        finally:
+            await precincts.aclose()
+            cache.close()
+    assert all(n == 20 if method == "table" else n >= 15 for n, method in settled.values()), settled  # maps: most
+    assert stats.external_calls == 0
