@@ -30,9 +30,14 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "tigerweb", "osm_tiles", "photon", "sos", "key_dates",
-                                                       "ballotpedia", "trackaipac", "fec", "tec", "polls"]
-    geocoding, outlines, tiles, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "tigerweb", "osm_tiles", "photon",
+                                                       "sos", "key_dates", "ballotpedia", "trackaipac", "fec", "tec", "polls"]
+    geocoding, precincts, outlines, tiles, photon, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+    assert (precincts["label"], precincts["toggleable"], precincts["enabled"], precincts["busy"], precincts["notice"]) == (
+        "Election precincts (Texas Legislative Council)", True, True, False, None)
+    assert "(a large file)" in precincts["refresh_confirm"]  # its size once VoteBot has seen the portal's list
+    assert [(f["label"], f["value"]) for f in precincts["details"]] == [
+        ("Map kept", "downloaded on the first lookup"), ("Newest on the portal", "not asked yet")]
     assert tiles["refreshable"] is False and all(s["refreshable"] for s in overview["sources"] if s is not tiles)
     assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
     assert (outlines["label"], outlines["enabled"], outlines["refresh_confirm"]) == ("District map (US Census TIGERweb)", True, None)

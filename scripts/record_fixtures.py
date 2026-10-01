@@ -1,12 +1,14 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, tec, trackaipac)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Photon), the polls three (FiftyPlusOne, one per kind of race),
-the key dates one (the Texas SOS's Important Election Dates page, kept as served), and the
-district outlines four (TIGERweb's layer list, and the Capitol's three districts).
+the key dates one (the Texas SOS's Important Election Dates page, kept as served), the
+district outlines four (TIGERweb's layer list, and the Capitol's three districts), and the
+election precincts one (the Texas Legislative Council portal's list of precinct maps; the
+tests make up the map itself).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -32,7 +34,9 @@ sys.path.insert(0, str(ROOT))
 
 from votebot.config import DEMO_KEY, load_config  # noqa: E402
 from votebot.offices import classify  # noqa: E402
-from votebot.sources import ballotpedia, census, fec, key_dates, nominatim, photon, polls, sos, tigerweb  # noqa: E402
+from votebot.sources import (  # noqa: E402
+    ballotpedia, census, election_precincts, fec, key_dates, nominatim, photon, polls, sos, tigerweb,
+)
 from votebot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -212,6 +216,14 @@ def record_tigerweb(client: httpx.Client) -> None:
              get(tigerweb.outline_spec(tigerweb.layer_id(index, kind), kind, number)))
 
 
+def record_election_precincts(client: httpx.Client) -> None:
+    """The portal's index of precinct maps, as VoteBot asks for it (never the 45 MB map)."""
+    spec = election_precincts.index_spec()
+    response = client.get(spec.url, params=spec.params)
+    response.raise_for_status()
+    save("election_precincts_index.json", response.json())
+
+
 def record_tec() -> None:
     """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
     bundled = ROOT / "tec_cache" / "data"
@@ -241,7 +253,8 @@ def record_trackaipac() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "tec", "trackaipac"),
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "election_precincts",
+                                           "tec", "trackaipac"),
                         help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
@@ -258,6 +271,8 @@ def main(argv: list[str] | None = None) -> int:
             record_key_dates(client)
         if only in (None, "tigerweb"):
             record_tigerweb(client)
+        if only in (None, "election_precincts"):
+            record_election_precincts(client)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

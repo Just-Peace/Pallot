@@ -1,5 +1,5 @@
-// The map under Your districts, always shown: a street map with each district's outline and
-// the address as a pin, centred on the pin. Leaflet (vendor/leaflet, imported once there's a
+// The map under Your districts, always shown: a street map with each district's outline, the
+// election precinct's too, and the address as a pin, centred on the pin. Leaflet (vendor/leaflet, imported once there's a
 // ballot) draws it; the street map's tiles come from OpenStreetMap through VoteBot (/api/tiles),
 // and the outlines from /api/district-outlines. A row of buttons right above the map, one per
 // district, is its legend: picking one, or its line on the map, highlights it and zooms to it;
@@ -14,9 +14,9 @@ import { icon } from "./icons.js";
 import { loadUi, saveUi } from "./picks.js";
 
 const SVG = "http://www.w3.org/2000/svg";
-const KINDS = ["cd", "sd", "hd", "sboe"];
+const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
 const NAMES = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "State Board of Education" };
-const LABELS = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "SBOE" };
+const LABELS = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "SBOE", election_precinct: "Precinct" };
 const TEXAS = [[23.5, -109], [38.5, -91]]; // as far as the server serves tiles (sources/osm_tiles.py)
 const HOME_ZOOM = [10, 14]; // the view around the address: streets, and the nearest district if it fits
 const TILES = "/api/tiles/{z}/{x}/{y}.png";
@@ -37,7 +37,7 @@ let parts = null; // the panel's toggle, body, picks, canvas, notes and foot, ma
 let shown = true; // the map is open (the voter can hide it)
 let drawn = ""; // the query whose outlines are on the map
 let ballot = null;
-let query = ""; // "cd=10&sd=14&hd=49&sboe=5": the ballot's districts
+let query = ""; // "cd=10&sd=14&hd=49&sboe=5&election_precinct=0300&county=453": the ballot's districts
 let highlight = null; // the kind picked
 let data = null; // the outlines for ``query``, once loaded
 let failed = null; // why they couldn't be loaded
@@ -46,7 +46,7 @@ let pending = null; // the AbortController of the request still running
 new ResizeObserver(() => map?.invalidateSize()).observe(section);
 
 function districtName(kind, number) {
-  return `${NAMES[kind]} District ${number}`;
+  return kind === "election_precinct" ? `Precinct ${number}` : `${NAMES[kind]} District ${number}`;
 }
 
 // A short line in the district's colour and dash.
@@ -68,8 +68,10 @@ function swatch(kind) {
 export function syncMap(next) {
   ballot = next;
   const districts = next.districts || {};
-  const nextQuery = new URLSearchParams(KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]))
-    .toString();
+  const asked = KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]);
+  const precinct = districts.election_precinct;
+  if (precinct) asked.push(["election_precinct", precinct.code], ["county", precinct.county]);
+  const nextQuery = new URLSearchParams(asked).toString();
   section.hidden = !nextQuery;
   if (!nextQuery) {
     query = "";
@@ -204,24 +206,29 @@ function draw() {
   fitView();
 
   const notUp = new Set(ballot.districts.not_up || []);
+  const mapLabel = ballot.districts.election_precinct?.map_label;
   parts.picks.replaceChildren(...data.outlines.map((outline) => {
     const name = districtName(outline.kind, outline.number);
+    const title = notUp.has(outline.kind) ? `${name}: not up for election this time`
+      : outline.kind === "election_precinct" && mapLabel ? `Election precinct ${outline.number}, from the map “${mapLabel}”`
+        : name;
     const button = h("button", {
       type: "button", class: `map-pick ${outline.kind}${notUp.has(outline.kind) ? " not-up" : ""}`,
-      "data-map-kind": outline.kind, "aria-pressed": String(outline.kind === highlight),
-      title: notUp.has(outline.kind) ? `${name}: not up for election this time` : name,
+      "data-map-kind": outline.kind, "aria-pressed": String(outline.kind === highlight), title,
     }, swatch(outline.kind), LABELS[outline.kind], " ", h("strong", {}, String(outline.number)));
     button.addEventListener("click", () => pickDistrict(outline.kind));
     return button;
   }));
+  const fromCouncil = (outline) => outline.kind === "sboe" || outline.kind === "election_precinct";
   const sources = [
-    data.outlines.some((outline) => outline.kind !== "sboe") && "the US Census (TIGERweb)",
-    data.outlines.some((outline) => outline.kind === "sboe") && "the Texas Legislative Council",
+    data.outlines.some((outline) => !fromCouncil(outline)) && "the US Census (TIGERweb)",
+    data.outlines.some(fromCouncil) && "the Texas Legislative Council",
   ].filter(Boolean).join(" and ");
+  const precise = data.outlines.some((outline) => outline.kind === "election_precinct") ? " (your precinct to about 5 m)" : "";
   const notes = data.street_map ? data.notes : [...data.notes, "The street map is turned off in Settings."];
   parts.notes.replaceChildren(...notes.map((note) => h("p", { class: "district-note" }, note)));
   parts.foot.replaceChildren(
-    sources ? `Outlines from ${sources}, simplified to about 50 m: near a boundary, go by the district numbers. ` : "",
+    sources ? `Outlines from ${sources}, simplified to about 50 m${precise}: near a boundary, go by the district numbers. ` : "",
     data.street_map ? "The street map comes from OpenStreetMap, through VoteBot." : "");
 }
 

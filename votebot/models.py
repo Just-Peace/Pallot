@@ -186,12 +186,24 @@ class Location(BaseModel):
     approximate: bool = False
 
 
+class ElectionPrecinct(BaseModel):
+    """The voter's election precinct (the "Pct" on a voter registration certificate), from the
+    Texas Legislative Council's precinct map."""
+
+    name: str  # as the voter reads it: "300"
+    code: str  # as the map writes it ("0300"): asks for the outline, with ``county``
+    county: int  # the county's FIPS code
+    map_label: str  # the map's: "2026 Primary Election Voting Precincts"
+    primary_map: bool  # a primary's map, which normally carries over to the general
+
+
 class Districts(BaseModel):
     county_id: int | None = None
     cd: int | None = None
     sd: int | None = None
     hd: int | None = None
     sboe: int | None = None
+    election_precinct: ElectionPrecinct | None = None
     city_council: str | None = None
     commissioner: int | None = None
     jp: int | None = None
@@ -246,13 +258,13 @@ class LastLookup(Meta):
 class Outline(BaseModel):
     """One district's shape for the map: rings of (lon, lat), outer rings and holes alike."""
 
-    kind: Literal["cd", "sd", "hd", "sboe"]  # as in Districts
-    number: int
+    kind: Literal["cd", "sd", "hd", "sboe", "election_precinct"]  # as in Districts
+    number: int | str  # the district's number, or the precinct's name ("300")
     rings: list[list[tuple[float, float]]]
 
 
 class DistrictOutlines(BaseModel):
-    outlines: list[Outline]  # in the order asked: U.S. House, State Senate, State House, SBOE
+    outlines: list[Outline]  # in the order asked: U.S. House, State Senate, State House, SBOE, election precinct
     notes: list[str]  # outlines that are off or couldn't be had
     street_map: bool  # whether the street map (/api/tiles) is on
     meta: Meta

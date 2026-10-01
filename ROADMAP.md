@@ -13,11 +13,15 @@ What to fix, tidy up and build next, then what's already done. The open items co
 
 ## Bugs
 
-Nothing open right now.
+1. **A failed SBOE map download is tried again on every lookup.** `SboeMap._load` (`sources/sboe.py:205-212`) downloads the map when none is stored. If that fails, `_districts` stays `None`, so the next lookup downloads the whole map again. There's no back-off, and no pause after a 403 or 429, since `download()` (`sboe.py:214-226`) calls the client directly instead of going through `HttpCache`. While the portal is down or refusing VoteBot, every lookup asks it again, and a repeat lookup isn't 0 external calls.
+
+   Suggested fix: download through `HttpCache.download`, as the election precinct map does ([#18](#your-election-precinct-18-sep-30)), so a refusal pauses the source. After any other failure, set a retry flag for `Ttls.retry_after` (`cache.set_flag`), as `ElectionPrecincts` does. While the flag is set, `_sboe` gives its warning without asking. Add a test: with the portal down, two lookups make one request to it.
 
 ## Improvements
 
-Nothing open right now.
+1. **The SBOE plan and its link are written into the code** (`sources/sboe.py:25-29`: `PLAN = "PLANE2106"` and `KML_URL`). When the Legislature redraws the SBOE map, VoteBot keeps the old one until someone edits the code. Found while building [#18](#your-election-precinct-18-sep-30), whose precinct map is found through the portal's index instead.
+
+   Suggested fix: take the plan's name from the newest `Precincts…_Districts` file in the `precincts` dataset (the same CKAN index the precinct map uses), whose column headers name the plans in force (today `PlanE2106`); then find that plan's KML through CKAN (`package_show?id=plane2106`). Don't take the newest `plane…` dataset: most plans on the portal are proposals that never passed. The 26P file is old-style `.xls`, so it needs a reader (the 24G one is `.xlsx`). The SBOE download could also move to `HttpCache.download` (see [Bugs](#bugs) 1).
 
 ## Tooling
 
@@ -45,7 +49,7 @@ Roughly in order of value to a voter. Items marked *(README)* were on the README
      - Google's Civic Information API (`voterinfo`) still returns `pollingLocations` and `earlyVoteSites`. But it needs a key, its Texas coverage is uncertain, and it only fills in days before an election. If it's added, make it optional (like the FEC key), with the county office as the fallback.
      - Counties publish their own lists, in different formats (Harris has an ArcGIS layer, most have PDFs or web apps). Not worth a scraper per county.
 2. **Incumbents' voting records** *(README)*. For Congress, the Congress.gov API, which takes the same api.data.gov key as the FEC. For the Texas Legislature, Open States.
-3. **District lean and past results** *(README: chances of winning)*. The Texas Legislative Council publishes election results for each district plan, on the same portal as the SBOE map. Show the last results for each seat (for example "2024: R+12 in this district"), plus race ratings where they're open.
+3. **District lean and past results** *(README: chances of winning)*. The Texas Legislative Council publishes election results for each district plan, on the same portal as the SBOE map. Show the last results for each seat (for example "2024: R+12 in this district"), plus race ratings where they're open. Where the data is (found while building [#18](#your-election-precinct-18-sep-30)): each plan's dataset has a "District Election Analysis" report per general election (`r206_Election24G.xls`), and `r202_22G-24G.xls` covers several. Use only the general elections' (`G`) reports, since the ballot's focus is the November general.
 4. **Each candidate's top views** *(README)*. Opt-in, using an LLM with web search. A short summary with every claim cited, cached per candidate, and refreshed only on request.
 5. **Fundraising over time** *(README)*. Money raised per report period from the FEC and per report from the TEC (which `tec_cache` already reads). Show it as a small chart, with cash on hand over time.
 6. **Proposition explainers.** For Texas constitutional amendments, the Texas Legislative Council's and the House Research Organization's analyses, with the arguments for and against. For local bonds, the amount, what it pays for and the tax impact.
@@ -61,24 +65,16 @@ Roughly in order of value to a voter. Items marked *(README)* were on the README
     - district maps the Census doesn't cover (Texas's SBOE map, for example).
 
     A second state can then be added without touching the Texas code.
-11. **Your election precinct.** The "Pct 227" on a voter registration certificate, shown as "Precinct 227" on the Your districts card and as "Pct 227" on the printed sheet. What was found:
-    - **The Census doesn't have it.** The geocoder's "Current" vintage has no voting-district layer (see `tests/fixtures/census_capitol.json`).
-    - **The Texas Legislative Council publishes it.** Its dataset `vtds` on data.capitol.texas.gov, the portal the SBOE map comes from, has VTDs, "the census geographic equivalent of county election precincts". The newest, `VTDs_24PG.zip` (46.6 MB, 9,712 precincts, modified 2025-01-29), matches the precincts of the 2024 primary and general elections. Counties may have changed some since, especially after the 2025 congressional map, so say which elections the number is from, and that the certificate wins.
-    - **Its API finds the newest map.** The portal is CKAN: `https://data.capitol.texas.gov/api/3/action/package_show?id=vtds` lists the resources (`name`, `format` "SHP", `url`, `created`, `last_modified`, `size`), so a `VTDs_26…` is picked up without a code change.
-    - **The file is a shapefile, not KML.**
-      - The zip holds `.shp` (73 MB unzipped, polygons), `.shx` and `.dbf`.
-      - The `.dbf` fields are `CNTY`, `VTD` ("0011"), `CNTYKEY`, `VTDKEY` and `CNTYVTD`.
-      - `CNTY` is the county's alphabetical number, the same as the SOS's `county_id`, and equals `(county FIPS + 1) / 2` (Travis: 227).
-      - A precinct in pieces is suffixed ("0001A", "0001B"), so show the VTD without its suffix or leading zeros.
-    - **It's in the Texas State Mapping System (EPSG:3081).** That's a Lambert conformal conic on NAD83 (GRS 1980), with central meridian −100°, standard parallels 27°25′ and 34°55′, latitude of origin 31°10′, and false easting and northing of 1,000,000 m. The projection is a short formula, so no GIS library is needed.
-    - **The server ignores `Range`,** so it's one streaming GET for the whole zip.
-
-    How to build it: its own source in Settings, with an on/off switch, a Refresh that asks first (about 45 MB), and Clear. The index is cached through `HttpCache` for a week. The zip is downloaded into `data/vtds/` like the SBOE map, and again only when the index shows a newer one. A lookup keeps the voter's county, then the polygons whose bounding box holds the point, then does an even-odd ray cast, off the event loop. Nothing is guessed near a boundary.
-
-    Then draw the precinct on the map of your districts: a `precinct` kind in `GET /api/district-outlines` (`outlines.py`), its polygons simplified like the SBOE's (`sboe.simplify`), and a fifth colour and dash in `district-map.js` and `app.css`, checked like the other four.
+11. **Commissioner and JP precincts from the election precinct.** Found while building [#18](#your-election-precinct-18-sep-30). Election Code §42.005 keeps each election precinct inside one commissioners precinct and one justice precinct, so a county's table of election precinct to commissioner and JP precinct would fill both fields under Your districts exactly, from the precinct VoteBot already shows. There's no statewide source: the Texas Legislative Council's portal has only congressional, SBOE, State House and State Senate plans (C, E, H, S). Start with the largest counties (Harris, Dallas, Tarrant, Bexar, Travis), from their own published tables or GIS layers, cached like any source. Never infer the numbers from how a county numbers its precincts.
 
 ## UI and UX
 
+- **"Your precinct" is ambiguous now that Your districts shows the election precinct.** Since [#18](#your-election-precinct-18-sep-30), the card shows "Precinct 300", but three places still say "your precinct" when they mean the commissioner and JP precincts:
+  - the "Depends on your precinct" section title (`MAYBE_SECTIONS` in `ballot.py:47-53`);
+  - the toast after **Update my ballot**, "Some races still depend on your precinct" (`ballot.js:317`);
+  - the group label "Your precinct" (`GROUP_LABELS` in `labels.js:11`).
+
+  The precinct prompt was reworded in #18 for this reason. Suggested fix: "Depends on your commissioner or JP precinct", "Some races still depend on your commissioner or JP precinct", and "Your commissioner & JP precincts" (check that the label fits the section chips on a phone).
 - **Offline:** make VoteBot installable (a web app manifest and a service worker), keeping the last ballot, picks and notes for use without a connection. For example, in line at the polls.
 
   Deferred, because browsers only run a service worker on `https://` or on `localhost`. A phone that reaches the Docker image at `http://<LAN address>:8000` would get nothing from it; it would need HTTPS in front of VoteBot (Caddy, or Tailscale serve), and the README would have to explain that. Until then, the printed sheet and the wallet card cover the polls.
@@ -404,3 +400,27 @@ What was Tooling 1. On the development machine (8 cores, the repo on WSL's `/mnt
   - Two slow parts are left as they are:
     - Each new app still builds the TEC name index, since that's production code.
     - trackaipac_cache's refresh tests (about 0.8 s each, 14 s in all) still parse their 1 MB page every time, since the library is a copy of the maintainer's.
+
+### Your election precinct ([#18](https://github.com/Fahd-Siddiqui/VoteBot/pull/18), Sep 30)
+
+What was Feature 11: the "Pct" on a voter registration certificate.
+- [x] **On the ballot.** Your districts shows "Travis County · Precinct 300 · Commissioner … · JP & Constable …", the certificate's order, and the printed sheet "Pct 300" before the commissioner. The small print names the map ("Election precinct from the Texas Legislative Council's map “2026 Primary Election Voting Precincts”, which normally carries over to the November general; your voter registration certificate wins if they differ"). The precinct prompt now names the precincts it asks for, starting with the election precinct when it's known ("Your election precinct is 300. Enter your commissioner and justice of the peace precincts from the same voter registration certificate."), since "your precincts" was ambiguous next to it.
+- [x] **On the map**, a fifth outline with its button ("Precinct 300"): olive (`--map-election-precinct`, `#48542a` light, `#cbd99a` dark) with a dash-dot-dot line, simplified to about 5 m. The map opens around the smallest outline, now the precinct, so at about zoom 14: the voter's own streets.
+- [x] **The source** (`sources/election_precincts.py`): the TLC's `precincts` dataset, the county voting precincts it collects after each statewide election, found through its CKAN index (cached a week, `VOTEBOT_TTL_ELECTION_PRECINCTS`; paused an hour after a 403 or 429). The newest map, now `Precincts26P.zip` (45.5 MB), is downloaded once into `data/election_precincts/` with one streaming GET (the server ignores `Range`), and again only when the index lists a newer one. Its own row in Settings: an on/off switch, the map kept and the newest listed with their sizes, Refresh (which asks first, with the size) and Clear; busy while downloading, when Clear and Clear all are refused.
+- [x] **`HttpCache.download`** streams a file too big for the database into a path, with the same pause, throttling, call count and refusals as `get_json`, refused past its size or when a redirect leaves the portal. **`HttpCache.peek`** reads a stored copy without asking, so Settings shows the newest map listed after a restart.
+- [x] **The shapefile and its projection, with the standard library.** `.dbf` fields `CNTY` (the county's FIPS, not the alphabetical number the roadmap guessed from `vtds`) and `PREC` (`0300`, or `101A`, `03-3`, `01CR`; at most 4 characters); every record is a polygon, one per precinct. The projection (EPSG:3081, a Lambert conformal conic on GRS 1980) is read from the `.prj`, with EPSG method 9802's formulas, checked against EPSG's worked example; any other projection is refused. Only the records' bounding boxes stay in memory (about 3 MB); a lookup reads its few candidates by seek. A new map is checked (size, files, projection, records), unpacked under a new name, and takes over when `map.json` is rewritten, so the old one stays until then.
+- [x] **The lookup:** the address's point and its census block's internal point (from the geocoder's `2020 Census Blocks`, no new call) must fall in the same single precinct. When they're in two, the ballot names both and picks neither; there's no nearest-precinct fallback. Without a block point, the address's point alone. An approximate address (OpenStreetMap's street) gets no precinct. The four fixture addresses: Capitol 300, UT 312, downtown Houston 890, north Austin 256 (approximate, so not shown).
+- [x] **A repeat lookup makes 0 external calls**, after a restart too: the index is a cache hit, the map is on disk, and the outline is kept in memory. The first lookup on this machine took 15.5 s with the download; the next, 0.25 s.
+- [x] **Found along the way:** [Bugs](#bugs) 1 (a failed SBOE map download is tried again on every lookup), [Improvements](#improvements) 1 (the SBOE plan is written into the code), [Features](#features) 11 (commissioner and JP precincts from the election precinct), where Feature 3's data is, and a [UI and UX](#ui-and-ux) item ("your precinct" is now ambiguous in three other places).
+- [x] Decisions:
+  - The `precincts` dataset, not `vtds`: real precinct lines, current after the 2025 map. Against the 2024 VTDs, about 20% of the 2026 precincts changed or are new (1,896 of 9,614).
+  - The newest map, primary or general, ranked by the election's year in its description, then a general's after a primary's, then the upload, so an older election's map uploaded later doesn't win. A general's map only comes out after that election (24G on 2025-01-28), and a primary's precincts carry over: counties can only redraw them in March or April of odd years (§42.031), and 99.5% and 99.9% were unchanged from primary to general in 2022 and 2024.
+  - Nothing written into the code but the dataset's name and the file format's fields: the map, its label, whether it's a primary's, its size, its projection and the download's host all come from the data.
+  - The two-point check is cheap, so it stays, but it only catches a precinct line through the block or a sliver between the TLC's lines and TIGER's: the block comes from the geocoder's own point, so a house put on the wrong side of a street that's a precinct line isn't caught. The FAQ says the certificate wins, and "between" says "near the line", not "on" it.
+  - A failed download is never retried in a loop: a lookup doesn't start that map again until the index lists a changed one, or for a week (15 minutes while none is kept); Refresh always tries. That's the plan review's bug 1: without it, a newer map that failed the checks would be downloaded again on every lookup.
+  - The first lookup waits up to 20 s for the first map, beside the other sources, then shows the ballot with a note while the download carries on. That breaks `outlines.py`'s "a ballot lookup never waits" once per install (and after Clear), as the SBOE map already does. A newer map downloads in the background.
+  - The outline is asked by the map's code and the county (two codes can share a display name) and answers with the display name. Its parameter has only a length limit: a pattern a real code failed would make FastAPI refuse every outline in the request.
+  - The election precinct can't be edited (no race depends on it), and it can't fill the commissioner or JP fields (no source; see Features 11).
+  - The colour: the plan's dark gold failed the colour-blindness check against the State Senate's orange (ΔE00 5.0 in protanopia); olive is told apart from all four by its lightness, and no pair is worse than before.
+  - On by default, like the other sources. The wallet card stays as it is.
+- [x] README, DEVELOPMENT, FAQ ("Where does my election precinct come from, and why might it be wrong?", "Is my election precinct the same as my commissioner or JP precinct?", and the portal in "Why is a source paused?"), About, Privacy, AGENTS.md (a rule for the precinct map, and every `--only` choice), `.env.example` and the welcome steps updated. `scripts/record_fixtures.py --only election_precincts` records the index; the tests make the map up.

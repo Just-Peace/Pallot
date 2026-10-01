@@ -200,12 +200,19 @@ function renderAddress() {
   saveAddressCard(card); // the other pages show it too
 }
 
-function district(label, value, { notUp = false } = {}) {
+function district(label, value, { notUp = false, title = null } = {}) {
   const shown = value == null
     ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, "not known"))
     : h("strong", {}, value);
-  return h("span", { class: notUp ? "district not-up" : "district", title: notUp ? "Not up for election this time" : null },
+  return h("span", { class: notUp ? "district not-up" : "district", title: notUp ? "Not up for election this time" : title },
     label ? [label, " "] : null, shown);
+}
+
+// "Election precinct from the Texas Legislative Council's map “…”": the map's own name, quoted.
+function electionPrecinctSource(precinct) {
+  return ` Election precinct from the Texas Legislative Council's map “${precinct.map_label}”`
+    + `${precinct.primary_map ? ", which normally carries over to the November general" : ""}; `
+    + "your voter registration certificate wins if they differ.";
 }
 
 const NOT_UP_LABELS = { sd: "State Senate", sboe: "SBOE" };
@@ -227,9 +234,11 @@ function renderDistricts() {
   const missing = [d.commissioner == null && "commissioner", jp == null && "justice of the peace"].filter(Boolean);
   const prompted = Boolean(waiting) && missing.length > 0;
   const school = location.school_district?.replace(/\bIndependent School District\b/, "ISD");
+  const precinct = d.election_precinct;
 
   const countyRow = districtRow(
     location.county && h("span", { class: "district" }, h("strong", {}, location.county), " County"),
+    precinct && district("Precinct", precinct.name, { title: `Election precinct, from the map “${precinct.map_label}”` }),
     district("Commissioner", d.commissioner),
     district([h("abbr", { title: "Justice of the Peace" }, "JP"), " & Constable"], jp),
   );
@@ -264,6 +273,7 @@ function renderDistricts() {
     prompted ? precinctPrompt(waiting, missing) : null,
     prompted || editingPrecincts ? precinctForm() : null,
     h("p", { class: "fine" }, "Districts from the US Census and the Texas Legislative Council.",
+      precinct ? electionPrecinctSource(precinct) : "",
       fromBallotpedia ? ` ${fromBallotpedia[0].toUpperCase()}${fromBallotpedia.slice(1)} from Ballotpedia.` : "",
       d.precinct_source === "you" ? " Precincts you entered." : ""),
   ].filter(Boolean));
@@ -278,8 +288,13 @@ function precinctPrompt(waiting, missing) {
     const first = $("#maybe-precinct .race");
     if (first) goTo(first);
   });
+  // it names the precincts it asks for, since the card also shows the election precinct
+  const asked = one ? `your ${missing[0]} precinct` : "your commissioner and justice of the peace precincts";
+  const precinct = ballot.districts.election_precinct;
   return h("p", { class: "precinct-prompt" },
-    `Enter ${one ? `your ${missing[0]} precinct` : "your precincts"} from your voter registration certificate. `,
+    precinct
+      ? `Your election precinct is ${precinct.name}. Enter ${asked} from the same voter registration certificate. `
+      : `Enter ${asked} from your voter registration certificate. `,
     `${count} ${count === 1 ? "race depends" : "races depend"} on ${one ? "it" : "them"}. `, see);
 }
 

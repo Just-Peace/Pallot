@@ -261,6 +261,63 @@ async def test_flags_expire_and_clear_with_their_source(tmp_path):
         assert cache.flag_until("paused") is None
 
 
+async def test_a_download_is_streamed_to_a_file_and_not_stored(tmp_path):
+    body = b"map" * 1000
+    with respx.mock() as router:
+        route = router.get(URL).mock(return_value=httpx.Response(200, content=body))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            stats = track_calls()
+            assert await cache.download("demo", SPEC, tmp_path / "map.zip", max_bytes=len(body)) == len(body)
+    assert (tmp_path / "map.zip").read_bytes() == body and route.call_count == 1
+    assert stats.external_calls == 1 and cache.stats("demo").entries == 0
+
+
+async def test_a_refused_download_pauses_the_source(tmp_path):
+    with respx.mock() as router:
+        route = router.get(URL).mock(return_value=httpx.Response(403))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            cache.pause_on("demo", {403}, 60)
+            with pytest.raises(UpstreamError) as refused:
+                await cache.download("demo", SPEC, tmp_path / "map.zip", max_bytes=100)
+            assert refused.value.status == 403 and cache.paused_until("demo")
+            with pytest.raises(UpstreamError) as paused:
+                await cache.download("demo", SPEC, tmp_path / "map.zip", max_bytes=100)
+    assert paused.value.until and route.call_count == 1 and not (tmp_path / "map.zip").exists()
+
+
+async def test_a_download_past_its_size_or_off_its_host_leaves_no_file(tmp_path):
+    async def unsized():
+        for _ in range(3):
+            yield b"x" * 600
+
+    with respx.mock() as router:
+        router.get(URL).mock(return_value=httpx.Response(200, content=b"x" * 1200))  # says how long it is
+        router.get("https://api.example.test/unsized").mock(return_value=httpx.Response(200, content=unsized()))
+        router.get("https://api.example.test/moved").mock(
+            return_value=httpx.Response(302, headers={"location": "https://elsewhere.test/map.zip"}))
+        router.get("https://elsewhere.test/map.zip").mock(return_value=httpx.Response(200, content=b"x"))
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            for url, why in ((URL, "larger than 1,000 bytes"), ("https://api.example.test/unsized", "larger than 1,000 bytes"),
+                             ("https://api.example.test/moved", "redirected to elsewhere.test")):
+                with pytest.raises(UpstreamError, match=why):
+                    await cache.download("demo", RequestSpec("GET", url), tmp_path / "map.zip", max_bytes=1000,
+                                         hosts={"api.example.test"})
+                assert not (tmp_path / "map.zip").exists()
+
+
+async def test_peek_reads_what_is_kept_without_asking(tmp_path):
+    with respx.mock() as router:
+        route = router.get(URL).mock(return_value=httpx.Response(200, json={"n": 1}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            assert cache.peek(SPEC) is None
+            fetched = await cache.get_json("demo", SPEC, ttl=60)
+            assert cache.peek(SPEC) == fetched and route.call_count == 1
+
+
 def test_value_is_empty_follows_the_path():
     assert value_is_empty([])
     assert value_is_empty({"result": {"addressMatches": []}}, ("result", "addressMatches"))

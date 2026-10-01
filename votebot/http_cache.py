@@ -277,6 +277,54 @@ class HttpCache:
         got = await self.get_json(source, replace(spec, as_bytes=True), ttl=ttl)
         return replace(got, value=base64.b64decode(got.value))
 
+    async def download(
+        self, source: str, spec: RequestSpec, path: Path, *, max_bytes: int, hosts: Collection[str] = ()
+    ) -> int:
+        """Stream the response to ``spec`` into ``path``, for a file too big to keep in the
+        database (a map), and return its size. The same pause, throttling, call count and
+        refusals as get_json, but nothing is stored: whoever keeps the file decides when it's
+        fetched again. Refused past ``max_bytes``, or when a redirect leaves ``hosts``. On any
+        failure ``path`` is removed, and UpstreamError raised."""
+        until = self.paused_until(source)
+        if until:
+            raise UpstreamError(source, f"paused until {iso_utc(until)}", until=until)
+        await self._throttle(source)
+        stats = current_calls()
+        if stats:
+            stats.called(source)
+        headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
+        written = 0
+        try:
+            async with self._client.stream(
+                spec.method, spec.url, params=spec.params, json=spec.json, headers=headers
+            ) as response:
+                response.raise_for_status()
+                if hosts and response.url.host not in hosts:
+                    raise ValueError(f"the download was redirected to {response.url.host}")
+                if int(response.headers.get("content-length") or 0) > max_bytes:
+                    raise ValueError(f"the download is larger than {max_bytes:,} bytes")
+                with path.open("wb") as fh:
+                    async for chunk in response.aiter_bytes(1 << 20):
+                        written += len(chunk)
+                        if written > max_bytes:
+                            raise ValueError(f"the download is larger than {max_bytes:,} bytes")
+                        await asyncio.to_thread(fh.write, chunk)
+        except (httpx.HTTPError, ValueError) as exc:
+            path.unlink(missing_ok=True)
+            self._refused(source, exc)
+            message = describe_error(exc) if isinstance(exc, httpx.HTTPError) else str(exc)
+            raise UpstreamError(source, message, _status(exc)) from exc
+        except BaseException:
+            path.unlink(missing_ok=True)
+            raise
+        return written
+
+    def peek(self, spec: RequestSpec) -> Cached | None:
+        """The stored copy of ``spec``, fresh or not, without asking anyone (Settings reads
+        what's kept this way)."""
+        stored = self._load(spec.key)
+        return Cached(stored.value, stored.fetched_at) if stored else None
+
     def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
         """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
         self._pause_on[source] = (frozenset(statuses), seconds)

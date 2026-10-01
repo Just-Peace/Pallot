@@ -60,7 +60,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - while you type an address, **suggestions** from Photon appear under the box: ↑/↓ and Enter pick one, which only fills the box in. "Street only" means OpenStreetMap has the street but not that house number, so the suggestion keeps the number you typed. Turn them off in Settings to get the browser's own address autofill back.
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
-- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant.
+- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant. The very first lookup after installing VoteBot (or after clearing the precinct map in Settings) also downloads the election precinct map, about 45 MB, and waits up to 20 seconds for it. If it isn't done by then, the ballot shows without your election precinct and says to reload the page in a minute.
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
@@ -75,18 +75,20 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - **Voting by mail?**, closed at first, says who can vote by mail in Texas and when the application must arrive (received, not postmarked), with its own calendar icon.
 - **Your districts**, like your voter registration certificate, in three lines:
   - U.S. House, State Senate, State House and State Board of Education;
-  - your county, with your commissioner precinct and your justice of the peace precinct (which is also your constable's);
+  - your county, with your election precinct, your commissioner precinct and your justice of the peace precinct (which is also your constable's);
   - your city, city council district and school district.
 
-  A State Senate or State Board of Education seat that isn't up this time is in grey, with a line saying so ("State Senate 14 isn't up for election this time"). The precincts and the city council district come from Ballotpedia, when it has them. **Edit** changes the precincts, and **Use Ballotpedia's numbers** puts its numbers back. When races depend on a precinct VoteBot doesn't know, the fields are already open, and the card says which number to enter from your voter registration certificate. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to your precinct's races. If the address could only be placed approximately, the card says to check the districts.
+  A State Senate or State Board of Education seat that isn't up this time is in grey, with a line saying so ("State Senate 14 isn't up for election this time"). The commissioner and JP precincts and the city council district come from Ballotpedia, when it has them. **Edit** changes those precincts, and **Use Ballotpedia's numbers** puts its numbers back. When races depend on a precinct VoteBot doesn't know, the fields are already open, and the card says which precinct to enter from your voter registration certificate. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to your precinct's races. If the address could only be placed approximately, the card says to check the districts.
 
-- **Map of your districts:** a street map from OpenStreetMap with the outline of each district, in its own colour and line (solid, dashed, dotted, or dashes and dots), and a pin at your address. It opens centred on your address, close enough to see your streets.
+  Your **election precinct** ("Precinct 300", the "Pct" on your voter registration certificate) comes from the Texas Legislative Council's map of every county's voting precincts; the card's small print names the map. It's not your commissioner or JP precinct. It isn't shown for an address that could only be placed approximately, or one near the line between two precincts, and a note under the ballot says why. Your certificate wins if they differ.
+
+- **Map of your districts:** a street map from OpenStreetMap with the outline of each district and of your election precinct, in its own colour and line (solid, dashed, dotted, or dashes and dots), and a pin at your address. It opens centred on your address, zoomed so your election precinct fits around it, close enough to see your streets.
   - Right above the map, a button for each district, with a sample of its line: pick one, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Hover over a line to see which district it is.
   - Drag the map to move it, and zoom with **+** and **−**, or with the scroll wheel once you've clicked the map (so scrolling the page never zooms it by accident). On a phone, move and zoom it with two fingers; one finger scrolls the page. With the map selected, the arrow keys move it.
-  - The outlines are simplified to about 50 m, so near a boundary, go by the district numbers.
+  - The outlines are simplified to about 50 m (your election precinct to about 5 m), so near a boundary, go by the district numbers.
   - The street map's tiles come from OpenStreetMap through the VoteBot server, which keeps them. Turn the street map off in Settings to see the outlines alone.
   - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's shown at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
-- **Precincts:** until your precincts are known, the races that depend on them are listed under "Depends on your precinct", with a link up to Your districts.
+- **Precincts:** until your commissioner and JP precincts are known, the races that depend on them are listed under "Depends on your precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
 - **Picks follow the party:** a picked candidate's row takes their party's colour (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid colour so they stand apart from the sources' badges.
 - **Money:** congressional and state races show what each candidate has raised, above the candidates. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source breaks it down:
@@ -106,7 +108,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
   A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
-- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day and the early-voting dates.
+- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day and the early-voting dates. The full page lists your districts under your address, with your election precinct as "Pct 300".
 
 Picks, notes and collapsed races are kept in the browser's `localStorage`, never on the server.
 
@@ -118,6 +120,7 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | OpenStreetMap Nominatim | fallback when the Census can't match an address | results flagged as approximate unless they hit a building |
 | Photon (photon.komoot.io) | address suggestions while typing | OpenStreetMap data; free for reasonable use, no key |
 | Texas Legislative Council map (PLANE2106) | State Board of Education district, and its outline on the map | downloaded once |
+| Texas Legislative Council precinct map (data.capitol.texas.gov, the `precincts` maps) | your election precinct, and its outline on the map | the portal's list of maps is asked once a week; the newest map, a primary's or a general's (now the 2026 primary's, about 45 MB), is downloaded on the first lookup and again only when a newer one is listed. Nothing about you is sent |
 | US Census TIGERweb | the outlines of your U.S. House, State Senate and State House districts, for the map | one request per district, with its number and never your address |
 | OpenStreetMap tiles (tile.openstreetmap.org) | the street map under the outlines | through the VoteBot server, only the tiles of the area you look at, following OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); drawn with [Leaflet](https://leafletjs.com), which comes with VoteBot |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
@@ -129,6 +132,8 @@ Picks, notes and collapsed races are kept in the browser's `localStorage`, never
 | FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API |
 
 The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's precinct. That comes from Ballotpedia or from the numbers the voter enters under Your districts, where one number covers both the JP and the constable, since each justice precinct elects one of each; otherwise those races are listed under "Depends on your precinct". Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". When Texas SOS has no ballot for the county, as for a special election, VoteBot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
+
+The election precinct comes from the newest precinct map, whether a primary's or a general's. The Texas Legislative Council publishes a general election's map only after that election, and counties can only redraw precincts in March or April of odd-numbered years, so a primary's precincts carry over to its general: 99.5% did in 2022 and 99.9% in 2024. An address's point and the middle of its census block must fall in the same precinct; when they don't, VoteBot names both and doesn't pick one. That can't catch the geocoder putting an address on the wrong side of a street that's a precinct line, so your voter registration certificate wins.
 
 Campaign money covers congressional races (FEC) and state races (TEC), which includes:
 - statewide offices;
@@ -160,6 +165,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - polls: 24 hours
   - key election dates: 24 hours
   - district outlines for the map: 30 days
+  - the list of election precinct maps: 7 days; the map itself is kept until a newer one is listed
   - street map tiles: 7 days, the least OpenStreetMap's policy allows
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
   - address suggestions, street map tiles, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
@@ -167,7 +173,8 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 - The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
 - Candidate details come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
-- If Ballotpedia, Photon, FiftyPlusOne, the Texas SOS's dates page, TIGERweb or OpenStreetMap's tile server refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If Ballotpedia, Photon, FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal refuses a request, VoteBot stops asking it for an hour. What it already sent still shows.
+- If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. Refresh in Settings always tries.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through.
 
@@ -175,10 +182,10 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 
 The **Settings** page, linked from the left pane:
 - picks the web search engine;
-- turns the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
+- turns election precincts, the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, TEC's 1 GB zip) ask first;
+- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
 - has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
 Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
@@ -200,12 +207,12 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 
 | Variable | Default |
 |---|---|
-| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE map, TrackAIPAC and TEC data; git-ignored) |
+| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE and precinct maps, TrackAIPAC and TEC data; git-ignored) |
 | `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and VoteBot never writes it anywhere |
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper; +https://github.com/Fahd-Siddiqui/VoteBot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
 | `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `VOTEBOT_TTL_OUTLINES` for the district map's outlines, `VOTEBOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks), and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
+| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `VOTEBOT_TTL_OUTLINES` for the district map's outlines, `VOTEBOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `VOTEBOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request), `VOTEBOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks), and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
 
 ### Docker
 

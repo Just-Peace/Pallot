@@ -43,6 +43,8 @@ class Ttls:
     outlines_backoff: int = HOUR  # after TIGERweb refuses us, stop asking for this long
     tiles: int = 7 * DAY  # OpenStreetMap's map tiles: its tile usage policy asks for at least 7 days
     tiles_backoff: int = HOUR  # after OpenStreetMap's tile server refuses us, stop asking for this long
+    election_precincts: int = 7 * DAY  # the TLC portal's list of precinct maps: a new one comes after each statewide election
+    election_precincts_backoff: int = HOUR  # after the TLC portal refuses us, stop asking for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # at startup, delete suggestions and addresses not found that expired this long ago
 
@@ -72,6 +74,10 @@ class Config:
     @property
     def sboe_path(self) -> Path:
         return self.data_dir / "plane2106_kml.zip"
+
+    @property
+    def election_precincts_dir(self) -> Path:
+        return self.data_dir / "election_precincts"
 
     @property
     def trackaipac_dir(self) -> Path:

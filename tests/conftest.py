@@ -1,7 +1,7 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
-served through respx, and a VoteBot app on a temp data dir with "today" pinned, no waits
-between calls to a source, an FEC API key, and the TrackAIPAC and Texas Ethics Commission
-fixture snapshots."""
+served through respx, made-up SBOE and precinct maps, and a VoteBot app on a temp data dir
+with "today" pinned, no waits between calls to a source, an FEC API key, and the TrackAIPAC
+and Texas Ethics Commission fixture snapshots."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import functools
 import io
 import json
 import re
+import struct
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,7 @@ from votebot.api import create_app
 from votebot.config import Config
 from votebot.sources import ballotpedia, photon
 from votebot.sources.census import normalize_address
+from votebot.sources.election_precincts import read_prj
 
 FIXTURES = Path(__file__).parent / "fixtures"
 TODAY = dt.date(2026, 9, 27)
@@ -89,6 +91,127 @@ def sboe_zip() -> bytes:
     return buffer.getvalue()
 
 
+# The Texas Legislative Council's precinct maps are in this projection (EPSG:3081); its .prj, as they ship it.
+PRJ = (
+    'PROJCS["NAD_1983_Lambert_Conformal_Conic",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",'
+    'SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],'
+    'PROJECTION["Lambert_Conformal_Conic"],PARAMETER["False_Easting",1000000.0],PARAMETER["False_Northing",1000000.0],'
+    'PARAMETER["Central_Meridian",-100.0],PARAMETER["Standard_Parallel_1",27.41666666666667],'
+    'PARAMETER["Standard_Parallel_2",34.91666666666666],PARAMETER["Latitude_Of_Origin",31.16666666666667],'
+    'UNIT["Meter",1.0]]'
+)
+PROJECTION = read_prj(PRJ)
+TRAVIS, HARRIS, ANDERSON = 453, 201, 1  # county FIPS codes
+# Where the made-up precincts are, besides the fixture addresses': (lat, lon).
+TWO_PIECES = (30.35, -97.95)
+HOLE = (30.40, -97.80)  # 0400, with 401A filling its hole
+OVERLAP = (30.45, -97.85)  # 0500 and 0501 overlap east of here
+LINE = (30.50, -97.80)  # 0600 west of here, 0601 east
+
+
+def nudge(point: tuple[float, float], east: float = 0.0, north: float = 0.0) -> tuple[float, float]:
+    """The (lat, lon) so many metres east and north of ``point``, in the precinct map's projection."""
+    x, y = PROJECTION.project(*point)
+    lon, lat = PROJECTION.unproject(x + east, y + north)
+    return lat, lon
+
+
+def census_points(name: str) -> tuple[tuple[float, float], tuple[float, float]]:
+    """A recorded address's point, and its census block's internal point."""
+    match = load(f"census_{name}.json")["result"]["addressMatches"][0]
+    block = match["geographies"]["2020 Census Blocks"][0]
+    return (match["coordinates"]["y"], match["coordinates"]["x"]), (float(block["INTPTLAT"]), float(block["INTPTLON"]))
+
+
+def box(center: tuple[float, float], west: float, south: float, east: float, north: float) -> list[tuple[float, float]]:
+    """A rectangle in metres around ``center``, clockwise as a shapefile's outer rings go."""
+    x, y = PROJECTION.project(*center)
+    return [(x - west, y - south), (x - west, y + north), (x + east, y + north), (x + east, y - south), (x - west, y - south)]
+
+
+def square(center: tuple[float, float], half: float) -> list[tuple[float, float]]:
+    return box(center, half, half, half, half)
+
+
+def middle(points: tuple[tuple[float, float], ...]) -> tuple[float, float]:
+    return sum(p[0] for p in points) / len(points), sum(p[1] for p in points) / len(points)
+
+
+def precincts() -> list[tuple[int, str, list[list[tuple[float, float]]]]]:
+    """(county, PREC, rings in metres): each exact fixture address's two points in one precinct,
+    then a precinct in two pieces, one with a hole another fills, two that overlap and two
+    that meet, and another county's precinct over the Capitol."""
+    return [
+        (TRAVIS, "0300", [square(middle(census_points("capitol")), 400)]),
+        (TRAVIS, "0312", [square(middle(census_points("ut")), 300)]),
+        (HARRIS, "0890", [square(middle(census_points("harris")), 400)]),
+        (ANDERSON, "0001", [square(census_points("capitol")[0], 3000)]),
+        (TRAVIS, "0101", [square(TWO_PIECES, 200), square(nudge(TWO_PIECES, 1000), 200)]),
+        (TRAVIS, "0400", [square(HOLE, 1000), square(HOLE, 300)[::-1]]),
+        (TRAVIS, "401A", [square(HOLE, 300)]),
+        (TRAVIS, "0500", [square(OVERLAP, 300)]),
+        (TRAVIS, "0501", [square(nudge(OVERLAP, 400), 300)]),
+        (TRAVIS, "0600", [box(LINE, 600, 300, 0, 300)]),
+        (TRAVIS, "0601", [box(LINE, 0, 300, 600, 300)]),
+    ]
+
+
+def precincts_zip(records: list[tuple[int, str, list[list[tuple[float, float]]]]] | None = None, *,
+                  prj: str | None = PRJ, shape_type: int = 5) -> bytes:
+    """A precinct map as the TLC zips it: .shp, .shx, .dbf (CNTY, COLOR and PREC), .prj and the
+    files VoteBot skips."""
+    records = precincts() if records is None else records
+    shapes, index, offset = [], [], 100
+    for number, (_, _, rings) in enumerate(records, 1):
+        points = [point for ring in rings for point in ring]
+        starts = [sum(len(r) for r in rings[:i]) for i in range(len(rings))]
+        xs, ys = [p[0] for p in points], [p[1] for p in points]
+        content = (struct.pack("<i4dii", shape_type, min(xs), min(ys), max(xs), max(ys), len(rings), len(points))
+                   + struct.pack(f"<{len(starts)}i", *starts) + struct.pack(f"<{2 * len(points)}d", *sum(points, ())))
+        shapes.append(struct.pack(">ii", number, len(content) // 2) + content)
+        index.append(struct.pack(">ii", offset // 2, len(content) // 2))
+        offset += 8 + len(content)
+
+    def header(length: int) -> bytes:
+        return struct.pack(">7i", 9994, 0, 0, 0, 0, 0, length // 2) + struct.pack("<2i8d", 1000, shape_type, *[0.0] * 8)
+
+    fields = [("CNTY", b"N", 3), ("COLOR", b"N", 2), ("PREC", b"C", 6)]
+    dbf = struct.pack("<4BIHH20x", 3, 126, 9, 30, len(records), 32 * (len(fields) + 1) + 1, 1 + sum(f[2] for f in fields))
+    dbf += b"".join(struct.pack("<11sc4xBB14x", name.encode(), kind, length, 0) for name, kind, length in fields) + b"\r"
+    dbf += b"".join(b" " + str(county).rjust(3).encode() + b" 1" + code.ljust(6).encode() for county, code, _ in records)
+    files = {
+        "Precincts26P.shp": header(offset) + b"".join(shapes),
+        "Precincts26P.shx": header(100 + 8 * len(index)) + b"".join(index),
+        "Precincts26P.dbf": dbf + b"\x1a",
+        "Precincts26P.cpg": b"UTF-8",
+        "Precincts26P.shp.xml": b"<metadata/>",
+    }
+    if prj is not None:
+        files["Precincts26P.prj"] = prj.encode()
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name, data in files.items():
+            archive.writestr(name, data)
+    return buffer.getvalue()
+
+
+@functools.cache
+def election_precincts_zip() -> bytes:
+    return precincts_zip()
+
+
+def precincts_index(size: int, *, newer: dict[str, Any] | None = None) -> dict[str, Any]:
+    """The recorded index of the portal's precinct maps, every map's size set to ``size`` (the
+    made-up map's, so the size check passes), plus a ``newer`` resource if given."""
+    index = load("election_precincts_index.json")
+    for resource in index["result"]["resources"]:
+        if resource["format"] == "SHP":
+            resource["size"] = size
+    if newer:
+        index["result"]["resources"].append(newer)
+    return index
+
+
 def _file(name: str, default: Any = None) -> httpx.Response:
     raw = fixture_bytes(name)
     if raw is None:
@@ -114,6 +237,9 @@ class Upstream:
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
         self.tile_agents: set[str | None] = set()  # the User-Agents the tile server was sent
+        self.precincts_status: int | None = None  # e.g. 429 when the TLC's portal throttles us
+        self.precinct_map: bytes | None = None  # the precinct zip served (default: election_precincts_zip())
+        self.precinct_index: dict[str, Any] | None = None  # the portal's index (default: sized to the map)
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
@@ -167,6 +293,13 @@ class Upstream:
             name = next((name for name, text in SUGGEST.items() if photon.normalize(text) == params["q"]), None)
             return _file(f"photon_{name}.json") if name else httpx.Response(200, json={"type": "FeatureCollection", "features": []})
         if url.host == "data.capitol.texas.gov":
+            if url.path.endswith("/package_show") or "/download/precincts" in url.path:
+                if self.precincts_status:
+                    return httpx.Response(self.precincts_status)
+                served = self.precinct_map or election_precincts_zip()
+                if url.path.endswith("/package_show"):
+                    return httpx.Response(200, json=self.precinct_index or precincts_index(len(served)))
+                return httpx.Response(200, content=served, headers={"content-type": "application/zip"})
             return httpx.Response(200, content=sboe_zip())
         if url.host == "api.open.fec.gov":
             return self._fec(request)

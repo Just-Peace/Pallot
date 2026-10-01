@@ -43,6 +43,7 @@
   --map-sd: #ec6d13;
   --map-hd: #169c7b;
   --map-sboe: #813160;
+  --map-election-precinct: #48542a; /* olive: told apart from the rest by its lightness in every kind of colour blindness */
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.07);
@@ -91,6 +92,7 @@
     --map-sd: #d2781e;
     --map-hd: #36a4ba;
     --map-sboe: #ba3678;
+    --map-election-precinct: #cbd99a;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
     color-scheme: dark;
   }
@@ -445,6 +447,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .map-pick.sd { --kind: var(--map-sd); }
 .map-pick.hd { --kind: var(--map-hd); }
 .map-pick.sboe { --kind: var(--map-sboe); }
+.map-pick.election_precinct { --kind: var(--map-election-precinct); }
 .map-swatch { width: 16px; height: 8px; flex: none; align-self: center; }
 
 /* Map of your districts (district-map.js, drawn by Leaflet): under both cards, the full width. */
@@ -480,6 +483,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .map-outline.sd { color: var(--map-sd); stroke-dasharray: 9 5; }
 .map-outline.hd { color: var(--map-hd); stroke-dasharray: 0.1 5; stroke-width: 2.6; }
 .map-outline.sboe { color: var(--map-sboe); stroke-dasharray: 12 4 2 4; }
+.map-outline.election_precinct { color: var(--map-election-precinct); stroke-dasharray: 10 4 0.1 4 0.1 4; }
 .map-outline.is-highlighted { stroke-width: 3.5; fill: currentColor; fill-opacity: 0.1; }
 .map-outline.hd.is-highlighted { stroke-width: 4; }
 .map-outline.is-faded, .map-halo.is-faded { opacity: 0.45; }
@@ -490,6 +494,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .map-swatch .map-outline.sd { stroke-dasharray: 4 2.5; }
 .map-swatch .map-outline.hd { stroke-dasharray: 0.1 3.5; }
 .map-swatch .map-outline.sboe { stroke-dasharray: 6 2 1 2; }
+.map-swatch .map-outline.election_precinct { stroke-dasharray: 4.5 2.5 0.1 2.5 0.1 2.5; }
 @media (prefers-color-scheme: dark) {
   .map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); } /* OpenStreetMap's tiles are light */
 }

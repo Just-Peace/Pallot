@@ -27,6 +27,8 @@ def test_capitol_ballot(client):
     assert (d["county_id"], d["cd"], d["sd"], d["hd"], d["sboe"]) == (227, 10, 14, 49, 5)
     assert (d["jp"], d["constable"], d["commissioner"], d["precinct_source"]) == (5, 5, None, "ballotpedia")
     assert d["city_council"] == "District 9"
+    assert d["election_precinct"] == {"name": "300", "code": "0300", "county": 453,
+                                      "map_label": "2026 Primary Election Voting Precincts", "primary_map": True}
     assert ballot["location"]["county"] == "Travis" and ballot["location"]["city"] == "Austin"
     assert (ballot["location"]["state"], ballot["location"]["state_name"]) == ("TX", "Texas")
 
@@ -67,8 +69,9 @@ def test_capitol_ballot(client):
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "photon": None, "sos": "used",
                         "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
-                        "tec": statuses["tec"], "polls": "used"}  # suggestions are asked for while typing, the map after
-    assert ballot["warnings"] == []
+                        "tec": statuses["tec"], "polls": "used", "election_precincts": "used"}
+    # (suggestions are asked for while typing, the map after)
+    assert ballot["warnings"] == [] and not [note for note in ballot["notes"] if "precinct" in note]
 
 
 def test_federal_races_get_fec_money(client):
