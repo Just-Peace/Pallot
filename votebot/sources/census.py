@@ -35,6 +35,7 @@ class Place:
     hd: int | None
     city: str | None
     school_district: str | None
+    block_point: tuple[float, float] | None = None  # the census block's internal point (lat, lon)
 
 
 def normalize_address(address: str) -> str:
@@ -87,6 +88,13 @@ def _number(entry: dict[str, Any] | None) -> int | None:
     return int(match.group()) if match else None
 
 
+def _internal_point(entry: dict[str, Any] | None) -> tuple[float, float] | None:
+    try:
+        return float(entry["INTPTLAT"]), float(entry["INTPTLON"])
+    except (TypeError, KeyError, ValueError):
+        return None
+
+
 def parse_geographies(geographies: dict[str, Any], lat: float, lon: float, matched: str | None) -> Place:
     county = _layer(geographies, "Counties")
     state = _layer(geographies, "States")
@@ -107,4 +115,5 @@ def parse_geographies(geographies: dict[str, Any], lat: float, lon: float, match
         hd=_number(_layer(geographies, "Legislative Districts - Lower")),
         city=(city or {}).get("BASENAME"),
         school_district=(school or {}).get("NAME"),
+        block_point=_internal_point(_layer(geographies, "Census Blocks")),  # not "Census Block Groups"
     )

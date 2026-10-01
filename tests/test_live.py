@@ -12,9 +12,13 @@ from tec_cache.models import ZIP_URL
 from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
 from votebot.api import create_app
-from votebot.config import DEMO_KEY, Config, load_config
+from votebot.config import DEMO_KEY, Config, Ttls, load_config
+from votebot.http_cache import HttpCache, track_calls
 from votebot.sources import fec, key_dates, polls
+from votebot.sources.election_precincts import ElectionPrecincts, read_dbf
 from votebot.sources.sboe import _inside
+
+from .conftest import census_points
 
 pytestmark = [pytest.mark.live, pytest.mark.xdist_group("live")]  # one worker, so one call at a time
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
@@ -22,6 +26,7 @@ FEC_KEY = load_config().fec_api_key  # from the environment or .env
 
 def test_capitol_ballot_live(tmp_path):
     with TestClient(create_app(Config(data_dir=tmp_path / "data", fec_api_key=FEC_KEY, allowed_hosts=("testserver",)))) as client:
+        client.put("/api/sources/election_precincts", json={"enabled": False})  # its own test downloads the map, once
         response = client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"})
         assert response.status_code == 200, response.text
         ballot = response.json()
@@ -109,3 +114,31 @@ def test_street_map_tile_live(tmp_path):
     assert first.status_code == 200, first.text
     assert first.content.startswith(b"\x89PNG") and again.content == first.content
     assert next(s for s in cached if s["id"] == "osm_tiles")["cache"]["entries"] == 1
+
+
+@pytest.mark.anyio
+async def test_election_precincts_live(tmp_path):
+    """The Texas Legislative Council's portal still lists its precinct maps, and the newest one (a
+    single download, about 45 MB) reads as VoteBot expects: the recorded addresses land in their
+    precincts, every precinct's code fits the outlines API, and a second lookup asks nothing."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=60) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client)
+        precincts = ElectionPrecincts(cache, Ttls(), tmp_path / "election_precincts", first_wait=600)
+        try:
+            found = {name: (await precincts.at(county, *census_points(name))).found
+                     for name, county in (("capitol", 453), ("ut", 453), ("harris", 201))}
+            stats = track_calls()
+            again = await precincts.at(453, *census_points("capitol"))
+            stored = precincts.stored()
+            codes = [row[1] for row in read_dbf(stored.file(precincts.folder, "dbf")) if row]
+            outline = await precincts.outline(453, found["capitol"].code)
+        finally:
+            await precincts.aclose()
+            cache.close()
+    assert {name: f.name for name, f in found.items()} == {"capitol": "300", "ut": "312", "harris": "890"}
+    assert again.found == found["capitol"]
+    assert stats.external_calls == 0 and stored.resource.label.endswith("Voting Precincts")
+    assert len(codes) > 9000 and all(1 <= len(code) <= 16 for code in codes)  # the outlines API's limit
+    lat, lon = census_points("capitol")[0]
+    assert sum(_inside(lon, lat, ring) for ring in outline) % 2

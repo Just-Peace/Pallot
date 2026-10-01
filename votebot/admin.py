@@ -9,9 +9,11 @@ from pathlib import Path
 import httpx
 
 from .ballot import Services
-from .http_cache import describe_error
+from .http_cache import UpstreamError, describe_error
 from .models import ActionResult, CacheStatus, Fact, SourcesOverview, SourceStatus, Tone
-from .sources import ballotpedia, fec, key_dates, osm_tiles, photon, polls, sos, tec, tigerweb, trackaipac
+from .sources import (
+    ballotpedia, election_precincts, fec, key_dates, osm_tiles, photon, polls, sos, tec, tigerweb, trackaipac,
+)
 from .text import display_date, display_time, iso_utc
 
 
@@ -48,6 +50,16 @@ SOURCES = (
         ("census", "nominatim"),
         refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
         "Nominatim the ones the Census couldn't match), and downloads the State Board of Education map again. Continue?",
+    ),
+    SourceInfo(
+        election_precincts.SOURCE,
+        "Election precincts (Texas Legislative Council)",
+        election_precincts.DESCRIPTION,
+        True,
+        (election_precincts.SOURCE,),
+        refresh_confirm="Refresh asks the Texas Legislative Council for its newest precinct map and, if it's newer than "
+        "the one kept, downloads it ({size}). Continue?",
+        pause=Pause("the Texas Legislative Council's portal refused a request", "the precinct map already kept still shows"),
     ),
     SourceInfo(
         tigerweb.SOURCE, "District map (US Census TIGERweb)", tigerweb.DESCRIPTION, True, (tigerweb.SOURCE,),
@@ -139,11 +151,24 @@ class Admin:
 
     def overview(self) -> SourcesOverview:
         snapshots = _dir_bytes(self.svc.trackaipac.data_dir) + _dir_bytes(self.svc.tec.data_dir)
+        maps = self.svc.sboe.size() + self.svc.election_precincts.size()
         return SourcesOverview(
             sources=[self._status(info) for info in SOURCES],
-            total_bytes=self.svc.cache.file_bytes() + self.svc.sboe.size() + snapshots,
+            total_bytes=self.svc.cache.file_bytes() + maps + snapshots,
             last_lookup=self.svc.last_lookup,
         )
+
+    def _running(self, source_id: str) -> bool:
+        """A refresh from Settings, or the precinct map downloading for a lookup."""
+        return source_id in self._busy or (
+            source_id == election_precincts.SOURCE and self.svc.election_precincts.downloading
+        )
+
+    def _refresh_confirm(self, info: SourceInfo) -> str | None:
+        if info.id != election_precincts.SOURCE or info.refresh_confirm is None:
+            return info.refresh_confirm
+        listed = self.svc.election_precincts.newest_listed()
+        return info.refresh_confirm.format(size=_size(listed.size) if listed else "a large file")
 
     def _status(self, info: SourceInfo) -> SourceStatus:
         stats = [self.svc.cache.stats(tag) for tag in info.cache_tags]
@@ -164,12 +189,12 @@ class Admin:
             toggleable=info.toggleable,
             resettable=info.resettable,
             enabled=self.svc.settings.enabled(info.id) if info.toggleable else True,
-            busy=info.id in self._busy,
+            busy=self._running(info.id),
             cache=cache,
             details=self._details(info.id),
             refresh_label=info.refresh_label,
             clear_label=info.clear_label,
-            refresh_confirm=info.refresh_confirm,
+            refresh_confirm=self._refresh_confirm(info),
             refreshable=info.refreshable,
             notice=notice,
             notice_tone=tone,
@@ -200,6 +225,13 @@ class Admin:
             return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
         if paused:
             return paused, "warn"
+        if source_id == election_precincts.SOURCE:
+            precincts = self.svc.election_precincts
+            if precincts.downloading:
+                return "Downloading the precinct map…", "info"
+            if precincts.last_error:
+                kept = "the map kept still shows" if precincts.stored() else "Refresh tries again"
+                return f"The last download of the precinct map failed ({precincts.last_error}); {kept}.", "warn"
         if source_id in (trackaipac.SOURCE, tec.SOURCE):
             snapshot = self.svc.trackaipac if source_id == trackaipac.SOURCE else self.svc.tec
             if snapshot.last_error:
@@ -221,6 +253,17 @@ class Admin:
                 if downloaded else "fetched on the first lookup"
             )
             return [Fact(label="SBOE map", value=value)]
+        if source_id == election_precincts.SOURCE:
+            precincts = self.svc.election_precincts
+            stored, listed = precincts.stored(), precincts.newest_listed()
+            kept = (
+                f"“{stored.resource.label}”, downloaded {display_time(stored.downloaded_at)} · {_size(precincts.size())}"
+                if stored else "downloaded on the first lookup"
+            )
+            return [
+                Fact(label="Map kept", value=kept),
+                Fact(label="Newest on the portal", value=f"“{listed.label}” · {_size(listed.size)}" if listed else "not asked yet"),
+            ]
         if source_id == "trackaipac":
             tracker = self.svc.trackaipac
             meta = tracker.meta()
@@ -251,7 +294,7 @@ class Admin:
         info = self._info(source_id)
         if not info.refreshable:
             raise AdminError(400, f"{info.label} is only fetched as you look at it, never all at once.")
-        if source_id in self._busy:
+        if self._running(source_id):
             raise AdminError(409, f"{info.label} is already refreshing.")
         self._busy.add(source_id)
         try:
@@ -284,6 +327,14 @@ class Admin:
                     message += f" Couldn't re-download the State Board of Education map ({describe_error(exc)}); {kept}."
                 else:
                     message += " Re-downloaded the State Board of Education map."
+            if source_id == election_precincts.SOURCE:
+                precincts = self.svc.election_precincts
+                try:
+                    message += f" {await precincts.update()}"
+                except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:  # nothing was replaced
+                    why = str(exc).removeprefix(f"{election_precincts.SOURCE}: ")
+                    kept = "kept the old one" if precincts.stored() else "the next lookup will try again later"
+                    message += f" Couldn't download the precinct map ({why}); {kept}."
             if failed:
                 message += f" {failed} failed and kept their old copy ({'; '.join(errors)})."
             if paused_until:
@@ -295,7 +346,7 @@ class Admin:
 
     def clear(self, source_id: str) -> ActionResult:
         info = self._info(source_id)
-        if source_id in self._busy:
+        if self._running(source_id):
             raise AdminError(409, f"{info.label} is refreshing; try again when it's done.")
         if source_id == trackaipac.SOURCE:
             self.svc.trackaipac.reset()
@@ -310,16 +361,20 @@ class Admin:
         if source_id == "geocoding":
             self.svc.sboe.clear()
             message += " The State Board of Education map will be downloaded again on the next lookup."
+        if source_id == election_precincts.SOURCE:
+            self.svc.election_precincts.clear()
+            message += " The precinct map will be downloaded again on the next lookup."
         return ActionResult(message=message)
 
     def clear_all(self) -> ActionResult:
-        if self._busy:
+        if self._busy or self.svc.election_precincts.downloading:
             raise AdminError(409, "A refresh is running; try again when it's done.")
         removed = self.svc.cache.clear()
         self.svc.sboe.clear()
+        self.svc.election_precincts.clear()
         self.svc.trackaipac.reset()
         self.svc.tec.reset()
         return ActionResult(
-            message=f"Cleared {removed} cached responses and the SBOE map, and reset TrackAIPAC and the Texas Ethics "
-            "Commission data to their bundled snapshots."
+            message=f"Cleared {removed} cached responses, the SBOE map and the precinct map, and reset TrackAIPAC and "
+            "the Texas Ethics Commission data to their bundled snapshots."
         )

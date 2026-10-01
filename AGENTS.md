@@ -99,6 +99,7 @@ How to write them:
   - Nominatim forbids search-as-you-type, which is why Photon does the suggestions.
   - Ballotpedia's endpoint is unofficial and for personal use only.
   - OpenStreetMap's tiles come through the server and are kept at least 7 days, fetched only as the voter looks at them. Never prefetch them or re-download them in bulk, which its tile policy forbids: that's why the street map has Clear in Settings but no Refresh.
+  - The Texas Legislative Council's precinct map (about 45 MB) is downloaded only when its portal's index lists a newer one, one download at a time, never in a loop. A map that fails isn't started again by a lookup until the index lists a changed one, or for a week (15 minutes while none is kept). Tests make the map up (`conftest.py`); only the live test downloads the real one.
 - **Match across sources by name, with seat and party as corroboration** (`votebot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
 - **Settings has no login.** Keep `uv run votebot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
@@ -113,7 +114,7 @@ How to write them:
   - Run the whole suite once, just before the feature's commit, and only when code changed. A change to Markdown files only (README, DEVELOPMENT, ROADMAP, AGENTS) needs no test run.
   - While working, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. The whole suite runs in parallel, one worker per CPU, and takes about 30 seconds.
   - Add tests for new behaviour, mocking HTTP with `respx`.
-  - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|fec|polls|tec|trackaipac`.
+  - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|tigerweb|election_precincts|tec|trackaipac`.
 - `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address.
 - For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
 - For a UI change, run `uv run votebot` and look at what changed:

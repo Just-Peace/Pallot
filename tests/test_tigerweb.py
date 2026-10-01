@@ -1,5 +1,5 @@
-"""District outlines for the map (TIGERweb, plus the SBOE map): finding the layers, reading
-the rings, and GET /api/district-outlines."""
+"""District outlines for the map (TIGERweb, plus the SBOE and precinct maps): finding the
+layers, reading the rings, and GET /api/district-outlines."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import pytest
 from votebot.sources import tigerweb
 from votebot.sources.sboe import _inside
 
-from .conftest import capitol_point, load
+from .conftest import capitol_point, get_ballot, load
 
 CAPITOL = {"cd": 10, "sd": 14, "hd": 49, "sboe": 5}
 
@@ -124,3 +124,42 @@ def test_refresh_and_clear_outlines(client, upstream):
     assert client.post(f"/api/sources/{tigerweb.SOURCE}/clear").json()["message"] == "Cleared 4 cached responses."
     outlines(client, **CAPITOL)
     assert upstream.count("tigerweb") == 12
+
+
+# -- the election precinct ----------------------------------------------------------------------
+
+PRECINCT = {"election_precinct": "0300", "county": 453}
+
+
+def test_the_election_precinct_is_drawn_from_the_map_the_ballot_downloaded(client, upstream):
+    get_ballot(client)
+    got = outlines(client, **CAPITOL, **PRECINCT)
+    assert [(o["kind"], o["number"]) for o in got["outlines"]][-2:] == [("sboe", 5), ("election_precinct", "300")]
+    assert got["notes"] == [] and inside(got["outlines"][-1]["rings"], *capitol_point())
+    again = outlines(client, **PRECINCT)
+    assert again["outlines"] == got["outlines"][-1:] and again["meta"]["external_calls"] == 0
+
+
+def test_the_election_precinct_is_never_downloaded_for_the_map(client, upstream):
+    got = outlines(client, hd=49, **PRECINCT)
+    assert [o["kind"] for o in got["outlines"]] == ["hd"]
+    assert got["notes"] == ["The election precinct map hasn't downloaded yet, so Election precinct 300 isn't drawn."]
+    assert upstream.count("data.capitol.texas.gov") == 0
+
+
+def test_an_unknown_precinct_is_a_note_not_an_error(client, upstream):
+    get_ballot(client)
+    for code in ("9999", "12 B.", "x" * 16):
+        got = outlines(client, hd=49, election_precinct=code, county=453)
+        assert [o["kind"] for o in got["outlines"]] == ["hd"]
+        assert got["notes"] == [f"No outline found for Election precinct {code}."]
+    assert client.get("/api/district-outlines", params={"election_precinct": "x" * 17, "county": 453}).status_code == 422
+    no_county = outlines(client, election_precinct="0300")  # not asked without its county
+    assert no_county["outlines"] == [] and no_county["notes"] == []
+
+
+def test_election_precincts_off(client, upstream):
+    get_ballot(client)
+    client.put("/api/sources/election_precincts", json={"enabled": False})
+    got = outlines(client, **PRECINCT)
+    assert got["outlines"] == [] and got["notes"] == ["Election precinct outlines are turned off in Settings."]

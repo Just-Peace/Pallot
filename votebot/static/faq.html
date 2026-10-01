@@ -33,7 +33,7 @@
         <details class="faq">
           <summary>How does VoteBot know what's on my ballot?</summary>
           <div class="faq-body">
-            <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's map gives your State Board of Education district.</p>
+            <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's maps give your State Board of Education district and your election precinct.</p>
             <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and tells VoteBot your precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
           </div>
         </details>
@@ -71,12 +71,30 @@
           </div>
         </details>
 
+        <details class="faq" id="election-precinct">
+          <summary>Where does my election precinct come from, and why might it be wrong?</summary>
+          <div class="faq-body">
+            <p>Your election precinct is the "Pct" on your voter registration certificate: the small area your county groups voters into. VoteBot shows it under "Your districts" as "Precinct 300", and draws it on the map of your districts. It comes from the Texas Legislative Council, which collects every county's precincts after each statewide election and publishes them as one map.</p>
+            <p>VoteBot uses the Council's newest map, which the small print names (now "2026 Primary Election Voting Precincts"). A general election's map only comes out after that election, but precincts rarely change in between: counties can only redraw them in March or April of odd-numbered years, and 99.5% of precincts were the same in the 2022 primary and general, 99.9% in 2024. VoteBot checks for a newer map at most once a week, and downloads it when there is one. The map is about 45 MB, so the very first lookup takes longer.</p>
+            <p>It can still be wrong. A county can change a precinct before the Council's next map, and an address right by a precinct line can be placed on the wrong side of it, since the address lookup places a house a few meters off. VoteBot checks your address's point against the middle of its census block, and when they fall in different precincts it names both rather than guess, but it can't catch every such case. It shows no precinct for an address it could only place approximately. Your voter registration certificate, or My Voter Portal ("Am I registered?"), always wins.</p>
+            <p>VoteBot sends the Council nothing about you: it downloads the whole map and finds your precinct itself. Turn "Election precincts" off in <a href="settings.html">Settings</a> to leave it out.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>Is my election precinct the same as my commissioner or JP precinct?</summary>
+          <div class="faq-body">
+            <p>No. Your election precinct, the "Pct" on your certificate, is a small area, usually a few neighborhoods. Commissioner and justice of the peace precincts are much larger: every county has four commissioner precincts and a handful of JP precincts, and they decide which commissioner, JP and constable races are on your ballot.</p>
+            <p>Each election precinct lies inside one commissioner precinct and one JP precinct, but VoteBot has no list of which, so it can't fill those in from your election precinct. Enter them from the same certificate under "Your districts" (see "Depends on your precinct").</p>
+          </div>
+        </details>
+
         <details class="faq" id="district-map">
           <summary>What does the map of my districts show?</summary>
           <div class="faq-body">
-            <p>The map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts, and a pin at your address, which the map opens centred on. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own colour and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
+            <p>The map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts and of your election precinct, and a pin at your address, which the map opens centred on, close enough to see your precinct's streets. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own colour and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
             <p>Drag the map to move it, and zoom with + and −, or with the scroll wheel once you've clicked the map, so scrolling the page never zooms it by accident. On a phone, use two fingers to move or zoom it; one finger scrolls the page.</p>
-            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. VoteBot sends it only each district's number, never your address. The State Board of Education outline comes from the Texas Legislative Council's map, which VoteBot already keeps. The outlines are simplified to about 50 meters, so if you live near a boundary, go by the district numbers, which come from the full maps.</p>
+            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. VoteBot sends it only each district's number, never your address. The State Board of Education outline comes from the Texas Legislative Council's map, which VoteBot already keeps. Your election precinct's outline comes from the Council's precinct map, also already kept. The outlines are simplified to about 50 meters, your precinct's to about 5, so if you live near a boundary, go by the numbers, which come from the full maps.</p>
             <p>The street map comes from OpenStreetMap. The VoteBot server asks for the map tiles of the area you look at, which shows OpenStreetMap roughly where your address is, and keeps them for a week, so looking again asks nothing. Turn "Street map" off in <a href="settings.html">Settings</a> to see the outlines alone, or "District map" off to leave out the Census's outlines.</p>
             <p>Clicking the map's heading folds it away, as with a race, until you click it again; this browser remembers which you chose. While the map is folded, nothing is fetched for it.</p>
           </div>
@@ -92,7 +110,7 @@
         <details class="faq">
           <summary>My address says it was placed "approximately". What does that mean?</summary>
           <div class="faq-body">
-            <p>When the Census can't match an address, VoteBot asks OpenStreetMap instead, which sometimes finds only the street or the area. The districts it shows may then not be yours. Try the address exactly as it appears on your voter registration certificate, and double-check the districts.</p>
+            <p>When the Census can't match an address, VoteBot asks OpenStreetMap instead, which sometimes finds only the street or the area. The districts it shows may then not be yours, and VoteBot doesn't show your election precinct. Try the address exactly as it appears on your voter registration certificate, and double-check the districts.</p>
           </div>
         </details>
 
@@ -183,7 +201,7 @@
         <details class="faq" id="paused">
           <summary>Why is a source paused?</summary>
           <div class="faq-body">
-            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia, Photon (address suggestions), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map) and OpenStreetMap's tile server (the street map) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia, Photon (address suggestions), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map) and the Texas Legislative Council's portal (the precinct map) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
             <p>Meanwhile, whatever the source already sent still shows. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
           </div>
         </details>

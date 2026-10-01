@@ -28,6 +28,7 @@ from .settings import Settings
 from .sources import census, key_dates, nominatim, osm_tiles, photon
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
+from .sources.election_precincts import ElectionPrecincts
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
@@ -101,6 +102,7 @@ def create_app(
                 source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
                 retry_after=config.ttl.retry_after,
             )
+            election_precincts = ElectionPrecincts(cache, config.ttl, config.election_precincts_dir)
             try:
                 await asyncio.to_thread(
                     cache.prune, {photon.SOURCE, osm_tiles.SOURCE}, {census.SOURCE, nominatim.SOURCE},
@@ -114,6 +116,7 @@ def create_app(
                     nominatim=Nominatim(cache, config.ttl),
                     photon=Photon(cache, config.ttl),
                     sboe=SboeMap(config.sboe_path, client),
+                    election_precincts=election_precincts,
                     sos=Sos(cache, config.ttl, today),
                     ballotpedia=Ballotpedia(cache, config.ttl),
                     trackaipac=TrackAipac(
@@ -133,6 +136,7 @@ def create_app(
                 app.state.admin = Admin(svc)
                 yield
             finally:
+                await election_precincts.aclose()  # before the client closes under a download
                 cache.close()
 
     app = FastAPI(title="VoteBot", version=__version__, lifespan=lifespan)
@@ -198,9 +202,14 @@ def create_app(
         sd: int | None = Query(None, ge=1, le=31),
         hd: int | None = Query(None, ge=1, le=150),
         sboe: int | None = Query(None, ge=1, le=15),
+        election_precinct: str | None = Query(None, max_length=16),
+        county: int | None = Query(None, ge=1, le=999),
     ) -> DistrictOutlines:
-        """The outlines of the voter's Texas districts, for the map on Your districts."""
-        return await district_outlines(services(request), {"cd": cd, "sd": sd, "hd": hd, "sboe": sboe})
+        """The outlines of the voter's Texas districts, for the map on Your districts. The election
+        precinct is asked by the map's code for it ("0300") and the county's FIPS code; an
+        unknown one is a note, so it can't fail the other outlines."""
+        precinct = (county, election_precinct) if election_precinct and county else None
+        return await district_outlines(services(request), {"cd": cd, "sd": sd, "hd": hd, "sboe": sboe}, precinct)
 
     @app.get("/api/tiles/{z}/{x}/{y}.png")
     async def tile(request: Request, z: int, x: int, y: int) -> Response:

@@ -1,7 +1,8 @@
 """Assemble one voter's ballot from the enabled sources.
 
-The Census gives the county and districts, and the SBOE map adds the State Board of
-Education district, whichever ballot source is on. Official path: the county's Texas SOS
+The Census gives the county and districts, the SBOE map adds the State Board of
+Education district, and the Texas Legislative Council's precinct map the election precinct,
+whichever ballot source is on. Official path: the county's Texas SOS
 ballot order is filtered down to those districts. Ballotpedia adds city/school races and the voter's precincts, or supplies
 the whole ballot when the state source is off. Then every candidate gets a card from each
 enabled source (enrich.py).
@@ -22,15 +23,17 @@ from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .models import (
-    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionRef, KeyDates, LastLookup, Location,
-    MaybeSection, Measure, Meta, Race, SourceUse,
+    GROUPS, Ballot, BallotRequest, Candidate, Districts, ElectionDate, ElectionPrecinct, ElectionRef, KeyDates,
+    LastLookup, Location, MaybeSection, Measure, Meta, Race, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Settings
+from .sources import election_precincts as election_precincts_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
 from .sources.census import TEXAS_FIPS, Census, Place
+from .sources.election_precincts import ElectionPrecincts, StillDownloading
 from .sources.fec import Fec
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
@@ -79,6 +82,7 @@ class Services:
     nominatim: Nominatim
     photon: Photon
     sboe: SboeMap
+    election_precincts: ElectionPrecincts
     sos: Sos
     ballotpedia: Ballotpedia
     trackaipac: TrackAipac
@@ -230,6 +234,7 @@ class _Builder:
         self.use_tec = svc.settings.enabled("tec")
         self.use_polls = svc.settings.enabled("polls")
         self.use_key_dates = svc.settings.enabled(key_dates_source.SOURCE)
+        self.use_election_precincts = svc.settings.enabled(election_precincts_source.SOURCE)
         self.notes: list[str] = []
         self.warnings: list[str] = []
         self.errors: dict[str, str] = {}
@@ -249,11 +254,12 @@ class _Builder:
             )
 
         elections, day = await self._elections()
-        sos_data, bp_ballot, deadlines, sboe = await asyncio.gather(
+        sos_data, bp_ballot, deadlines, sboe, election_precinct = await asyncio.gather(
             self._sos(elections, place) if elections else _nothing(),
             self._ballotpedia(place, day) if self.use_bp else _nothing(),
             self._key_dates() if self.use_key_dates else _nothing(),
             self._sboe(place),
+            self._election_precinct(place, location) if self.use_election_precincts else _nothing(),
         )
         if sos_data is None and not (bp_ballot and bp_ballot.races):
             if "sos" in self.errors:
@@ -269,6 +275,7 @@ class _Builder:
             sd=place.sd,
             hd=place.hd,
             sboe=sboe,
+            election_precinct=election_precinct,
             city_council=bp_ballot.city_council if bp_ballot else None,
             precinct_source=precinct_source,
             **precincts,
@@ -410,6 +417,41 @@ class _Builder:
         except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile):
             self.warnings.append("Couldn't load the State Board of Education map, so your SBOE district isn't known.")
             return None
+
+    async def _election_precinct(self, place: Place, location: Location) -> ElectionPrecinct | None:
+        """The precinct from the Texas Legislative Council's map. None, with a note saying why, for
+        an approximate address (OpenStreetMap's street, where the block's point would agree with
+        it and look certain), one near a precinct line, or while the first map downloads."""
+        if location.approximate:
+            self.notes.append("Your address could only be placed approximately, so your election precinct isn't "
+                              "shown; it's on your voter registration certificate.")
+            return None
+        if not place.county_fips:
+            return None
+        try:
+            answer = await self.svc.election_precincts.at(int(place.county_fips), (place.lat, place.lon), place.block_point)
+        except StillDownloading as exc:
+            self.notes.append(f"Your election precinct will show once its map has downloaded ({exc.size / 1_048_576:.0f} "
+                              "MB, the first time only). Reload the page in a minute.")
+            return None
+        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
+            self.errors[election_precincts_source.SOURCE] = str(exc).removeprefix(f"{election_precincts_source.SOURCE}: ")
+            self.warnings.append("Couldn't load the Texas Legislative Council's precinct map, so your election precinct "
+                                 "isn't shown; it's on your voter registration certificate.")
+            return None
+        found = answer.found
+        if found is None:
+            if answer.reason == "between":
+                first, second = answer.between
+                self.notes.append(f"Your address is near the line between election precincts {first} and {second}, and "
+                                  "the map can't tell which side it's on; your voter registration certificate says which.")
+            else:
+                self.notes.append("Your address isn't inside one election precinct on the Texas Legislative Council's "
+                                  "map; your voter registration certificate has it.")
+            return None
+        return ElectionPrecinct(
+            name=found.name, code=found.code, county=found.county, map_label=found.label, primary_map=found.primary
+        )
 
     async def _ballotpedia(self, place: Place, day: dt.date | None) -> BpBallot | None:
         try:
@@ -579,4 +621,6 @@ class _Builder:
             status("fec", "FEC", self.use_fec, ("fec",)),
             snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
             status("polls", "Polls", self.use_polls, ("polls",)),
+            status(election_precincts_source.SOURCE, election_precincts_source.LABEL, self.use_election_precincts,
+                   (election_precincts_source.SOURCE,)),
         ]
