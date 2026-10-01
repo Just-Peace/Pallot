@@ -402,13 +402,8 @@ class ElectionPrecincts:
     async def outline(self, county: int, code: str) -> list[Ring] | None:
         """The precinct's rings in lon/lat, simplified to SIMPLIFY_DEG once and kept; None when no
         map is kept or it has no such precinct. Never downloads."""
-        key = (county, code)
-        if key not in self._outlines:
-            rings = await asyncio.to_thread(self._outline, county, code)
-            if rings is None:
-                return None
-            self._outlines[key] = rings
-        return self._outlines[key]
+        kept = self._outlines.get((county, code))
+        return kept if kept is not None else await asyncio.to_thread(self._outline, county, code)
 
     def _locate(self, county: int, point: tuple[float, float], block: tuple[float, float] | None) -> Answer:
         with self._lock:
@@ -444,7 +439,11 @@ class ElectionPrecincts:
             with stored.file(self.folder, "shp").open("rb") as fh:
                 rings = [ring for r in records for ring in read_rings(fh, r.offset)]
         lonlat = ([stored.projection.unproject(x, y) for x, y in ring] for ring in rings)
-        return [ring for ring in (simplify(ring, SIMPLIFY_DEG) for ring in lonlat) if len(ring) >= 4]
+        found = [ring for ring in (simplify(ring, SIMPLIFY_DEG) for ring in lonlat) if len(ring) >= 4]
+        with self._lock:
+            if self._stored is stored:  # not when a newer map or a Clear came meanwhile
+                self._outlines[(county, code)] = found
+        return found
 
     def _loaded(self) -> tuple[Stored, dict[int, list[Record]]]:
         """The map kept and its index, read once; the caller holds _lock."""
@@ -458,6 +457,11 @@ class ElectionPrecincts:
     # -- the map kept -----------------------------------------------------------------------
 
     def stored(self) -> Stored | None:
+        """The map kept. Once known, without waiting for _lock, so the event loop never waits on a
+        thread reading the map."""
+        stored = self._stored
+        if stored is not None:
+            return stored
         with self._lock:
             return self._stored_now()
 
@@ -527,7 +531,8 @@ class ElectionPrecincts:
         return f"Downloaded the precinct map “{resource.label}” ({resource.size / 1_048_576:.1f} MB)."
 
     async def aclose(self) -> None:
-        """Stop a download still running (at shutdown); its partial file is removed."""
+        """Stop a download still running (at shutdown); its partial file is removed. One already
+        unpacking finishes in its thread, which then removes the zip."""
         task, self._task = self._task, None
         if task and not task.done():
             task.cancel()
@@ -540,7 +545,7 @@ class ElectionPrecincts:
 
     async def _ready(self) -> Stored:
         """The map kept, after starting a newer one's download in the background; with none kept,
-        the first one, waited for up to ``first_wait`` seconds."""
+        the first one, waited for up to ``first_wait`` seconds by the lookup that starts it."""
         stored = await asyncio.to_thread(self.stored)
         if stored:
             try:
@@ -553,7 +558,9 @@ class ElectionPrecincts:
         resource = await self._newest()
         if resource is None:
             raise ValueError("the Texas Legislative Council's portal lists no precinct map")
-        if not self.downloading and self._failed(resource):
+        if self.downloading:  # only the lookup that starts it waits: a reload meanwhile goes on at once
+            raise StillDownloading(resource.size)
+        if self._failed(resource):
             until = self.cache.flag_until(_failed_flag(resource))
             raise UpstreamError(SOURCE, f"the last download failed ({self.last_error or 'see Settings'}); "
                                         f"VoteBot tries again after {display_time(until)}")
@@ -583,25 +590,38 @@ class ElectionPrecincts:
         self.folder.mkdir(parents=True, exist_ok=True)
         part = self.folder / f".{uuid.uuid4().hex}.zip.part"
         try:
-            got = await self.cache.download(SOURCE, RequestSpec("GET", resource.url), part, max_bytes=resource.size,
-                                            hosts={HOST})
-            if got != resource.size:
-                raise ValueError(f"the download was {got:,} bytes, not the {resource.size:,} the portal lists")
+            try:
+                got = await self.cache.download(SOURCE, RequestSpec("GET", resource.url), part,
+                                                max_bytes=resource.size, hosts={HOST})
+                if got != resource.size:
+                    raise ValueError(f"the download was {got:,} bytes, not the {resource.size:,} the portal lists")
+            except BaseException:
+                part.unlink(missing_ok=True)
+                raise
+            # Cancelling (shutdown) can't stop a thread, so the thread removes the zip once it's unpacked.
             await asyncio.to_thread(self._install, resource, part)
-        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
-            self.last_error = str(exc).removeprefix(f"{SOURCE}: ")
+        except Exception as exc:
+            known = isinstance(exc, (UpstreamError, OSError, ValueError, zipfile.BadZipFile))
+            error = exc if known else ValueError(f"the map couldn't be unpacked ({type(exc).__name__}: {exc})")
+            self.last_error = str(error).removeprefix(f"{SOURCE}: ")
             refused = isinstance(exc, UpstreamError) and (exc.until or exc.status in REFUSALS)
             if not refused:  # a refusal pauses the whole source instead
                 wait = self.ttl.election_precincts if self.stored() else self.ttl.retry_after
                 self.cache.set_flag(_failed_flag(resource), SOURCE, wait)
-            raise
-        finally:
-            part.unlink(missing_ok=True)
+            if known:
+                raise
+            raise error from exc
         self.last_error = None
 
     def _install(self, resource: Resource, part: Path) -> None:
         """Check the zip and unpack it under a new name, then point map.json at it and remove the
-        old map. Until map.json is rewritten, the map kept is untouched."""
+        old map, and the zip. Until map.json is rewritten, the map kept is untouched."""
+        try:
+            self._unzip(resource, part)
+        finally:
+            part.unlink(missing_ok=True)
+
+    def _unzip(self, resource: Resource, part: Path) -> None:
         stem = f"{Path(resource.name).stem}-{uuid.uuid4().hex[:8]}"
         new = {ext: self.folder / f"{stem}.{ext}" for ext in SHAPEFILE}
         try:

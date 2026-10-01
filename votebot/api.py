@@ -42,7 +42,9 @@ from .sources.trackaipac import TrackAipac
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
-MIN_INTERVAL = {"nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25}
+MIN_INTERVAL = {
+    "nominatim": 1.0, "photon": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
+}
 
 
 def _hostname(host: str) -> str:
