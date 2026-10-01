@@ -329,7 +329,8 @@ async function updatePrecincts(precincts) {
   const waiting = ballot.maybe.some((section) => section.id === "precinct");
   const target = waiting ? "#maybe-precinct .race" : "#group-precinct .race";
   const show = { label: "Show", run: () => { const first = $(target); if (first) goTo(first); } };
-  showToast(waiting ? "Your ballot is updated. Some races still depend on your precinct." : "Your ballot now has your precinct's races.",
+  showToast(waiting ? "Your ballot is updated. Some races still depend on your commissioner or JP precinct."
+    : "Your ballot now has the races for your commissioner and JP precincts.",
     $(target) ? show : null);
 }
 
@@ -699,7 +700,7 @@ function precinctForm() {
   }
   const form = h("form", { class: "precinct-form", id: "precinct-form" },
     h("fieldset", {},
-      h("legend", { class: "sr-only" }, "Your precincts"),
+      h("legend", { class: "sr-only" }, "Your commissioner and JP precincts"),
       field("commissioner", "Commissioner", "4", d.commissioner),
       field("jp", "Justice of the Peace & Constable", "99", d.jp ?? d.constable)),
     h("div", { class: "button-row" }, buttons));
@@ -717,7 +718,7 @@ function precinctForm() {
 }
 
 function precinctLink() {
-  const button = h("button", { type: "button", class: "link-btn" }, "Enter your precinct numbers");
+  const button = h("button", { type: "button", class: "link-btn" }, "Enter your commissioner and JP precincts");
   button.addEventListener("click", openPrecincts);
   return h("p", { class: "precinct-link" }, button);
 }

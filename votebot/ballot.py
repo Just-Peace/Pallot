@@ -47,7 +47,7 @@ from .text import display_office, display_person, iso_utc
 
 MAYBE_SECTIONS = {
     "precinct": (
-        "Depends on your precinct",
+        "Depends on your commissioner or JP precinct",
         "These races are only on some ballots in {county} County. Your commissioner and justice of the peace "
         "precincts are printed on your voter registration certificate; enter them under Your districts at the top "
         "of your ballot to narrow this list.",
