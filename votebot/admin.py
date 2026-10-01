@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from .ballot import Services
 from .models import ActionResult, CacheStatus, SourcesOverview, SourceStatus, Tone
 from .sources import (
-    KeptSource, RefreshFailed, ballotpedia, election_precincts, fec, key_dates, osm_tiles, photon, polls, sos, tec,
-    tigerweb, trackaipac,
+    KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, photon,
+    polls, sos, tec, tigerweb, trackaipac,
 )
 from .text import display_size, display_time, iso_utc
 
@@ -59,6 +59,14 @@ SOURCES = (
         "the one kept, downloads it ({size}). Continue?",
         pause=Pause("the Texas Legislative Council's portal refused a request", "the precinct map already kept still shows"),
         kept="election_precincts",
+    ),
+    SourceInfo(
+        county_precincts.SOURCE,
+        "Commissioner & JP precincts (counties)",
+        county_precincts.DESCRIPTION,
+        True,
+        (county_precincts.SOURCE,),
+        pause=Pause("a county's map server refused a request", "what the counties already sent still shows"),
     ),
     SourceInfo(
         tigerweb.SOURCE, "District map (US Census TIGERweb)", tigerweb.DESCRIPTION, True, (tigerweb.SOURCE,),

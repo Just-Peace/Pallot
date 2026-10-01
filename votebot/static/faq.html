@@ -65,9 +65,9 @@
         <details class="faq">
           <summary>What does "Depends on your commissioner or JP precinct" mean?</summary>
           <div class="faq-body">
-            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. VoteBot uses Ballotpedia's answer when it has one.</p>
+            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, VoteBot gets them from the county's own records (see "How does VoteBot know my commissioner and JP precincts?"); elsewhere, it uses Ballotpedia's answer when it has one.</p>
             <p>Otherwise those races are listed under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
-            <p>The small print under "Your districts" says where the numbers came from: Ballotpedia, or you. If Ballotpedia's are wrong, "Edit" lets you change them or empty them, and "Use Ballotpedia's numbers" puts them back.</p>
+            <p>The small print under "Your districts" says where each number came from: your county, Ballotpedia, or you. If one is wrong, "Edit" lets you change them or empty them, and "Use Harris County's numbers" (or "Use Ballotpedia's numbers") puts the looked-up ones back.</p>
           </div>
         </details>
 
@@ -85,7 +85,20 @@
           <summary>Is my election precinct the same as my commissioner or JP precinct?</summary>
           <div class="faq-body">
             <p>No. Your election precinct, the "Pct" on your certificate, is a small area, usually a few neighborhoods. Commissioner and justice of the peace precincts are much larger: every county has four commissioner precincts and a handful of JP precincts, and they decide which commissioner, JP and constable races are on your ballot.</p>
-            <p>Each election precinct lies inside one commissioner precinct and one JP precinct, but VoteBot has no list of which, so it can't fill those in from your election precinct. Enter them from the same certificate under "Your districts" (see "Depends on your commissioner or JP precinct").</p>
+            <p>Each election precinct lies inside one commissioner precinct and one JP precinct, so in seven counties VoteBot fills those in from your election precinct (see the next question). Elsewhere, enter them from the same certificate under "Your districts" (see "Depends on your commissioner or JP precinct").</p>
+          </div>
+        </details>
+
+        <details class="faq" id="county-precincts">
+          <summary>How does VoteBot know my commissioner and JP precincts?</summary>
+          <div class="faq-body">
+            <p>Texas law keeps each election precinct inside one commissioner precinct and one justice of the peace precinct, so once VoteBot knows your election precinct (see "Where does my election precinct come from"), your county's records say the other two. There's no statewide list, so this works in the counties whose records VoteBot reads:</p>
+            <ul>
+              <li><strong>Harris, Dallas, Tarrant, Travis and Fort Bend</strong> publish a list of their election precincts, with each one's commissioner and JP precinct. Fort Bend's has commissioner precincts only, so your JP precinct there comes from Ballotpedia or from you. VoteBot only uses a county's list when it has exactly the precincts on the Texas Legislative Council's map, so a list for another year, with precincts drawn differently, is never used.</li>
+              <li><strong>Bexar and Denton</strong> publish maps of their commissioner and JP precincts instead. VoteBot takes points spread through your election precinct, each at least 50 meters from its edges, and gives a number only when they all fall in the same commissioner (or JP) precinct on the county's map. The two maps are drawn separately, so near a precinct's edge they can disagree by a few meters; keeping 50 meters in gave no wrong numbers when checked against the lists of Dallas and Harris counties, for all 2,015 of their precincts. When your election precinct crosses a line on the county's map, or is too small to check, VoteBot leaves the number for you to enter, and a note says why.</li>
+            </ul>
+            <p>Near the line between two election precincts, VoteBot gives a number only when both precincts have the same one. When the county's records and Ballotpedia disagree, VoteBot uses the county's and a note says so. A number you enter always wins.</p>
+            <p>VoteBot downloads a county's whole list or maps, at most once a week, when you look up an address there; your address is never sent. The counties publish proposals for new precincts too, which VoteBot never uses. Your voter registration certificate wins if they differ. Turn "Commissioner &amp; JP precincts (counties)" off in <a href="settings.html">Settings</a> to leave them out.</p>
           </div>
         </details>
 

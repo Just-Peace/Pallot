@@ -45,6 +45,8 @@ class Ttls:
     tiles_backoff: int = HOUR  # after OpenStreetMap's tile server refuses us, stop asking for this long
     election_precincts: int = 7 * DAY  # the TLC portal's list of precinct maps: a new one comes after each statewide election
     election_precincts_backoff: int = HOUR  # after the TLC portal refuses us, stop asking for this long
+    county_precincts: int = 7 * DAY  # counties' lists of their election precincts and maps of commissioner and JP precincts
+    county_precincts_backoff: int = HOUR  # after a county's map server refuses us, stop asking them for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # at startup, delete suggestions and addresses not found that expired this long ago
 

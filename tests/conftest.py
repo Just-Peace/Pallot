@@ -1,5 +1,6 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
-served through respx, made-up SBOE and precinct maps, and a VoteBot app on a temp data dir
+served through respx, made-up SBOE and precinct maps and counties' lists of their precincts, and a
+VoteBot app on a temp data dir
 with "today" pinned, no waits between calls to a source, an FEC API key, and the TrackAIPAC
 and Texas Ethics Commission fixture snapshots."""
 
@@ -200,6 +201,27 @@ def election_precincts_zip() -> bytes:
     return precincts_zip()
 
 
+# The made-up map's Travis and Harris precincts in each county's list of them: election precinct ->
+# (commissioner, JP). The Capitol's 300 is in JP precinct 5, as Ballotpedia has it; 600 and 601,
+# either side of LINE, share a commissioner precinct and not a JP one.
+TRAVIS_LIST = {"300": (2, 5), "312": (1, 2), "101": (3, 3), "400": (4, 4), "401A": (4, 4), "500": (2, 1), "501": (2, 1),
+               "600": (3, 3), "601": (3, 4)}
+HARRIS_LIST = {"0890": (1, 1)}
+TRAVIS_QUERY = "/arcgis/rest/services/Precincts/FeatureServer/0/query"
+HARRIS_QUERY = "/su8ic9KbA7PYVxPS/arcgis/rest/services/VPCTs_2026/FeatureServer/2/query"
+
+
+def travis_rows(numbers: dict[str, tuple[Any, Any]] = TRAVIS_LIST) -> list[dict[str, Any]]:
+    """Travis County's list as its Tax Office writes it: "P02" for commissioner precinct 2, "J05" for JP 5."""
+    return [{"attributes": {"Precinct": code, "Commissioner": f"P{c:02d}" if isinstance(c, int) else c,
+                            "JPConstable": f"J{j:02d}" if isinstance(j, int) else j}}
+            for code, (c, j) in numbers.items()]
+
+
+def harris_rows(numbers: dict[str, tuple[Any, Any]] = HARRIS_LIST) -> list[dict[str, Any]]:
+    return [{"attributes": {"VPCT_txt": code, "Comm__Cour": c, "JP_Constab": j}} for code, (c, j) in numbers.items()]
+
+
 def precincts_index(size: int, *, newer: dict[str, Any] | None = None) -> dict[str, Any]:
     """The recorded index of the portal's precinct maps, every map's size set to ``size`` (the
     made-up map's, so the size check passes), plus a ``newer`` resource if given."""
@@ -241,6 +263,21 @@ class Upstream:
         self.precinct_map: bytes | None = None  # the precinct zip served (default: election_precincts_zip())
         self.precinct_index: dict[str, Any] | None = None  # the portal's index (default: sized to the map)
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
+        self.county_status: int | None = None  # e.g. 403 when a county's map server refuses us
+        # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
+        # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
+        self.arcgis: dict[str, dict[str, Any]] = {
+            "taxmaps.traviscountytx.gov": {
+                "/arcgis/rest/services": load("county_precincts_travis_services.json"),
+                "/arcgis/rest/services/Precincts/FeatureServer": load("county_precincts_travis_service.json"),
+                TRAVIS_QUERY: travis_rows(),
+            },
+            "services.arcgis.com": {
+                "/su8ic9KbA7PYVxPS/arcgis/rest/services": load("county_precincts_harris_services.json"),
+                "/su8ic9KbA7PYVxPS/arcgis/rest/services/VPCTs_2026/FeatureServer": load("county_precincts_harris_service.json"),
+                HARRIS_QUERY: harris_rows(),
+            },
+        }
         self._addresses = {normalize_address(a): name for name, a in ADDRESSES.items()}
 
     def count(self, host_part: str) -> int:
@@ -327,7 +364,24 @@ class Upstream:
             if self.tiles_status:
                 return httpx.Response(self.tiles_status)
             return httpx.Response(200, content=PNG, headers={"content-type": "image/png"})
+        if url.host in self.arcgis:
+            return self._arcgis(request)
         raise AssertionError(f"unexpected request: {request.method} {url}")
+
+    def _arcgis(self, request: httpx.Request) -> httpx.Response:
+        if self.county_status:
+            return httpx.Response(self.county_status)
+        answer = self.arcgis[request.url.host].get(request.url.path)
+        if answer is None:
+            raise AssertionError(f"unexpected county request: {request.url}")
+        if isinstance(answer, list):
+            params = request.url.params
+            start, count = int(params.get("resultOffset", 0)), int(params.get("resultRecordCount", 1000))
+            page: dict[str, Any] = {"features": answer[start:start + count]}
+            if start + count < len(answer):
+                page["exceededTransferLimit"] = True
+            return httpx.Response(200, json=page)
+        return httpx.Response(200, json=answer)
 
     def _fec(self, request: httpx.Request) -> httpx.Response:
         params = request.url.params

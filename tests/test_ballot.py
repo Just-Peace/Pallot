@@ -7,7 +7,9 @@ from fastapi.testclient import TestClient
 
 from votebot.ballot import _jp_is_constable
 
-from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, last_use, load
+from .conftest import (
+    ADDRESSES, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
+)
 
 
 def sources_of(candidate):
@@ -25,7 +27,9 @@ def test_capitol_ballot(client):
     assert [e["name"] for e in ballot["elections"]] == ["2026 November General Election"]  # specials don't apply here
     d = ballot["districts"]
     assert (d["county_id"], d["cd"], d["sd"], d["hd"], d["sboe"]) == (227, 10, 14, 49, 5)
-    assert (d["jp"], d["constable"], d["commissioner"], d["precinct_source"]) == (5, 5, None, "ballotpedia")
+    assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, 2)  # from Travis County's list, by election precinct 300
+    assert d["precinct_sources"] == {"commissioner": "county", "jp": "county", "constable": "county"}
+    assert d["county_source"] == {"county": "Travis", "method": "table"}
     assert d["city_council"] == "District 9"
     assert d["election_precinct"] == {"name": "300", "code": "0300", "county": 453,
                                       "map_label": "2026 Primary Election Voting Precincts", "primary_map": True}
@@ -47,7 +51,8 @@ def test_capitol_ballot(client):
 
     assert find_race(ballot, "Justice of the Peace Precinct 5")
     assert not [r for r in ballot["races"] if "Constable" in r["name"]]  # precinct 4's race isn't ours
-    assert {r["name"] for r in ballot["maybe"][0]["races"]} == {"County Commissioner Precinct 2", "County Commissioner Precinct 4"}
+    assert find_race(ballot, "County Commissioner Precinct 2") and not find_race(ballot, "County Commissioner Precinct 4")
+    assert "precinct" not in [s["id"] for s in ballot["maybe"]]
     assert find_race(ballot, "District Judge, 147th Judicial District")  # whole-county judicial races stay
 
     assert find_race(ballot, "Austin City Council District 9")["source"] == "ballotpedia"
@@ -69,7 +74,8 @@ def test_capitol_ballot(client):
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "photon": None, "sos": "used",
                         "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
-                        "tec": statuses["tec"], "polls": "used", "election_precincts": "used"}
+                        "tec": statuses["tec"], "polls": "used", "election_precincts": "used",
+                        "county_precincts": "used"}
     # (suggestions are asked for while typing, the map after)
     assert ballot["warnings"] == [] and not [note for note in ballot["notes"] if "precinct" in note]
 
@@ -182,8 +188,8 @@ def test_ballotpedia_off(client):
     ballot = get_ballot(client)
     assert not [r for r in ballot["races"] if r["source"] == "ballotpedia"]
     maybe = {s["id"]: [r["name"] for r in s["races"]] for s in ballot["maybe"]}
-    assert "Justice of the Peace Precinct 5" in maybe["precinct"]
-    assert "special" not in maybe
+    assert find_race(ballot, "Justice of the Peace Precinct 5")  # the county's list still places it
+    assert "precinct" not in maybe and "special" not in maybe
     assert last_use(client, "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
     assert sources_of(senate["candidates"][0]) == ["fec", "sos", "polls", "trackaipac"]
@@ -209,25 +215,54 @@ def test_no_ballot_source_is_an_error(client):
     assert response.status_code == 400 and "Settings" in response.json()["detail"]
 
 
-def test_entered_precincts_narrow_the_ballot(client):
-    ballot = get_ballot(client, precincts={"commissioner": 2})
-    assert find_race(ballot, "County Commissioner Precinct 2")
-    assert not find_race(ballot, "County Commissioner Precinct 4")
-    assert ballot["districts"]["precinct_source"] == "you"
+def test_entered_precincts_override_the_countys(client):
+    ballot = get_ballot(client, precincts={"commissioner": 4})
+    assert find_race(ballot, "County Commissioner Precinct 4")
+    assert not find_race(ballot, "County Commissioner Precinct 2")
+    d = ballot["districts"]
+    assert d["precinct_sources"] == {"commissioner": "you", "jp": "county", "constable": "county"}
+    assert d["county_source"] == {"county": "Travis", "method": "table"}  # for "Use Travis County's numbers"
     assert "precinct" not in [s["id"] for s in ballot["maybe"]]
 
 
-def test_an_emptied_precinct_overrides_ballotpedia(client):
+def test_an_emptied_precinct_overrides_the_county_and_ballotpedia(client):
     ballot = get_ballot(client, precincts={"commissioner": None, "jp": None})
     d = ballot["districts"]
-    assert (d["jp"], d["constable"], d["commissioner"], d["precinct_source"]) == (None, None, None, "you")
+    assert (d["jp"], d["constable"], d["commissioner"]) == (None, None, None)
+    assert set(d["precinct_sources"].values()) == {"you"}
     assert find_race(ballot, "Justice of the Peace Precinct 5", maybe=True)
     assert not find_race(ballot, "Justice of the Peace Precinct 5")
+    assert not [note for note in ballot["notes"] if "precinct" in note]
+
+
+def test_no_precincts_sent_brings_the_countys_numbers_back(client):
+    d = get_ballot(client, precincts=None)["districts"]
+    assert (d["commissioner"], d["jp"]) == (2, 5) and set(d["precinct_sources"].values()) == {"county"}
+
+
+def test_without_the_countys_list_ballotpedia_gives_the_precincts(client, upstream):
+    client.put("/api/sources/county_precincts", json={"enabled": False})
+    ballot = get_ballot(client)
+    d = ballot["districts"]
+    assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, None)
+    assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"} and d["county_source"] is None
+    assert {r["name"] for r in ballot["maybe"][0]["races"]} == {"County Commissioner Precinct 2", "County Commissioner Precinct 4"}
+    assert upstream.count("traviscountytx") == 0 and last_use(client, "county_precincts")["status"] == "off"
+
+
+def test_a_note_when_the_county_and_ballotpedia_differ(client, upstream):
+    upstream.arcgis["taxmaps.traviscountytx.gov"][TRAVIS_QUERY] = travis_rows({**TRAVIS_LIST, "300": (2, 3)})
+    ballot = get_ballot(client)
+    assert ballot["districts"]["jp"] == 3 and ballot["districts"]["precinct_sources"]["jp"] == "county"
+    assert find_race(ballot, "Justice of the Peace Precinct 5", maybe=False) is None
+    assert ("Ballotpedia puts this address in justice of the peace precinct 5, but Travis County's records say 3, which "
+            "this ballot uses. Your voter registration certificate says which.") in ballot["notes"]
 
 
 def test_one_number_for_jp_and_constable(client):
     d = get_ballot(client, precincts={"jp": 3})["districts"]
-    assert (d["jp"], d["constable"], d["precinct_source"]) == (3, 3, "you")
+    assert (d["jp"], d["constable"]) == (3, 3)
+    assert d["precinct_sources"] == {"commissioner": "county", "jp": "you", "constable": "you"}
     assert _jp_is_constable({"constable": 4}) == {"constable": 4, "jp": 4}
     assert _jp_is_constable({"jp": None}) == {"jp": None, "constable": None}
     assert _jp_is_constable({"jp": 2, "constable": None}) == {"jp": 2, "constable": None}
