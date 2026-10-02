@@ -264,6 +264,7 @@ class Upstream:
         self.precinct_map: bytes | None = None  # the precinct zip served (default: election_precincts_zip())
         self.precinct_index: dict[str, Any] | None = None  # the portal's index (default: sized to the map)
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
+        self.candidates_down: set[int] = set()  # election ids whose statewide candidate list answers HTTP 500
         self.county_status: int | None = None  # e.g. 403 when a county's map server refuses us
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
@@ -312,6 +313,8 @@ class Upstream:
             if path.endswith("getCandidateBallotOrder"):
                 return _file(f"sos_ballot_{body['electionId']}_{body['countyId']}.json", default=[])
             if path.endswith("findQualifiedCandidates"):
+                if body["electionId"] in self.candidates_down:
+                    return httpx.Response(500)
                 extra = self.extra_candidates.get(body["electionId"])
                 if extra:
                     return httpx.Response(200, json=load(f"sos_candidates_{body['electionId']}.json") + extra)

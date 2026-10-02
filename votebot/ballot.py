@@ -200,6 +200,19 @@ def _placeable(row: dict[str, Any]) -> bool:
     return office_type == "SR" and classify(row.get("txOfficeName") or "", office_type).kind in DISTRICT_KINDS
 
 
+def _declared_write_ins(rows: list[dict[str, Any]], running: list[dict[str, Any]], county: str | None) -> list[dict[str, Any]]:
+    """The statewide list's declared write-ins for the races on the county's ballot order,
+    which lists only the printed names; a county office's only from this county."""
+    offices = {row.get("idOffice") for row in rows}
+    printed = {row.get("idCandidate") for row in rows}
+    wanted = (county or "").upper()
+    return [
+        r for r in running
+        if r.get("cdParty") == "W" and r.get("idOffice") in offices and r.get("idCandidate") not in printed
+        and (not r.get("txCountyName") or r["txCountyName"].upper() == wanted)
+    ]
+
+
 def _jp_is_constable(precincts: dict[str, int | None]) -> dict[str, int | None]:
     filled = dict(precincts)
     for kind, twin in (("jp", "constable"), ("constable", "jp")):
@@ -289,12 +302,12 @@ class _Builder:
             self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
 
         precincts, precinct_sources = self._precincts(bp_ballot, county)
+        entered = self.request.districts.model_dump(exclude_unset=True) if self.request.districts else {}
+        found = {"cd": place.cd, "sd": place.sd, "hd": place.hd, "sboe": sboe}
         districts = Districts(
             county_id=sos_data.county_id if sos_data else None,
-            cd=place.cd,
-            sd=place.sd,
-            hd=place.hd,
-            sboe=sboe,
+            **{**found, **entered},
+            entered=[kind for kind in DISTRICT_KINDS if kind in entered],
             election_precinct=election_precinct,
             city_council=bp_ballot.city_council if bp_ballot else None,
             precinct_sources=precinct_sources,
@@ -419,16 +432,30 @@ class _Builder:
         return SosData(county_id, set(counties), lookups, list(zip(elections, orders)))
 
     async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
-        """The county's ballot order; when that's empty (special elections), the statewide
-        candidate list trimmed to the races it can place (_placeable). It names no county
-        for judicial, DA or county races, so those are left out, with a note, rather than
-        shown to every county. Everyone in either list goes in ``state_names``, so Ballotpedia's
-        races that the state has, even for another district, aren't added again."""
-        rows = (await self.svc.sos.ballot_order(election, county_id)).value or []
-        if rows:
+        """The county's ballot order, plus its races' declared write-ins from the statewide
+        candidate list; when the ballot order is empty (special elections), that list trimmed to
+        the races it can place (_placeable). It names no county for judicial, DA or county
+        races, so those are left out, with a note, rather than shown to every county. Everyone
+        in either list goes in ``state_names``, so Ballotpedia's races that the state has, even
+        for another district, aren't added again."""
+        order, statewide = await asyncio.gather(
+            self.svc.sos.ballot_order(election, county_id), self.svc.sos.candidates(election), return_exceptions=True
+        )
+        if isinstance(order, BaseException):
+            raise order
+        rows = order.value or []
+        if isinstance(statewide, UpstreamError) and rows:
+            self.notes.append("Couldn't load the Texas Secretary of State's list of declared write-in candidates, so "
+                              "they aren't listed; your county's sample ballot names them.")
             self._remember_names(rows)
             return rows
-        running = [r for r in (await self.svc.sos.candidates(election)).value or [] if still_running(r)]
+        if isinstance(statewide, BaseException):
+            raise statewide
+        running = [r for r in statewide.value or [] if still_running(r)]
+        if rows:
+            rows = rows + _declared_write_ins(rows, running, county)
+            self._remember_names(rows)
+            return rows
         self._remember_names(running)
         wanted = (county or "").upper()
         kept = [r for r in running if _placeable(r) or (r.get("txCountyName") or "").upper() == wanted]
@@ -600,7 +627,8 @@ class _Builder:
     def _sos_candidate(self, election: Election, row: dict[str, Any], lookups: Lookups) -> Candidate:
         key = f"sos:{election.id}:{row['idCandidate']}"
         self.ballot_rows[key] = row
-        code = row.get("cdParty")
+        write_in = row.get("cdParty") == "W"  # the state's "W" marks a write-in, not a party
+        code = None if write_in else row.get("cdParty")
         return Candidate(
             key=key,
             name=display_person(row.get("txFullNameBallot") or ""),
@@ -608,7 +636,7 @@ class _Builder:
             party=code,
             party_name=(lookups.parties.get(code or "") or "").title() or None,
             incumbent=bool(row.get("flIncmbntGen")),
-            write_in=code == "W",
+            write_in=write_in,
             ballot_position=row.get("nbBallotOrder"),
         )
 

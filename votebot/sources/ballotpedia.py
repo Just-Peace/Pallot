@@ -342,7 +342,7 @@ def counterparts(ballot: BpBallot, races: list[Race]) -> dict[str, BpRace]:
             if own := by_id.get(int(race.key.split(":", 1)[1])):
                 out[race.key] = own
             continue
-        found = {hit[0].id: hit[0] for c in race.candidates if (hit := match_unique(printed, c.name))}
+        found = {hit[0].id: hit[0] for c in race.candidates if not c.write_in and (hit := match_unique(printed, c.name))}
         if len(found) == 1:
             out[race.key] = next(iter(found.values()))
     return out

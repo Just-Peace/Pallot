@@ -16,6 +16,7 @@ function pickText(race, keys, picks, { short = false } = {}) {
       if (key === WRITE_IN) return picks.writeInLabel(race.key, "Write-in: ____________________");
       const candidate = race.candidates.find((c) => c.key === key);
       if (!candidate) return null;
+      if (candidate.write_in) return `${candidate.name} (write-in)`;
       const party = short && PARTY_LETTERS.has(candidate.party) ? candidate.party : partyName(candidate);
       return party && party !== "Nonpartisan" ? `${candidate.name} (${party})` : candidate.name;
     })

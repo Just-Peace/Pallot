@@ -131,7 +131,7 @@ class Candidate(BaseModel):
     key: str  # stable across refreshes: "sos:<election>:<candidate>" or "bp:<candidate>"
     name: str
     ballot_name: str | None = None
-    party: str | None = None  # D, R, L, G, I, W …
+    party: str | None = None  # D, R, L, G, I …
     party_name: str | None = None
     incumbent: bool = False
     write_in: bool = False
@@ -232,6 +232,7 @@ class Districts(BaseModel):
     precinct_sources: dict[str, PrecinctSource] = Field(default_factory=dict)  # "commissioner", "jp", "constable" -> who gave it
     county_source: CountySource | None = None  # when the county's records gave any, even ones the voter then changed
     not_up: list[str] = Field(default_factory=list)  # the voter's districts ("sd", "sboe") whose seat isn't on this ballot
+    entered: list[str] = Field(default_factory=list)  # the districts ("cd", "sd", "hd", "sboe") the voter gave
 
 
 class ElectionRef(BaseModel):
@@ -312,11 +313,21 @@ class PrecinctInput(BaseModel):
     constable: int | None = Field(default=None, ge=1, le=99)
 
 
+class DistrictInput(BaseModel):
+    """District numbers the voter gives, which win over the ones found from the address."""
+
+    cd: int | None = Field(default=None, ge=1, le=38)
+    sd: int | None = Field(default=None, ge=1, le=31)
+    hd: int | None = Field(default=None, ge=1, le=150)
+    sboe: int | None = Field(default=None, ge=1, le=15)
+
+
 class BallotRequest(BaseModel):
     address: str = Field(min_length=5, max_length=200)
     election_date: dt.date | None = None
     party: Literal["D", "R"] | None = None
     precincts: PrecinctInput | None = None
+    districts: DistrictInput | None = None
 
 
 class ElectionDate(BaseModel):
