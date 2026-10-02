@@ -22,7 +22,7 @@ export const STATES = {
       hint: "My Voter Portal (Texas SOS): your registration, and your polling place once you log in",
     },
     countyOffices: {
-      label: "Where to vote", url: "https://www.sos.state.tx.us/elections/voter/county.shtml",
+      label: "Where to vote", url: "https://www.votetexas.gov/voting/where.html",
       hint: "Every county's elections office (Texas SOS); yours publishes where and when you can vote",
     },
     mailApply: { label: "How to apply", url: "https://www.sos.state.tx.us/elections/voter/reqabbm.shtml" },
