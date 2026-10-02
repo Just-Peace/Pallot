@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import copy
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -206,6 +208,63 @@ def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):
     assert any(c["write_in"] for c in senate["candidates"])
     assert "trackaipac" in sources_of(next(c for c in senate["candidates"] if c["name"] == "Ken Paxton"))
     assert find_race(ballot, "Travis County Justice of the Peace Precinct 5")["group"] == "precinct"
+
+
+def _bp_districts(payload):
+    return payload["data"]["elections"][0]["districts"]
+
+
+def test_ballotpedias_notes_show_under_the_race(client):
+    house = find_race(get_ballot(client), "U.S. Representative District 10")
+    assert house["notes"] == [{
+        "text": "Texas redrew its U.S. House district map ahead of the 2026 elections. Your district may have changed.",
+        "url": "https://ballotpedia.org/Redistricting_in_Texas_ahead_of_the_2026_elections",
+        "source": "Ballotpedia",
+    }]
+
+
+def test_a_race_only_ballotpedia_lists_is_added(client, upstream):
+    def add_appraisal_district(payload):
+        county = next(d for d in _bp_districts(payload) if d["type"] == "County")
+        race = copy.deepcopy(next(r for r in county["races"] if r["office"]["name"] == "Travis County Clerk"))
+        race["id"] = 999001
+        race["office"] = {"name": "Travis Central Appraisal District, Place 1", "type": "Appraisal", "level": "Local"}
+        race["candidates"][0].update(id=999002, person={"name": "Pat Appraiser"})
+        county["races"].append(race)
+
+    upstream.ballotpedia_edit = add_appraisal_district
+    ballot = get_ballot(client)
+    appraisal = find_race(ballot, "Travis Central Appraisal District, Place 1")
+    assert (appraisal["group"], appraisal["source"], candidate_names(appraisal)) == ("county", "ballotpedia", ["Pat Appraiser"])
+    assert not find_race(ballot, "Travis County Clerk")  # the state lists its candidate, so it isn't added again
+    assert not find_race(ballot, "Texas 147th District Court")
+
+
+def test_a_precinct_ballotpedia_names_without_its_kind(client, upstream):
+    def generic_name(payload):
+        next(d for d in _bp_districts(payload) if d["type"] == "County subdivision")["name"] = "Travis County Precinct 5"
+
+    upstream.ballotpedia_edit = generic_name
+    client.put("/api/sources/county_precincts", json={"enabled": False})
+    d = get_ballot(client)["districts"]
+    assert (d["jp"], d["constable"]) == (5, 5)
+    assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"}
+
+
+def test_ballotpedia_can_say_who_holds_the_seat(client, upstream):
+    def incumbents(payload):
+        for district in _bp_districts(payload):
+            for race in district["races"]:
+                for candidate in race["candidates"]:
+                    if candidate["person"]["name"] in ("James Talarico", "Donald Huffines"):
+                        candidate["is_incumbent"] = True
+
+    upstream.ballotpedia_edit = incumbents
+    ballot = get_ballot(client)
+    talarico = next(c for c in find_race(ballot, "U.S. Senator")["candidates"] if c["name"] == "James Talarico")
+    assert talarico["incumbent"] and card_of(talarico, "ballotpedia")["match"]["confidence"] == "exact"
+    huffines = next(c for c in find_race(ballot, "Comptroller of Public Accounts")["candidates"] if c["name"] == "Don Huffines")
+    assert not huffines["incumbent"]  # Don and Donald: only a likely match
 
 
 def test_no_ballot_source_is_an_error(client):

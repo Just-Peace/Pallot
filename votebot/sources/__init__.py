@@ -13,10 +13,12 @@ from ..models import Fact, SourceCard, Tone
 @dataclass
 class CardSet:
     """What a source adds to a ballot: cards keyed by candidate key and by race key (a race
-    card compares the candidates), plus lines for the ballot's notes and warnings."""
+    card compares the candidates), the candidates it says hold the seat (on an exact match),
+    plus lines for the ballot's notes and warnings."""
 
     candidates: dict[str, SourceCard] = field(default_factory=dict)
     races: dict[str, SourceCard] = field(default_factory=dict)
+    incumbents: set[str] = field(default_factory=set)
     notes: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 

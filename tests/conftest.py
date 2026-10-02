@@ -15,7 +15,7 @@ import re
 import struct
 import zipfile
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import httpx
 import pytest
@@ -250,6 +250,7 @@ class Upstream:
         self.calls: list[str] = []
         self.down: set[str] = set()  # hosts that answer HTTP 500
         self.ballotpedia_status: int | None = None
+        self.ballotpedia_edit: Callable[[dict[str, Any]], None] | None = None  # changes the Capitol's ballot before it's sent
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
         self.suggestions_status: int | None = None  # e.g. 429 when Ballotpedia's address search throttles us
@@ -330,6 +331,10 @@ class Upstream:
                 return httpx.Response(403)
             lat, lon = capitol_point()
             if params["lat"] == f"{lat:.5f}" and params["long"] == f"{lon:.5f}":
+                if self.ballotpedia_edit:
+                    payload = load("ballotpedia_capitol.json")
+                    self.ballotpedia_edit(payload)
+                    return httpx.Response(200, json=payload)
                 return _file("ballotpedia_capitol.json")
             return httpx.Response(200, json={"success": True, "data": {"districts": [], "elections": []}})
         if url.host == "data.capitol.texas.gov":

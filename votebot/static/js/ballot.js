@@ -508,7 +508,11 @@ function raceCard(race) {
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)));
   const money = raceMoney(race, () => openCompare(compareDialog, race));
-  const card = collapsibleCard(race.key, { title: race.name, meta: meta.join(" · "), body: [money, body], headExtras: [clearButton] });
+  const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
+    `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
+  const card = collapsibleCard(race.key, {
+    title: race.name, meta: meta.join(" · "), body: [...notes, money, body], headExtras: [clearButton],
+  });
 
   redraw.set(race.key, () => {
     const picked = picks.picked(race.key);

@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any, Awaitable
 from .models import Race, SourceCard
 from .offices import OfficeScope
 from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac
-from .sources.ballotpedia import BpBallot
+from .sources.ballotpedia import BpBallot, BpRace
 from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
@@ -57,16 +57,18 @@ async def run(
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
+    bp_counterparts: dict[str, BpRace] | None = None,
 ) -> Outcome:
     """Add cards in place; say what failed. ``sos_lookups`` is None when the ballot didn't
-    come from Texas SOS. Every source is asked at once (the ones without I/O in a thread),
-    and nothing touches the races until they've all answered."""
+    come from Texas SOS; ``bp_counterparts`` gives each race's own race on Ballotpedia's
+    ballot (ballotpedia.counterparts). Every source is asked at once (the ones without I/O
+    in a thread), and nothing touches the races until they've all answered."""
     candidates = [c for race in races for c in race.candidates]
     jobs: dict[str, Awaitable[CardSet]] = {}
     if sos_lookups and elections:
         jobs[sos.SOURCE] = _candidate_cards(sos.cards(svc.sos, elections, candidates, ballot_rows, sos_lookups))
     if bp_ballot is not None:
-        jobs[ballotpedia.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=ballotpedia.cards(bp_ballot, races)))
+        jobs[ballotpedia.SOURCE] = asyncio.to_thread(ballotpedia.cards, bp_ballot, races, bp_counterparts)
     if use_trackaipac:
         jobs[trackaipac.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races)))
     if use_fec:
@@ -96,6 +98,8 @@ async def run(
                 candidate.cards.append(card)
                 if card.image and not candidate.photo_url:
                     candidate.photo_url = card.image
+            if candidate.key in cards.incumbents:
+                candidate.incumbent = True
         for race in races:
             if race_card := cards.races.get(race.key):
                 race.cards.append(race_card)
