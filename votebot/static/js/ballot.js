@@ -53,7 +53,7 @@ let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
 let currentSection = null; // the id of the section marked as the one on screen
 let lastJumped = null; // the race "Next race to pick" went to last
-let editingPrecincts = false;
+let editingDistricts = false;
 
 // ---- status line (only while working, or when something went wrong) -------------------
 
@@ -112,7 +112,10 @@ function readForm() {
   const request = { address: addressInput.value.trim() };
   if (electionSelect.value) request.election_date = electionSelect.value;
   if (!partyField.hidden && partySelect.value) request.party = partySelect.value;
-  if (shownRequest?.precincts && shownRequest.address === request.address) request.precincts = shownRequest.precincts;
+  if (shownRequest?.address === request.address) {
+    if (shownRequest.precincts) request.precincts = shownRequest.precincts;
+    if (shownRequest.districts) request.districts = shownRequest.districts;
+  }
   return request;
 }
 
@@ -134,7 +137,7 @@ async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
     shownRequest = request;
     saveLastLookup(request);
     picks = new Picks(ballot.election_date);
-    editingPrecincts = false;
+    editingDistricts = false;
     render();
     setStatus("");
     if (keepForm) cancelButton.hidden = false;
@@ -200,12 +203,34 @@ function renderAddress() {
   saveAddressCard(card); // the other pages show it too
 }
 
-function district(label, value, { notUp = false, title = null } = {}) {
+// The numbers the voter can change: what each is called, and the highest there is.
+const EDITABLE = {
+  cd: ["U.S. House district", 38], sd: ["State Senate district", 31], hd: ["State House district", 150],
+  sboe: ["State Board of Education district", 15], commissioner: ["Commissioner precinct", 4],
+  jp: ["Justice of the peace and constable precinct", 99],
+};
+const DISTRICT_NAMES = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "SBOE" };
+
+function shownNumbers(d) {
+  return { cd: d.cd ?? null, sd: d.sd ?? null, hd: d.hd ?? null, sboe: d.sboe ?? null,
+    commissioner: d.commissioner ?? null, jp: d.jp ?? d.constable ?? null };
+}
+
+// A district's number, or a box in its place after the pencil (``edit``: its kind). A seat that
+// isn't up is grey, and a number races wait on, missing, is amber.
+function district(label, value, { notUp = false, missing = false, title = null, edit = null } = {}) {
+  if (edit) {
+    const [name, max] = EDITABLE[edit];
+    return h("label", { class: "district editing", title: name }, label ? [label, " "] : null,
+      h("input", { type: "number", class: "district-input", name: edit, min: "1", max: String(max), inputmode: "numeric",
+        value: value ?? null }));
+  }
   const shown = value == null
-    ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, "not known"))
-    : h("strong", {}, value);
-  return h("span", { class: notUp ? "district not-up" : "district", title: notUp ? "Not up for election this time" : title },
-    label ? [label, " "] : null, shown);
+    ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, missing ? "missing: races depend on it" : "not known"))
+    : h("strong", {}, value, notUp ? h("span", { class: "sr-only" }, " (not up this time)") : null);
+  const kind = missing && value == null ? "district missing" : notUp ? "district not-up" : "district";
+  title = missing && value == null ? "Missing: races on your ballot depend on it" : notUp ? "Not up for election this time" : title;
+  return h("span", { class: kind, title }, label ? [label, " "] : null, shown);
 }
 
 // "Election precinct from the Texas Legislative Council's map “…”": the map's own name, quoted.
@@ -218,9 +243,10 @@ function electionPrecinctSource(precinct) {
 // Who gave the commissioner and JP precincts and the city council district, in a sentence each:
 // " Commissioner and JP precincts from Harris County's list of its election precincts. City council district from Ballotpedia."
 const PRECINCT_NAMES = { commissioner: "Commissioner", jp: "JP" };
+const PRECINCT_KINDS = Object.keys(PRECINCT_NAMES);
 function precinctSources(d) {
   const groups = new Map();
-  for (const kind of Object.keys(PRECINCT_NAMES)) {
+  for (const kind of PRECINCT_KINDS) {
     const source = d.precinct_sources?.[kind];
     const value = kind === "jp" ? d.jp ?? d.constable : d[kind];
     if (source && (source === "you" || value != null)) groups.set(source, [...(groups.get(source) || []), PRECINCT_NAMES[kind]]);
@@ -247,42 +273,47 @@ function notUpNote(d) {
 
 function districtRow(...items) {
   const shown = items.filter(Boolean);
-  return shown.length ? h("p", { class: "district-line" }, shown.map((item, i) => [i ? " · " : "", item])) : null;
+  return shown.length
+    ? h("p", { class: "district-line" }, shown.map((item, i) => [i ? h("span", { class: "sep" }, " · ") : null, item]))
+    : null;
+}
+
+function listed(names) {
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : names[0];
+}
+
+// " U.S. House and SBOE districts you entered."
+function enteredDistricts(d) {
+  const names = (d.entered || []).map((kind) => DISTRICT_NAMES[kind]);
+  return names.length ? ` ${listed(names)} ${names.length > 1 ? "districts" : "district"} you entered.` : "";
 }
 
 function renderDistricts() {
   const { location, districts: d } = ballot;
-  const jp = d.jp ?? d.constable;
+  const shown = shownNumbers(d);
   const waiting = ballot.maybe.find((section) => section.id === "precinct");
-  const missing = [d.commissioner == null && "commissioner", jp == null && "justice of the peace"].filter(Boolean);
+  const missing = PRECINCT_KINDS.filter((kind) => shown[kind] == null);
   const prompted = Boolean(waiting) && missing.length > 0;
+  const edit = (kind) => (editingDistricts ? kind : null); // boxes in place of the numbers, after the pencil
+  const needed = (kind) => prompted && missing.includes(kind);
   const school = location.school_district?.replace(/\bIndependent School District\b/, "ISD");
   const precinct = d.election_precinct;
-
-  const countyRow = districtRow(
-    location.county && h("span", { class: "district" }, h("strong", {}, location.county), " County"),
-    precinct && district("Precinct", precinct.name, { title: `Election precinct, from the map “${precinct.map_label}”` }),
-    district("Commissioner", d.commissioner),
-    district([h("abbr", { title: "Justice of the Peace" }, "JP"), " & Constable"], jp),
-  );
-  if (!prompted) {
-    const edit = h("button", {
-      type: "button", class: "link-btn with-icon district-edit", id: "districts-edit",
-      "aria-expanded": String(editingPrecincts), "aria-controls": "precinct-form",
-    }, icon("edit"), missing.length === 2 ? "Add precincts" : "Edit");
-    edit.addEventListener("click", () => setEditingPrecincts(!editingPrecincts));
-    countyRow.append(" ", edit);
-  }
-
   const notUp = new Set(d.not_up || []);
-  $("#districts-card").replaceChildren(...[
-    h("h2", { id: "districts-card-title" }, "Your districts"),
+
+  const rows = [
     districtRow(
-      district("U.S. House", d.cd), district("State Senate", d.sd, { notUp: notUp.has("sd") }), district("State House", d.hd),
-      district(h("abbr", { title: "State Board of Education" }, "SBOE"), d.sboe, { notUp: notUp.has("sboe") }),
+      district("U.S. House", d.cd, { edit: edit("cd") }),
+      district("State Senate", d.sd, { notUp: notUp.has("sd"), edit: edit("sd") }),
+      district("State House", d.hd, { edit: edit("hd") }),
+      district(h("abbr", { title: "State Board of Education" }, "SBOE"), d.sboe, { notUp: notUp.has("sboe"), edit: edit("sboe") }),
     ),
-    notUpNote(d),
-    countyRow,
+    districtRow(
+      location.county && district("County", location.county),
+      precinct && district("Precinct", precinct.name, { title: `Election precinct, from the map “${precinct.map_label}”` }),
+      district("Commissioner", d.commissioner, { edit: edit("commissioner"), missing: needed("commissioner") }),
+      district([h("abbr", { title: "Justice of the Peace" }, "JP"), " & Constable"], shown.jp,
+        { edit: edit("jp"), missing: needed("jp") }),
+    ),
     districtRow(
       location.city && district(null, location.city),
       d.city_council && district("City council", d.city_council),
@@ -292,64 +323,121 @@ function renderDistricts() {
       ? h("p", { class: "district-warn" }, "Approximate address: check these against your voter registration certificate.")
       : null,
     prompted ? precinctPrompt(waiting, missing) : null,
-    prompted || editingPrecincts ? precinctForm() : null,
+    editingDistricts ? null : notUpNote(d),
+  ].filter(Boolean);
+  $("#districts-card").replaceChildren(
+    h("div", { class: "districts-head" }, h("h2", { id: "districts-card-title" }, "Your districts"), districtActions(d)),
+    ...(editingDistricts ? [districtsForm(rows, shown)] : rows),
     h("p", { class: "fine" }, "Districts from the US Census and the Texas Legislative Council.",
-      precinct ? electionPrecinctSource(precinct) : "", precinctSources(d)),
-  ].filter(Boolean));
+      enteredDistricts(d), precinct ? electionPrecinctSource(precinct) : "", precinctSources(d)),
+  );
   $("#districts-card").hidden = false;
 }
+
+// The pencil, which opens every number for editing, and Reset, which works once any number is the voter's.
+function districtActions(d) {
+  const label = "Edit your districts";
+  const pencil = h("button", { type: "button", class: "icon-only", id: "districts-edit", "aria-label": label, title: label,
+    "aria-pressed": String(editingDistricts) }, icon("edit"));
+  pencil.addEventListener("click", () => setEditingDistricts(!editingDistricts));
+  const yours = Boolean(d.entered?.length) || Object.values(d.precinct_sources || {}).includes("you");
+  const back = yours ? "Reset to the districts VoteBot looked up"
+    : "Reset: nothing to reset, these are the districts VoteBot looked up";
+  const reset = h("button", { type: "button", class: "icon-only", "aria-label": back, title: back, disabled: !yours },
+    icon("reset"));
+  reset.addEventListener("click", () => updateDistricts(null));
+  return h("div", { class: "district-actions" }, pencil, reset);
+}
+
+// The card's lines with their open boxes. It sends only the numbers the voter changed, on top of
+// the ones they entered before; the rest keep following the address, the county and Ballotpedia.
+function districtsForm(rows, shown) {
+  const cancel = h("button", { class: "btn small ghost", type: "button" }, "Cancel");
+  cancel.addEventListener("click", () => setEditingDistricts(false));
+  const buttons = [h("button", { class: "btn small primary", type: "submit" }, "Update my ballot"), cancel];
+  const form = h("form", { class: "districts-form", id: "districts-form", "aria-label": "Your districts" },
+    rows, h("div", { class: "button-row" }, buttons));
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const districts = { ...shownRequest.districts };
+    const precincts = { ...shownRequest.precincts };
+    let changed = false;
+    for (const input of form.querySelectorAll(".district-input")) {
+      const kind = input.name;
+      const typed = parseInt(input.value, 10);
+      const value = typed > 0 ? typed : null;
+      if (value === shown[kind]) continue;
+      changed = true;
+      if (kind in DISTRICT_NAMES) districts[kind] = value;
+      else precincts[kind] = value;
+      if (kind === "jp") precincts.constable = value;
+    }
+    if (changed) updateDistricts({ districts, precincts });
+    else setEditingDistricts(false);
+  });
+  return form;
+}
+
+const PRECINCT_WORDS = { commissioner: "commissioner", jp: "justice of the peace" };
 
 function precinctPrompt(waiting, missing) {
   const count = waiting.races.length;
   const one = missing.length === 1;
-  const see = h("button", { type: "button", class: "link-btn" }, one && count === 1 ? "See it" : "See them");
+  const enter = h("button", { type: "button", class: "link-btn" }, one ? "Enter it" : "Enter them");
+  enter.addEventListener("click", openPrecincts);
+  const see = h("button", { type: "button", class: "link-btn" }, one && count === 1 ? "See the race" : "See the races");
   see.addEventListener("click", () => {
     const first = $("#maybe-precinct .race");
     if (first) goTo(first);
   });
   // it names the precincts it asks for, since the card also shows the election precinct
-  const asked = one ? `your ${missing[0]} precinct` : "your commissioner and justice of the peace precincts";
+  const asked = one ? `your ${PRECINCT_WORDS[missing[0]]} precinct` : "your commissioner and justice of the peace precincts";
   const precinct = ballot.districts.election_precinct;
   return h("p", { class: "precinct-prompt" },
     precinct
       ? `Your election precinct is ${precinct.name}. Enter ${asked} from the same voter registration certificate. `
       : `Enter ${asked} from your voter registration certificate. `,
-    `${count} ${count === 1 ? "race depends" : "races depend"} on ${one ? "it" : "them"}. `, see);
+    `${count} ${count === 1 ? "race depends" : "races depend"} on ${one ? "it" : "them"}. `, enter, " · ", see);
 }
 
-function firstEmptyPrecinct() {
-  const inputs = [...document.querySelectorAll("#precinct-form input")];
+// The first empty box (of ``kinds``, when given), else the first.
+function firstEmptyBox(kinds = null) {
+  const inputs = [...document.querySelectorAll("#districts-form .district-input")]
+    .filter((input) => !kinds || kinds.includes(input.name));
   return inputs.find((input) => !input.value) ?? inputs[0];
 }
 
-function setEditingPrecincts(on) {
-  editingPrecincts = on;
+function setEditingDistricts(on) {
+  editingDistricts = on;
   renderDistricts();
-  (on ? firstEmptyPrecinct() : $("#districts-edit"))?.focus();
+  (on ? firstEmptyBox() : $("#districts-edit"))?.focus();
 }
 
 function openPrecincts() {
-  if (!$("#precinct-form")) {
-    editingPrecincts = true;
+  if (!editingDistricts) {
+    editingDistricts = true;
     renderDistricts();
   }
-  const field = firstEmptyPrecinct();
+  const field = firstEmptyBox(PRECINCT_KINDS);
   field.scrollIntoView({ block: "center" });
   field.focus({ preventScroll: true });
 }
 
-async function updatePrecincts(precincts) {
-  const { precincts: _previous, ...request } = shownRequest;
-  if (precincts) request.precincts = precincts;
+// ``entered``: { districts, precincts } the voter gave, or null to go back to the looked-up ones.
+async function updateDistricts(entered) {
+  const { precincts: _precincts, districts: _districts, ...request } = shownRequest;
+  for (const [key, numbers] of Object.entries(entered || {})) {
+    if (Object.keys(numbers).length) request[key] = numbers;
+  }
   const before = ballot;
   await lookup(request, { keepBallot: true });
   if (ballot === before) return;
-  ($("#districts-edit") ?? firstEmptyPrecinct())?.focus();
+  $("#districts-edit")?.focus();
   const waiting = ballot.maybe.some((section) => section.id === "precinct");
   const target = waiting ? "#maybe-precinct .race" : "#group-precinct .race";
   const show = { label: "Show", run: () => { const first = $(target); if (first) goTo(first); } };
   showToast(waiting ? "Your ballot is updated. Some races still depend on your commissioner or JP precinct."
-    : "Your ballot now has the races for your commissioner and JP precincts.",
+    : "Your ballot is updated for your districts.",
     $(target) ? show : null);
 }
 
@@ -480,12 +568,17 @@ function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
   };
 }
 
+// A declared write-in's name says so, as a typed write-in's does: the voter writes it in.
+function writeInName(candidate) {
+  return candidate && (candidate.write_in ? `${candidate.name} (write-in)` : candidate.name);
+}
+
 function pickedText(race, picked) {
   if (!picked.length) return "Not picked yet";
   return picked
     .map((key) => (key === WRITE_IN
       ? picks.writeInLabel(race.key, "Write-in (no name yet)")
-      : race.candidates.find((c) => c.key === key)?.name))
+      : writeInName(race.candidates.find((c) => c.key === key))))
     .filter(Boolean)
     .join(", ");
 }
@@ -660,7 +753,8 @@ function writeInRow(race) {
     timer = setTimeout(save, 300);
   });
   name.addEventListener("change", save); // on leaving the box, e.g. for another page
-  const hint = STATES[ballot.location.state]?.writeInNote;
+  const note = STATES[ballot.location.state]?.writeInNote;
+  const hint = note && race.candidates.some((c) => c.write_in) ? `${note} The ones who filed for this race are listed above.` : note;
   return h(
     "li",
     { class: "cand write-in", "data-cand": WRITE_IN },
@@ -704,42 +798,6 @@ function setAllCollapsed(collapsed) {
 }
 
 // ---- maybe sections, precincts, propositions ----------------------------------------
-
-function precinctForm() {
-  const d = ballot.districts;
-  const field = (name, label, max, value) =>
-    h("label", { class: "field precinct-field" }, label,
-      h("input", { type: "number", min: "1", max, inputmode: "numeric", name, value: value ?? null }));
-  const buttons = [h("button", { class: "btn small primary", type: "submit" }, "Update my ballot")];
-  if (editingPrecincts) {
-    const cancel = h("button", { class: "btn small ghost", type: "button" }, "Cancel");
-    cancel.addEventListener("click", () => setEditingPrecincts(false));
-    buttons.push(cancel);
-  }
-  if (Object.values(d.precinct_sources || {}).includes("you")) {
-    const reset = h("button", { class: "link-btn", type: "button" },
-      d.county_source ? `Use ${d.county_source.county} County's numbers` : "Use Ballotpedia's numbers");
-    reset.addEventListener("click", () => updatePrecincts(null));
-    buttons.push(reset);
-  }
-  const form = h("form", { class: "precinct-form", id: "precinct-form" },
-    h("fieldset", {},
-      h("legend", { class: "sr-only" }, "Your commissioner and JP precincts"),
-      field("commissioner", "Commissioner", "4", d.commissioner),
-      field("jp", "Justice of the Peace & Constable", "99", d.jp ?? d.constable)),
-    h("div", { class: "button-row" }, buttons));
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const data = new FormData(form);
-    const number = (key) => {
-      const value = parseInt(data.get(key), 10);
-      return value > 0 ? value : null;
-    };
-    const jp = number("jp");
-    updatePrecincts({ commissioner: number("commissioner"), jp, constable: jp });
-  });
-  return form;
-}
 
 function precinctLink() {
   const button = h("button", { type: "button", class: "link-btn" }, "Enter your commissioner and JP precincts");

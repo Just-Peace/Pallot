@@ -185,6 +185,42 @@ def test_the_statewide_list_leaves_out_races_it_cant_place(client, upstream):
     assert any("doesn't say which counties judicial" in note for note in ballot["notes"])
 
 
+def _write_in(office_id, candidate_id, name, **changes):
+    """A declared write-in row of the statewide list, shaped like a real one."""
+    return {**load("sos_candidates_53815.json")[0], "idOffice": office_id, "idCandidate": candidate_id, "cdParty": "W",
+            "cdCandType": "WRTIN", "cdDeclarationStatus": "A", "txFullNameBallot": name, "txCountyName": None, **changes}
+
+
+def test_declared_write_ins_follow_the_printed_candidates(client, upstream):
+    senate_rows = [r for r in load("sos_ballot_53815_227.json") if r["txOfficeName"].strip() == "U. S. SENATOR"]
+    senate_office = senate_rows[0]["idOffice"]
+    upstream.extra_candidates[53815] = [
+        _write_in(senate_office, 900001, "PAT FILED"),
+        _write_in(senate_office, 900002, "LEE WITHDREW", cdDeclarationStatus="R"),
+        _write_in(351, 900003, "SAM ELSEWHERE", cdOfficeType="CW", txCountyName="HARRIS"),  # Travis's county clerk office id
+        _write_in(351, 900004, "KIM CLERK", cdOfficeType="CW", txCountyName="TRAVIS"),
+        _write_in(999999, 900005, "NO SUCH RACE"),
+    ]
+    ballot = get_ballot(client)
+    senate = find_race(ballot, "U.S. Senator")
+    assert len(senate["candidates"]) == len(senate_rows) + 1 and senate["candidates"][-1]["name"] == "Pat Filed"
+    filed = senate["candidates"][-1]
+    assert filed["write_in"] and filed["party"] is None and filed["party_name"] is None and filed["ballot_position"] is None
+    assert "sos" in sources_of(filed)
+    assert not any(c["write_in"] for c in senate["candidates"][:-1])
+    assert candidate_names(find_race(ballot, "County Clerk"))[-1] == "Kim Clerk"
+    everyone = [c["name"] for r in ballot["races"] + [r for s in ballot["maybe"] for r in s["races"]] for c in r["candidates"]]
+    assert not {"Lee Withdrew", "Sam Elsewhere", "No Such Race"} & set(everyone)
+
+
+def test_a_failed_write_in_list_keeps_the_printed_ballot(client, upstream):
+    upstream.candidates_down.add(53815)
+    ballot = get_ballot(client)
+    senate = find_race(ballot, "U.S. Senator")
+    assert senate["candidates"] and not any(c["write_in"] for c in senate["candidates"])
+    assert any("declared write-in candidates" in note for note in ballot["notes"])
+
+
 def test_ballotpedia_off(client):
     client.put("/api/sources/ballotpedia", json={"enabled": False})
     ballot = get_ballot(client)
@@ -280,7 +316,7 @@ def test_entered_precincts_override_the_countys(client):
     assert not find_race(ballot, "County Commissioner Precinct 2")
     d = ballot["districts"]
     assert d["precinct_sources"] == {"commissioner": "you", "jp": "county", "constable": "county"}
-    assert d["county_source"] == {"county": "Travis", "method": "table"}  # for "Use Travis County's numbers"
+    assert d["county_source"] == {"county": "Travis", "method": "table"}  # for the card's small print
     assert "precinct" not in [s["id"] for s in ballot["maybe"]]
 
 
@@ -329,6 +365,16 @@ def test_one_number_for_jp_and_constable(client):
 
 def test_commissioner_precincts_run_one_to_four(client):
     response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"], "precincts": {"commissioner": 5}})
+    assert response.status_code == 422
+
+
+def test_entered_districts_win_over_the_addresss(client):
+    ballot = get_ballot(client, districts={"cd": 37})
+    d = ballot["districts"]
+    assert (d["cd"], d["sd"], d["entered"]) == (37, 14, ["cd"])
+    assert find_race(ballot, "U.S. Representative District 37") and not find_race(ballot, "U.S. Representative District 10")
+    assert get_ballot(client)["districts"]["entered"] == []
+    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"], "districts": {"cd": 39}})
     assert response.status_code == 422
 
 

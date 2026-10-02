@@ -48,7 +48,7 @@ export function districtLine(d, { precinct = "" } = {}) {
   ].filter(Boolean).join(" · ");
 }
 
-const PARTY_NAMES = { R: "Republican", D: "Democratic", L: "Libertarian", G: "Green", I: "Independent", W: "Write-in" };
+const PARTY_NAMES = { R: "Republican", D: "Democratic", L: "Libertarian", G: "Green", I: "Independent" };
 
 export function partyName(candidate) {
   return candidate.party_name || PARTY_NAMES[candidate.party] || "";

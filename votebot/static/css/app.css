@@ -427,9 +427,34 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .district { white-space: nowrap; }
 .district strong { color: var(--text); font-weight: 650; }
 .district strong.unknown, .district.not-up strong { color: var(--muted); font-weight: 400; }
+/* a seat that isn't up: a grey chip; a missing number races wait on: an amber one */
+.district.not-up strong, .district.missing strong { display: inline-block; padding: 0 6px; border-radius: var(--radius-sm);
+  line-height: 1.5; }
+.district.not-up strong { background: var(--neutral-soft); }
+.district.missing strong { background: var(--warn-soft); color: var(--warn); font-weight: 650; }
 .district-note { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); }
+.precinct-prompt + .district-note, .district-warn + .district-note { margin-top: 8px; }
 .district abbr { text-decoration: none; }
-.district-edit { margin-left: 4px; }
+.districts-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 8px; }
+.districts-card .districts-head h2 { margin: 0; }
+.district-actions { display: flex; gap: 2px; margin: -6px -8px -6px 0; }
+.icon-only { display: inline-flex; padding: 6px; background: none; border: 0; border-radius: var(--radius-sm); color: var(--muted);
+  cursor: pointer; }
+.icon-only:hover { color: var(--accent); background: var(--neutral-soft); }
+.icon-only[aria-pressed="true"] { color: var(--accent); }
+.icon-only:disabled { opacity: 0.35; cursor: default; background: none; color: var(--muted); }
+.icon-only .icon { width: 16px; height: 16px; }
+/* a number open for editing: a box in its place, in the same line */
+/* while editing, a line's numbers sit in a row with even gaps, wrapping whole, without the dots */
+.district-line:has(.editing) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; line-height: 2; }
+.district-line:has(.editing) .sep { display: none; }
+.district.editing { font-weight: inherit; font-size: inherit; }
+/* a box the size of the number it stands for: no spinner, the text's height and weight */
+input.district-input { width: calc(3ch + 12px); height: 1.6em; padding: 0 5px; margin-left: 2px; font-size: inherit;
+  font-weight: 650; line-height: 1; text-align: center; vertical-align: baseline; border-radius: 4px;
+  appearance: textfield; -moz-appearance: textfield; }
+input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.districts-form .button-row { margin: 8px 0 0; align-items: center; }
 /* the map's legend: a button per district, right above it, that highlights the district */
 .map-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
 .map-picks:empty { display: none; }
@@ -499,11 +524,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
   background: var(--warn-soft); color: var(--warn); }
 .precinct-prompt .link-btn, .district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
-.precinct-form { margin: 10px 0 0; }
-.precinct-form fieldset { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 10px; padding: 0; border: 0; }
-.precinct-field { flex: 0 1 auto; font-size: 0.85rem; }
-.precinct-field input { width: 7ch; padding: 6px 8px; }
-.precinct-form .button-row { align-items: center; }
 .precinct-link { margin: 0 0 12px; }
 
 .progress-strip {

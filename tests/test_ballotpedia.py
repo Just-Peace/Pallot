@@ -104,6 +104,12 @@ def test_a_state_race_finds_its_own_race_on_ballotpedia(courts):
     assert {key: race.id for key, race in found.items()} == {"ccl3": 3, "bp:4": 4}
 
 
+def test_a_write_in_doesnt_count_toward_its_races_own_race(courts):
+    ccl3 = _state_race("ccl3", ("Jessica Jaramillo", "R"), ("Juli A. Mathew", "D"))
+    ccl3.candidates.append(Candidate(key="ccl3:w", name="Toni Wallace", write_in=True))  # printed in race 4 on Ballotpedia
+    assert counterparts(courts, [ccl3])["ccl3"].id == 3
+
+
 def test_a_match_in_its_own_race_and_party_is_exact(courts):
     ccl3 = _state_race("ccl3", ("Jessica Jaramillo", "R"), ("Juli A. Mathew", "D"))
     ccl4 = _state_race("ccl4", ("Toni Wallace", "R"), ("Tom Baker", "D"))
