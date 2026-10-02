@@ -624,6 +624,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .race.collapsed .race-meta { display: none; }
 .race.collapsed .race-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .race-body { margin-top: 12px; }
+.race-note { margin: 0 0 10px; overflow-wrap: anywhere; }
 
 .race-options, .measure-options { border: 0; margin: 0; padding: 0; min-width: 0; }
 .cands { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }

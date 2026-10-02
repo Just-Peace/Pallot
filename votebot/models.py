@@ -140,6 +140,14 @@ class Candidate(BaseModel):
     cards: list[SourceCard] = Field(default_factory=list)
 
 
+class RaceNote(BaseModel):
+    """A source's note on a race, as plain text, e.g. Ballotpedia's on a replacement nominee."""
+
+    text: str
+    url: str | None = None
+    source: str  # the source's label, "Ballotpedia"
+
+
 class Race(BaseModel):
     key: str  # "sos:<election>:<office>" or "bp:<race>"
     name: str
@@ -153,6 +161,7 @@ class Race(BaseModel):
     url: str | None = None
     candidates: list[Candidate] = Field(default_factory=list)
     cards: list[SourceCard] = Field(default_factory=list)  # race-level cards, e.g. money raised by each candidate
+    notes: list[RaceNote] = Field(default_factory=list)
 
 
 class MaybeSection(BaseModel):

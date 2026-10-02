@@ -8,11 +8,32 @@ import respx
 
 from votebot.config import Ttls
 from votebot.http_cache import HttpCache
+from votebot.models import Candidate, Race
 from votebot.sources.ballotpedia import (
-    SOURCE, URL, Ballotpedia, BallotpediaUnavailable, council_district_in, parse, precincts_in,
+    SOURCE, URL, Ballotpedia, BallotpediaUnavailable, BpNote, cards, council_district_in, counterparts, parse,
+    precincts_in,
 )
 
 from .conftest import load
+
+DAY = dt.date(2026, 11, 3)
+
+
+def _payload(*districts):
+    return {"data": {"elections": [{"date": DAY.isoformat(), "districts": list(districts)}]}}
+
+
+def _bp_race(race_id, office, *candidates, **extra):
+    return {"id": race_id, "office": {"name": office}, "candidates": list(candidates), **extra}
+
+
+def _bp_candidate(candidate_id, name, party="Democratic Party", **extra):
+    return {"id": candidate_id, "person": {"name": name}, "party_affiliation": [{"name": party}], **extra}
+
+
+def _state_race(key, *people):
+    return Race(key=key, name=key, group="county", source="sos",
+                candidates=[Candidate(key=f"{key}:{i}", name=name, party=party) for i, (name, party) in enumerate(people)])
 
 
 @pytest.fixture(scope="module")
@@ -34,6 +55,68 @@ def test_precincts_come_from_county_subdivisions(ballot):
     assert ballot.precincts == {"jp": 5, "constable": 5}
     assert precincts_in("Harris County Commissioners Court Precinct 2") == {"commissioner": 2}
     assert precincts_in("Travis County") == {}
+
+
+def test_a_precinct_named_without_its_kind_takes_it_from_its_races():
+    assert precincts_in("Fort Bend County Precinct 1", ["Fort Bend County Justice of the Peace, Precinct 1-Place 2"]) == {"jp": 1}
+    assert precincts_in("Harris County Commissioners Court Precinct 2", ["Harris County Justice of the Peace Precinct 2"]) == {
+        "commissioner": 2}  # the name says which, so the races don't
+    assert precincts_in("Fort Bend County Precinct 1", ["Fort Bend County Judge"]) == {}
+    fort_bend = parse(_payload({"type": "County subdivision", "name": "Fort Bend County Precinct 1", "races": [
+        _bp_race(1, "Fort Bend County Justice of the Peace, Precinct 1-Place 1", _bp_candidate(10, "Martin Sanchez")),
+    ]}), DAY, 0.0)
+    assert fort_bend.precincts == {"jp": 1}
+
+
+def test_notes_are_plain_text_with_their_link():
+    replaced = {"text": "Paula Miller won the <b>Democratic</b> primary &amp; was replaced."}
+    district = {
+        "type": "Judicial District", "name": "Fort Bend County Court at Law, Texas",
+        "disclaimers": [{"text": 'Texas redrew its map. <a href="https://ballotpedia.org/Redistricting" target="_blank">'
+                                 "Click here to learn more.</a>"}],
+        "races": [_bp_race(1, "Fort Bend County Court at Law No. 3", _bp_candidate(10, "Juli Mathew"),
+                           race_disclaimers=[replaced, replaced, {"text": '<a href="javascript:alert(1)">See</a> the court.'}],
+                           stage_disclaimers=None)],
+    }
+    race = parse(_payload(district), DAY, 0.0).races[0]
+    assert race.notes == (
+        BpNote("Paula Miller won the Democratic primary & was replaced."),
+        BpNote("See the court."),  # not a web link, so no link
+        BpNote("Texas redrew its map.", "https://ballotpedia.org/Redistricting"),
+    )
+
+
+@pytest.fixture
+def courts():
+    return parse(_payload({"type": "Judicial District", "name": "Fort Bend County Court at Law, Texas", "races": [
+        _bp_race(3, "Fort Bend County Court at Law No. 3", _bp_candidate(31, "Jessica Jaramillo", "Republican Party"),
+                 _bp_candidate(32, "Juli Mathew", is_incumbent=True)),
+        _bp_race(4, "Fort Bend County Court at Law No. 4", _bp_candidate(41, "Toni Wallace", is_incumbent=True),
+                 _bp_candidate(42, "Thomas Baker", is_incumbent=True)),
+    ]}), DAY, 0.0)
+
+
+def test_a_state_race_finds_its_own_race_on_ballotpedia(courts):
+    ccl3 = _state_race("ccl3", ("Jessica Jaramillo", "R"), ("Juli A. Mathew", "D"))
+    mixed = _state_race("mixed", ("Jessica Jaramillo", "R"), ("Toni Wallace", "D"))  # two races: neither
+    own = Race(key="bp:4", name="Fort Bend County Court at Law No. 4", group="judicial", source="ballotpedia")
+    found = counterparts(courts, [ccl3, mixed, own])
+    assert {key: race.id for key, race in found.items()} == {"ccl3": 3, "bp:4": 4}
+
+
+def test_a_match_in_its_own_race_and_party_is_exact(courts):
+    ccl3 = _state_race("ccl3", ("Jessica Jaramillo", "R"), ("Juli A. Mathew", "D"))
+    ccl4 = _state_race("ccl4", ("Toni Wallace", "R"), ("Tom Baker", "D"))
+    races = [ccl3, ccl4]
+    got = cards(courts, races, counterparts(courts, races))
+    mathew = got.candidates["ccl3:1"].match
+    assert (mathew.confidence, mathew.method) == ("exact", "first and last name + seat Fort Bend County Court at Law No. 3")
+    wallace = got.candidates["ccl4:0"].match
+    assert wallace.confidence == "likely" and wallace.note == "party differs (Ballotpedia says D)"
+    assert got.candidates["ccl4:1"].match.confidence == "likely"  # Tom and Thomas: initials only
+    assert got.incumbents == {"ccl3:1"}  # exact matches only
+    alone = cards(courts, [ccl3])  # without its own race, a middle initial leaves it likely
+    assert alone.candidates["ccl3:1"].match.confidence == "likely" and not alone.incumbents
 
 
 def test_city_council_district_comes_from_city_subdivisions(ballot):

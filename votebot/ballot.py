@@ -4,9 +4,9 @@ The Census gives the county and districts, the SBOE map adds the State Board of
 Education district, and the Texas Legislative Council's precinct map the election precinct,
 whose county's records may settle the commissioner and JP precincts, whichever ballot source is
 on. Official path: the county's Texas SOS
-ballot order is filtered down to those districts. Ballotpedia adds city/school races and the voter's precincts, or supplies
-the whole ballot when the state source is off. Then every candidate gets a card from each
-enabled source (enrich.py).
+ballot order is filtered down to those districts. Ballotpedia adds city/school races, races the state doesn't list
+at all, its notes on races and the voter's precincts, or supplies the whole ballot when the state source is off.
+Then every candidate gets a card from each enabled source (enrich.py).
 """
 
 from __future__ import annotations
@@ -21,17 +21,19 @@ from typing import Any, Callable
 from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
+from .matching import NameIndex
 from .models import (
     GROUPS, Ballot, BallotRequest, Candidate, CountySource, Districts, ElectionDate, ElectionPrecinct, ElectionRef,
-    KeyDates, LastLookup, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, SourceUse,
+    KeyDates, LastLookup, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, RaceNote, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Settings
+from .sources import ballotpedia as ballotpedia_source
 from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
-from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot
+from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot, BpRace
 from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
@@ -206,6 +208,19 @@ def _jp_is_constable(precincts: dict[str, int | None]) -> dict[str, int | None]:
     return filled
 
 
+def _adds_to_state_ballot(race: BpRace, state_names: NameIndex) -> bool:
+    """A Ballotpedia race the state's ballot doesn't have: a city, school or special-district
+    race, or one with candidates on the ballot, none of whom the state lists."""
+    if race.group in ("local", "special"):
+        return True
+    printed = [c for c in race.candidates if not c.write_in]
+    return bool(printed) and not any(state_names.find(c.name)[0] for c in printed)
+
+
+def _notes(race: BpRace) -> list[RaceNote]:
+    return [RaceNote(text=note.text, url=note.url, source=ballotpedia_source.LABEL) for note in race.notes]
+
+
 def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
     return (
         row.get("nbOfficeTypeOrder") or 99,
@@ -244,6 +259,7 @@ class _Builder:
         self.ballot_rows: dict[str, dict[str, Any]] = {}  # candidate key -> its SOS row
         self.scopes: dict[str, OfficeScope] = {}  # SOS race key -> what its office covers
         self.included: set[tuple[str, int | None]] = set()  # (kind, number) of SOS races kept
+        self.state_names = NameIndex()  # everyone the state lists for the day, kept or not
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
 
     async def run(self) -> Ballot:
@@ -290,10 +306,10 @@ class _Builder:
         if sos_data:
             races = self._sos_races(sos_data, districts)
             if bp_ballot:
-                races += self._bp_races(bp_ballot, only={"local"})
+                races += self._bp_races(bp_ballot, self.state_names)
             self._district_notes(districts, [e for e, _ in sos_data.orders])
         else:
-            races = self._bp_races(bp_ballot, only=None) if bp_ballot else []
+            races = self._bp_races(bp_ballot, None) if bp_ballot else []
 
         maybe = [
             MaybeSection(
@@ -306,6 +322,10 @@ class _Builder:
             if found
         ]
         every_race = races + [race for section in maybe for race in section.races]
+        bp_counterparts = ballotpedia_source.counterparts(bp_ballot, every_race) if bp_ballot else {}
+        for race in every_race:
+            if own := bp_counterparts.get(race.key):
+                race.notes = _notes(own)
         ballot_day = day or (bp_ballot.day if bp_ballot else None)
         found = next((d for d in deadlines or () if d.day == ballot_day), None)
         outcome = await enrich.run(
@@ -322,6 +342,7 @@ class _Builder:
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,
+            bp_counterparts=bp_counterparts,
         )
         self.warnings += outcome.warnings
         self.notes += outcome.notes
@@ -401,11 +422,14 @@ class _Builder:
         """The county's ballot order; when that's empty (special elections), the statewide
         candidate list trimmed to the races it can place (_placeable). It names no county
         for judicial, DA or county races, so those are left out, with a note, rather than
-        shown to every county."""
+        shown to every county. Everyone in either list goes in ``state_names``, so Ballotpedia's
+        races that the state has, even for another district, aren't added again."""
         rows = (await self.svc.sos.ballot_order(election, county_id)).value or []
         if rows:
+            self._remember_names(rows)
             return rows
         running = [r for r in (await self.svc.sos.candidates(election)).value or [] if still_running(r)]
+        self._remember_names(running)
         wanted = (county or "").upper()
         kept = [r for r in running if _placeable(r) or (r.get("txCountyName") or "").upper() == wanted]
         if len(kept) < len(running):
@@ -416,6 +440,10 @@ class _Builder:
                 "check your county's sample ballot."
             )
         return kept
+
+    def _remember_names(self, rows: list[dict[str, Any]]) -> None:
+        for row in rows:
+            self.state_names.add(display_person(row.get("txFullNameBallot") or ""), row.get("idOffice"))
 
     async def _sboe(self, place: Place) -> int | None:
         try:
@@ -584,12 +612,14 @@ class _Builder:
             ballot_position=row.get("nbBallotOrder"),
         )
 
-    def _bp_races(self, ballot: BpBallot, only: set[str] | None) -> list[Race]:
-        """Ballotpedia's races (``only`` these groups, when the state covers the rest);
-        special districts always go to the "may be on your ballot" list."""
+    def _bp_races(self, ballot: BpBallot, state_names: NameIndex | None) -> list[Race]:
+        """Ballotpedia's races: all of them without the state's ballot. With it, the city, school
+        and special-district races, and any other race none of whose candidates the state lists
+        (an appraisal district's board). Special districts always go to the "may be on your
+        ballot" list."""
         races = []
         for bp_race in ballot.races:
-            if only is not None and bp_race.group not in only and bp_race.group != "special":
+            if state_names is not None and not _adds_to_state_ballot(bp_race, state_names):
                 continue
             race = Race(
                 key=f"bp:{bp_race.id}",

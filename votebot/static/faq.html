@@ -34,7 +34,7 @@
           <summary>How does VoteBot know what's on my ballot?</summary>
           <div class="faq-body">
             <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's maps give your State Board of Education district and your election precinct.</p>
-            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and tells VoteBot your commissioner and JP precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
+            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and any other race the state doesn't list, such as an appraisal district's board (these say "Listed by Ballotpedia"). It also adds Ballotpedia's notes on a race, such as a replacement nominee, and tells VoteBot your commissioner and JP precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
           </div>
         </details>
 
@@ -64,7 +64,7 @@
         <details class="faq">
           <summary>What does "Depends on your commissioner or JP precinct" mean?</summary>
           <div class="faq-body">
-            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, VoteBot gets them from the county's own records (see "How does VoteBot know my commissioner and JP precincts?"); elsewhere, it uses Ballotpedia's answer when it has one.</p>
+            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, VoteBot gets them from the county's own records (see "How does VoteBot know my commissioner and JP precincts?"); elsewhere, it uses Ballotpedia's answer when it has one. Ballotpedia only names a precinct that has a race on this ballot, so when yours has none this time, those races stay listed until you enter your precincts.</p>
             <p>Otherwise those races are listed under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
             <p>The small print under "Your districts" says where each number came from: your county, Ballotpedia, or you. If one is wrong, "Edit" lets you change them or empty them, and "Use Harris County's numbers" (or "Use Ballotpedia's numbers") puts the looked-up ones back.</p>
           </div>
@@ -93,7 +93,7 @@
           <div class="faq-body">
             <p>Texas law keeps each election precinct inside one commissioner precinct and one justice of the peace precinct, so once VoteBot knows your election precinct (see "Where does my election precinct come from"), your county's records say the other two. There's no statewide list, so this works in the counties whose records VoteBot reads:</p>
             <ul>
-              <li><strong>Harris, Dallas, Tarrant, Travis and Fort Bend</strong> publish a list of their election precincts, with each one's commissioner and JP precinct. Fort Bend's has commissioner precincts only, so your JP precinct there comes from Ballotpedia or from you. VoteBot only uses a county's list when it has exactly the precincts on the Texas Legislative Council's map, so a list for another year, with precincts drawn differently, is never used.</li>
+              <li><strong>Harris, Dallas, Tarrant, Travis and Fort Bend</strong> publish a list of their election precincts, with each one's commissioner and JP precinct. Fort Bend's has commissioner precincts only, so your JP precinct there comes from Ballotpedia, when your JP precinct has a race this time, or from you. VoteBot only uses a county's list when it has exactly the precincts on the Texas Legislative Council's map, so a list for another year, with precincts drawn differently, is never used.</li>
               <li><strong>Bexar and Denton</strong> publish maps of their commissioner and JP precincts instead. VoteBot takes points spread through your election precinct, each at least 50 meters from its edges, and gives a number only when they all fall in the same commissioner (or JP) precinct on the county's map. The two maps are drawn separately, so near a precinct's edge they can disagree by a few meters; keeping 50 meters in gave no wrong numbers when checked against the lists of Dallas and Harris counties, for all 2,015 of their precincts. When your election precinct crosses a line on the county's map, or is too small to check, VoteBot leaves the number for you to enter, and a note says why.</li>
             </ul>
             <p>Near the line between two election precincts, VoteBot gives a number only when both precincts have the same one. When the county's records and Ballotpedia disagree, VoteBot uses the county's and a note says so. A number you enter always wins.</p>
@@ -176,6 +176,7 @@
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
             <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
+            <p>Sources write names differently, so VoteBot matches them by name, with the seat and party to confirm. A <strong>?</strong> means a source only likely matched the candidate, for example when only the first initial agrees ("Tom" and "Thomas"), so check it. "Incumbent" comes from the state's filing, or from Ballotpedia when it matches the candidate exactly in the same race.</p>
           </div>
         </details>
 
