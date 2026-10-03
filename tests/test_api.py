@@ -216,9 +216,7 @@ def test_a_second_refresh_while_one_runs_is_refused(make_app):
 PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]
 
 
-@pytest.mark.parametrize("path", ["/", "/favicon.svg", "/js/ballot.js", "/js/settings.js", "/js/page.js", "/js/chrome.js",
-                                  "/js/address.js", "/js/icons.js", "/js/search.js", "/js/topbar.js", "/js/toast.js",
-                                  "/css/app.css"])
+@pytest.mark.parametrize("path", ["/", "/favicon.svg", "/css/app.css"])  # the scripts: test_frontend_modules.py
 def test_static_pages(client, path):
     assert client.get(path).status_code == 200
 

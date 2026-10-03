@@ -54,7 +54,12 @@ export function partyName(candidate) {
   return candidate.party_name || PARTY_NAMES[candidate.party] || "";
 }
 
-export function partyPill(candidate) {
-  const name = partyName(candidate);
-  return name ? h("span", { class: `party party-${candidate.party || "none"}` }, name) : null;
+// The pills under a candidate's name: their party, Incumbent, Write-in.
+export function candidatePills(candidate) {
+  const party = partyName(candidate);
+  return [
+    party ? h("span", { class: ["party", `party-${candidate.party || "none"}`] }, party) : null,
+    candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,
+    candidate.write_in ? h("span", { class: "pill" }, "Write-in") : null,
+  ];
 }

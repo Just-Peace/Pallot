@@ -1,19 +1,35 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and a tab in Details) without any code change.
 
-import { extLink, formatDate, h, linkedText, safeUrl } from "./dom.js";
+import { extLink, h, linkedText, safeUrl } from "./dom.js";
+import { DOLLARS, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { icon } from "./icons.js";
 
 // The FAQ answers that say how each source's figures are put together.
 const MONEY_FAQ = { fec: "faq.html#fec-money", tec: "faq.html#tec-money", polls: "faq.html#polls" };
-// What a race card's date means ("reports through" for the money sources).
-const AS_OF_WORDS = { polls: "latest poll" };
+// What a card's date means.
+const AS_OF_WORDS = { fec: "reports through", tec: "reports through", polls: "latest poll" };
 
-// " · How these figures are put together" after a money card's source line (a new tab, so
-// the ballot and any open dialog stay put); nothing for other sources.
-export function howCounted(card) {
-  const href = MONEY_FAQ[card.source];
-  return href ? [" · ", extLink(href, "How these figures are put together")] : null;
+// The line under a card: "From the FEC, reports through Mar 31, 2026 · Open the FEC · How these
+// figures are put together". The FAQ link, for the money sources and polls, opens a new tab, so
+// the ballot and any open dialog stay put.
+export function sourceLine(card) {
+  const faq = MONEY_FAQ[card.source];
+  return h("p", { class: "fine" },
+    `From ${card.label}`,
+    card.as_of ? `, ${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : "",
+    card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
+    faq ? [" · ", extLink(faq, "How these figures are put together")] : null);
+}
+
+const width = (fraction) => `${(Math.min(1, Math.max(0, fraction || 0)) * 100).toFixed(1)}%`;
+
+// A bar filled to ``fraction`` (0 to 1) of its length. Given { name: fraction }, it sets each as
+// the CSS variable --w-name instead, for the stylesheet to pick one.
+export function bar(fraction) {
+  const style = typeof fraction === "number" ? `width: ${width(fraction)}`
+    : Object.entries(fraction).map(([name, f]) => `--w-${name}: ${width(f)}`).join("; ");
+  return h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style }));
 }
 
 const isLikely = (card) => card.match?.confidence === "likely";
@@ -31,11 +47,10 @@ function badge(item, card = null, first = false) {
   const title = [item.hint, card ? `From ${card.label}` : null, likely ? "Likely match: see Details" : null]
     .filter(Boolean).join(" · ") || null;
   const flag = likely && first ? likelyFlag("Likely match: see Details") : null;
-  const href = safeUrl(item.url);
-  return h("li", {}, href
-    ? h("a", { class: `badge badge-link tone-${item.tone}`, href, target: "_blank", rel: "noopener noreferrer", title },
-        item.text, flag, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗"))
-    : h("span", { class: `badge tone-${item.tone}`, title }, item.text, flag));
+  return h("li", {}, safeUrl(item.url)
+    ? extLink(item.url, [item.text, flag, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")],
+        { class: ["badge badge-link", `tone-${item.tone}`], title })
+    : h("span", { class: ["badge", `tone-${item.tone}`], title }, item.text, flag));
 }
 
 // Highlights from every source, shown under the candidate's name.
@@ -54,44 +69,29 @@ function matchNote(card) {
   const exact = card.match.confidence === "exact";
   return h(
     "p",
-    { class: `match ${exact ? "match-exact" : "match-likely"}` },
+    { class: ["match", exact ? "match-exact" : "match-likely"] },
     h("strong", {}, exact ? "Matched" : "Likely match"),
     ` by ${card.match.method}.`,
     card.match.note ? ` ${card.match.note[0].toUpperCase()}${card.match.note.slice(1)}.` : "",
   );
 }
 
-export const SHORT_DATE = { month: "short", day: "numeric", year: "numeric" };
-export const DOLLARS = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-export const DOLLARS_SHORT = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 });
-export const COUNT = new Intl.NumberFormat("en-US");
-
-function asOf(card) {
-  return card.as_of ? `Data as of ${formatDate(card.as_of, SHORT_DATE)}` : null;
-}
-
-export function percent(share) {
-  if (share <= 0) return "0%";
-  return share < 0.01 ? "<1%" : `${Math.round(share * 100)}%`;
-}
-
 // A word such as "for" or "against", as a small badge in the row's tone.
 export function tagBadge(part) {
-  return part.tag ? h("span", { class: `badge share-tag tone-${part.tone || "neutral"}` }, part.tag) : null;
+  return part.tag ? h("span", { class: ["badge share-tag", `tone-${part.tone || "neutral"}`] }, part.tag) : null;
 }
 
 // One row of a breakdown: the label (with its note), a bar, and the amount. partyOf maps a
 // candidate key to their party, so a race comparison's bars take the party colours.
 function shareRow(part, scale, showPercent, partyOf) {
-  const width = scale > 0 && part.amount != null ? Math.min(100, Math.max(0, (part.amount / scale) * 100)) : 0;
-  const count = part.count ? `${COUNT.format(part.count)} donation${part.count === 1 ? "" : "s"}` : null;
+  const count = part.count ? plural(part.count, "donation") : null;
   const note = [part.note, count].filter(Boolean).join(" · ");
   const party = part.candidate_key && partyOf ? partyOf(part.candidate_key) : null;
   return h(
     "li",
-    { class: `share${part.tone ? ` tone-${part.tone}` : ""}`, "data-party": party || null },
+    { class: ["share", part.tone && `tone-${part.tone}`], "data-party": party || null },
     h("span", { class: "share-label" }, part.label, tagBadge(part), note ? h("span", { class: "share-note" }, note) : null),
-    h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width: ${width.toFixed(1)}%` })),
+    bar(scale > 0 && part.amount != null ? part.amount / scale : 0),
     h("span", { class: "share-amount" },
       part.amount == null ? "—" : DOLLARS.format(part.amount),
       showPercent && part.amount != null && scale > 0 ? h("span", { class: "share-pct" }, percent(part.amount / scale)) : null),
@@ -113,9 +113,9 @@ function stackedBar(item, partyOf) {
   return [
     h("div", { class: "stack-bar", role: "img", "aria-label": described.filter(Boolean).join(", ") },
       shown.map((part) => h("span", {
-        "data-party": partyAttr(part), style: `width: ${((part.amount / whole) * 100).toFixed(1)}%`, title: `${part.label} ${pct(part.amount)}`,
+        "data-party": partyAttr(part), style: `width: ${width(part.amount / whole)}`, title: `${part.label} ${pct(part.amount)}`,
       })),
-      rest >= 0.5 ? h("span", { class: "rest", style: `width: ${rest.toFixed(1)}%`, title: `Undecided / other ${pct(rest)}` }) : null),
+      rest >= 0.5 ? h("span", { class: "rest", style: `width: ${width(rest / 100)}`, title: `Undecided / other ${pct(rest)}` }) : null),
     h("ul", { class: "stack-legend" },
       item.parts.map((part) => h("li", { "data-party": partyAttr(part) },
         h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
@@ -158,17 +158,13 @@ export function raceMoney(race, onCompare = null) {
   const [first] = comparable(race);
   let button = null;
   if (onCompare && first) {
-    button = h("button", { type: "button", class: "icon-btn compare-btn with-icon" }, icon("bars"), "Compare candidates");
-    button.addEventListener("click", onCompare);
+    button = h("button", { type: "button", class: "icon-btn compare-btn with-icon", on: { click: onCompare } },
+      icon("bars"), "Compare candidates");
   }
   return race.cards.map((card) =>
     h("div", { class: "race-money" },
       card.breakdowns.map((b, j) => breakdownBlock(b, partyOf, card === first && j === 0 ? button : null)),
-      h("p", { class: "fine" },
-        `From ${card.label}`,
-        card.as_of ? `, ${AS_OF_WORDS[card.source] || "reports through"} ${formatDate(card.as_of, SHORT_DATE)}` : "",
-        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
-        howCounted(card))));
+      sourceLine(card)));
 }
 
 function cardPanel(card) {
@@ -186,8 +182,7 @@ function cardPanel(card) {
       : null,
     (card.breakdowns || []).map((b) => breakdownBlock(b)),
     card.links.length ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label)))) : null,
-    h("p", { class: "fine" }, asOf(card), card.as_of && card.url ? " · " : null, card.url ? extLink(card.url, `Open ${card.label}`) : null,
-      howCounted(card)),
+    sourceLine(card),
   );
 }
 

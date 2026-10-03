@@ -3,6 +3,7 @@
 
 import "./chrome.js";
 import { showRememberedAddress } from "./address.js";
+import { onReturn } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
 
 showRememberedAddress();
@@ -22,9 +23,4 @@ window.addEventListener("hashchange", openLinkedAnswer);
 
 // The address may have changed on the ballot page since this page was drawn (another tab,
 // or the browser's Back button showing this page as it was left).
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) showRememberedAddress();
-});
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) showRememberedAddress();
-});
+onReturn(showRememberedAddress);

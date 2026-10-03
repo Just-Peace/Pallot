@@ -3,15 +3,18 @@
 // phone, a top bar; see topbar.js); the main area has the progress strip and the races, each
 // one collapsible.
 
-import { isPaneCollapsed, onPaneToggle, setPaneCollapsed } from "./chrome.js";
+import { isPaneCollapsed, narrow, onPaneToggle, setPaneCollapsed } from "./chrome.js";
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { openCompare } from "./compare.js";
 import { syncMap } from "./district-map.js";
-import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
+import {
+  $, autosave, closeOnBackdrop, dialogHead, extLink, h, initials, onFrame, onReturn, safeUrl, setStatus as showStatus, slug, trackHeight,
+} from "./dom.js";
+import { formatDate, listed, plural } from "./format.js";
 import { hydrateIcons, icon } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
-import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
+import { GROUP_LABELS, GROUP_ORDER, STATES, candidatePills } from "./labels.js";
 import { Picks, WRITE_IN, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
@@ -21,7 +24,6 @@ import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
 import { openPanel } from "./topbar.js";
 
-const $ = (selector) => document.querySelector(selector);
 const form = $("#lookup-form");
 const addressInput = $("#address");
 const electionSelect = $("#election");
@@ -57,8 +59,7 @@ let editingDistricts = false;
 // ---- status line (only while working, or when something went wrong) -------------------
 
 function setStatus(message, kind = "info") {
-  statusBox.className = `status status-${kind}`;
-  statusBox.textContent = message || "";
+  showStatus(statusBox, message, kind);
   if (message && kind === "error") showAddressPanel(); // the line is under the address
 }
 
@@ -258,7 +259,7 @@ function precinctSources(d) {
     const value = kind === "jp" ? d.jp ?? d.constable : d[kind];
     if (source && (source === "you" || value != null)) groups.set(source, [...(groups.get(source) || []), PRECINCT_NAMES[kind]]);
   }
-  const named = (names) => `${names.join(" and ")} ${names.length > 1 ? "precincts" : "precinct"}`;
+  const named = (names) => `${listed(names)} ${names.length > 1 ? "precincts" : "precinct"}`;
   const county = d.county_source;
   const from = {
     you: () => "you entered",
@@ -275,7 +276,7 @@ const NOT_UP_LABELS = { sd: "State Senate", sboe: "SBOE" };
 function notUpNote(d) {
   const names = (d.not_up || []).filter((kind) => d[kind] != null).map((kind) => `${NOT_UP_LABELS[kind]} ${d[kind]}`);
   if (!names.length) return null;
-  return h("p", { class: "district-note" }, `${names.join(" and ")} ${names.length > 1 ? "aren't" : "isn't"} up for election this time.`);
+  return h("p", { class: "district-note" }, `${listed(names)} ${names.length > 1 ? "aren't" : "isn't"} up for election this time.`);
 }
 
 function districtRow(...items) {
@@ -283,10 +284,6 @@ function districtRow(...items) {
   return shown.length
     ? h("p", { class: "district-line" }, shown.map((item, i) => [i ? h("span", { class: "sep" }, " · ") : null, item]))
     : null;
-}
-
-function listed(names) {
-  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : names[0];
 }
 
 // " U.S. House and SBOE districts you entered."
@@ -345,22 +342,19 @@ function renderDistricts() {
 function districtActions(d) {
   const label = "Edit your districts";
   const pencil = h("button", { type: "button", class: "icon-only", id: "districts-edit", "aria-label": label, title: label,
-    "aria-pressed": String(editingDistricts) }, icon("edit"));
-  pencil.addEventListener("click", () => setEditingDistricts(!editingDistricts));
+    "aria-pressed": String(editingDistricts), on: { click: () => setEditingDistricts(!editingDistricts) } }, icon("edit"));
   const yours = Boolean(d.entered?.length) || Object.values(d.precinct_sources || {}).includes("you");
   const back = yours ? "Reset to the districts VoteBot looked up"
     : "Reset: nothing to reset, these are the districts VoteBot looked up";
-  const reset = h("button", { type: "button", class: "icon-only", "aria-label": back, title: back, disabled: !yours },
-    icon("reset"));
-  reset.addEventListener("click", () => updateDistricts(null));
+  const reset = h("button", { type: "button", class: "icon-only", "aria-label": back, title: back, disabled: !yours,
+    on: { click: () => updateDistricts(null) } }, icon("reset"));
   return h("div", { class: "district-actions" }, pencil, reset);
 }
 
 // The card's lines with their open boxes. It sends only the numbers the voter changed, on top of
 // the ones they entered before; the rest keep following the address, the county and Ballotpedia.
 function districtsForm(rows, shown) {
-  const cancel = h("button", { class: "btn small ghost", type: "button" }, "Cancel");
-  cancel.addEventListener("click", () => setEditingDistricts(false));
+  const cancel = h("button", { class: "btn small ghost", type: "button", on: { click: () => setEditingDistricts(false) } }, "Cancel");
   const buttons = [h("button", { class: "btn small primary", type: "submit" }, "Update my ballot"), cancel];
   const form = h("form", { class: "districts-form", id: "districts-form", "aria-label": "Your districts" },
     rows, h("div", { class: "button-row" }, buttons));
@@ -390,13 +384,12 @@ const PRECINCT_WORDS = { commissioner: "commissioner", jp: "justice of the peace
 function precinctPrompt(waiting, missing) {
   const count = waiting.races.length;
   const one = missing.length === 1;
-  const enter = h("button", { type: "button", class: "link-btn" }, one ? "Enter it" : "Enter them");
-  enter.addEventListener("click", openPrecincts);
-  const see = h("button", { type: "button", class: "link-btn" }, one && count === 1 ? "See the race" : "See the races");
-  see.addEventListener("click", () => {
+  const enter = h("button", { type: "button", class: "link-btn", on: { click: openPrecincts } }, one ? "Enter it" : "Enter them");
+  const seeRaces = () => {
     const first = $("#maybe-precinct .race");
     if (first) goTo(first);
-  });
+  };
+  const see = h("button", { type: "button", class: "link-btn", on: { click: seeRaces } }, one && count === 1 ? "See the race" : "See the races");
   // it names the precincts it asks for, since the card also shows the election precinct
   const asked = one ? `your ${PRECINCT_WORDS[missing[0]]} precinct` : "your commissioner and justice of the peace precincts";
   const precinct = ballot.districts.election_precinct;
@@ -470,7 +463,7 @@ function renderKeyDates() {
   card.hidden = !contents;
 }
 
-const showPickedButton = h("button", { type: "button", class: "link-btn" }, "Show them");
+const showPickedButton = h("button", { type: "button", class: "link-btn", on: { click: () => setHidePicked(false) } }, "Show them");
 const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
 
 function renderMessages() {
@@ -519,8 +512,6 @@ function renderSections() {
   jump.hidden = !items.length;
 }
 
-const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
-
 // "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
 // that may not be on the ballot aren't counted.
 function updateProgress() {
@@ -553,22 +544,16 @@ function updateProgress() {
 function collapsibleCard(key, { title, meta, body }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
-  const toggle = h("button", { type: "button", class: "race-toggle", "aria-controls": bodyId },
+  const fold = () => {
+    picks.setCollapsed(key, !picks.isCollapsed(key));
+    redraw.get(key)?.();
+  };
+  const toggle = h("button", { type: "button", class: "race-toggle", "aria-controls": bodyId, on: { click: fold } },
     h("span", { class: "chevron", "aria-hidden": "true" }),
     h("span", { class: "race-name" }, title),
     status,
     meta ? h("span", { class: "race-meta" }, meta) : null);
-  const clear = h("button", { type: "button", class: "icon-btn with-icon clear-pick", hidden: true,
-    "aria-label": `Clear your pick for ${title}`, title: "Clear pick" }, icon("x"), "Clear");
-  const bodyElement = h("div", { class: "race-body", id: bodyId }, body);
-  const article = h("article", { class: "race", "data-race": key },
-    h("header", { class: "race-head" }, h("h3", {}, toggle), clear),
-    bodyElement);
-  toggle.addEventListener("click", () => {
-    picks.setCollapsed(key, !picks.isCollapsed(key));
-    redraw.get(key)?.();
-  });
-  clear.addEventListener("click", () => {
+  const clearPick = () => {
     const before = picks.picked(key);
     picks.set(key, []);
     refresh(key);
@@ -580,7 +565,13 @@ function collapsibleCard(key, { title, meta, body }) {
         refresh(key);
       },
     });
-  });
+  };
+  const clear = h("button", { type: "button", class: "icon-btn with-icon clear-pick", hidden: true,
+    "aria-label": `Clear your pick for ${title}`, title: "Clear pick", on: { click: clearPick } }, icon("x"), "Clear");
+  const bodyElement = h("div", { class: "race-body", id: bodyId }, body);
+  const article = h("article", { class: "race", "data-race": key },
+    h("header", { class: "race-head" }, h("h3", {}, toggle), clear),
+    bodyElement);
   return {
     article,
     show(statusText, done) {
@@ -652,11 +643,11 @@ function raceCard(race) {
   return card.article;
 }
 
-function avatar(candidate, extraClass = "") {
+function avatar(candidate, extraClass = null) {
   const src = safeUrl(candidate.photo_url);
   return src
-    ? h("img", { class: `avatar ${extraClass}`, src, alt: "", loading: "lazy", referrerpolicy: "no-referrer" })
-    : h("span", { class: `avatar ${extraClass}`, "aria-hidden": "true" }, initials(candidate.name));
+    ? h("img", { class: ["avatar", extraClass], src, alt: "", loading: "lazy", referrerpolicy: "no-referrer" })
+    : h("span", { class: ["avatar", extraClass], "aria-hidden": "true" }, initials(candidate.name));
 }
 
 // What to search the web for: the candidate plus the office and place, so common names find the right person.
@@ -672,22 +663,18 @@ function searchQuery(race, candidate) {
 }
 
 function searchLink(race, candidate, className, label) {
-  const query = searchQuery(race, candidate);
-  return h("a", {
+  return extLink(searchHref(searchQuery(race, candidate)), label, {
     class: className,
-    href: searchHref(query),
-    target: "_blank",
-    rel: "noopener noreferrer",
     title: `Search ${currentEngine().label} for ${candidate.name}`,
     "aria-label": `Search the web for ${candidate.name} (opens in a new tab)`,
-  }, label);
+  });
 }
 
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
   const id = slug(candidate.key);
-  const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id: `pick-${id}`, class: "pick-input" });
-  input.addEventListener("change", () => choose(race, candidate.key, input.checked));
+  const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id: `pick-${id}`, class: "pick-input",
+    on: { change: (event) => choose(race, candidate.key, event.target.checked) } });
 
   const noteText = picks.note(candidate.key);
   const textarea = h("textarea", { id: `note-${id}-text`, rows: "2", placeholder: "Your thoughts on this candidate…" });
@@ -695,37 +682,30 @@ function candidateRow(race, candidate) {
   const saved = h("span", { class: "saved", "aria-live": "polite" });
   const noteBox = h("div", { class: "note", id: `note-${id}`, hidden: !noteText },
     h("label", { for: `note-${id}-text` }, `Your note on ${candidate.name}`), textarea, saved);
-  const noteButton = h("button", {
-    type: "button", class: `icon-btn note-btn${noteText ? " has-note" : ""}`,
-    "aria-expanded": String(Boolean(noteText)), "aria-controls": `note-${id}`,
-  }, "✎ Note");
-  noteButton.addEventListener("click", () => {
+  const openNote = () => {
     const opening = noteBox.hidden;
     noteBox.hidden = !opening;
     noteButton.setAttribute("aria-expanded", String(opening));
     if (opening) textarea.focus();
-  });
-  let timer;
-  const save = () => {
-    clearTimeout(timer);
+  };
+  const noteButton = h("button", {
+    type: "button", class: ["icon-btn note-btn", noteText && "has-note"],
+    "aria-expanded": String(Boolean(noteText)), "aria-controls": `note-${id}`, on: { click: openNote },
+  }, "✎ Note");
+  autosave(textarea, () => {
     picks.setNote(candidate.key, textarea.value);
     hideToast(); // an Undo of "Clear picks" would now lose this
     noteButton.classList.toggle("has-note", Boolean(textarea.value.trim()));
     saved.textContent = "Saved";
     setTimeout(() => { saved.textContent = ""; }, 1500);
-  };
-  textarea.addEventListener("input", () => {
-    clearTimeout(timer);
-    timer = setTimeout(save, 400);
-  });
-  textarea.addEventListener("change", save); // on leaving the box, e.g. for another page
+  }, 400);
 
   const sources = candidate.cards.length;
   const unflagged = likelyUnflagged(candidate); // likely matches with no badge to show the "?"
-  const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources },
+  const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources,
+    on: { click: () => showDetails(race, race.candidates.indexOf(candidate)) } },
     sources ? `Details · ${plural(sources, "source")}` : "No details",
     unflagged.length ? likelyFlag(`Likely match: ${unflagged.join(", ")}`) : null);
-  detailsButton.addEventListener("click", () => showDetails(race, race.candidates.indexOf(candidate)));
 
   return h(
     "li",
@@ -736,10 +716,7 @@ function candidateRow(race, candidate) {
         avatar(candidate),
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
-          h("span", { class: "cand-sub" },
-            partyPill(candidate),
-            candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,
-            candidate.write_in ? h("span", { class: "pill" }, "Write-in") : null))),
+          h("span", { class: "cand-sub" }, candidatePills(candidate)))),
       h("div", { class: "cand-actions" }, noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"))),
     badgeList(candidate),
     noteBox,
@@ -761,21 +738,14 @@ function writeInRow(race) {
     choose(race, WRITE_IN, input.checked);
     if (input.checked) name.focus();
   });
-  let timer;
-  const save = () => {
-    clearTimeout(timer);
+  autosave(name, () => {
     picks.setWriteIn(race.key, name.value);
     const typed = Boolean(name.value.trim());
     const picked = picks.picked(race.key).includes(WRITE_IN);
     const full = multi && !picked && picks.picked(race.key).length >= race.seats;
     if (typed !== picked && !full) choose(race, WRITE_IN, typed);
     else refresh(race.key); // the collapsed line shows the new name
-  };
-  name.addEventListener("input", () => {
-    clearTimeout(timer);
-    timer = setTimeout(save, 300);
-  });
-  name.addEventListener("change", save); // on leaving the box, e.g. for another page
+  }, 300);
   const note = STATES[ballot.location.state]?.writeInNote;
   const hint = note && race.candidates.some((c) => c.write_in) ? `${note} The ones who filed for this race are listed above.` : note;
   return h(
@@ -823,9 +793,8 @@ function setAllCollapsed(collapsed) {
 // ---- maybe sections, precincts, propositions ----------------------------------------
 
 function precinctLink() {
-  const button = h("button", { type: "button", class: "link-btn" }, "Enter your commissioner and JP precincts");
-  button.addEventListener("click", openPrecincts);
-  return h("p", { class: "precinct-link" }, button);
+  return h("p", { class: "precinct-link" },
+    h("button", { type: "button", class: "link-btn", on: { click: openPrecincts } }, "Enter your commissioner and JP precincts"));
 }
 
 function renderMaybe() {
@@ -843,11 +812,11 @@ function measureCard(measure) {
   const key = `measure:${measure.key}`;
   const name = `measure-${slug(measure.key)}`;
   const options = [["for", "For"], ["against", "Against"]].map(([value, label]) => {
-    const input = h("input", { type: "radio", name, id: `${name}-${value}`, value });
-    input.addEventListener("change", () => {
+    const vote = () => {
       picks.set(key, [value]);
       settle(key, true);
-    });
+    };
+    const input = h("input", { type: "radio", name, id: `${name}-${value}`, value, on: { change: vote } });
     return { value, input, label: h("label", { class: "measure-option", for: `${name}-${value}` }, input, label) };
   });
   const body = [
@@ -883,16 +852,16 @@ function renderMeasures() {
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
 function showDetails(race, index, focus = null) {
   const candidate = race.candidates[index];
-  const pickButton = h("button", { type: "button", class: "btn primary" });
+  const pickOrUndo = () => {
+    choose(race, candidate.key, !picks.isPicked(race.key, candidate.key));
+    syncPickButton();
+  };
+  const pickButton = h("button", { type: "button", class: "btn primary", on: { click: pickOrUndo } });
   const syncPickButton = () => {
     const on = picks.isPicked(race.key, candidate.key);
     pickButton.textContent = on ? "✓ Picked (undo)" : `Pick ${candidate.name}`;
     pickButton.classList.toggle("ghost", on);
   };
-  pickButton.addEventListener("click", () => {
-    choose(race, candidate.key, !picks.isPicked(race.key, candidate.key));
-    syncPickButton();
-  });
   syncPickButton();
   const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
   pickButton.disabled = multiFull;
@@ -900,44 +869,37 @@ function showDetails(race, index, focus = null) {
   const tabs = h("div", { class: "details-tabs" });
   if (candidate.cards.length) renderTabs(tabs, candidate.cards, `d-${slug(candidate.key)}`);
   else tabs.append(h("p", { class: "muted details-empty" }, "No source has details on this candidate yet."));
-  const closeButton = h("button", { type: "button", class: "icon-btn close", "aria-label": "Close" }, "✕");
-  closeButton.addEventListener("click", () => details.close());
 
   const count = race.candidates.length;
   const step = (offset, label, symbol) => {
     const other = race.candidates[index + offset];
-    const button = h("button", {
+    return h("button", {
       type: "button", class: "icon-btn step", disabled: !other,
       "aria-label": other ? `${label} candidate: ${other.name}` : `No ${label.toLowerCase()} candidate`,
-      title: other ? other.name : null,
+      title: other ? other.name : null, on: { click: () => showDetails(race, index + offset, label.toLowerCase()) },
     }, symbol);
-    button.addEventListener("click", () => showDetails(race, index + offset, label.toLowerCase()));
-    return button;
   };
   const steps = count > 1 ? { previous: step(-1, "Previous", "‹"), next: step(1, "Next", "›") } : {};
 
+  const { head, close } = dialogHead(details, [
+    avatar(candidate, "large"),
+    h("div", { class: "details-title" },
+      h("h2", { id: "details-name" }, candidate.name),
+      h("p", { class: "muted" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
+      h("p", { class: "cand-sub" }, candidatePills(candidate))),
+  ], steps.previous, steps.next);
   details.replaceChildren(
-    h("div", { class: "details-head" },
-      avatar(candidate, "large"),
-      h("div", { class: "details-title" },
-        h("h2", { id: "details-name" }, candidate.name),
-        h("p", { class: "muted" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
-        h("p", { class: "cand-sub" }, partyPill(candidate), candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null)),
-      h("div", { class: "details-nav" }, steps.previous, steps.next, closeButton)),
+    head,
     tabs,
     h("div", { class: "details-foot" }, searchLink(race, candidate, "btn ghost", `Search the web for ${candidate.name} ↗`), pickButton),
   );
   if (!details.open) details.showModal();
   details.scrollTop = 0;
   const pressed = steps[focus];
-  (pressed && !pressed.disabled ? pressed : closeButton).focus();
+  (pressed && !pressed.disabled ? pressed : close).focus();
 }
 
-for (const dialog of [details, compareDialog]) {
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog) dialog.close(); // click on the backdrop
-  });
-}
+for (const dialog of [details, compareDialog, printDialog]) closeOnBackdrop(dialog);
 
 // ---- print / clear ------------------------------------------------------------------
 
@@ -993,7 +955,6 @@ function setHidePicked(on) {
 }
 
 $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
-showPickedButton.addEventListener("click", () => setHidePicked(false));
 $("#collapse-on-pick").checked = Boolean(uiPref("collapseOnPick"));
 $("#collapse-on-pick").addEventListener("change", (event) => setUiPref("collapseOnPick", event.target.checked));
 $("#expand-all").addEventListener("click", () => {
@@ -1074,7 +1035,6 @@ document.addEventListener("keydown", (event) => {
 // On a phone (or a narrow window) the section chips join the sticky strip, and View, Clear
 // picks and Print move under the heading, where they scroll away. So what stays in view is
 // the progress, Next and the sections. With the left pane folded, the chips join the strip too.
-const narrow = matchMedia("(max-width: 960px)");
 function placeForWidth() {
   if (narrow.matches) $(".ballot-head").after(tools);
   else strip.append(tools);
@@ -1087,10 +1047,9 @@ placeForWidth();
 
 // Links to a section, Next and j/k scroll to just below the strip, however tall it is, and
 // each race's heading sticks right under it (--strip-h).
-new ResizeObserver(() => {
-  document.documentElement.style.scrollPaddingTop = `${strip.offsetHeight + 12}px`;
-  document.documentElement.style.setProperty("--strip-h", `${strip.getBoundingClientRect().height}px`);
-}).observe(strip);
+trackHeight(strip, "--strip-h", (height) => {
+  document.documentElement.style.scrollPaddingTop = `${height + 12}px`;
+});
 
 // ---- the section on screen ------------------------------------------------------------
 
@@ -1120,16 +1079,7 @@ function markCurrentSection() {
   }
 }
 
-// At most once a frame while scrolling.
-let marking = false;
-function markSoon() {
-  if (marking) return;
-  marking = true;
-  requestAnimationFrame(() => {
-    marking = false;
-    markCurrentSection();
-  });
-}
+const markSoon = onFrame(markCurrentSection);
 addEventListener("scroll", markSoon, { passive: true });
 addEventListener("resize", markSoon);
 
@@ -1147,14 +1097,8 @@ hydrateIcons();
 // Settings live on their own page. If they changed while this page was open (in another tab,
 // or kept by the browser for the Back button), start over so the ballot reflects them.
 const settingsSeen = settingsStamp();
-function reloadIfSettingsChanged() {
+onReturn(() => {
   if (settingsStamp() !== settingsSeen) location.reload();
-}
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) reloadIfSettingsChanged();
-});
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) reloadIfSettingsChanged();
 });
 
 // Picks made in another tab show here too, and a pick made here doesn't undo them.

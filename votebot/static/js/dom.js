@@ -1,18 +1,33 @@
 // Small DOM helpers. Everything from the API is inserted as text, never as HTML.
 
-export function h(tag, props = {}, ...children) {
-  const el = document.createElement(tag);
+export const $ = (selector) => document.querySelector(selector);
+
+// ``class`` is a string or an array, whose falsy entries are dropped; ``on`` is { event: listener }.
+function build(el, props, children) {
   for (const [key, value] of Object.entries(props || {})) {
     if (value == null || value === false) continue;
-    if (key === "class") el.className = value;
-    else if (value === true) el.setAttribute(key, "");
-    else el.setAttribute(key, value);
+    if (key === "on") {
+      for (const [type, listener] of Object.entries(value)) el.addEventListener(type, listener);
+    } else if (key === "class") {
+      const names = [value].flat().filter(Boolean).join(" ");
+      if (names) el.setAttribute("class", names);
+    } else {
+      el.setAttribute(key, value === true ? "" : value);
+    }
   }
   for (const child of children.flat(Infinity)) {
     if (child == null || child === false) continue;
     el.append(child instanceof Node ? child : document.createTextNode(String(child)));
   }
   return el;
+}
+
+export function h(tag, props = {}, ...children) {
+  return build(document.createElement(tag), props, children);
+}
+
+export function svg(tag, props = {}, ...children) {
+  return build(document.createElementNS("http://www.w3.org/2000/svg", tag), props, children);
 }
 
 // Only http(s) and mailto links are ever rendered.
@@ -26,9 +41,11 @@ export function safeUrl(url) {
   }
 }
 
+// A link that opens in a new tab (mailto: aside). ``label`` is text, a node or a list of them;
+// without a usable url it's shown unlinked.
 export function extLink(url, label, props = {}) {
   const href = safeUrl(url);
-  if (!href) return document.createTextNode(label);
+  if (!href) return h("span", {}, label);
   const external = !href.startsWith("mailto:");
   return h("a", { href, ...(external ? { target: "_blank", rel: "noopener noreferrer" } : {}), ...props }, label);
 }
@@ -49,34 +66,6 @@ export function linkedText(text) {
   return parts;
 }
 
-export function formatDate(iso, options = { month: "long", day: "numeric", year: "numeric" }) {
-  if (!iso) return "";
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? new Date(`${iso}T12:00:00`) : new Date(iso);
-  return Number.isNaN(date.getTime()) ? iso : date.toLocaleDateString(undefined, options);
-}
-
-export function relativeTime(iso) {
-  if (!iso) return "never";
-  const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return iso;
-  const seconds = Math.round((Date.now() - then) / 1000);
-  const steps = [[60, "second"], [60, "minute"], [24, "hour"], [30, "day"], [12, "month"], [Infinity, "year"]];
-  let value = seconds;
-  for (const [size, unit] of steps) {
-    if (Math.abs(value) < size) {
-      return new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(-value, unit);
-    }
-    value = Math.round(value / size);
-  }
-  return iso;
-}
-
-export function formatBytes(bytes) {
-  if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
-  if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${bytes} B`;
-}
-
 export function initials(name) {
   const words = name.split(/\s+/).filter((w) => /^[A-Za-z]/.test(w));
   return ((words[0]?.[0] || "") + (words.length > 1 ? words[words.length - 1][0] : "")).toUpperCase();
@@ -84,4 +73,74 @@ export function initials(name) {
 
 export function slug(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+// A status line: ``kind`` is busy, ok, error or info.
+export function setStatus(box, message, kind = "info") {
+  box.className = `status status-${kind}`;
+  box.textContent = message || "";
+}
+
+// ``run``, at most once a frame however often the returned function is called (scrolling).
+export function onFrame(run) {
+  let pending = false;
+  return () => {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      run();
+    });
+  };
+}
+
+// Keeps ``element``'s height in the page's CSS variable ``name``, and passes it to ``then``.
+export function trackHeight(element, name, then = null) {
+  new ResizeObserver(() => {
+    const height = element.getBoundingClientRect().height;
+    document.documentElement.style.setProperty(name, `${height}px`);
+    then?.(height);
+  }).observe(element);
+}
+
+// Runs ``run`` when the voter comes back to the page: from another tab, or with Back, which can
+// show the page as it was left.
+export function onReturn(run) {
+  addEventListener("pageshow", (event) => {
+    if (event.persisted) run();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) run();
+  });
+}
+
+// Saves a box ``wait`` ms after the last keystroke, and at once on leaving it (e.g. for another page).
+export function autosave(field, save, wait) {
+  let timer = null;
+  const now = () => {
+    clearTimeout(timer);
+    save();
+  };
+  field.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(now, wait);
+  });
+  field.addEventListener("change", now);
+}
+
+// A dialog's heading row: ``content``, then ``buttons`` and ✕, which closes it. ``close`` is
+// the ✕, to focus.
+export function dialogHead(dialog, content, ...buttons) {
+  const close = h("button", { type: "button", class: "icon-btn close", "aria-label": "Close", on: { click: () => dialog.close() } }, "✕");
+  return { head: h("div", { class: "details-head" }, content, h("div", { class: "details-nav" }, buttons, close)), close };
+}
+
+// A click on the backdrop, outside the dialog's box, closes it, with no returnValue.
+export function closeOnBackdrop(dialog) {
+  dialog.addEventListener("click", (event) => {
+    if (event.target !== dialog) return;
+    const box = dialog.getBoundingClientRect();
+    const inside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
+    if (!inside) dialog.close("");
+  });
 }

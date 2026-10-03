@@ -3,16 +3,15 @@
 // is a tight group of bars, one per candidate; named donors and spenders are columns, with a
 // name more than one candidate has flagged. The server builds the Comparison; this draws it.
 
-import { extLink, formatDate, h, slug } from "./dom.js";
+import { dialogHead, h, slug } from "./dom.js";
+import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { partyName } from "./labels.js";
 import { setUiPref, uiPref } from "./storage.js";
-import { COUNT, DOLLARS, DOLLARS_SHORT, SHORT_DATE, comparable, howCounted, percent, renderTabs, tagBadge } from "./source-cards.js";
+import { bar, comparable, renderTabs, sourceLine, tagBadge } from "./source-cards.js";
 
 const SCALES = [["dollars", "Dollars"], ["share", "Share of their money"]];
 
-function counted(count, what) {
-  return count ? `${COUNT.format(count)} ${what}${count === 1 ? "" : "s"}` : "";
-}
+const counted = (count, what) => (count ? plural(count, what) : "");
 
 function amountText(amount, share) {
   return [
@@ -29,7 +28,7 @@ function legend(race, comparison, source) {
     const has = comparison.candidates.includes(candidate.key);
     const through = comparison.as_of[candidate.key];
     const sub = !has ? `No ${source} data` : dates.size > 1 && through ? `Reports through ${formatDate(through, SHORT_DATE)}` : null;
-    return h("li", { class: `cmp-chip${has ? "" : " missing"}`, "data-party": candidate.party || null },
+    return h("li", { class: ["cmp-chip", !has && "missing"], "data-party": candidate.party || null },
       h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
       h("span", { class: "cmp-chip-name" }, candidate.name),
       partyName(candidate) ? h("span", { class: "cmp-chip-sub" }, partyName(candidate)) : null,
@@ -43,12 +42,10 @@ function legend(race, comparison, source) {
 function barRow(value, candidate, largest, whole, what) {
   const { amount } = value;
   const share = whole && amount != null ? amount / whole : null;
-  const dollars = largest > 0 && amount ? Math.min(100, (amount / largest) * 100) : 0;
-  const shareWidth = share != null ? Math.min(100, Math.max(0, share * 100)) : dollars;
+  const dollars = largest > 0 && amount ? amount / largest : 0;
   return h("li", { class: "cmp-bar", "data-party": candidate?.party || null },
     h("span", { class: "cmp-name", title: candidate?.name }, candidate?.name || "Unknown"),
-    h("span", { class: "bar", "aria-hidden": "true" },
-      h("span", { style: `--w-dollars: ${dollars.toFixed(1)}%; --w-share: ${shareWidth.toFixed(1)}%` })),
+    bar({ dollars, share: share ?? dollars }),
     h("span", { class: "cmp-amount", title: amount != null ? DOLLARS.format(amount) : "No figure from this source" },
       amountText(amount, share)),
     h("span", { class: "cmp-count" }, counted(value.count, what)));
@@ -57,7 +54,7 @@ function barRow(value, candidate, largest, whole, what) {
 function barsSection(section, byKey) {
   const largest = Math.max(0, ...section.rows.flatMap((row) => row.values.map((v) => v.amount || 0)));
   const shares = Object.keys(section.totals).length > 0;
-  return h("section", { class: `cmp-section${shares ? " has-shares" : ""}` },
+  return h("section", { class: ["cmp-section", shares && "has-shares"] },
     h("h3", { class: "breakdown-title" }, section.title),
     h("div", { class: "cmp-grid" }, section.rows.map((row) =>
       h("div", { class: "cmp-group" },
@@ -71,11 +68,10 @@ function barsSection(section, byKey) {
 // ---- side-by-side columns --------------------------------------------------------------
 
 function entryRow(entry, largest, byKey, what) {
-  const width = largest > 0 && entry.amount ? Math.min(100, (entry.amount / largest) * 100) : 0;
   const others = entry.shared_with.map((key) => byKey.get(key)?.name).filter(Boolean);
   const note = [entry.note, counted(entry.count, what)].filter(Boolean).join(" · ");
   return h("li", {
-    class: `cmp-entry${entry.tone ? ` tone-${entry.tone}` : ""}${others.length ? " shared" : ""}`,
+    class: ["cmp-entry", entry.tone && `tone-${entry.tone}`, others.length && "shared"],
     "data-match": entry.match_key || null,
     tabindex: others.length ? "0" : null,
     title: others.length === 1 ? `Also in ${others[0]}'s list` : others.length ? `Also in the lists of ${others.join(", ")}` : null,
@@ -85,7 +81,7 @@ function entryRow(entry, largest, byKey, what) {
   h("span", { class: "cmp-amount", title: entry.amount != null ? DOLLARS.format(entry.amount) : null }, amountText(entry.amount, null)),
   note ? h("span", { class: "cmp-entry-note" }, note) : null,
   others.length ? h("span", { class: "cmp-also" }, `Also: ${others.join(", ")}`) : null,
-  h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width: ${width.toFixed(1)}%` })));
+  bar(largest > 0 && entry.amount ? entry.amount / largest : 0));
 }
 
 function columnsSection(section, comparison, byKey) {
@@ -135,11 +131,7 @@ function comparisonPanel(race) {
       legend(race, comparison, card.label),
       comparison.sections.map((section) =>
         (Object.keys(section.columns).length ? columnsSection(section, comparison, byKey) : barsSection(section, byKey))),
-      h("p", { class: "fine" },
-        `From ${card.label}`,
-        card.as_of ? `, reports through ${formatDate(card.as_of, SHORT_DATE)}` : "",
-        card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
-        howCounted(card)));
+      sourceLine(card));
   };
 }
 
@@ -148,12 +140,12 @@ function scaleToggle(dialog) {
   return h("fieldset", { class: "seg" },
     h("legend", { class: "sr-only" }, "Bar length"),
     SCALES.map(([value, label]) => {
-      const input = h("input", { type: "radio", name: "cmp-scale", value, checked: value === current });
-      input.addEventListener("change", () => {
+      const change = () => {
         dialog.dataset.scale = value;
         setUiPref("compareScale", value);
-      });
-      return h("label", { class: "seg-option" }, input, label);
+      };
+      return h("label", { class: "seg-option" },
+        h("input", { type: "radio", name: "cmp-scale", value, checked: value === current, on: { change } }), label);
     }));
 }
 
@@ -161,19 +153,15 @@ export function openCompare(dialog, race) {
   const cards = comparable(race);
   if (!cards.length) return;
   dialog.dataset.scale = uiPref("compareScale") === "share" ? "share" : "dollars";
-  const closeButton = h("button", { type: "button", class: "icon-btn close", "aria-label": "Close" }, "✕");
-  closeButton.addEventListener("click", () => dialog.close());
   const body = h("div", { class: "details-tabs" });
   const panel = comparisonPanel(race);
   if (cards.length > 1) renderTabs(body, cards, `cmp-${slug(race.key)}`, panel);
   else body.append(h("div", { class: "tab-panel" }, panel(cards[0])));
 
+  const { head, close } = dialogHead(dialog,
+    h("div", { class: "details-title" }, h("h2", { id: "compare-title" }, "Compare candidates"), h("p", { class: "muted" }, race.name)));
   dialog.replaceChildren(
-    h("div", { class: "details-head" },
-      h("div", { class: "details-title" },
-        h("h2", { id: "compare-title" }, "Compare candidates"),
-        h("p", { class: "muted" }, race.name)),
-      closeButton),
+    head,
     h("div", { class: "cmp-controls" },
       scaleToggle(dialog),
       h("p", { class: "fine" }, "Share: each bar is that part of the candidate's own money, so a small campaign's mix "
@@ -181,5 +169,5 @@ export function openCompare(dialog, race) {
     body,
   );
   dialog.showModal();
-  closeButton.focus();
+  close.focus();
 }

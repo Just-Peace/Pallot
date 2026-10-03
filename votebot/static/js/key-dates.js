@@ -3,7 +3,8 @@
 // registration, find where to vote, add every date to a calendar. The mail-ballot deadline
 // sits apart, in a closed "Voting by mail?", since most voters can't vote by mail.
 
-import { extLink, formatDate, h } from "./dom.js";
+import { extLink, h } from "./dom.js";
+import { formatDate } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES } from "./labels.js";
 
@@ -21,15 +22,16 @@ function calendarHref(date, event) {
   return `/api/key-dates.ics?${new URLSearchParams({ date, ...(event ? { event } : {}) })}`;
 }
 
-// A date (and ``extra`` after it), with a link to add it to a calendar while it's still to come.
+// The calendar icon after a date ``iso``, which adds ``event`` to a calendar, while it's still to come.
+function calendarLink(iso, electionDay, event, label) {
+  return daysUntil(iso) >= 0
+    ? h("a", { class: "cal-link", href: calendarHref(electionDay, event), download: "", title: label, "aria-label": label }, icon("calendar"))
+    : null;
+}
+
+// A date (and ``extra`` after it), with its calendar link.
 function dateWithCalendar(iso, electionDay, event, what, extra = "") {
-  const label = `Add “${what}” to your calendar`;
-  return [
-    formatDate(iso, DAY) + extra,
-    daysUntil(iso) >= 0
-      ? h("a", { class: "cal-link", href: calendarHref(electionDay, event), download: "", title: label, "aria-label": label }, icon("calendar"))
-      : null,
-  ];
+  return [formatDate(iso, DAY) + extra, calendarLink(iso, electionDay, event, `Add “${what}” to your calendar`)];
 }
 
 // The main list: register by, early voting, Election Day. The first that isn't over is the
@@ -64,7 +66,7 @@ function dateRows(dates, state) {
       : !isNext ? null
       : untilFirst <= 0 ? (row.first === row.last ? "today" : "open now")
       : untilFirst === 1 ? "tomorrow" : `in ${untilFirst} days`;
-    return h("div", { class: `key-date${passed ? " passed" : ""}${isNext ? " next" : ""}` },
+    return h("div", { class: ["key-date", passed && "passed", isNext && "next"] },
       h("dt", {}, row.label),
       h("dd", {}, row.value, when ? h("span", { class: "when" }, when) : null));
   });
@@ -78,11 +80,7 @@ function mailVoting(dates, state) {
     deadline ? h("p", {},
       "Your application must be received (not postmarked) by ", formatDate(deadline, DAY),
       daysUntil(deadline) < 0 ? " (passed)." : ".",
-      daysUntil(deadline) >= 0
-        ? h("a", { class: "cal-link", href: calendarHref(dates.election_day, "mail"), download: "",
-          title: "Add the mail-ballot deadline to your calendar", "aria-label": "Add the mail-ballot deadline to your calendar" },
-        icon("calendar"))
-        : null) : null);
+      calendarLink(deadline, dates.election_day, "mail", "Add the mail-ballot deadline to your calendar")) : null);
 }
 
 // The card's contents, or null when VoteBot has nothing for the address's state.
