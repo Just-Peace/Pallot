@@ -112,7 +112,6 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
       h("h1", {}, "My ballot picks"),
       h("p", { class: "election-day" }, electionLine(ballot, { day: true })),
       when ? h("p", {}, when) : null,
-      h("p", {}, ballot.location.matched_address || ballot.location.input_address),
       districts ? h("p", { class: "small" }, districts) : null),
     ...(rows ? tables : [h("p", {}, "No picks yet. Pick candidates on the ballot page, then print again.")]),
     h("footer", {},
