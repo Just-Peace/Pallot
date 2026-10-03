@@ -16,7 +16,7 @@ from votebot.config import DAY
 from votebot.http_cache import HttpCache, RequestSpec
 from votebot.text import display_time
 
-from .conftest import get_ballot, load
+from .conftest import ADDRESSES, get_ballot, load
 
 ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't have to read
 
@@ -222,6 +222,26 @@ PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]
 @pytest.mark.parametrize("path", ["/", "/favicon.svg", "/css/app.css"])  # the scripts: test_frontend_modules.py
 def test_static_pages(client, path):
     assert client.get(path).status_code == 200
+
+
+def test_static_files_are_kept_but_checked_before_each_use(client):
+    """After an update, no page mixes modules from the browser's cache with new ones."""
+    first = client.get("/js/dom.js")
+    assert first.headers["cache-control"] == "no-cache" and first.headers["etag"]
+    again = client.get("/js/dom.js", headers={"If-None-Match": first.headers["etag"]})
+    assert again.status_code == 304 and again.headers["cache-control"] == "no-cache"
+    assert client.get("/").headers["cache-control"] == "no-cache"
+
+
+def test_responses_are_gzipped_when_the_browser_asks(client):
+    plain = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]},
+                        headers={"Accept-Encoding": "identity"})
+    assert "content-encoding" not in plain.headers
+    zipped = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]},
+                         headers={"Accept-Encoding": "gzip"})
+    assert zipped.headers["content-encoding"] == "gzip" and int(zipped.headers["content-length"]) < len(plain.content) / 4
+    assert zipped.json().keys() == plain.json().keys()
+    assert client.get("/css/app.css", headers={"Accept-Encoding": "gzip"}).headers["content-encoding"] == "gzip"
 
 
 @pytest.mark.parametrize("page", PAGES)

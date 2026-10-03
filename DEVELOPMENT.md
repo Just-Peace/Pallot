@@ -23,6 +23,10 @@ A middleware in `api.py` guards the Settings actions from the voter's own browse
 - It refuses a POST or PUT that another page started: `Sec-Fetch-Site` other than `same-origin`, or an `Origin` that isn't the `Host`. That includes another port on localhost.
 - The tests' `make_app` allows `testserver`, TestClient's host name.
 
+How responses are sent:
+- **Static files with `Cache-Control: no-cache`** (`RevalidatedFiles` in `api.py`). The browser keeps them but asks each time, with the `ETag`, and gets a short 304 when nothing changed. Without it, the browser guessed how long each file stays fresh, and after an update a page could mix old modules with new ones and stop at an import error. The `/api` routes set their own `Cache-Control`, or none.
+- **Gzipped when the browser asks** (`GZipMiddleware`, at least 1000 bytes, level 6: the ballot is compressed on every lookup, and level 9 took nearly twice as long for 2 KB less). The ballot shrinks from about 850 KB to 64 KB, Leaflet from 424 KB to 110 KB. PNGs (the map tiles) are left alone, as Starlette excludes them.
+
 The live tests and `record_fixtures.py` call the real services. With `DEMO_KEY`, the FEC's rate limit is shared by everything on your IP address, VoteBot itself included.
 
 How the tests run:
@@ -134,7 +138,7 @@ Every page has an empty `<aside class="sidebar">`, and `chrome.js` draws the lef
 `chrome.js` also draws what else every page shares, so no page has its own:
 - **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). `trackHeight()` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear.
 - **Back to top:** it shows once the page has scrolled one screen.
-- **Folding the pane:** wider than 960px, « folds the pane to a 64px rail (`html.pane-collapsed`, which sets `--sidebar`), saved as `paneCollapsed` in `votebot.ui.v1`. The address card is hidden there, and the link names become tooltips.
+- **Folding the pane:** wider than 960px, « folds the pane to a 64px rail (`html.pane-collapsed`, which sets `--sidebar`), saved as `paneCollapsed` in `votebot.ui.v1`. `theme.js` sets the class before the first paint, so a folded pane doesn't show open while the modules load; `initChrome` then draws the toggle to match. The address card is hidden there, and the link names become tooltips.
   - `setPaneCollapsed()` and `onPaneToggle()` are exported. `ballot.js`'s `showAddressPanel()` unfolds the pane for the form, an error or a first visit, as `openPanel("address")` does on a phone.
 
 The address card's last line is the election (`electionLine()` in `ballot-shared.js`), saved with the card in `votebot.addressCard.v1`, so the other pages show it.

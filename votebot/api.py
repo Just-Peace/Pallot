@@ -13,8 +13,10 @@ from urllib.parse import urlsplit
 
 import httpx
 from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.types import Scope
 
 from . import __version__, ics
 from .admin import Admin, AdminError
@@ -95,6 +97,14 @@ async def warm_up(svc: Services) -> None:
     if svc.settings.enabled("trackaipac"):
         jobs.append(asyncio.to_thread(svc.trackaipac.name_index, "TX"))
     await asyncio.gather(*jobs, return_exceptions=True)
+class RevalidatedFiles(StaticFiles):
+    """The frontend's files, which the browser keeps but checks with their ETag before each use
+    (a short 304 when unchanged), so after an update no page mixes old modules with new ones."""
+
+    async def get_response(self, path: str, scope: Scope) -> Response:
+        response = await super().get_response(path, scope)
+        response.headers.setdefault("Cache-Control", "no-cache")
+        return response
 
 
 def create_app(
@@ -167,6 +177,7 @@ def create_app(
                 cache.close()
 
     app = FastAPI(title="VoteBot", version=__version__, lifespan=lifespan)
+    app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)
 
     def services(request: Request) -> Services:
         return request.app.state.svc
@@ -293,7 +304,7 @@ def create_app(
     def clear_all(request: Request) -> ActionResult:
         return admin(request).clear_all()
 
-    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
+    app.mount("/", RevalidatedFiles(directory=STATIC_DIR, html=True), name="static")
     return app
 
 
