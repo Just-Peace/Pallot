@@ -8,10 +8,13 @@
 // Wider than 960px, « folds the pane into a rail of icons (remembered as paneCollapsed in
 // votebot.ui.v1); the ballot then shows its sections as chips in the strip (onPaneToggle).
 
-import { h } from "./dom.js";
+import { h, onFrame, trackHeight } from "./dom.js";
 import { icon, logo } from "./icons.js";
 import { setUiPref, uiPref } from "./storage.js";
 import { initTopBar } from "./topbar.js";
+
+// Phones and narrow windows: app.css's breakpoint, where the pane becomes the top bar.
+export const narrow = matchMedia("(max-width: 960px)");
 
 const BALLOT = { href: "./", icon: "ballot", label: "Your ballot" };
 const PAGES = [
@@ -34,7 +37,7 @@ function pageList(pages, current) {
 
 // ---- folding the pane ------------------------------------------------------------------
 
-const paneToggle = h("button", { type: "button", class: "icon-only pane-toggle" });
+const paneToggle = h("button", { type: "button", class: "icon-only pane-toggle", on: { click: () => setPaneCollapsed(!isPaneCollapsed()) } });
 const paneListeners = [];
 
 export function isPaneCollapsed() {
@@ -61,8 +64,6 @@ export function setPaneCollapsed(collapsed) {
   if (Boolean(uiPref("paneCollapsed")) !== collapsed) setUiPref("paneCollapsed", collapsed);
   for (const listener of paneListeners) listener();
 }
-
-paneToggle.addEventListener("click", () => setPaneCollapsed(!isPaneCollapsed()));
 
 // ---- the pane ----------------------------------------------------------------------------
 
@@ -101,29 +102,19 @@ function renderFooter(app) {
     h("p", {}, "VoteBot is an unofficial helper: always check your county's official sample ballot. · ",
       h("a", { href: "about.html#credits" }, "Sources")));
   app.after(footer);
-  // The content, Back to top and the toasts keep clear of it, however many lines it wraps to.
-  new ResizeObserver(() => {
-    document.documentElement.style.setProperty("--footer-h", `${footer.offsetHeight}px`);
-  }).observe(footer);
+  trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
 }
 
 function renderToTop() {
-  const button = h("button", { type: "button", class: "to-top", "aria-label": "Back to top", title: "Back to top" }, icon("arrow-up"));
-  button.addEventListener("click", () => {
+  const top = () => {
     window.scrollTo({ top: 0 }); // smooth, unless reduced motion (the html's scroll-behavior)
     document.querySelector(".brand")?.focus({ preventScroll: true });
-  });
-  document.body.append(button);
-  let pending = false;
-  const sync = () => {
-    pending = false;
-    button.classList.toggle("shown", scrollY > innerHeight);
   };
-  addEventListener("scroll", () => {
-    if (pending) return;
-    pending = true;
-    requestAnimationFrame(sync);
-  }, { passive: true });
+  const button = h("button", { type: "button", class: "to-top", "aria-label": "Back to top", title: "Back to top", on: { click: top } },
+    icon("arrow-up"));
+  document.body.append(button);
+  const sync = () => button.classList.toggle("shown", scrollY > innerHeight);
+  addEventListener("scroll", onFrame(sync), { passive: true });
   sync();
 }
 

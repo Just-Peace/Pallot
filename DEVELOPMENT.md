@@ -49,7 +49,8 @@ votebot/
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html, favicon.svg,
                     vendor/leaflet/ (Leaflet 1.9.4, copied in), css/app.css,
                     js/ (ballot.js, key-dates.js, district-map.js, suggest.js, compare.js, settings.js,
-                    chrome.js, page.js, topbar.js, toast.js, source-cards.js, print.js, picks.js, storage.js, …)
+                    chrome.js, page.js, topbar.js, toast.js, source-cards.js, print.js, picks.js, storage.js,
+                    dom.js, format.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
@@ -126,16 +127,16 @@ Notes on how each source is called, beyond the README's table:
 Every page has an empty `<aside class="sidebar">`, and `chrome.js` draws the left pane into it: the brand, "Your ballot", the address card, and the other pages from its `PAGES` list, marking the current one. The ballot page puts its own parts in the aside: the form and status line (`data-slot="address"`) go under the address card, and the section list (`#jump`) above the other pages. `page.js` and `ballot.js` import `chrome.js` first, so the pane exists before their own code looks for it. The favicon is `favicon.svg`.
 
 `chrome.js` also draws what else every page shares, so no page has its own:
-- **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). A `ResizeObserver` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear.
+- **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). `trackHeight()` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear.
 - **Back to top:** it shows once the page has scrolled one screen.
 - **Folding the pane:** wider than 960px, « folds the pane to a 64px rail (`html.pane-collapsed`, which sets `--sidebar`), saved as `paneCollapsed` in `votebot.ui.v1`. The address card is hidden there, and the link names become tooltips.
   - `setPaneCollapsed()` and `onPaneToggle()` are exported. `ballot.js`'s `showAddressPanel()` unfolds the pane for the form, an error or a first visit, as `openPanel("address")` does on a phone.
 
 The address card's last line is the election (`electionLine()` in `ballot.js`), saved with the card in `votebot.addressCard.v1`, so the other pages show it.
 
-At 960px and less (a phone), the left pane becomes a top bar. `chrome.js` then calls `initTopBar()` in `topbar.js`, which adds its two buttons (the address and Menu). The empty aside is already the closed bar's height, so the page doesn't move when it's drawn. On the ballot, `placeForWidth()` in `ballot.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. With the pane folded, wider than that, only the section list moves into the strip. The chip styles are scoped to `.progress-strip` for this reason.
+At 960px and less (a phone; `narrow` in `chrome.js`, the same breakpoint as `app.css`), the left pane becomes a top bar. `chrome.js` then calls `initTopBar()` in `topbar.js`, which adds its two buttons (the address and Menu). The empty aside is already the closed bar's height, so the page doesn't move when it's drawn. On the ballot, `placeForWidth()` in `ballot.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. With the pane folded, wider than that, only the section list moves into the strip. The chip styles are scoped to `.progress-strip` for this reason.
 
-A `ResizeObserver` keeps `scroll-padding-top` at the strip's height, so links, Next and `j`/`k` land below it. It also keeps `--strip-h` at that height, which is where each race's `.race-head` sticks (`position: sticky`) until its card has scrolled by. The card is `overflow: clip`, not `hidden`: `clip` keeps the heading inside the rounded corners without making the card a scroll container, which would stop the heading sticking to the window.
+`trackHeight()` keeps `scroll-padding-top` at the strip's height, so links, Next and `j`/`k` land below it. It also keeps `--strip-h` at that height, which is where each race's `.race-head` sticks (`position: sticky`) until its card has scrolled by. The card is `overflow: clip`, not `hidden`: `clip` keeps the heading inside the rounded corners without making the card a scroll container, which would stop the heading sticking to the window.
 
 `collapsibleCard()` gives races and propositions their heading. Once there's a pick, the heading shows it (expanded too) with ✕ Clear, which clears it at once and offers Undo. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `votebot.ui.v1`.
 
@@ -153,6 +154,13 @@ The strip comes first so that Next and the section chips stay on a phone's first
 Clearing what the voter keeps in the browser (Clear picks on the ballot, and the two Clear buttons in Settings) happens at once, then `toast.js` offers Undo for 10 seconds. The clear functions in `picks.js` return what they removed, for Undo to put back. Clearing what the server saved can't be undone, so those buttons still ask first.
 
 Everything kept in the browser goes through `storage.js`: the keys, `readJson`/`writeJson` (which swallow blocked storage), and `uiPref`/`setUiPref` for the view settings in `votebot.ui.v1`. `picks.js` keeps `Picks`, one bucket per election in `votebot.picks.v1`. Each save re-reads the stored picks and replaces only its own election's bucket, so two ballot tabs don't overwrite each other's elections, and a `storage` listener (`onPicksChanged`) redraws the ballot when another tab changes them. If storage refuses a save, the bucket is kept in memory until the page closes.
+
+The modules share their small helpers rather than writing them out again:
+- `dom.js`: `h()` and `svg()` build elements (`class` takes a string or an array whose falsy entries are dropped, `on: { click }` adds listeners), `$`, `extLink` (a new-tab link, its label text or nodes, shown unlinked without a usable url), `setStatus` for a status line, `onFrame` (at most once a frame), `trackHeight` (an element's height in a CSS variable), `onReturn` (the voter comes back to the page), `autosave` for the note and write-in boxes, and `dialogHead()` and `closeOnBackdrop()` for the dialogs.
+- `format.js`: dates, money, counts, sizes, `plural` and `listed` ("A, B and C").
+- `source-cards.js`: `sourceLine(card)`, the line under every card, and `bar(fraction)`. `labels.js`: `candidatePills(candidate)`, on the candidate's row and in Details.
+
+`tests/test_frontend_modules.py` follows the imports from each page's entry scripts: every module must be served and reached, and every imported name exported, since a wrong import name blanks a page without failing anything else.
 
 ## trackaipac_cache
 

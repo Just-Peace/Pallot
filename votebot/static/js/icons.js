@@ -1,6 +1,8 @@
 // Small line icons (paths from the MIT-licensed Feather set), drawn inline so nothing is
 // loaded from elsewhere. Use icon("pin") in code, or <span data-icon="pin"></span> in HTML.
 
+import { svg } from "./dom.js";
+
 const PATHS = {
   pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
   list: '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>'
@@ -32,27 +34,19 @@ const PATHS = {
     + '<polyline points="17 11 19 13 23 9"/>',
 };
 
-const SVG = "http://www.w3.org/2000/svg";
-
 export function icon(name) {
-  const svg = document.createElementNS(SVG, "svg");
-  for (const [key, value] of Object.entries({
+  const el = svg("svg", {
     class: "icon", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "2",
     "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true", focusable: "false",
-  })) {
-    svg.setAttribute(key, value);
-  }
-  svg.innerHTML = PATHS[name] || ""; // our own constant markup, never data
-  return svg;
+  });
+  el.innerHTML = PATHS[name] || ""; // our own constant markup, never data
+  return el;
 }
 
 export function logo() {
-  const svg = document.createElementNS(SVG, "svg");
-  for (const [key, value] of Object.entries({ class: "logo", viewBox: "0 0 32 32", "aria-hidden": "true" })) {
-    svg.setAttribute(key, value);
-  }
-  svg.innerHTML = '<rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/>'; // constant markup
-  return svg;
+  const el = svg("svg", { class: "logo", viewBox: "0 0 32 32", "aria-hidden": "true" });
+  el.innerHTML = '<rect width="32" height="32" rx="7"/><path d="M9 16.5l4.5 4.5L23 11"/>'; // constant markup
+  return el;
 }
 
 export function hydrateIcons(root = document) {

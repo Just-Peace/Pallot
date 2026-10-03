@@ -1,4 +1,4 @@
-// Phones and narrow windows (960px and less): the left pane becomes a one-line top bar, with
+// Phones and narrow windows (``narrow`` in chrome.js): the left pane becomes a one-line top bar, with
 // the address and the page links each behind a button. chrome.js draws the pane, then calls
 // initTopBar() to add the two buttons; wider, the CSS hides them.
 

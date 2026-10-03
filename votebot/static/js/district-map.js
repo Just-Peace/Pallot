@@ -9,11 +9,10 @@
 // the browser (storage.js, showMap); nothing is fetched for it while it's folded.
 
 import { api } from "./api.js";
-import { h } from "./dom.js";
+import { h, svg } from "./dom.js";
 import { icon } from "./icons.js";
 import { setUiPref, uiPref } from "./storage.js";
 
-const SVG = "http://www.w3.org/2000/svg";
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
 const NAMES = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "State Board of Education" };
 const LABELS = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "SBOE", election_precinct: "Precinct" };
@@ -51,16 +50,8 @@ function districtName(kind, number) {
 
 // A short line in the district's colour and dash.
 function swatch(kind) {
-  const svg = document.createElementNS(SVG, "svg");
-  const line = document.createElementNS(SVG, "line");
-  for (const [key, value] of Object.entries({ class: "map-swatch", viewBox: "0 0 16 8", "aria-hidden": "true", focusable: "false" })) {
-    svg.setAttribute(key, value);
-  }
-  for (const [key, value] of Object.entries({ class: `map-outline ${kind}`, x1: "1", y1: "4", x2: "15", y2: "4" })) {
-    line.setAttribute(key, value);
-  }
-  svg.append(line);
-  return svg;
+  return svg("svg", { class: "map-swatch", viewBox: "0 0 16 8", "aria-hidden": "true", focusable: "false" },
+    svg("line", { class: ["map-outline", kind], x1: "1", y1: "4", x2: "15", y2: "4" }));
 }
 
 // After every render of the ballot: new districts load their outlines and go back to the
@@ -117,6 +108,7 @@ function makePanel() {
   parts = {
     toggle: h("button", {
       type: "button", class: "map-toggle", "aria-expanded": String(shown), "aria-controls": "district-map-body",
+      on: { click: () => setShown(!shown) },
     }, h("span", { class: "chevron", "aria-hidden": "true" }), "Map of your districts"),
     body: h("div", { id: "district-map-body", hidden: !shown }),
     picks: h("div", { class: "map-picks", role: "group", "aria-label": "Highlight a district on the map" }),
@@ -127,7 +119,6 @@ function makePanel() {
     notes: h("div", { class: "map-notes" }),
     foot: h("p", { class: "fine map-foot" }),
   };
-  parts.toggle.addEventListener("click", () => setShown(!shown));
   parts.body.append(
     h("p", { class: "map-hint" },
       "Pick a district to highlight it and zoom to it; pick it again to go back to your address. ",
@@ -171,8 +162,7 @@ async function load() {
 
 function draw() {
   if (failed) {
-    const retry = h("button", { type: "button", class: "link-btn" }, "Try again");
-    retry.addEventListener("click", load);
+    const retry = h("button", { type: "button", class: "link-btn", on: { click: load } }, "Try again");
     parts.notes.replaceChildren(h("p", { class: "district-warn" }, `Couldn't load the map: ${failed} `, retry));
     return;
   }
@@ -212,12 +202,11 @@ function draw() {
     const title = notUp.has(outline.kind) ? `${name}: not up for election this time`
       : outline.kind === "election_precinct" && mapLabel ? `Election precinct ${outline.number}, from the map “${mapLabel}”`
         : name;
-    const button = h("button", {
-      type: "button", class: `map-pick ${outline.kind}${notUp.has(outline.kind) ? " not-up" : ""}`,
+    return h("button", {
+      type: "button", class: ["map-pick", outline.kind, notUp.has(outline.kind) && "not-up"],
       "data-map-kind": outline.kind, "aria-pressed": String(outline.kind === highlight), title,
+      on: { click: () => pickDistrict(outline.kind) },
     }, swatch(outline.kind), LABELS[outline.kind], " ", h("strong", {}, String(outline.number)));
-    button.addEventListener("click", () => pickDistrict(outline.kind));
-    return button;
   }));
   const fromCouncil = (outline) => outline.kind === "sboe" || outline.kind === "election_precinct";
   const sources = [

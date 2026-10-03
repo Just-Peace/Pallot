@@ -11,15 +11,11 @@ let timer = null;
 // ``action``: { label, run }, a button after the message; it closes the toast, then runs.
 export function showToast(message, action = null) {
   clearTimeout(timer);
-  let button = null;
-  if (action) {
-    button = h("button", { type: "button", class: "link-btn" }, action.label);
-    button.addEventListener("click", () => {
-      hideToast();
-      action.run();
-    });
-  }
-  toast.replaceChildren(h("span", {}, message), button ?? "");
+  const run = () => {
+    hideToast();
+    action.run();
+  };
+  toast.replaceChildren(h("span", {}, message), action ? h("button", { type: "button", class: "link-btn", on: { click: run } }, action.label) : "");
   timer = setTimeout(hideToast, 10000);
 }
 

@@ -1,7 +1,8 @@
 // The print-only sheet: the voter's picks in ballot order, to take to the polls. A full
 // page, or a wallet card to cut out.
 
-import { formatDate, h } from "./dom.js";
+import { h } from "./dom.js";
+import { formatDate } from "./format.js";
 import { earlyVotingText } from "./key-dates.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, districtLine, partyName } from "./labels.js";
 import { WRITE_IN } from "./picks.js";

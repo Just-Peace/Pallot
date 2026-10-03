@@ -5,25 +5,19 @@
 
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
-import { formatBytes, formatDate, h, linkedText, relativeTime } from "./dom.js";
+import { $, h, linkedText, onReturn, setStatus } from "./dom.js";
+import { formatBytes, formatDate, plural, relativeTime } from "./format.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged } from "./storage.js";
 import { showToast } from "./toast.js";
 
-const list = document.querySelector("#source-list");
-const summary = document.querySelector("#sources-summary");
-const searchSelect = document.querySelector("#search-engine");
-const searchStatus = document.querySelector("#search-status");
-const sourcesStatus = document.querySelector("#sources-status");
+const list = $("#source-list");
+const summary = $("#sources-summary");
+const searchSelect = $("#search-engine");
+const searchStatus = $("#search-status");
+const sourcesStatus = $("#sources-status");
 let pollTimer = null; // re-checks the sources while one is refreshing (the TEC's takes minutes)
-
-function say(status, message, kind = "ok") {
-  status.className = `status status-${kind}`;
-  status.textContent = message;
-}
-
-const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 // What the source has saved on the server: "12 saved responses · 3.1 MB · 2 expired · fetched
 // 4 days ago to an hour ago". Snapshot sources describe theirs in their details instead.
@@ -53,7 +47,7 @@ function lastUseLine(source) {
     unused: use.message || "not needed",
   }[use.status];
   const warn = use.status === "stale" || use.status === "error";
-  return h("p", { class: `source-last${warn ? " tone-warn" : ""}` }, `Last lookup: ${text}`);
+  return h("p", { class: ["source-last", warn && "tone-warn"] }, `Last lookup: ${text}`);
 }
 
 function detailList(source) {
@@ -81,11 +75,11 @@ function sourceRow(source) {
     try {
       render(await api.put(`/api/sources/${source.id}`, { enabled: toggle.checked }));
       markSettingsChanged();
-      say(sourcesStatus, `${source.label} turned ${toggle.checked ? "on" : "off"}.`);
+      setStatus(sourcesStatus, `${source.label} turned ${toggle.checked ? "on" : "off"}.`, "ok");
     } catch (error) {
       toggle.checked = !toggle.checked;
       toggle.disabled = false;
-      say(sourcesStatus, error.message, "error");
+      setStatus(sourcesStatus, error.message, "error");
     }
   });
 
@@ -99,13 +93,13 @@ function sourceRow(source) {
       const { message } = await api.post(`/api/sources/${source.id}/refresh`);
       markSettingsChanged();
       await load();
-      say(sourcesStatus, `${source.label}: ${message}`);
+      setStatus(sourcesStatus, `${source.label}: ${message}`, "ok");
     } catch (error) {
       refreshButton.disabled = false;
       clearButton.disabled = false;
       refreshButton.textContent = "↻ Refresh";
       result.textContent = error.message;
-      say(sourcesStatus, `${source.label}: ${error.message}`, "error"); // the row may have been redrawn meanwhile
+      setStatus(sourcesStatus, `${source.label}: ${error.message}`, "error"); // the row may have been redrawn meanwhile
       load();
     }
   });
@@ -118,22 +112,22 @@ function sourceRow(source) {
     try {
       const { message } = await api.post(`/api/sources/${source.id}/clear`);
       await load();
-      say(sourcesStatus, `${source.label}: ${message}`);
+      setStatus(sourcesStatus, `${source.label}: ${message}`, "ok");
     } catch (error) {
-      say(sourcesStatus, error.message, "error");
+      setStatus(sourcesStatus, error.message, "error");
     }
   });
 
   const name = h("span", { class: "source-name" }, source.label);
   return h(
     "div",
-    { class: `source-row${source.enabled ? "" : " is-off"}` },
+    { class: ["source-row", !source.enabled && "is-off"] },
     h("div", { class: "source-row-head" },
       toggle
         ? h("label", { class: "switch", for: `toggle-${source.id}` }, toggle, name)
         : h("span", { class: "source-name-wrap" }, name, h("span", { class: "pill" }, "Always on"))),
     h("p", { class: "source-desc" }, source.description),
-    source.notice ? h("p", { class: `source-notice tone-${source.notice_tone || "info"}` }, linkedText(source.notice)) : null,
+    source.notice ? h("p", { class: ["source-notice", `tone-${source.notice_tone || "info"}`] }, linkedText(source.notice)) : null,
     cacheLine(source),
     detailList(source),
     lastUseLine(source),
@@ -162,7 +156,7 @@ async function load() {
   try {
     render(await api.get("/api/sources"));
   } catch (error) {
-    say(sourcesStatus, error.message, "error");
+    setStatus(sourcesStatus, error.message, "error");
   }
 }
 
@@ -172,20 +166,20 @@ function initSearchEngine() {
   searchSelect.addEventListener("change", () => {
     setEngine(searchSelect.value);
     markSettingsChanged();
-    say(searchStatus, `Web search now uses ${currentEngine().label}.`);
+    setStatus(searchStatus, `Web search now uses ${currentEngine().label}.`, "ok");
   });
 }
 
-document.querySelector("#clear-all").addEventListener("click", async () => {
+$("#clear-all").addEventListener("click", async () => {
   if (!confirm("Clear everything the server saved from every source, and reset TrackAIPAC and the Texas Ethics Commission "
     + "to the data that came with VoteBot? A refreshed Texas Ethics Commission snapshot is thrown away. "
     + "The next lookups will fetch everything again.")) return;
   try {
     const { message } = await api.post("/api/cache/clear");
     await load();
-    say(sourcesStatus, message);
+    setStatus(sourcesStatus, message, "ok");
   } catch (error) {
-    say(sourcesStatus, error.message, "error");
+    setStatus(sourcesStatus, error.message, "error");
   }
 });
 
@@ -215,19 +209,17 @@ function showBrowserData() {
   searchSelect.value = currentEngine().id;
 }
 
-document.querySelector("#clear-my-picks").addEventListener("click", () => {
+$("#clear-my-picks").addEventListener("click", () => {
   clearInBrowser(clearPicksAndNotes, "Your picks, notes and write-ins were removed from this browser.", "There were no picks or notes to clear.");
 });
 
-document.querySelector("#clear-browser-data").addEventListener("click", () => {
+$("#clear-browser-data").addEventListener("click", () => {
   clearInBrowser(clearBrowserData, "Everything VoteBot kept in this browser was removed.", "VoteBot had nothing saved in this browser.");
 });
 
-// Back from the ballot, the browser may show this page as it was left; a lookup since then has
-// changed what's saved (and may have paused a source), so ask the server again.
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) load();
-});
+// Back from the ballot (or another tab), a lookup since may have changed what's saved, and may
+// have paused a source, so ask the server again.
+onReturn(load);
 
 initSearchEngine();
 load();

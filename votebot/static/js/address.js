@@ -2,10 +2,9 @@
 // its city and county, and the election. The ballot page fills it after each lookup and remembers it; the
 // other pages show the remembered one. On a phone the top bar's button shows it too.
 
+import { $ } from "./dom.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson } from "./storage.js";
 import { setTopBarAddress } from "./topbar.js";
-
-const $ = (selector) => document.querySelector(selector);
 
 export function showAddress({ address, place = "", matched = "", election = "" }) {
   $("#address-line").textContent = address;
