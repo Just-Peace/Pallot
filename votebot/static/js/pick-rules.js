@@ -4,7 +4,8 @@
 // The Pick half is AND across its conditions, OR across the party chips; Don't pick is OR. A
 // condition from a source (TrackAIPAC, money, polls) counts only in races where that source has
 // something, so "Democrats who spent under $1M" still picks a county race's Democrat. A race with
-// more matches than seats is left for the voter: the rule never guesses.
+// more matches than seats is left for the voter: the rule never guesses, so a tie for "the least"
+// money in a one-seat race is left too.
 
 import { ballotSections } from "./ballot-shared.js";
 import { DOLLARS_SHORT } from "./format.js";
@@ -27,10 +28,12 @@ export const DEFAULT_RULE = {
   parties: [],
   incumbent: "any", // "yes": only incumbents, "no": only challengers
   endorsed: false,
-  money: { on: false, metric: "spent", compare: "under", amount: 1_000_000 },
+  money: { on: false, metric: "spent", compare: "under", amount: 1_000_000 }, // compare: "under", "over", "least", "most"
+  small: { on: false, amount: 50 }, // small donations are at least this % of what they raised
   leads: false,
   watchlist: false,
   lobby: { on: false, amount: 0 },
+  selfFunded: { on: false, amount: 50 }, // they gave or lent their campaign over this % of what it raised
   polling: { on: false, amount: 5 },
   keepMine: true,
   mark: false, // "Mark who matches" is on
@@ -109,6 +112,8 @@ export function available(races) {
     trackaipac: candidates.some(tracked),
     lobby: has("israel_lobby"),
     money: Object.fromEntries(MONEY.map(([id]) => [id, has(id)])),
+    small: has("small_share"),
+    selfFunded: has("self_share"),
     polls: has("poll"),
   };
 }
@@ -124,10 +129,23 @@ function judge(race, rule) {
   if (rule.incumbent === "no") tests.push((c) => !c.incumbent);
   if (rule.endorsed && candidates.some(tracked)) tests.push((c) => listed(c, "endorsed"));
   const { money } = rule;
-  if (money.on && known(money.amount) && candidates.some((c) => figure(c, money.metric) !== undefined)) {
+  const relative = money.compare === "least" || money.compare === "most";
+  if (money.on && (relative || known(money.amount)) && candidates.some((c) => figure(c, money.metric) !== undefined)) {
+    // The least or the most among the names printed on the ballot, and the write-ins with their chip on.
+    const amounts = candidates.filter((c) => !c.write_in || parties.has(WRITE_INS))
+      .map((c) => figure(c, money.metric)).filter((amount) => amount !== undefined);
+    const target = { least: Math.min(...amounts), most: Math.max(...amounts) }[money.compare];
     tests.push((c) => {
       const amount = figure(c, money.metric);
-      return amount !== undefined && (money.compare === "over" ? amount > money.amount : amount < money.amount);
+      if (amount === undefined) return false;
+      if (relative) return amount === target;
+      return money.compare === "over" ? amount > money.amount : amount < money.amount;
+    });
+  }
+  if (rule.small.on && known(rule.small.amount) && candidates.some((c) => figure(c, "small_share") !== undefined)) {
+    tests.push((c) => {
+      const share = figure(c, "small_share");
+      return share !== undefined && share >= rule.small.amount;
     });
   }
   const polled = candidates.map((c) => figure(c, "poll")).filter((share) => share !== undefined);
@@ -140,6 +158,10 @@ function judge(race, rule) {
     const lobby = figure(c, "israel_lobby");
     if (rule.lobby.on && known(rule.lobby.amount) && lobby !== undefined && lobby > rule.lobby.amount) {
       reasons.push(`Israel lobby money ${DOLLARS_SHORT.format(lobby)}`);
+    }
+    const own = figure(c, "self_share");
+    if (rule.selfFunded.on && known(rule.selfFunded.amount) && own !== undefined && own > rule.selfFunded.amount) {
+      reasons.push(`${own}% of their money from themselves`);
     }
     const share = figure(c, "poll");
     if (rule.polling.on && known(rule.polling.amount) && share !== undefined && share < rule.polling.amount) {

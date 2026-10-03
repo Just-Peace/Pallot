@@ -107,7 +107,8 @@ def test_federal_races_get_fec_money(client):
     sources = fec["breakdowns"][0]
     assert sum(p["amount"] for p in sources["parts"]) == pytest.approx(sources["total"], abs=1)
     assert any("Senate" in link["label"] for link in fec["links"])  # personal financial disclosures
-    assert set(fec["figures"]) == {"raised", "spent", "cash", "outside_for"}  # what Pick by rule tests
+    assert set(fec["figures"]) == {"raised", "spent", "cash", "outside_for", "small_share", "self_share"}  # what Pick by rule tests
+    assert (fec["figures"]["small_share"], fec["figures"]["self_share"]) == (53.6, 0.0)  # percents of raised
     assert fec["figures"]["raised"] == 68560930.42 and fec["figures"]["outside_for"] == pytest.approx(4.1e6, rel=0.05)
 
     paxton = next(card for card in senate["candidates"][0]["cards"] if card["source"] == "fec")

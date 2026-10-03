@@ -176,10 +176,17 @@ def period(seat: str, cycle: int) -> str:
     return f"{cycle - (5 if seat.endswith('-SEN') else 1)}–{str(cycle)[2:]}"
 
 
+def _own(totals: dict[str, Any]) -> float | None:
+    """What the candidate gave and lent their own campaign; None without the totals call."""
+    if "candidate_contribution" not in totals and "loans_made_by_candidate" not in totals:
+        return None
+    return (_number(totals.get("candidate_contribution")) or 0) + (_number(totals.get("loans_made_by_candidate")) or 0)
+
+
 def _where_from(totals: dict[str, Any], raised: float | None, span: str) -> Breakdown | None:
     if not totals or not raised:
         return None
-    candidate = (_number(totals.get("candidate_contribution")) or 0) + (_number(totals.get("loans_made_by_candidate")) or 0)
+    candidate = _own(totals)
     parts = [
         ("Individuals giving $200 or less", _number(totals.get("individual_unitemized_contributions"))),
         ("Individuals giving more than $200", _number(totals.get("individual_itemized_contributions"))),
@@ -381,14 +388,21 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
         facts=[f for f in facts if f.value],
         breakdowns=[b for b in breakdowns if b],
         links=links,
-        figures=_figures(campaign, details.outside),
+        figures=_figures(campaign, totals, details.outside),
     )
 
 
-def _figures(campaign: Money, outside: list[dict[str, Any]] | None) -> dict[str, float]:
-    """Pick by rule's figures. Outside spending only when it was asked for (a key), so a
-    campaign nobody spent for is 0, not missing."""
+def _share(part: float | None, whole: float | None) -> float | None:
+    return round(100 * part / whole, 1) if part is not None and whole else None
+
+
+def _figures(campaign: Money, totals: dict[str, Any], outside: list[dict[str, Any]] | None) -> dict[str, float]:
+    """Pick by rule's figures. The shares of what was raised (small donations, the candidate's
+    own gifts and loans) and outside spending only from the calls a key makes, so a campaign
+    nobody spent for is 0, not missing."""
     figures = {"raised": campaign.raised, "spent": campaign.spent, "cash": campaign.cash}
+    figures["small_share"] = _share(_number(totals.get("individual_unitemized_contributions")), campaign.raised)
+    figures["self_share"] = _share(_own(totals), campaign.raised)
     if outside is not None:
         figures["outside_for"] = _for_against(outside)[0]
     return {key: value for key, value in figures.items() if value is not None}
