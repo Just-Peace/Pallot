@@ -22,7 +22,7 @@ from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, match_person, match_unique
 from ..models import Badge, Fact, Link, Match, Race, SourceCard
-from ..text import display_time, iso_utc
+from ..text import display_time, iso_utc, parse_date
 from . import CardSet
 
 SOURCE = "ballotpedia"
@@ -119,13 +119,6 @@ class BpBallot:
     precincts: dict[str, int]
     fetched_at: float
     city_council: str | None = None
-
-
-def _date(text: str | None) -> dt.date | None:
-    try:
-        return dt.date.fromisoformat((text or "")[:10])
-    except ValueError:
-        return None
 
 
 def _group(district_type: str, office: dict[str, Any], name: str) -> str:
@@ -251,7 +244,7 @@ def _measure(raw: dict[str, Any], district_name: str) -> BpMeasure:
 
 def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float) -> BpBallot:
     elections = ((payload or {}).get("data") or {}).get("elections") or []
-    dated = [(e, _date(e.get("date"))) for e in elections]
+    dated = [(e, parse_date(e.get("date"))) for e in elections]
     if day:
         chosen = next((e for e, d in dated if d == day), None)
     else:
@@ -273,7 +266,7 @@ def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float) -> Bp
             city_council = city_council or council_district_in(district_name)
         races += [_race(r, district) for r in district.get("races") or []]
         measures += [_measure(m, district_name) for m in district.get("ballot_measures") or []]
-    return BpBallot(_date(chosen.get("date")), tuple(races), tuple(measures), precincts, fetched_at, city_council)
+    return BpBallot(parse_date(chosen.get("date")), tuple(races), tuple(measures), precincts, fetched_at, city_council)
 
 
 class Ballotpedia:

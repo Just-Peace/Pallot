@@ -28,7 +28,7 @@ def test_capitol_ballot(client):
     assert ballot["election_date"] == "2026-11-03"
     assert [e["name"] for e in ballot["elections"]] == ["2026 November General Election"]  # specials don't apply here
     d = ballot["districts"]
-    assert (d["county_id"], d["cd"], d["sd"], d["hd"], d["sboe"]) == (227, 10, 14, 49, 5)
+    assert (d["cd"], d["sd"], d["hd"], d["sboe"]) == (10, 14, 49, 5)
     assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, 2)  # from Travis County's list, by election precinct 300
     assert d["precinct_sources"] == {"commissioner": "county", "jp": "county", "constable": "county"}
     assert d["county_source"] == {"county": "Travis", "method": "table"}
@@ -40,7 +40,6 @@ def test_capitol_ballot(client):
 
     senate = find_race(ballot, "U.S. Senator")
     assert candidate_names(senate)[:3] == ["Ken Paxton", "James Talarico", "Ted Brown"]
-    assert [c["ballot_position"] for c in senate["candidates"]] == [1, 2, 3]
     assert senate["candidates"][0]["party_name"] == "Republican"
 
     house = [r["name"] for r in ballot["races"] if r["name"].startswith("U.S. Representative")]
@@ -158,7 +157,7 @@ def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, up
 def test_harris_county_gets_exactly_one_sboe_race(client):
     client.put("/api/sources/ballotpedia", json={"enabled": False})
     ballot = get_ballot(client, "harris")
-    assert ballot["districts"]["sboe"] == 4 and ballot["districts"]["county_id"] == 101
+    assert ballot["districts"]["sboe"] == 4 and ballot["location"]["county"] == "Harris"
     sboe = [r["name"] for r in ballot["races"] if "Board of Education" in r["name"]]
     assert sboe == ["Member, State Board of Education, District 4"]
     assert find_race(ballot, "Member, State Board of Education, District 4")["unexpired"] is True
@@ -168,7 +167,7 @@ def test_special_election_comes_from_the_statewide_list_when_the_county_has_no_b
     ballot = get_ballot(client, "hd93")
     race = find_race(ballot, "State Representative District 93")
     assert race is not None and race["unexpired"] and race["election_id"] == 66734
-    assert race["candidates"] and all(c["ballot_position"] is None for c in race["candidates"])
+    assert race["candidates"]
     assert "2026 Special Election House District 93" in [e["name"] for e in ballot["elections"]]
     assert not find_race(ballot, "State Representative District 49")  # the Capitol's own district is filtered out
 
@@ -205,7 +204,7 @@ def test_declared_write_ins_follow_the_printed_candidates(client, upstream):
     senate = find_race(ballot, "U.S. Senator")
     assert len(senate["candidates"]) == len(senate_rows) + 1 and senate["candidates"][-1]["name"] == "Pat Filed"
     filed = senate["candidates"][-1]
-    assert filed["write_in"] and filed["party"] is None and filed["party_name"] is None and filed["ballot_position"] is None
+    assert filed["write_in"] and filed["party"] is None and filed["party_name"] is None
     assert "sos" in sources_of(filed)
     assert not any(c["write_in"] for c in senate["candidates"][:-1])
     assert candidate_names(find_race(ballot, "County Clerk"))[-1] == "Kim Clerk"
@@ -280,7 +279,7 @@ def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):
     assert ballot["elections"][0]["name"] == "Ballotpedia sample ballot"
     assert ballot["districts"]["sboe"] == 5  # from the SBOE map, which doesn't need Texas SOS
     senate = find_race(ballot, "U.S. Senate Texas")
-    assert senate["seat"] == "TX-SEN" and senate["candidates"][0]["ballot_position"] is None
+    assert senate["seat"] == "TX-SEN"
     assert any(c["write_in"] for c in senate["candidates"])
     assert "trackaipac" in sources_of(next(c for c in senate["candidates"] if c["name"] == "Ken Paxton"))
     assert find_race(ballot, "Travis County Justice of the Peace Precinct 5")["group"] == "precinct"
@@ -423,7 +422,7 @@ def test_nominatim_fallback_is_marked_approximate(client):
     ballot = get_ballot(client, "mopac")
     assert ballot["location"]["geocoder"] == "nominatim" and ballot["location"]["approximate"]
     assert any("approximately" in w for w in ballot["warnings"])
-    assert ballot["districts"]["county_id"] == 227
+    assert ballot["location"]["county"] == "Travis"
 
 
 def source_row(client: TestClient, source_id: str) -> dict:

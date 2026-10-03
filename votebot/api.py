@@ -97,6 +97,8 @@ async def warm_up(svc: Services) -> None:
     if svc.settings.enabled("trackaipac"):
         jobs.append(asyncio.to_thread(svc.trackaipac.name_index, "TX"))
     await asyncio.gather(*jobs, return_exceptions=True)
+
+
 class RevalidatedFiles(StaticFiles):
     """The frontend's files, which the browser keeps but checks with their ETag before each use
     (a short 304 when unchanged), so after an update no page mixes old modules with new ones."""

@@ -130,12 +130,10 @@ class SourceCard(BaseModel):
 class Candidate(BaseModel):
     key: str  # stable across refreshes: "sos:<election>:<candidate>" or "bp:<candidate>"
     name: str
-    ballot_name: str | None = None
     party: str | None = None  # D, R, L, G, I …
     party_name: str | None = None
     incumbent: bool = False
     write_in: bool = False
-    ballot_position: int | None = None
     photo_url: str | None = None
     cards: list[SourceCard] = Field(default_factory=list)
 
@@ -182,7 +180,6 @@ class Measure(BaseModel):
 
 
 class Location(BaseModel):
-    input_address: str
     matched_address: str | None
     lat: float
     lon: float
@@ -219,7 +216,6 @@ class CountySource(BaseModel):
 
 
 class Districts(BaseModel):
-    county_id: int | None = None
     cd: int | None = None
     sd: int | None = None
     hd: int | None = None
