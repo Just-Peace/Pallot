@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import datetime as dt
 import ipaddress
 from contextlib import asynccontextmanager
@@ -81,6 +82,21 @@ def from_another_site(request: Request) -> bool:
     return origin is not None and urlsplit(origin).netloc.lower() != request.headers.get("host", "").lower()
 
 
+async def warm_up(svc: Services) -> None:
+    """Read, in the background at startup, what the first lookup would otherwise read: the
+    precinct map's index, the SBOE map, and the TEC's and TrackAIPAC's name indexes. Only files
+    already kept, for sources that are on; nothing is fetched. A lookup meanwhile waits on the
+    same locks, and a failure is left for the lookup to report."""
+    jobs = [svc.sboe.warm()]
+    if svc.settings.enabled("election_precincts"):
+        jobs.append(asyncio.to_thread(svc.election_precincts.warm))
+    if svc.settings.enabled("tec"):
+        jobs += [asyncio.to_thread(svc.tec.name_index), asyncio.to_thread(svc.tec.outside_index)]
+    if svc.settings.enabled("trackaipac"):
+        jobs.append(asyncio.to_thread(svc.trackaipac.name_index, "TX"))
+    await asyncio.gather(*jobs, return_exceptions=True)
+
+
 def create_app(
     config: Config | None = None,
     *,
@@ -139,7 +155,13 @@ def create_app(
                 await asyncio.to_thread(svc.tec.ensure_seeded)
                 app.state.svc = svc
                 app.state.admin = Admin(svc)
-                yield
+                app.state.warm_up = warming = asyncio.create_task(warm_up(svc))
+                try:
+                    yield
+                finally:
+                    warming.cancel()
+                    with contextlib.suppress(asyncio.CancelledError):
+                        await warming
             finally:
                 await election_precincts.aclose()  # before the client closes under a download
                 cache.close()

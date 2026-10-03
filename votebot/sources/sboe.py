@@ -236,13 +236,23 @@ class SboeMap:
             async with self._lock:
                 if self._districts is None:
                     if self.path.exists():
-                        self._districts = await asyncio.to_thread(parse_zip, self.path.read_bytes())
+                        self._districts = await asyncio.to_thread(self._read)
                     elif until := self.cache.flag_until(FAILED_FLAG):
                         raise UpstreamError(SOURCE, f"the last download failed ({self.last_error or 'see Settings'}); "
                                                     f"VoteBot tries again after {display_time(until)}")
                     else:
                         await self._download()
         return self._districts
+
+    async def warm(self) -> None:
+        """Read the map kept, at startup, so the first lookup needn't; never downloads."""
+        if self._districts is None and self.path.exists():
+            async with self._lock:
+                if self._districts is None and self.path.exists():
+                    self._districts = await asyncio.to_thread(self._read)
+
+    def _read(self) -> list[District]:
+        return parse_zip(self.path.read_bytes())
 
     async def _download(self) -> None:
         """Fetch the map, check it has every district, then put it in place of the one kept. On
