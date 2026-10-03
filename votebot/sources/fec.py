@@ -381,7 +381,17 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
         facts=[f for f in facts if f.value],
         breakdowns=[b for b in breakdowns if b],
         links=links,
+        figures=_figures(campaign, details.outside),
     )
+
+
+def _figures(campaign: Money, outside: list[dict[str, Any]] | None) -> dict[str, float]:
+    """Pick by rule's figures. Outside spending only when it was asked for (a key), so a
+    campaign nobody spent for is 0, not missing."""
+    figures = {"raised": campaign.raised, "spent": campaign.spent, "cash": campaign.cash}
+    if outside is not None:
+        figures["outside_for"] = _for_against(outside)[0]
+    return {key: value for key, value in figures.items() if value is not None}
 
 
 def comparison(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: dict[str, Details]) -> Comparison:

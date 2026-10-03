@@ -134,6 +134,8 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
             facts.append(Fact(label="Election date", value=item["election_date"]))
 
     quotes = [_absolute_links(note) for item in listings for note in item.get("notes") or []]
+    lobby = [item["israel_lobby_total"] for item in listings
+             if item.get("category") in categories and item.get("israel_lobby_total") is not None]
 
     links = [Link(label=f"TrackAIPAC {CATEGORY_NAMES[c]} page", url=CATEGORY_PAGES[c]) for c in categories]
     for item in listings:
@@ -153,6 +155,8 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
         facts=facts,
         quotes=quotes,
         links=list({link.url: link for link in links}.values()),
+        figures={"israel_lobby": max(lobby)} if lobby else {},
+        flags=categories,
     )
 
 

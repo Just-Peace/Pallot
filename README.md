@@ -69,6 +69,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
   - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
+  - **Pick by rule** picks by party, TrackAIPAC, money and polls (below).
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
 - Under it, two cards, side by side (and as tall as each other) on a wide screen, and one above the other on a phone, then the map of your districts.
@@ -123,9 +124,21 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
   A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
+- **Pick by rule:** picks across your ballot at once, since Texas has no straight-ticket voting. Open it from the top of the ballot for every race, or from the funnel in a race's heading for that race; **Apply to** can also be one section.
+  - **Pick:** any of the parties you choose (a chip for each party on your ballot, with how many races it's in, and one for the declared write-ins), and then only if all of these hold:
+    - incumbents only, or challengers only;
+    - TrackAIPAC endorses them;
+    - what they raised, spent, have on hand, or had spent for them from outside is under (or over) an amount;
+    - they lead the polls.
+  - **Don't pick, and take back:** anyone on TrackAIPAC's watchlist, with Israel lobby money over an amount ($0 at first), or polling under a share (5% at first). A pick of theirs is taken back, even one you made yourself.
+  - A TrackAIPAC, money or polls condition counts only in races its source covers: "Democrats who spent under $1M" still picks a county race's Democrat. Without the Write-ins chip, a rule picks only the names printed on the ballot.
+  - A race with more matches than seats is left for you, never guessed. **Don't replace picks I've already made** (on at first) leaves the races you've picked alone, apart from what Don't pick takes back.
+  - As you change the rule, the dialog says what it would do ("Picks 43 races · takes back 1 pick · 5 with no match"), race by race. Nothing changes until **Apply**, which offers **Undo** for 10 seconds.
+  - **Mark who matches** picks nobody: it marks each candidate your rule would pick ("✓ Matches your rule") or skip ("✕ Your rule skips: on TrackAIPAC's watchlist"), on the whole ballot, until **Stop marking** in the note above the races.
+  - The last rule you applied or marked is remembered in the browser.
 - **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with Election Day and the early-voting dates. The full page lists your districts, with your election precinct as "Pct 300". Your address isn't printed, so the sheet doesn't give away where you live.
 
-Picks, notes and collapsed races are kept in the browser's `localStorage`, never on the server.
+Picks, notes, collapsed races and your pick rule are kept in the browser's `localStorage`, never on the server.
 
 ## Where the data comes from
 
@@ -206,7 +219,7 @@ The **Settings** page, linked from the left pane:
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to the snapshots that came with VoteBot. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
-- has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, appearance, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
+- has "Clear my picks & notes" (your pick rule too), and "Clear all browser data", which also forgets your address, appearance, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
 Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
 

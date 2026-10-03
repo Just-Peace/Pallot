@@ -251,6 +251,7 @@ def candidate_card(candidate: Candidate, race: Race, kept: list[Reading], median
         as_of=kept[0].end or None,
         facts=facts,
         links=[Link(label="FiftyPlusOne", url=SITE)],
+        figures={"poll": round(median, 1)},
     )
 
 

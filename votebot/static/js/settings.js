@@ -246,7 +246,7 @@ function showBrowserData() {
 }
 
 $("#clear-my-picks").addEventListener("click", () => {
-  clearInBrowser(clearPicksAndNotes, "Your picks, notes and write-ins were removed from this browser.", "There were no picks or notes to clear.");
+  clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and pick rule were removed from this browser.", "There were no picks or notes to clear.");
 });
 
 $("#clear-browser-data").addEventListener("click", () => {

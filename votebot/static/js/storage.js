@@ -5,6 +5,7 @@ export const PICKS = "votebot.picks.v1";
 export const LAST_LOOKUP = "votebot.lastLookup.v1";
 export const ADDRESS_CARD = "votebot.addressCard.v1";
 export const SETTINGS_CHANGED = "votebot.settingsChanged.v1";
+export const PICK_RULE = "votebot.pickRule.v1"; // Pick by rule's last rule, for every election
 const UI = "votebot.ui.v1";
 
 // The Settings page stamps every change that affects the ballot, so a ballot page that was

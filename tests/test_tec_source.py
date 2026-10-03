@@ -162,6 +162,7 @@ def test_cards_for_a_state_race(tmp_path):
     assert [p.label for p in states.parts] == ["Texas", "Other states"]
     assert [p.label for p in outside.parts] == ["Texans for Jane", "Other Group"] and "doesn't record" in outside.note
     assert card.as_of == "2025-06-30"
+    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0}
 
     comparison = cards.races[rep.key]
     [money] = comparison.breakdowns

@@ -909,6 +909,47 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-layout { border: 0; margin: 0 0 6px; padding: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 
+/* ---- Pick by rule (pick-rule-dialog.js) ---- */
+.rules { width: min(620px, calc(100vw - 32px)); }
+.rule-body { padding: 4px 20px 8px; }
+.rule-set { border: 1px solid var(--line); border-radius: var(--radius-sm); margin: 12px 0; padding: 4px 14px 6px; min-width: 0; }
+.rule-set legend { font-weight: 700; padding: 0 6px; }
+.rule-set > .fine { margin: 8px 0 2px; }
+.rule-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.rule-row .check { margin: 8px 0; flex: 0 1 auto; }
+.rule-row.disabled .check { color: var(--muted); }
+.rule-label { min-width: 5.5em; }
+.rule-row.stacked .rule-inputs { flex-basis: 100%; margin: -4px 0 6px 26px; }
+.rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rule-inputs select { width: auto; padding: 6px 9px; }
+.rule-body > .rule-row:first-child { margin: 10px 0 0; }
+.rule-amount-wrap { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+input.rule-amount { width: 8.5em; padding: 6px 9px; }
+input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
+.rule-parties { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.rule-party { --swatch: var(--party, var(--line-strong)); display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
+  font-size: 0.88rem; font-weight: 600; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
+  border-radius: 999px; cursor: pointer; }
+.rule-party:hover { background: var(--neutral-soft); }
+.rule-party[aria-pressed="true"] { color: var(--text); background: var(--party-soft, var(--accent-soft)); border-color: var(--party, var(--accent));
+  box-shadow: inset 0 0 0 1px var(--party, var(--accent)); }
+.rule-party[aria-pressed="true"]::before { content: "✓"; }
+.rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
+.rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.rule-preview { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; }
+.rule-summary { font-weight: 650; margin: 4px 0 6px; }
+.rule-details > summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
+.rule-races { list-style: none; margin: 6px 0 0; padding: 0; font-size: 0.88rem; max-height: 14em; overflow-y: auto; }
+.rule-race { padding: 4px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.rule-race-name { font-weight: 650; }
+.rule-pick, .rule-same { color: var(--good); }
+.rule-pick .rule-race-name, .rule-same .rule-race-name, .rule-none .rule-race-name { color: var(--text); }
+.rule-none { color: var(--muted); }
+.rule-btn { flex: none; display: inline-flex; align-items: center; margin-top: -2px; padding: 5px 8px; }
+.rule-btn .icon { width: 14px; height: 14px; }
+.pill.rule-mark.tone-good { background: var(--good-soft); color: var(--good); }
+.pill.rule-mark.tone-warn { background: var(--warn-soft); color: var(--warn); }
+
 /* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
    its two buttons (topbar.js); on the ballot the section chips join the sticky strip ---- */
 
