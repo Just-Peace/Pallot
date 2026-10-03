@@ -8,6 +8,7 @@ import pytest
 
 from votebot.sources import osm_tiles
 
+from . import conftest
 from .conftest import PNG, capitol_point
 
 
@@ -42,6 +43,14 @@ def test_a_tile_is_asked_for_once_and_names_votebot(client, upstream):
     (agent,) = upstream.tile_agents  # OpenStreetMap's tile policy: a User-Agent that names the app and how to reach it
     assert agent.startswith("VoteBot/") and "github.com/Fahd-Siddiqui/VoteBot" in agent
 
+
+def test_tiles_are_not_gzipped(client, upstream, monkeypatch):
+    """A PNG is compressed already: gzip would only cost time."""
+    big = PNG + bytes(range(256)) * 20
+    monkeypatch.setattr(conftest, "PNG", big)
+    z, x, y = tile_at(14, *capitol_point())
+    response = client.get(f"/api/tiles/{z}/{x}/{y}.png", headers={"Accept-Encoding": "gzip"})
+    assert response.content == big and "content-encoding" not in response.headers
 
 def test_tiles_outside_texas_are_refused_without_asking(client, upstream):
     assert get_tile(client, *tile_at(12, 40.71, -74.0)).status_code == 404
