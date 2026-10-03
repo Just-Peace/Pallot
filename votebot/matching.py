@@ -153,7 +153,7 @@ def match_person(
         notes = []
         if seat and seat in seats_of(item):
             confidence = "exact" if how in (FULL, FIRST_LAST) else "likely"
-            method = f"{how} + seat {seat}"
+            method = f"{how}, in the same seat"
         else:
             confidence, method = "likely", how
             notes.append(f"{source} lists them for {seat_text(item) or 'another seat'}")
@@ -172,7 +172,7 @@ def match_person(
             listed = name_of(same_seat[0])
             return same_seat[0], Match(
                 confidence="likely",
-                method="last name + seat",
+                method="last name, in the same seat",
                 note=f"first names differ ({source} lists {listed}); check it's the same person" if listed
                 else "first names differ; check it's the same person",
             )

@@ -115,7 +115,7 @@ function makePanel() {
     picks: h("div", { class: "map-picks", role: "group", "aria-label": "Highlight a district on the map" }),
     canvas: h("div", {
       class: "map-canvas", role: "region",
-      "aria-label": "Street map of your districts, centred on your address. Arrow keys move it; + and − zoom.",
+      "aria-label": "Street map of your districts, centered on your address. Arrow keys move it; + and − zoom.",
     }),
     notes: h("div", { class: "map-notes" }),
     foot: h("p", { class: "fine map-foot" }),
@@ -214,11 +214,11 @@ function draw() {
     data.outlines.some((outline) => !fromCouncil(outline)) && "the US Census (TIGERweb)",
     data.outlines.some(fromCouncil) && "the Texas Legislative Council",
   ].filter(Boolean).join(" and ");
-  const precise = data.outlines.some((outline) => outline.kind === "election_precinct") ? " (your precinct to about 5 m)" : "";
+  const precise = data.outlines.some((outline) => outline.kind === "election_precinct") ? " (your precinct to about 16 feet)" : "";
   const notes = data.street_map ? data.notes : [...data.notes, "The street map is turned off in Settings."];
   parts.notes.replaceChildren(...notes.map((note) => h("p", { class: "district-note" }, note)));
   parts.foot.replaceChildren(
-    sources ? `Outlines from ${sources}, simplified to about 50 m${precise}: near a boundary, go by the district numbers. ` : "",
+    sources ? `Outlines from ${sources}, simplified to about 160 feet${precise}: near a boundary, go by the district numbers. ` : "",
     data.street_map ? "The street map comes from OpenStreetMap, through VoteBot." : "");
 }
 

@@ -27,7 +27,7 @@
         <details class="faq">
           <summary>Which addresses and elections does VoteBot cover?</summary>
           <div class="faq-body">
-            <p>Texas addresses, for now. The list of elections comes from the Texas Secretary of State. VoteBot shows the next one unless you choose another.</p>
+            <p>Texas addresses, for now. The list of elections comes from the Texas Secretary of State (Texas SOS). VoteBot shows the next one unless you choose another.</p>
           </div>
         </details>
 
@@ -66,7 +66,7 @@
           <summary>What does "Depends on your commissioner or JP precinct" mean?</summary>
           <div class="faq-body">
             <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, VoteBot gets them from the county's own records (see "How does VoteBot know my commissioner and JP precincts?"); elsewhere, it uses Ballotpedia's answer when it has one. Ballotpedia only names a precinct that has a race on this ballot, so when yours has none this time, those races stay listed until you enter your precincts.</p>
-            <p>Otherwise those races are listed under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
+            <p>Until VoteBot knows them, those races are listed under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
             <p>The small print under "Your districts" says where each number came from: your county, Ballotpedia, or you. If one is wrong, the pencil at the top of "Your districts" turns every number, your U.S. House, State Senate, State House and SBOE districts too, into a box you can change or empty, and the reset arrow puts the looked-up ones back. Only the numbers you change are kept as yours; the others keep following your address, your county's records and Ballotpedia.</p>
           </div>
         </details>
@@ -76,7 +76,7 @@
           <div class="faq-body">
             <p>Your election precinct is the "Pct" on your voter registration certificate: the small area your county groups voters into. VoteBot shows it under "Your districts" as "Precinct 300", and draws it on the map of your districts. It comes from the Texas Legislative Council, which collects every county's precincts after each statewide election and publishes them as one map.</p>
             <p>VoteBot uses the Council's newest map, which the small print names (now "2026 Primary Election Voting Precincts"). A general election's map only comes out after that election, but precincts rarely change in between: counties can only redraw them in March or April of odd-numbered years, and 99.5% of precincts were the same in the 2022 primary and general, 99.9% in 2024. VoteBot checks for a newer map at most once a week, and downloads it when there is one. The map is about 45 MB, so the very first lookup takes longer.</p>
-            <p>It can still be wrong. A county can change a precinct before the Council's next map, and an address right by a precinct line can be placed on the wrong side of it, since the address lookup places a house a few meters off. VoteBot checks your address's point against the middle of its census block, and when they fall in different precincts it names both rather than guess, but it can't catch every such case. It shows no precinct for an address it could only place approximately. Your voter registration certificate, or My Voter Portal ("Am I registered?"), always wins.</p>
+            <p>It can still be wrong. A county can change a precinct before the Council's next map, and an address right by a precinct line can be placed on the wrong side of it, since the address lookup can place a house several feet off. VoteBot checks your address's point against the middle of its census block, and when they fall in different precincts it names both rather than guess, but it can't catch every such case. It shows no precinct for an address it could only place approximately. Your voter registration certificate, or My Voter Portal ("Am I registered?"), always wins.</p>
             <p>VoteBot sends the Council nothing about you: it downloads the whole map and finds your precinct itself. Turn "Election precincts" off in <a href="settings.html">Settings</a> to leave it out.</p>
           </div>
         </details>
@@ -95,7 +95,7 @@
             <p>Texas law keeps each election precinct inside one commissioner precinct and one justice of the peace precinct, so once VoteBot knows your election precinct (see "Where does my election precinct come from"), your county's records say the other two. There's no statewide list, so this works in the counties whose records VoteBot reads:</p>
             <ul>
               <li><strong>Harris, Dallas, Tarrant, Travis and Fort Bend</strong> publish a list of their election precincts, with each one's commissioner and JP precinct. Fort Bend's has commissioner precincts only, so your JP precinct there comes from Ballotpedia, when your JP precinct has a race this time, or from you. VoteBot only uses a county's list when it has exactly the precincts on the Texas Legislative Council's map, so a list for another year, with precincts drawn differently, is never used.</li>
-              <li><strong>Bexar and Denton</strong> publish maps of their commissioner and JP precincts instead. VoteBot takes points spread through your election precinct, each at least 50 meters from its edges, and gives a number only when they all fall in the same commissioner (or JP) precinct on the county's map. The two maps are drawn separately, so near a precinct's edge they can disagree by a few meters; keeping 50 meters in gave no wrong numbers when checked against the lists of Dallas and Harris counties, for all 2,015 of their precincts. When your election precinct crosses a line on the county's map, or is too small to check, VoteBot leaves the number for you to enter, and a note says why.</li>
+              <li><strong>Bexar and Denton</strong> publish maps of their commissioner and JP precincts instead. VoteBot takes points spread through your election precinct, each at least 160 feet from its edges, and gives a number only when they all fall in the same commissioner (or JP) precinct on the county's map. The two maps are drawn separately, so near a precinct's edge they can disagree by several feet; keeping 160 feet in gave no wrong numbers when checked against the lists of Dallas and Harris counties, for all 2,015 of their precincts. When your election precinct crosses a line on the county's map, or is too small to check, VoteBot leaves the number for you to enter, and a note says why.</li>
             </ul>
             <p>Near the line between two election precincts, VoteBot gives a number only when both precincts have the same one. When the county's records and Ballotpedia disagree, VoteBot uses the county's and a note says so. A number you enter always wins.</p>
             <p>VoteBot downloads a county's whole list or maps, at most once a week, when you look up an address there; your address is never sent. The counties publish proposals for new precincts too, which VoteBot never uses. Your voter registration certificate wins if they differ. Turn "Commissioner &amp; JP precincts (counties)" off in <a href="settings.html">Settings</a> to leave them out.</p>
@@ -105,9 +105,9 @@
         <details class="faq" id="district-map">
           <summary>What does the map of my districts show?</summary>
           <div class="faq-body">
-            <p>The map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts and of your election precinct, and a pin at your address, which the map opens centred on, close enough to see your precinct's streets. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own colour and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
+            <p>The map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts and of your election precinct, and a pin at your address, which the map opens centered on, close enough to see your precinct's streets. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own color and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
             <p>Drag the map to move it, and zoom with + and −, or with the scroll wheel once you've clicked the map, so scrolling the page never zooms it by accident. On a phone, use two fingers to move or zoom it; one finger scrolls the page.</p>
-            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. VoteBot sends it only each district's number, never your address. The State Board of Education outline comes from the Texas Legislative Council's map, which VoteBot already keeps. Your election precinct's outline comes from the Council's precinct map, also already kept. The outlines are simplified to about 50 meters, your precinct's to about 5, so if you live near a boundary, go by the numbers, which come from the full maps.</p>
+            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. VoteBot sends it only each district's number, never your address. The State Board of Education outline comes from the Texas Legislative Council's map, which VoteBot already keeps. Your election precinct's outline comes from the Council's precinct map, also already kept. The outlines are simplified to about 160 feet, your precinct's to about 16, so if you live near a boundary, go by the numbers, which come from the full maps.</p>
             <p>The street map comes from OpenStreetMap. The VoteBot server asks for the map tiles of the area you look at, which shows OpenStreetMap roughly where your address is, and keeps them for a week, so looking again asks nothing. Turn "Street map" off in <a href="settings.html">Settings</a> to see the outlines alone, or "District map" off to leave out the Census's outlines.</p>
             <p>Clicking the map's heading folds it away, as with a race, until you click it again; this browser remembers which you chose. While the map is folded, nothing is fetched for it.</p>
           </div>
@@ -215,7 +215,7 @@
         <details class="faq" id="paused">
           <summary>Why is a source paused?</summary>
           <div class="faq-body">
-            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia (its ballot and its address search, each on its own), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map) and the Texas Legislative Council's portal (the precinct and SBOE maps) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>When a source turns VoteBot away, VoteBot stops asking it for an hour rather than keep trying: Ballotpedia (its ballot and its address search, each on its own), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map), the Texas Legislative Council's portal (the precinct and SBOE maps) and the counties' map servers (the commissioner and JP precincts) when they refuse a request, and the FEC when VoteBot reaches its rate limit. <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
             <p>Meanwhile, whatever the source already sent still shows. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
           </div>
         </details>
@@ -227,7 +227,7 @@
         <details class="faq" id="money-sources">
           <summary>Where do the money figures come from?</summary>
           <div class="faq-body">
-            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission). Candidates for statewide office, the Legislature, the State Board of Education, the appeals and district courts, and district attorney report to the Texas Ethics Commission.</p>
+            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission). Candidates for statewide office, the Legislature, the State Board of Education, the appeals and district courts, and district attorney report to the Texas Ethics Commission (TEC).</p>
             <p>"Raised" is what the candidate's campaign reported receiving. For Congress it covers the whole election period: two years for the House, six for the Senate. For state offices it counts the reports since the last even-year November general election, and the date is shown next to the figures. "Cash on hand" is from the candidate's latest report, and the date shown is when that report ends, not when VoteBot fetched it.</p>
             <p>A candidate's details break the money down: small and large donations, individuals and political action committees (PACs), where donors live, and the largest donors. The next two answers say exactly how VoteBot puts the figures together, for <a href="#fec-money">the FEC</a> and for <a href="#tec-money">the Texas Ethics Commission</a>.</p>
           </div>
@@ -325,7 +325,7 @@
               <li>Donors are added up by name as written: "Bob Smith" and "Robert Smith" in the same state are two donors, and two different people with the same name in the same state are one.</li>
               <li>The Texas Ethics Commission doesn't record whether outside spending supported or opposed the candidate.</li>
               <li>The summary is only as new as its date in Settings. Reports filed since then appear after a Refresh.</li>
-              <li>Officeholders' personal financial statements aren't online. Each candidate's Texas Ethics Commission tab links to how to request one.</li>
+              <li>Officeholders' personal financial statements aren't online. Each candidate's TEC tab links to how to request one.</li>
             </ul>
           </div>
         </details>
@@ -379,7 +379,7 @@
             <ul>
               <li>Only questions that pit the candidates on your ballot against each other count. An early poll of a matchup that didn't happen (another nominee) is left out.</li>
               <li>Each pollster counts once, with its latest poll, so a firm that polls every week doesn't outweigh the rest. When a poll asked both likely and registered voters, the likely voters' answer counts.</li>
-              <li>Each candidate's number is the median of their share across those polls. The grey rest of the bar is undecided voters and others.</li>
+              <li>Each candidate's number is the median of their share across those polls. The gray rest of the bar is undecided voters and others.</li>
               <li>Most U.S. House districts have no public polls at all, so their races show no poll bar.</li>
               <li>The poll lists are fetched at most once a day. A candidate's Polls tab lists every poll used, with a link to it.</li>
             </ul>
@@ -400,7 +400,7 @@
         <details class="faq">
           <summary>How do I take my picks to the polls?</summary>
           <div class="faq-body">
-            <p>Use "Print my picks" at the top of your ballot. A full page can include your notes, and blank lines for races you haven't picked. A wallet card is a small card, about 3.5 inches wide, to cut out along its dashed edge and fold; it leaves notes out. Both start with the election day and the early-voting dates. To keep a copy on your computer, choose "Save as PDF" as the printer.</p>
+            <p>Use "Print my picks" at the top of your ballot. A full page can include your notes, and blank lines for races you haven't picked. A wallet card is a small card, about 3.5 inches wide, to cut out along its dashed edge and fold; it leaves notes out. Both start with Election Day and the early-voting dates. To keep a copy on your computer, choose "Save as PDF" as the printer.</p>
             <p>Bring it on paper: phones can't be used at the voting station in Texas.</p>
           </div>
         </details>
@@ -416,7 +416,7 @@
         <details class="faq">
           <summary>How do I delete my picks and my address?</summary>
           <div class="faq-body">
-            <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes and write-ins from this browser, and "Clear all browser data" also deletes your remembered address, search engine and view choices. "Clear picks" at the top of your ballot clears just that election's picks and notes, and "Clear" in a race's heading takes back that race's pick. All of them offer Undo for a few seconds, in case you didn't mean it.</p>
+            <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes and write-ins from this browser, and "Clear all browser data" also deletes your remembered address, appearance, search engine and view choices. "Clear picks" at the top of your ballot clears just that election's picks and notes, and "Clear" in a race's heading takes back that race's pick. All of them offer Undo for a few seconds, in case you didn't mean it.</p>
             <p>The VoteBot server also keeps a copy of address lookups and suggestions. <a href="privacy.html#server">Privacy</a> explains how to clear it.</p>
           </div>
         </details>
@@ -428,7 +428,7 @@
         <details class="faq">
           <summary>Can I share my VoteBot with other people?</summary>
           <div class="faq-body">
-            <p>VoteBot is made to run on your own computer, for you. Settings has no login, so keep it on its default address (127.0.0.1), which only your computer can reach. Its buttons only work from VoteBot's own pages, so another website open in your browser can't use them. Ballotpedia's endpoint is unofficial and meant for personal use: turn Ballotpedia off before you share VoteBot with anyone.</p>
+            <p>VoteBot is made to run on your own computer, for you. Settings has no login, so keep it on its default address (127.0.0.1), which only your computer can reach. Its buttons only work from VoteBot's own pages, so another website open in your browser can't use them. Ballotpedia's ballot and address search are unofficial endpoints meant for personal use: turn off "Ballotpedia" and "Address suggestions" before you share VoteBot with anyone.</p>
           </div>
         </details>
 

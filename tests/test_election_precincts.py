@@ -323,7 +323,7 @@ async def test_a_newer_map_downloads_in_the_background(tmp_path, upstream):
     ("size", "larger than 1,000 bytes"),
     ("no prj", "isn't one shapefile"),
     ("lines", "a shape of type 3, not polygons"),
-    ("feet", "isn't in metres"),
+    ("feet", "isn't in meters"),
     ("short", "cut short"),
     ("deflate64", "couldn't be unpacked (NotImplementedError"),
 ])

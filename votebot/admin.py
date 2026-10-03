@@ -42,7 +42,7 @@ SOURCES = (
         "geocoding",
         "Address lookup & districts",
         "US Census geocoder (county and districts), OpenStreetMap Nominatim when the Census can't match an "
-        "address, and the Texas Legislative Council's State Board of Education map. Always on.",
+        "address, and the Texas Legislative Council's State Board of Education map.",
         False,
         ("census", "nominatim"),
         refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
@@ -87,7 +87,7 @@ SOURCES = (
         "half second. Continue?",
         pause=Pause("Ballotpedia refused an address search", "suggestions it already sent still show"),
     ),
-    SourceInfo(sos.SOURCE, "Texas Secretary of State", sos.DESCRIPTION, True, (sos.SOURCE,)),
+    SourceInfo(sos.SOURCE, "Texas Secretary of State (Texas SOS)", sos.DESCRIPTION, True, (sos.SOURCE,)),
     SourceInfo(
         key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,),
         pause=Pause("the Texas SOS website refused a request", "dates it already sent still show"),
@@ -103,7 +103,7 @@ SOURCES = (
         True,
         (),
         refresh_label="Refresh from trackaipac.com",
-        clear_label="Reset to bundled snapshot",
+        clear_label="Reset to the snapshot that came with VoteBot",
         resettable=True,
         kept="trackaipac",
     ),
@@ -113,12 +113,12 @@ SOURCES = (
     ),
     SourceInfo(
         tec.SOURCE,
-        "Texas Ethics Commission",
+        "Texas Ethics Commission (TEC)",
         tec.DESCRIPTION,
         True,
         (),
         refresh_label="Refresh from the Texas Ethics Commission (downloads about 1 GB if it changed)",
-        clear_label="Reset to bundled snapshot",
+        clear_label="Reset to the snapshot that came with VoteBot",
         resettable=True,
         refresh_confirm="Refresh first asks the Texas Ethics Commission whether its data has changed. If it has, it "
         "downloads about 1 GB (a minute or two on a fast connection) and rebuilds the data. Continue?",
@@ -173,7 +173,7 @@ class Admin:
     @staticmethod
     def _clear_confirm(info: SourceInfo) -> str:
         if info.resettable:
-            return f"Throw away refreshed {info.label} data and go back to the bundled snapshot?"
+            return f"Throw away the refreshed {info.label} data and go back to the snapshot that came with VoteBot?"
         return f"Clear everything cached from {info.label}? The next lookup will fetch it again."
 
     def _running(self, info: SourceInfo) -> bool:
@@ -235,12 +235,7 @@ class Admin:
         paused = self._paused(info)
         if info.id == fec.SOURCE:
             if not self.svc.fec.keyed:
-                return " ".join(filter(None, (
-                    paused,
-                    "Using the shared DEMO_KEY, so federal races show totals only. For the full breakdown, set "
-                    f"VOTEBOT_FEC_API_KEY to a [free key from the OpenFEC developers page]({fec.KEY_SIGNUP}) and restart "
-                    "VoteBot.",
-                ))), "warn"
+                return " ".join(filter(None, (paused, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
             return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
         if paused:
             return paused, "warn"
@@ -315,5 +310,5 @@ class Admin:
             source.clear()
         return ActionResult(
             message=f"Cleared {removed} cached responses, the SBOE map and the precinct map, and reset TrackAIPAC and "
-            "the Texas Ethics Commission data to their bundled snapshots."
+            "the Texas Ethics Commission data to the snapshots that came with VoteBot."
         )

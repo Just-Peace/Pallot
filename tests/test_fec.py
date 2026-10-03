@@ -44,7 +44,7 @@ def test_a_nickname_the_fec_keeps_as_a_middle_name_is_a_likely_match():
                               party_of=lambda r: fec.party_code(r["party_full"]), source="the FEC",
                               name_of=lambda r: r["candidate_name"])
     assert row["candidate_id"] == "S6TX00388"
-    assert (match.confidence, match.method) == ("likely", "last name + seat")
+    assert (match.confidence, match.method) == ("likely", "last name, in the same seat")
     assert "PAXTON, WARREN KENNETH JR." in match.note
 
 

@@ -7,7 +7,7 @@ import "./page.js";
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { $, h, linkedText, onReturn, setStatus } from "./dom.js";
-import { formatBytes, formatDate, plural, relativeTime } from "./format.js";
+import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setUiPref, uiPref } from "./storage.js";
@@ -39,7 +39,7 @@ function cacheLine(source) {
 function lastUseLine(source) {
   const use = source.last_use;
   if (!use || use.status === "off") return null;
-  const age = use.as_of ? (source.resettable ? formatDate(use.as_of) : relativeTime(use.as_of)) : null;
+  const age = use.as_of ? (source.resettable ? formatDate(use.as_of, SHORT_DATE) : relativeTime(use.as_of)) : null;
   const text = {
     used: source.resettable
       ? `used the snapshot of ${age}`
