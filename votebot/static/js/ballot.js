@@ -22,7 +22,7 @@ import { keyDatesCard } from "./key-dates.js";
 import { STATES } from "./labels.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
-import { initRaceCards, renderCards } from "./race-cards.js";
+import { initRaceCards, redrawCards, renderCards } from "./race-cards.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { showToast } from "./toast.js";
@@ -183,14 +183,15 @@ function render() {
   loading.hidden = true;
   welcome.hidden = true;
   result.hidden = false;
+  renderCards();
   renderRaces();
 }
 
-// The races and propositions again, from the saved picks, with the progress and the filter:
-// after the picks change as a whole (Clear picks, its Undo, another tab). The rest of the page,
-// an open edit of the districts included, stays as it is.
+// Redraws the races and propositions in place, from the saved picks, with the progress and the
+// filter: after the picks change as a whole (Clear picks, its Undo, another tab). The rest of
+// the page, an open edit of the districts and a note being typed included, stays as it is.
 function renderRaces() {
-  renderCards();
+  redrawCards();
   applyHidePicked();
   updateProgress();
   markCurrentSection();
@@ -293,11 +294,11 @@ onReturn(() => {
 // Picks made in another tab show here too, and a pick made here doesn't undo them.
 onPicksChanged(() => {
   if (!page.ballot) return;
-  page.picks = new Picks(page.ballot.election_date);
+  page.picks.reload();
   renderRaces();
 });
 
-async function start() {
+function start() {
   const fromHash = new URLSearchParams(location.hash.slice(1));
   const changing = fromHash.has("change"); // "Change" on another page's address card
   if (changing) history.replaceState(null, "", location.pathname + location.search);
@@ -314,7 +315,7 @@ async function start() {
     showAddressPanel(); // the form is the first thing to fill in
   }
   if (changing) showForm(true);
-  await loadElections(initial?.election_date);
+  loadElections(initial?.election_date);
   if (initial?.address) {
     if (initial.party) partySelect.value = initial.party;
     lookup(initial, { keepForm: changing });

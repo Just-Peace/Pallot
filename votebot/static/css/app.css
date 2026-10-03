@@ -635,6 +635,10 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
   margin-bottom: 10px;
   overflow: clip; /* keeps the heading in the rounded corners; unlike hidden, sticky still works */
 }
+/* Cards off screen aren't laid out or painted; a card not drawn yet counts as this tall. A
+   collapsed card is one line, cheap to lay out, so it always is: Collapse all then sizes the page. */
+.race:not(.skeleton) { content-visibility: auto; contain-intrinsic-size: auto 400px; }
+.race.collapsed { content-visibility: visible; }
 .race.has-pick { border-left-color: var(--pick); }
 
 /* The heading stays under the strip (--strip-h, ballot.js) until its card has scrolled by. */
