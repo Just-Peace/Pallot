@@ -27,6 +27,7 @@ CBP = f"{HOST}/api-ivis-cbp/api/cbp"
 SYSTEM = f"{HOST}/api-ivis-system/api/system"
 BALLOT_ORDER_PAGE = f"{HOST}/ivis-cbp-ui/candidate-ballot-order"
 CANDIDATE_PAGE = f"{HOST}/ivis-cbp-ui/candidate-information"
+REFUSALS = (403, 429)  # answers that pause Texas SOS for Ttls.sos_backoff
 
 _GONE = {"R", "WDE", "DI"}  # declaration status: rejected, withdrew, declared ineligible
 
@@ -84,6 +85,7 @@ class Sos:
         self.cache = cache
         self.ttl = ttl
         self.today = today
+        cache.pause_on(SOURCE, REFUSALS, ttl.sos_backoff)
         self._indexes: dict[int, tuple[float, dict[int, dict[str, Any]]]] = {}
 
     async def _get(self, url: str, ttl: float) -> Cached:

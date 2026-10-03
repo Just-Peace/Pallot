@@ -5,8 +5,8 @@ import socket
 from datetime import datetime, timezone
 from pathlib import Path
 
+import httpx
 import pytest
-import requests
 
 from trackaipac_cache.parser import ParseResult, parse_source
 from trackaipac_cache.refresh import refresh
@@ -21,7 +21,7 @@ def _no_network(monkeypatch):
     def blocked(*args, **kwargs):
         raise RuntimeError("network access is disabled in tests")
 
-    monkeypatch.setattr(requests.sessions.Session, "send", blocked)
+    monkeypatch.setattr(httpx.Client, "send", blocked)
     monkeypatch.setattr(socket.socket, "connect", blocked)
 
 

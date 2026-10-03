@@ -47,6 +47,7 @@ SOURCES = (
         ("census", "nominatim"),
         refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
         "Nominatim the ones the Census couldn't match), and downloads the State Board of Education map again. Continue?",
+        pause=Pause("the address lookup refused a request", "addresses already looked up still work"),
         kept="sboe",
     ),
     SourceInfo(
@@ -87,7 +88,10 @@ SOURCES = (
         "half second. Continue?",
         pause=Pause("Ballotpedia refused an address search", "suggestions it already sent still show"),
     ),
-    SourceInfo(sos.SOURCE, "Texas Secretary of State (Texas SOS)", sos.DESCRIPTION, True, (sos.SOURCE,)),
+    SourceInfo(
+        sos.SOURCE, "Texas Secretary of State (Texas SOS)", sos.DESCRIPTION, True, (sos.SOURCE,),
+        pause=Pause("Texas SOS refused a request", "ballots it already sent still show"),
+    ),
     SourceInfo(
         key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,),
         pause=Pause("the Texas SOS website refused a request", "dates it already sent still show"),

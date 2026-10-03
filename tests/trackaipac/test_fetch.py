@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import httpx
 import pytest
-import requests
 
 from trackaipac_cache import __main__ as cli
 from trackaipac_cache.errors import FetchError, ValidationError
@@ -41,21 +41,22 @@ def test_success_decodes_utf8_and_sends_user_agent():
 
 def test_retries_transient_failures():
     sleeps: list[float] = []
-    session = FakeSession(requests.ConnectionError("reset"), FakeResponse(503), FakeResponse(200, b"ok"))
+    session = FakeSession(httpx.ConnectError("reset"), FakeResponse(503), FakeResponse(200, b"ok"))
     assert fetch_source("https://example.test/x", session, sleep=sleeps.append) == "ok"
     assert sleeps == [2.0, 4.0]
 
 
 def test_gives_up_after_all_attempts():
-    session = FakeSession(FakeResponse(500), FakeResponse(502), FakeResponse(429))
-    with pytest.raises(FetchError, match=r"giving up after 3 attempts \(HTTP 429\)"):
+    session = FakeSession(FakeResponse(500), FakeResponse(502), FakeResponse(503))
+    with pytest.raises(FetchError, match=r"giving up after 3 attempts \(HTTP 503\)"):
         fetch_source("https://example.test/x", session, sleep=lambda s: None)
     assert len(session.calls) == 3
 
 
-def test_client_error_is_not_retried():
-    session = FakeSession(FakeResponse(404))
-    with pytest.raises(FetchError, match="HTTP 404"):
+@pytest.mark.parametrize("status", [404, 429])
+def test_client_error_is_not_retried(status):
+    session = FakeSession(FakeResponse(status))
+    with pytest.raises(FetchError, match=f"HTTP {status}"):
         fetch_source("https://example.test/x", session, sleep=lambda s: None)
     assert len(session.calls) == 1
 
@@ -70,7 +71,7 @@ def test_fetch_all_saves_raw(tmp_path):
 
 def test_tests_cannot_reach_the_network():
     with pytest.raises(RuntimeError, match="network access is disabled"):
-        requests.get("https://www.trackaipac.com/candidates", timeout=1)
+        httpx.get("https://www.trackaipac.com/candidates", timeout=1)
 
 
 def test_cli_refresh(monkeypatch, capsys, tmp_path):

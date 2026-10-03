@@ -249,6 +249,7 @@ class Upstream:
     def __init__(self) -> None:
         self.calls: list[str] = []
         self.down: set[str] = set()  # hosts that answer HTTP 500
+        self.refusing: dict[str, int] = {}  # host -> the status it refuses every request with, e.g. 429
         self.ballotpedia_status: int | None = None
         self.ballotpedia_edit: Callable[[dict[str, Any]], None] | None = None  # changes the Capitol's ballot before it's sent
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
@@ -291,6 +292,8 @@ class Upstream:
         self.calls.append(f"{request.method} {url.host}{url.path}")
         if url.host in self.down:
             return httpx.Response(500)
+        if url.host in self.refusing:
+            return httpx.Response(self.refusing[url.host])
         params = url.params
         if url.host == "geocoding.geo.census.gov":
             if url.path.endswith("/onelineaddress"):

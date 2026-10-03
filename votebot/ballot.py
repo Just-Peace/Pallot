@@ -48,7 +48,7 @@ from .sources.suggestions import Suggestions
 from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
-from .text import display_office, display_person, iso_utc
+from .text import display_office, display_person, display_time, iso_utc
 
 MAYBE_SECTIONS = {
     "precinct": (
@@ -159,6 +159,9 @@ async def locate(svc: Services, address: str) -> tuple[Place, Location]:
                 raise BallotError(422, "That address doesn't seem to be in the United States.")
             geocoder, approximate, label = "nominatim", point.approximate, point.label
     except UpstreamError as exc:
+        if exc.until:
+            raise BallotError(502, f"The address lookup is paused until {display_time(exc.until)} after refusing a "
+                                   "request. Addresses already looked up still work.") from exc
         raise BallotError(502, f"The address lookup service isn't responding ({exc}). Try again in a minute.") from exc
     if place.state_fips != TEXAS_FIPS:
         raise BallotError(422, "VoteBot only covers Texas addresses for now.")
@@ -306,6 +309,9 @@ class _Builder:
         )
         election_precinct, county = found_precincts or (None, None)
         if sos_data is None and not (bp_ballot and bp_ballot.races):
+            if "sos" in self.errors and (until := self.svc.cache.paused_until("sos")):
+                raise BallotError(502, f"Texas SOS is paused until {display_time(until)} after refusing a request, "
+                                       "and nothing is cached yet for this address.")
             if "sos" in self.errors:
                 raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.errors['sos']}).")
             raise BallotError(404, " ".join(self.warnings) or "No ballot data found for this address.")
