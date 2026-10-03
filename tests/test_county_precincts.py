@@ -11,7 +11,7 @@ import httpx
 import pytest
 
 from votebot.config import Ttls
-from votebot.http_cache import HttpCache, UpstreamError
+from votebot.http_cache import HttpCache, UpstreamError, track_calls
 from votebot.sources import county_precincts as cp
 from votebot.sources.county_precincts import Areas, County, CountyPrecincts, Layer, Table, number, pick, services_root
 from votebot.sources.election_precincts import ElectionPrecincts
@@ -155,14 +155,35 @@ async def test_an_error_answer_is_asked_again_after_a_few_minutes(tmp_path, upst
     travis = upstream.arcgis["taxmaps.traviscountytx.gov"]
     travis[TRAVIS_QUERY] = {"error": {"code": 400, "message": "Invalid field: Commissioner", "details": []}}
     async with service(tmp_path, clock=clock) as county:
-        with pytest.raises(ValueError, match="^Travis County's map server answered: Invalid field: Commissioner$"):
+        error = "^county_precincts: Travis County's map server: error 400: Invalid field: Commissioner$"
+        with pytest.raises(UpstreamError, match=error):
             await county.at(TRAVIS, ("0300",))
         travis[TRAVIS_QUERY] = travis_rows()
-        with pytest.raises(ValueError):
-            await county.at(TRAVIS, ("0300",))  # its answer kept a while, like any
+        with pytest.raises(UpstreamError, match=error):
+            await county.at(TRAVIS, ("0300",))  # the error kept a while, so it isn't asked again
         clock.now += Ttls().retry_after + 1
         assert (await county.at(TRAVIS, ("0300",))).numbers == {"commissioner": 2, "jp": 5}
     assert upstream.count(TRAVIS_QUERY) == 2
+
+
+@pytest.mark.anyio
+async def test_an_error_answer_serves_the_good_list_kept(tmp_path, upstream):
+    clock = Clock()
+    travis = upstream.arcgis["taxmaps.traviscountytx.gov"]
+    async with service(tmp_path, clock=clock) as county:
+        await county.at(TRAVIS, ("0300",))
+        clock.now += Ttls().county_precincts + 1
+        travis[TRAVIS_QUERY] = {"error": {"code": 500, "message": "Unable to complete operation.", "details": []}}
+        stats = track_calls()
+        assert (await county.at(TRAVIS, ("0300",))).numbers == {"commissioner": 2, "jp": 5}
+        assert stats.stale_sources == {cp.SOURCE}
+        clock.now += Ttls().retry_after - 60
+        assert (await county.at(TRAVIS, ("0300",))).numbers == {"commissioner": 2, "jp": 5}
+        assert upstream.count(TRAVIS_QUERY) == 2  # within retry_after: not asked again
+        report = await county.cache.refresh(cp.SOURCE)  # a Refresh during the hiccup keeps the good copy too
+        assert (report.refreshed, report.failed) == (2, 1)
+        assert "error 500: Unable to complete operation." in report.errors[0]
+        assert (await county.at(TRAVIS, ("0300",))).numbers == {"commissioner": 2, "jp": 5}
 
 
 @pytest.mark.anyio

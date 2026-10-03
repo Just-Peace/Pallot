@@ -21,7 +21,8 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from ..config import Ttls
-from ..http_cache import Cached, HttpCache, RequestSpec
+from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
+from . import arcgis_error
 from .election_precincts import ElectionPrecincts, contains, display_name
 from .sboe import Ring
 
@@ -267,13 +268,15 @@ class CountyPrecincts:
         self.counties = counties
         self._parsed: dict[tuple[int, str], tuple[tuple[str, ...], Any]] = {}  # (county, what) -> (copies read, parsed)
         cache.pause_on(SOURCE, REFUSALS, ttl.county_precincts_backoff)
+        cache.check_answers(SOURCE, arcgis_error)
 
     async def at(self, county_fips: int, codes: tuple[str, ...]) -> Found | None:
         """What the county's records say for the election precinct ``codes`` (as the precinct map
         writes it), or for the two an address near a line could be in, where a number counts
         only when both give it. None for a county VoteBot has no records of. Raises
-        UpstreamError when the county's server can't be asked and nothing is cached, and
-        ValueError or OSError when its records or the precinct map can't be read."""
+        UpstreamError when the county's server can't be asked, or answers an error, and nothing
+        good is cached, and ValueError or OSError when its records or the precinct map can't be
+        read."""
         county = self.counties.get(county_fips)
         if county is None or not codes:
             return None
@@ -307,14 +310,15 @@ class CountyPrecincts:
     # -- fetching ---------------------------------------------------------------------------
 
     async def _get(self, county: County, spec: RequestSpec, part: str) -> Cached:
-        """The answer to ``spec``, which must have ``part``: an ArcGIS error comes as a 200 without
-        it, kept only for Ttls.retry_after."""
-        got = await self.cache.get_json(SOURCE, spec, ttl=self.ttl.county_precincts, empty_ttl=self.ttl.retry_after,
-                                        empty_at=(part,))
+        """The answer to ``spec``, which must have ``part``. An ArcGIS error, answered with a 200,
+        is refused by the cache's check (arcgis_error), so it never replaces a good copy."""
+        try:
+            got = await self.cache.get_json(SOURCE, spec, ttl=self.ttl.county_precincts)
+        except UpstreamError as exc:
+            message = str(exc).removeprefix(f"{SOURCE}: ")
+            raise UpstreamError(SOURCE, f"{county.name} County's map server: {message}", exc.status, exc.until) from exc
         if not isinstance(got.value, dict) or not got.value.get(part):
-            error = got.value.get("error") if isinstance(got.value, dict) else None
-            message = (error.get("message") if isinstance(error, dict) else None) or f"no {part}"
-            raise ValueError(f"{county.name} County's map server answered: {message}")
+            raise ValueError(f"{county.name} County's map server answered no {part}")
         return got
 
     async def _layer(self, county: County, layer: Layer) -> str:

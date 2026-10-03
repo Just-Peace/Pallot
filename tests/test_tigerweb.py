@@ -3,8 +3,12 @@ layers, reading the rings, and GET /api/district-outlines."""
 
 from __future__ import annotations
 
+import httpx
 import pytest
+import respx
 
+from votebot.config import Ttls
+from votebot.http_cache import HttpCache, UpstreamError
 from votebot.sources import tigerweb
 from votebot.sources.sboe import _inside
 
@@ -50,6 +54,48 @@ def test_rings():
     assert len(found) == 1 and found[0][0] == found[0][-1]
     assert inside(found, *capitol_point())
     assert tigerweb.rings({"features": []}) is None
+
+
+class Clock:
+    def __init__(self) -> None:
+        self.now = 1_800_000_000.0
+
+    def __call__(self) -> float:
+        return self.now
+
+
+ERROR = {"error": {"code": 404, "message": "Layer not found", "details": []}}
+
+
+@pytest.mark.anyio
+async def test_an_error_answered_with_a_200_is_asked_again_after_retry_after(tmp_path):
+    clock = Clock()
+    retry_after = Ttls().retry_after
+    with respx.mock() as router:
+        index = router.get(tigerweb.SERVICE).mock(side_effect=[
+            httpx.Response(200, json=ERROR), httpx.Response(200, json=load("tigerweb_layers.json")),
+        ])
+        district = router.get(f"{tigerweb.SERVICE}/58/query").mock(side_effect=[
+            httpx.Response(200, json=ERROR), httpx.Response(200, json=load("tigerweb_48049.json")),
+        ])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, retry_after=retry_after, clock=clock)
+            source = tigerweb.Tigerweb(cache, Ttls())
+            for _ in range(2):  # the list of layers is an error, kept a while, never "no such layer"
+                with pytest.raises(UpstreamError, match="^tigerweb: error 404: Layer not found$"):
+                    await source.outline("hd", 49)
+            assert index.call_count == 1
+            clock.now += retry_after + 1
+            for _ in range(2):  # then the district is
+                with pytest.raises(UpstreamError, match="Layer not found"):
+                    await source.outline("hd", 49)
+            assert (index.call_count, district.call_count) == (2, 1)
+            clock.now += retry_after + 1
+            assert inside(await source.outline("hd", 49), *capitol_point())
+            clock.now += retry_after + 1
+            assert await source.outline("hd", 49)  # the good copies are kept their usual 30 days
+            cache.close()
+    assert (index.call_count, district.call_count) == (2, 2)
 
 
 # -- through the API ------------------------------------------------------------------------
@@ -99,6 +145,16 @@ def test_tigerweb_down_still_draws_the_sboe_district(client, upstream):
         "The US Census's map service isn't responding, so State Senate District 14 isn't drawn.",
         "The US Census's map service isn't responding, so State House District 49 isn't drawn.",
     ]
+
+
+def test_an_error_from_tigerweb_reads_like_any_failure(client, upstream):
+    upstream.tigerweb_answer = ERROR
+    got = outlines(client, cd=10, sboe=5)
+    assert [o["kind"] for o in got["outlines"]] == ["sboe"]
+    assert got["notes"] == ["The US Census's map service isn't responding, so U.S. House District 10 isn't drawn."]
+    upstream.tigerweb_answer = None
+    assert outlines(client, cd=10)["notes"][0].endswith("isn't responding, so U.S. House District 10 isn't drawn.")
+    assert upstream.count("tigerweb") == 1  # the error is kept a while, not asked again at once
 
 
 def test_a_refusal_pauses_tigerweb(client, upstream):
