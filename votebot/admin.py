@@ -161,7 +161,20 @@ class Admin:
             sources=[self._status(info) for info in SOURCES],
             total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._all_kept()),
             last_lookup=self.svc.last_lookup,
+            clear_all_confirm=self._clear_all_confirm(),
         )
+
+    @staticmethod
+    def _clear_all_confirm() -> str:
+        snapshots = " and ".join(info.label for info in SOURCES if info.resettable)
+        return (f"Clear everything the server saved from every source? The {snapshots} data go back to the snapshots "
+                "that came with VoteBot, and the next lookups fetch everything again.")
+
+    @staticmethod
+    def _clear_confirm(info: SourceInfo) -> str:
+        if info.resettable:
+            return f"Throw away refreshed {info.label} data and go back to the bundled snapshot?"
+        return f"Clear everything cached from {info.label}? The next lookup will fetch it again."
 
     def _running(self, info: SourceInfo) -> bool:
         """A refresh from Settings, or a source kept in files downloading for a lookup."""
@@ -201,6 +214,7 @@ class Admin:
             refresh_label=info.refresh_label,
             clear_label=info.clear_label,
             refresh_confirm=self._refresh_confirm(info),
+            clear_confirm=self._clear_confirm(info),
             refreshable=info.refreshable,
             notice=notice,
             notice_tone=tone,

@@ -403,8 +403,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .source-facts dt { color: var(--muted); }
 .source-facts dd { margin: 0; overflow-wrap: anywhere; }
 .source-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
-.action-result { color: var(--danger); font-size: 0.82rem; margin: 6px 0 0; }
-.action-result:empty { display: none; }
+.source-state { display: contents; }
 
 .switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
 .switch input { appearance: none; flex: none; width: 36px; height: 20px; border-radius: 999px; background: var(--line-strong);

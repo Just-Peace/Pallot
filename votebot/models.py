@@ -366,6 +366,7 @@ class SourceStatus(BaseModel):
     refresh_label: str
     clear_label: str
     refresh_confirm: str | None = None  # asked before refreshing, when a refresh sends or downloads a lot
+    clear_confirm: str  # asked before clearing
     refreshable: bool = True  # False: no Refresh (OpenStreetMap's tiles may only be fetched as they're viewed)
     notice: str | None = None  # one line shown under the description, e.g. what the source is missing
     notice_tone: Tone = "info"
@@ -376,6 +377,7 @@ class SourcesOverview(BaseModel):
     sources: list[SourceStatus]
     total_bytes: int
     last_lookup: LastLookup | None = None
+    clear_all_confirm: str  # asked before "Clear all caches"
 
 
 class SourceToggle(BaseModel):
