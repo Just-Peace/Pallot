@@ -103,7 +103,6 @@ class Services:
 
 @dataclass
 class SosData:
-    county_id: int
     county_names: set[str]
     lookups: Lookups
     orders: list[tuple[Election, list[dict[str, Any]]]]
@@ -163,7 +162,6 @@ async def locate(svc: Services, address: str) -> tuple[Place, Location]:
     if place.state_fips != TEXAS_FIPS:
         raise BallotError(422, "VoteBot only covers Texas addresses for now.")
     location = Location(
-        input_address=address,
         matched_address=label,
         lat=place.lat,
         lon=place.lon,
@@ -316,7 +314,6 @@ class _Builder:
         entered = self.request.districts.model_dump(exclude_unset=True) if self.request.districts else {}
         found = {"cd": place.cd, "sd": place.sd, "hd": place.hd, "sboe": sboe}
         districts = Districts(
-            county_id=sos_data.county_id if sos_data else None,
             **{**found, **entered},
             entered=[kind for kind in DISTRICT_KINDS if kind in entered],
             election_precinct=election_precinct,
@@ -440,7 +437,7 @@ class _Builder:
         except UpstreamError as exc:
             self.errors["sos"] = str(exc)
             return None
-        return SosData(county_id, set(counties), lookups, list(zip(elections, orders)))
+        return SosData(set(counties), lookups, list(zip(elections, orders)))
 
     async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
         """The county's ballot order, plus the declared write-ins from the statewide candidate
@@ -647,12 +644,10 @@ class _Builder:
         return Candidate(
             key=key,
             name=display_person(row.get("txFullNameBallot") or ""),
-            ballot_name=row.get("txFullNameBallot"),
             party=code,
             party_name=(lookups.parties.get(code or "") or "").title() or None,
             incumbent=bool(row.get("flIncmbntGen")),
             write_in=write_in,
-            ballot_position=row.get("nbBallotOrder"),
         )
 
     def _bp_races(self, ballot: BpBallot, state_names: NameIndex | None) -> list[Race]:

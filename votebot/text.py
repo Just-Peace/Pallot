@@ -114,13 +114,18 @@ def display_size(num: int) -> str:
     return f"{num / 1_048_576:.1f} MB" if num >= 1_048_576 else f"{num / 1024:.0f} KB"
 
 
+def parse_date(text: str | None) -> dt.date | None:
+    """ "2026-06-30" or "2026-06-30T00:00:00" -> that date; None for anything else."""
+    try:
+        return dt.date.fromisoformat((text or "")[:10])
+    except ValueError:
+        return None
+
+
 def display_date(value: str | dt.date | None) -> str | None:
     """ "2026-06-30" or "2026-06-30T00:00:00" -> "Jun 30, 2026"."""
     if isinstance(value, str):
-        try:
-            value = dt.date.fromisoformat(value[:10])
-        except ValueError:
-            return None
+        value = parse_date(value)
     return f"{value:%b} {value.day}, {value.year}" if value else None
 
 

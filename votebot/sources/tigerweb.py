@@ -15,6 +15,7 @@ from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec
 from . import arcgis_error
 from .census import TEXAS_FIPS, vintage
+from .sboe import Ring
 
 SOURCE = "tigerweb"
 DESCRIPTION = (
@@ -24,8 +25,6 @@ DESCRIPTION = (
 SERVICE = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer"
 REFUSALS = (403, 429)  # answers that pause TIGERweb for Ttls.outlines_backoff
 SIMPLIFY_DEG = 0.0005  # about 50 m: shared boundaries still meet when zoomed to a State House district
-
-Ring = list[tuple[float, float]]  # (lon, lat)
 
 # kind -> the end of its layer's name, and the width of the district number in its GEOID
 LAYERS = {

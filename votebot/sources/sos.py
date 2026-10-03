@@ -17,7 +17,7 @@ from ..config import Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
 from ..models import Candidate, Fact, Link, SourceCard
 from ..offices import clean_office_name
-from ..text import display_office, iso_utc, web_url
+from ..text import display_office, iso_utc, parse_date, web_url
 
 SOURCE = "sos"
 LABEL = "Texas SOS"
@@ -52,13 +52,6 @@ class Lookups:
     parties: dict[str, str]
     filing: dict[str, str]
     declaration: dict[str, str]
-
-
-def _date(text: str | None) -> dt.date | None:
-    try:
-        return dt.date.fromisoformat((text or "")[:10])
-    except ValueError:
-        return None
 
 
 def still_running(row: dict[str, Any]) -> bool:
@@ -100,7 +93,7 @@ class Sos:
         got = await self._get(f"{CBP}/getElectionsByYear/{year}", ttl)
         return [
             Election(row["idElection"], " ".join((row.get("txElectionName") or "").split()),
-                     row.get("cdElectionType"), _date(row.get("dtElectionDate")))
+                     row.get("cdElectionType"), parse_date(row.get("dtElectionDate")))
             for row in got.value or []
             if row.get("idElection")
         ]
@@ -156,7 +149,7 @@ class Sos:
 
 
 def _filed(text: str | None) -> str | None:
-    day = _date(text)
+    day = parse_date(text)
     return f"{day:%b} {day.day}, {day.year}" if day else None
 
 

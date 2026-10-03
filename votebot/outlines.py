@@ -19,7 +19,7 @@ from .ballot import Services
 from .http_cache import UpstreamError, track_calls
 from .models import DistrictOutlines, Meta, Outline
 from .sources import election_precincts, osm_tiles, tigerweb
-from .sources.tigerweb import Ring
+from .sources.sboe import Ring
 
 LABELS = {"cd": "U.S. House", "sd": "State Senate", "hd": "State House", "sboe": "State Board of Education"}
 
