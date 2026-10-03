@@ -29,6 +29,7 @@ export const STATES = {
     mailEligibility: "Only if you're 65 or older, sick or disabled, away from your county for all of early voting and "
       + "Election Day, expecting to give birth around Election Day, or in jail but still eligible to vote.",
     pollHours: "7 a.m. – 7 p.m.",
+    districtCounts: { cd: 38, sd: 31, hd: 150, sboe: 15, commissioner: 4, jp: 99 }, // the highest number of each
     writeInNote: "In Texas, a write-in vote only counts for someone who filed as a write-in candidate.",
     printTips: [
       "Phones can't be used at the voting station in Texas, so bring this sheet.",
@@ -37,14 +38,27 @@ export const STATES = {
   },
 };
 
+// The districts and precincts the voter can see and change, in the voter registration
+// certificate's order: ``short`` on the card, the map's buttons and the print sheet, ``long``
+// spelled out ("State Board of Education District 5"), and whether it's a district or a precinct.
+export const DISTRICTS = {
+  cd: { short: "U.S. House", long: "U.S. House", unit: "district" },
+  sd: { short: "State Senate", long: "State Senate", unit: "district" },
+  hd: { short: "State House", long: "State House", unit: "district" },
+  sboe: { short: "SBOE", long: "State Board of Education", unit: "district" },
+  commissioner: { short: "Commissioner", long: "Commissioner", unit: "precinct" },
+  jp: { short: "JP", long: "Justice of the Peace", unit: "precinct" },
+};
+export const PRECINCT_KINDS = Object.keys(DISTRICTS).filter((kind) => DISTRICTS[kind].unit === "precinct");
+
 // The voter's districts in one line: "U.S. House 10 · State Senate 14 · … · Pct 300 · JP 5", in
 // the voter registration certificate's order (the print sheet passes precinct: " Pct" for "JP Pct 5").
 export function districtLine(d, { precinct = "" } = {}) {
+  const named = (kind) => d[kind] && `${DISTRICTS[kind].short}${DISTRICTS[kind].unit === "precinct" ? precinct : ""} ${d[kind]}`;
   return [
-    d.cd && `U.S. House ${d.cd}`, d.sd && `State Senate ${d.sd}`, d.hd && `State House ${d.hd}`, d.sboe && `SBOE ${d.sboe}`,
+    named("cd"), named("sd"), named("hd"), named("sboe"),
     d.election_precinct && `Pct ${d.election_precinct.name}`,
-    d.commissioner && `Commissioner${precinct} ${d.commissioner}`, d.jp && `JP${precinct} ${d.jp}`,
-    d.constable && `Constable${precinct} ${d.constable}`,
+    named("commissioner"), named("jp"), d.constable && `Constable${precinct} ${d.constable}`,
   ].filter(Boolean).join(" · ");
 }
 

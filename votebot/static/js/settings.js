@@ -1,8 +1,9 @@
 // The Settings page: the web search engine; sources on/off, what each has saved and how the
 // last lookup used it, refresh or clear; and deleting what this browser keeps. Changes that
 // affect the ballot are marked with markSettingsChanged(), so an open ballot page reloads
-// when the voter goes back to it.
+// when the voter goes back to it. It imports page.js first, which draws the left pane.
 
+import "./page.js";
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { $, h, linkedText, onReturn, setStatus } from "./dom.js";

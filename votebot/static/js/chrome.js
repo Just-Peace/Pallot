@@ -2,8 +2,8 @@
 // brand, "Your ballot", the address card, then the other pages at the foot), the footer pinned
 // to the bottom of the window, and Back to top. A page can put its own parts in the aside: those
 // marked data-slot="address" go under the address card (the ballot's form and status line),
-// anything else goes above the other pages (the ballot's section list). Import this first, so
-// the pane exists before a page's own code looks for it.
+// anything else goes above the other pages (the ballot's section list). Each page's entry script
+// calls initChrome() first, so the pane exists before its own code looks for it.
 //
 // Wider than 960px, « folds the pane into a rail of icons (remembered as paneCollapsed in
 // votebot.ui.v1); the ballot then shows its sections as chips in the strip (onPaneToggle).
@@ -118,11 +118,13 @@ function renderToTop() {
   sync();
 }
 
-const sidebar = document.querySelector(".sidebar");
-if (sidebar) {
-  renderSidebar(sidebar);
-  setPaneCollapsed(Boolean(uiPref("paneCollapsed")));
+export function initChrome() {
+  const sidebar = document.querySelector(".sidebar");
+  if (sidebar) {
+    renderSidebar(sidebar);
+    setPaneCollapsed(Boolean(uiPref("paneCollapsed")));
+  }
+  const app = document.querySelector(".app");
+  if (app) renderFooter(app);
+  renderToTop();
 }
-const app = document.querySelector(".app");
-if (app) renderFooter(app);
-renderToTop();

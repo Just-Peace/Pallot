@@ -230,7 +230,8 @@ def test_every_page_leaves_its_left_pane_and_footer_to_chrome_js_and_its_files_e
         assert aside.count('data-slot="address"') == 2 and 'id="jump"' in aside and "address-card" not in aside
     else:
         assert not aside.strip()
-    assert f'<script type="module" src="js/{"ballot" if page == "./" else "page"}.js"></script>' in html
+    entry = {"./": "ballot", "settings.html": "settings"}.get(page, "page")  # settings.js imports page.js
+    assert re.findall(r'<script type="module" src="js/([\w-]+)\.js"></script>', html) == [entry]
     assert '<link rel="icon" href="favicon.svg" type="image/svg+xml">' in html
     local = {ref.split("#")[0] for ref in re.findall(r'(?:href|src)="([^"#:][^":]*)"', html)}
     for ref in local:
