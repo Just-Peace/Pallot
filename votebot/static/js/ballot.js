@@ -3,7 +3,7 @@
 // phone, a top bar; see topbar.js); the main area has the progress strip and the races, each
 // one collapsible.
 
-import "./chrome.js";
+import { isPaneCollapsed, onPaneToggle, setPaneCollapsed } from "./chrome.js";
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import { openCompare } from "./compare.js";
@@ -60,16 +60,23 @@ let editingDistricts = false;
 function setStatus(message, kind = "info") {
   statusBox.className = `status status-${kind}`;
   statusBox.textContent = message || "";
-  if (message && kind === "error") openPanel("address"); // on a phone, the line is in that panel
+  if (message && kind === "error") showAddressPanel(); // the line is under the address
 }
 
 // ---- the address: a saved card, or the form ------------------------------------------
+
+// The address and the form: on a phone, the top bar's panel; wider, the pane, unfolded.
+function showAddressPanel() {
+  openPanel("address");
+  setPaneCollapsed(false);
+}
 
 function showForm(show) {
   form.hidden = !show;
   addressCard.hidden = show;
   cancelButton.hidden = !ballot;
-  openPanel(show ? "address" : null);
+  if (show) showAddressPanel();
+  else openPanel(null);
   if (show) addressInput.focus();
 }
 
@@ -198,6 +205,7 @@ function renderAddress() {
     address: shownRequest.address,
     place: [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
     matched: location.matched_address || "",
+    election: electionLine(),
   };
   showAddress(card);
   saveAddressCard(card); // the other pages show it too
@@ -441,11 +449,17 @@ async function updateDistricts(entered) {
     $(target) ? show : null);
 }
 
+// "November 3, 2026 · 2026 November General Election": under the ballot's heading, and the
+// address card's last line.
+function electionLine() {
+  return [formatDate(ballot.election_date), ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · ");
+}
+
 function renderHeader() {
   const state = STATES[ballot.location.state];
   const site = state?.registration ? null : state?.site;
   $("#ballot-sub").replaceChildren(
-    [formatDate(ballot.election_date), ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · "),
+    electionLine(),
     ...(site ? [" · Official info: ", extLink(site.url, site.label)] : []),
   );
 }
@@ -534,9 +548,11 @@ function updateProgress() {
 
 // ---- collapsible cards --------------------------------------------------------------
 
-// A card whose heading is a button that shows or hides its body. Collapsed, the heading
-// is one line: the race on the left, the pick ("✓ James Talarico") on the right.
-function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
+// A card whose heading is a button that shows or hides its body. The heading stays under the
+// strip while its card scrolls by. Collapsed, it's one line: the race on the left, the pick
+// ("✓ James Talarico") on the right; the pick shows expanded too, once there is one. ✕ Clear,
+// next to it, takes the pick back, with Undo.
+function collapsibleCard(key, { title, meta, body }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
   const toggle = h("button", { type: "button", class: "race-toggle", "aria-controls": bodyId },
@@ -544,13 +560,28 @@ function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
     h("span", { class: "race-name" }, title),
     status,
     meta ? h("span", { class: "race-meta" }, meta) : null);
+  const clear = h("button", { type: "button", class: "icon-btn with-icon clear-pick", hidden: true,
+    "aria-label": `Clear your pick for ${title}`, title: "Clear pick" }, icon("x"), "Clear");
   const bodyElement = h("div", { class: "race-body", id: bodyId }, body);
   const article = h("article", { class: "race", "data-race": key },
-    h("header", { class: "race-head" }, h("h3", {}, toggle), ...headExtras),
+    h("header", { class: "race-head" }, h("h3", {}, toggle), clear),
     bodyElement);
   toggle.addEventListener("click", () => {
     picks.setCollapsed(key, !picks.isCollapsed(key));
     redraw.get(key)?.();
+  });
+  clear.addEventListener("click", () => {
+    const before = picks.picked(key);
+    picks.set(key, []);
+    refresh(key);
+    toggle.focus();
+    showToast(`Cleared your pick for ${title}.`, {
+      label: "Undo",
+      run: () => {
+        picks.set(key, before);
+        refresh(key);
+      },
+    });
   });
   return {
     article,
@@ -563,7 +594,7 @@ function collapsibleCard(key, { title, meta, body, headExtras = [] }) {
       status.textContent = statusText;
       status.title = statusText;
       status.classList.toggle("done", done);
-      return collapsed;
+      clear.hidden = !done;
     },
   };
 }
@@ -591,11 +622,6 @@ function raceCard(race) {
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
   ].filter(Boolean);
-  const clearButton = h("button", { class: "link-btn clear-pick", type: "button", hidden: true }, "Clear pick");
-  clearButton.addEventListener("click", () => {
-    picks.set(race.key, []);
-    refresh(race.key);
-  });
   const body = h("fieldset", { class: "race-options" },
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
@@ -604,7 +630,7 @@ function raceCard(race) {
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta.join(" · "), body: [...notes, money, body], headExtras: [clearButton],
+    title: race.name, meta: meta.join(" · "), body: [...notes, money, body],
   });
 
   redraw.set(race.key, () => {
@@ -613,8 +639,7 @@ function raceCard(race) {
     const parties = new Set(picked.map((key) => race.candidates.find((c) => c.key === key)?.party || "none"));
     if (parties.size === 1) card.article.dataset.pickParty = [...parties][0];
     else delete card.article.dataset.pickParty;
-    const collapsed = card.show(pickedText(race, picked), picked.length > 0);
-    clearButton.hidden = collapsed || !picked.length;
+    card.show(pickedText(race, picked), picked.length > 0);
     for (const row of card.article.querySelectorAll(".cand")) {
       const on = picked.includes(row.dataset.cand);
       row.classList.toggle("picked", on);
@@ -1052,23 +1077,23 @@ document.addEventListener("keydown", (event) => {
 
 // On a phone (or a narrow window) the section chips join the sticky strip, and View, Clear
 // picks and Print move under the heading, where they scroll away. So what stays in view is
-// the progress, Next and the sections.
+// the progress, Next and the sections. With the left pane folded, the chips join the strip too.
 const narrow = matchMedia("(max-width: 960px)");
 function placeForWidth() {
-  if (narrow.matches) {
-    strip.append(jump);
-    $(".ballot-head").after(tools);
-  } else {
-    $(".side-bottom").before(jump);
-    strip.append(tools);
-  }
+  if (narrow.matches) $(".ballot-head").after(tools);
+  else strip.append(tools);
+  if (narrow.matches || isPaneCollapsed()) strip.append(jump); // the chips' row last
+  else $(".side-bottom").before(jump);
 }
 narrow.addEventListener("change", placeForWidth);
+onPaneToggle(placeForWidth);
 placeForWidth();
 
-// Links to a section, Next and j/k scroll to just below the strip, however tall it is.
+// Links to a section, Next and j/k scroll to just below the strip, however tall it is, and
+// each race's heading sticks right under it (--strip-h).
 new ResizeObserver(() => {
   document.documentElement.style.scrollPaddingTop = `${strip.offsetHeight + 12}px`;
+  document.documentElement.style.setProperty("--strip-h", `${strip.getBoundingClientRect().height}px`);
 }).observe(strip);
 
 // ---- the section on screen ------------------------------------------------------------
@@ -1150,7 +1175,7 @@ async function start() {
     form.hidden = true;
     addressCard.hidden = false;
   } else {
-    openPanel("address"); // on a phone, the form is the first thing to fill in
+    showAddressPanel(); // the form is the first thing to fill in
   }
   if (changing) showForm(true);
   await loadElections(initial?.election_date);

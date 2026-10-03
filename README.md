@@ -56,10 +56,13 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
 ## Using it
 
 - **Left pane**, the same on every page. On a phone or a narrow window it's a **top bar** instead, with your address and the pages each behind a button.
-  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with its city and county. **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with its city and county, and the election ("November 3, 2026 · 2026 November General Election"). **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+  - **«** at its top folds the pane into a narrow rail of icons, each named in a tooltip; **»** brings it back. The choice is remembered in the browser. On the ballot, the sections then show as chips in the strip at the top. The pane opens again by itself when the address form or an error needs to be seen.
   - while you type an address, **suggestions** from Ballotpedia's address search appear under the box, once you've typed a house number and a few letters of the street: ↑/↓ and Enter pick one, which only fills the box in. Only Texas addresses are suggested. Turn them off in Settings to get the browser's own address autofill back.
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
+- **Footer**, on every page, always in view at the bottom of the window: a reminder that VoteBot is unofficial, and **Sources** (About's credits).
+- **Back to top:** once you've scrolled a screen, a round arrow button at the bottom right goes back to the top.
 - **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant. The very first lookup after installing VoteBot (or after clearing the precinct map in Settings) also downloads the election precinct map, about 45 MB, and waits up to 20 seconds for it. If it isn't done by then, the ballot shows without your election precinct and says to reload the page in a minute. Lookups while it's still downloading don't wait for it.
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
@@ -96,6 +99,8 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's shown at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
 - **Precincts:** until your commissioner and JP precincts are known, the races that depend on them are listed under "Depends on your commissioner or JP precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
+  - While you scroll through a race, its heading stays at the top, under the progress bar, until the next race comes.
+  - Once you've picked, the heading shows your pick, collapsed or not, with **✕ Clear** next to it to take it back. A message at the foot of the window offers **Undo**. Propositions have it too.
   - Races the state's ballot doesn't have, such as city council, school board and appraisal district races, say "Listed by Ballotpedia" under their name.
   - Ballotpedia's notes on a race (a replacement nominee, a redrawn district) show at the top of it, with Ballotpedia's link.
   - **Incumbent** comes from the state's filing, or from Ballotpedia when it matches the candidate exactly in the same race.

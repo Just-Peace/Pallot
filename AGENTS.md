@@ -58,8 +58,8 @@ Update the docs in the same commit as the change.
 | Internals, commands, layout, a source's quirks                            | `DEVELOPMENT.md`                                                                                                                         |
 | Something a voter might ask about, especially how a figure is worked out  | `votebot/static/faq.html`                                                                                                                |
 | A source's row in Settings (label, description, notices, confirm prompts) | `SOURCES` in `votebot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, Refresh and Clear in its `KeptSource` methods), and `votebot/static/settings.html` if the page's text changes |
-| A page, or a link in the left pane                                        | `PAGES` in `votebot/static/js/chrome.js`, which draws the left pane on every page                                                        |
-| A new source, or what's sent to or kept from one                          | the tables in `votebot/static/privacy.html` and `votebot/static/about.html`; the footer and welcome steps in `votebot/static/index.html` |
+| A page, or a link in the left pane                                        | `PAGES` in `votebot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
+| A new source, or what's sent to or kept from one                          | the tables in `votebot/static/privacy.html` and `votebot/static/about.html`; the welcome steps in `votebot/static/index.html`            |
 | A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `votebot/config.py`, and README's "Configuration"                                                  |
 | Something found along the way                                             | a GitHub issue (see [Things you notice along the way](#things-you-notice-along-the-way))                                                 |
 
