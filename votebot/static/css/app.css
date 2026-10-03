@@ -47,6 +47,8 @@
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.07);
+  --shadow-pop: 0 8px 24px rgba(16, 24, 40, 0.16); /* what floats over the page: menus, suggestions, dialogs, the toast */
+  --on-solid: #ffffff; /* text and marks on a solid colour: the logo, party badges, the switch's knob */
   --sidebar: 320px;
   --content-max: 1360px;
   color-scheme: light;
@@ -95,6 +97,7 @@
     --map-sboe: #ba3678;
     --map-election-precinct: #cbd99a;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
     color-scheme: dark;
   }
 }
@@ -124,7 +127,14 @@ h2 { font-size: 1.25rem; }
 h3 { font-size: 1.05rem; }
 p { margin: 0 0 0.75em; }
 
-.sr-only {
+button, input, select, textarea { font: inherit; }
+
+/* Small uppercase headings: each sets its own size and margins */
+.side-title, .data-table thead th, .faq-body h3, .key-dates h2, .districts-card h2, .district-map h2, .group-title,
+.quotes-title, .breakdown-title { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+/* the section chips in the sticky strip say what they are, so their heading is for screen readers only */
+.sr-only, .progress-strip .side-title {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
@@ -162,13 +172,12 @@ p { margin: 0 0 0.75em; }
 .brand-name > span { color: var(--accent); }
 .logo { width: 28px; height: 28px; }
 .logo rect { fill: var(--accent); }
-.logo path { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.logo path { fill: none; stroke: var(--on-solid); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
 
 .side-section { border-top: 1px solid var(--line); padding-top: 16px; }
 .side-address { margin-top: -6px; } /* belongs with "Your ballot" above it */
 .side-bottom { margin-top: auto; }
-.side-title { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.07em; color: var(--muted); margin: 0 0 12px; }
+.side-title { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; margin: 0 0 12px; }
 .side-title .icon { width: 16px; height: 16px; color: var(--accent); }
 /* « in the brand's row folds the pane to a rail of icons (chrome.js); see the end of the file */
 .pane-toggle { position: absolute; top: 21px; right: 14px; }
@@ -184,7 +193,7 @@ p { margin: 0 0 0.75em; }
 /* Back to top (chrome.js): once you've scrolled a screen, above the footer */
 .to-top { position: fixed; right: 20px; bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
   width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--panel);
-  color: var(--accent); box-shadow: 0 4px 14px rgba(16, 24, 40, 0.18); cursor: pointer;
+  color: var(--accent); box-shadow: var(--shadow-pop); cursor: pointer;
   opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 0.15s, transform 0.15s, visibility 0.15s; }
 .to-top.shown { opacity: 1; visibility: visible; transform: none; }
 .to-top:hover { background: var(--accent-soft); }
@@ -214,7 +223,6 @@ p { margin: 0 0 0.75em; }
 label { font-weight: 600; font-size: 0.9rem; }
 
 input[type="text"], input[type="number"], select, textarea {
-  font: inherit;
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line-strong);
@@ -228,7 +236,7 @@ textarea { resize: vertical; min-height: 60px; }
 .suggestions {
   position: absolute; top: 100%; left: 0; right: 0; z-index: 30; margin-top: 4px;
   background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16); overflow: hidden;
+  box-shadow: var(--shadow-pop); overflow: hidden;
 }
 .suggestions ul { list-style: none; margin: 0; padding: 4px 0; }
 .suggestion { padding: 7px 11px; cursor: pointer; font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
@@ -238,7 +246,6 @@ textarea { resize: vertical; min-height: 60px; }
 input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 
 .btn {
-  font: inherit;
   font-weight: 600;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
@@ -261,13 +268,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .button-row.end { justify-content: flex-end; }
 
-.link-btn { font: inherit; font-size: 0.85rem; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 2px 0;
+.link-btn { font-size: 0.85rem; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 2px 0;
   white-space: nowrap; }
 .link-btn:hover { text-decoration: underline; }
 .link-btn .icon { width: 14px; height: 14px; }
 
 .icon-btn {
-  font: inherit;
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--muted);
@@ -315,8 +321,6 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 .progress-strip .jump-list a { border: 1px solid var(--line); border-radius: 999px; }
 .progress-strip .jump-list a[aria-current] { border-color: var(--accent); }
 .progress-strip .side-section { flex: 1 1 100%; min-width: 0; border-top: 0; padding-top: 0; }
-.progress-strip .side-title { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0 0 0 0); white-space: nowrap; border: 0; } /* sr-only: the chips say what they are */
 
 /* ---- left pane: links to the pages ---- */
 
@@ -331,7 +335,7 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 /* ---- left pane: the top bar's buttons on narrow screens (topbar.js) ---- */
 
 .topbar-buttons { display: none; }
-.topbar-btn { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font: inherit; font-size: 0.88rem; font-weight: 600;
+.topbar-btn { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 0.88rem; font-weight: 600;
   color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .topbar-btn:hover { border-color: var(--line-strong); background: var(--neutral-soft); }
 .topbar-btn .icon { width: 16px; height: 16px; color: var(--accent); }
@@ -357,8 +361,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .table-wrap { overflow-x: auto; margin: 4px 0 14px; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 .data-table th, .data-table td { text-align: left; vertical-align: top; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); }
-.data-table thead th { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
-  padding-top: 0; border-bottom-color: var(--line-strong); }
+.data-table thead th { font-size: 0.75rem; padding-top: 0; border-bottom-color: var(--line-strong); }
 .data-table tbody th { font-weight: 600; }
 .data-table.stack tbody th { width: 40%; }
 .data-table tbody tr:last-child > * { border-bottom: 0; }
@@ -367,14 +370,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .faq { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 8px; }
 .faq > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 16px; font-weight: 650; }
 .faq > summary::-webkit-details-marker { display: none; }
-.faq > summary::before { content: ""; flex: none; width: 7px; height: 7px; margin: 0 4px; border-right: 2px solid var(--muted);
-  border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform 0.15s; }
-.faq[open] > summary::before { transform: rotate(45deg); }
+.faq > summary::before { margin: 0 4px; color: var(--muted); } /* a chevron, drawn with the race's */
 .faq > summary:hover { color: var(--accent); }
 .faq-body { padding: 0 16px 14px 42px; }
 .faq-body p { max-width: 72ch; }
-.faq-body h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
-  margin: 1.4em 0 0.5em; }
+.faq-body h3 { font-size: 0.75rem; margin: 1.4em 0 0.5em; }
 .faq-body ul { max-width: 72ch; padding-left: 20px; margin: 0 0 0.75em; }
 .faq-body li + li { margin-top: 5px; }
 /* "What each figure is": the figure's name, then what it counts */
@@ -409,7 +409,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .switch input { appearance: none; flex: none; width: 36px; height: 20px; border-radius: 999px; background: var(--line-strong);
   position: relative; margin: 0; cursor: pointer; transition: background 0.15s; }
 .switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%;
-  background: #fff; transition: transform 0.15s; }
+  background: var(--on-solid); transition: transform 0.15s; }
 .switch input:checked { background: var(--accent); }
 .switch input:checked::after { transform: translateX(16px); }
 .switch input:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -423,11 +423,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .ballot-head p { margin: 2px 0 0; }
 
 .ballot-top { display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; margin: 8px 0 4px; }
-.key-dates, .districts-card { display: flex; flex-direction: column; min-width: 0; background: var(--panel);
-  border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; }
-.key-dates, .districts-card { flex: 1 1 340px; }
-.key-dates h2, .districts-card h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
-  color: var(--muted); margin: 0 0 8px; }
+/* When to vote and Your districts side by side, the map under both, the full width */
+.key-dates, .districts-card, .district-map { min-width: 0; background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 14px 18px; }
+.key-dates, .districts-card { display: flex; flex-direction: column; flex: 1 1 340px; }
+.key-dates h2, .districts-card h2, .district-map h2 { font-size: 0.78rem; margin: 0 0 8px; }
 .key-dates .fine, .districts-card .fine { margin-top: auto; padding-top: 10px; }
 
 /* When to vote (key-dates.js): a date per line, the next one in bold, past ones in grey; the
@@ -485,8 +485,7 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 /* the map's legend: a button per district, right above it, that highlights the district */
 .map-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
 .map-picks:empty { display: none; }
-.map-pick { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; font: inherit;
-  font-size: 0.88rem; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
+.map-pick { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; font-size: 0.88rem; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
   border-radius: 999px; cursor: pointer; }
 .map-pick strong { color: var(--text); font-weight: 650; }
 .map-pick.not-up strong { color: var(--muted); font-weight: 400; }
@@ -500,14 +499,12 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .map-pick.election_precinct { --kind: var(--map-election-precinct); }
 .map-swatch { width: 16px; height: 8px; flex: none; align-self: center; }
 
-/* Map of your districts (district-map.js, drawn by Leaflet): under both cards, the full width. */
-.district-map { flex: 1 1 100%; min-width: 0; background: var(--panel); border: 1px solid var(--line);
-  border-radius: var(--radius); padding: 14px 18px; }
-.district-map h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
-  margin: 0; }
+/* Map of your districts (district-map.js, drawn by Leaflet) */
+.district-map { flex: 1 1 100%; }
+.district-map h2 { margin: 0; }
 /* the heading folds the map away, with a race's chevron */
 .map-toggle { display: flex; align-items: center; gap: 6px; width: 100%; margin: -3px 0 -3px -4px; padding: 0; border: 0;
-  background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; text-align: left;
+  background: none; color: inherit; letter-spacing: inherit; text-transform: inherit; text-align: left;
   cursor: pointer; }
 .map-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
 #district-map-body { margin-top: 4px; }
@@ -578,12 +575,10 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .menu { position: relative; }
 .menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
 .menu > summary::-webkit-details-marker { display: none; }
-.menu > summary::after { content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
-  transform: translateY(-2px) rotate(45deg); }
 .menu.filtered > summary::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .menu-panel { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max-content; max-width: min(300px, calc(100vw - 32px));
   padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16); }
+  box-shadow: var(--shadow-pop); }
 .menu-panel .check { font-size: 0.9rem; }
 
 /* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
@@ -604,7 +599,7 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
    it's invisible but stays in the page, so each new message is announced. */
 .toast { position: fixed; left: 50%; bottom: calc(var(--footer-h, 0px) + 12px); z-index: 40; transform: translateX(-50%); display: flex; align-items: center; gap: 16px;
   width: max-content; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: var(--radius-sm); background: var(--text); color: var(--bg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); font-size: 0.92rem; }
+  box-shadow: var(--shadow-pop); font-size: 0.92rem; }
 .toast:empty { opacity: 0; pointer-events: none; }
 .toast .link-btn { color: inherit; font-size: inherit; font-weight: 700; text-decoration: underline; }
 
@@ -614,16 +609,23 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .notice .link-btn { font-size: inherit; padding: 0; text-decoration: underline; }
 
 .group { margin: 22px 0 8px; }
-.group-title { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }
+.group-title { font-size: 0.95rem; margin: 0 0 10px; }
 .group.maybe { border: 2px dashed var(--line-strong); border-radius: var(--radius); padding: 16px; }
 .explain { max-width: 70ch; }
 
-/* The picked party's colour: set on a race (via data-pick-party) and on each candidate row. */
-.race, .cand { --pick: var(--party-other-pick); --pick-soft: var(--party-other-soft); }
-[data-party="R"], [data-pick-party="R"] { --pick: var(--party-r); --pick-soft: var(--party-r-soft); }
-[data-party="D"], [data-pick-party="D"] { --pick: var(--party-d); --pick-soft: var(--party-d-soft); }
-[data-party="L"], [data-pick-party="L"] { --pick: var(--party-l); --pick-soft: var(--party-l-soft); --pick-text: var(--party-l-text); }
-[data-party="G"], [data-pick-party="G"] { --pick: var(--party-g); --pick-soft: var(--party-g-soft); }
+/* A party's colour, set only on the four parties: on a candidate row, a race (via data-pick-party),
+   a money or poll bar. It isn't inherited, so whatever reads it falls back on its own
+   (var(--party, …)), even inside a race picked for a party. */
+@property --party { syntax: "*"; inherits: false; }
+@property --party-soft { syntax: "*"; inherits: false; }
+@property --party-text { syntax: "*"; inherits: false; }
+[data-party="R"], [data-pick-party="R"] { --party: var(--party-r); --party-soft: var(--party-r-soft); }
+[data-party="D"], [data-pick-party="D"] { --party: var(--party-d); --party-soft: var(--party-d-soft); }
+[data-party="L"], [data-pick-party="L"] { --party: var(--party-l); --party-soft: var(--party-l-soft); --party-text: var(--party-l-text); }
+[data-party="G"], [data-pick-party="G"] { --party: var(--party-g); --party-soft: var(--party-g-soft); }
+/* the picked party's colour, for the race and its candidate rows; anyone else picks in white */
+.race, .cand { --pick: var(--party, var(--party-other-pick)); --pick-soft: var(--party-soft, var(--party-other-soft));
+  --pick-text: var(--party-text, var(--pick)); }
 
 .race {
   background: var(--panel);
@@ -657,21 +659,23 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
   border: 0;
   background: none;
   color: inherit;
-  font: inherit;
   text-align: left;
   cursor: pointer;
 }
 .chevron { grid-area: chevron; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
   border-radius: 6px; color: var(--muted); }
-.chevron::before { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
-  transform: translateY(-2px) rotate(45deg); transition: transform 0.15s; }
-.race.collapsed .chevron::before, .district-map.collapsed .chevron::before { transform: translateX(-2px) rotate(-45deg); }
+/* A chevron: down while open, right while folded (a race, the map, a FAQ answer; the View menu only points down) */
+.chevron::before, .faq > summary::before, .menu > summary::after { content: ""; flex: none; width: 7px; height: 7px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s; }
+.race.collapsed .chevron::before, .district-map.collapsed .chevron::before, .faq:not([open]) > summary::before {
+  transform: translateX(-2px) rotate(-45deg); }
 .race-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
 .race-name { grid-area: name; font-weight: 700; font-size: 1.05rem; min-width: 0; }
 .race-meta { grid-area: meta; color: var(--muted); font-size: 0.85rem; font-weight: 400; margin-top: 1px; }
 .race-status { grid-area: status; min-width: 0; max-width: 26em; font-size: 0.92rem; font-weight: 600; color: var(--muted);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.race-status.done { color: var(--pick-text, var(--pick)); }
+.race-status.done { color: var(--pick-text); }
 .race-status.done::before { content: "✓ "; }
 .race:not(.collapsed) .race-status:not(.done) { display: none; }
 .race.collapsed .race-meta { display: none; }
@@ -701,10 +705,10 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .party { display: inline-flex; align-items: center; border-radius: 999px; padding: 1px 9px; font-size: 0.7rem; font-weight: 800;
   letter-spacing: 0.04em; text-transform: uppercase; background: var(--party-other); color: var(--party-other-ink);
   box-shadow: inset 0 0 0 1px var(--line-strong); }
-.party-R { background: var(--party-r); color: #fff; box-shadow: none; }
-.party-D { background: var(--party-d); color: #fff; box-shadow: none; }
+.party-R { background: var(--party-r); color: var(--on-solid); box-shadow: none; }
+.party-D { background: var(--party-d); color: var(--on-solid); box-shadow: none; }
 .party-L { background: var(--party-l); color: var(--party-l-ink); box-shadow: none; }
-.party-G { background: var(--party-g); color: #fff; box-shadow: none; }
+.party-G { background: var(--party-g); color: var(--on-solid); box-shadow: none; }
 .pill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-weight: 600; font-size: 0.75rem;
   background: var(--neutral-soft); color: var(--muted); }
 
@@ -747,7 +751,7 @@ dialog {
   background: var(--panel);
   color: var(--text);
   padding: 0;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-pop);
 }
 dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
 .details { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 10vh); margin: 5vh auto auto; }
@@ -764,7 +768,7 @@ dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
 .details-foot { padding: 12px 20px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 0 -20px; padding: 0 20px; overflow-x: auto; }
-.tab { font: inherit; font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
+.tab { font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
   padding: 10px 12px 8px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 /* "?": a source only likely matched this candidate (on its tab, badges and Details button) */
@@ -784,7 +788,7 @@ dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
 .match-likely { background: var(--warn-soft); color: var(--warn); }
 
 .quotes { margin: 12px 0; }
-.quotes-title { font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+.quotes-title { font-size: 0.82rem; margin-bottom: 6px; }
 blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--line-strong); background: var(--panel-2);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.92rem; overflow-wrap: anywhere; }
 .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0; font-size: 0.92rem; }
@@ -794,18 +798,17 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
    rows share the list's columns (subgrid), so every bar starts on the same line and the
    amounts line up, however wide each amount is. */
 .breakdown { margin: 14px 0; }
-.breakdown-title { font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em;
-  margin: 0 0 6px; }
+.breakdown-title { font-size: 0.82rem; margin: 0 0 6px; }
 .breakdown-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 12px;
   grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content; }
 .breakdown .fine { margin-top: 6px; }
 .share { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content;
-  grid-template-columns: subgrid; align-items: center; gap: 2px 12px; font-size: 0.9rem; --bar: var(--accent); }
+  grid-template-columns: subgrid; align-items: center; gap: 2px 12px; font-size: 0.9rem;
+  --bar: var(--party, var(--tone, var(--accent))); }
 .share .bar span { background: var(--bar); transition: none; }
-.share.tone-info { --bar: var(--info); }
-.share.tone-warn { --bar: var(--warn); }
-.share.tone-good { --bar: var(--good); }
-.share[data-party="R"], .share[data-party="D"], .share[data-party="L"], .share[data-party="G"] { --bar: var(--pick); }
+.share.tone-info { --tone: var(--info); }
+.share.tone-warn { --tone: var(--warn); }
+.share.tone-good { --tone: var(--good); }
 .share-label { min-width: 0; overflow-wrap: anywhere; }
 .share-note { display: block; color: var(--muted); font-size: 0.8rem; }
 .share-amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -823,8 +826,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 /* A poll: one bar with a segment per candidate in their party colour and the rest
    (undecided or other) left grey, then a legend. */
 .stack-bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--neutral-soft); }
-.stack-bar > span, .stack-legend li { --bar: var(--accent); }
-:is(.stack-bar, .stack-legend) :is([data-party="R"], [data-party="D"], [data-party="L"], [data-party="G"]) { --bar: var(--pick); }
+.stack-bar > span, .stack-legend li { --bar: var(--party, var(--accent)); }
 .stack-bar > span { flex: none; background: var(--bar); }
 .stack-bar > span + span { border-left: 2px solid var(--panel-2); }
 .stack-bar > .rest { background: transparent; }
@@ -842,8 +844,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
    that candidate's own money. The groups share their section's columns (nested subgrids),
    so every bar starts on the same line. */
 .compare { width: min(960px, calc(100vw - 32px)); }
-.compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--accent); } /* no party, or one without a colour */
-.compare [data-party="R"], .compare [data-party="D"], .compare [data-party="L"], .compare [data-party="G"] { --bar: var(--pick); }
+.compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--party, var(--accent)); } /* no party, or one without a colour: the accent */
 .cmp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 20px; border-bottom: 1px solid var(--line);
   background: var(--panel-2); }
 .cmp-controls .fine { flex: 1 1 260px; margin: 0; }
