@@ -510,6 +510,13 @@ class ElectionPrecincts:
                 self._interiors[(county, code, inset)] = points
         return points
 
+    def warm(self) -> None:
+        """Read the kept map's index, at startup, so the first lookup needn't; nothing when no
+        map is kept. A lookup meanwhile waits on _lock for it."""
+        with self._lock:
+            if self._stored_now() is not None:
+                self._loaded()
+
     def _loaded(self) -> tuple[Stored, dict[int, list[Record]]]:
         """The map kept and its index, read once; the caller holds _lock."""
         stored = self._stored_now()

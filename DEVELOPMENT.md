@@ -84,6 +84,8 @@ Other work that would hold up the server runs in threads too:
 - `BundledSnapshot` (TrackAIPAC, TEC) is read from threads, so a lock makes each version of `current.json` parse once, and keeps a Reset's copy from being read half-written.
 - The Settings routes that only touch files (`GET /api/sources`, the on/off switch, Clear, Clear all) are plain `def`, which FastAPI runs in its thread pool.
 
+At startup, once the services are made, `warm_up()` in `api.py` reads in the background what the first lookup would otherwise read once: the precinct map's index (`ElectionPrecincts.warm`), the SBOE map (`SboeMap.warm`), and the TEC's and TrackAIPAC's name indexes. Only files already kept, for sources that are on: it never downloads or asks anyone, so with no map kept the first lookup downloads it as before. The server answers at once; a lookup that comes meanwhile waits on the same locks (`_lock` in each), so nothing is read twice. A failure is ignored, and the lookup reports it as before. Shutdown cancels the task. On WSL with `data/` on the Windows drive, the warm-up takes about 0.7 s, and the first lookup after it 0.45 s instead of 0.9 s.
+
 ## Sources
 
 Notes on how each source is called, beyond the README's table:
