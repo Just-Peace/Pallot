@@ -122,7 +122,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
   A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
-- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day and the early-voting dates. The full page lists your districts under your address, with your election precinct as "Pct 300".
+- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with the election day and the early-voting dates. The full page lists your districts, with your election precinct as "Pct 300". Your address isn't printed, so the sheet doesn't give away where you live.
 
 Picks, notes and collapsed races are kept in the browser's `localStorage`, never on the server.
 
