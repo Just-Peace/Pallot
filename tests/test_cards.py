@@ -29,6 +29,18 @@ def test_trackaipac_badge_per_list_without_money_when_none_is_shown():
     assert all(b.url for b in badges) and not any(b.hint for b in badges)
 
 
+def test_trackaipac_lists_and_money_for_pick_by_rule():
+    member = {"name": "August Pfluger", "categories": ["congress"], "listings": [listing("congress", 219959)]}
+    assert (trackaipac.card(member, EXACT, None).flags, trackaipac.card(member, EXACT, None).figures) == (
+        ["congress"], {"israel_lobby": 219959})
+    endorsed = {"name": "Greg Casar", "categories": ["endorsed", "congress"],
+                "listings": [listing("endorsed"), listing("congress")]}
+    assert (trackaipac.card(endorsed, EXACT, None).flags, trackaipac.card(endorsed, EXACT, None).figures) == (
+        ["endorsed", "congress"], {})  # no total shown: no figure, rather than $0
+    watched = {"name": "James Talarico", "categories": ["watchlist"], "listings": [listing("watchlist", 0)]}
+    assert trackaipac.card(watched, EXACT, None).figures == {"israel_lobby": 0}
+
+
 def test_trackaipac_notes_link_to_the_site_not_to_votebot():
     person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"], "listings": [listing(
         "watchlist", 0, notes=["[This candidate is pro-israel.](/james-talarico)",

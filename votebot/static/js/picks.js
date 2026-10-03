@@ -1,7 +1,7 @@
 // The voter's picks and notes. They stay in this browser (localStorage) and are never
 // sent to the server. If storage is blocked they still work until the page is closed.
 
-import { PICKS, SETTINGS_CHANGED, readJson, removeRaw, restoreRaw, storedKeys, writeJson } from "./storage.js";
+import { PICKS, PICK_RULE, SETTINGS_CHANGED, readJson, removeRaw, restoreRaw, storedKeys, writeJson } from "./storage.js";
 
 export const WRITE_IN = "write-in"; // the pick key for a name the voter types in
 
@@ -17,10 +17,10 @@ function saveBucket(electionKey, data) {
   else unsaved[electionKey] = data;
 }
 
-// Runs ``redraw`` when another tab changes the picks (a pick, Clear in Settings).
+// Runs ``redraw`` when another tab changes the picks or the pick rule (a pick, Clear in Settings).
 export function onPicksChanged(redraw) {
   window.addEventListener("storage", (event) => {
-    if (event.key === PICKS || event.key === null) redraw();
+    if (event.key === PICKS || event.key === PICK_RULE || event.key === null) redraw();
   });
 }
 
@@ -87,6 +87,18 @@ export class Picks {
     saveBucket(this.key, this.data);
   }
 
+  // Sets several races' picks with one save (Pick by rule), and returns what they were, for Undo.
+  setMany(changes) {
+    const before = {};
+    for (const [raceKey, keys] of Object.entries(changes)) {
+      before[raceKey] = this.picked(raceKey);
+      if (keys.length) this.data.races[raceKey] = keys;
+      else delete this.data.races[raceKey];
+    }
+    saveBucket(this.key, this.data);
+    return before;
+  }
+
   // Which race cards the voter collapsed (a view setting, kept by "Clear picks").
   isCollapsed(raceKey) {
     return Boolean(this.data.collapsed?.[raceKey]);
@@ -124,10 +136,10 @@ export class Picks {
 }
 
 // "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
-// races. The remembered address stays. Returns what was removed, for Undo.
+// races, and the pick rule. The remembered address stays. Returns what was removed, for Undo.
 export function clearPicksAndNotes() {
   unsaved = {};
-  return removeRaw([PICKS]);
+  return removeRaw([PICKS, PICK_RULE]);
 }
 
 // "Clear all browser data" in Settings: everything VoteBot keeps in this browser, the remembered

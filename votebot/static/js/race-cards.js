@@ -14,7 +14,7 @@ import { badgeList, likelyFlag, likelyUnflagged, raceMoney } from "./source-card
 import { uiPref } from "./storage.js";
 import { hideToast, showToast } from "./toast.js";
 
-let page = null; // { ballot, picks, showDetails, openPrecincts, updateProgress }
+let page = null; // { ballot, picks, marks, showDetails, openPrecincts, updateProgress, openRules }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 
 export function initRaceCards(context) {
@@ -66,8 +66,8 @@ export function cardFor(key) {
 // A card whose heading is a button that shows or hides its body. The heading stays under the
 // strip while its card scrolls by. Collapsed, it's one line: the race on the left, the pick
 // ("✓ James Talarico") on the right; the pick shows expanded too, once there is one. ✕ Clear,
-// next to it, takes the pick back, with Undo.
-function collapsibleCard(key, { title, meta, body }) {
+// next to it, takes the pick back, with Undo. ``tools``: more buttons after it (a race's funnel).
+function collapsibleCard(key, { title, meta, body, tools = null }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
   const fold = () => {
@@ -96,7 +96,7 @@ function collapsibleCard(key, { title, meta, body }) {
     "aria-label": `Clear your pick for ${title}`, title: "Clear pick", on: { click: clearPick } }, icon("x"), "Clear");
   const bodyElement = h("div", { class: "race-body", id: bodyId }, body);
   const article = h("article", { class: "race", "data-race": key },
-    h("header", { class: "race-head" }, h("h3", {}, toggle), clear),
+    h("header", { class: "race-head" }, h("h3", {}, toggle), clear, tools),
     bodyElement);
   return {
     article,
@@ -130,8 +130,13 @@ function raceCard(race) {
   const money = raceMoney(race, () => openCompare($("#compare"), race));
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
+  // Pick by rule for this race, when there's a choice to make.
+  const ruleButton = race.candidates.length > 1
+    ? h("button", { type: "button", class: "icon-btn rule-btn", title: "Pick by rule", "aria-label": `Pick by rule in ${race.name}`,
+      on: { click: () => page.openRules(race.key) } }, icon("filter"))
+    : null;
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta.join(" · "), body: [...notes, money, body],
+    title: race.name, meta: meta.join(" · "), body: [...notes, money, body], tools: ruleButton,
   });
 
   redraw.set(race.key, () => {
@@ -192,7 +197,8 @@ export function searchLink(race, candidate, className, label) {
   });
 }
 
-// A candidate's row, and ``sync``, which puts its saved note in the note box.
+// A candidate's row, and ``sync``, which puts its saved note in the note box and its Pick by rule
+// mark ("Mark who matches") under the name.
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
   const id = slug(candidate.key);
@@ -215,8 +221,19 @@ function candidateRow(race, candidate) {
   const noteButton = h("button", {
     type: "button", class: "icon-btn note-btn", "aria-expanded": "false", "aria-controls": `note-${id}`, on: { click: openNote },
   }, "✎ Note");
+  const mark = h("span", { class: "pill rule-mark", hidden: true });
+  const syncMark = () => {
+    const verdict = page.marks?.get(candidate.key);
+    mark.hidden = !verdict;
+    if (!verdict) return;
+    const skipped = verdict.avoid.length > 0;
+    mark.classList.toggle("tone-warn", skipped);
+    mark.classList.toggle("tone-good", !skipped);
+    mark.textContent = skipped ? `✕ Your rule skips: ${verdict.avoid.join(", ")}` : "✓ Matches your rule";
+  };
   // A box opened for a new note stays open until its note changes elsewhere.
   const sync = () => {
+    syncMark();
     const text = page.picks.note(candidate.key);
     if (!syncBox(textarea, text)) return;
     noteButton.classList.toggle("has-note", Boolean(text));
@@ -246,7 +263,7 @@ function candidateRow(race, candidate) {
         avatar(candidate),
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
-          h("span", { class: "cand-sub" }, candidatePills(candidate)))),
+          h("span", { class: "cand-sub" }, candidatePills(candidate), mark))),
       h("div", { class: "cand-actions" }, noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"))),
     badgeList(candidate),
     noteBox,

@@ -1,0 +1,206 @@
+// Pick by rule: the voter's rule, what it would do to the picks, and which candidates it
+// matches. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks.
+//
+// The Pick half is AND across its conditions, OR across the party chips; Don't pick is OR. A
+// condition from a source (TrackAIPAC, money, polls) counts only in races where that source has
+// something, so "Democrats who spent under $1M" still picks a county race's Democrat. A race with
+// more matches than seats is left for the voter: the rule never guesses.
+
+import { ballotSections } from "./ballot-shared.js";
+import { DOLLARS_SHORT } from "./format.js";
+import { partyName } from "./labels.js";
+import { PICK_RULE, readJson, writeJson } from "./storage.js";
+
+const TRACKAIPAC = "trackaipac";
+export const WRITE_INS = "write-in"; // the party chip for the declared write-in candidates
+const PARTY_ORDER = ["R", "D", "L", "G", "I"];
+
+// The money measures, by their figure on the FEC's and the TEC's cards.
+export const MONEY = [
+  ["raised", "Raised"],
+  ["spent", "Spent"],
+  ["cash", "Cash on hand"],
+  ["outside_for", "Outside spending for them"],
+];
+
+export const DEFAULT_RULE = {
+  parties: [],
+  incumbent: "any", // "yes": only incumbents, "no": only challengers
+  endorsed: false,
+  money: { on: false, metric: "spent", compare: "under", amount: 1_000_000 },
+  leads: false,
+  watchlist: false,
+  lobby: { on: false, amount: 0 },
+  polling: { on: false, amount: 5 },
+  keepMine: true,
+  mark: false, // "Mark who matches" is on
+};
+
+// The saved rule over the defaults, so a rule saved before a condition existed still loads.
+export function loadRule() {
+  const rule = structuredClone(DEFAULT_RULE);
+  const saved = readJson(PICK_RULE, {});
+  for (const [key, value] of Object.entries(saved && typeof saved === "object" ? saved : {})) {
+    if (!(key in rule) || value == null) continue;
+    const nested = typeof rule[key] === "object" && !Array.isArray(rule[key]);
+    rule[key] = nested ? { ...rule[key], ...value } : value;
+  }
+  return rule;
+}
+
+export const saveRule = (rule) => writeJson(PICK_RULE, rule);
+
+// A source's figure for the candidate (undefined when none has it).
+export function figure(candidate, id) {
+  const card = candidate.cards.find((c) => c.figures && id in c.figures);
+  return card ? card.figures[id] : undefined;
+}
+
+const tracked = (candidate) => candidate.cards.some((c) => c.source === TRACKAIPAC);
+const listed = (candidate, list) => candidate.cards.some((c) => c.source === TRACKAIPAC && c.flags?.includes(list));
+const known = (amount) => typeof amount === "number" && Number.isFinite(amount);
+
+// "1,000,000", "$1M", "250k" -> a number; null when it isn't one.
+export function parseAmount(text) {
+  const match = String(text).trim().toLowerCase().replace(/[$,\s]/g, "").match(/^(\d+(?:\.\d+)?|\.\d+)([km]?)$/);
+  if (!match) return null;
+  return Number(match[1]) * ({ k: 1e3, m: 1e6 }[match[2]] || 1);
+}
+
+// Every race on the ballot, the ones that may not be on it included, in ballot order.
+export const allRaces = (ballot) => ballotSections(ballot).flatMap((section) => section.races);
+
+// Where a rule can apply: every race, a section, or the race it was opened from.
+export function scopes(ballot, raceKey = null) {
+  const sections = ballotSections(ballot);
+  const out = [];
+  const race = raceKey && sections.flatMap((s) => s.races).find((r) => r.key === raceKey);
+  if (race) out.push({ id: `race:${race.key}`, label: `This race: ${race.name}`, races: [race] });
+  out.push({ id: "all", label: "Every race", races: sections.flatMap((s) => s.races) });
+  for (const section of sections) out.push({ id: section.id, label: section.title, races: section.races });
+  return out;
+}
+
+// The parties on these races, Republican, Democratic, Libertarian, Green and Independent first,
+// each with how many races it has a candidate in; then the declared write-ins.
+export function ballotParties(races) {
+  const found = new Map();
+  const add = (code, label, race) => {
+    if (!found.has(code)) found.set(code, { code, label, races: new Set() });
+    found.get(code).races.add(race.key);
+  };
+  for (const race of races) {
+    for (const candidate of race.candidates) {
+      if (candidate.write_in) add(WRITE_INS, "Write-ins", race);
+      else if (candidate.party) add(candidate.party, partyName(candidate) || candidate.party, race);
+    }
+  }
+  const rank = (code) => (code === WRITE_INS ? 99 : PARTY_ORDER.includes(code) ? PARTY_ORDER.indexOf(code) : 50);
+  return [...found.values()]
+    .map(({ code, label, races: inRaces }) => ({ code, label, count: inRaces.size }))
+    .sort((a, b) => rank(a.code) - rank(b.code) || a.label.localeCompare(b.label));
+}
+
+// Which conditions have anything to go on in these races; the dialog greys out the rest.
+export function available(races) {
+  const candidates = races.flatMap((race) => race.candidates);
+  const has = (id) => candidates.some((c) => figure(c, id) !== undefined);
+  return {
+    trackaipac: candidates.some(tracked),
+    lobby: has("israel_lobby"),
+    money: Object.fromEntries(MONEY.map(([id]) => [id, has(id)])),
+    polls: has("poll"),
+  };
+}
+
+// The rule in one race: whether its Pick half applies there, who it picks (``matches``, never
+// anyone Don't pick catches), who it would pick (``picks``) and why Don't pick catches someone.
+function judge(race, rule) {
+  const { candidates } = race;
+  const tests = [];
+  const parties = new Set(rule.parties);
+  if (parties.size) tests.push((c) => parties.has(c.write_in ? WRITE_INS : c.party));
+  if (rule.incumbent === "yes") tests.push((c) => c.incumbent);
+  if (rule.incumbent === "no") tests.push((c) => !c.incumbent);
+  if (rule.endorsed && candidates.some(tracked)) tests.push((c) => listed(c, "endorsed"));
+  const { money } = rule;
+  if (money.on && known(money.amount) && candidates.some((c) => figure(c, money.metric) !== undefined)) {
+    tests.push((c) => {
+      const amount = figure(c, money.metric);
+      return amount !== undefined && (money.compare === "over" ? amount > money.amount : amount < money.amount);
+    });
+  }
+  const polled = candidates.map((c) => figure(c, "poll")).filter((share) => share !== undefined);
+  if (rule.leads && polled.length) tests.push((c) => figure(c, "poll") === Math.max(...polled));
+
+  const avoid = new Map();
+  for (const c of candidates) {
+    const reasons = [];
+    if (rule.watchlist && listed(c, "watchlist")) reasons.push("on TrackAIPAC's watchlist");
+    const lobby = figure(c, "israel_lobby");
+    if (rule.lobby.on && known(rule.lobby.amount) && lobby !== undefined && lobby > rule.lobby.amount) {
+      reasons.push(`Israel lobby money ${DOLLARS_SHORT.format(lobby)}`);
+    }
+    const share = figure(c, "poll");
+    if (rule.polling.on && known(rule.polling.amount) && share !== undefined && share < rule.polling.amount) {
+      reasons.push(`polling at ${share}%`);
+    }
+    if (reasons.length) avoid.set(c.key, reasons);
+  }
+
+  // Without a party chip, only the names printed on the ballot.
+  const base = parties.size ? () => true : (c) => !c.write_in;
+  const picks = tests.length ? candidates.filter((c) => base(c) && tests.every((test) => test(c))) : [];
+  return { active: tests.length > 0, picks, matches: picks.filter((c) => !avoid.has(c.key)), avoid };
+}
+
+// For "Mark who matches": candidate key -> { avoid: [reasons] }, empty for one the rule picks.
+export function verdicts(ballot, rule) {
+  const out = new Map();
+  for (const race of allRaces(ballot)) {
+    const { picks, avoid } = judge(race, rule);
+    for (const candidate of picks) out.set(candidate.key, { avoid: [] });
+    for (const [key, reasons] of avoid) out.set(key, { avoid: reasons });
+  }
+  return out;
+}
+
+const sameKeys = (a, b) => a.length === b.length && a.every((key) => b.includes(key));
+
+// What the rule would do in ``races``: a row per race it touches, with its ``outcome`` ("pick",
+// "same": already picked so, "kept": the voter's pick stays, "many": more matches than seats,
+// "none": no match, or null when it only takes picks back), the picks ``before`` and ``after``,
+// and the picks it takes back with why. ``changed`` counts the races whose picks change.
+export function plan(races, rule, picks) {
+  const rows = [];
+  for (const race of races) {
+    const { active, matches, avoid } = judge(race, rule);
+    const before = picks.picked(race.key);
+    const kept = before.filter((key) => !avoid.has(key));
+    const takenBack = before.filter((key) => avoid.has(key)).map((key) => ({ key, reasons: avoid.get(key) }));
+    let outcome = null;
+    let after = kept;
+    if (active) {
+      if (rule.keepMine && kept.length) outcome = "kept";
+      else if (!matches.length) outcome = "none";
+      else if (matches.length > race.seats) outcome = "many";
+      else {
+        after = matches.map((c) => c.key);
+        outcome = sameKeys(before, after) ? "same" : "pick";
+      }
+    }
+    if (!outcome && !takenBack.length) continue;
+    rows.push({ race, outcome, before, after, matches, takenBack, changed: !sameKeys(before, after) });
+  }
+  const count = (outcome) => rows.filter((row) => row.outcome === outcome).length;
+  return {
+    rows,
+    picked: count("pick"),
+    same: count("same"),
+    kept: count("kept"),
+    many: count("many"),
+    none: count("none"),
+    takenBack: rows.reduce((sum, row) => sum + row.takenBack.length, 0),
+    changed: rows.filter((row) => row.changed).length,
+  };
+}

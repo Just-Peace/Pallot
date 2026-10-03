@@ -125,6 +125,11 @@ class SourceCard(BaseModel):
     breakdowns: list[Breakdown] = Field(default_factory=list)
     links: list[Link] = Field(default_factory=list)
     comparison: Comparison | None = None  # race cards only: the candidates side by side
+    # What Pick by rule tests, by id, shared by sources that mean the same thing ("raised" from
+    # the FEC and the TEC): figures in dollars (a poll's in percent), and the source's lists the
+    # candidate is on ("endorsed").
+    figures: dict[str, float] = Field(default_factory=dict)
+    flags: list[str] = Field(default_factory=list)
 
 
 class Candidate(BaseModel):

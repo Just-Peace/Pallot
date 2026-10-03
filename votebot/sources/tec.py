@@ -467,6 +467,8 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
             Link(label="Texas Ethics Commission campaign finance search", url=SEARCH),
             Link(label="Personal financial statements (not online; the TEC explains how to request one)", url=PFS_INFO),
         ],
+        figures={key: value for key, value in (("raised", raised), ("spent", totals.get("spent")), ("cash", totals.get("cash")))
+                 if value is not None},
     )
 
 
