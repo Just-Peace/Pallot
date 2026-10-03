@@ -347,3 +347,69 @@ async def test_prune_forgets_old_suggestions_and_addresses_not_found(tmp_path):
         assert cache._db.execute("SELECT value FROM responses WHERE source = 'census'").fetchone()[0] == "[1]"  # the found one
         assert cache._db.execute("SELECT COUNT(*) FROM flags").fetchone()[0] == 0
         assert cache.prune({"suggestions"}, {"census"}, older_than=50) == 0
+
+
+async def test_dates_and_stats_are_read_from_covering_indexes(tmp_path):
+    async with httpx.AsyncClient() as client:
+        cache = HttpCache(tmp_path / "c.sqlite3", client)
+        statements: list[str] = []
+        cache._db.set_trace_callback(statements.append)
+        cache.peek(SPEC)
+        cache.stats("demo")
+        cache._db.set_trace_callback(None)
+        plans = [" ".join(str(row[-1]) for row in cache._db.execute(f"EXPLAIN QUERY PLAN {sql}")) for sql in statements]
+    assert "COVERING INDEX responses_key_dates" in plans[0]
+    assert "COVERING INDEX responses_source_stats" in plans[1]
+
+
+async def test_a_value_held_in_memory_is_not_read_again(tmp_path):
+    with respx.mock() as router:
+        router.get(URL).mock(return_value=httpx.Response(200, json={"n": 1}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            await cache.get_json("demo", SPEC, ttl=60)
+            statements: list[str] = []
+            cache._db.set_trace_callback(statements.append)
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"n": 1}
+    assert statements and not any("SELECT value" in sql for sql in statements)
+
+
+async def test_a_newer_copy_stored_elsewhere_replaces_the_one_in_memory(tmp_path):
+    clock = Clock()
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=[httpx.Response(200, json={"v": 1}), httpx.Response(200, json={"v": 2})])
+        async with httpx.AsyncClient() as client:
+            reader = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            assert (await reader.get_json("demo", SPEC, ttl=60)).value == {"v": 1}
+            clock.now += 1
+            await HttpCache(tmp_path / "c.sqlite3", client, clock=clock).refresh("demo")  # another process
+            again = await reader.get_json("demo", SPEC, ttl=60)
+    assert (again.value, again.fetched_at) == ({"v": 2}, clock.now)
+
+
+async def test_images_are_not_kept_in_memory(tmp_path):
+    with respx.mock() as router:
+        router.get(URL).mock(return_value=httpx.Response(200, content=b"\x89PNG"))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            await cache.get_bytes("demo", SPEC, ttl=60)
+            assert (await cache.get_bytes("demo", SPEC, ttl=60)).value == b"\x89PNG"
+    assert not cache._memory and cache._memory_used == 0
+
+
+async def test_memory_keeps_the_most_recent_values_up_to_its_size(tmp_path):
+    specs = [RequestSpec("GET", URL, params={"q": str(n)}) for n in range(3)]
+    with respx.mock() as router:
+        router.get(URL).mock(return_value=httpx.Response(200, json="x" * 98))  # 100 bytes stored
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, memory_bytes=250)
+            for spec in specs:
+                await cache.get_json("demo", spec, ttl=60)
+            assert list(cache._memory) == [specs[1].key, specs[2].key] and cache._memory_used == 200
+            await cache.get_json("demo", specs[0], ttl=60)  # read from the database, and kept again
+            assert list(cache._memory) == [specs[2].key, specs[0].key] and cache._memory_used == 200
+            cache.clear("demo")
+            assert not cache._memory and cache._memory_used == 0
+            big = HttpCache(tmp_path / "c.sqlite3", client, memory_bytes=50)
+            await big.get_json("demo", specs[0], ttl=60)
+    assert not big._memory  # larger than the whole budget

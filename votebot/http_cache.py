@@ -4,8 +4,12 @@ One SQLite row per distinct request (method + URL + params + body), tagged with 
 source that made it, so the Settings page can show, clear or refresh one source at a
 time. A row keeps the request itself and the lifetimes it was stored with, so refresh()
 can re-issue it without knowing what it was for. A value is parsed JSON, a web page's text
-(get_text) or an image as base64 (get_bytes). Decoded values also sit in a small
-in-memory LRU, which matters for the 2.6 MB statewide candidate list.
+(get_text) or an image as base64 (get_bytes). Decoded values also sit in an in-memory
+LRU bounded by their stored size, which matters for the 2.6 MB statewide candidate list;
+images stay out of it, since the browser keeps them too.
+
+A row's dates are read through a covering index, and stats() through another: the value
+is stored before them in each row, so reading them from the table walks the whole value.
 
 When a request fails, its last good copy is served (marked stale) and the source isn't
 asked for it again for ``retry_after`` seconds. A source can also be paused as a whole
@@ -47,7 +51,9 @@ CREATE TABLE IF NOT EXISTS responses (
     empty_at TEXT NOT NULL,
     bytes INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS responses_source ON responses(source);
+DROP INDEX IF EXISTS responses_source;
+CREATE INDEX IF NOT EXISTS responses_key_dates ON responses(key, fetched_at, expires_at);
+CREATE INDEX IF NOT EXISTS responses_source_stats ON responses(source, fetched_at, expires_at, bytes);
 CREATE TABLE IF NOT EXISTS flags (
     name TEXT PRIMARY KEY,
     source TEXT NOT NULL,
@@ -206,7 +212,7 @@ class HttpCache:
         *,
         min_interval: dict[str, float] | None = None,
         source_headers: dict[str, dict[str, str]] | None = None,
-        memory_items: int = 32,
+        memory_bytes: int = 64 << 20,
         retry_after: float = 0.0,
         clock: Callable[[], float] = time.time,
     ):
@@ -218,8 +224,9 @@ class HttpCache:
         self._lock = threading.Lock()
         self._client = client
         self._clock = clock
-        self._memory: OrderedDict[str, tuple[float, Any]] = OrderedDict()
-        self._memory_items = memory_items
+        self._memory: OrderedDict[str, tuple[float, Any, int]] = OrderedDict()  # key -> fetched_at, value, bytes
+        self._memory_bytes = memory_bytes
+        self._memory_used = 0
         self._inflight: dict[str, asyncio.Future[Cached]] = {}
         self._min_interval = dict(min_interval or {})
         self._source_headers = {source: dict(headers) for source, headers in (source_headers or {}).items()}
@@ -250,7 +257,7 @@ class HttpCache:
         request share one fetch.
         """
         key = spec.key
-        stored = await asyncio.to_thread(self._load, key)
+        stored = await asyncio.to_thread(self._load, spec)
         if stored and stored.expires_at > self._clock():
             return self._hit(source, Cached(stored.value, stored.fetched_at))
         until = self.paused_until(source)
@@ -322,7 +329,7 @@ class HttpCache:
     def peek(self, spec: RequestSpec) -> Cached | None:
         """The stored copy of ``spec``, fresh or not, without asking anyone (Settings reads
         what's kept this way)."""
-        stored = self._load(spec.key)
+        stored = self._load(spec)
         return Cached(stored.value, stored.fetched_at) if stored else None
 
     def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
@@ -350,7 +357,7 @@ class HttpCache:
             value = await self._request(source, spec)
         except (httpx.HTTPError, ValueError) as exc:
             self._refused(source, exc)
-            stored = await asyncio.to_thread(self._load, spec.key)
+            stored = await asyncio.to_thread(self._load, spec)
             if stored is None:
                 raise UpstreamError(source, describe_error(exc), _status(exc)) from exc
             if self._retry_after:
@@ -399,34 +406,52 @@ class HttpCache:
 
     # -- storage -----------------------------------------------------------------
 
-    def _load(self, key: str) -> _Stored | None:
-        """The stored copy, or None. Its times and value come from one query, so a Clear
-        from another process (or thread) can't remove the row in between. The value text is
-        only sent, and parsed, when the in-memory copy isn't this one."""
+    def _load(self, spec: RequestSpec) -> _Stored | None:
+        """The stored copy, or None. The dates come from the covering index, and the value
+        is read only when memory doesn't hold that copy, by key and fetched_at: a Clear or a
+        newer copy from another process (or thread) in between is a miss, never a value
+        paired with another copy's dates."""
+        key = spec.key
         with self._lock:
-            hit = self._memory.get(key)
             row = self._db.execute(
-                "SELECT fetched_at, expires_at, CASE WHEN fetched_at = ? THEN NULL ELSE value END"
-                " FROM responses WHERE key = ?",
-                (hit[0] if hit else None, key),
+                "SELECT fetched_at, expires_at FROM responses INDEXED BY responses_key_dates WHERE key = ?", (key,)
             ).fetchone()
-            if row is not None and row[2] is None:  # value is NOT NULL, so memory holds this very copy
+            if row is None:
+                return None
+            fetched_at, expires_at = row
+            hit = self._memory.get(key)
+            if hit and hit[0] == fetched_at:
                 self._memory.move_to_end(key)
-                return _Stored(row[0], row[1], hit[1])
-        if row is None:
+                return _Stored(fetched_at, expires_at, hit[1])
+            found = self._db.execute(
+                "SELECT value, bytes FROM responses WHERE key = ? AND fetched_at = ?", (key, fetched_at)
+            ).fetchone()
+        if found is None:
             return None
-        fetched_at, expires_at, text = row
+        text, size = found
         value = json.loads(text)
-        with self._lock:
-            self._remember(key, fetched_at, value)
+        if not spec.as_bytes:
+            with self._lock:
+                self._remember(key, fetched_at, value, size)
         return _Stored(fetched_at, expires_at, value)
 
-    def _remember(self, key: str, fetched_at: float, value: Any) -> None:
-        """Keep a decoded value in memory; the caller holds self._lock."""
-        self._memory[key] = (fetched_at, value)
-        self._memory.move_to_end(key)
-        while len(self._memory) > self._memory_items:
-            self._memory.popitem(last=False)
+    def _remember(self, key: str, fetched_at: float, value: Any, size: int) -> None:
+        """Keep a decoded value in memory, dropping the least recently used past
+        ``memory_bytes`` of stored text; the caller holds self._lock."""
+        old = self._memory.pop(key, None)
+        if old:
+            self._memory_used -= old[2]
+        if size > self._memory_bytes:
+            return
+        self._memory[key] = (fetched_at, value, size)
+        self._memory_used += size
+        while self._memory_used > self._memory_bytes:
+            self._memory_used -= self._memory.popitem(last=False)[1][2]
+
+    def _forget_all(self) -> None:
+        """Empty the in-memory copies; the caller holds self._lock."""
+        self._memory.clear()
+        self._memory_used = 0
 
     def _store(
         self,
@@ -440,6 +465,7 @@ class HttpCache:
     ) -> None:
         lifetime = empty_ttl if empty_ttl is not None and value_is_empty(value, empty_at) else ttl
         text = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+        size = len(text.encode("utf-8"))
         with self._lock:
             self._db.execute(
                 "INSERT OR REPLACE INTO responses"
@@ -447,11 +473,12 @@ class HttpCache:
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     spec.key, source, spec.dumps(), text, now, now + lifetime,
-                    ttl, empty_ttl, json.dumps(list(empty_at)), len(text.encode("utf-8")),
+                    ttl, empty_ttl, json.dumps(list(empty_at)), size,
                 ),
             )
             self._db.execute("DELETE FROM flags WHERE name = ?", (_retry_flag(spec.key),))
-            self._remember(spec.key, now, value)
+            if not spec.as_bytes:
+                self._remember(spec.key, now, value, size)
 
     # -- Settings page -----------------------------------------------------------
 
@@ -476,7 +503,7 @@ class HttpCache:
             else:
                 removed = self._db.execute("DELETE FROM responses WHERE source = ?", (source,)).rowcount
                 self._db.execute("DELETE FROM flags WHERE source = ?", (source,))
-            self._memory.clear()
+            self._forget_all()
         return removed
 
     def prune(self, sources: Collection[str], misses: Collection[str], older_than: float) -> int:
@@ -502,7 +529,7 @@ class HttpCache:
             self._db.execute("DELETE FROM flags WHERE expires_at <= ?", (self._clock(),))
             if removed:
                 self._db.execute("VACUUM")
-                self._memory.clear()
+                self._forget_all()
         return removed
 
     async def refresh(self, source: str, *, concurrency: int = 3) -> RefreshReport:
