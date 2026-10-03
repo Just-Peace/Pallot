@@ -147,6 +147,23 @@ def test_tigerweb_down_still_draws_the_sboe_district(client, upstream):
     ]
 
 
+def test_the_sboe_map_down_still_draws_the_other_districts(client, upstream):
+    upstream.down.add("data.capitol.texas.gov")
+    note = "The Texas Legislative Council's portal isn't responding, so State Board of Education District 5 isn't drawn."
+    for _ in range(2):  # the download, then the wait before it's tried again
+        got = outlines(client, sboe=5, cd=10)
+        assert [o["kind"] for o in got["outlines"]] == ["cd"] and got["notes"] == [note]
+    assert upstream.count("data.capitol.texas.gov") == 1
+
+
+def test_a_refused_sboe_map_reads_as_paused(client, upstream):
+    upstream.down.add("data.capitol.texas.gov")
+    client.app.state.svc.cache.set_flag("paused:sboe", "sboe", 3600)
+    got = outlines(client, sboe=5)
+    assert got["notes"] == ["The Texas Legislative Council's portal is paused, so State Board of Education District 5 isn't drawn."]
+    assert upstream.count("data.capitol.texas.gov") == 0
+
+
 def test_an_error_from_tigerweb_reads_like_any_failure(client, upstream):
     upstream.tigerweb_answer = ERROR
     got = outlines(client, cd=10, sboe=5)

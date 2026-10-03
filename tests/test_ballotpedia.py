@@ -36,6 +36,17 @@ def _state_race(key, *people):
                 candidates=[Candidate(key=f"{key}:{i}", name=name, party=party) for i, (name, party) in enumerate(people)])
 
 
+def test_without_a_date_the_ballot_is_the_next_election_or_else_the_latest():
+    def election(day):
+        return {"date": day, "districts": [{"type": "State", "name": "Texas",
+                                            "races": [_bp_race(day, f"Race on {day}", _bp_candidate(1, "A B"))]}]}
+
+    payload = {"data": {"elections": [election("2026-11-03"), election("2026-03-03")]}}
+    for today, expected in ((dt.date(2026, 1, 1), dt.date(2026, 3, 3)), (dt.date(2026, 3, 3), dt.date(2026, 3, 3)),
+                            (dt.date(2026, 10, 3), DAY), (dt.date(2026, 12, 1), DAY)):
+        assert parse(payload, None, 0.0, today).day == expected, today
+
+
 @pytest.fixture(scope="module")
 def ballot():
     return parse(load("ballotpedia_capitol.json"), dt.date(2026, 11, 3), fetched_at=0.0)

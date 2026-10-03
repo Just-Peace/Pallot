@@ -30,6 +30,7 @@ CANDIDATE_PAGE = f"{HOST}/ivis-cbp-ui/candidate-information"
 REFUSALS = (403, 429)  # answers that pause Texas SOS for Ttls.sos_backoff
 
 _GONE = {"R", "WDE", "DI"}  # declaration status: rejected, withdrew, declared ineligible
+_DECEASED = "D"  # drops a declared write-in only: a printed name stays on the ballot as the county printed it
 
 
 @dataclass(frozen=True)
@@ -56,7 +57,8 @@ class Lookups:
 
 
 def still_running(row: dict[str, Any]) -> bool:
-    return row.get("cdDeclarationStatus") not in _GONE
+    status = row.get("cdDeclarationStatus")
+    return status not in _GONE and not (status == _DECEASED and row.get("cdParty") == "W")
 
 
 def find_county(counties: dict[str, int], name: str | None, fips: str | None) -> int | None:

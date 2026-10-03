@@ -16,7 +16,7 @@ import html
 import re
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
@@ -242,14 +242,19 @@ def _measure(raw: dict[str, Any], district_name: str) -> BpMeasure:
     )
 
 
-def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float) -> BpBallot:
+def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float, today: dt.date | None = None) -> BpBallot:
+    """The ballot of the election on ``day``; without one, the earliest on or after ``today``,
+    or the latest when every election listed is past."""
     elections = ((payload or {}).get("data") or {}).get("elections") or []
     dated = [(e, parse_date(e.get("date"))) for e in elections]
     if day:
         chosen = next((e for e, d in dated if d == day), None)
     else:
-        upcoming = sorted((d, i) for i, (_, d) in enumerate(dated) if d)
-        chosen = dated[upcoming[0][1]][0] if upcoming else (elections[0] if elections else None)
+        today = today or dt.date.today()
+        dates = sorted((d, i) for i, (_, d) in enumerate(dated) if d)
+        coming = [(d, i) for d, i in dates if d >= today]
+        pick = coming[0] if coming else (dates[-1] if dates else None)
+        chosen = dated[pick[1]][0] if pick else (elections[0] if elections else None)
     if chosen is None:
         return BpBallot(day, (), (), {}, fetched_at)
     races: list[BpRace] = []
@@ -270,9 +275,10 @@ def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float) -> Bp
 
 
 class Ballotpedia:
-    def __init__(self, cache: HttpCache, ttl: Ttls):
+    def __init__(self, cache: HttpCache, ttl: Ttls, today: Callable[[], dt.date] = dt.date.today):
         self.cache = cache
         self.ttl = ttl
+        self.today = today
         cache.pause_on(SOURCE, REFUSALS, ttl.ballotpedia_backoff)
 
     async def ballot(self, lat: float, lon: float, day: dt.date | None = None) -> BpBallot:
@@ -289,7 +295,7 @@ class Ballotpedia:
             if exc.until:
                 raise BallotpediaUnavailable(f"paused until {display_time(exc.until)} after Ballotpedia refused a request") from exc
             raise BallotpediaUnavailable(str(exc)) from exc
-        return parse(got.value, day, got.fetched_at)
+        return parse(got.value, day, got.fetched_at, self.today())
 
 
 def card(candidate: BpCandidate, race: BpRace, fetched_at: float, match: Match | None) -> SourceCard:

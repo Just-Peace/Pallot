@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from votebot.ballot import _jp_is_constable
+from votebot.sources.sos import still_running
 
 from .conftest import (
     ADDRESSES, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
@@ -190,12 +191,19 @@ def _write_in(office_id, candidate_id, name, **changes):
             "cdCandType": "WRTIN", "cdDeclarationStatus": "A", "txFullNameBallot": name, "txCountyName": None, **changes}
 
 
+def test_a_deceased_status_drops_a_declared_write_in_but_not_a_printed_name():
+    assert not still_running({"cdParty": "W", "cdDeclarationStatus": "D"})
+    assert still_running({"cdParty": "R", "cdDeclarationStatus": "D"})
+    assert still_running({"cdParty": "W", "cdDeclarationStatus": "A"})
+
+
 def test_declared_write_ins_follow_the_printed_candidates(client, upstream):
     senate_rows = [r for r in load("sos_ballot_53815_227.json") if r["txOfficeName"].strip() == "U. S. SENATOR"]
     senate_office = senate_rows[0]["idOffice"]
     upstream.extra_candidates[53815] = [
         _write_in(senate_office, 900001, "PAT FILED"),
         _write_in(senate_office, 900002, "LEE WITHDREW", cdDeclarationStatus="R"),
+        _write_in(senate_office, 900006, "DEE CEASED", cdDeclarationStatus="D"),
         _write_in(351, 900003, "SAM ELSEWHERE", cdOfficeType="CW", txCountyName="HARRIS"),  # Travis's county clerk office id
         _write_in(351, 900004, "KIM CLERK", cdOfficeType="CW", txCountyName="TRAVIS"),
         _write_in(999999, 900005, "NO SUCH RACE", cdOfficeType="SR", txOfficeName="DISTRICT JUDGE, 999TH JUDICIAL DISTRICT"),
