@@ -220,6 +220,7 @@ class HttpCache:
         self.path = path
         self._db = sqlite3.connect(str(path), check_same_thread=False, isolation_level=None)
         self._db.execute("PRAGMA journal_mode=WAL")
+        self._db.execute("PRAGMA secure_delete=ON")
         self._db.executescript(_SCHEMA)
         self._lock = threading.Lock()
         self._client = client
@@ -495,6 +496,8 @@ class HttpCache:
         return sum(p.stat().st_size for p in self.path.parent.glob(self.path.name + "*") if p.is_file())
 
     def clear(self, source: str | None = None) -> int:
+        """``secure_delete`` zeroes the deleted rows, and the checkpoint empties the WAL of
+        their old copies, so a cleared address can't be read back from the files."""
         with self._lock:
             if source is None:
                 removed = self._db.execute("DELETE FROM responses").rowcount
@@ -503,6 +506,7 @@ class HttpCache:
             else:
                 removed = self._db.execute("DELETE FROM responses WHERE source = ?", (source,)).rowcount
                 self._db.execute("DELETE FROM flags WHERE source = ?", (source,))
+            self._db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
             self._forget_all()
         return removed
 
@@ -529,6 +533,7 @@ class HttpCache:
             self._db.execute("DELETE FROM flags WHERE expires_at <= ?", (self._clock(),))
             if removed:
                 self._db.execute("VACUUM")
+                self._db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
                 self._forget_all()
         return removed
 

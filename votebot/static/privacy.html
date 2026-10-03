@@ -195,7 +195,7 @@
           </table>
         </div>
         <p><strong>Apart from suggestions and addresses that weren't found, the times above only decide when VoteBot asks a source again. They don't delete anything:</strong> an address that was found stays in the server's copy until it's cleared, as the copy to use when the Census doesn't answer.</p>
-        <p>To clear it, go to <a href="settings.html">Settings</a>. Clear on "Address lookup &amp; districts" deletes every saved address lookup, Clear on "Address suggestions" deletes everything saved from the address box, Clear on Ballotpedia deletes its saved lookups, and "Clear all caches" deletes everything saved from every source. You can also stop VoteBot and delete its data folder (<code>data/</code>, unless <code>VOTEBOT_DATA_DIR</code> points elsewhere).</p>
+        <p>To clear it, go to <a href="settings.html">Settings</a>. Clear on "Address lookup &amp; districts" deletes every saved address lookup, Clear on "Address suggestions" deletes everything saved from the address box, Clear on Ballotpedia deletes its saved lookups, and "Clear all caches" deletes everything saved from every source. Clearing overwrites what it deletes, so it can't be read back from the files. You can also stop VoteBot and delete its data folder (<code>data/</code>, unless <code>VOTEBOT_DATA_DIR</code> points elsewhere).</p>
         <p>Addresses travel in the body of requests, which isn't logged. If something goes wrong, though, an error report in the log can include the request VoteBot was making, address included.</p>
       </section>
 
