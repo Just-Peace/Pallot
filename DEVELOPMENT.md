@@ -50,7 +50,7 @@ votebot/
                     vendor/leaflet/ (Leaflet 1.9.4, copied in), css/app.css,
                     js/ (ballot.js, districts-card.js, race-cards.js, details.js, ballot-nav.js, ballot-shared.js,
                     key-dates.js, district-map.js, suggest.js, compare.js, settings.js, chrome.js, page.js,
-                    topbar.js, toast.js, source-cards.js, print.js, picks.js, storage.js,
+                    topbar.js, toast.js, source-cards.js, print.js, picks.js, storage.js, theme.js,
                     dom.js, format.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
@@ -157,6 +157,8 @@ The strip comes first so that Next and the section chips stay on a phone's first
 Clearing what the voter keeps in the browser (Clear picks on the ballot, and the two Clear buttons in Settings) happens at once, then `toast.js` offers Undo for 10 seconds. On the ballot, Clear picks and its Undo redraw only the races, the progress and the filter (`renderRaces()`), so an open edit of the districts stays open. The clear functions in `picks.js` return what they removed, for Undo to put back. Clearing what the server saved can't be undone, so those buttons still ask first. `admin.py` words every prompt (`refresh_confirm`, `clear_confirm`, and the overview's `clear_all_confirm`, which names the bundled snapshots it resets), so `settings.js` holds no source's name. `settings.js` draws each source's row once and updates it in place by `source.id`, so a change, or the 5-second poll while a refresh runs, keeps the focus where it was.
 
 Everything kept in the browser goes through `storage.js`: the keys, `readJson`/`writeJson` (which swallow blocked storage), and `uiPref`/`setUiPref` for the view settings in `votebot.ui.v1`. `picks.js` keeps `Picks`, one bucket per election in `votebot.picks.v1`. Each save re-reads the stored picks and replaces only its own election's bucket, so two ballot tabs don't overwrite each other's elections, and a `storage` listener (`onPicksChanged`) redraws the ballot when another tab changes them. If storage refuses a save, the bucket is kept in memory until the page closes.
+
+Light or dark is the `theme` view setting (`system`, `light` or `dark`; System when unset), chosen under Appearance in Settings. `theme.js` is the one classic script, loaded in every page's `<head>` before the stylesheet, so `<html>` has `data-theme="light"` or `"dark"` before the first paint (a module runs too late and would flash). It reads `votebot.ui.v1` itself, since it can't import `storage.js`, and applies the choice again when the device's setting changes, when another tab changes it (`storage`), and when Settings fires `votebot:theme` on `document`. `app.css`'s dark colours and the map tiles' dark filter key off `[data-theme="dark"]`, never `prefers-color-scheme`.
 
 The modules share their small helpers rather than writing them out again:
 - `dom.js`: `h()` and `svg()` build elements (`class` takes a string or an array whose falsy entries are dropped, `on: { click }` adds listeners), `$`, `extLink` (a new-tab link, its label text or nodes, shown unlinked without a usable url), `setStatus` for a status line, `onFrame` (at most once a frame), `trackHeight` (an element's height in a CSS variable), `onReturn` (the voter comes back to the page), `autosave` for the note and write-in boxes, and `dialogHead()` and `closeOnBackdrop()` for the dialogs.

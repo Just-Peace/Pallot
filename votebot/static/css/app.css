@@ -54,52 +54,51 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0e1319;
-    --panel: #151c24;
-    --panel-2: #1a222c;
-    --text: #e5ebf1;
-    --muted: #9ba7b4;
-    --line: #25303c;
-    --line-strong: #34414f;
-    --accent: #5aa7e0;
-    --accent-hover: #7cbbeb;
-    --accent-contrast: #07121c;
-    --accent-soft: #14283a;
-    --focus: #7cbbeb;
-    --good: #6fcf97;
-    --good-soft: #16301f;
-    --warn: #f0a55a;
-    --warn-soft: #34240f;
-    --info: #8fb4f5;
-    --info-soft: #172642;
-    --neutral-soft: #212b36;
-    --danger: #f4877e;
-    --danger-soft: #3a1714;
-    --party-r: #d64541;
-    --party-r-soft: #3a1a18;
-    --party-d: #3d7be6;
-    --party-d-soft: #172642;
-    --party-l: #e8c026;
-    --party-l-ink: #2b2100;
-    --party-l-text: #e8c026;
-    --party-l-soft: #332b0c;
-    --party-g: #3f9a45;
-    --party-g-soft: #16301f;
-    --party-other: #ffffff;
-    --party-other-ink: #0e1319;
-    --party-other-pick: #ffffff;
-    --party-other-soft: #202a35;
-    --map-cd: #8b68f3;
-    --map-sd: #d2781e;
-    --map-hd: #36a4ba;
-    --map-sboe: #ba3678;
-    --map-election-precinct: #cbd99a;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
-    color-scheme: dark;
-  }
+/* theme.js sets data-theme from Settings' Appearance, or from the device's setting */
+:root[data-theme="dark"] {
+  --bg: #0e1319;
+  --panel: #151c24;
+  --panel-2: #1a222c;
+  --text: #e5ebf1;
+  --muted: #9ba7b4;
+  --line: #25303c;
+  --line-strong: #34414f;
+  --accent: #5aa7e0;
+  --accent-hover: #7cbbeb;
+  --accent-contrast: #07121c;
+  --accent-soft: #14283a;
+  --focus: #7cbbeb;
+  --good: #6fcf97;
+  --good-soft: #16301f;
+  --warn: #f0a55a;
+  --warn-soft: #34240f;
+  --info: #8fb4f5;
+  --info-soft: #172642;
+  --neutral-soft: #212b36;
+  --danger: #f4877e;
+  --danger-soft: #3a1714;
+  --party-r: #d64541;
+  --party-r-soft: #3a1a18;
+  --party-d: #3d7be6;
+  --party-d-soft: #172642;
+  --party-l: #e8c026;
+  --party-l-ink: #2b2100;
+  --party-l-text: #e8c026;
+  --party-l-soft: #332b0c;
+  --party-g: #3f9a45;
+  --party-g-soft: #16301f;
+  --party-other: #ffffff;
+  --party-other-ink: #0e1319;
+  --party-other-pick: #ffffff;
+  --party-other-soft: #202a35;
+  --map-cd: #8b68f3;
+  --map-sd: #d2781e;
+  --map-hd: #36a4ba;
+  --map-sboe: #ba3678;
+  --map-election-precinct: #cbd99a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -388,6 +387,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 .setting-row { display: grid; gap: 4px; max-width: 360px; margin: 4px 0 0; }
 .setting-row .fine { margin: 0; }
+.setting-row .seg { justify-self: start; }
+.setting-row .seg-option { padding: 6px 16px; font-size: 0.9rem; }
 
 .source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 14px 0; }
 .source-row { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
@@ -542,9 +543,7 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .map-swatch .map-outline.hd { stroke-dasharray: 0.1 3.5; }
 .map-swatch .map-outline.sboe { stroke-dasharray: 6 2 1 2; }
 .map-swatch .map-outline.election_precinct { stroke-dasharray: 4.5 2.5 0.1 2.5 0.1 2.5; }
-@media (prefers-color-scheme: dark) {
-  .map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); } /* OpenStreetMap's tiles are light */
-}
+[data-theme="dark"] .map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); } /* OpenStreetMap's tiles are light */
 .district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
   background: var(--warn-soft); color: var(--warn); }
 .precinct-prompt .link-btn, .district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }

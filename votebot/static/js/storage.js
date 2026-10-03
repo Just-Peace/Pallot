@@ -30,7 +30,7 @@ export function writeJson(key, value) {
   }
 }
 
-// A view setting: the search engine, the folded left pane, Compare's scale, the map.
+// A view setting: the appearance, the search engine, the folded left pane, Compare's scale, the map.
 export const uiPref = (name) => readJson(UI, {})[name];
 
 export function setUiPref(name, value) {
