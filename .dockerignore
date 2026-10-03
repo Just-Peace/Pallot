@@ -1,4 +1,8 @@
-.git
+# all of .git but what names the commit, which the build writes into the image for the footer
+.git/*
+!.git/HEAD
+!.git/refs
+!.git/packed-refs
 .venv
 # the FEC key: compose.yaml passes .env in at run time, never into the image
 .env
