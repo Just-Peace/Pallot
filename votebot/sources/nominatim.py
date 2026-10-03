@@ -14,6 +14,7 @@ from .census import normalize_address
 
 SOURCE = "nominatim"
 URL = "https://nominatim.openstreetmap.org/search"
+REFUSALS = (403, 429)  # answers that pause Nominatim for Ttls.geocode_backoff; its policy blocks clients that keep asking
 
 # Result types that are an area or a street rather than the address itself.
 _APPROXIMATE = {
@@ -34,6 +35,7 @@ class Nominatim:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
+        cache.pause_on(SOURCE, REFUSALS, ttl.geocode_backoff)
 
     async def locate(self, address: str) -> Point | None:
         spec = RequestSpec(

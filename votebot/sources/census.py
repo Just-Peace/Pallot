@@ -18,6 +18,7 @@ SOURCE = "census"
 BASE = "https://geocoding.geo.census.gov/geocoder/geographies"
 PARAMS = {"benchmark": "Public_AR_Current", "vintage": "Current_Current", "layers": "all", "format": "json"}
 TEXAS_FIPS = "48"
+REFUSALS = (403, 429)  # answers that pause the geocoder for Ttls.geocode_backoff
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,7 @@ class Census:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
+        cache.pause_on(SOURCE, REFUSALS, ttl.geocode_backoff)
 
     async def geocode(self, address: str) -> Place | None:
         spec = RequestSpec("GET", f"{BASE}/onelineaddress", params={"address": normalize_address(address), **PARAMS})

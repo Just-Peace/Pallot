@@ -184,7 +184,7 @@ The modules share their small helpers rather than writing them out again:
 
 `trackaipac_cache/` is a copy of the TrackAIPAC library from `git@github.com:Fahd-Siddiqui/TrackAipacCache.git` (develop, commit `423443a`), with its tests in `tests/trackaipac/`. VoteBot copies its bundled snapshot into `data/trackaipac/` on first run, so it works without calling trackaipac.com.
 
-- **Refresh** (TrackAIPAC's row in Settings) runs the package's `refresh()`, which validates the pages and writes only if the site changed.
+- **Refresh** (TrackAIPAC's row in Settings) runs the package's `refresh()`, which validates the pages and writes only if the site changed. Its fetch (`fetch.py`, with `httpx`) retries a connection error or a 5xx twice, 2 and 4 seconds apart, and stops at once at any 4xx, a 429 included.
 - **Reset** goes back to the copy in the repo.
 - To update the bundled copy itself, run `uv run trackaipac-cache refresh` and see `trackaipac_cache/README.md`.
 

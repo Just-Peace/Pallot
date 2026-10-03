@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 from typing import Callable
 
-import requests
+import httpx
 
 from .errors import FetchError
 from .models import SOURCE_URLS
@@ -19,29 +19,30 @@ BACKOFF_SECONDS = 2.0
 
 def fetch_source(
     url: str,
-    session: requests.Session | None = None,
+    session: httpx.Client | None = None,
     *,
     attempts: int = ATTEMPTS,
     backoff: float = BACKOFF_SECONDS,
     sleep: Callable[[float], None] = time.sleep,
 ) -> str:
-    """GET ``url`` with retries on connection errors, 429 and 5xx."""
+    """GET ``url`` with retries on connection errors and 5xx. Any 4xx, a 429 included, stops
+    at once, so a site that refuses us isn't asked again."""
     own_session = session is None
-    session = session or requests.Session()
+    session = session or _client()
     last_error = "no attempts made"
     try:
         for attempt in range(1, attempts + 1):
             try:
                 resp = session.get(url, headers={"User-Agent": USER_AGENT}, timeout=TIMEOUT)
-            except requests.RequestException as exc:
+            except httpx.HTTPError as exc:
                 last_error = f"{type(exc).__name__}: {exc}"
             else:
-                if resp.status_code == 429 or resp.status_code >= 500:
+                if resp.status_code >= 500:
                     last_error = f"HTTP {resp.status_code}"
                 elif resp.status_code >= 400:
                     raise FetchError(f"{url}: HTTP {resp.status_code}")
                 else:
-                    # requests guesses ISO-8859-1 when the charset is missing, which mangles names.
+                    # Always UTF-8: the pages may name no charset, and a guessed one mangles names.
                     return resp.content.decode("utf-8", errors="replace")
             if attempt < attempts:
                 sleep(backoff * 2 ** (attempt - 1))
@@ -51,10 +52,14 @@ def fetch_source(
             session.close()
 
 
-def fetch_all(session: requests.Session | None = None, raw_dir: str | Path | None = None) -> dict[str, str]:
+def _client() -> httpx.Client:
+    return httpx.Client(follow_redirects=True)
+
+
+def fetch_all(session: httpx.Client | None = None, raw_dir: str | Path | None = None) -> dict[str, str]:
     """Fetch every source; optionally save each page to ``raw_dir/<source>.html``."""
     own_session = session is None
-    session = session or requests.Session()
+    session = session or _client()
     try:
         pages = {source: fetch_source(url, session) for source, url in SOURCE_URLS.items()}
     finally:

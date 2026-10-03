@@ -426,6 +426,46 @@ def test_nominatim_fallback_is_marked_approximate(client):
     assert ballot["districts"]["county_id"] == 227
 
 
+def source_row(client: TestClient, source_id: str) -> dict:
+    return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == source_id)
+
+
+def test_a_census_refusal_pauses_it_and_addresses_already_looked_up_still_work(client, upstream):
+    get_ballot(client)
+    upstream.refusing["geocoding.geo.census.gov"] = 429
+    first = client.post("/api/ballot", json={"address": ADDRESSES["ut"]})
+    assert first.status_code == 502 and "isn't responding" in first.json()["detail"]
+    again = client.post("/api/ballot", json={"address": ADDRESSES["harris"]})
+    assert again.status_code == 502 and again.json()["detail"].startswith("The address lookup is paused until ")
+    assert upstream.count("geocoding.geo.census.gov") == 2  # the Capitol, then the refusal; not asked again
+    assert get_ballot(client)["location"]["geocoder"] == "census"
+    row = source_row(client, "geocoding")
+    assert row["notice_tone"] == "warn" and row["notice"].startswith("Paused until ")
+    assert row["notice"].endswith(" after the address lookup refused a request; addresses already looked up still work.")
+
+
+def test_a_nominatim_refusal_pauses_it(client, upstream):
+    upstream.refusing["nominatim.openstreetmap.org"] = 403
+    assert client.post("/api/ballot", json={"address": ADDRESSES["mopac"]}).status_code == 502
+    again = client.post("/api/ballot", json={"address": "1 Nowhere Lane, Austin, TX 78701"})
+    assert again.status_code == 502 and "is paused until" in again.json()["detail"]
+    assert upstream.count("nominatim.openstreetmap.org") == 1
+
+
+def test_a_texas_sos_refusal_pauses_it_and_the_ballot_comes_from_ballotpedia(client, upstream):
+    upstream.refusing["goelect.txelections.civixapps.com"] = 403
+    ballot = get_ballot(client)
+    assert ballot["races"] and any("Ballotpedia only" in w for w in ballot["warnings"])
+    asked = upstream.count("goelect.txelections.civixapps.com")
+    get_ballot(client)
+    assert upstream.count("goelect.txelections.civixapps.com") == asked  # paused: not asked again
+    nothing = client.post("/api/ballot", json={"address": ADDRESSES["ut"]})  # Ballotpedia has no races there
+    assert nothing.status_code == 502 and nothing.json()["detail"].startswith("Texas SOS is paused until ")
+    row = source_row(client, "sos")
+    assert row["notice_tone"] == "warn"
+    assert row["notice"].endswith(" after Texas SOS refused a request; ballots it already sent still show.")
+
+
 def test_outside_texas_is_refused(client):
     response = client.post("/api/ballot", json={"address": ADDRESSES["dc"]})
     assert response.status_code == 422 and "Texas" in response.json()["detail"]

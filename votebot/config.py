@@ -26,9 +26,11 @@ class Ttls:
     sos_ballot_order: int = DAY
     sos_candidates: int = DAY  # the statewide candidate list, one per election
     sos_empty: int = 6 * HOUR  # an empty ballot order may fill in later
+    sos_backoff: int = HOUR  # after Texas SOS refuses us, stop asking for this long
     past_election: int = 365 * DAY  # anything about an election that already happened
     geocode: int = 30 * DAY
     geocode_miss: int = DAY
+    geocode_backoff: int = HOUR  # after the Census geocoder or Nominatim refuses us, stop asking that one for this long
     suggest: int = 30 * DAY  # address suggestions as you type
     suggest_backoff: int = HOUR  # after Ballotpedia refuses an address search, stop asking for this long
     ballotpedia: int = DAY
