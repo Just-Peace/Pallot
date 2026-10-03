@@ -11,6 +11,7 @@ date in it: some add a footnote, a note or a time after it.
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import re
 from dataclasses import dataclass
 from html.parser import HTMLParser
@@ -129,20 +130,31 @@ def parse(html: str) -> list[Deadlines]:
     return found
 
 
+@functools.lru_cache(maxsize=2)
+def elections(html: str) -> list[Deadlines]:
+    """parse(), once per copy of the page: the cache's check and deadlines() both read it, and
+    a copy held in memory is the same string each time, so its hash is already known."""
+    return parse(html)
+
+
+def no_elections(page: object) -> str | None:
+    """The cache's check: a page with no election table (a maintenance page, or wherever a
+    redirect led) is refused, so it never replaces the good copy."""
+    return None if isinstance(page, str) and elections(page) else "the page lists no elections"
+
+
 class KeyDatesPage:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        self._parsed: tuple[float, list[Deadlines]] | None = None
         cache.pause_on(SOURCE, REFUSALS, ttl.key_dates_backoff)
+        cache.check_answers(SOURCE, no_elections)
 
     async def deadlines(self) -> list[Deadlines]:
         """Every election on the page, parsed once per fetched copy. UpstreamError when the
-        page can't be had and nothing is cached."""
+        page can't be had, or has no elections, and no good copy is cached."""
         got = await self.cache.get_text(SOURCE, RequestSpec("GET", URL), ttl=self.ttl.key_dates)
-        if self._parsed is None or self._parsed[0] != got.fetched_at:
-            self._parsed = (got.fetched_at, parse(got.value or ""))
-        return self._parsed[1]
+        return elections(got.value)
 
     async def on(self, day: dt.date) -> Deadlines | None:
         return next((found for found in await self.deadlines() if found.day == day), None)

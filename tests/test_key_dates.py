@@ -11,7 +11,7 @@ import respx
 
 from votebot import ics
 from votebot.config import Ttls
-from votebot.http_cache import HttpCache, RequestSpec
+from votebot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls
 from votebot.sources import key_dates
 from votebot.sources.key_dates import Deadlines, parse
 
@@ -129,6 +129,54 @@ async def test_the_page_is_cached_as_text_and_parsed_once(tmp_path):
             assert (await cache.refresh(key_dates.SOURCE)).refreshed == 1  # re-fetched as text
     assert RequestSpec("GET", key_dates.URL).key != RequestSpec("GET", key_dates.URL, as_text=True).key
     assert RequestSpec.loads(RequestSpec("GET", "https://x.test/", as_text=True).dumps()).as_text
+
+
+class Clock:
+    def __init__(self) -> None:
+        self.now = 1_800_000_000.0
+
+    def __call__(self) -> float:
+        return self.now
+
+
+@pytest.mark.anyio
+async def test_a_page_with_no_election_table_keeps_the_old_page(tmp_path):
+    clock = Clock()
+    maintenance = httpx.Response(200, text="<html><body>Down for maintenance</body></html>",
+                                 headers={"content-type": "text/html"})
+    with respx.mock() as router:
+        route = router.get(key_dates.URL).mock(side_effect=[
+            httpx.Response(200, text=page(), headers={"content-type": "text/html"}), maintenance, maintenance,
+        ])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, retry_after=Ttls().retry_after, clock=clock)
+            source = key_dates.KeyDatesPage(cache, Ttls())
+            assert await source.on(D(2026, 11, 3)) == NOV_3
+            clock.now += Ttls().key_dates + 1
+            stats = track_calls()
+            assert await source.on(D(2026, 11, 3)) == NOV_3 and stats.stale_sources == {key_dates.SOURCE}
+            report = await cache.refresh(key_dates.SOURCE)
+            assert report.failed == 1 and report.errors == (f"{key_dates.URL}: the page lists no elections",)
+            assert await source.on(D(2026, 11, 3)) == NOV_3
+            cache.close()
+    assert route.call_count == 3
+
+
+@pytest.mark.anyio
+async def test_a_page_with_no_election_table_and_no_old_page(tmp_path):
+    with respx.mock() as router:
+        router.get(key_dates.URL).mock(return_value=httpx.Response(200, text="<html>Moved</html>",
+                                                                   headers={"content-type": "text/html"}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, retry_after=Ttls().retry_after)
+            with pytest.raises(UpstreamError, match="^key_dates: the page lists no elections$"):
+                await key_dates.KeyDatesPage(cache, Ttls()).deadlines()
+            cache.close()
+
+
+def test_the_check_refuses_only_a_page_without_elections():
+    assert key_dates.no_elections(page()) is None
+    assert key_dates.no_elections("<p>Maintenance</p>") == "the page lists no elections"
 
 
 # -- through the API ------------------------------------------------------------------------

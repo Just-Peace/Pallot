@@ -213,6 +213,73 @@ async def test_a_clear_while_a_row_is_read_is_not_an_error(tmp_path):
     assert route.call_count == 1
 
 
+def refuse_errors(value) -> str | None:
+    return value["error"] if "error" in value else None
+
+
+async def test_an_answer_its_check_refuses_never_replaces_a_good_copy(tmp_path):
+    clock = Clock()
+    with respx.mock() as router:
+        route = router.get(URL).mock(side_effect=[
+            httpx.Response(200, json={"v": "old"}), httpx.Response(200, json={"error": "Layer not found"}),
+            httpx.Response(200, json={"v": "new"}),
+        ])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, retry_after=300, clock=clock)
+            cache.check_answers("demo", refuse_errors)
+            await cache.get_json("demo", SPEC, ttl=60)
+            clock.now += 120
+            stats = track_calls()
+            got = await cache.get_json("demo", SPEC, ttl=60)  # the error: the good copy, marked stale
+            assert got.value == {"v": "old"} and got.stale and stats.stale_sources == {"demo"}
+            assert cache.peek(SPEC).value == {"v": "old"}
+            clock.now += 200
+            assert (await cache.get_json("demo", SPEC, ttl=60)).stale  # within retry_after: not asked
+            assert route.call_count == 2
+            clock.now += 101
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": "new"}
+    assert route.call_count == 3
+
+
+async def test_a_refused_answer_with_no_good_copy_is_kept_for_retry_after(tmp_path):
+    clock = Clock()
+    with respx.mock() as router:
+        route = router.get(URL).mock(side_effect=[
+            httpx.Response(200, json={"error": "Layer not found"}), httpx.Response(200, json={"error": "Busy"}),
+            httpx.Response(200, json={"v": 1}),
+        ])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, retry_after=300, clock=clock)
+            cache.check_answers("demo", refuse_errors)
+            for _ in range(2):  # the second is the kept answer: not asked
+                with pytest.raises(UpstreamError, match="^demo: Layer not found$") as caught:
+                    await cache.get_json("demo", SPEC, ttl=3600)
+                assert caught.value.status is None and caught.value.until is None
+            assert route.call_count == 1
+            clock.now += 301
+            with pytest.raises(UpstreamError, match="Busy"):  # a refused copy is no fallback for another
+                await cache.get_json("demo", SPEC, ttl=3600)
+            clock.now += 301
+            assert (await cache.get_json("demo", SPEC, ttl=3600)).value == {"v": 1}
+            clock.now += 3000
+            assert (await cache.get_json("demo", SPEC, ttl=3600)).value == {"v": 1}  # kept its own ttl
+    assert route.call_count == 3
+
+
+async def test_refresh_keeps_the_old_copy_when_its_answer_is_refused(tmp_path):
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=[
+            httpx.Response(200, json={"v": 1}), httpx.Response(200, json={"error": "Busy"}),
+        ])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            cache.check_answers("demo", refuse_errors)
+            await cache.get_json("demo", SPEC, ttl=60)
+            report = await cache.refresh("demo")
+            assert (report.refreshed, report.failed) == (0, 1) and report.errors == (f"{URL}: Busy",)
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": 1}
+
+
 async def test_failure_with_nothing_cached_raises(tmp_path):
     with respx.mock() as router:
         router.get(URL).mock(return_value=httpx.Response(403))

@@ -258,6 +258,7 @@ class Upstream:
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
+        self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
         self.tile_agents: set[str | None] = set()  # the User-Agents the tile server was sent
         self.precincts_status: int | None = None  # e.g. 429 when the TLC's portal throttles us
@@ -366,6 +367,8 @@ class Upstream:
         if url.host == "tigerweb.geo.census.gov":
             if self.tigerweb_status:
                 return httpx.Response(self.tigerweb_status)
+            if self.tigerweb_answer is not None:
+                return httpx.Response(200, json=self.tigerweb_answer)
             if url.path.endswith("/MapServer"):
                 return _file("tigerweb_layers.json")
             geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"]).group(1)

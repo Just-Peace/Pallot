@@ -181,7 +181,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - key election dates: 24 hours
   - district outlines for the map: 30 days
   - the list of election precinct maps: 7 days; the map itself is kept until a newer one is listed
-  - counties' lists of their election precincts, and their maps of commissioner and JP precincts: 7 days (an error a county's server answers with: 15 minutes)
+  - counties' lists of their election precincts, and their maps of commissioner and JP precincts: 7 days
   - street map tiles: 7 days, the least OpenStreetMap's policy allows
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
   - address suggestions, street map tiles, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
@@ -189,6 +189,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 - The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
 - Candidate details and the declared write-ins come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
+- An error that a source sends as if it were an answer counts as a failure too, so it never replaces the good copy: TIGERweb's and the counties' map servers answering with an error, or the Texas SOS's dates page coming back without its election dates (a maintenance page, say). With no good copy yet, the error is kept for 15 minutes, so lookups meanwhile don't ask again.
 - If Ballotpedia (its ballot or its address search, each on its own), FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, VoteBot stops asking it for an hour; if a county's map server does, it stops asking all seven counties for an hour. What it already sent still shows.
 - If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. Refresh in Settings always tries.
 - If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. Refresh in Settings always tries.

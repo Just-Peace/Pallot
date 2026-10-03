@@ -12,9 +12,13 @@ A row's dates are read through a covering index, and stats() through another: th
 is stored before them in each row, so reading them from the table walks the whole value.
 
 When a request fails, its last good copy is served (marked stale) and the source isn't
-asked for it again for ``retry_after`` seconds. A source can also be paused as a whole
-when it answers with certain statuses (Ballotpedia refusing us, the FEC's rate limit):
-while paused, whatever is stored is served and nothing is fetched, not even by refresh().
+asked for it again for ``retry_after`` seconds. Some sources answer an error with a 200
+(an ArcGIS server's ``error`` body, a page without its table): a source registers a check of
+its answers (check_answers), and an answer it refuses is handled like a failed request, so it
+never replaces a good copy; with none, it's kept for ``retry_after`` and raised as
+UpstreamError meanwhile. A source can also be paused as a whole when it answers with certain
+statuses (Ballotpedia refusing us, the FEC's rate limit): while paused, whatever is stored is
+served and nothing is fetched, not even by refresh().
 
 Cached values are shared between callers: treat them as read-only.
 """
@@ -235,6 +239,7 @@ class HttpCache:
         self._throttle_locks: dict[str, asyncio.Lock] = {}
         self._retry_after = retry_after
         self._pause_on: dict[str, tuple[frozenset[int], float]] = {}
+        self._checks: dict[str, Callable[[Any], str | None]] = {}
 
     def close(self) -> None:
         self._db.close()
@@ -253,12 +258,17 @@ class HttpCache:
         ``empty_ttl`` applies instead of ``ttl`` when the value (or its part at
         ``empty_at``) is empty. If a fetch fails, the expired copy is returned marked
         stale, and keeps being returned without asking for ``retry_after``; UpstreamError
-        only when there is no copy at all. While the source is paused: the stored copy,
-        fresh or not, or UpstreamError with ``until``. Concurrent calls for the same
-        request share one fetch.
+        only when there is no copy at all. An answer the source's check refuses counts as a
+        failure, and a stored one is never served: UpstreamError while it's kept, then asked
+        again. While the source is paused: the stored copy, fresh or not, or UpstreamError
+        with ``until``. Concurrent calls for the same request share one fetch.
         """
         key = spec.key
         stored = await asyncio.to_thread(self._load, spec)
+        if stored and (why := self._refusal(source, stored.value)):
+            if stored.expires_at > self._clock():
+                raise UpstreamError(source, why)
+            stored = None
         if stored and stored.expires_at > self._clock():
             return self._hit(source, Cached(stored.value, stored.fetched_at))
         until = self.paused_until(source)
@@ -340,6 +350,15 @@ class HttpCache:
     def paused_until(self, source: str) -> float | None:
         return self.flag_until(_pause_flag(source))
 
+    def check_answers(self, source: str, check: Callable[[Any], str | None]) -> None:
+        """Refuse an answer of ``source`` that ``check`` finds wrong (it returns why, or None
+        for a good one), as if the request had failed."""
+        self._checks[source] = check
+
+    def _refusal(self, source: str, value: Any) -> str | None:
+        check = self._checks.get(source)
+        return check(value) if check else None
+
     def _refused(self, source: str, exc: Exception) -> None:
         rule = self._pause_on.get(source)
         if rule and _status(exc) in rule[0]:
@@ -353,25 +372,43 @@ class HttpCache:
     async def _fetch_and_store(
         self, source: str, spec: RequestSpec, ttl: float, empty_ttl: float | None, empty_at: tuple[str, ...]
     ) -> Cached:
-        stats = current_calls()
         try:
             value = await self._request(source, spec)
         except (httpx.HTTPError, ValueError) as exc:
             self._refused(source, exc)
-            stored = await asyncio.to_thread(self._load, spec)
-            if stored is None:
+            kept = await self._fall_back(source, spec)
+            if kept is None:
                 raise UpstreamError(source, describe_error(exc), _status(exc)) from exc
-            if self._retry_after:
-                self.set_flag(_retry_flag(spec.key), source, self._retry_after)
-            if stats:
-                stats.stale_sources.add(source)
-                stats.used(source, stored.fetched_at)
-            return Cached(stored.value, stored.fetched_at, stale=True)
+            return kept
         now = self._clock()
+        why = self._refusal(source, value)
+        if why:
+            kept = await self._fall_back(source, spec)
+            if kept is None:
+                await asyncio.to_thread(
+                    self._store, spec, source, value, now, ttl, empty_ttl, empty_at, self._retry_after
+                )
+                raise UpstreamError(source, why)
+            return kept
         await asyncio.to_thread(self._store, spec, source, value, now, ttl, empty_ttl, empty_at)
+        stats = current_calls()
         if stats:
             stats.used(source, now)
         return Cached(value, now)
+
+    async def _fall_back(self, source: str, spec: RequestSpec) -> Cached | None:
+        """After a failed request: the last good copy, marked stale and not asked for again
+        for ``retry_after``, or None when there's none (a refused answer isn't one)."""
+        stored = await asyncio.to_thread(self._load, spec)
+        if stored is None or self._refusal(source, stored.value):
+            return None
+        if self._retry_after:
+            self.set_flag(_retry_flag(spec.key), source, self._retry_after)
+        stats = current_calls()
+        if stats:
+            stats.stale_sources.add(source)
+            stats.used(source, stored.fetched_at)
+        return Cached(stored.value, stored.fetched_at, stale=True)
 
     async def _request(self, source: str, spec: RequestSpec) -> Any:
         await self._throttle(source)
@@ -463,8 +500,12 @@ class HttpCache:
         ttl: float,
         empty_ttl: float | None,
         empty_at: tuple[str, ...],
+        lifetime: float | None = None,
     ) -> None:
-        lifetime = empty_ttl if empty_ttl is not None and value_is_empty(value, empty_at) else ttl
+        """Store ``value`` for ``lifetime``, or else ``ttl`` (``empty_ttl`` when it's empty);
+        the lifetimes are kept for refresh() either way."""
+        if lifetime is None:
+            lifetime = empty_ttl if empty_ttl is not None and value_is_empty(value, empty_at) else ttl
         text = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
         size = len(text.encode("utf-8"))
         with self._lock:
@@ -538,7 +579,8 @@ class HttpCache:
         return removed
 
     async def refresh(self, source: str, *, concurrency: int = 3) -> RefreshReport:
-        """Re-fetch every stored request for ``source``; failures keep their old copy. While
+        """Re-fetch every stored request for ``source``; failures, and answers its check
+        refuses, keep their old copy. While
         the source is paused (also when a refusal pauses it partway through), the rest are
         skipped rather than asked."""
         with self._lock:
@@ -560,6 +602,9 @@ class HttpCache:
                 except (httpx.HTTPError, ValueError) as exc:
                     self._refused(source, exc)
                     return f"{spec.url}: {describe_error(exc)}"
+            why = self._refusal(source, value)
+            if why:
+                return f"{spec.url}: {why}"
             await asyncio.to_thread(
                 self._store, spec, source, value, self._clock(), ttl, empty_ttl, tuple(json.loads(empty_at))
             )

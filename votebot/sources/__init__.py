@@ -5,7 +5,7 @@ can build SourceCards for candidates."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Protocol
+from typing import Any, Protocol
 
 from ..models import Fact, SourceCard, Tone
 
@@ -21,6 +21,18 @@ class CardSet:
     incumbents: set[str] = field(default_factory=set)
     notes: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+
+
+def arcgis_error(answer: Any) -> str | None:
+    """Why an ArcGIS server's answer is an error, or None for a good one: it answers an error
+    with a 200 and an ``error`` body (HttpCache.check_answers)."""
+    error = answer.get("error") if isinstance(answer, dict) else None
+    if error is None:
+        return None
+    if not isinstance(error, dict):
+        return f"error: {error}"
+    code, message = error.get("code"), error.get("message") or "no message"
+    return f"error {code}: {message}" if code else f"error: {message}"
 
 
 class RefreshFailed(Exception):

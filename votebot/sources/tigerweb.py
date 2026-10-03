@@ -13,6 +13,7 @@ from typing import Any
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec
+from . import arcgis_error
 from .census import TEXAS_FIPS, vintage
 
 SOURCE = "tigerweb"
@@ -80,10 +81,11 @@ class Tigerweb:
         self.cache = cache
         self.ttl = ttl
         cache.pause_on(SOURCE, REFUSALS, ttl.outlines_backoff)
+        cache.check_answers(SOURCE, arcgis_error)
 
     async def outline(self, kind: str, number: int) -> list[Ring] | None:
         """The district's rings in lon/lat; None when TIGERweb has no such layer or district.
-        Raises UpstreamError when it can't be asked and nothing is cached."""
+        Raises UpstreamError when it can't be asked, or answers an error, and nothing is cached."""
         index = await self.cache.get_json(SOURCE, index_spec(), ttl=self.ttl.outlines)
         layer = layer_id(index.value, kind)
         if layer is None:
