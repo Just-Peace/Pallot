@@ -198,12 +198,13 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 ## Settings
 
 The **Settings** page, linked from the left pane:
+- sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open VoteBot tab;
 - picks the web search engine;
 - turns election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused, whether a map's last download failed, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to their bundled snapshots. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
-- has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
+- has "Clear my picks & notes", and "Clear all browser data", which also forgets your address, appearance, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
 Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
 

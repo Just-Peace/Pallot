@@ -6,6 +6,7 @@
   <title>VoteBot · Settings</title>
   <meta name="description" content="Choose VoteBot's web search engine and sources, and clear what it has saved.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
   <script type="module" src="js/settings.js"></script>
 </head>
@@ -17,8 +18,21 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>Settings</h1>
-        <p class="lede">Choose your web search engine and which sources VoteBot uses, see what it has saved, and clear it.</p>
+        <p class="lede">Choose how VoteBot looks, your web search engine and which sources VoteBot uses, see what it has saved, and clear it.</p>
       </header>
+
+      <section class="panel" aria-labelledby="appearance-title">
+        <h2 id="appearance-title">Appearance</h2>
+        <div class="setting-row">
+          <fieldset class="seg" id="theme">
+            <legend class="sr-only">Colour theme</legend>
+            <label class="seg-option"><input type="radio" name="theme" value="system">System</label>
+            <label class="seg-option"><input type="radio" name="theme" value="light">Light</label>
+            <label class="seg-option"><input type="radio" name="theme" value="dark">Dark</label>
+          </fieldset>
+          <p class="fine">System follows your device's light or dark setting. Saved in this browser.</p>
+        </div>
+      </section>
 
       <section class="panel" aria-labelledby="search-title">
         <h2 id="search-title">Web search</h2>
@@ -51,7 +65,7 @@
           <button class="btn danger small" id="clear-my-picks" type="button">Clear my picks &amp; notes</button>
           <button class="btn danger small" id="clear-browser-data" type="button">Clear all browser data</button>
         </div>
-        <p class="fine">"Clear my picks &amp; notes" keeps your address. "Clear all browser data" also forgets your address, search engine and view choices, as if you'd never used VoteBot in this browser. Both happen at once, with Undo for a few seconds. Neither touches what the server saved; that's under Sources.</p>
+        <p class="fine">"Clear my picks &amp; notes" keeps your address. "Clear all browser data" also forgets your address, appearance, search engine and view choices, as if you'd never used VoteBot in this browser. Both happen at once, with Undo for a few seconds. Neither touches what the server saved; that's under Sources.</p>
       </section>
     </main>
   </div>

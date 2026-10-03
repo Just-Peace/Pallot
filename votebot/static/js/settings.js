@@ -1,4 +1,4 @@
-// The Settings page: the web search engine; sources on/off, what each has saved and how the
+// The Settings page: the appearance; the web search engine; sources on/off, what each has saved and how the
 // last lookup used it, refresh or clear; and deleting what this browser keeps. Changes that
 // affect the ballot are marked with markSettingsChanged(), so an open ballot page reloads
 // when the voter goes back to it. It imports page.js first, which draws the left pane.
@@ -10,7 +10,7 @@ import { $, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { formatBytes, formatDate, plural, relativeTime } from "./format.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
-import { markSettingsChanged } from "./storage.js";
+import { markSettingsChanged, setUiPref, uiPref } from "./storage.js";
 import { showToast } from "./toast.js";
 
 const list = $("#source-list");
@@ -192,6 +192,20 @@ function initSearchEngine() {
   });
 }
 
+// Appearance: theme.js, in every page's <head>, applies it here at once and in other tabs.
+const themeChoice = $("#theme");
+
+function showTheme() {
+  const theme = ["light", "dark"].includes(uiPref("theme")) ? uiPref("theme") : "system";
+  themeChoice.querySelector(`input[value="${theme}"]`).checked = true;
+  document.dispatchEvent(new Event("votebot:theme"));
+}
+
+themeChoice.addEventListener("change", (event) => {
+  setUiPref("theme", event.target.value);
+  showTheme();
+});
+
 $("#clear-all").addEventListener("click", async () => {
   if (!clearAllQuestion || !confirm(clearAllQuestion)) return;
   try {
@@ -223,9 +237,11 @@ function clearInBrowser(clear, message, nothing) {
   });
 }
 
-// The parts of this page that show what the browser keeps: the address and the search engine.
+// The parts of this page that show what the browser keeps: the address, the appearance and the
+// search engine.
 function showBrowserData() {
   showRememberedAddress();
+  showTheme();
   searchSelect.value = currentEngine().id;
 }
 
@@ -238,8 +254,12 @@ $("#clear-browser-data").addEventListener("click", () => {
 });
 
 // Back from the ballot (or another tab), a lookup since may have changed what's saved, and may
-// have paused a source, so ask the server again.
-onReturn(load);
+// have paused a source, so ask the server again. Another tab may have changed the appearance.
+onReturn(() => {
+  showTheme();
+  load();
+});
 
+showTheme();
 initSearchEngine();
 load();

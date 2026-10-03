@@ -14,6 +14,7 @@ from votebot.api import STATIC_DIR
 PAGES = ["/", "/settings.html", "/faq.html", "/about.html", "/privacy.html"]
 
 ENTRY = re.compile(r'<script type="module" src="([^"]+)"')
+CLASSIC = re.compile(r'<script src="([^"]+)"')
 IMPORT = re.compile(r'^\s*import\s+(?:\{([^}]*)\}\s*from\s*)?"([^"]+)"', re.M)
 DYNAMIC = re.compile(r'\bimport\(\s*"([^"]+)"\s*\)')
 DECLARED = re.compile(r"^export\s+(?:async\s+)?(?:function\*?|const|let|var|class)\s+([\w$]+)", re.M)
@@ -66,9 +67,18 @@ def test_every_imported_name_is_exported(client):
 
 
 def test_every_module_is_reached(client):
-    """A module under js/ that no page reaches is dead code."""
+    """A module under js/ that no page reaches, or loads as a classic script, is dead code."""
     on_disk = {f"/js/{p.name}" for p in (STATIC_DIR / "js").glob("*.js")}
-    assert on_disk - set(_modules(client)) == set()
+    classic = {posixpath.join("/", src) for page in PAGES for src in CLASSIC.findall(client.get(page).text)}
+    assert on_disk - set(_modules(client)) - classic == set()
+
+
+@pytest.mark.parametrize("page", PAGES)
+def test_theme_is_set_before_the_stylesheet(client, page):
+    """theme.js sets light or dark before the first paint, so the page never flashes the other one."""
+    html = client.get(page).text
+    assert '<script src="js/theme.js"></script>' in html
+    assert html.index("js/theme.js") < html.index("css/app.css") < html.index("</head>")
 
 
 @pytest.mark.parametrize("source,expected", [
