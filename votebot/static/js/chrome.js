@@ -10,7 +10,7 @@
 
 import { h } from "./dom.js";
 import { icon, logo } from "./icons.js";
-import { loadUi, saveUi } from "./picks.js";
+import { setUiPref, uiPref } from "./storage.js";
 import { initTopBar } from "./topbar.js";
 
 const BALLOT = { href: "./", icon: "ballot", label: "Your ballot" };
@@ -58,7 +58,7 @@ export function setPaneCollapsed(collapsed) {
     else link.removeAttribute("title");
   }
   if (!changed) return;
-  if (Boolean(loadUi().paneCollapsed) !== collapsed) saveUi({ ...loadUi(), paneCollapsed: collapsed });
+  if (Boolean(uiPref("paneCollapsed")) !== collapsed) setUiPref("paneCollapsed", collapsed);
   for (const listener of paneListeners) listener();
 }
 
@@ -130,7 +130,7 @@ function renderToTop() {
 const sidebar = document.querySelector(".sidebar");
 if (sidebar) {
   renderSidebar(sidebar);
-  setPaneCollapsed(Boolean(loadUi().paneCollapsed));
+  setPaneCollapsed(Boolean(uiPref("paneCollapsed")));
 }
 const app = document.querySelector(".app");
 if (app) renderFooter(app);

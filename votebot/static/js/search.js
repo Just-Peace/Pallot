@@ -1,7 +1,7 @@
 // The web search behind each candidate's "Web search" link. The engine is a per-browser
 // choice on the Settings page; Google unless changed.
 
-import { loadUi, saveUi } from "./picks.js";
+import { setUiPref, uiPref } from "./storage.js";
 
 export const ENGINES = [
   { id: "google", label: "Google", url: "https://www.google.com/search?q=" },
@@ -16,11 +16,11 @@ export const ENGINES = [
 ];
 
 export function currentEngine() {
-  return ENGINES.find((e) => e.id === loadUi().searchEngine) || ENGINES[0];
+  return ENGINES.find((e) => e.id === uiPref("searchEngine")) || ENGINES[0];
 }
 
 export function setEngine(id) {
-  saveUi({ ...loadUi(), searchEngine: id });
+  setUiPref("searchEngine", id);
 }
 
 export function searchHref(query) {

@@ -6,12 +6,12 @@
 // picking it again, or the map's pin button, goes back to the address. The scroll wheel only
 // zooms once the map has been clicked, and on a touch screen the map moves with two fingers, so
 // it never traps the page's scrolling. Its heading folds it away like a race's, remembered in
-// the browser (picks.js, showMap); nothing is fetched for it while it's folded.
+// the browser (storage.js, showMap); nothing is fetched for it while it's folded.
 
 import { api } from "./api.js";
 import { h } from "./dom.js";
 import { icon } from "./icons.js";
-import { loadUi, saveUi } from "./picks.js";
+import { setUiPref, uiPref } from "./storage.js";
 
 const SVG = "http://www.w3.org/2000/svg";
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
@@ -92,7 +92,7 @@ export function syncMap(next) {
 
 function setShown(open) {
   shown = open;
-  saveUi({ ...loadUi(), showMap: open });
+  setUiPref("showMap", open);
   parts.body.hidden = !open;
   section.classList.toggle("collapsed", !open);
   parts.toggle.setAttribute("aria-expanded", String(open));
@@ -113,7 +113,7 @@ function pickDistrict(kind) {
 
 function makePanel() {
   if (parts) return;
-  shown = loadUi().showMap !== false;
+  shown = uiPref("showMap") !== false;
   parts = {
     toggle: h("button", {
       type: "button", class: "map-toggle", "aria-expanded": String(shown), "aria-controls": "district-map-body",

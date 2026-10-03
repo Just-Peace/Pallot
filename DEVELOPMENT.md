@@ -49,7 +49,7 @@ votebot/
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html, favicon.svg,
                     vendor/leaflet/ (Leaflet 1.9.4, copied in), css/app.css,
                     js/ (ballot.js, key-dates.js, district-map.js, suggest.js, compare.js, settings.js,
-                    chrome.js, page.js, topbar.js, toast.js, source-cards.js, print.js, …)
+                    chrome.js, page.js, topbar.js, toast.js, source-cards.js, print.js, picks.js, storage.js, …)
 trackaipac_cache/   TrackAIPAC library (copied in)
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py
@@ -151,6 +151,8 @@ Under the strip, `.ballot-top` holds When to vote (`key-dates.js`) and Your dist
 The strip comes first so that Next and the section chips stay on a phone's first screen. The districts form lives in the districts card. The numbers show as text; the pencil in the card's heading turns each one (`cd`, `sd`, `hd`, `sboe`, commissioner, JP) into a box in its place, and nothing opens by itself: a missing precinct that races wait on is an amber chip (`.district.missing`), a seat that isn't up a grey one, and the prompt's Enter it opens the boxes. It sends only the numbers the voter changed, on top of the ones they entered before (`shownRequest.districts` and `.precincts`), `null` for a box they emptied. The four districts go in `BallotRequest.districts` (`DistrictInput`), which win over the Census's and the SBOE map's, and `Districts.entered` lists them for the small print. For the precincts, `_precincts()` in `ballot.py` reads the request with `exclude_unset`, so a `null` clears the county's or Ballotpedia's number while a missing key keeps it. `precinct_sources` says who gave each number ("you", "county" or "ballotpedia"), which the card's small print groups, and `county_source` names the county for that small print. The reset arrow, greyed out until any number is the voter's, sends neither. A JP number also sets the constable, and the other way round (`_jp_is_constable`), since each justice precinct elects one of each.
 
 Clearing what the voter keeps in the browser (Clear picks on the ballot, and the two Clear buttons in Settings) happens at once, then `toast.js` offers Undo for 10 seconds. The clear functions in `picks.js` return what they removed, for Undo to put back. Clearing what the server saved can't be undone, so those buttons still ask first.
+
+Everything kept in the browser goes through `storage.js`: the keys, `readJson`/`writeJson` (which swallow blocked storage), and `uiPref`/`setUiPref` for the view settings in `votebot.ui.v1`. `picks.js` keeps `Picks`, one bucket per election in `votebot.picks.v1`. Each save re-reads the stored picks and replaces only its own election's bucket, so two ballot tabs don't overwrite each other's elections, and a `storage` listener (`onPicksChanged`) redraws the ballot when another tab changes them. If storage refuses a save, the bucket is kept in memory until the page closes.
 
 ## trackaipac_cache
 
