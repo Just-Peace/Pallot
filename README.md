@@ -129,10 +129,10 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
     - incumbents only, or challengers only;
     - TrackAIPAC endorses them;
     - what they raised, spent, have on hand, or had spent for them from outside is under (or over) an amount, or the least (or the most) in the race;
-    - small donations, of $200 or less from a donor, make up at least a share of what they raised (50% at first; congressional races only);
+    - small donations, of $200 or less from a donor, make up at least a share of what they raised (50% at first);
     - they lead the polls.
   - **Don't pick, and take back:** anyone on TrackAIPAC's watchlist, with Israel lobby money over an amount ($0 at first), whose own gifts and loans make up over a share of what their campaign raised (50% at first; congressional races only), or polling under a share (5% at first). A pick of theirs is taken back, even one you made yourself.
-  - A TrackAIPAC, money or polls condition counts only in races its source covers: "Democrats who spent under $1M" still picks a county race's Democrat. Small donations and self-funding need an FEC key in congressional races. Without the Write-ins chip, a rule picks only the names printed on the ballot.
+  - A TrackAIPAC, money or polls condition counts only in races its source covers: "Democrats who spent under $1M" still picks a county race's Democrat. Small donations need an FEC key in congressional races; self-funding is known only in congressional races, with an FEC key. Without the Write-ins chip, a rule picks only the names printed on the ballot.
   - A race with more matches than seats is left for you, never guessed, a tie for the least or the most included. **Don't replace picks I've already made** (on at first) leaves the races you've picked alone, apart from what Don't pick takes back.
   - As you change the rule, the dialog says what it would do ("Picks 43 races · takes back 1 pick · 5 with no match"), race by race. Nothing changes until **Apply**, which offers **Undo** for 10 seconds.
   - **Mark who matches** picks nobody: it marks each candidate your rule would pick ("✓ Matches your rule") or skip ("✕ Your rule skips: on TrackAIPAC's watchlist"), on the whole ballot, until **Stop marking** in the note above the races.

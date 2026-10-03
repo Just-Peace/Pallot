@@ -256,9 +256,9 @@ export function openRules(raceKey = null) {
       h("p", { class: "fine" },
         "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
         + "congressional races, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
-        + "donor) and self-funding are known only in congressional races, with an FEC key. Without the Write-ins chip, a rule "
-        + "picks only the names printed on the ballot. If more candidates match than a race has seats, a tie included, "
-        + "it's left for you."),
+        + "donor) need an FEC key in congressional races; self-funding is known only in congressional races, with an FEC "
+        + "key. Without the Write-ins chip, a rule picks only the names printed on the ballot. If more candidates match than "
+        + "a race has seats, a tie included, it's left for you."),
       h("div", { class: "rule-preview" }, summaryLine, raceDetails)),
     h("div", { class: "details-foot" },
       h("button", { type: "button", class: "btn ghost", on: { click: () => dialog.close() } }, "Cancel"),

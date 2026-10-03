@@ -28,8 +28,8 @@ def jane(**extra):
                               "filed": "2025-07-15"}},
         "by_kind": {"INDIVIDUAL": {"amount": 3100.0, "count": 3}, "ENTITY": {"amount": 500.0, "count": 1}},
         "by_state": {"TX": 2900.0, "other": 700.0},
-        "sizes": [{"amount": 400.0, "count": 1}, {"amount": 3200.0, "count": 3}, {"amount": 0.0, "count": 0},
-                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
+        "sizes": [{"amount": 0.0, "count": 0}, {"amount": 400.0, "count": 1}, {"amount": 3200.0, "count": 3},
+                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
         "top_donors": [{"name": "PAT SMITH", "kind": "INDIVIDUAL", "city": "AUSTIN", "state": "TX", "employer": "ACME",
                         "occupation": "CEO", "amount": 2400.0, "count": 2},
                        {"name": "Teachers PAC", "kind": "ENTITY", "city": "Austin", "state": "TX", "amount": 500.0, "count": 1},
@@ -158,11 +158,11 @@ def test_cards_for_a_state_race(tmp_path):
     assert where.total == 4000.0
     assert [(p.label, p.note) for p in largest.parts] == [
         ("Pat Smith", "Austin, TX · Acme (CEO)"), ("Teachers PAC", "Austin, TX"), ("Lee Far", "Oakland, CA · Retired")]
-    assert [p.label for p in sizes.parts] == ["Under $500", "$500 to $4,999"] and "$400" in sizes.note
+    assert [p.label for p in sizes.parts] == ["$201 to $499", "$500 to $4,999"] and "$400" in sizes.note
     assert [p.label for p in states.parts] == ["Texas", "Other states"]
     assert [p.label for p in outside.parts] == ["Texans for Jane", "Other Group"] and "doesn't record" in outside.note
     assert card.as_of == "2025-06-30"
-    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0}
+    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0, "small_share": 10.0}
 
     comparison = cards.races[rep.key]
     [money] = comparison.breakdowns
@@ -180,7 +180,7 @@ def juan():
         "by_kind": {"INDIVIDUAL": {"amount": 750.0, "count": 2}, "ENTITY": {"amount": 250.0, "count": 1}},
         "by_state": {"TX": 1000.0}, "by_state_count": {"TX": 3},
         "sizes": [{"amount": 1000.0, "count": 3}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0},
-                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
+                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
         "top_donors": [{"name": "Pat Smith", "kind": "INDIVIDUAL", "city": "Fresno", "state": "CA", "amount": 750.0, "count": 2},
                        {"name": "TEACHERS PAC", "kind": "ENTITY", "city": "Austin", "state": "TX", "amount": 250.0, "count": 1}],
     }
@@ -326,6 +326,7 @@ def test_capitol_ballot_state_races_get_tec_money(client):
                 and any(c["source"] == "tec" for cand in r["candidates"] for c in cand["cards"])]
     with_money = [cand for r in with_tec for cand in r["candidates"] if any(c["source"] == "tec" for c in cand["cards"])]
     assert with_money and all(cand["cards"][0]["source"] == "tec" for cand in with_money)  # the money tab comes first
+    assert any("small_share" in cand["cards"][0]["figures"] for cand in with_money)
 
 
 def test_a_ballotpedia_only_ballot_matches_tec_filers_by_seat(client):

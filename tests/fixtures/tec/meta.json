@@ -1,34 +1,54 @@
 {
- "content_hash": "4a666ab149a5354f5859da164d631e6268a1cb51ce4c58ad6c1341f548f21636",
+ "content_hash": "e771c2ce17bbfb260670dc3c7f4f84e0019aa7420120d73219b564641a458b6c",
  "counts": {
-  "contribs": 482084,
-  "dce": 8482,
+  "contribs": 485226,
+  "dce": 8840,
   "filers": 10623,
-  "reports": 7789,
+  "reports": 7844,
   "snapshot_filers": 2144
  },
- "last_checked": "2026-09-28T18:25:03+00:00",
- "last_refresh": "2026-09-28T18:25:03+00:00",
+ "last_checked": "2026-10-03T22:28:14+00:00",
+ "last_refresh": "2026-10-03T22:28:14+00:00",
  "members": {
   "contribs_100.csv": {
-   "crc": 2437262326,
+   "crc": 3459885710,
    "first": "20260505",
-   "last": "20260926"
+   "last": "20261002"
   },
   "contribs_101.csv": {
-   "crc": 2718543584,
+   "crc": 4063908661,
    "first": "20260709",
-   "last": "20260731"
+   "last": "20261003"
   },
   "contribs_102.csv": {
-   "crc": 728602957,
+   "crc": 1447864972,
    "first": "20260715",
-   "last": "20260926"
+   "last": "20261003"
   },
   "contribs_103.csv": {
-   "crc": 3943228348,
+   "crc": 3301093945,
    "first": "20260805",
-   "last": "20260927"
+   "last": "20261003"
+  },
+  "contribs_104.csv": {
+   "crc": 3184077655,
+   "first": "20260930",
+   "last": "20261001"
+  },
+  "contribs_105.csv": {
+   "crc": 2130315834,
+   "first": "20260929",
+   "last": "20261002"
+  },
+  "contribs_106.csv": {
+   "crc": 786478097,
+   "first": "20260929",
+   "last": "20261002"
+  },
+  "contribs_107.csv": {
+   "crc": 1867657446,
+   "first": "20261001",
+   "last": "20261002"
   },
   "contribs_74.csv": {
    "crc": 578003376,
@@ -162,11 +182,11 @@
   }
  },
  "schema_version": 1,
- "snapshot": "2026-09-28",
+ "snapshot": "2026-10-03",
  "window_start": "2024-11-06",
  "zip": {
-  "etag": "\"local-1042151650-1790619481\"",
-  "last_modified": "Mon, 28 Sep 2026 18:18:01 GMT",
-  "size": 1042151650
+  "etag": "\"9b4834b70a1cb66b2448525c92d1f44a-125\"",
+  "last_modified": "Sat, 03 Oct 2026 10:35:03 GMT",
+  "size": 1043888325
  }
 }

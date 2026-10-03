@@ -467,8 +467,12 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
             Link(label="Texas Ethics Commission campaign finance search", url=SEARCH),
             Link(label="Personal financial statements (not online; the TEC explains how to request one)", url=PFS_INFO),
         ],
-        figures={key: value for key, value in (("raised", raised), ("spent", totals.get("spent")), ("cash", totals.get("cash")))
-                 if value is not None},
+        figures={key: value for key, value in (
+            ("raised", raised),
+            ("spent", totals.get("spent")),
+            ("cash", totals.get("cash")),
+            ("small_share", round(100 * ((totals.get("unitemized") or 0.0) + ((filer.get("sizes") or [{}])[0].get("amount") or 0.0)) / raised, 1) if raised else None),
+        ) if value is not None},
     )
 
 

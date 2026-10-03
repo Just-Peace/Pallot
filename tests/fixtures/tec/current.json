@@ -1,6 +1,6 @@
 {
- "snapshot": "2026-09-28",
- "tec_updated": "Mon, 28 Sep 2026 18:18:01 GMT",
+ "snapshot": "2026-10-03",
+ "tec_updated": "Sat, 03 Oct 2026 10:35:03 GMT",
  "window": {
   "start": "2024-11-06"
  },
@@ -16,6 +16,10 @@
     "TX": 25500.0,
     "other": 2000000.0
    },
+   "by_state_count": {
+    "TX": 4,
+    "other": 1
+   },
    "first": "Greg",
    "hold": {
     "office": "GOVERNOR"
@@ -27,6 +31,10 @@
     "office": "GOVERNOR"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 0.0,
      "count": 0
@@ -189,6 +197,10 @@
     "TX": 131379.83,
     "other": 29218.42
    },
+   "by_state_count": {
+    "TX": 383,
+    "other": 85
+   },
    "first": "Maria Luisa",
    "hold": {
     "district": "51",
@@ -204,8 +216,12 @@
    "short": "Lulu",
    "sizes": [
     {
-     "amount": 27856.09,
-     "count": 376
+     "amount": 12406.09,
+     "count": 315
+    },
+    {
+     "amount": 15450.0,
+     "count": 61
     },
     {
      "amount": 87742.16,
@@ -453,6 +469,10 @@
     "TX": 1075661.6,
     "other": 88000.0
    },
+   "by_state_count": {
+    "TX": 452,
+    "other": 54
+   },
    "first": "Judith",
    "hold": {
     "district": "21",
@@ -467,8 +487,12 @@
    },
    "sizes": [
     {
-     "amount": 13390.6,
-     "count": 53
+     "amount": 2362.73,
+     "count": 14
+    },
+    {
+     "amount": 11027.87,
+     "count": 39
     },
     {
      "amount": 581750.0,
@@ -633,6 +657,9 @@
    "by_state": {
     "unknown": 146422.14
    },
+   "by_state_count": {
+    "unknown": 224
+   },
    "first": "Catherine A.",
    "hold": {
     "district": "419",
@@ -647,8 +674,12 @@
    },
    "sizes": [
     {
-     "amount": 22083.66,
-     "count": 121
+     "amount": 5631.95,
+     "count": 58
+    },
+    {
+     "amount": 16451.71,
+     "count": 63
     },
     {
      "amount": 93811.54,
@@ -796,6 +827,10 @@
     "TX": 8155457.28,
     "other": 198434.0
    },
+   "by_state_count": {
+    "TX": 1096,
+    "other": 99
+   },
    "first": "Christi L.",
    "hold": {
     "office": "RRCOMM"
@@ -808,8 +843,12 @@
    },
    "sizes": [
     {
-     "amount": 35892.0,
-     "count": 328
+     "amount": 16492.0,
+     "count": 254
+    },
+    {
+     "amount": 19400.0,
+     "count": 74
     },
     {
      "amount": 719444.28,
@@ -956,6 +995,10 @@
     "TX": 440485.0,
     "other": 40500.0
    },
+   "by_state_count": {
+    "TX": 134,
+    "other": 13
+   },
    "first": "Walter Wayne",
    "hold": {
     "office": "RRCOMM"
@@ -969,8 +1012,12 @@
    "short": "Wayne",
    "sizes": [
     {
-     "amount": 5285.0,
-     "count": 39
+     "amount": 3285.0,
+     "count": 31
+    },
+    {
+     "amount": 2000.0,
+     "count": 8
     },
     {
      "amount": 120700.0,
@@ -1198,6 +1245,9 @@
    "by_state": {
     "unknown": 55161.0
    },
+   "by_state_count": {
+    "unknown": 54
+   },
    "first": "Robert C.",
    "hold": {
     "office": "JUDGE_COCA",
@@ -1213,8 +1263,12 @@
    "short": "Bert",
    "sizes": [
     {
-     "amount": 3426.0,
-     "count": 19
+     "amount": 941.0,
+     "count": 9
+    },
+    {
+     "amount": 2485.0,
+     "count": 10
     },
     {
      "amount": 21735.0,
@@ -1331,6 +1385,9 @@
    "by_state": {
     "unknown": 258059.05
    },
+   "by_state_count": {
+    "unknown": 355
+   },
    "first": "Darlene",
    "hold": {
     "district": "3",
@@ -1345,8 +1402,12 @@
    },
    "sizes": [
     {
-     "amount": 30893.69,
-     "count": 186
+     "amount": 9780.33,
+     "count": 105
+    },
+    {
+     "amount": 21113.36,
+     "count": 81
     },
     {
      "amount": 172165.36,
@@ -1488,6 +1549,10 @@
     "TX": 111692.29,
     "other": 20604.23
    },
+   "by_state_count": {
+    "TX": 468,
+    "other": 108
+   },
    "first": "Donna S.",
    "hold": {
     "district": "48",
@@ -1502,8 +1567,12 @@
    },
    "sizes": [
     {
-     "amount": 14796.52,
-     "count": 477
+     "amount": 9496.52,
+     "count": 457
+    },
+    {
+     "amount": 5300.0,
+     "count": 20
     },
     {
      "amount": 95500.0,
@@ -1636,6 +1705,10 @@
     "TX": 870711.78,
     "other": 75115.0
    },
+   "by_state_count": {
+    "TX": 410,
+    "other": 22
+   },
    "first": "Sid",
    "hold": {
     "office": "AGRICULTUR"
@@ -1648,8 +1721,12 @@
    },
    "sizes": [
     {
-     "amount": 15985.96,
-     "count": 248
+     "amount": 10635.96,
+     "count": 227
+    },
+    {
+     "amount": 5350.0,
+     "count": 21
     },
     {
      "amount": 179838.82,
@@ -1798,6 +1875,10 @@
     "TX": 560085.05,
     "other": 82674.35
    },
+   "by_state_count": {
+    "TX": 156,
+    "other": 118
+   },
    "first": "Glenn A.",
    "hold": {
     "office": "COMPTROLLER"
@@ -1810,8 +1891,12 @@
    },
    "sizes": [
     {
-     "amount": 2796.82,
-     "count": 146
+     "amount": 1946.82,
+     "count": 143
+    },
+    {
+     "amount": 850.0,
+     "count": 3
     },
     {
      "amount": 123362.58,
@@ -1954,6 +2039,10 @@
     "TX": 682643.41,
     "other": 81985.76
    },
+   "by_state_count": {
+    "TX": 2216,
+    "other": 1646
+   },
    "first": "W. Kenneth",
    "hold": {
     "office": "ATTYGEN"
@@ -1967,8 +2056,12 @@
    "short": "Ken",
    "sizes": [
     {
-     "amount": 102214.17,
-     "count": 3732
+     "amount": 91847.17,
+     "count": 3691
+    },
+    {
+     "amount": 10367.0,
+     "count": 41
     },
     {
      "amount": 87415.0,
@@ -2115,6 +2208,10 @@
     "TX": 52598.77,
     "other": 3000.0
    },
+   "by_state_count": {
+    "TX": 35,
+    "other": 2
+   },
    "first": "Gary W.",
    "hold": {
     "district": "28",
@@ -2127,6 +2224,10 @@
     "office": "RRCOMM"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 500.0,
      "count": 2
@@ -2259,6 +2360,9 @@
    "by_state": {
     "TX": 4443.89
    },
+   "by_state_count": {
+    "TX": 3
+   },
    "first": "Arthur",
    "id": "00052055",
    "last": "DiBianca",
@@ -2267,6 +2371,10 @@
     "office": "RRCOMM"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 693.89,
      "count": 2
@@ -2329,6 +2437,9 @@
    "by_state": {
     "unknown": 11934.1
    },
+   "by_state_count": {
+    "unknown": 19
+   },
    "first": "Gisela D.",
    "hold": {
     "district": "3",
@@ -2344,8 +2455,12 @@
    },
    "sizes": [
     {
-     "amount": 1434.1,
-     "count": 13
+     "amount": 484.1,
+     "count": 10
+    },
+    {
+     "amount": 950.0,
+     "count": 3
     },
     {
      "amount": 10500.0,
@@ -2458,6 +2573,9 @@
    "by_state": {
     "TX": 4143.89
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Thomas E.",
    "id": "00055017",
    "last": "Oxford",
@@ -2467,6 +2585,10 @@
    },
    "short": "Tom",
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 393.89,
      "count": 1
@@ -2507,17 +2629,17 @@
     }
    ],
    "totals": {
-    "as_of": "2026-06-30",
+    "as_of": "2026-09-24",
     "cash": 0.0,
     "latest": {
-     "filed": "2026-07-01",
-     "name": "July semiannual report",
-     "period_end": "2026-06-30",
-     "type": "SEMIJUL"
+     "filed": "2026-09-28",
+     "name": "30-day pre-election report",
+     "period_end": "2026-09-24",
+     "type": "E30DAYBEF"
     },
     "loans": 0.0,
     "raised": 4143.89,
-    "reports": 2,
+    "reports": 3,
     "spent": 0.0,
     "unitemized": 0.0
    },
@@ -2563,6 +2685,10 @@
     "TX": 10666.53,
     "other": 2250.0
    },
+   "by_state_count": {
+    "TX": 38,
+    "other": 5
+   },
    "first": "Patrick J.",
    "id": "00055583",
    "last": "Dixon",
@@ -2572,8 +2698,12 @@
    },
    "sizes": [
     {
-     "amount": 3416.53,
-     "count": 35
+     "amount": 2472.64,
+     "count": 32
+    },
+    {
+     "amount": 943.89,
+     "count": 3
     },
     {
      "amount": 9500.0,
@@ -2747,6 +2877,10 @@
     "TX": 31075.0,
     "other": 2211.0
    },
+   "by_state_count": {
+    "TX": 16,
+    "other": 6
+   },
    "first": "R. Christopher",
    "id": "00056697",
    "last": "Bell",
@@ -2756,8 +2890,12 @@
    },
    "sizes": [
     {
-     "amount": 1286.0,
-     "count": 13
+     "amount": 986.0,
+     "count": 12
+    },
+    {
+     "amount": 300.0,
+     "count": 1
     },
     {
      "amount": 7000.0,
@@ -2988,6 +3126,9 @@
    "by_state": {
     "TX": 300000.0
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Dan",
    "hold": {
     "office": "LTGOVERNOR"
@@ -2999,6 +3140,10 @@
     "office": "LTGOVERNOR"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 0.0,
      "count": 0
@@ -3057,6 +3202,9 @@
    "by_state": {
     "TX": 693.89
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Neill",
    "id": "00058885",
    "last": "Snider",
@@ -3065,6 +3213,10 @@
     "office": "LANDCOMM"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 693.89,
      "count": 2
@@ -3178,6 +3330,9 @@
    "by_state": {
     "unknown": 250951.41
    },
+   "by_state_count": {
+    "unknown": 238
+   },
    "first": "Scott K.",
    "hold": {
     "district": "15",
@@ -3193,8 +3348,12 @@
    },
    "sizes": [
     {
-     "amount": 18019.83,
-     "count": 122
+     "amount": 7920.04,
+     "count": 84
+    },
+    {
+     "amount": 10099.79,
+     "count": 38
     },
     {
      "amount": 122931.58,
@@ -3314,6 +3473,9 @@
    "by_state": {
     "unknown": 32418.96
    },
+   "by_state_count": {
+    "unknown": 85
+   },
    "first": "Clifford A.",
    "hold": {
     "district": "147",
@@ -3328,8 +3490,12 @@
    },
    "sizes": [
     {
-     "amount": 10231.36,
-     "count": 66
+     "amount": 4699.1,
+     "count": 45
+    },
+    {
+     "amount": 5532.26,
+     "count": 21
     },
     {
      "amount": 22187.6,
@@ -3448,6 +3614,9 @@
    "by_state": {
     "unknown": 37836.18
    },
+   "by_state_count": {
+    "unknown": 42
+   },
    "first": "Karen R.",
    "hold": {
     "district": "299",
@@ -3462,8 +3631,12 @@
    },
    "sizes": [
     {
-     "amount": 3307.35,
-     "count": 19
+     "amount": 713.06,
+     "count": 9
+    },
+    {
+     "amount": 2594.29,
+     "count": 10
     },
     {
      "amount": 34528.83,
@@ -3582,6 +3755,10 @@
     "TX": 17728.75,
     "other": 331.0
    },
+   "by_state_count": {
+    "TX": 71,
+    "other": 4
+   },
    "first": "Rebecca L.",
    "hold": {
     "district": "5",
@@ -3596,8 +3773,12 @@
    },
    "sizes": [
     {
-     "amount": 8719.75,
-     "count": 63
+     "amount": 4468.75,
+     "count": 46
+    },
+    {
+     "amount": 4251.0,
+     "count": 17
     },
     {
      "amount": 9340.0,
@@ -3729,6 +3910,9 @@
    "by_state": {
     "unknown": 119900.0
    },
+   "by_state_count": {
+    "unknown": 100
+   },
    "first": "Amy C.",
    "hold": {
     "district": "201",
@@ -3743,8 +3927,12 @@
    },
    "sizes": [
     {
-     "amount": 4650.0,
-     "count": 23
+     "amount": 1350.0,
+     "count": 10
+    },
+    {
+     "amount": 3300.0,
+     "count": 13
     },
     {
      "amount": 80250.0,
@@ -3884,6 +4072,9 @@
    "by_state": {
     "unknown": 1594553.1
    },
+   "by_state_count": {
+    "unknown": 957
+   },
    "first": "Justin B.",
    "hold": {
     "office": "JUSTICE_SC",
@@ -3899,8 +4090,12 @@
    "short": "Brett",
    "sizes": [
     {
-     "amount": 60901.07,
-     "count": 344
+     "amount": 17081.99,
+     "count": 172
+    },
+    {
+     "amount": 43819.08,
+     "count": 172
     },
     {
      "amount": 643652.03,
@@ -4062,6 +4257,9 @@
    "by_state": {
     "TX": 500.0
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Michael",
    "id": "00068114",
    "last": "Berlanga",
@@ -4070,6 +4268,10 @@
     "office": "COMPTROLLER"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 0.0,
      "count": 0
@@ -4134,6 +4336,9 @@
    "by_state": {
     "TX": 4518.89
    },
+   "by_state_count": {
+    "TX": 5
+   },
    "first": "Mark",
    "id": "00068347",
    "last": "Ash",
@@ -4143,8 +4348,12 @@
    },
    "sizes": [
     {
-     "amount": 768.89,
-     "count": 4
+     "amount": 375.0,
+     "count": 3
+    },
+    {
+     "amount": 393.89,
+     "count": 1
     },
     {
      "amount": 3750.0,
@@ -4251,16 +4460,19 @@
   {
    "by_kind": {
     "ENTITY": {
-     "amount": 2500.0,
-     "count": 2
+     "amount": 17350.0,
+     "count": 16
     },
     "INDIVIDUAL": {
-     "amount": 11035.0,
-     "count": 46
+     "amount": 18030.0,
+     "count": 71
     }
    },
    "by_state": {
-    "unknown": 13535.0
+    "unknown": 35380.0
+   },
+   "by_state_count": {
+    "unknown": 87
    },
    "first": "Kevin Patrick",
    "hold": {
@@ -4276,12 +4488,16 @@
    },
    "sizes": [
     {
-     "amount": 4535.0,
-     "count": 39
+     "amount": 3235.0,
+     "count": 42
     },
     {
-     "amount": 9000.0,
-     "count": 9
+     "amount": 4025.0,
+     "count": 16
+    },
+    {
+     "amount": 28120.0,
+     "count": 29
     },
     {
      "amount": 0.0,
@@ -4300,6 +4516,18 @@
     {
      "amount": 2500.0,
      "count": 1,
+     "kind": "ENTITY",
+     "name": "Central Texas Republican Women"
+    },
+    {
+     "amount": 2500.0,
+     "count": 1,
+     "kind": "ENTITY",
+     "name": "Republican Party of Rockwall County"
+    },
+    {
+     "amount": 2500.0,
+     "count": 1,
      "kind": "INDIVIDUAL",
      "name": "Scott Retzloff",
      "occupation": "Real Estate"
@@ -4309,6 +4537,24 @@
      "count": 1,
      "kind": "ENTITY",
      "name": "Austin Republican Women PAC Fund"
+    },
+    {
+     "amount": 1500.0,
+     "count": 1,
+     "kind": "ENTITY",
+     "name": "Burnet County Republican Club"
+    },
+    {
+     "amount": 1100.0,
+     "count": 1,
+     "kind": "ENTITY",
+     "name": "Canyon Lake Republican Women"
+    },
+    {
+     "amount": 1000.0,
+     "count": 1,
+     "kind": "ENTITY",
+     "name": "Austin Patriot Republican Women"
     },
     {
      "amount": 1000.0,
@@ -4326,59 +4572,23 @@
     {
      "amount": 1000.0,
      "count": 1,
-     "kind": "INDIVIDUAL",
-     "name": "Caryn Hermes",
-     "occupation": "Homemaker"
-    },
-    {
-     "amount": 550.0,
-     "count": 5,
-     "kind": "INDIVIDUAL",
-     "name": "Sharon Yeary",
-     "occupation": "Retired"
-    },
-    {
-     "amount": 500.0,
-     "count": 1,
-     "kind": "INDIVIDUAL",
-     "name": "Emma Lou Brown",
-     "occupation": "Retired"
-    },
-    {
-     "amount": 500.0,
-     "count": 1,
-     "kind": "INDIVIDUAL",
-     "name": "John Gellhausen",
-     "occupation": "Fire Truck Dealer"
-    },
-    {
-     "amount": 500.0,
-     "count": 1,
-     "kind": "INDIVIDUAL",
-     "name": "Beverley Langley",
-     "occupation": "Manufacturing"
-    },
-    {
-     "amount": 500.0,
-     "count": 2,
-     "kind": "INDIVIDUAL",
-     "name": "Dennis Sullivan",
-     "occupation": "Attorney"
+     "kind": "ENTITY",
+     "name": "Conner Harrington Republican Women"
     }
    ],
    "totals": {
-    "as_of": "2026-06-30",
-    "cash": 2535.05,
+    "as_of": "2026-09-24",
+    "cash": 19729.38,
     "latest": {
-     "filed": "2026-07-14",
-     "name": "July semiannual report",
-     "period_end": "2026-06-30",
-     "type": "SEMIJUL"
+     "filed": "2026-09-28",
+     "name": "30-day pre-election report",
+     "period_end": "2026-09-24",
+     "type": "E30DAYBEF"
     },
     "loans": 3004.71,
-    "raised": 13535.0,
-    "reports": 4,
-    "spent": 24489.91,
+    "raised": 35380.0,
+    "reports": 5,
+    "spent": 29140.58,
     "unitemized": 0.0
    },
    "type": "JCOH"
@@ -4399,6 +4609,11 @@
     "other": 167745.78,
     "unknown": 1500.0
    },
+   "by_state_count": {
+    "TX": 801,
+    "other": 44,
+    "unknown": 1
+   },
    "first": "Dawn C.",
    "hold": {
     "office": "LANDCOMM"
@@ -4411,8 +4626,12 @@
    },
    "sizes": [
     {
-     "amount": 47760.0,
-     "count": 324
+     "amount": 23259.0,
+     "count": 228
+    },
+    {
+     "amount": 24501.0,
+     "count": 96
     },
     {
      "amount": 486410.15,
@@ -4564,6 +4783,9 @@
    "by_state": {
     "unknown": 13942.49
    },
+   "by_state_count": {
+    "unknown": 62
+   },
    "first": "Lesli R.",
    "id": "00069155",
    "last": "Fitzpatrick",
@@ -4573,8 +4795,12 @@
    },
    "sizes": [
     {
-     "amount": 6080.97,
-     "count": 53
+     "amount": 3161.57,
+     "count": 44
+    },
+    {
+     "amount": 2919.4,
+     "count": 9
     },
     {
      "amount": 7861.52,
@@ -4779,6 +5005,10 @@
     "TX": 44475.0,
     "other": 2000.0
    },
+   "by_state_count": {
+    "TX": 20,
+    "other": 5
+   },
    "first": "Michael E.",
    "id": "00069397",
    "last": "Collier",
@@ -4789,8 +5019,12 @@
    "short": "Mike",
    "sizes": [
     {
-     "amount": 3200.0,
-     "count": 13
+     "amount": 100.0,
+     "count": 1
+    },
+    {
+     "amount": 3100.0,
+     "count": 12
     },
     {
      "amount": 9500.0,
@@ -4940,6 +5174,10 @@
     "TX": 10730675.28,
     "other": 1160712.07
    },
+   "by_state_count": {
+    "TX": 1511,
+    "other": 41
+   },
    "first": "Donald B.",
    "hold": {
     "office": "COMPTROLLER"
@@ -4953,8 +5191,12 @@
    "short": "Don",
    "sizes": [
     {
-     "amount": 52346.58,
-     "count": 1141
+     "amount": 39021.82,
+     "count": 1091
+    },
+    {
+     "amount": 13324.76,
+     "count": 50
     },
     {
      "amount": 324055.06,
@@ -5100,6 +5342,9 @@
    "by_state": {
     "unknown": 12020.0
    },
+   "by_state_count": {
+    "unknown": 23
+   },
    "first": "Elizabeth Davis",
    "hold": {
     "office": "CRIMINAL_JUDGEDIST_DAL",
@@ -5115,8 +5360,12 @@
    },
    "sizes": [
     {
-     "amount": 3000.0,
-     "count": 13
+     "amount": 850.0,
+     "count": 6
+    },
+    {
+     "amount": 2150.0,
+     "count": 7
     },
     {
      "amount": 9020.0,
@@ -5239,6 +5488,11 @@
     "other": 140.12,
     "unknown": 42.7
    },
+   "by_state_count": {
+    "TX": 94,
+    "other": 18,
+    "unknown": 5
+   },
    "first": "Cynthia T.",
    "id": "00069817",
    "last": "Cavazos",
@@ -5250,6 +5504,10 @@
     {
      "amount": 1040.26,
      "count": 117
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -5490,6 +5748,9 @@
    "by_state": {
     "unknown": 426863.34
    },
+   "by_state_count": {
+    "unknown": 343
+   },
    "first": "Kristen Brauchle",
    "hold": {
     "district": "11",
@@ -5504,8 +5765,12 @@
    },
    "sizes": [
     {
-     "amount": 21263.34,
-     "count": 121
+     "amount": 5181.42,
+     "count": 59
+    },
+    {
+     "amount": 16081.92,
+     "count": 62
     },
     {
      "amount": 220600.0,
@@ -5655,6 +5920,11 @@
     "other": 1682375.18,
     "unknown": 538.91
    },
+   "by_state_count": {
+    "TX": 124727,
+    "other": 63990,
+    "unknown": 26
+   },
    "first": "Regina",
    "hold": {
     "district": "49",
@@ -5669,8 +5939,12 @@
    "short": "Gina",
    "sizes": [
     {
-     "amount": 4626416.97,
-     "count": 186515
+     "amount": 4200470.21,
+     "count": 184851
+    },
+    {
+     "amount": 425946.76,
+     "count": 1664
     },
     {
      "amount": 1916082.36,
@@ -5841,6 +6115,10 @@
     "TX": 101755.86,
     "other": 6065.47
    },
+   "by_state_count": {
+    "TX": 315,
+    "other": 53
+   },
    "first": "Sheryl N.",
    "hold": {
     "district": "46",
@@ -5855,8 +6133,12 @@
    },
    "sizes": [
     {
-     "amount": 18072.7,
-     "count": 283
+     "amount": 8339.0,
+     "count": 246
+    },
+    {
+     "amount": 9733.7,
+     "count": 37
     },
     {
      "amount": 84748.63,
@@ -6043,6 +6325,10 @@
     "TX": 990973.42,
     "other": 170438.4
    },
+   "by_state_count": {
+    "TX": 17500,
+    "other": 3626
+   },
    "first": "Vikki A.",
    "hold": {
     "district": "47",
@@ -6056,8 +6342,12 @@
    },
    "sizes": [
     {
-     "amount": 696713.8,
-     "count": 20709
+     "amount": 578318.85,
+     "count": 20246
+    },
+    {
+     "amount": 118394.95,
+     "count": 463
     },
     {
      "amount": 309535.32,
@@ -6205,6 +6495,11 @@
     "other": 97608.06,
     "unknown": 5000.0
    },
+   "by_state_count": {
+    "TX": 629,
+    "other": 55,
+    "unknown": 1
+   },
    "first": "David M.",
    "hold": {
     "district": "11",
@@ -6219,8 +6514,12 @@
    "short": "Mayes",
    "sizes": [
     {
-     "amount": 23401.93,
-     "count": 286
+     "amount": 14280.17,
+     "count": 251
+    },
+    {
+     "amount": 9121.76,
+     "count": 35
     },
     {
      "amount": 281345.89,
@@ -6362,6 +6661,9 @@
    "by_state": {
     "unknown": 2000.0
    },
+   "by_state_count": {
+    "unknown": 2
+   },
    "first": "Maya S.",
    "hold": {
     "district": "459",
@@ -6375,6 +6677,10 @@
     "office": "JUDGEDIST"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 0.0,
      "count": 0
@@ -6441,6 +6747,9 @@
    "by_state": {
     "unknown": 15341.29
    },
+   "by_state_count": {
+    "unknown": 19
+   },
    "first": "Cory Lee",
    "hold": {
     "district": "5",
@@ -6455,8 +6764,12 @@
    },
    "sizes": [
     {
-     "amount": 1841.29,
-     "count": 13
+     "amount": 591.29,
+     "count": 8
+    },
+    {
+     "amount": 1250.0,
+     "count": 5
     },
     {
      "amount": 3500.0,
@@ -6603,6 +6916,11 @@
     "other": 614184.29,
     "unknown": 25.0
    },
+   "by_state_count": {
+    "TX": 22330,
+    "other": 21133,
+    "unknown": 1
+   },
    "first": "James",
    "hold": {
     "district": "50",
@@ -6617,8 +6935,12 @@
    },
    "sizes": [
     {
-     "amount": 1245667.89,
-     "count": 43174
+     "amount": 1159711.78,
+     "count": 42833
+    },
+    {
+     "amount": 85956.11,
+     "count": 341
     },
     {
      "amount": 219430.41,
@@ -6793,6 +7115,9 @@
    "by_state": {
     "unknown": 61182.17
    },
+   "by_state_count": {
+    "unknown": 81
+   },
    "first": "Chari L.",
    "hold": {
     "district": "3",
@@ -6808,8 +7133,12 @@
    },
    "sizes": [
     {
-     "amount": 6927.17,
-     "count": 51
+     "amount": 2394.67,
+     "count": 34
+    },
+    {
+     "amount": 4532.5,
+     "count": 17
     },
     {
      "amount": 29255.0,
@@ -6922,6 +7251,10 @@
     "TX": 101748.6,
     "other": 4310.0
    },
+   "by_state_count": {
+    "TX": 134,
+    "other": 13
+   },
    "first": "Robert Andrew",
    "id": "00082111",
    "last": "White",
@@ -6932,8 +7265,12 @@
    "short": "Andrew",
    "sizes": [
     {
-     "amount": 10958.6,
-     "count": 99
+     "amount": 5746.0,
+     "count": 79
+    },
+    {
+     "amount": 5212.6,
+     "count": 20
     },
     {
      "amount": 51600.0,
@@ -7081,6 +7418,9 @@
    "by_state": {
     "unknown": 1004.58
    },
+   "by_state_count": {
+    "unknown": 2
+   },
    "first": "Thomas J.",
    "hold": {
     "district": "3",
@@ -7100,6 +7440,10 @@
     {
      "amount": 4.58,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 1000.0,
@@ -7190,6 +7534,9 @@
    "by_state": {
     "unknown": 990470.63
    },
+   "by_state_count": {
+    "unknown": 401
+   },
    "first": "James D.",
    "hold": {
     "office": "CHIEFJUSTICE_SC"
@@ -7203,8 +7550,12 @@
    "short": "Jimmy",
    "sizes": [
     {
-     "amount": 13731.5,
-     "count": 85
+     "amount": 5581.5,
+     "count": 54
+    },
+    {
+     "amount": 8150.0,
+     "count": 31
     },
     {
      "amount": 291739.13,
@@ -7318,6 +7669,10 @@
     "TX": 233907.2,
     "other": 60580.37
    },
+   "by_state_count": {
+    "TX": 1878,
+    "other": 457
+   },
    "first": "Jon E.",
    "hold": {
     "district": "135",
@@ -7331,8 +7686,12 @@
    },
    "sizes": [
     {
-     "amount": 84583.47,
-     "count": 2172
+     "amount": 63133.47,
+     "count": 2089
+    },
+    {
+     "amount": 21450.0,
+     "count": 83
     },
     {
      "amount": 144404.1,
@@ -7482,6 +7841,11 @@
     "other": 117593.0,
     "unknown": 100.0
    },
+   "by_state_count": {
+    "TX": 1353,
+    "other": 386,
+    "unknown": 1
+   },
    "first": "Montserrat",
    "id": "00083295",
    "last": "Garibay",
@@ -7492,8 +7856,12 @@
    },
    "sizes": [
     {
-     "amount": 132278.07,
-     "count": 1572
+     "amount": 82766.55,
+     "count": 1378
+    },
+    {
+     "amount": 49511.52,
+     "count": 194
     },
     {
      "amount": 124937.0,
@@ -7630,6 +7998,10 @@
     "TX": 181821.37,
     "other": 7327.58
    },
+   "by_state_count": {
+    "TX": 324,
+    "other": 6
+   },
    "first": "Kennon L.",
    "id": "00083387",
    "last": "Wooten",
@@ -7640,8 +8012,12 @@
    },
    "sizes": [
     {
-     "amount": 33574.55,
-     "count": 205
+     "amount": 11543.54,
+     "count": 121
+    },
+    {
+     "amount": 22031.01,
+     "count": 84
     },
     {
      "amount": 115574.4,
@@ -7781,6 +8157,11 @@
     "other": 650127.11,
     "unknown": 142394.26
    },
+   "by_state_count": {
+    "TX": 941,
+    "other": 323,
+    "unknown": 5
+   },
    "first": "Aaron F.",
    "id": "00083762",
    "last": "Reitz",
@@ -7790,8 +8171,12 @@
    },
    "sizes": [
     {
-     "amount": 63658.26,
-     "count": 863
+     "amount": 34665.9,
+     "count": 753
+    },
+    {
+     "amount": 28992.36,
+     "count": 110
     },
     {
      "amount": 340880.55,
@@ -7942,6 +8327,9 @@
    "by_state": {
     "unknown": 60688.68
    },
+   "by_state_count": {
+    "unknown": 372
+   },
    "first": "Maggie",
    "hold": {
     "district": "3",
@@ -7956,8 +8344,12 @@
    },
    "sizes": [
     {
-     "amount": 22583.85,
-     "count": 348
+     "amount": 14535.67,
+     "count": 318
+    },
+    {
+     "amount": 8048.18,
+     "count": 30
     },
     {
      "amount": 28054.83,
@@ -8101,6 +8493,10 @@
     "TX": 356006.1,
     "other": 57415.97
    },
+   "by_state_count": {
+    "TX": 7400,
+    "other": 331
+   },
    "first": "Clayton H.",
    "id": "00084053",
    "last": "Tucker",
@@ -8110,8 +8506,12 @@
    },
    "sizes": [
     {
-     "amount": 222720.86,
-     "count": 7616
+     "amount": 204778.1,
+     "count": 7548
+    },
+    {
+     "amount": 17942.76,
+     "count": 68
     },
     {
      "amount": 117701.21,
@@ -8258,6 +8658,10 @@
     "TX": 2997940.71,
     "other": 217952.64
    },
+   "by_state_count": {
+    "TX": 449,
+    "other": 56
+   },
    "first": "James D.",
    "hold": {
     "office": "RRCOMM"
@@ -8271,8 +8675,12 @@
    "short": "Jim",
    "sizes": [
     {
-     "amount": 14165.0,
-     "count": 104
+     "amount": 5515.0,
+     "count": 70
+    },
+    {
+     "amount": 8650.0,
+     "count": 34
     },
     {
      "amount": 318476.32,
@@ -8413,6 +8821,9 @@
    "by_state": {
     "TX": 29143.0
    },
+   "by_state_count": {
+    "TX": 55
+   },
    "first": "Jennifer",
    "id": "00084709",
    "last": "Mushtaler",
@@ -8423,8 +8834,12 @@
    },
    "sizes": [
     {
-     "amount": 4643.0,
-     "count": 44
+     "amount": 3643.0,
+     "count": 40
+    },
+    {
+     "amount": 1000.0,
+     "count": 4
     },
     {
      "amount": 9500.0,
@@ -8569,6 +8984,10 @@
     "TX": 613541.98,
     "other": 60042.42
    },
+   "by_state_count": {
+    "TX": 5324,
+    "other": 1188
+   },
    "first": "Sarah",
    "hold": {
     "district": "14",
@@ -8582,8 +9001,12 @@
    },
    "sizes": [
     {
-     "amount": 223623.11,
-     "count": 6150
+     "amount": 158687.55,
+     "count": 5898
+    },
+    {
+     "amount": 64935.56,
+     "count": 252
     },
     {
      "amount": 334611.09,
@@ -8730,6 +9153,10 @@
     "TX": 615668.83,
     "other": 148397.8
    },
+   "by_state_count": {
+    "TX": 1904,
+    "other": 146
+   },
    "first": "Joe S.",
    "id": "00084866",
    "last": "Jaworski",
@@ -8739,8 +9166,12 @@
    },
    "sizes": [
     {
-     "amount": 97166.63,
-     "count": 1719
+     "amount": 66646.63,
+     "count": 1600
+    },
+    {
+     "amount": 30520.0,
+     "count": 119
     },
     {
      "amount": 266400.0,
@@ -8915,6 +9346,9 @@
    "by_state": {
     "unknown": 297457.22
    },
+   "by_state_count": {
+    "unknown": 292
+   },
    "first": "April L.",
    "hold": {
     "district": "15",
@@ -8930,8 +9364,12 @@
    },
    "sizes": [
     {
-     "amount": 20887.39,
-     "count": 126
+     "amount": 10193.33,
+     "count": 87
+    },
+    {
+     "amount": 10694.06,
+     "count": 39
     },
     {
      "amount": 156569.83,
@@ -9042,6 +9480,9 @@
    "by_state": {
     "TX": 103.2
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Zachary A.",
    "id": "00085291",
    "last": "Vance",
@@ -9053,6 +9494,10 @@
     {
      "amount": 103.2,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -9114,6 +9559,9 @@
    "by_state": {
     "unknown": 174180.54
    },
+   "by_state_count": {
+    "unknown": 223
+   },
    "first": "Laurie",
    "hold": {
     "district": "455",
@@ -9127,8 +9575,12 @@
    },
    "sizes": [
     {
-     "amount": 17684.1,
-     "count": 104
+     "amount": 6896.54,
+     "count": 63
+    },
+    {
+     "amount": 10787.56,
+     "count": 41
     },
     {
      "amount": 121496.44,
@@ -9238,6 +9690,9 @@
    "by_state": {
     "TX": 15.94
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Kodi E.",
    "id": "00085348",
    "last": "Sawin",
@@ -9250,6 +9705,10 @@
     {
      "amount": 15.94,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -9308,6 +9767,10 @@
     "TX": 1000.0,
     "unknown": 1050.0
    },
+   "by_state_count": {
+    "TX": 1,
+    "unknown": 1
+   },
    "first": "Paul G.",
    "id": "00085424",
    "last": "Belew",
@@ -9316,6 +9779,10 @@
     "office": "GOVERNOR"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 0.0,
      "count": 0
@@ -9386,6 +9853,9 @@
    "by_state": {
     "unknown": 184595.21
    },
+   "by_state_count": {
+    "unknown": 206
+   },
    "first": "Daniella Deseta",
    "hold": {
     "district": "261",
@@ -9400,8 +9870,12 @@
    },
    "sizes": [
     {
-     "amount": 16149.85,
-     "count": 81
+     "amount": 4057.14,
+     "count": 35
+    },
+    {
+     "amount": 12092.71,
+     "count": 46
     },
     {
      "amount": 123445.36,
@@ -9515,6 +9989,10 @@
     "TX": 196849.74,
     "other": 7350.0
    },
+   "by_state_count": {
+    "TX": 162,
+    "other": 11
+   },
    "first": "Ellen",
    "hold": {
     "district": "19",
@@ -9529,8 +10007,12 @@
    },
    "sizes": [
     {
-     "amount": 7949.74,
-     "count": 80
+     "amount": 4347.34,
+     "count": 66
+    },
+    {
+     "amount": 3602.4,
+     "count": 14
     },
     {
      "amount": 86250.0,
@@ -9688,13 +10170,17 @@
      "count": 44
     },
     "INDIVIDUAL": {
-     "amount": 47992.43,
-     "count": 84
+     "amount": 49065.97,
+     "count": 87
     }
    },
    "by_state": {
-    "TX": 129387.95,
+    "TX": 130461.49,
     "other": 4604.48
+   },
+   "by_state_count": {
+    "TX": 126,
+    "other": 5
    },
    "first": "Janis A.",
    "hold": {
@@ -9710,12 +10196,16 @@
    },
    "sizes": [
     {
-     "amount": 6324.19,
-     "count": 55
+     "amount": 3212.63,
+     "count": 43
     },
     {
-     "amount": 67668.24,
-     "count": 65
+     "amount": 3685.1,
+     "count": 14
+    },
+    {
+     "amount": 68168.24,
+     "count": 66
     },
     {
      "amount": 60000.0,
@@ -9821,18 +10311,18 @@
     }
    ],
    "totals": {
-    "as_of": "2026-06-30",
-    "cash": 26830.09,
+    "as_of": "2026-09-24",
+    "cash": 15198.45,
     "latest": {
-     "filed": "2026-07-15",
-     "name": "July semiannual report",
-     "period_end": "2026-06-30",
-     "type": "SEMIJUL"
+     "filed": "2026-10-02",
+     "name": "30-day pre-election report",
+     "period_end": "2026-09-24",
+     "type": "E30DAYBEF"
     },
     "loans": 79408.9,
-    "raised": 136298.97,
-    "reports": 4,
-    "spent": 128725.14,
+    "raised": 137372.51,
+    "reports": 5,
+    "spent": 141028.79,
     "unitemized": 2306.54
    },
    "type": "COH"
@@ -9897,6 +10387,9 @@
    "by_state": {
     "other": 10000.0
    },
+   "by_state_count": {
+    "other": 1
+   },
    "first": "Rochelle Mercedes",
    "id": "00086056",
    "last": "Garza",
@@ -9905,6 +10398,10 @@
     "office": "ATTYGEN"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 0.0,
      "count": 0
@@ -9989,6 +10486,10 @@
     "TX": 3421.11,
     "other": 208.16
    },
+   "by_state_count": {
+    "TX": 30,
+    "other": 7
+   },
    "first": "Michael",
    "id": "00086126",
    "last": "Lange",
@@ -9998,8 +10499,12 @@
    },
    "sizes": [
     {
-     "amount": 2129.27,
-     "count": 34
+     "amount": 1629.27,
+     "count": 32
+    },
+    {
+     "amount": 500.0,
+     "count": 2
     },
     {
      "amount": 1500.0,
@@ -10147,6 +10652,9 @@
    "by_state": {
     "TX": 37526.25
    },
+   "by_state_count": {
+    "TX": 76
+   },
    "first": "Ronnie E.",
    "id": "00086143",
    "last": "Tullos",
@@ -10157,8 +10665,12 @@
    "short": "Bubba",
    "sizes": [
     {
-     "amount": 5241.25,
-     "count": 68
+     "amount": 3184.6,
+     "count": 60
+    },
+    {
+     "amount": 2056.65,
+     "count": 8
     },
     {
      "amount": 7285.0,
@@ -10306,6 +10818,9 @@
    "by_state": {
     "TX": 15.0
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Daniel J.",
    "id": "00086172",
    "last": "McCarthy",
@@ -10318,6 +10833,10 @@
     {
      "amount": 15.0,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -10402,6 +10921,9 @@
    "by_state": {
     "unknown": 23740.37
    },
+   "by_state_count": {
+    "unknown": 57
+   },
    "first": "Brandy K.",
    "hold": {
     "district": "403",
@@ -10416,8 +10938,12 @@
    },
    "sizes": [
     {
-     "amount": 7240.37,
-     "count": 42
+     "amount": 3226.9,
+     "count": 26
+    },
+    {
+     "amount": 4013.47,
+     "count": 16
     },
     {
      "amount": 16500.0,
@@ -10535,6 +11061,9 @@
    "by_state": {
     "TX": 4128.29
    },
+   "by_state_count": {
+    "TX": 5
+   },
    "first": "Alfred",
    "id": "00086241",
    "last": "Molison",
@@ -10544,8 +11073,12 @@
    },
    "sizes": [
     {
-     "amount": 378.29,
-     "count": 4
+     "amount": 61.68,
+     "count": 3
+    },
+    {
+     "amount": 316.61,
+     "count": 1
     },
     {
      "amount": 3750.0,
@@ -10670,6 +11203,9 @@
    "by_state": {
     "TX": 4143.89
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Victor A",
    "id": "00086258",
    "last": "Echavarria",
@@ -10679,6 +11215,10 @@
    },
    "short": "Alonzo",
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 393.89,
      "count": 1
@@ -10721,17 +11261,17 @@
     }
    ],
    "totals": {
-    "as_of": "2026-06-30",
+    "as_of": "2026-09-24",
     "cash": 0.0,
     "latest": {
-     "filed": "2026-07-13",
-     "name": "report after appointing a treasurer",
-     "period_end": "2026-06-30",
-     "type": "A15DAYAFT"
+     "filed": "2026-10-01",
+     "name": "30-day pre-election report",
+     "period_end": "2026-09-24",
+     "type": "E30DAYBEF"
     },
     "loans": 0.0,
     "raised": 4143.89,
-    "reports": 2,
+    "reports": 3,
     "spent": 0.0,
     "unitemized": 0.0
    },
@@ -10751,6 +11291,9 @@
    "by_state": {
     "TX": 3755.0
    },
+   "by_state_count": {
+    "TX": 15
+   },
    "first": "Julia E.",
    "id": "00086288",
    "last": "Dahlberg",
@@ -10764,6 +11307,10 @@
     {
      "amount": 755.0,
      "count": 11
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 3000.0,
@@ -11015,6 +11562,10 @@
     "TX": 2037.39,
     "other": 350.0
    },
+   "by_state_count": {
+    "TX": 13,
+    "other": 2
+   },
    "first": "Evelyn L.",
    "hold": {
     "district": "14",
@@ -11028,8 +11579,12 @@
    },
    "sizes": [
     {
-     "amount": 1887.39,
-     "count": 14
+     "amount": 737.39,
+     "count": 10
+    },
+    {
+     "amount": 1150.0,
+     "count": 4
     },
     {
      "amount": 500.0,
@@ -11173,6 +11728,9 @@
    "by_state": {
     "TX": 2495.21
    },
+   "by_state_count": {
+    "TX": 10
+   },
    "first": "Mark Vincent",
    "id": "00086357",
    "last": "Goloby",
@@ -11182,8 +11740,12 @@
    },
    "sizes": [
     {
-     "amount": 995.21,
-     "count": 8
+     "amount": 520.21,
+     "count": 6
+    },
+    {
+     "amount": 475.0,
+     "count": 2
     },
     {
      "amount": 1500.0,
@@ -11328,6 +11890,9 @@
    "by_state": {
     "TX": 255.0
    },
+   "by_state_count": {
+    "TX": 5
+   },
    "first": "Perla Munoz",
    "id": "00086384",
    "last": "Hopkins",
@@ -11339,6 +11904,10 @@
     {
      "amount": 255.0,
      "count": 5
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -11437,6 +12006,10 @@
     "TX": 300.0,
     "other": 100.0
    },
+   "by_state_count": {
+    "TX": 5,
+    "other": 1
+   },
    "first": "Angela A.",
    "id": "00086386",
    "last": "Villescaz",
@@ -11449,6 +12022,10 @@
     {
      "amount": 400.0,
      "count": 6
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -11587,6 +12164,10 @@
     "TX": 37218.03,
     "other": 1401.25
    },
+   "by_state_count": {
+    "TX": 98,
+    "other": 13
+   },
    "first": "John R.",
    "id": "00087578",
    "last": "Messinger",
@@ -11597,8 +12178,12 @@
    },
    "sizes": [
     {
-     "amount": 9688.59,
-     "count": 87
+     "amount": 5621.74,
+     "count": 71
+    },
+    {
+     "amount": 4066.85,
+     "count": 16
     },
     {
      "amount": 18930.69,
@@ -11792,6 +12377,10 @@
     "TX": 6714.25,
     "other": 660.35
    },
+   "by_state_count": {
+    "TX": 45,
+    "other": 34
+   },
    "first": "Katherine",
    "id": "00088068",
    "last": "Culbert",
@@ -11803,6 +12392,10 @@
     {
      "amount": 2524.6,
      "count": 76
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 4850.0,
@@ -11972,6 +12565,10 @@
     "TX": 1101.0,
     "other": 150.0
    },
+   "by_state_count": {
+    "TX": 27,
+    "other": 5
+   },
    "first": "Edwardo",
    "id": "00088168",
    "last": "Espinoza",
@@ -11984,6 +12581,10 @@
     {
      "amount": 1251.0,
      "count": 32
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -12136,6 +12737,10 @@
     "TX": 30958.89,
     "other": 4929.29
    },
+   "by_state_count": {
+    "TX": 128,
+    "other": 26
+   },
    "first": "Holly E.",
    "id": "00088174",
    "last": "Taylor",
@@ -12146,8 +12751,12 @@
    },
    "sizes": [
     {
-     "amount": 10892.87,
-     "count": 129
+     "amount": 6742.87,
+     "count": 113
+    },
+    {
+     "amount": 4150.0,
+     "count": 16
     },
     {
      "amount": 19995.31,
@@ -12290,6 +12899,10 @@
     "TX": 2083411.55,
     "other": 27094.61
    },
+   "by_state_count": {
+    "TX": 651,
+    "other": 46
+   },
    "first": "Bo",
    "hold": {
     "office": "PARTYCHAIRCO"
@@ -12302,8 +12915,12 @@
    },
    "sizes": [
     {
-     "amount": 43663.48,
-     "count": 522
+     "amount": 31764.98,
+     "count": 480
+    },
+    {
+     "amount": 11898.5,
+     "count": 42
     },
     {
      "amount": 148676.55,
@@ -12448,6 +13065,10 @@
     "TX": 335304.96,
     "other": 415.48
    },
+   "by_state_count": {
+    "TX": 139,
+    "other": 12
+   },
    "first": "Lynn H.",
    "id": "00088186",
    "last": "Dunlap",
@@ -12458,8 +13079,12 @@
    "short": "Hawk",
    "sizes": [
     {
-     "amount": 10501.41,
-     "count": 128
+     "amount": 7129.66,
+     "count": 116
+    },
+    {
+     "amount": 3371.75,
+     "count": 12
     },
     {
      "amount": 11721.07,
@@ -12605,6 +13230,9 @@
    "by_state": {
     "TX": 81.0
    },
+   "by_state_count": {
+    "TX": 4
+   },
    "first": "Allan Dwain",
    "id": "00088189",
    "last": "Handley",
@@ -12617,6 +13245,10 @@
     {
      "amount": 81.0,
      "count": 4
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -12697,6 +13329,10 @@
     "TX": 298037.32,
     "other": 11055.5
    },
+   "by_state_count": {
+    "TX": 1079,
+    "other": 32
+   },
    "first": "Pooja",
    "id": "00088197",
    "last": "Sethi",
@@ -12707,8 +13343,12 @@
    },
    "sizes": [
     {
-     "amount": 85302.32,
-     "count": 946
+     "amount": 51004.51,
+     "count": 811
+    },
+    {
+     "amount": 34297.81,
+     "count": 135
     },
     {
      "amount": 138161.5,
@@ -12952,6 +13592,10 @@
     "TX": 23042.0,
     "unknown": 100.0
    },
+   "by_state_count": {
+    "TX": 13,
+    "unknown": 3
+   },
    "first": "Jenn",
    "id": "00088719",
    "last": "Mack Raphoon",
@@ -12961,8 +13605,12 @@
    },
    "sizes": [
     {
-     "amount": 642.0,
-     "count": 12
+     "amount": 392.0,
+     "count": 11
+    },
+    {
+     "amount": 250.0,
+     "count": 1
     },
     {
      "amount": 2500.0,
@@ -13180,6 +13828,9 @@
    "by_state": {
     "unknown": 733808.44
    },
+   "by_state_count": {
+    "unknown": 383
+   },
    "first": "James P.",
    "hold": {
     "office": "JUSTICE_SC",
@@ -13190,8 +13841,12 @@
    "name": "James P. Sullivan",
    "sizes": [
     {
-     "amount": 15134.01,
-     "count": 89
+     "amount": 5913.32,
+     "count": 53
+    },
+    {
+     "amount": 9220.69,
+     "count": 36
     },
     {
      "amount": 268674.43,
@@ -13305,6 +13960,9 @@
    "by_state": {
     "unknown": 30968.5
    },
+   "by_state_count": {
+    "unknown": 53
+   },
    "first": "Cory R.",
    "hold": {
     "district": "250",
@@ -13319,8 +13977,12 @@
    },
    "sizes": [
     {
-     "amount": 5168.5,
-     "count": 39
+     "amount": 2051.0,
+     "count": 27
+    },
+    {
+     "amount": 3117.5,
+     "count": 12
     },
     {
      "amount": 15800.0,
@@ -13438,6 +14100,9 @@
    "by_state": {
     "TX": 24859.0
    },
+   "by_state_count": {
+    "TX": 23
+   },
    "first": "Timothy N.",
    "id": "00089565",
    "last": "Mabry",
@@ -13449,6 +14114,10 @@
     {
      "amount": 1309.0,
      "count": 19
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 5250.0,
@@ -13596,6 +14265,10 @@
     "TX": 2416916.81,
     "other": 30791.0
    },
+   "by_state_count": {
+    "TX": 456,
+    "other": 14
+   },
    "first": "Nathan H.",
    "id": "00089619",
    "last": "Sheets",
@@ -13605,8 +14278,12 @@
    },
    "sizes": [
     {
-     "amount": 19954.33,
-     "count": 205
+     "amount": 11617.78,
+     "count": 171
+    },
+    {
+     "amount": 8336.55,
+     "count": 34
     },
     {
      "amount": 224568.18,
@@ -13745,6 +14422,10 @@
     "TX": 97091.51,
     "other": 111309.08
    },
+   "by_state_count": {
+    "TX": 39,
+    "other": 74
+   },
    "first": "John",
    "id": "00089623",
    "last": "Bash",
@@ -13754,8 +14435,12 @@
    },
    "sizes": [
     {
-     "amount": 4647.35,
-     "count": 30
+     "amount": 2094.05,
+     "count": 21
+    },
+    {
+     "amount": 2553.3,
+     "count": 9
     },
     {
      "amount": 74120.25,
@@ -13953,6 +14638,9 @@
    "by_state": {
     "TX": 200.0
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Tiffany A.",
    "id": "00089710",
    "last": "May",
@@ -13965,6 +14653,10 @@
     {
      "amount": 200.0,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -14024,6 +14716,11 @@
     "other": 18035.15,
     "unknown": 25.0
    },
+   "by_state_count": {
+    "TX": 3610,
+    "other": 931,
+    "unknown": 1
+   },
    "first": "Bobby A.",
    "id": "00089742",
    "last": "Cole",
@@ -14033,8 +14730,12 @@
    },
    "sizes": [
     {
-     "amount": 109374.71,
-     "count": 4525
+     "amount": 101119.51,
+     "count": 4492
+    },
+    {
+     "amount": 8255.2,
+     "count": 33
     },
     {
      "amount": 10600.0,
@@ -14182,6 +14883,9 @@
    "by_state": {
     "TX": 124.0
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Esala A.",
    "id": "00089767",
    "last": "Wueschner",
@@ -14193,6 +14897,10 @@
     {
      "amount": 124.0,
      "count": 2
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -14289,6 +14997,10 @@
     "TX": 197090.62,
     "other": 18983.21
    },
+   "by_state_count": {
+    "TX": 720,
+    "other": 235
+   },
    "first": "Peter Constantine",
    "id": "00089796",
    "last": "Chambers",
@@ -14299,8 +15011,12 @@
    "short": "Doc",
    "sizes": [
     {
-     "amount": 59572.19,
-     "count": 883
+     "amount": 45246.12,
+     "count": 829
+    },
+    {
+     "amount": 14326.07,
+     "count": 54
     },
     {
      "amount": 63501.64,
@@ -14447,6 +15163,10 @@
     "TX": 2755.69,
     "other": 443.7
    },
+   "by_state_count": {
+    "TX": 47,
+    "other": 9
+   },
    "first": "Arshia N.",
    "id": "00089818",
    "last": "Papari",
@@ -14457,8 +15177,12 @@
    },
    "sizes": [
     {
-     "amount": 3199.39,
-     "count": 56
+     "amount": 1722.87,
+     "count": 50
+    },
+    {
+     "amount": 1476.52,
+     "count": 6
     },
     {
      "amount": 0.0,
@@ -14599,6 +15323,10 @@
     "TX": 7457.75,
     "other": 19586.35
    },
+   "by_state_count": {
+    "TX": 102,
+    "other": 33
+   },
    "first": "Benjamin",
    "id": "00089819",
    "last": "Flores",
@@ -14608,8 +15336,12 @@
    },
    "sizes": [
     {
-     "amount": 5794.1,
-     "count": 123
+     "amount": 4544.1,
+     "count": 118
+    },
+    {
+     "amount": 1250.0,
+     "count": 5
     },
     {
      "amount": 21250.0,
@@ -14754,6 +15486,10 @@
     "TX": 1170.0,
     "other": 245.0
    },
+   "by_state_count": {
+    "TX": 10,
+    "other": 3
+   },
    "first": "Harold",
    "id": "00089841",
    "last": "Savant Moore",
@@ -14763,8 +15499,12 @@
    },
    "sizes": [
     {
-     "amount": 1415.0,
-     "count": 13
+     "amount": 665.0,
+     "count": 11
+    },
+    {
+     "amount": 750.0,
+     "count": 2
     },
     {
      "amount": 0.0,
@@ -14892,6 +15632,9 @@
    "by_state": {
     "TX": 5.0
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Johnny Lee",
    "id": "00089842",
    "last": "Hammitt",
@@ -14904,6 +15647,10 @@
     {
      "amount": 5.0,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -14964,6 +15711,10 @@
     "TX": 72716.0,
     "other": 18855.0
    },
+   "by_state_count": {
+    "TX": 191,
+    "other": 62
+   },
    "first": "Kate",
    "id": "00089876",
    "last": "Lincoln-Goldfinch",
@@ -14974,8 +15725,12 @@
    },
    "sizes": [
     {
-     "amount": 20971.0,
-     "count": 201
+     "amount": 16369.0,
+     "count": 184
+    },
+    {
+     "amount": 4602.0,
+     "count": 17
     },
     {
      "amount": 50600.0,
@@ -15147,6 +15902,9 @@
    "by_state": {
     "TX": 100.0
    },
+   "by_state_count": {
+    "TX": 1
+   },
    "first": "Brian Hay",
    "id": "00089915",
    "last": "Mortimore",
@@ -15159,6 +15917,10 @@
     {
      "amount": 100.0,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -15220,6 +15982,10 @@
     "TX": 36772.5,
     "other": 120.0
    },
+   "by_state_count": {
+    "TX": 135,
+    "other": 3
+   },
    "first": "Samantha",
    "id": "00089916",
    "last": "Lopez-Resendez",
@@ -15230,8 +15996,12 @@
    },
    "sizes": [
     {
-     "amount": 9642.5,
-     "count": 111
+     "amount": 5092.5,
+     "count": 93
+    },
+    {
+     "amount": 4550.0,
+     "count": 18
     },
     {
      "amount": 22250.0,
@@ -15369,6 +16139,9 @@
    "by_state": {
     "TX": 140.0
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Edward E.",
    "id": "00089946",
    "last": "Giles",
@@ -15380,6 +16153,10 @@
     {
      "amount": 140.0,
      "count": 2
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -15475,6 +16252,10 @@
     "TX": 5152.75,
     "other": 1250.0
    },
+   "by_state_count": {
+    "TX": 39,
+    "other": 2
+   },
    "first": "Kevin M.",
    "id": "00089957",
    "last": "Jackson",
@@ -15485,8 +16266,12 @@
    },
    "sizes": [
     {
-     "amount": 3102.75,
-     "count": 37
+     "amount": 1852.75,
+     "count": 32
+    },
+    {
+     "amount": 1250.0,
+     "count": 5
     },
     {
      "amount": 3300.0,
@@ -15621,6 +16406,10 @@
     "TX": 88635.0,
     "other": 47047.0
    },
+   "by_state_count": {
+    "TX": 225,
+    "other": 121
+   },
    "first": "Jeremy",
    "id": "00089968",
    "last": "Hendricks",
@@ -15631,8 +16420,12 @@
    },
    "sizes": [
     {
-     "amount": 29682.0,
-     "count": 285
+     "amount": 18082.0,
+     "count": 239
+    },
+    {
+     "amount": 11600.0,
+     "count": 46
     },
     {
      "amount": 51000.0,
@@ -15767,6 +16560,10 @@
     "TX": 52245.91,
     "other": 3188.28
    },
+   "by_state_count": {
+    "TX": 194,
+    "other": 19
+   },
    "first": "Allison",
    "id": "00089988",
    "last": "Bush",
@@ -15777,8 +16574,12 @@
    },
    "sizes": [
     {
-     "amount": 17934.19,
-     "count": 189
+     "amount": 11226.19,
+     "count": 163
+    },
+    {
+     "amount": 6708.0,
+     "count": 26
     },
     {
      "amount": 17500.0,
@@ -15920,6 +16721,9 @@
    "by_state": {
     "TX": 932.0
    },
+   "by_state_count": {
+    "TX": 12
+   },
    "first": "Courtney M.L.",
    "id": "00090002",
    "last": "Head",
@@ -15931,6 +16735,10 @@
     {
      "amount": 932.0,
      "count": 12
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -16095,6 +16903,9 @@
    "by_state": {
     "TX": 600.0
    },
+   "by_state_count": {
+    "TX": 9
+   },
    "first": "John Michael",
    "id": "00090097",
    "last": "Hash",
@@ -16107,6 +16918,10 @@
     {
      "amount": 600.0,
      "count": 9
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -16239,6 +17054,10 @@
     "TX": 94710.97,
     "other": 13659.0
    },
+   "by_state_count": {
+    "TX": 142,
+    "other": 36
+   },
    "first": "Jose Nathanael",
    "id": "00090120",
    "last": "Loya",
@@ -16248,8 +17067,12 @@
    },
    "sizes": [
     {
-     "amount": 11173.0,
-     "count": 157
+     "amount": 6823.0,
+     "count": 140
+    },
+    {
+     "amount": 4350.0,
+     "count": 17
     },
     {
      "amount": 25550.0,
@@ -16388,6 +17211,10 @@
     "TX": 74776.0,
     "other": 17531.0
    },
+   "by_state_count": {
+    "TX": 269,
+    "other": 55
+   },
    "first": "Shenghao",
    "id": "00090169",
    "last": "Wang",
@@ -16399,8 +17226,12 @@
    "short": "Daniel",
    "sizes": [
     {
-     "amount": 34891.0,
-     "count": 274
+     "amount": 18791.0,
+     "count": 215
+    },
+    {
+     "amount": 16100.0,
+     "count": 59
     },
     {
      "amount": 42416.0,
@@ -16553,6 +17384,10 @@
     "TX": 125216.87,
     "other": 673.0
    },
+   "by_state_count": {
+    "TX": 189,
+    "other": 7
+   },
    "first": "Daniel Joshua",
    "id": "00090172",
    "last": "Reyna",
@@ -16564,8 +17399,12 @@
    "short": "Josh",
    "sizes": [
     {
-     "amount": 16389.87,
-     "count": 137
+     "amount": 8096.0,
+     "count": 105
+    },
+    {
+     "amount": 8293.87,
+     "count": 32
     },
     {
      "amount": 59500.0,
@@ -16737,6 +17576,10 @@
     "TX": 122885.0,
     "other": 9175.0
    },
+   "by_state_count": {
+    "TX": 365,
+    "other": 10
+   },
    "first": "Kathryne",
    "id": "00090192",
    "last": "Tovo",
@@ -16748,8 +17591,12 @@
    "short": "Kathie",
    "sizes": [
     {
-     "amount": 38060.0,
-     "count": 303
+     "amount": 18060.0,
+     "count": 225
+    },
+    {
+     "amount": 20000.0,
+     "count": 78
     },
     {
      "amount": 54000.0,
@@ -16896,6 +17743,10 @@
     "TX": 1750.0,
     "other": 962.0
    },
+   "by_state_count": {
+    "TX": 6,
+    "other": 6
+   },
    "first": "Steven",
    "id": "00090206",
    "last": "Rivas",
@@ -16906,8 +17757,12 @@
    },
    "sizes": [
     {
-     "amount": 712.0,
-     "count": 9
+     "amount": 462.0,
+     "count": 8
+    },
+    {
+     "amount": 250.0,
+     "count": 1
     },
     {
      "amount": 2000.0,
@@ -17056,6 +17911,10 @@
     "TX": 1355.0,
     "other": 100.0
    },
+   "by_state_count": {
+    "TX": 19,
+    "other": 1
+   },
    "first": "Kelly A.",
    "id": "00090209",
    "last": "Griffin",
@@ -17065,8 +17924,12 @@
    },
    "sizes": [
     {
-     "amount": 1455.0,
-     "count": 20
+     "amount": 1155.0,
+     "count": 19
+    },
+    {
+     "amount": 300.0,
+     "count": 1
     },
     {
      "amount": 0.0,
@@ -17217,6 +18080,11 @@
     "other": 61529.0,
     "unknown": 5300.0
    },
+   "by_state_count": {
+    "TX": 106,
+    "other": 218,
+    "unknown": 2
+   },
    "first": "Robin J.",
    "id": "00090245",
    "last": "Lerner",
@@ -17227,8 +18095,12 @@
    },
    "sizes": [
     {
-     "amount": 38405.0,
-     "count": 271
+     "amount": 19435.0,
+     "count": 199
+    },
+    {
+     "amount": 18970.0,
+     "count": 72
     },
     {
      "amount": 47329.0,
@@ -17380,6 +18252,10 @@
     "TX": 57022.0,
     "other": 10995.0
    },
+   "by_state_count": {
+    "TX": 140,
+    "other": 57
+   },
    "first": "Kimberly D.",
    "id": "00090256",
    "last": "Ellison",
@@ -17391,8 +18267,12 @@
    "short": "Kimmie",
    "sizes": [
     {
-     "amount": 15017.0,
-     "count": 166
+     "amount": 13917.0,
+     "count": 162
+    },
+    {
+     "amount": 1100.0,
+     "count": 4
     },
     {
      "amount": 18000.0,
@@ -17528,6 +18408,9 @@
    "by_state": {
     "TX": 2876.0
    },
+   "by_state_count": {
+    "TX": 31
+   },
    "first": "Javier A.",
    "id": "00090259",
    "last": "Andrade",
@@ -17539,8 +18422,12 @@
    "short": "Javi",
    "sizes": [
     {
-     "amount": 1376.0,
-     "count": 29
+     "amount": 826.0,
+     "count": 27
+    },
+    {
+     "amount": 550.0,
+     "count": 2
     },
     {
      "amount": 1500.0,
@@ -17683,6 +18570,10 @@
     "TX": 185346.43,
     "other": 179391.52
    },
+   "by_state_count": {
+    "TX": 2935,
+    "other": 7099
+   },
    "first": "Tony",
    "id": "00090260",
    "last": "Box",
@@ -17692,8 +18583,12 @@
    },
    "sizes": [
     {
-     "amount": 191026.49,
-     "count": 9989
+     "amount": 171472.45,
+     "count": 9913
+    },
+    {
+     "amount": 19554.04,
+     "count": 76
     },
     {
      "amount": 41711.46,
@@ -17835,6 +18730,9 @@
    "by_state": {
     "TX": 313.62
    },
+   "by_state_count": {
+    "TX": 6
+   },
    "first": "Kenneth",
    "id": "00090272",
    "last": "Hyde",
@@ -17846,6 +18744,10 @@
     {
      "amount": 313.62,
      "count": 6
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -17947,6 +18849,9 @@
    "by_state": {
     "TX": 4943.89
    },
+   "by_state_count": {
+    "TX": 6
+   },
    "first": "Anthony D.",
    "id": "00090296",
    "last": "Cristo",
@@ -17957,8 +18862,12 @@
    "short": "Tony",
    "sizes": [
     {
-     "amount": 1193.89,
-     "count": 5
+     "amount": 200.0,
+     "count": 2
+    },
+    {
+     "amount": 993.89,
+     "count": 3
     },
     {
      "amount": 3750.0,
@@ -18101,6 +19010,11 @@
     "other": 449075.87,
     "unknown": 23.0
    },
+   "by_state_count": {
+    "TX": 999,
+    "other": 1196,
+    "unknown": 1
+   },
    "first": "Marcos",
    "id": "00090323",
    "last": "Velez",
@@ -18110,8 +19024,12 @@
    },
    "sizes": [
     {
-     "amount": 44384.13,
-     "count": 2157
+     "amount": 40334.13,
+     "count": 2141
+    },
+    {
+     "amount": 4050.0,
+     "count": 16
     },
     {
      "amount": 35025.31,
@@ -18246,6 +19164,10 @@
     "TX": 17233.89,
     "other": 4973.0
    },
+   "by_state_count": {
+    "TX": 191,
+    "other": 49
+   },
    "first": "Taren",
    "id": "00090325",
    "last": "Hodges",
@@ -18257,8 +19179,12 @@
    "short": "Gigs",
    "sizes": [
     {
-     "amount": 14516.89,
-     "count": 228
+     "amount": 11259.89,
+     "count": 217
+    },
+    {
+     "amount": 3257.0,
+     "count": 11
     },
     {
      "amount": 7690.0,
@@ -18402,6 +19328,9 @@
    "by_state": {
     "TX": 49.18
    },
+   "by_state_count": {
+    "TX": 3
+   },
    "first": "Abigail L.",
    "id": "00090372",
    "last": "Gray",
@@ -18415,6 +19344,10 @@
     {
      "amount": 49.18,
      "count": 3
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -18493,6 +19426,10 @@
     "TX": 7983.58,
     "other": 325.9
    },
+   "by_state_count": {
+    "TX": 41,
+    "other": 6
+   },
    "first": "Shehla N.",
    "id": "00090378",
    "last": "Faizi",
@@ -18502,8 +19439,12 @@
    },
    "sizes": [
     {
-     "amount": 3559.48,
-     "count": 45
+     "amount": 2159.87,
+     "count": 40
+    },
+    {
+     "amount": 1399.61,
+     "count": 5
     },
     {
      "amount": 4750.0,
@@ -18647,6 +19588,9 @@
    "by_state": {
     "TX": 264.0
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Stephen",
    "id": "00090381",
    "last": "Samuelson",
@@ -18656,8 +19600,12 @@
    },
    "sizes": [
     {
-     "amount": 264.0,
-     "count": 2
+     "amount": 14.0,
+     "count": 1
+    },
+    {
+     "amount": 250.0,
+     "count": 1
     },
     {
      "amount": 0.0,
@@ -18726,6 +19674,10 @@
     "TX": 34868.34,
     "other": 2000.0
    },
+   "by_state_count": {
+    "TX": 42,
+    "other": 1
+   },
    "first": "Stephanie",
    "id": "00090421",
    "last": "Limon Bazan",
@@ -18736,8 +19688,12 @@
    },
    "sizes": [
     {
-     "amount": 4611.09,
-     "count": 35
+     "amount": 1568.18,
+     "count": 23
+    },
+    {
+     "amount": 3042.91,
+     "count": 12
     },
     {
      "amount": 7257.25,
@@ -18898,6 +19854,10 @@
     "TX": 137468.27,
     "other": 51664.39
    },
+   "by_state_count": {
+    "TX": 302,
+    "other": 143
+   },
    "first": "George J.",
    "id": "00090439",
    "last": "Kopser",
@@ -18909,8 +19869,12 @@
    "short": "Joseph",
    "sizes": [
     {
-     "amount": 39766.66,
-     "count": 369
+     "amount": 20581.66,
+     "count": 296
+    },
+    {
+     "amount": 19185.0,
+     "count": 73
     },
     {
      "amount": 69366.0,
@@ -19084,6 +20048,9 @@
    "by_state": {
     "other": 50.0
    },
+   "by_state_count": {
+    "other": 1
+   },
    "first": "Omer W.",
    "id": "00090459",
    "last": "Khwaja",
@@ -19095,6 +20062,10 @@
     {
      "amount": 50.0,
      "count": 1
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -19152,6 +20123,9 @@
    "by_state": {
     "TX": 126.0
    },
+   "by_state_count": {
+    "TX": 3
+   },
    "first": "Kevin",
    "id": "00090462",
    "last": "McCormick",
@@ -19163,6 +20137,10 @@
     {
      "amount": 126.0,
      "count": 3
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -19234,6 +20212,9 @@
    "by_state": {
     "TX": 803.0
    },
+   "by_state_count": {
+    "TX": 12
+   },
    "first": "Sam",
    "id": "00090463",
    "last": "Slade",
@@ -19244,8 +20225,12 @@
    },
    "sizes": [
     {
-     "amount": 803.0,
-     "count": 12
+     "amount": 503.0,
+     "count": 11
+    },
+    {
+     "amount": 300.0,
+     "count": 1
     },
     {
      "amount": 0.0,
@@ -19366,6 +20351,9 @@
    "by_state": {
     "TX": 4143.89
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Austin R.",
    "id": "00090468",
    "last": "Kelly",
@@ -19374,6 +20362,10 @@
     "office": "AGRICULTUR"
    },
    "sizes": [
+    {
+     "amount": 0.0,
+     "count": 0
+    },
     {
      "amount": 393.89,
      "count": 1
@@ -19432,6 +20424,9 @@
    "by_state": {
     "TX": 922.74
    },
+   "by_state_count": {
+    "TX": 3
+   },
    "first": "Robert F.",
    "id": "00090477",
    "last": "Achgill",
@@ -19442,8 +20437,12 @@
    "short": "Bob",
    "sizes": [
     {
-     "amount": 251.4,
-     "count": 2
+     "amount": 45.0,
+     "count": 1
+    },
+    {
+     "amount": 206.4,
+     "count": 1
     },
     {
      "amount": 671.34,
@@ -19527,6 +20526,10 @@
     "TX": 75.0,
     "other": 50.0
    },
+   "by_state_count": {
+    "TX": 2,
+    "other": 1
+   },
    "first": "Victor D.",
    "id": "00090485",
    "last": "Sampson",
@@ -19539,6 +20542,10 @@
     {
      "amount": 125.0,
      "count": 3
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -19641,6 +20648,9 @@
    "by_state": {
     "TX": 300.0
    },
+   "by_state_count": {
+    "TX": 2
+   },
    "first": "Charles A.",
    "id": "00090497",
    "last": "Crouch",
@@ -19652,6 +20662,10 @@
     {
      "amount": 300.0,
      "count": 2
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -19716,6 +20730,9 @@
    "by_state": {
     "TX": 772.03
    },
+   "by_state_count": {
+    "TX": 9
+   },
    "first": "Dolores",
    "id": "00090515",
    "last": "Arellano",
@@ -19729,6 +20746,10 @@
     {
      "amount": 772.03,
      "count": 9
+    },
+    {
+     "amount": 0.0,
+     "count": 0
     },
     {
      "amount": 0.0,
@@ -19863,6 +20884,10 @@
     "TX": 820.0,
     "other": 50.0
    },
+   "by_state_count": {
+    "TX": 13,
+    "other": 1
+   },
    "first": "Raul E.",
    "id": "00090562",
    "last": "Longoria",
@@ -19874,8 +20899,12 @@
    "short": "Neto",
    "sizes": [
     {
-     "amount": 870.0,
-     "count": 14
+     "amount": 620.0,
+     "count": 13
+    },
+    {
+     "amount": 250.0,
+     "count": 1
     },
     {
      "amount": 0.0,
@@ -20058,6 +21087,10 @@
     "TX": 7525.0,
     "other": 500.0
    },
+   "by_state_count": {
+    "TX": 19,
+    "other": 1
+   },
    "first": "George Thomas",
    "id": "00091105",
    "last": "Luck",
@@ -20069,8 +21102,12 @@
    "short": "Tom",
    "sizes": [
     {
-     "amount": 1475.0,
-     "count": 12
+     "amount": 825.0,
+     "count": 10
+    },
+    {
+     "amount": 650.0,
+     "count": 2
     },
     {
      "amount": 6550.0,
@@ -20195,6 +21232,7 @@
  ],
  "outside": [
   {
+   "count": 3,
    "first": "Greg",
    "hold": {
     "office": "GOVERNOR"
@@ -20216,6 +21254,7 @@
    "total": 160000.0
   },
   {
+   "count": 1,
    "first": "Greg",
    "hold": {
     "district": "Texas",
@@ -20237,6 +21276,7 @@
    "total": 18000.0
   },
   {
+   "count": 31,
    "first": "Greg",
    "hold": {
     "office": "GOVERNOR"
@@ -20273,8 +21313,8 @@
      "name": "Penn Entertainment Inc. Texas Political Action Committee"
     },
     {
-     "amount": 6954.85,
-     "count": 7,
+     "amount": 6975.77,
+     "count": 8,
      "name": "Texas Alliance for Life"
     },
     {
@@ -20298,9 +21338,10 @@
      "name": "Tenaris Global Services (USA) Corp. PAC"
     }
    ],
-   "total": 200284.07
+   "total": 200304.99
   },
   {
+   "count": 1,
    "first": "Gregg",
    "hold": {
     "office": "GOVERNOR"
@@ -20320,6 +21361,7 @@
    "total": 9644.17
   },
   {
+   "count": 1,
    "first": "Cristo",
    "hold": {
     "office": "NONE"
@@ -20339,6 +21381,7 @@
    "total": 84.33
   },
   {
+   "count": 1,
    "first": "MICHAEL",
    "hold": {
     "office": "NONE"
@@ -20358,6 +21401,7 @@
    "total": 3500.0
   },
   {
+   "count": 2,
    "first": "JON",
    "hold": {
     "district": "21",
@@ -20376,6 +21420,7 @@
    "total": 2000.0
   },
   {
+   "count": 15,
    "first": "DAWN",
    "last": "BUCKINGHAM",
    "name": "DAWN BUCKINGHAM",
@@ -20399,8 +21444,8 @@
      "name": "Local Conservatives for Liberty"
     },
     {
-     "amount": 3527.33,
-     "count": 4,
+     "amount": 3548.25,
+     "count": 5,
      "name": "Texas Alliance for Life"
     },
     {
@@ -20409,9 +21454,10 @@
      "name": "Texans for Life Committee LIFE PAC"
     }
    ],
-   "total": 191809.84
+   "total": 191830.76
   },
   {
+   "count": 12,
    "first": "Jennifer",
    "last": "Balido",
    "name": "Jennifer Balido",
@@ -20439,6 +21485,7 @@
    "total": 29065.69
   },
   {
+   "count": 1,
    "first": "Jimmy",
    "hold": {
     "office": "CHIEFJUSTICE_SC",
@@ -20460,6 +21507,7 @@
    "total": 150.0
   },
   {
+   "count": 26,
    "first": "Jimmy",
    "hold": {
     "office": "CHIEFJUSTICE_SC"
@@ -20481,14 +21529,19 @@
      "name": "Local Conservatives for Liberty"
     },
     {
-     "amount": 6954.85,
-     "count": 7,
+     "amount": 6975.77,
+     "count": 8,
      "name": "Texas Alliance for Life"
     },
     {
      "amount": 6613.52,
      "count": 4,
      "name": "Texas Bipartisan Justice Committee"
+    },
+    {
+     "amount": 1000.0,
+     "count": 1,
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
     },
     {
      "amount": 860.05,
@@ -20506,9 +21559,10 @@
      "name": "Texas Civil Justice League PAC"
     }
    ],
-   "total": 110989.96
+   "total": 112010.88
   },
   {
+   "count": 6,
    "first": "Jimmy",
    "hold": {
     "office": "JUSTICE_SC",
@@ -20535,6 +21589,29 @@
    "total": 9718.91
   },
   {
+   "count": 1,
+   "first": "Clark",
+   "hold": {
+    "district": "46",
+    "office": "STATEREP"
+   },
+   "last": "Boyd",
+   "name": "Clark Boyd",
+   "seek": {
+    "district": "46",
+    "office": "STATEREP"
+   },
+   "spenders": [
+    {
+     "amount": 1000.0,
+     "count": 1,
+     "name": "World Acceptance Corporation Political Action Committee"
+    }
+   ],
+   "total": 1000.0
+  },
+  {
+   "count": 1,
    "first": "Scott",
    "hold": {
     "district": "15",
@@ -20558,6 +21635,7 @@
    "total": 366.67
   },
   {
+   "count": 2,
    "first": "Scott",
    "hold": {
     "district": "15",
@@ -20584,6 +21662,7 @@
    "total": 1110.05
   },
   {
+   "count": 1,
    "first": "Dawn",
    "hold": {
     "office": "LANDCOMM"
@@ -20603,6 +21682,7 @@
    "total": 500.0
   },
   {
+   "count": 1,
    "first": "Jeff",
    "hold": {
     "district": "50",
@@ -20624,6 +21704,7 @@
    "total": 500.0
   },
   {
+   "count": 16,
    "first": "Brett",
    "hold": {
     "office": "JUSTICE_SC",
@@ -20642,9 +21723,14 @@
      "name": "Houston Region Business Coalition"
     },
     {
-     "amount": 6954.85,
-     "count": 7,
+     "amount": 6975.77,
+     "count": 8,
      "name": "Texas Alliance for Life"
+    },
+    {
+     "amount": 2500.0,
+     "count": 1,
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
     },
     {
      "amount": 250.0,
@@ -20657,9 +21743,10 @@
      "name": "Texas REALTORS Political Action Committee"
     }
    ],
-   "total": 71290.68
+   "total": 73811.6
   },
   {
+   "count": 1,
    "first": "Allison",
    "hold": {
     "office": "NONE"
@@ -20680,6 +21767,7 @@
    "total": 211.09
   },
   {
+   "count": 1,
    "first": "Christi",
    "hold": {
     "office": "RRCOMM"
@@ -20696,6 +21784,7 @@
    "total": 2500.0
   },
   {
+   "count": 2,
    "first": "Christi",
    "hold": {
     "office": "RRCOMM"
@@ -20720,6 +21809,7 @@
    "total": 34329.09
   },
   {
+   "count": 5,
    "first": "Christi",
    "hold": {
     "office": "RRCOMM"
@@ -20739,6 +21829,7 @@
    "total": 3599.65
   },
   {
+   "count": 7,
    "first": "Anthony",
    "hold": {
     "office": "NONE"
@@ -20758,6 +21849,7 @@
    "total": 2883.74
   },
   {
+   "count": 1,
    "first": "Buckingham",
    "hold": {
     "office": "LANDCOMM"
@@ -20777,6 +21869,7 @@
    "total": 900.0
   },
   {
+   "count": 3,
    "first": "Sarah",
    "hold": {
     "district": "14",
@@ -20807,6 +21900,7 @@
    "total": 451.09
   },
   {
+   "count": 1,
    "first": "Maggie",
    "hold": {
     "district": "3",
@@ -20829,6 +21923,7 @@
    "total": 211.09
   },
   {
+   "count": 18,
    "first": "BO",
    "last": "FRENCH",
    "name": "BO FRENCH",
@@ -20880,11 +21975,17 @@
      "amount": 1305.69,
      "count": 1,
      "name": "Llano County Conservatives PAC"
+    },
+    {
+     "amount": 1000.0,
+     "count": 1,
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
     }
    ],
-   "total": 1131356.85
+   "total": 1132356.85
   },
   {
+   "count": 9,
    "first": "April",
    "hold": {
     "district": "15",
@@ -20900,8 +22001,8 @@
    },
    "spenders": [
     {
-     "amount": 3947.33,
-     "count": 5,
+     "amount": 3968.25,
+     "count": 6,
      "name": "Texas Alliance for Life"
     },
     {
@@ -20920,9 +22021,10 @@
      "name": "Cooke County Republican Women PAC"
     }
    ],
-   "total": 5424.05
+   "total": 5444.97
   },
   {
+   "count": 9,
    "first": "Scott",
    "hold": {
     "district": "15",
@@ -20938,8 +22040,8 @@
    },
    "spenders": [
     {
-     "amount": 3947.33,
-     "count": 5,
+     "amount": 3968.25,
+     "count": 6,
      "name": "Texas Alliance for Life"
     },
     {
@@ -20958,9 +22060,10 @@
      "name": "Cooke County Republican Women PAC"
     }
    ],
-   "total": 5424.05
+   "total": 5444.97
   },
   {
+   "count": 3,
    "first": "Lesli",
    "hold": {
     "office": "NONE"
@@ -20981,6 +22084,7 @@
    "total": 2885.54
   },
   {
+   "count": 4,
    "first": "Lesli",
    "hold": {
     "office": "NONE"
@@ -21001,6 +22105,7 @@
    "total": 1352.18
   },
   {
+   "count": 2,
    "first": "Benjamin",
    "hold": {
     "office": "OTHER",
@@ -21026,6 +22131,7 @@
    "total": 331.09
   },
   {
+   "count": 16,
    "first": "Alison",
    "last": "Fox",
    "name": "Alison Fox",
@@ -21053,6 +22159,7 @@
    "total": 32329.02
   },
   {
+   "count": 7,
    "first": "Allison",
    "hold": {
     "office": "NONE"
@@ -21073,6 +22180,7 @@
    "total": 36924.85
   },
   {
+   "count": 2,
    "first": "Bo",
    "last": "French",
    "name": "Bo French",
@@ -21090,6 +22198,7 @@
    "total": 19009.43
   },
   {
+   "count": 1,
    "first": "Monserrat",
    "last": "Garibay",
    "name": "Monserrat Garibay",
@@ -21107,6 +22216,7 @@
    "total": 150.0
   },
   {
+   "count": 1,
    "first": "Montserrat",
    "hold": {
     "office": "NONE"
@@ -21128,6 +22238,7 @@
    "total": 500.0
   },
   {
+   "count": 4,
    "first": "Montserrat",
    "last": "Garibay",
    "name": "Montserrat Garibay",
@@ -21155,6 +22266,7 @@
    "total": 35000.8
   },
   {
+   "count": 1,
    "first": "Vicki",
    "hold": {
     "district": "47",
@@ -21175,6 +22287,7 @@
    "total": 211.09
   },
   {
+   "count": 4,
    "first": "Vikki",
    "hold": {
     "district": "47",
@@ -21205,237 +22318,10 @@
    "total": 1013.81
   },
   {
-   "first": "DON",
-   "last": "HUFFINES",
-   "name": "DON HUFFINES",
-   "seek": {
-    "office": "COMPTROLLER"
-   },
-   "spenders": [
-    {
-     "amount": 91301.46,
-     "count": 1,
-     "name": "True Texas Project PAC"
-    },
-    {
-     "amount": 38425.2,
-     "count": 5,
-     "name": "Texas Patriots State PAC"
-    },
-    {
-     "amount": 8245.47,
-     "count": 5,
-     "name": "Bastrop County Conservatives"
-    },
-    {
-     "amount": 6272.42,
-     "count": 2,
-     "name": "Make Liberty Win"
-    }
-   ],
-   "total": 144244.55
-  },
-  {
-   "first": "Kelly",
-   "hold": {
-    "office": "COMPTROLLER"
-   },
-   "last": "Hancock",
-   "name": "Kelly Hancock",
-   "spenders": [
-    {
-     "amount": 2500.0,
-     "count": 1,
-     "name": "Consulting Engineers PAC"
-    },
-    {
-     "amount": 2000.0,
-     "count": 1,
-     "name": "BearbackerPAC"
-    }
-   ],
-   "total": 4500.0
-  },
-  {
-   "first": "Kelly",
-   "last": "Hancock",
-   "name": "Kelly Hancock",
-   "seek": {
-    "office": "COMPTROLLER"
-   },
-   "spenders": [
-    {
-     "amount": 495351.0,
-     "count": 2,
-     "name": "Forge the Future Project with Meta"
-    },
-    {
-     "amount": 63935.83,
-     "count": 5,
-     "name": "Houston Region Business Coalition"
-    },
-    {
-     "amount": 19242.07,
-     "count": 2,
-     "name": "Local Conservatives for Liberty"
-    }
-   ],
-   "total": 578528.9
-  },
-  {
-   "first": "John",
-   "hold": {
-    "office": "NONE"
-   },
-   "last": "Hash",
-   "name": "John Hash",
-   "seek": {
-    "district": "50",
-    "office": "STATEREP"
-   },
-   "spenders": [
-    {
-     "amount": 5915.45,
-     "count": 29,
-     "name": "Hash, John Michael (Mr.)"
-    }
-   ],
-   "total": 5915.45
-  },
-  {
-   "first": "Kristen",
-   "hold": {
-    "district": "11",
-    "office": "JUDGEDIST"
-   },
-   "last": "Hawkins",
-   "name": "Kristen Hawkins",
-   "seek": {
-    "office": "JUSTICE_SC",
-    "place": "7"
-   },
-   "spenders": [
-    {
-     "amount": 211.09,
-     "count": 1,
-     "name": "Pflugerville Area Democrats"
-    }
-   ],
-   "total": 211.09
-  },
-  {
-   "first": "Kyle",
-   "hold": {
-    "office": "JUSTICE_SC",
-    "place": "7"
-   },
-   "last": "Hawkins",
-   "name": "Kyle Hawkins",
-   "seek": {
-    "office": "JUSTICE_SC",
-    "place": "7"
-   },
-   "spenders": [
-    {
-     "amount": 63935.83,
-     "count": 5,
-     "name": "Houston Region Business Coalition"
-    },
-    {
-     "amount": 13607.2,
-     "count": 1,
-     "name": "Local Conservatives for Liberty"
-    },
-    {
-     "amount": 250.0,
-     "count": 1,
-     "name": "Cooke County Republican Women PAC"
-    }
-   ],
-   "total": 77793.03
-  },
-  {
-   "first": "Kyle",
-   "hold": {
-    "office": "CHIEFJUSTICE_SC"
-   },
-   "last": "Hawkins",
-   "name": "Kyle Hawkins",
-   "seek": {
-    "office": "JUSTICE_SC"
-   },
-   "spenders": [
-    {
-     "amount": 860.05,
-     "count": 1,
-     "name": "Texans for Life Committee LIFE PAC"
-    },
-    {
-     "amount": 366.67,
-     "count": 1,
-     "name": "Texas Bipartisan Justice Committee"
-    },
-    {
-     "amount": 190.54,
-     "count": 3,
-     "name": "Texas Civil Justice League PAC"
-    }
-   ],
-   "total": 1417.26
-  },
-  {
-   "first": "Jeremy",
-   "last": "Hendricks",
-   "name": "Jeremy Hendricks",
-   "seek": {
-    "district": "50",
-    "office": "STATEREP"
-   },
-   "spenders": [
-    {
-     "amount": 5000.8,
-     "count": 2,
-     "name": "Capital Area Progressive Democrats"
-    },
-    {
-     "amount": 2672.48,
-     "count": 1,
-     "name": "SWLDC Texas PAC"
-    },
-    {
-     "amount": 1000.0,
-     "count": 1,
-     "name": "San Antonio Alliance of Teachers and Support Personnel PAC"
-    },
-    {
-     "amount": 150.0,
-     "count": 1,
-     "name": "Texas REALTORS Political Action Committee"
-    }
-   ],
-   "total": 8823.28
-  },
-  {
-   "first": "Gina",
-   "hold": {
-    "district": "49",
-    "office": "STATEREP"
-   },
-   "last": "Hinojosa",
-   "name": "Gina Hinojosa",
-   "spenders": [
-    {
-     "amount": 1500.0,
-     "count": 1,
-     "name": "Brazos County Democratic Party (CEC)"
-    }
-   ],
-   "total": 1500.0
-  },
-  {
-   "first": "Gina",
-   "last": "Hinojosa",
-   "name": "Gina Hinojosa",
+   "count": 33,
+   "first": "GINA",
+   "last": "HINOJOSA",
+   "name": "GINA HINOJOSA",
    "seek": {
     "office": "GOVERNOR"
    },
@@ -21449,6 +22335,11 @@
      "amount": 19959.0,
      "count": 2,
      "name": "Texas AFT Committee on Political Education"
+    },
+    {
+     "amount": 2776.67,
+     "count": 21,
+     "name": "Grandparents for Public Schools PAC"
     },
     {
      "amount": 2000.0,
@@ -21481,9 +22372,246 @@
      "name": "Pflugerville Area Democrats"
     }
    ],
-   "total": 49474.34
+   "total": 52251.01
   },
   {
+   "count": 13,
+   "first": "DON",
+   "last": "HUFFINES",
+   "name": "DON HUFFINES",
+   "seek": {
+    "office": "COMPTROLLER"
+   },
+   "spenders": [
+    {
+     "amount": 91301.46,
+     "count": 1,
+     "name": "True Texas Project PAC"
+    },
+    {
+     "amount": 38425.2,
+     "count": 5,
+     "name": "Texas Patriots State PAC"
+    },
+    {
+     "amount": 8245.47,
+     "count": 5,
+     "name": "Bastrop County Conservatives"
+    },
+    {
+     "amount": 6272.42,
+     "count": 2,
+     "name": "Make Liberty Win"
+    }
+   ],
+   "total": 144244.55
+  },
+  {
+   "count": 2,
+   "first": "Kelly",
+   "hold": {
+    "office": "COMPTROLLER"
+   },
+   "last": "Hancock",
+   "name": "Kelly Hancock",
+   "spenders": [
+    {
+     "amount": 2500.0,
+     "count": 1,
+     "name": "Consulting Engineers PAC"
+    },
+    {
+     "amount": 2000.0,
+     "count": 1,
+     "name": "BearbackerPAC"
+    }
+   ],
+   "total": 4500.0
+  },
+  {
+   "count": 9,
+   "first": "Kelly",
+   "last": "Hancock",
+   "name": "Kelly Hancock",
+   "seek": {
+    "office": "COMPTROLLER"
+   },
+   "spenders": [
+    {
+     "amount": 495351.0,
+     "count": 2,
+     "name": "Forge the Future Project with Meta"
+    },
+    {
+     "amount": 63935.83,
+     "count": 5,
+     "name": "Houston Region Business Coalition"
+    },
+    {
+     "amount": 19242.07,
+     "count": 2,
+     "name": "Local Conservatives for Liberty"
+    }
+   ],
+   "total": 578528.9
+  },
+  {
+   "count": 29,
+   "first": "John",
+   "hold": {
+    "office": "NONE"
+   },
+   "last": "Hash",
+   "name": "John Hash",
+   "seek": {
+    "district": "50",
+    "office": "STATEREP"
+   },
+   "spenders": [
+    {
+     "amount": 5915.45,
+     "count": 29,
+     "name": "Hash, John Michael (Mr.)"
+    }
+   ],
+   "total": 5915.45
+  },
+  {
+   "count": 1,
+   "first": "Kristen",
+   "hold": {
+    "district": "11",
+    "office": "JUDGEDIST"
+   },
+   "last": "Hawkins",
+   "name": "Kristen Hawkins",
+   "seek": {
+    "office": "JUSTICE_SC",
+    "place": "7"
+   },
+   "spenders": [
+    {
+     "amount": 211.09,
+     "count": 1,
+     "name": "Pflugerville Area Democrats"
+    }
+   ],
+   "total": 211.09
+  },
+  {
+   "count": 7,
+   "first": "Kyle",
+   "hold": {
+    "office": "JUSTICE_SC",
+    "place": "7"
+   },
+   "last": "Hawkins",
+   "name": "Kyle Hawkins",
+   "seek": {
+    "office": "JUSTICE_SC",
+    "place": "7"
+   },
+   "spenders": [
+    {
+     "amount": 63935.83,
+     "count": 5,
+     "name": "Houston Region Business Coalition"
+    },
+    {
+     "amount": 13607.2,
+     "count": 1,
+     "name": "Local Conservatives for Liberty"
+    },
+    {
+     "amount": 250.0,
+     "count": 1,
+     "name": "Cooke County Republican Women PAC"
+    }
+   ],
+   "total": 77793.03
+  },
+  {
+   "count": 5,
+   "first": "Kyle",
+   "hold": {
+    "office": "CHIEFJUSTICE_SC"
+   },
+   "last": "Hawkins",
+   "name": "Kyle Hawkins",
+   "seek": {
+    "office": "JUSTICE_SC"
+   },
+   "spenders": [
+    {
+     "amount": 860.05,
+     "count": 1,
+     "name": "Texans for Life Committee LIFE PAC"
+    },
+    {
+     "amount": 366.67,
+     "count": 1,
+     "name": "Texas Bipartisan Justice Committee"
+    },
+    {
+     "amount": 190.54,
+     "count": 3,
+     "name": "Texas Civil Justice League PAC"
+    }
+   ],
+   "total": 1417.26
+  },
+  {
+   "count": 5,
+   "first": "Jeremy",
+   "last": "Hendricks",
+   "name": "Jeremy Hendricks",
+   "seek": {
+    "district": "50",
+    "office": "STATEREP"
+   },
+   "spenders": [
+    {
+     "amount": 5000.8,
+     "count": 2,
+     "name": "Capital Area Progressive Democrats"
+    },
+    {
+     "amount": 2672.48,
+     "count": 1,
+     "name": "SWLDC Texas PAC"
+    },
+    {
+     "amount": 1000.0,
+     "count": 1,
+     "name": "San Antonio Alliance of Teachers and Support Personnel PAC"
+    },
+    {
+     "amount": 150.0,
+     "count": 1,
+     "name": "Texas REALTORS Political Action Committee"
+    }
+   ],
+   "total": 8823.28
+  },
+  {
+   "count": 19,
+   "first": "Regina",
+   "last": "Hinojosa",
+   "name": "Regina Hinojosa",
+   "seek": {
+    "office": "GOVERNOR"
+   },
+   "spenders": [
+    {
+     "amount": 14304.62,
+     "count": 19,
+     "name": "LUPE Votes Texas PAC"
+    }
+   ],
+   "total": 14304.62
+  },
+  {
+   "count": 2,
    "first": "Don",
    "hold": {
     "district": "Texas"
@@ -21504,6 +22632,7 @@
    "total": 19009.43
   },
   {
+   "count": 9,
    "first": "Joan",
    "hold": {
     "district": "17",
@@ -21534,6 +22663,7 @@
    "total": 79805.18
   },
   {
+   "count": 1,
    "first": "Joan",
    "hold": {
     "office": "STATESEN"
@@ -21553,6 +22683,7 @@
    "total": 4500.0
   },
   {
+   "count": 1,
    "first": "Matlock",
    "hold": {
     "office": "NONE"
@@ -21572,6 +22703,7 @@
    "total": 175.0
   },
   {
+   "count": 1,
    "first": "Joe",
    "hold": {
     "office": "NONE"
@@ -21591,6 +22723,7 @@
    "total": 211.09
   },
   {
+   "count": 1,
    "first": "Wright",
    "hold": {
     "office": "RRCOMM"
@@ -21610,6 +22743,7 @@
    "total": 520.46
   },
   {
+   "count": 2,
    "first": "Nathan",
    "hold": {
     "office": "STATESEN"
@@ -21634,6 +22768,7 @@
    "total": 620.0
   },
   {
+   "count": 1,
    "first": "Austin",
    "last": "Kelly",
    "name": "Austin Kelly",
@@ -21650,6 +22785,7 @@
    "total": 48.53
   },
   {
+   "count": 2,
    "first": "Stephanie",
    "last": "Limon Bazan",
    "name": "Stephanie Limon Bazan",
@@ -21667,6 +22803,7 @@
    "total": 5000.8
   },
   {
+   "count": 1,
    "first": "Brad",
    "hold": {
     "office": "GOVERNOR"
@@ -21686,6 +22823,7 @@
    "total": 2500.0
   },
   {
+   "count": 1,
    "first": "Cory",
    "last": "Liu",
    "name": "Cory Liu",
@@ -21703,6 +22841,29 @@
    "total": 860.05
   },
   {
+   "count": 1,
+   "first": "Cory",
+   "hold": {
+    "district": "Texas 250th",
+    "office": "JUDGEDIST"
+   },
+   "last": "Liu",
+   "name": "Cory Liu",
+   "seek": {
+    "district": "Texas Third",
+    "office": "CHIEFJUSTICE_COA"
+   },
+   "spenders": [
+    {
+     "amount": 250.0,
+     "count": 1,
+     "name": "Georgetown Area Republican Women PAC"
+    }
+   ],
+   "total": 250.0
+  },
+  {
+   "count": 1,
    "first": "Samantha",
    "hold": {
     "office": "NONE"
@@ -21723,6 +22884,7 @@
    "total": 211.09
   },
   {
+   "count": 10,
    "first": "JOHN",
    "last": "MESSINGER",
    "name": "JOHN MESSINGER",
@@ -21750,11 +22912,22 @@
      "amount": 250.0,
      "count": 1,
      "name": "Cooke County Republican Women PAC"
+    },
+    {
+     "amount": 250.0,
+     "count": 1,
+     "name": "Georgetown Area Republican Women PAC"
+    },
+    {
+     "amount": 20.92,
+     "count": 1,
+     "name": "Texas Alliance for Life"
     }
    ],
-   "total": 130476.66
+   "total": 130747.58
   },
   {
+   "count": 43,
    "first": "MAYES",
    "last": "MIDDLETON",
    "name": "MAYES MIDDLETON",
@@ -21808,14 +22981,15 @@
      "name": "Llano County Conservatives PAC"
     },
     {
-     "amount": 750.0,
+     "amount": 1000.0,
      "count": 1,
-     "name": "Cooke County Republican Women PAC"
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
     }
    ],
-   "total": 200346.56
+   "total": 201367.48
   },
   {
+   "count": 1,
    "first": "John",
    "last": "Messinger",
    "name": "John Messinger",
@@ -21834,6 +23008,7 @@
    "total": 1009.43
   },
   {
+   "count": 1,
    "first": "David M",
    "last": "Middleton",
    "name": "David M Middleton",
@@ -21850,6 +23025,7 @@
    "total": 200.0
   },
   {
+   "count": 2,
    "first": "Mayes",
    "hold": {
     "district": "11",
@@ -21871,6 +23047,7 @@
    "total": 429.89
   },
   {
+   "count": 2,
    "first": "Sid",
    "hold": {
     "office": "AGRICULTUR"
@@ -21895,6 +23072,7 @@
    "total": 1150.0
   },
   {
+   "count": 1,
    "first": "Bo",
    "hold": {
     "district": "50",
@@ -21916,6 +23094,7 @@
    "total": 1000.0
   },
   {
+   "count": 2,
    "first": "James",
    "hold": {
     "office": "JUSTICE_SC",
@@ -21937,6 +23116,7 @@
    "total": 27164.39
   },
   {
+   "count": 28,
    "first": "DAN",
    "hold": {
     "office": "LTGOVERNOR"
@@ -21978,8 +23158,8 @@
      "name": "Sabine Pilots"
     },
     {
-     "amount": 6954.85,
-     "count": 7,
+     "amount": 6975.77,
+     "count": 8,
      "name": "Texas Alliance for Life"
     },
     {
@@ -21998,9 +23178,10 @@
      "name": "Texans for Life Committee LIFE PAC"
     }
    ],
-   "total": 280521.33
+   "total": 280542.25
   },
   {
+   "count": 1,
    "first": "KEN",
    "hold": {
     "office": "ATTYGEN"
@@ -22017,6 +23198,7 @@
    "total": 91301.46
   },
   {
+   "count": 1,
    "first": "Dan",
    "hold": {
     "office": "LTGOVERNOR"
@@ -22033,6 +23215,7 @@
    "total": 150000.0
   },
   {
+   "count": 2,
    "first": "Dan",
    "hold": {
     "office": "LTGOVERNOR"
@@ -22054,6 +23237,7 @@
    "total": 152500.0
   },
   {
+   "count": 1,
    "first": "Dan",
    "hold": {
     "district": "7",
@@ -22077,6 +23261,7 @@
    "total": 10000.0
   },
   {
+   "count": 2,
    "first": "Dan",
    "hold": {
     "district": "Texas",
@@ -22098,6 +23283,7 @@
    "total": 19009.43
   },
   {
+   "count": 4,
    "first": "Kevin",
    "hold": {
     "office": "JUDGE_COCA",
@@ -22119,6 +23305,7 @@
    "total": 63313.39
   },
   {
+   "count": 2,
    "first": "Aaron",
    "last": "Reitz",
    "name": "Aaron Reitz",
@@ -22136,6 +23323,7 @@
    "total": 19009.43
   },
   {
+   "count": 1,
    "first": "Josh",
    "last": "Reyna",
    "name": "Josh Reyna",
@@ -22153,6 +23341,7 @@
    "total": 150.0
   },
   {
+   "count": 6,
    "first": "Bert",
    "hold": {
     "office": "JUDGE_COCA",
@@ -22165,14 +23354,15 @@
    },
    "spenders": [
     {
-     "amount": 3947.33,
-     "count": 5,
+     "amount": 3968.25,
+     "count": 6,
      "name": "Texas Alliance for Life"
     }
    ],
-   "total": 3947.33
+   "total": 3968.25
   },
   {
+   "count": 1,
    "first": "Jon",
    "last": "Rosenthal",
    "name": "Jon Rosenthal",
@@ -22189,6 +23379,7 @@
    "total": 40.0
   },
   {
+   "count": 40,
    "first": "Chip",
    "last": "Roy",
    "name": "Chip Roy",
@@ -22235,6 +23426,7 @@
    "total": 3305368.08
   },
   {
+   "count": 24,
    "first": "NATE",
    "last": "SHEETS",
    "name": "NATE SHEETS",
@@ -22268,19 +23460,25 @@
      "name": "Texas Patriots State PAC"
     },
     {
-     "amount": 3947.33,
-     "count": 5,
+     "amount": 3968.25,
+     "count": 6,
      "name": "Texas Alliance for Life"
     },
     {
-     "amount": 1000.0,
-     "count": 1,
+     "amount": 3200.0,
+     "count": 3,
      "name": "Texas Agricultural Cooperative Council PAC"
+    },
+    {
+     "amount": 3000.0,
+     "count": 1,
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
     }
    ],
-   "total": 254619.86
+   "total": 259840.78
   },
   {
+   "count": 11,
    "first": "THOMAS",
    "last": "SMITH",
    "name": "THOMAS SMITH",
@@ -22305,6 +23503,11 @@
      "name": "Llano County Conservatives PAC"
     },
     {
+     "amount": 1250.0,
+     "count": 1,
+     "name": "Austin County Republican Party (CEC)"
+    },
+    {
      "amount": 462.46,
      "count": 1,
      "name": "True Texas Project PAC"
@@ -22313,11 +23516,39 @@
      "amount": 250.0,
      "count": 1,
      "name": "Cooke County Republican Women PAC"
+    },
+    {
+     "amount": 20.92,
+     "count": 1,
+     "name": "Texas Alliance for Life"
     }
    ],
-   "total": 135542.28
+   "total": 136813.2
   },
   {
+   "count": 1,
+   "first": "Brister",
+   "hold": {
+    "district": "15",
+    "office": "CHIEFJUSTICE_COA"
+   },
+   "last": "Scott",
+   "name": "Brister Scott",
+   "seek": {
+    "district": "15",
+    "office": "CHIEFJUSTICE_COA"
+   },
+   "spenders": [
+    {
+     "amount": 3000.0,
+     "count": 1,
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
+    }
+   ],
+   "total": 3000.0
+  },
+  {
+   "count": 1,
    "first": "Pooja",
    "hold": {
     "office": "NONE"
@@ -22339,6 +23570,7 @@
    "total": 2500.0
   },
   {
+   "count": 2,
    "first": "Pooja",
    "last": "Sethi",
    "name": "Pooja Sethi",
@@ -22361,6 +23593,7 @@
    "total": 1762.0
   },
   {
+   "count": 1,
    "first": "Pooja",
    "last": "Sethia",
    "name": "Pooja Sethia",
@@ -22378,6 +23611,7 @@
    "total": 3388.8
   },
   {
+   "count": 2,
    "first": "Nate",
    "last": "Sheets",
    "name": "Nate Sheets",
@@ -22395,6 +23629,7 @@
    "total": 19009.43
   },
   {
+   "count": 1,
    "first": "Nate",
    "hold": {
     "office": "NONE"
@@ -22414,6 +23649,7 @@
    "total": 9644.17
   },
   {
+   "count": 1,
    "first": "Thomas",
    "hold": {
     "office": "NONE"
@@ -22434,6 +23670,7 @@
    "total": 2797.25
   },
   {
+   "count": 1,
    "first": "Tom",
    "last": "Smith",
    "name": "Tom Smith",
@@ -22451,6 +23688,7 @@
    "total": 6000.0
   },
   {
+   "count": 10,
    "first": "James",
    "hold": {
     "office": "JUSTICE_SC",
@@ -22474,8 +23712,8 @@
      "name": "Local Conservatives for Liberty"
     },
     {
-     "amount": 3947.33,
-     "count": 5,
+     "amount": 3968.25,
+     "count": 6,
      "name": "Texas Alliance for Life"
     },
     {
@@ -22484,9 +23722,10 @@
      "name": "Cooke County Republican Women PAC"
     }
    ],
-   "total": 41375.97
+   "total": 41396.89
   },
   {
+   "count": 1,
    "first": "James P.",
    "hold": {
     "office": "JUSTICE_SC",
@@ -22508,6 +23747,7 @@
    "total": 13200.0
   },
   {
+   "count": 3,
    "first": "James",
    "hold": {
     "district": "50",
@@ -22538,6 +23778,7 @@
    "total": 272.09
   },
   {
+   "count": 1,
    "first": "James",
    "hold": {
     "district": "50",
@@ -22561,6 +23802,7 @@
    "total": 3000.0
   },
   {
+   "count": 3,
    "first": "Kathie",
    "last": "Tovo",
    "name": "Kathie Tovo",
@@ -22579,6 +23821,7 @@
    "total": 8106.21
   },
   {
+   "count": 16,
    "first": "Ellen",
    "hold": {
     "district": "19",
@@ -22592,8 +23835,8 @@
    },
    "spenders": [
     {
-     "amount": 10554.5,
-     "count": 12,
+     "amount": 10575.42,
+     "count": 13,
      "name": "Texas Alliance for Life"
     },
     {
@@ -22612,9 +23855,30 @@
      "name": "Texas REALTORS Political Action Committee"
     }
    ],
-   "total": 15422.58
+   "total": 15443.5
   },
   {
+   "count": 1,
+   "first": "Tommy",
+   "hold": {
+    "office": "STATESEN"
+   },
+   "last": "Tuberville",
+   "name": "Tommy Tuberville",
+   "seek": {
+    "office": "GOVERNOR"
+   },
+   "spenders": [
+    {
+     "amount": 2000.0,
+     "count": 1,
+     "name": "World Acceptance Corporation Political Action Committee"
+    }
+   ],
+   "total": 2000.0
+  },
+  {
+   "count": 4,
    "first": "Clayton",
    "last": "Tucker",
    "name": "Clayton Tucker",
@@ -22646,6 +23910,7 @@
    "total": 10900.0
   },
   {
+   "count": 2,
    "first": "Marcos",
    "last": "Velez",
    "name": "Marcos Velez",
@@ -22667,6 +23932,7 @@
    "total": 2750.0
   },
   {
+   "count": 2,
    "first": "James",
    "hold": {
     "office": "RRCOMM"
@@ -22691,6 +23957,7 @@
    "total": 5396.5
   },
   {
+   "count": 45,
    "first": "Jim",
    "hold": {
     "office": "RRCOMM"
@@ -22750,6 +24017,7 @@
    "total": 2781933.64
   },
   {
+   "count": 7,
    "first": "Jimmy",
    "hold": {
     "office": "RRCOMM"
@@ -22769,6 +24037,29 @@
    "total": 6954.85
   },
   {
+   "count": 1,
+   "first": "Kevin",
+   "hold": {
+    "office": "JUDGE_COCA",
+    "place": "4"
+   },
+   "last": "Yeary",
+   "name": "Kevin Yeary",
+   "seek": {
+    "district": "4",
+    "office": "JUDGE_COCA"
+   },
+   "spenders": [
+    {
+     "amount": 2500.0,
+     "count": 1,
+     "name": "Rockwall Republican Executive Committee General Purpose PAC (CEC)"
+    }
+   ],
+   "total": 2500.0
+  },
+  {
+   "count": 12,
    "first": "Kevin",
    "last": "Yeary",
    "name": "Kevin Yeary",
@@ -22783,8 +24074,8 @@
      "name": "Local Conservatives for Liberty"
     },
     {
-     "amount": 6954.85,
-     "count": 7,
+     "amount": 6975.77,
+     "count": 8,
      "name": "Texas Alliance for Life"
     },
     {
@@ -22793,9 +24084,10 @@
      "name": "Cooke County Republican Women PAC"
     }
    ],
-   "total": 39390.02
+   "total": 39410.94
   },
   {
+   "count": 1,
    "first": "Kevin Patrick",
    "hold": {
     "office": "JUDGE_COCA",
@@ -22817,6 +24109,7 @@
    "total": 622.44
   },
   {
+   "count": 4,
    "first": "Judith",
    "hold": {
     "district": "21",
@@ -22834,6 +24127,7 @@
    "total": 390.0
   },
   {
+   "count": 8,
    "first": "Judith",
    "hold": {
     "district": "21",
@@ -22861,6 +24155,7 @@
    "total": 55669.13
   },
   {
+   "count": 1,
    "first": "Judith",
    "hold": {
     "district": "21",

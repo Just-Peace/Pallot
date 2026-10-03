@@ -57,7 +57,7 @@ def test_first_refresh_builds_the_snapshot(server, tmp_path):
     assert jane["by_kind"] == {"INDIVIDUAL": {"amount": 3100.0, "count": 3}, "ENTITY": {"amount": 500.0, "count": 1}}
     assert jane["by_state"] == {"TX": 2900.0, "other": 700.0}
     assert jane["by_state_count"] == {"TX": 3, "other": 1}
-    assert [s["amount"] for s in jane["sizes"]] == [400.0, 3200.0, 0.0, 0.0, 0.0]
+    assert [s["amount"] for s in jane["sizes"]] == [0.0, 400.0, 3200.0, 0.0, 0.0, 0.0]
     smith, *others = jane["top_donors"]
     assert smith == {"name": "Pat Smith", "kind": "INDIVIDUAL", "city": "AUSTIN", "state": "TX", "employer": "ACME",
                      "occupation": "CEO", "amount": 2400.0, "count": 2}

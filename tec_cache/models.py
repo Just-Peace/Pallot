@@ -37,7 +37,8 @@ DAILY_FORMS = frozenset({"DIRE", "DAILYCPAC", "DAILYEPAC", "DAILYCCOH"})
 
 # Itemized donations by size. Texas has no contribution limits for most state offices.
 SIZE_BUCKETS: tuple[tuple[float, str], ...] = (
-    (0, "Under $500"),
+    (0, "$200 and under"),
+    (200.01, "$201 to $499"),
     (500, "$500 to $4,999"),
     (5_000, "$5,000 to $24,999"),
     (25_000, "$25,000 to $99,999"),
