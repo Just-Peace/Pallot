@@ -29,6 +29,7 @@ BALLOT_ORDER_PAGE = f"{HOST}/ivis-cbp-ui/candidate-ballot-order"
 CANDIDATE_PAGE = f"{HOST}/ivis-cbp-ui/candidate-information"
 
 _GONE = {"R", "WDE", "DI"}  # declaration status: rejected, withdrew, declared ineligible
+_DECEASED = "D"  # drops a declared write-in only: a printed name stays on the ballot as the county printed it
 
 
 @dataclass(frozen=True)
@@ -62,7 +63,8 @@ def _date(text: str | None) -> dt.date | None:
 
 
 def still_running(row: dict[str, Any]) -> bool:
-    return row.get("cdDeclarationStatus") not in _GONE
+    status = row.get("cdDeclarationStatus")
+    return status not in _GONE and not (status == _DECEASED and row.get("cdParty") == "W")
 
 
 def find_county(counties: dict[str, int], name: str | None, fips: str | None) -> int | None:

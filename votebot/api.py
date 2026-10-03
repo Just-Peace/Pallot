@@ -149,7 +149,7 @@ def create_app(
                     election_precincts=election_precincts,
                     county_precincts=CountyPrecincts(cache, config.ttl, election_precincts),
                     sos=Sos(cache, config.ttl, today),
-                    ballotpedia=Ballotpedia(cache, config.ttl),
+                    ballotpedia=Ballotpedia(cache, config.ttl, today),
                     trackaipac=TrackAipac(
                         config.trackaipac_dir, refresh_fn=trackaipac_refresh, bundled_dir=trackaipac_bundled
                     ),

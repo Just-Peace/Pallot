@@ -13,8 +13,6 @@ import asyncio
 import time
 import zipfile
 
-import httpx
-
 from .ballot import Services
 from .http_cache import UpstreamError, track_calls
 from .models import DistrictOutlines, Meta, Outline
@@ -40,7 +38,10 @@ async def district_outlines(
         if kind == "sboe":
             try:
                 found = await svc.sboe.outline(number, tigerweb.SIMPLIFY_DEG)
-            except (httpx.HTTPError, ValueError, OSError, zipfile.BadZipFile):
+            except UpstreamError as exc:
+                why = "is paused" if exc.until else "isn't responding"
+                return None, f"The Texas Legislative Council's portal {why}, so {label} isn't drawn."
+            except (ValueError, OSError, zipfile.BadZipFile):
                 return None, f"Couldn't load the State Board of Education map, so {label} isn't drawn."
         else:
             try:
