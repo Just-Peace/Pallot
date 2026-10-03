@@ -1,5 +1,5 @@
 // The address card under "Your ballot" in the left pane, on every page: the address with
-// its city and county. The ballot page fills it after each lookup and remembers it; the
+// its city and county, and the election. The ballot page fills it after each lookup and remembers it; the
 // other pages show the remembered one. On a phone the top bar's button shows it too.
 
 import { loadAddressCard, loadLastLookup } from "./picks.js";
@@ -7,10 +7,12 @@ import { setTopBarAddress } from "./topbar.js";
 
 const $ = (selector) => document.querySelector(selector);
 
-export function showAddress({ address, place = "", matched = "" }) {
+export function showAddress({ address, place = "", matched = "", election = "" }) {
   $("#address-line").textContent = address;
   $("#address-line").title = matched;
   $("#address-sub").textContent = place;
+  $("#address-election").textContent = election;
+  $("#address-election").hidden = !election;
   setTopBarAddress(address);
 }
 
