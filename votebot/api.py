@@ -6,6 +6,7 @@ import asyncio
 import contextlib
 import datetime as dt
 import ipaddress
+import json
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, Callable, Collection, Mapping
@@ -28,6 +29,7 @@ from .models import (
 )
 from .outlines import district_outlines
 from .settings import Settings
+from .version import short_commit
 from .sources import census, key_dates, nominatim, osm_tiles, suggestions
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
@@ -304,6 +306,13 @@ def create_app(
     @app.post("/api/cache/clear", response_model=ActionResult)
     def clear_all(request: Request) -> ActionResult:
         return admin(request).clear_all()
+
+    version_js = f"export const VERSION = {json.dumps(__version__)};\nexport const COMMIT = {json.dumps(short_commit())};\n"
+
+    @app.get("/js/version.js")
+    def version_module() -> Response:
+        """The running version and commit, as a module the footer imports, so the page never fetches them."""
+        return Response(version_js, media_type="text/javascript", headers={"Cache-Control": "no-cache"})
 
     app.mount("/", RevalidatedFiles(directory=STATIC_DIR, html=True), name="static")
     return app

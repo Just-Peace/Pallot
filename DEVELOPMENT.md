@@ -46,6 +46,7 @@ votebot/
   offices.py        SOS office names -> districts  matching.py cross-source name matching
   admin.py          Settings actions               settings.py source on/off switches (data/settings.json)
   ics.py            calendar files of key dates    outlines.py the district map's outlines
+  version.py        the commit the footer shows
   sources/          census, nominatim, suggestions, sboe, election_precincts, county_precincts, tigerweb, osm_tiles, sos,
                     key_dates, ballotpedia, trackaipac, fec, tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC and TEC share;
@@ -139,7 +140,7 @@ Notes on how each source is called, beyond the README's table:
 Every page has an empty `<aside class="sidebar">`, and `chrome.js` draws the left pane into it: the brand, "Your ballot", the address card, and the other pages from its `PAGES` list, marking the current one. The ballot page puts its own parts in the aside: the form and status line (`data-slot="address"`) go under the address card, and the section list (`#jump`) above the other pages. The other pages' section list is built by `listSections()` in `page.js`, from each `<section aria-labelledby>` directly in `<main>` (named by its heading, linked to the heading's id), and appended to the aside just before `initChrome()`, so it lands in the same place. It marks the section on screen as the page scrolls, like the ballot's, except that a section just jumped to stays marked while it's in view until the voter scrolls (wheel, touch or a key), since short sections at the end of a page never reach the line. It's `.page-sections`: on a phone it's in the Menu panel (`topbar.js`'s `aria-controls` includes it) and a jump closes the panel; in the folded rail it's hidden. Nothing draws when it's imported: each entry script (`ballot.js`, `page.js`) calls `initChrome()` before its own code looks for the pane, and `settings.js` imports `page.js` first. `toast.js` makes its element the first time it shows a message. The favicon is `favicon.svg`.
 
 `chrome.js` also draws what else every page shares, so no page has its own:
-- **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). `trackHeight()` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear.
+- **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). `trackHeight()` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear. It ends with the running version and the short hash of its commit, as `git describe` writes them (`v0.9.0-g1a2b3c4`), as plain text; `initChrome()` also writes it into any element marked `data-version` (About's credits). Both come from `/js/version.js`, a module `api.py` writes at startup, so the footer imports them rather than fetching them. The version is `votebot.__version__`. The commit comes from `votebot/version.py`, which reads the checkout's `.git` files (HEAD, then the loose ref or `packed-refs`, worktrees included) without running git. The Docker image has neither git nor `.git`, so `.dockerignore` lets just those files into the build stage, and the build writes the full hash into the installed package as `votebot/COMMIT`. Without either, the footer shows just the version.
 - **Back to top:** it shows once the page has scrolled one screen.
 - **Folding the pane:** wider than 960px, « folds the pane to a 64px rail (`html.pane-collapsed`, which sets `--sidebar`), saved as `paneCollapsed` in `votebot.ui.v1`. `theme.js` sets the class before the first paint, so a folded pane doesn't show open while the modules load; `initChrome` then draws the toggle to match. The address card is hidden there, and the link names become tooltips.
   - `setPaneCollapsed()` and `onPaneToggle()` are exported. `ballot.js`'s `showAddressPanel()` unfolds the pane for the form, an error or a first visit, as `openPanel("address")` does on a phone.
@@ -219,6 +220,20 @@ The modules share their small helpers rather than writing them out again:
 - Because the install isn't editable, the static files and the bundled snapshots reach the image only as package data (`[tool.setuptools.package-data]` in `pyproject.toml`). A new kind of file, such as an image under `votebot/static/`, needs a pattern there (Leaflet's files have `static/vendor/*/*`). Otherwise it works with `uv run` but is missing from the container.
 - `.dockerignore` keeps `.env`, `data/`, the tests and scripts out of the build. The image has VoteBot and its locked dependencies, not the dev tools or tests.
 - Everything VoteBot writes goes under `VOTEBOT_DATA_DIR` (`/data` in the container); a TEC refresh stages its work in `/tmp`.
+
+## Releases
+
+- The version lives in one place, `__version__` in `votebot/__init__.py`. `pyproject.toml` reads it (`[tool.setuptools.dynamic]`), and the footer shows it.
+- To release, bump it in a pull request into `develop` (`feat: release vX.Y.Z`). Once that's merged, tag the merge commit with an annotated tag, push the tag, and publish the release from it:
+
+```bash
+git switch develop && git pull
+git tag -a vX.Y.Z -m "VoteBot X.Y.Z"
+git push origin vX.Y.Z
+gh release create vX.Y.Z --verify-tag --title "VoteBot X.Y.Z" --notes-file NOTES.md
+```
+
+- `--verify-tag` stops `gh` from making a lightweight tag of its own when the annotated one isn't pushed yet.
 
 ## Adding a source
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "votebot"
-version = "0.1.0"
+dynamic = ["version"]  # votebot.__version__
 description = "Personal ballot helper: your races, candidates enriched from several sources, picks, notes and a printable list."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,6 +26,9 @@ dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21"]  # installed by `uv sync
 
 [tool.setuptools]
 packages = ["votebot", "votebot.sources", "trackaipac_cache", "tec_cache"]
+
+[tool.setuptools.dynamic]
+version = { attr = "votebot.__version__" }
 
 [tool.setuptools.package-data]
 votebot = ["static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*"]

@@ -12,6 +12,7 @@ import { h, onFrame, trackHeight } from "./dom.js";
 import { icon, logo } from "./icons.js";
 import { setUiPref, uiPref } from "./storage.js";
 import { initTopBar } from "./topbar.js";
+import { COMMIT, VERSION } from "./version.js";
 
 // Phones and narrow windows: app.css's breakpoint, where the pane becomes the top bar.
 export const narrow = matchMedia("(max-width: 960px)");
@@ -97,10 +98,14 @@ function renderSidebar(sidebar) {
 
 // ---- the footer and Back to top -----------------------------------------------------------
 
+// The running version as `git describe` writes it (v0.9.0-g1a2b3c4): in the footer, and in any
+// element marked data-version (About's credits).
+const VERSION_LABEL = COMMIT ? `v${VERSION}-g${COMMIT}` : `v${VERSION}`;
+
 function renderFooter(app) {
   const footer = h("footer", { class: "site-footer" },
     h("p", {}, "VoteBot is an unofficial helper: always check your county's official sample ballot. · ",
-      h("a", { href: "about.html#sources" }, "Sources")));
+      h("a", { href: "about.html#sources" }, "Sources"), ` · ${VERSION_LABEL}`));
   app.after(footer);
   trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
 }
@@ -126,5 +131,6 @@ export function initChrome() {
   }
   const app = document.querySelector(".app");
   if (app) renderFooter(app);
+  for (const el of document.querySelectorAll("[data-version]")) el.textContent = VERSION_LABEL;
   renderToTop();
 }

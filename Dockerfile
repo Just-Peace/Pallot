@@ -14,6 +14,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY . .
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
+# the commit, for the footer: the run stage has no .git. -P writes it into the installed
+# package, not the copy of the source in /app.
+RUN .venv/bin/python -P -m votebot.version /app
 
 # Run: just the venv; everything VoteBot writes goes to /data (a volume).
 FROM python:3.13-slim

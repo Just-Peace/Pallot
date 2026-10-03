@@ -298,3 +298,11 @@ def test_startup_deletes_old_suggestions_and_addresses_not_found(make_app, tmp_p
     with TestClient(make_app()) as client:
         rows = {s["id"]: s["cache"]["entries"] for s in client.get("/api/sources").json()["sources"]}
     assert (rows["suggestions"], rows["osm_tiles"], rows["geocoding"]) == (0, 0, 1)  # the address found stays, as a fallback
+
+
+def test_the_footer_shows_the_running_version(client):
+    from votebot import __version__
+    from votebot.version import short_commit
+    response = client.get("/js/version.js")
+    assert response.headers["content-type"].startswith("text/javascript")
+    assert response.text == f'export const VERSION = "{__version__}";\nexport const COMMIT = {json.dumps(short_commit())};\n'
