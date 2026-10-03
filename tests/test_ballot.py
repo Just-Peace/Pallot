@@ -199,7 +199,7 @@ def test_declared_write_ins_follow_the_printed_candidates(client, upstream):
         _write_in(senate_office, 900002, "LEE WITHDREW", cdDeclarationStatus="R"),
         _write_in(351, 900003, "SAM ELSEWHERE", cdOfficeType="CW", txCountyName="HARRIS"),  # Travis's county clerk office id
         _write_in(351, 900004, "KIM CLERK", cdOfficeType="CW", txCountyName="TRAVIS"),
-        _write_in(999999, 900005, "NO SUCH RACE"),
+        _write_in(999999, 900005, "NO SUCH RACE", cdOfficeType="SR", txOfficeName="DISTRICT JUDGE, 999TH JUDICIAL DISTRICT"),
     ]
     ballot = get_ballot(client)
     senate = find_race(ballot, "U.S. Senator")
@@ -211,6 +211,46 @@ def test_declared_write_ins_follow_the_printed_candidates(client, upstream):
     assert candidate_names(find_race(ballot, "County Clerk"))[-1] == "Kim Clerk"
     everyone = [c["name"] for r in ballot["races"] + [r for s in ballot["maybe"] for r in s["races"]] for c in r["candidates"]]
     assert not {"Lee Withdrew", "Sam Elsewhere", "No Such Race"} & set(everyone)
+
+
+def test_a_race_with_only_write_ins_is_shown_where_it_can_be_placed(client, upstream):
+    upstream.extra_candidates[53815] = [
+        _write_in(990001, 900001, "SAL SURVEYOR", cdOfficeType="CW", txCountyName="TRAVIS",
+                  txOfficeName="TRAVIS - COUNTY SURVEYOR", nbSortOrder=13, nbSecondarySortOrder=1),
+        _write_in(990002, 900002, "CAL FIVE", cdOfficeType="CR", txCountyName="TRAVIS",
+                  txOfficeName="TRAVIS - COUNTY CONSTABLE PRECINCT 5", nbSortOrder=17, nbSecondarySortOrder=5),
+        _write_in(990003, 900003, "CAL ONE", cdOfficeType="CR", txCountyName="TRAVIS",
+                  txOfficeName="TRAVIS - COUNTY CONSTABLE PRECINCT 1", nbSortOrder=17, nbSecondarySortOrder=1),
+        _write_in(990004, 900004, "HAL HARRIS", cdOfficeType="CW", txCountyName="HARRIS",
+                  txOfficeName="HARRIS - COUNTY SURVEYOR", nbSortOrder=13, nbSecondarySortOrder=1),
+        _write_in(990005, 900005, "JUDGE ELSEWHERE", cdOfficeType="SR",
+                  txOfficeName="DISTRICT JUDGE, 276TH JUDICIAL DISTRICT", nbSortOrder=70, nbSecondarySortOrder=276),
+        _write_in(990006, 900006, "REP ELSEWHERE", cdOfficeType="SR",
+                  txOfficeName="STATE REPRESENTATIVE DISTRICT 93", nbSortOrder=51, nbSecondarySortOrder=93),
+    ]
+    ballot = get_ballot(client)
+    surveyor = find_race(ballot, "County Surveyor")
+    assert candidate_names(surveyor) == ["Sal Surveyor"] and surveyor["candidates"][0]["write_in"]
+    county = [r["name"] for r in ballot["races"] if r["group"] == "county"]
+    assert county[county.index("County Treasurer") + 1] == "County Surveyor"
+    assert candidate_names(find_race(ballot, "County Constable Precinct 5")) == ["Cal Five"]
+    everyone = [c["name"] for r in ballot["races"] + [r for s in ballot["maybe"] for r in s["races"]] for c in r["candidates"]]
+    assert not {"Cal One", "Hal Harris", "Judge Elsewhere", "Rep Elsewhere"} & set(everyone)
+
+
+def test_a_write_in_only_district_race_isnt_guessed(client, upstream):
+    """Without the voter's district, the statewide list's races for every district in Texas
+    would otherwise all land under "Couldn't confirm"."""
+    client.put("/api/sources/election_precincts", json={"enabled": False})
+    upstream.down.add("data.capitol.texas.gov")
+    upstream.extra_candidates[53815] = [
+        _write_in(990001, 900001, "SID ELSEWHERE", cdOfficeType="SR",
+                  txOfficeName="MEMBER, STATE BOARD OF EDUCATION, DISTRICT 3", nbSortOrder=49, nbSecondarySortOrder=3),
+    ]
+    ballot = get_ballot(client)
+    assert ballot["districts"]["sboe"] is None
+    unconfirmed = next(s for s in ballot["maybe"] if s["id"] == "unconfirmed")
+    assert [r["name"] for r in unconfirmed["races"]] == ["Member, State Board of Education, District 5"]
 
 
 def test_a_failed_write_in_list_keeps_the_printed_ballot(client, upstream):

@@ -201,15 +201,25 @@ def _placeable(row: dict[str, Any]) -> bool:
 
 
 def _declared_write_ins(rows: list[dict[str, Any]], running: list[dict[str, Any]], county: str | None) -> list[dict[str, Any]]:
-    """The statewide list's declared write-ins for the races on the county's ballot order,
-    which lists only the printed names; a county office's only from this county."""
+    """The statewide list's declared write-ins, since the county's ballot order lists only the
+    printed names: a county office's only from this county, and another's for a race on the ballot
+    order or, when it has only write-ins and so no ballot-order row, one _placeable places. A
+    district judge or DA with only write-ins names no county, so it's left out. The list has no
+    nbOfficeTypeOrder; it's taken from the ballot order, so such a race sorts into its place."""
     offices = {row.get("idOffice") for row in rows}
     printed = {row.get("idCandidate") for row in rows}
+    type_order = {row.get("cdOfficeType"): row.get("nbOfficeTypeOrder") for row in rows}
     wanted = (county or "").upper()
+
+    def kept(r: dict[str, Any]) -> bool:
+        if r.get("txCountyName"):
+            return r["txCountyName"].upper() == wanted
+        return r.get("idOffice") in offices or _placeable(r)
+
     return [
-        r for r in running
-        if r.get("cdParty") == "W" and r.get("idOffice") in offices and r.get("idCandidate") not in printed
-        and (not r.get("txCountyName") or r["txCountyName"].upper() == wanted)
+        {**r, "nbOfficeTypeOrder": r.get("nbOfficeTypeOrder") or type_order.get(r.get("cdOfficeType"))}
+        for r in running
+        if r.get("cdParty") == "W" and r.get("idCandidate") not in printed and kept(r)
     ]
 
 
@@ -272,6 +282,7 @@ class _Builder:
         self.ballot_rows: dict[str, dict[str, Any]] = {}  # candidate key -> its SOS row
         self.scopes: dict[str, OfficeScope] = {}  # SOS race key -> what its office covers
         self.included: set[tuple[str, int | None]] = set()  # (kind, number) of SOS races kept
+        self.unlisted: set[str] = set()  # SOS race keys with only write-ins, so not on the county's ballot order
         self.state_names = NameIndex()  # everyone the state lists for the day, kept or not
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
 
@@ -432,8 +443,9 @@ class _Builder:
         return SosData(county_id, set(counties), lookups, list(zip(elections, orders)))
 
     async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
-        """The county's ballot order, plus its races' declared write-ins from the statewide
-        candidate list; when the ballot order is empty (special elections), that list trimmed to
+        """The county's ballot order, plus the declared write-ins from the statewide candidate
+        list (_declared_write_ins), with the races that have only write-ins noted in ``unlisted``;
+        when the ballot order is empty (special elections), that list trimmed to
         the races it can place (_placeable). It names no county for judicial, DA or county
         races, so those are left out, with a note, rather than shown to every county. Everyone
         in either list goes in ``state_names``, so Ballotpedia's races that the state has, even
@@ -453,7 +465,10 @@ class _Builder:
             raise statewide
         running = [r for r in statewide.value or [] if still_running(r)]
         if rows:
-            rows = rows + _declared_write_ins(rows, running, county)
+            listed = {row.get("idOffice") for row in rows}
+            write_ins = _declared_write_ins(rows, running, county)
+            self.unlisted |= {f"sos:{election.id}:{r['idOffice']}" for r in write_ins if r.get("idOffice") not in listed}
+            rows = rows + write_ins
             self._remember_names(rows)
             return rows
         self._remember_names(running)
@@ -597,7 +612,7 @@ class _Builder:
                 first = office_rows[0]
                 scope = classify(first.get("txOfficeName") or "", first.get("cdOfficeType"), data.county_names)
                 where = placement(scope, districts)
-                if where == "skip":
+                if where == "skip" or (where == "unconfirmed" and f"sos:{election.id}:{office_id}" in self.unlisted):
                     continue
                 ordered = sorted(
                     office_rows,
