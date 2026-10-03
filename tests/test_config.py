@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from votebot.config import DEMO_KEY, load_config, read_env_file
+from votebot.config import DAY, DEMO_KEY, load_config, read_env_file
 
 
 def test_env_file_values_with_the_environment_winning(tmp_path, monkeypatch):
@@ -35,3 +35,8 @@ def test_allowed_hosts_are_a_comma_separated_list():
 def test_an_explicit_mapping_ignores_the_env_file(tmp_path):
     (tmp_path / ".env").write_text("VOTEBOT_FEC_API_KEY=from-file\n", encoding="utf-8")
     assert load_config({}, env_file=tmp_path / ".env").fec_api_key == DEMO_KEY
+
+
+def test_tiles_are_kept_at_least_7_days():
+    assert load_config({"VOTEBOT_TTL_TILES": "3600"}).ttl.tiles == 7 * DAY
+    assert load_config({"VOTEBOT_TTL_TILES": str(30 * DAY)}).ttl.tiles == 30 * DAY

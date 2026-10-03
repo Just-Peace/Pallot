@@ -22,7 +22,9 @@ ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't hav
 
 
 def test_elections_list(client):
-    dates = client.get("/api/elections").json()
+    response = client.get("/api/elections")
+    assert "cache-control" not in response.headers
+    dates = response.json()
     assert [d["date"] for d in dates] == ["2026-11-03"]
     assert [e["id"] for e in dates[0]["elections"]] == [53815, 66734, 66618]
     assert dates[0]["has_primaries"] is False

@@ -109,7 +109,7 @@ Notes on how each source is called, beyond the README's table:
   - The election precinct comes from the precinct map the ballot lookup downloaded, never downloaded here. It's asked by the map's code for it (`0300`) and the county's FIPS code, since two codes can share a display name, and comes back with `Outline.number` set to the display name (`"300"`). It's simplified to 0.00005° (about 5 m), since a precinct is a few streets across: a city precinct goes from 58–165 points to 20–40. The parameter only has a length limit, no pattern: one that a real code failed would make FastAPI refuse the whole request, the other outlines with it; an unknown code is the usual note.
 - **Street map** (`GET /api/tiles/{z}/{x}/{y}.png`, `sources/osm_tiles.py`): OpenStreetMap's standard tiles, which the server fetches for the browser and keeps. Its [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) sets the rules:
   - a User-Agent that names the app and a way to reach it (`Config.user_agent` includes the project's URL);
-  - each tile kept at least 7 days (`Ttls.tiles`); the browser also keeps a tile for a day (`Cache-Control`);
+  - each tile kept at least 7 days (`Ttls.tiles`; `load_config` raises a shorter `VOTEBOT_TTL_TILES` to 7 days); the browser also keeps a tile for a day (`Cache-Control`);
   - only the tiles someone is looking at: no prefetching, and no bulk re-download, so its Settings row has Clear but no Refresh (`SourceInfo.refreshable`), and `POST …/refresh` answers 400;
   - the attribution on the map, bottom right.
 

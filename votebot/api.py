@@ -204,7 +204,7 @@ def create_app(
         return JSONResponse({"detail": exc.message}, status_code=exc.status)
 
     @app.get("/api/elections", response_model=list[ElectionDate])
-    async def elections(request: Request, response: Response) -> list[ElectionDate]:
+    async def elections(request: Request) -> list[ElectionDate]:
         svc = services(request)
         if not svc.settings.enabled("sos"):
             return []
@@ -212,7 +212,6 @@ def create_app(
             dates = await election_dates(svc.sos)
         except UpstreamError as exc:
             raise HTTPException(502, f"Texas SOS isn't responding ({exc}).") from exc
-        response.headers["Cache-Control"] = "private, max-age=600"
         return dates
 
     @app.get("/api/key-dates.ics")
