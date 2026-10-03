@@ -186,12 +186,20 @@ export function openRules(raceKey = null) {
   } } }, options.map((o) => h("option", { value: o.id, selected: o === scope }, o.label)));
 
   const moneyOff = !Object.values(has.money).some(Boolean);
+  const moneyAmount = amountBox(rule.money.amount, (amount) => { rule.money.amount = amount; update(); },
+    { label: "Amount in dollars", disabled: moneyOff });
+  const relative = (compare) => compare === "least" || compare === "most";
+  moneyAmount.hidden = relative(rule.money.compare);
   const moneyInputs = [
     select("Which money", MONEY.map(([id, label]) => [id, label, !has.money[id]]), rule.money.metric,
       (value) => { rule.money.metric = value; update(); }, { disabled: moneyOff }),
-    select("Under or over", [["under", "under"], ["over", "over"]], rule.money.compare,
-      (value) => { rule.money.compare = value; update(); }, { disabled: moneyOff }),
-    amountBox(rule.money.amount, (amount) => { rule.money.amount = amount; update(); }, { label: "Amount in dollars", disabled: moneyOff }),
+    select("Compared with what", [["under", "under"], ["over", "over"], ["least", "the least in the race"], ["most", "the most in the race"]],
+      rule.money.compare, (value) => {
+        rule.money.compare = value;
+        moneyAmount.hidden = relative(value);
+        update();
+      }, { disabled: moneyOff }),
+    moneyAmount,
   ];
 
   const pickSet = h("fieldset", { class: "rule-set" },
@@ -208,6 +216,11 @@ export function openRules(raceKey = null) {
             h("option", { value, selected: value === rule.incumbent }, text))))),
     checkRow("TrackAIPAC endorses them", rule.endorsed, (on) => { rule.endorsed = on; update(); }, { disabled: !has.trackaipac }),
     checkRow("Their money is", rule.money.on, (on) => { rule.money.on = on; update(); }, { disabled: moneyOff, extra: moneyInputs, stacked: true }),
+    checkRow("Small donations make up at least", rule.small.on, (on) => { rule.small.on = on; update(); }, {
+      disabled: !has.small,
+      extra: amountBox(rule.small.amount, (amount) => { rule.small.amount = amount; update(); },
+        { label: "Small donations' share of what they raised, in percent", prefix: "", suffix: "%", disabled: !has.small }),
+    }),
     checkRow("They lead the polls", rule.leads, (on) => { rule.leads = on; update(); }, { disabled: !has.polls }));
 
   const skipSet = h("fieldset", { class: "rule-set" },
@@ -217,6 +230,11 @@ export function openRules(raceKey = null) {
       disabled: !has.lobby,
       extra: amountBox(rule.lobby.amount, (amount) => { rule.lobby.amount = amount; update(); },
         { label: "Israel lobby money, in dollars", disabled: !has.lobby }),
+    }),
+    checkRow("Their own money makes up over", rule.selfFunded.on, (on) => { rule.selfFunded.on = on; update(); }, {
+      disabled: !has.selfFunded,
+      extra: amountBox(rule.selfFunded.amount, (amount) => { rule.selfFunded.amount = amount; update(); },
+        { label: "The candidate's own gifts and loans, in percent of what the campaign raised", prefix: "", suffix: "%", disabled: !has.selfFunded }),
     }),
     checkRow("Polling under", rule.polling.on, (on) => { rule.polling.on = on; update(); }, {
       disabled: !has.polls,
@@ -237,8 +255,10 @@ export function openRules(raceKey = null) {
       checkRow("Don't replace picks I've already made", rule.keepMine, (on) => { rule.keepMine = on; update(); }),
       h("p", { class: "fine" },
         "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
-        + "congressional races, polls in U.S. Senate, U.S. House and Governor races. Without the Write-ins chip, a rule "
-        + "picks only the names printed on the ballot. If more candidates match than a race has seats, it's left for you."),
+        + "congressional races, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
+        + "donor) and self-funding are known only in congressional races, with an FEC key. Without the Write-ins chip, a rule "
+        + "picks only the names printed on the ballot. If more candidates match than a race has seats, a tie included, "
+        + "it's left for you."),
       h("div", { class: "rule-preview" }, summaryLine, raceDetails)),
     h("div", { class: "details-foot" },
       h("button", { type: "button", class: "btn ghost", on: { click: () => dialog.close() } }, "Cancel"),

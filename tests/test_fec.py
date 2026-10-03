@@ -87,7 +87,7 @@ def test_demo_key_shows_totals_only(make_app, upstream):
     assert [s["title"] for s in senate["cards"][0]["comparison"]["sections"]] == ["Totals"]
     card = next(c for c in senate["candidates"][1]["cards"] if c["source"] == "fec")
     assert card["badges"][0]["text"] == "FEC: raised $68.6M" and card["breakdowns"] == []
-    assert card["figures"]["raised"] == 68560930.42 and "outside_for" not in card["figures"]  # not asked for, so not 0
+    assert card["figures"]["raised"] == 68560930.42 and not {"outside_for", "small_share", "self_share"} & set(card["figures"])  # not asked for, so not 0
     assert any("VOTEBOT_FEC_API_KEY" in note for note in ballot["notes"])
     assert all("/elections/" in call for call in upstream.calls if "open.fec.gov" in call)
     assert upstream.fec_keys == {"DEMO_KEY"}
