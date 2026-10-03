@@ -28,6 +28,12 @@ export class Picks {
   // One bucket per election date; candidate/race keys are stable ids from the server.
   constructor(electionKey) {
     this.key = electionKey || "undated";
+    this.reload();
+  }
+
+  // Reads its election's bucket again, after another tab changed it, so whoever holds this
+  // object sees the change.
+  reload() {
     this.data = unsaved[this.key] || readJson(PICKS, {})[this.key] || { races: {}, notes: {} };
   }
 

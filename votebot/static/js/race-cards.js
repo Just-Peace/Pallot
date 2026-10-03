@@ -21,7 +21,7 @@ export function initRaceCards(context) {
   page = context;
 }
 
-// Builds every card again, from the saved picks, notes and write-ins.
+// Builds every card again, blank: redrawCards() then fills them in.
 export function renderCards() {
   redraw.clear();
   const sections = ballotSections(page.ballot);
@@ -47,9 +47,14 @@ export function redrawRace(key) {
   redraw.get(key)?.();
 }
 
+// Every card, in place, from the saved picks, notes, write-ins and folding.
+export function redrawCards() {
+  for (const draw of redraw.values()) draw();
+}
+
 export function setAllCollapsed(collapsed) {
   page.picks.setCollapsed([...redraw.keys()], collapsed);
-  for (const draw of redraw.values()) draw();
+  redrawCards();
 }
 
 export function cardFor(key) {
@@ -63,11 +68,10 @@ export function cardFor(key) {
 // ("✓ James Talarico") on the right; the pick shows expanded too, once there is one. ✕ Clear,
 // next to it, takes the pick back, with Undo.
 function collapsibleCard(key, { title, meta, body }) {
-  const { picks } = page;
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
   const fold = () => {
-    picks.setCollapsed(key, !picks.isCollapsed(key));
+    page.picks.setCollapsed(key, !page.picks.isCollapsed(key));
     redrawRace(key);
   };
   const toggle = h("button", { type: "button", class: "race-toggle", "aria-controls": bodyId, on: { click: fold } },
@@ -76,14 +80,14 @@ function collapsibleCard(key, { title, meta, body }) {
     status,
     meta ? h("span", { class: "race-meta" }, meta) : null);
   const clearPick = () => {
-    const before = picks.picked(key);
-    picks.set(key, []);
+    const before = page.picks.picked(key);
+    page.picks.set(key, []);
     refresh(key);
     toggle.focus();
     showToast(`Cleared your pick for ${title}.`, {
       label: "Undo",
       run: () => {
-        picks.set(key, before);
+        page.picks.set(key, before);
         refresh(key);
       },
     });
@@ -97,7 +101,7 @@ function collapsibleCard(key, { title, meta, body }) {
   return {
     article,
     show(statusText, done) {
-      const collapsed = picks.isCollapsed(key);
+      const collapsed = page.picks.isCollapsed(key);
       article.classList.toggle("collapsed", collapsed);
       article.classList.toggle("has-pick", done);
       toggle.setAttribute("aria-expanded", String(!collapsed));
@@ -118,10 +122,11 @@ function raceCard(race) {
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
   ].filter(Boolean);
+  const rows = [...race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)];
   const body = h("fieldset", { class: "race-options" },
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
-    h("ul", { class: "cands" }, race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)));
+    h("ul", { class: "cands" }, rows.map((r) => r.row)));
   const money = raceMoney(race, () => openCompare($("#compare"), race));
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
@@ -146,9 +151,17 @@ function raceCard(race) {
       const note = row.querySelector(".write-in-note");
       if (note) note.hidden = !on;
     }
+    for (const { sync } of rows) sync();
   });
-  redrawRace(race.key);
   return card.article;
+}
+
+// Puts ``text`` in a box the voter isn't typing in, if it changed (another tab, Clear picks, Undo).
+// Returns whether it did.
+function syncBox(box, text) {
+  if (document.activeElement === box || box.value === text) return false;
+  box.value = text;
+  return true;
 }
 
 export function avatar(candidate, extraClass = null) {
@@ -179,31 +192,38 @@ export function searchLink(race, candidate, className, label) {
   });
 }
 
+// A candidate's row, and ``sync``, which puts its saved note in the note box.
 function candidateRow(race, candidate) {
-  const { picks } = page;
   const multi = race.seats > 1;
   const id = slug(candidate.key);
   const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id: `pick-${id}`, class: "pick-input",
     on: { change: (event) => choose(race, candidate.key, event.target.checked) } });
 
-  const noteText = picks.note(candidate.key);
   const textarea = h("textarea", { id: `note-${id}-text`, rows: "2", placeholder: "Your thoughts on this candidate…" });
-  textarea.value = noteText;
   const saved = h("span", { class: "saved", "aria-live": "polite" });
-  const noteBox = h("div", { class: "note", id: `note-${id}`, hidden: !noteText },
+  const noteBox = h("div", { class: "note", id: `note-${id}`, hidden: true },
     h("label", { for: `note-${id}-text` }, `Your note on ${candidate.name}`), textarea, saved);
+  const showNote = (open) => {
+    noteBox.hidden = !open;
+    noteButton.setAttribute("aria-expanded", String(open));
+  };
   const openNote = () => {
     const opening = noteBox.hidden;
-    noteBox.hidden = !opening;
-    noteButton.setAttribute("aria-expanded", String(opening));
+    showNote(opening);
     if (opening) textarea.focus();
   };
   const noteButton = h("button", {
-    type: "button", class: ["icon-btn note-btn", noteText && "has-note"],
-    "aria-expanded": String(Boolean(noteText)), "aria-controls": `note-${id}`, on: { click: openNote },
+    type: "button", class: "icon-btn note-btn", "aria-expanded": "false", "aria-controls": `note-${id}`, on: { click: openNote },
   }, "✎ Note");
+  // A box opened for a new note stays open until its note changes elsewhere.
+  const sync = () => {
+    const text = page.picks.note(candidate.key);
+    if (!syncBox(textarea, text)) return;
+    noteButton.classList.toggle("has-note", Boolean(text));
+    showNote(Boolean(text));
+  };
   autosave(textarea, () => {
-    picks.setNote(candidate.key, textarea.value);
+    page.picks.setNote(candidate.key, textarea.value);
     hideToast(); // an Undo of "Clear picks" would now lose this
     noteButton.classList.toggle("has-note", Boolean(textarea.value.trim()));
     saved.textContent = "Saved";
@@ -217,7 +237,7 @@ function candidateRow(race, candidate) {
     sources ? `Details · ${plural(sources, "source")}` : "No details",
     unflagged.length ? likelyFlag(`Likely match: ${unflagged.join(", ")}`) : null);
 
-  return h(
+  const row = h(
     "li",
     { class: "cand", "data-cand": candidate.key, "data-party": candidate.party || null },
     h("div", { class: "cand-main" },
@@ -231,12 +251,12 @@ function candidateRow(race, candidate) {
     badgeList(candidate),
     noteBox,
   );
+  return { row, sync };
 }
 
 // The last row of every race: a blank for someone who isn't listed. Typing a name picks
-// it; emptying the box takes the pick back.
+// it; emptying the box takes the pick back. ``sync`` puts the saved name in the box.
 function writeInRow(race) {
-  const { picks } = page;
   const multi = race.seats > 1;
   const id = `writein-${slug(race.key)}`;
   const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id, class: "pick-input" });
@@ -244,12 +264,12 @@ function writeInRow(race) {
     type: "text", id: `${id}-name`, class: "write-in-name", maxlength: "80", autocomplete: "off",
     placeholder: "Someone else's name", "aria-label": `Write-in name for ${race.name}`,
   });
-  name.value = picks.writeIn(race.key);
   input.addEventListener("change", () => {
     choose(race, WRITE_IN, input.checked);
     if (input.checked) name.focus();
   });
   autosave(name, () => {
+    const { picks } = page;
     picks.setWriteIn(race.key, name.value);
     const typed = Boolean(name.value.trim());
     const picked = picks.picked(race.key).includes(WRITE_IN);
@@ -259,7 +279,7 @@ function writeInRow(race) {
   }, 300);
   const note = STATES[page.ballot.location.state]?.writeInNote;
   const hint = note && race.candidates.some((c) => c.write_in) ? `${note} The ones who filed for this race are listed above.` : note;
-  return h(
+  const row = h(
     "li",
     { class: "cand write-in", "data-cand": WRITE_IN },
     h("div", { class: "cand-main" },
@@ -268,6 +288,7 @@ function writeInRow(race) {
       name),
     hint ? h("p", { class: "fine write-in-note", hidden: true }, hint) : null,
   );
+  return { row, sync: () => syncBox(name, page.picks.writeIn(race.key)) };
 }
 
 // ---- picking ------------------------------------------------------------------------
@@ -327,6 +348,5 @@ function measureCard(measure) {
     for (const option of options) option.input.checked = option.value === vote;
     card.show(vote ? `Voting ${vote}` : "Not decided yet", Boolean(vote));
   });
-  redrawRace(key);
   return card.article;
 }
