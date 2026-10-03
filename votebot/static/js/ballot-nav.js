@@ -15,6 +15,7 @@ const tools = $("#ballot-tools");
 const viewMenu = $("#view-menu");
 const nextButton = $("#next-race");
 const jump = $("#jump");
+const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
 
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
@@ -152,14 +153,15 @@ function placeForWidth() {
 
 // ---- the section on screen ------------------------------------------------------------
 
-// Marks the section on screen in the section list: the last one whose top has gone under the
-// strip (the first until then, the last at the foot of the page). Where the list is a row of
-// chips (a phone), the row scrolls sideways to show it.
+// Marks the section on screen in the section list: the last one whose top has reached the
+// line a jump scrolls to, under the strip (the first until then, the last at the foot of the
+// page), so a section jumped to is the one marked. Where the list is a row of chips (a phone),
+// the row scrolls sideways to show it.
 export function markCurrentSection() {
   if (!page.ballot || result.hidden) return;
   const shown = sectionLinks.filter(({ id }) => document.getElementById(id)?.offsetParent); // not hidden by the filter
   if (!shown.length) return;
-  const line = strip.getBoundingClientRect().bottom + 8;
+  const line = strip.getBoundingClientRect().bottom + SCROLL_GAP + 4; // a little slack for rounding
   let current = shown[0];
   for (const entry of shown) {
     if (document.getElementById(entry.id).getBoundingClientRect().top <= line) current = entry;
@@ -214,7 +216,7 @@ export function initNav(context) {
   // Links to a section, Next and j/k scroll to just below the strip, however tall it is, and
   // each race's heading sticks right under it (--strip-h).
   trackHeight(strip, "--strip-h", (height) => {
-    document.documentElement.style.scrollPaddingTop = `${height + 12}px`;
+    document.documentElement.style.scrollPaddingTop = `${height + SCROLL_GAP}px`;
   });
 
   const markSoon = onFrame(markCurrentSection);
