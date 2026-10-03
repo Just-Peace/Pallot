@@ -1,43 +1,47 @@
 // The voter's picks and notes. They stay in this browser (localStorage) and are never
 // sent to the server. If storage is blocked they still work until the page is closed.
 
-const PICKS_KEY = "votebot.picks.v1";
-const LOOKUP_KEY = "votebot.lastLookup.v1";
-const UI_KEY = "votebot.ui.v1";
-const SETTINGS_CHANGED_KEY = "votebot.settingsChanged.v1";
-const ADDRESS_CARD_KEY = "votebot.addressCard.v1";
+import { PICKS, SETTINGS_CHANGED, readJson, removeRaw, restoreRaw, storedKeys, writeJson } from "./storage.js";
 
 export const WRITE_IN = "write-in"; // the pick key for a name the voter types in
 
-let memory = null;
+// Each election's picks that storage refused, so they last until the page is closed.
+let unsaved = {};
 
-function readAll() {
-  if (memory) return memory;
-  try {
-    memory = JSON.parse(localStorage.getItem(PICKS_KEY) || "{}") || {};
-  } catch {
-    memory = {};
-  }
-  return memory;
+// Saves one election's picks over what's stored now, so picks another tab saved meanwhile,
+// for other elections, aren't overwritten.
+function saveBucket(electionKey, data) {
+  const all = readJson(PICKS, {});
+  all[electionKey] = data;
+  if (writeJson(PICKS, all)) delete unsaved[electionKey];
+  else unsaved[electionKey] = data;
 }
 
-function writeAll() {
-  try {
-    localStorage.setItem(PICKS_KEY, JSON.stringify(memory));
-  } catch {
-    // storage unavailable: keep going in memory
-  }
+// Runs ``redraw`` when another tab changes the picks (a pick, Clear in Settings).
+export function onPicksChanged(redraw) {
+  window.addEventListener("storage", (event) => {
+    if (event.key === PICKS || event.key === null) redraw();
+  });
 }
 
 export class Picks {
   // One bucket per election date; candidate/race keys are stable ids from the server.
   constructor(electionKey) {
-    const all = readAll();
-    this.data = all[electionKey || "undated"] ||= { races: {}, notes: {} };
+    this.key = electionKey || "undated";
+    this.data = unsaved[this.key] || readJson(PICKS, {})[this.key] || { races: {}, notes: {} };
   }
 
   picked(raceKey) {
     return this.data.races[raceKey] || [];
+  }
+
+  has(raceKey) {
+    return this.picked(raceKey).length > 0;
+  }
+
+  // How many of ``raceKeys`` have a pick.
+  countPicked(raceKeys) {
+    return raceKeys.filter((key) => this.has(key)).length;
   }
 
   isPicked(raceKey, candidateKey) {
@@ -47,7 +51,7 @@ export class Picks {
   set(raceKey, candidateKeys) {
     if (candidateKeys.length) this.data.races[raceKey] = candidateKeys;
     else delete this.data.races[raceKey];
-    writeAll();
+    saveBucket(this.key, this.data);
   }
 
   note(candidateKey) {
@@ -57,7 +61,7 @@ export class Picks {
   setNote(candidateKey, text) {
     if (text.trim()) this.data.notes[candidateKey] = text;
     else delete this.data.notes[candidateKey];
-    writeAll();
+    saveBucket(this.key, this.data);
   }
 
   writeIn(raceKey) {
@@ -74,7 +78,7 @@ export class Picks {
     this.data.writeIns ||= {};
     if (name.trim()) this.data.writeIns[raceKey] = name;
     else delete this.data.writeIns[raceKey];
-    writeAll();
+    saveBucket(this.key, this.data);
   }
 
   // Which race cards the voter collapsed (a view setting, kept by "Clear picks").
@@ -88,7 +92,7 @@ export class Picks {
       if (collapsed) this.data.collapsed[key] = true;
       else delete this.data.collapsed[key];
     }
-    writeAll();
+    saveBucket(this.key, this.data);
   }
 
   // Clears the picks, notes and write-ins (not the collapsed races), and returns them for restore().
@@ -97,14 +101,14 @@ export class Picks {
     this.data.races = {};
     this.data.notes = {};
     this.data.writeIns = {};
-    writeAll();
+    saveBucket(this.key, this.data);
     return { races, notes, writeIns };
   }
 
   // Puts back what clear() returned: "Undo" after "Clear picks".
   restore({ races, notes, writeIns }) {
     Object.assign(this.data, { races, notes, writeIns });
-    writeAll();
+    saveBucket(this.key, this.data);
   }
 
   // Whether there's anything for clear() to clear.
@@ -113,118 +117,20 @@ export class Picks {
   }
 }
 
-export function loadUi() {
-  try {
-    return JSON.parse(localStorage.getItem(UI_KEY) || "{}") || {};
-  } catch {
-    return {};
-  }
-}
-
-export function saveUi(prefs) {
-  try {
-    localStorage.setItem(UI_KEY, JSON.stringify(prefs));
-  } catch {
-    // not remembered; fine
-  }
-}
-
-// The Settings page stamps every change that affects the ballot, so a ballot page that was
-// open meanwhile (in another tab, or kept for the Back button) can tell it's out of date.
-export function markSettingsChanged() {
-  try {
-    localStorage.setItem(SETTINGS_CHANGED_KEY, String(Date.now()));
-  } catch {
-    // storage unavailable: nothing else can have remembered the old settings either
-  }
-}
-
-export function settingsStamp() {
-  try {
-    return localStorage.getItem(SETTINGS_CHANGED_KEY);
-  } catch {
-    return null;
-  }
-}
-
-// Removes ``keys`` from storage and returns what they held, for restoreBrowserData().
-function removeStored(keys) {
-  const removed = {};
-  try {
-    for (const key of keys) {
-      const value = localStorage.getItem(key);
-      if (value === null) continue;
-      removed[key] = value;
-      localStorage.removeItem(key);
-    }
-  } catch {
-    // nothing stored
-  }
-  return removed;
-}
-
 // "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
 // races. The remembered address stays. Returns what was removed, for Undo.
 export function clearPicksAndNotes() {
-  memory = {};
-  return removeStored([PICKS_KEY]);
+  unsaved = {};
+  return removeRaw([PICKS]);
 }
 
 // "Clear all browser data" in Settings: everything VoteBot keeps in this browser, the remembered
-// address and the search engine included. Every key it uses starts with "votebot.". Returns
-// what was removed, for Undo. The settings stamp stays: it isn't the voter's, and the caller
-// renews it.
+// address and the search engine included. Returns what was removed, for Undo. The settings
+// stamp stays: it isn't the voter's, and the caller renews it.
 export function clearBrowserData() {
-  memory = {};
-  let keys = [];
-  try {
-    keys = Object.keys(localStorage).filter((key) => key.startsWith("votebot.") && key !== SETTINGS_CHANGED_KEY);
-  } catch {
-    // nothing stored
-  }
-  return removeStored(keys);
+  unsaved = {};
+  return removeRaw(storedKeys().filter((key) => key !== SETTINGS_CHANGED));
 }
 
 // Undo in Settings: puts back what clearPicksAndNotes() or clearBrowserData() removed.
-export function restoreBrowserData(removed) {
-  memory = null; // read the picks again
-  try {
-    for (const [key, value] of Object.entries(removed)) localStorage.setItem(key, value);
-  } catch {
-    // storage unavailable: there was nothing to put back
-  }
-}
-
-export function saveLastLookup(request) {
-  try {
-    localStorage.setItem(LOOKUP_KEY, JSON.stringify(request));
-  } catch {
-    // not remembered; fine
-  }
-}
-
-// What the left pane's address card shows for the last lookup (the address, its city and
-// county), so every page can show it without looking the address up again.
-export function saveAddressCard(card) {
-  try {
-    localStorage.setItem(ADDRESS_CARD_KEY, JSON.stringify(card));
-  } catch {
-    // not remembered; fine
-  }
-}
-
-export function loadAddressCard() {
-  try {
-    return JSON.parse(localStorage.getItem(ADDRESS_CARD_KEY) || "null");
-  } catch {
-    return null;
-  }
-}
-
-export function loadLastLookup() {
-  try {
-    return JSON.parse(localStorage.getItem(LOOKUP_KEY) || "null");
-  } catch {
-    return null;
-  }
-}
+export const restoreBrowserData = restoreRaw;

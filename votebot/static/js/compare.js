@@ -5,7 +5,7 @@
 
 import { extLink, formatDate, h, slug } from "./dom.js";
 import { partyName } from "./labels.js";
-import { loadUi, saveUi } from "./picks.js";
+import { setUiPref, uiPref } from "./storage.js";
 import { COUNT, DOLLARS, DOLLARS_SHORT, SHORT_DATE, comparable, howCounted, percent, renderTabs, tagBadge } from "./source-cards.js";
 
 const SCALES = [["dollars", "Dollars"], ["share", "Share of their money"]];
@@ -151,7 +151,7 @@ function scaleToggle(dialog) {
       const input = h("input", { type: "radio", name: "cmp-scale", value, checked: value === current });
       input.addEventListener("change", () => {
         dialog.dataset.scale = value;
-        saveUi({ ...loadUi(), compareScale: value });
+        setUiPref("compareScale", value);
       });
       return h("label", { class: "seg-option" }, input, label);
     }));
@@ -160,7 +160,7 @@ function scaleToggle(dialog) {
 export function openCompare(dialog, race) {
   const cards = comparable(race);
   if (!cards.length) return;
-  dialog.dataset.scale = loadUi().compareScale === "share" ? "share" : "dollars";
+  dialog.dataset.scale = uiPref("compareScale") === "share" ? "share" : "dollars";
   const closeButton = h("button", { type: "button", class: "icon-btn close", "aria-label": "Close" }, "✕");
   closeButton.addEventListener("click", () => dialog.close());
   const body = h("div", { class: "details-tabs" });

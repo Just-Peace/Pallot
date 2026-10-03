@@ -51,7 +51,7 @@ function printedSections(ballot, picks, includeBlank) {
   return sections(ballot)
     .map((section) => ({
       ...section,
-      races: section.races.filter((race) => picks.picked(race.key).length || (includeBlank && !section.maybe)),
+      races: section.races.filter((race) => picks.has(race.key) || (includeBlank && !section.maybe)),
     }))
     .filter((section) => section.races.length);
 }

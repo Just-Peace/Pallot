@@ -6,8 +6,9 @@
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { formatBytes, formatDate, h, linkedText, relativeTime } from "./dom.js";
-import { clearBrowserData, clearPicksAndNotes, markSettingsChanged, restoreBrowserData } from "./picks.js";
+import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
+import { markSettingsChanged } from "./storage.js";
 import { showToast } from "./toast.js";
 
 const list = document.querySelector("#source-list");

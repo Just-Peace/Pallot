@@ -12,12 +12,11 @@ import { extLink, formatDate, h, initials, safeUrl, slug } from "./dom.js";
 import { hydrateIcons, icon } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
 import { GROUP_LABELS, GROUP_ORDER, STATES, partyPill } from "./labels.js";
-import {
-  Picks, WRITE_IN, loadLastLookup, loadUi, saveAddressCard, saveLastLookup, saveUi, settingsStamp,
-} from "./picks.js";
+import { Picks, WRITE_IN, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { currentEngine, searchHref } from "./search.js";
 import { badgeList, likelyFlag, likelyUnflagged, raceMoney, renderTabs } from "./source-cards.js";
+import { ADDRESS_CARD, LAST_LOOKUP, readJson, setUiPref, settingsStamp, uiPref, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
 import { openPanel } from "./topbar.js";
@@ -142,7 +141,7 @@ async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
     if (controller.signal.aborted) return; // cancelled as its answer arrived
     ballot = found;
     shownRequest = request;
-    saveLastLookup(request);
+    writeJson(LAST_LOOKUP, request);
     picks = new Picks(ballot.election_date);
     editingDistricts = false;
     render();
@@ -208,7 +207,7 @@ function renderAddress() {
     election: electionLine(),
   };
   showAddress(card);
-  saveAddressCard(card); // the other pages show it too
+  writeJson(ADDRESS_CARD, card); // the other pages show it too
 }
 
 // The numbers the voter can change: what each is called, and the highest there is.
@@ -525,11 +524,10 @@ const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
 // "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
 // that may not be on the ballot aren't counted.
 function updateProgress() {
-  const countPicked = (keys) => keys.filter((k) => picks.picked(k).length).length;
   const raceKeys = ballot.races.map((r) => r.key);
   const measureKeys = measureKeysOf(ballot);
-  const done = countPicked(raceKeys);
-  const decided = countPicked(measureKeys);
+  const done = picks.countPicked(raceKeys);
+  const decided = picks.countPicked(measureKeys);
   $("#progress").textContent = [
     `${done} of ${plural(raceKeys.length, "race")}`,
     measureKeys.length ? `${decided} of ${plural(measureKeys.length, "proposition")}` : null,
@@ -540,7 +538,7 @@ function updateProgress() {
   nextButton.disabled = !left;
   nextButton.textContent = left ? "Next race to pick" : "All picked ✓";
   for (const { element, keys, maybe } of sectionCounts) {
-    const picked = keys.filter((k) => picks.picked(k).length).length;
+    const picked = picks.countPicked(keys);
     element.textContent = maybe ? (picked ? `${picked} picked` : String(keys.length)) : `${picked}/${keys.length}`;
     element.classList.toggle("complete", !maybe && picked === keys.length);
   }
@@ -810,7 +808,7 @@ function refresh(key) {
 // After a pick that fills the race: with "Collapse a race when I pick" (View), fold the race to
 // one line, and bring its heading back into view if that left it above the strip.
 function settle(key, filled) {
-  const fold = filled && loadUi().collapseOnPick;
+  const fold = filled && uiPref("collapseOnPick");
   if (fold) picks.setCollapsed(key, true);
   refresh(key);
   const card = fold ? cardFor(key) : null;
@@ -975,14 +973,12 @@ $("#clear-picks").addEventListener("click", () => {
 
 // ---- view: collapse, only unpicked races, next race, j/k -----------------------------
 
-const setView = (pref, value) => saveUi({ ...loadUi(), [pref]: value });
-
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
 // until this runs again (switching it on, a new ballot), so it doesn't vanish mid-pick.
 function applyHidePicked() {
-  const on = Boolean(loadUi().hidePicked);
+  const on = Boolean(uiPref("hidePicked"));
   for (const card of result.querySelectorAll(".race")) {
-    card.classList.toggle("hidden-picked", on && picks.picked(card.dataset.race).length > 0);
+    card.classList.toggle("hidden-picked", on && picks.has(card.dataset.race));
   }
   $("#hide-picked").checked = on;
   hidingNote.hidden = !on;
@@ -990,7 +986,7 @@ function applyHidePicked() {
 }
 
 function setHidePicked(on) {
-  setView("hidePicked", on);
+  setUiPref("hidePicked", on);
   if (!ballot) return;
   applyHidePicked();
   markCurrentSection(); // the marked section may have gone
@@ -998,8 +994,8 @@ function setHidePicked(on) {
 
 $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
 showPickedButton.addEventListener("click", () => setHidePicked(false));
-$("#collapse-on-pick").checked = Boolean(loadUi().collapseOnPick);
-$("#collapse-on-pick").addEventListener("change", (event) => setView("collapseOnPick", event.target.checked));
+$("#collapse-on-pick").checked = Boolean(uiPref("collapseOnPick"));
+$("#collapse-on-pick").addEventListener("change", (event) => setUiPref("collapseOnPick", event.target.checked));
 $("#expand-all").addEventListener("click", () => {
   setAllCollapsed(false);
   viewMenu.open = false;
@@ -1045,7 +1041,7 @@ nextButton.addEventListener("click", () => {
   const from = keys.indexOf(document.activeElement?.closest(".race")?.dataset.race ?? lastJumped) + 1;
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[(from + i) % keys.length];
-    if (!picks.picked(key).length) {
+    if (!picks.has(key)) {
       lastJumped = key;
       goTo(cardFor(key), { open: true });
       return;
@@ -1161,13 +1157,20 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden) reloadIfSettingsChanged();
 });
 
+// Picks made in another tab show here too, and a pick made here doesn't undo them.
+onPicksChanged(() => {
+  if (!ballot) return;
+  picks = new Picks(ballot.election_date);
+  render();
+});
+
 async function start() {
   const fromHash = new URLSearchParams(location.hash.slice(1));
   const changing = fromHash.has("change"); // "Change" on another page's address card
   if (changing) history.replaceState(null, "", location.pathname + location.search);
   const initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
-    : loadLastLookup();
+    : readJson(LAST_LOOKUP, null);
   if (initial?.address) {
     // Show the remembered address right away; the lookup fills in the rest.
     addressInput.value = initial.address;
