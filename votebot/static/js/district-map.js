@@ -11,11 +11,10 @@
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";
 import { icon } from "./icons.js";
+import { DISTRICTS } from "./labels.js";
 import { setUiPref, uiPref } from "./storage.js";
 
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
-const NAMES = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "State Board of Education" };
-const LABELS = { cd: "U.S. House", sd: "State Senate", hd: "State House", sboe: "SBOE", election_precinct: "Precinct" };
 const TEXAS = [[23.5, -109], [38.5, -91]]; // as far as the server serves tiles (sources/osm_tiles.py)
 const HOME_ZOOM = [10, 14]; // the view around the address: streets, and the nearest district if it fits
 const TILES = "/api/tiles/{z}/{x}/{y}.png";
@@ -24,7 +23,7 @@ const LEAFLET_CREDIT = '<a href="https://leafletjs.com" target="_blank" rel="noo
 const touch = matchMedia("(pointer: coarse)").matches;
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const section = document.querySelector("#district-map");
+let section = null; // #district-map, found on the first ballot
 const fetched = new Map(); // query -> the API's answer
 let leaflet = null; // the import of Leaflet, once started
 let L = null;
@@ -42,10 +41,8 @@ let data = null; // the outlines for ``query``, once loaded
 let failed = null; // why they couldn't be loaded
 let pending = null; // the AbortController of the request still running
 
-new ResizeObserver(() => map?.invalidateSize()).observe(section);
-
 function districtName(kind, number) {
-  return kind === "election_precinct" ? `Precinct ${number}` : `${NAMES[kind]} District ${number}`;
+  return kind === "election_precinct" ? `Precinct ${number}` : `${DISTRICTS[kind].long} District ${number}`;
 }
 
 // A short line in the district's colour and dash.
@@ -58,6 +55,10 @@ function swatch(kind) {
 // address; a precinct update keeps the map where the voter left it.
 export function syncMap(next) {
   ballot = next;
+  if (!section) {
+    section = document.querySelector("#district-map");
+    new ResizeObserver(() => map?.invalidateSize()).observe(section);
+  }
   const districts = next.districts || {};
   const asked = KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]);
   const precinct = districts.election_precinct;
@@ -206,7 +207,7 @@ function draw() {
       type: "button", class: ["map-pick", outline.kind, notUp.has(outline.kind) && "not-up"],
       "data-map-kind": outline.kind, "aria-pressed": String(outline.kind === highlight), title,
       on: { click: () => pickDistrict(outline.kind) },
-    }, swatch(outline.kind), LABELS[outline.kind], " ", h("strong", {}, String(outline.number)));
+    }, swatch(outline.kind), DISTRICTS[outline.kind]?.short ?? "Precinct", " ", h("strong", {}, String(outline.number)));
   }));
   const fromCouncil = (outline) => outline.kind === "sboe" || outline.kind === "election_precinct";
   const sources = [

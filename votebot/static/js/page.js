@@ -1,11 +1,13 @@
 // Shared by every page except the ballot: draws the left pane and the icons, shows the
-// remembered address under "Your ballot", and opens the FAQ answer a link points to.
+// remembered address under "Your ballot", and opens the FAQ answer a link points to. The
+// Settings page's settings.js imports it first.
 
-import "./chrome.js";
 import { showRememberedAddress } from "./address.js";
+import { initChrome } from "./chrome.js";
 import { onReturn } from "./dom.js";
 import { hydrateIcons } from "./icons.js";
 
+initChrome();
 showRememberedAddress();
 hydrateIcons();
 
