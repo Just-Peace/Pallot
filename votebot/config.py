@@ -114,12 +114,15 @@ def read_env_file(path: Path) -> dict[str, str]:
 
 def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None = ENV_FILE) -> Config:
     """The config from ``env``, or by default from the environment on top of ``env_file``
-    (variables already set in the environment win)."""
+    (variables already set in the environment win). The tiles' lifetime is kept at 7 days or more,
+    the least OpenStreetMap's tile policy allows."""
     if env is None:
         env = {**(read_env_file(env_file) if env_file else {}), **os.environ}
     overrides = {
         f.name: int(env[key]) for f in fields(Ttls) if (key := f"VOTEBOT_TTL_{f.name.upper()}") in env
     }
+    if "tiles" in overrides:
+        overrides["tiles"] = max(overrides["tiles"], 7 * DAY)
     return Config(
         data_dir=Path(env["VOTEBOT_DATA_DIR"]) if env.get("VOTEBOT_DATA_DIR") else Config.data_dir,
         user_agent=env.get("VOTEBOT_USER_AGENT") or Config.user_agent,
