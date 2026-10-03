@@ -266,6 +266,17 @@ def test_the_left_pane_links_every_page(client):
     assert set(PAGES) <= set(re.findall(r'href: "([^"]+)"', chrome))
 
 
+@pytest.mark.parametrize("page", [p for p in PAGES if p != "./"])
+def test_every_other_page_has_sections_for_the_left_pane(client, page):
+    """page.js lists each <section> in <main> by the heading it's labelled by."""
+    html = client.get(f"/{page}").text
+    main = re.search(r'<main id="main"[^>]*>(.*)</main>', html, re.S).group(1)
+    labelled = re.findall(r'^      <section [^>]*aria-labelledby="([\w-]+)"', main, re.M)
+    assert len(labelled) >= 2
+    for heading_id in labelled:
+        assert re.search(rf'<h2 [^>]*id="{heading_id}"', main), heading_id
+
+
 def test_a_refusal_pauses_ballotpedia_and_settings_says_until_when(client, upstream):
     upstream.ballotpedia_status = 403
     get_ballot(client)  # from Texas SOS alone

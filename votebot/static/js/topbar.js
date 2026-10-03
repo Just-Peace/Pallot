@@ -1,5 +1,5 @@
 // Phones and narrow windows (``narrow`` in chrome.js): the left pane becomes a one-line top bar, with
-// the address and the page links each behind a button. chrome.js draws the pane, then calls
+// the address and the page links (and a page's sections) each behind a button. chrome.js draws the pane, then calls
 // initTopBar() to add the two buttons; wider, the CSS hides them.
 
 import { h } from "./dom.js";
@@ -28,7 +28,7 @@ export function setTopBarAddress(address) {
 
 export function initTopBar(pane) {
   const addressPanel = pane.querySelector(".side-address");
-  const navs = [...pane.querySelectorAll(".site-nav")];
+  const navs = [...pane.querySelectorAll(".site-nav, .page-sections")];
   if (!addressPanel) return;
   sidebar = pane;
   addressPanel.id ||= "side-address";

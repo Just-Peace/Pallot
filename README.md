@@ -60,6 +60,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - **«** at its top folds the pane into a narrow rail of icons, each named in a tooltip; **»** brings it back. The choice is remembered in the browser. On the ballot, the sections then show as chips in the strip at the top. The pane opens again by itself when the address form or an error needs to be seen.
   - while you type an address, **suggestions** from Ballotpedia's address search appear under the box, once you've typed a house number and a few letters of the street: ↑/↓ and Enter pick one, which only fills the box in. Only Texas addresses are suggested. Turn them off in Settings to get the browser's own address autofill back.
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
+  - on Settings, FAQ, About and Privacy, the list of that page's sections, to jump to one. The section on screen is highlighted as you scroll. On a phone they're under **Menu**, which closes when you pick one; in the folded rail they're hidden.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
 - **Footer**, on every page, always in view at the bottom of the window: a reminder that VoteBot is unofficial, and **Sources** (About's credits).
 - **Back to top:** once you've scrolled a screen, a round arrow button at the bottom right goes back to the top.
