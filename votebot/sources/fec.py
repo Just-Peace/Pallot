@@ -36,7 +36,7 @@ HOUSE_DISCLOSURES = "https://disclosures-clerk.house.gov/FinancialDisclosure"
 SENATE_DISCLOSURES = "https://efdsearch.senate.gov/search/"
 KEY_NOTE = (
     "Federal races show FEC totals only. For where each candidate's money comes from, set VOTEBOT_FEC_API_KEY "
-    f"to a free key from {KEY_SIGNUP} and restart VoteBot."
+    f"to a [free key from the OpenFEC developers page]({KEY_SIGNUP}) and restart VoteBot."
 )
 
 _PARTIES = (("DEMOCRAT", "D"), ("REPUBLICAN", "R"), ("LIBERTARIAN", "L"), ("GREEN", "G"), ("INDEPENDENT", "I"))

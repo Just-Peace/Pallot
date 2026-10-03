@@ -100,7 +100,7 @@ function renderSidebar(sidebar) {
 function renderFooter(app) {
   const footer = h("footer", { class: "site-footer" },
     h("p", {}, "VoteBot is an unofficial helper: always check your county's official sample ballot. · ",
-      h("a", { href: "about.html#credits" }, "Sources")));
+      h("a", { href: "about.html#sources" }, "Sources")));
   app.after(footer);
   trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
 }

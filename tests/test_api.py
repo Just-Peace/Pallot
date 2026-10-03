@@ -47,11 +47,11 @@ def test_sources_overview(client):
     assert (outlines["label"], outlines["enabled"], outlines["refresh_confirm"]) == ("District map (US Census TIGERweb)", True, None)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
     assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
-    assert tracker["clear_label"] == tec["clear_label"] == "Reset to bundled snapshot"
+    assert tracker["clear_label"] == tec["clear_label"] == "Reset to the snapshot that came with VoteBot"
     assert tracker["resettable"] and tec["resettable"] and not sos["resettable"]
-    assert tec["clear_confirm"].startswith("Throw away refreshed Texas Ethics Commission data")
-    assert sos["clear_confirm"].startswith("Clear everything cached from Texas Secretary of State?")
-    assert "The TrackAIPAC and Texas Ethics Commission data go back" in overview["clear_all_confirm"]
+    assert tec["clear_confirm"].startswith("Throw away the refreshed Texas Ethics Commission (TEC) data")
+    assert sos["clear_confirm"].startswith("Clear everything cached from Texas Secretary of State (Texas SOS)?")
+    assert "The TrackAIPAC and Texas Ethics Commission (TEC) data go back" in overview["clear_all_confirm"]
     assert overview["last_lookup"] is None and sos["last_use"] is None
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"

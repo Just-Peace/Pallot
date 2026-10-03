@@ -51,7 +51,7 @@ def test_seats_in_text():
 def test_exact_match_on_name_and_seat(index):
     person_, match = match_trackaipac(index, "AUGUST PFLUGER", "R", "TX-11")
     assert person_["name"] == "August Pfluger"
-    assert (match.confidence, match.method) == ("exact", "full name + seat TX-11")
+    assert (match.confidence, match.method) == ("exact", "full name, in the same seat")
 
 
 def test_senate_seat(index):
@@ -86,13 +86,13 @@ def test_ambiguous_names_are_settled_by_seat_or_left_alone(index):
 def test_first_initial_match_is_only_likely(index):
     person_, match = match_trackaipac(index, "WES HUNT", "R", "TX-38")
     assert person_["name"] == "Wesley Hunt"
-    assert (match.confidence, match.method) == ("likely", "first initial and last name + seat TX-38")
+    assert (match.confidence, match.method) == ("likely", "first initial and last name, in the same seat")
 
 
 def test_last_name_and_seat_fallback_for_nicknames(index):
     person_, match = match_trackaipac(index, "BOB HALL", "R", "TX-02")
     assert person_["name"] == "Robert Hall"
-    assert (match.confidence, match.method) == ("likely", "last name + seat")
+    assert (match.confidence, match.method) == ("likely", "last name, in the same seat")
 
 
 def test_unknown_person_gets_no_match(index):

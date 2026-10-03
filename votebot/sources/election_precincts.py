@@ -44,7 +44,7 @@ SOURCE = "election_precincts"
 LABEL = "Election precincts"
 DESCRIPTION = (
     "Your election precinct, the \"Pct\" on your voter registration certificate, and its outline on the map, from "
-    "the Texas Legislative Council's map of every county's voting precincts. The newest map is downloaded once, and "
+    "the Texas Legislative Council's map of every county's election precincts. The newest map is downloaded once, and "
     "again only when the Council publishes a newer one. Your address is never sent."
 )
 INDEX_URL = "https://data.capitol.texas.gov/api/3/action/package_show"
@@ -127,7 +127,7 @@ def read_prj(text: str) -> Lambert:
     units = re.findall(rf'UNIT\["([^"]+)",{_NUMBER}\]', text)
     params = {name.lower(): float(value) for name, value in re.findall(rf'PARAMETER\["([^"]+)",{_NUMBER}\]', text)}
     if not units or units[-1][0].lower() not in ("meter", "metre") or float(units[-1][1]) != 1:
-        raise ValueError("the map's projection isn't in metres")
+        raise ValueError("the map's projection isn't in meters")
     if not spheroid or (primem and float(primem.group(1)) != 0) or params.get("scale_factor", 1) != 1:
         raise ValueError("the map's projection has an ellipsoid, meridian or scale VoteBot can't read")
     try:

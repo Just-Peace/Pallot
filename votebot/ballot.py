@@ -54,12 +54,12 @@ MAYBE_SECTIONS = {
     "precinct": (
         "Depends on your commissioner or JP precinct",
         "These races are only on some ballots in {county} County. Your commissioner and justice of the peace "
-        "precincts are printed on your voter registration certificate; enter them under Your districts at the top "
+        "precincts are printed on your voter registration certificate; enter them under \"Your districts\" at the top "
         "of your ballot to narrow this list.",
     ),
     "unconfirmed": (
         "Couldn't confirm",
-        "We couldn't work out which of these districts your address is in, so check your county's sample ballot.",
+        "VoteBot couldn't work out which of these districts your address is in, so check your county's sample ballot.",
     ),
     "special": (
         "Special districts (MUDs, water and utility districts)",
@@ -153,7 +153,7 @@ async def locate(svc: Services, address: str) -> tuple[Place, Location]:
         if place is None:
             point = await svc.nominatim.locate(address)
             if point is None:
-                raise BallotError(422, "We couldn't find that address. Include the street, city and ZIP code.")
+                raise BallotError(422, "VoteBot couldn't find that address. Include the street, city and ZIP code.")
             place = await svc.census.at(point.lat, point.lon)
             if place is None:
                 raise BallotError(422, "That address doesn't seem to be in the United States.")
@@ -292,8 +292,8 @@ class _Builder:
         place, location = await locate(self.svc, self.request.address)
         if location.approximate:
             self.warnings.append(
-                f"We could only place this address approximately ({location.matched_address}), "
-                "so double-check Your districts at the top of your ballot."
+                f"VoteBot could only place this address approximately ({location.matched_address}), "
+                "so double-check \"Your districts\" at the top of your ballot."
             )
 
         elections, day = await self._elections()

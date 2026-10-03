@@ -18,7 +18,7 @@ from .census import TEXAS_FIPS, vintage
 
 SOURCE = "tigerweb"
 DESCRIPTION = (
-    "Outlines of your U.S. House, State Senate and State House districts, for the map under Your districts, from "
+    "Outlines of your U.S. House, State Senate and State House districts, for the map under \"Your districts\", from "
     "the US Census's TIGERweb. Asked once your ballot is shown, with each district's number, never your address."
 )
 SERVICE = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer"

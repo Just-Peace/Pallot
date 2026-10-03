@@ -145,7 +145,7 @@ def test_cards_for_a_state_race(tmp_path):
 
     assert set(cards.candidates) == {"sos:1:1:0"}  # not Juan Perez (not filed), not the JP race (files locally)
     card = cards.candidates["sos:1:1:0"]
-    assert (card.match.confidence, card.match.method) == ("exact", "full name + seat STATEREP:49")  # via her nickname
+    assert (card.match.confidence, card.match.method) == ("exact", "full name, in the same seat")  # via her nickname
     assert [b.text for b in card.badges] == ["TEC: raised $4K", "Outside spending: $2.3K"]
     assert "Nov 6, 2024" in card.badges[0].hint and "00000001" in card.badges[0].hint
     facts = {f.label: f.value for f in card.facts}
@@ -252,7 +252,7 @@ def test_a_ballotpedia_race_takes_its_seat_from_ballotpedia(tmp_path):
     ballot = BpBallot(None, (bp_race(district, "State Legislative (Lower)", district, race_id=7),), (), {}, 0.0)
     rep = race(district, ["Jane Doe"], key="bp:7")
     card = tec.cards(source, [rep], {}, "Travis", ballot).candidates["bp:7:0"]
-    assert (card.match.confidence, card.match.method) == ("exact", "full name + seat STATEREP:49")
+    assert (card.match.confidence, card.match.method) == ("exact", "full name, in the same seat")
     assert card.facts[-1].value == "00000001"  # not the Jane Doe in District 12
     assert not tec.cards(source, [rep], {}, "Travis").candidates  # with no seat, two Jane Does and nothing to decide
 
@@ -291,7 +291,7 @@ def test_clear_keeps_a_downloaded_zip(tmp_path):
     source.ensure_seeded()
     source.local_zip.write_bytes(b"zip")
     (tmp_path / "data" / "current.json").write_text('{"snapshot": "edited", "filers": []}', encoding="utf-8")
-    assert source.clear() == "Back to the snapshot bundled with tec_cache (Sep 27, 2026)."
+    assert source.clear() == "Back to the snapshot that came with VoteBot (Sep 27, 2026)."
     assert source.document()["snapshot"] == "2026-09-27" and source.local_zip.exists()
 
 
@@ -299,7 +299,7 @@ def test_refresh_and_reset_from_settings(make_app, tmp_path):
     with TestClient(make_app()) as client:
         message = client.post("/api/sources/tec/refresh").json()["message"]
         assert message.startswith("updated snapshot")
-        assert client.post("/api/sources/tec/clear").json()["message"].startswith("Back to the snapshot bundled with tec_cache")
+        assert client.post("/api/sources/tec/clear").json()["message"].startswith("Back to the snapshot that came with VoteBot")
     [call] = make_app.tec_refreshed
     assert call == {"data_dir": tmp_path / "data" / "tec", "zip_path": None}
 
@@ -330,13 +330,13 @@ def test_capitol_ballot_state_races_get_tec_money(client):
 def test_a_ballotpedia_only_ballot_matches_tec_filers_by_seat(client):
     client.put("/api/sources/sos", json={"enabled": False})
     ballot = get_ballot(client)
-    for office, name, seat in (
-        ("Governor of Texas", "Greg Abbott", "GOVERNOR"),
-        ("Texas 419th District Court", "Catherine Mauzy", "JUDGEDIST:419"),
-        ("Texas Third District Court of Appeals Chief Justice", "Darlene Byrne", "CHIEFJUSTICE_COA:3"),
-        ("Texas Fifteenth District Court of Appeals Chief Justice", "Scott Brister", "CHIEFJUSTICE_COA:15"),
+    for office, name in (
+        ("Governor of Texas", "Greg Abbott"),
+        ("Texas 419th District Court", "Catherine Mauzy"),
+        ("Texas Third District Court of Appeals Chief Justice", "Darlene Byrne"),
+        ("Texas Fifteenth District Court of Appeals Chief Justice", "Scott Brister"),
     ):
         race_ = next(r for r in ballot["races"] if r["name"] == office)
         candidate = next(c for c in race_["candidates"] if c["name"] == name)
         match = next(card for card in candidate["cards"] if card["source"] == "tec")["match"]
-        assert match["confidence"] == "exact" and match["method"].endswith(f"+ seat {seat}"), (office, match)
+        assert match["confidence"] == "exact" and match["method"].endswith(", in the same seat"), (office, match)

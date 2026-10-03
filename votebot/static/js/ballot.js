@@ -15,7 +15,7 @@ import { initChrome, setPaneCollapsed } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openPrecincts, renderDistricts } from "./districts-card.js";
-import { $, closeOnBackdrop, extLink, h, onReturn, setStatus as showStatus } from "./dom.js";
+import { $, closeOnBackdrop, extLink, h, linkedText, onReturn, setStatus as showStatus } from "./dom.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
@@ -230,7 +230,7 @@ function renderMessages() {
   $("#messages").replaceChildren(
     hidingNote,
     ...warnings.map((w) => h("p", { class: "notice notice-warn" }, w)),
-    ...notes.map((n) => h("p", { class: "notice" }, n)),
+    ...notes.map((n) => h("p", { class: "notice" }, linkedText(n))),
   );
 }
 

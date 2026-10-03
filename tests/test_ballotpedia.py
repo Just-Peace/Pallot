@@ -116,7 +116,7 @@ def test_a_match_in_its_own_race_and_party_is_exact(courts):
     races = [ccl3, ccl4]
     got = cards(courts, races, counterparts(courts, races))
     mathew = got.candidates["ccl3:1"].match
-    assert (mathew.confidence, mathew.method) == ("exact", "first and last name + seat Fort Bend County Court at Law No. 3")
+    assert (mathew.confidence, mathew.method) == ("exact", "first and last name, in the same seat")
     wallace = got.candidates["ccl4:0"].match
     assert wallace.confidence == "likely" and wallace.note == "party differs (Ballotpedia says D)"
     assert got.candidates["ccl4:1"].match.confidence == "likely"  # Tom and Thomas: initials only

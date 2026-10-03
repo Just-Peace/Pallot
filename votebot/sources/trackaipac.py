@@ -90,8 +90,8 @@ class TrackAipac(BundledSnapshot):
             Fact(label="Snapshot", value=display_date(meta.get("latest_snapshot")) or "none"),
             Fact(label="Last changed", value=display_time(meta.get("last_refresh")) or "never"),
             Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
-            Fact(label="Texas entries", value=str(len(self.people("TX")))),
-            Fact(label="All entries", value=str(len(self.people()))),
+            Fact(label="Texas entries", value=f"{len(self.people('TX')):,}"),
+            Fact(label="All entries", value=f"{len(self.people()):,}"),
         ]
 
 

@@ -290,7 +290,7 @@ class Tec(BundledSnapshot):
             Fact(label="Money raised since", value=display_date((document.get("window") or {}).get("start")) or "unknown"),
             Fact(label="TEC data from", value=display_time(document.get("tec_updated")) or "unknown"),
             Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
-            Fact(label="Candidates and officeholders", value=str(len(document.get("filers") or []))),
+            Fact(label="Candidates and officeholders", value=f"{len(document.get('filers') or []):,}"),
         ]
 
     def name_index(self) -> NameIndex:
@@ -384,7 +384,7 @@ def _sizes(filer: dict[str, Any]) -> Breakdown | None:
         title="Itemized donations by size",
         parts=parts,
         total=sum(p.amount or 0 for p in parts),
-        note="Each itemized donation by its amount." + (f" Small unitemized donations add {money(unitemized)} more." if unitemized else ""),
+        note="Each itemized donation by its own amount." + (f" Small unitemized donations add {money(unitemized)} more." if unitemized else ""),
     )
 
 
@@ -502,7 +502,7 @@ def comparison(race: Race, filers: dict[str, dict[str, Any]], outside: dict[str,
            "candidate's latest report. Outside spending is what groups reported spending in the candidate's race."),
         compare.bars("Where the money came from", each(lambda k: _where_from(filers[k], totals[k].get("raised") or 0.0))),
         compare.bars("Itemized donations by size", each(lambda k: _sizes(filers[k])),
-                     note="Each itemized donation by its amount; small unitemized donations aren't listed one by one."),
+                     note="Each itemized donation by its own amount; small unitemized donations aren't listed one by one."),
         compare.bars("Where donors live", each(lambda k: _states(filers[k])), note="Itemized donations, by the donor's address."),
         compare.columns("Largest donors", each(lambda k: [(_donor(d), _donor_name(d)) for d in filers[k].get("top_donors") or []]),
                         note="Each candidate's largest itemized donors, added up by donor name and state."),

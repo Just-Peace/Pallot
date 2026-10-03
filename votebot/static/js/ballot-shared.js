@@ -42,9 +42,9 @@ export function pickLabels(race, keys, picks, { unnamed, party = null }) {
 }
 
 // "November 3, 2026 · 2026 November General Election", under the ballot's heading and on the
-// address card; with ``day``, "Election day: Tuesday, November 3, 2026 · …", on the print sheet.
+// address card; with ``day``, "Election Day: Tuesday, November 3, 2026 · …", on the print sheet.
 export function electionLine(ballot, { day = false } = {}) {
   const date = ballot.election_date
-    && (day ? `Election day: ${formatDate(ballot.election_date, ELECTION_DAY)}` : formatDate(ballot.election_date));
+    && (day ? `Election Day: ${formatDate(ballot.election_date, ELECTION_DAY)}` : formatDate(ballot.election_date));
   return [date, ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · ");
 }

@@ -4,7 +4,7 @@ from votebot.models import Match
 from votebot.sources import trackaipac
 from votebot.sources.ballotpedia import BpCandidate, BpRace, card as ballotpedia_card
 
-EXACT = Match(confidence="exact", method="full name + seat TX-11")
+EXACT = Match(confidence="exact", method="full name, in the same seat")
 
 
 def listing(category, total=None, **extra):

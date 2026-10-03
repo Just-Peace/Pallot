@@ -86,7 +86,7 @@ class BundledSnapshot:
             self.last_error = None
             self.ensure_seeded()
         snapshot = display_date(self.snapshot_date()) or "none"
-        return f"Back to the snapshot bundled with {self._package.__name__} ({snapshot})."
+        return f"Back to the snapshot that came with VoteBot ({snapshot})."
 
     def _discard(self) -> None:
         raise NotImplementedError
