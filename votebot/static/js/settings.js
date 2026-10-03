@@ -19,6 +19,8 @@ const searchSelect = $("#search-engine");
 const searchStatus = $("#search-status");
 const sourcesStatus = $("#sources-status");
 let pollTimer = null; // re-checks the sources while one is refreshing (the TEC's takes minutes)
+const rows = new Map(); // source id → { row, update }
+let clearAllQuestion = null; // the server words "Clear all caches"'s prompt
 
 // What the source has saved on the server: "12 saved responses · 3.1 MB · 2 expired · fetched
 // 4 days ago to an hour ago". Snapshot sources describe theirs in their details instead.
@@ -56,20 +58,23 @@ function detailList(source) {
   return h("dl", { class: "source-facts" }, source.details.map((f) => [h("dt", {}, f.label), h("dd", {}, f.value)]));
 }
 
-function sourceRow(source) {
-  const resets = source.resettable; // comes with a bundled snapshot, which "clear" goes back to
-  const result = h("p", { class: "action-result", "aria-live": "polite" });
+// A source's row is drawn once and then updated in place (update below), so a change or the
+// poll while a refresh runs doesn't take the focus away.
+function sourceRow(initial) {
+  let source = initial;
   const refreshButton = h("button", {
-    class: "icon-btn", type: "button", title: source.refresh_label,
-    "aria-label": `${source.refresh_label}: ${source.label}`, disabled: source.busy,
-  }, source.busy ? "Refreshing…" : "↻ Refresh");
+    class: "icon-btn", type: "button", title: source.refresh_label, "aria-label": `${source.refresh_label}: ${source.label}`,
+  });
   const clearButton = h("button", {
-    class: "icon-btn", type: "button", title: source.clear_label,
-    "aria-label": `${source.clear_label}: ${source.label}`, disabled: source.busy,
-  }, resets ? "Reset" : "Clear");
-  const toggle = source.toggleable
-    ? h("input", { type: "checkbox", role: "switch", id: `toggle-${source.id}`, checked: source.enabled, disabled: source.busy })
-    : null;
+    class: "icon-btn", type: "button", title: source.clear_label, "aria-label": `${source.clear_label}: ${source.label}`,
+  }, source.resettable ? "Reset" : "Clear");
+  const toggle = source.toggleable ? h("input", { type: "checkbox", role: "switch", id: `toggle-${source.id}` }) : null;
+  const state = h("div", { class: "source-state" });
+
+  function showBusy(busy) {
+    refreshButton.disabled = clearButton.disabled = busy;
+    refreshButton.textContent = busy ? "Refreshing…" : "↻ Refresh";
+  }
 
   toggle?.addEventListener("change", async () => {
     toggle.disabled = true;
@@ -86,30 +91,21 @@ function sourceRow(source) {
 
   refreshButton.addEventListener("click", async () => {
     if (source.refresh_confirm && !confirm(source.refresh_confirm)) return; // it sends or downloads a lot
-    refreshButton.disabled = true;
-    clearButton.disabled = true;
-    refreshButton.textContent = "Refreshing…";
-    result.textContent = "";
+    showBusy(true);
     try {
       const { message } = await api.post(`/api/sources/${source.id}/refresh`);
       markSettingsChanged();
       await load();
       setStatus(sourcesStatus, `${source.label}: ${message}`, "ok");
     } catch (error) {
-      refreshButton.disabled = false;
-      clearButton.disabled = false;
-      refreshButton.textContent = "↻ Refresh";
-      result.textContent = error.message;
-      setStatus(sourcesStatus, `${source.label}: ${error.message}`, "error"); // the row may have been redrawn meanwhile
+      showBusy(false);
+      setStatus(sourcesStatus, `${source.label}: ${error.message}`, "error");
       load();
     }
   });
 
   clearButton.addEventListener("click", async () => {
-    const question = resets
-      ? `Throw away refreshed ${source.label} data and go back to the bundled snapshot?`
-      : `Clear everything cached from ${source.label}? The next lookup will fetch it again.`;
-    if (!confirm(question)) return;
+    if (!confirm(source.clear_confirm)) return;
     try {
       const { message } = await api.post(`/api/sources/${source.id}/clear`);
       await load();
@@ -120,21 +116,36 @@ function sourceRow(source) {
   });
 
   const name = h("span", { class: "source-name" }, source.label);
-  return h(
+  const row = h(
     "div",
-    { class: ["source-row", !source.enabled && "is-off"] },
+    { class: "source-row" },
     h("div", { class: "source-row-head" },
       toggle
         ? h("label", { class: "switch", for: `toggle-${source.id}` }, toggle, name)
         : h("span", { class: "source-name-wrap" }, name, h("span", { class: "pill" }, "Always on"))),
     h("p", { class: "source-desc" }, source.description),
-    source.notice ? h("p", { class: ["source-notice", `tone-${source.notice_tone || "info"}`] }, linkedText(source.notice)) : null,
-    cacheLine(source),
-    detailList(source),
-    lastUseLine(source),
+    state,
     h("div", { class: "source-actions" }, source.refreshable ? refreshButton : null, clearButton),
-    result,
   );
+
+  function update(next) {
+    source = next;
+    row.classList.toggle("is-off", !source.enabled);
+    if (toggle) {
+      toggle.checked = source.enabled;
+      toggle.disabled = source.busy;
+    }
+    showBusy(source.busy);
+    state.replaceChildren(...[
+      source.notice ? h("p", { class: ["source-notice", `tone-${source.notice_tone || "info"}`] }, linkedText(source.notice)) : null,
+      cacheLine(source),
+      detailList(source),
+      lastUseLine(source),
+    ].filter(Boolean));
+  }
+
+  update(source);
+  return { row, update };
 }
 
 function renderSummary(overview) {
@@ -148,7 +159,17 @@ function renderSummary(overview) {
 
 function render(overview) {
   renderSummary(overview);
-  list.replaceChildren(...overview.sources.map(sourceRow));
+  clearAllQuestion = overview.clear_all_confirm;
+  for (const source of overview.sources) {
+    const drawn = rows.get(source.id);
+    if (drawn) {
+      drawn.update(source);
+    } else {
+      const added = sourceRow(source);
+      rows.set(source.id, added);
+      list.append(added.row);
+    }
+  }
   clearTimeout(pollTimer);
   if (overview.sources.some((s) => s.busy)) pollTimer = setTimeout(load, 5000);
 }
@@ -172,9 +193,7 @@ function initSearchEngine() {
 }
 
 $("#clear-all").addEventListener("click", async () => {
-  if (!confirm("Clear everything the server saved from every source, and reset TrackAIPAC and the Texas Ethics Commission "
-    + "to the data that came with VoteBot? A refreshed Texas Ethics Commission snapshot is thrown away. "
-    + "The next lookups will fetch everything again.")) return;
+  if (!clearAllQuestion || !confirm(clearAllQuestion)) return;
   try {
     const { message } = await api.post("/api/cache/clear");
     await load();
