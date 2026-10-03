@@ -349,6 +349,36 @@ async def test_prune_forgets_old_suggestions_and_addresses_not_found(tmp_path):
         assert cache.prune({"suggestions"}, {"census"}, older_than=50) == 0
 
 
+def _in_cache_files(tmp_path, text: str) -> list[str]:
+    return [p.name for p in tmp_path.glob("c.sqlite3*") if text.encode() in p.read_bytes()]
+
+
+async def test_clear_leaves_no_readable_copy_in_the_files(tmp_path):
+    async with httpx.AsyncClient() as client:
+        cache = HttpCache(tmp_path / "c.sqlite3", client)
+        for source, q in (("suggestions", "1234 Zanzibar Lane"), ("census", "5678 Quokka Court"), ("demo", "Wombat Way")):
+            cache._store(RequestSpec("GET", URL, params={"q": q}), source, {"echo": q}, time.time(), 60, None, ())
+        assert _in_cache_files(tmp_path, "Zanzibar") and _in_cache_files(tmp_path, "Quokka")
+
+        assert cache.clear("suggestions") == 1
+        assert _in_cache_files(tmp_path, "Zanzibar") == []
+        assert _in_cache_files(tmp_path, "Quokka")
+        assert cache.clear() == 2
+        assert _in_cache_files(tmp_path, "Quokka") == [] and _in_cache_files(tmp_path, "Wombat") == []
+
+
+async def test_prune_leaves_no_readable_copy_in_the_files(tmp_path):
+    clock = Clock()
+    async with httpx.AsyncClient() as client:
+        cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+        cache._store(RequestSpec("GET", URL, params={"q": "1234 Zanzibar"}), "suggestions", {"x": 1}, clock.now, 10, None, ())
+        cache._store(RequestSpec("GET", URL, params={"q": "5678 Quokka"}), "demo", {"x": 1}, clock.now, 10, None, ())
+        clock.now += 100
+        assert cache.prune({"suggestions"}, (), older_than=50) == 1
+        assert _in_cache_files(tmp_path, "Zanzibar") == []
+        assert _in_cache_files(tmp_path, "Quokka")
+
+
 async def test_dates_and_stats_are_read_from_covering_indexes(tmp_path):
     async with httpx.AsyncClient() as client:
         cache = HttpCache(tmp_path / "c.sqlite3", client)
