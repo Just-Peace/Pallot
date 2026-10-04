@@ -146,10 +146,10 @@ def test_the_ballot_settings_and_the_pages_list(client, upstream):
     assert client.post("/api/sources/examplepac/clear").status_code == 400
     assert client.post("/api/cache/clear").status_code == 200  # Clear all leaves it be
 
-    assert client.get("/api/endorsements").json() == [{
+    assert [found for found in client.get("/api/endorsements").json() if not found["live"]] == [{
         "source": "examplepac", "label": "Example PAC", "organization": "Example Peace Action Committee",
         "url": "https://example.org/endorsements", "captured": "2026-09-20",
-        "description": "A made-up organization's endorsements, for the tests.", "enabled": True,
+        "description": "A made-up organization's endorsements, for the tests.", "live": False, "enabled": True,
     }]
 
 
@@ -161,10 +161,11 @@ def test_turned_off_it_adds_no_cards_and_stays_off(make_app, tmp_path):
         row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "examplepac")
         assert row["enabled"] is False and row["last_use"]["status"] == "off"
     with TestClient(make_app()) as client:
-        assert client.get("/api/endorsements").json()[0]["enabled"] is False
+        assert next(found for found in client.get("/api/endorsements").json() if found["source"] == "examplepac")[
+            "enabled"] is False
     with TestClient(make_app(endorsements_dir=tmp_path / "none")) as client:  # its file gone: its switch is ignored
         assert "examplepac" not in [s["id"] for s in client.get("/api/sources").json()["sources"]]
-        assert client.get("/api/endorsements").json() == []
+        assert [found["source"] for found in client.get("/api/endorsements").json() if not found["live"]] == []
 
 
 def test_settings_only_keep_switches_for_known_sources(tmp_path):

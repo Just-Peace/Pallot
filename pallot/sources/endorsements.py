@@ -2,11 +2,13 @@
 pallot/endorsements/, captured once and never fetched (no scraper, no Refresh). Each file is its
 own source, found in the folder at startup, so adding an organization is adding its file: it gets
 a switch and a row in Settings, a card on each candidate it endorses, and a condition in Pick by
-rule. Entries are matched to the ballot's races like Vote for Peace's (seats.py).
+rule. Entries are matched to the ballot's races like Vote for Peace's (seats.py). A live feed
+(endorsement_feeds.py) builds the same EndorsementList from an organization's own JSON instead.
 """
 
 from __future__ import annotations
 
+import asyncio
 import datetime as dt
 import json
 import re
@@ -41,7 +43,8 @@ class BadList(ValueError):
 @dataclass
 class EndorsementList:
     """One organization's list. ``entries`` are its candidates in seats.entry_seats' shape
-    (``office_title``, ``level``), each with its place in the file as ``entry_id``."""
+    (``office_title``, ``level``), each with its place in the file as ``entry_id``. ``live``: a
+    feed's copy, whose ``captured`` is the day it was fetched."""
 
     source: str
     label: str
@@ -50,6 +53,7 @@ class EndorsementList:
     captured: str  # ISO date
     description: str
     entries: list[dict[str, Any]]
+    live: bool = False
     _indexes: dict[str, NameIndex] = field(default_factory=dict, repr=False)
     busy = False  # never downloads
 
@@ -95,6 +99,17 @@ class EndorsementList:
 
     # -- the ballot ---------------------------------------------------------------------------
 
+    async def lookup(
+        self,
+        races: list[Race],
+        scopes: dict[str, OfficeScope],
+        county: str | None,
+        bp_ballot: BpBallot | None = None,
+        state: str = "TX",
+    ) -> CardSet:
+        """cards() in a thread, as enrich.run asks every list and feed."""
+        return await asyncio.to_thread(self.cards, races, scopes, county, bp_ballot, state)
+
     def cards(
         self,
         races: list[Race],
@@ -116,7 +131,8 @@ class EndorsementList:
         ]
         if entry.get("party"):
             facts.append(Fact(label="Party on the list", value=entry["party"]))
-        facts.append(Fact(label="List captured", value=display_date(self.captured) or self.captured))
+        facts.append(Fact(label="List fetched" if self.live else "List captured",
+                          value=display_date(self.captured) or self.captured))
         return SourceCard(
             source=self.source,
             label=self.label,
@@ -141,7 +157,8 @@ def _text(value: Any, where: str, *, optional: bool = False) -> str | None:
     return value.strip()
 
 
-def _entry(raw: Any, number: int, where: str) -> dict[str, Any]:
+def read_entry(raw: Any, number: int, where: str) -> dict[str, Any]:
+    """One candidate in a file's (or a feed adapter's) shape, checked, in seats.entry_seats' shape."""
     where = f"{where}: candidates[{number}]"
     if not isinstance(raw, dict):
         raise BadList(f"{where} must be an object")
@@ -195,7 +212,7 @@ def parse(path: Path) -> EndorsementList:
         raise BadList(f"{where}: candidates must be a list with at least one candidate")
     return EndorsementList(
         source=source, label=label, organization=organization, url=url, captured=captured, description=description,
-        entries=[_entry(entry, number, where) for number, entry in enumerate(candidates)],
+        entries=[read_entry(entry, number, where) for number, entry in enumerate(candidates)],
     )
 
 

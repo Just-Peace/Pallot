@@ -70,7 +70,7 @@ def test_capitol_ballot(client):
     profile = next(b for b in card_of(paxton, "ballotpedia")["badges"] if b["text"] == "Ballotpedia profile")
     assert profile["url"].startswith("https://ballotpedia.org/")
     talarico = senate["candidates"][1]
-    assert sources_of(talarico)[-3:] == ["trackaipac", "voteforpeace", "examplepac"]  # the endorsement lists last
+    assert sources_of(talarico)[-4:] == ["trackaipac", "voteforpeace", "emgage", "examplepac"]  # the endorsement lists last
     vfp = card_of(talarico, "voteforpeace")
     assert (vfp["match"]["confidence"], vfp["flags"]) == ("exact", ["ally"])
     assert vfp["badges"][0]["text"] == "Vote for Peace: Ally" and vfp["url"].endswith("/texas/james-talarico")
@@ -83,7 +83,7 @@ def test_capitol_ballot(client):
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
-                        "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "fec": "used",
+                        "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "mupac": "used", "cair": "used", "emgage": "used", "fec": "used",
                         "tec": statuses["tec"], "polls": "used", "election_precincts": "used",
                         "county_precincts": "used"}
     # (suggestions are asked for while typing, the map after)

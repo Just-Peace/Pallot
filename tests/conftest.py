@@ -2,8 +2,10 @@
 served through respx, made-up SBOE and precinct maps and counties' lists of their precincts, and a
 Pallot app on a temp data dir
 with "today" pinned, no waits between calls to a source, an FEC API key, the TrackAIPAC,
-Vote for Peace and Texas Ethics Commission fixture snapshots, and a made-up endorsement list
-(tests/fixtures/endorsements) in place of the ones that come with Pallot."""
+Vote for Peace and Texas Ethics Commission fixture snapshots, a made-up endorsement list
+(tests/fixtures/endorsements) in place of the ones that come with Pallot, and each live endorsement
+feed's recorded list (tests/fixtures/endorsement_feeds/<source>.json, and the page with its token,
+<source>.html)."""
 
 from __future__ import annotations
 
@@ -27,6 +29,7 @@ from pallot.api import create_app
 from pallot.config import Config
 from pallot.sources import ballotpedia, suggestions
 from pallot.sources.census import normalize_address
+from pallot.sources.endorsement_feeds import FEEDS
 from pallot.sources.election_precincts import read_prj
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -42,6 +45,9 @@ ADDRESSES = {
 }
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}  # as in scripts/record_fixtures.py
 PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only its bytes matter
+FEED_URLS = {feed.api: feed.source for feed in FEEDS}
+FEED_PAGES = {feed.url: feed.source for feed in FEEDS if feed.token}
+FEED_TOKEN = "recorded-token"  # the token in a feed's recorded page; its endpoint refuses any other
 
 
 @functools.cache
@@ -269,6 +275,11 @@ class Upstream:
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
         self.candidates_down: set[int] = set()  # election ids whose statewide candidate list answers HTTP 500
         self.county_status: int | None = None  # e.g. 403 when a county's map server refuses us
+        self.feed_status: int | None = None  # e.g. 429 when an organization's website refuses us
+        self.feed_answers: dict[str, Any] = {}  # feed source id -> its answer, in place of the recorded one
+        self.feed_page_status: int | None = None  # e.g. 403 when the page with a feed's token refuses us
+        self.feed_pages: dict[str, str] = {}  # feed source id -> its page, in place of the recorded one
+        self.feed_tokens: list[str | None] = []  # the token each request to a feed that wants one carried
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
         self.arcgis: dict[str, dict[str, Any]] = {
@@ -384,6 +395,23 @@ class Upstream:
             return httpx.Response(200, content=PNG, headers={"content-type": "image/png"})
         if url.host in self.arcgis:
             return self._arcgis(request)
+        page = FEED_PAGES.get(f"{url.scheme}://{url.host}{url.path}")
+        if page:
+            if self.feed_page_status:
+                return httpx.Response(self.feed_page_status)
+            text = self.feed_pages.get(page) or fixture_bytes(f"endorsement_feeds/{page}.html").decode()
+            return httpx.Response(200, text=text, headers={"content-type": "text/html"})
+        feed = FEED_URLS.get(f"{url.scheme}://{url.host}{url.path}")
+        if feed:
+            if feed in FEED_PAGES.values():
+                self.feed_tokens.append(request.headers.get("requestverificationtoken"))
+                if self.feed_tokens[-1] != FEED_TOKEN:
+                    return httpx.Response(500, json={"Message": "An error has occurred."})
+            if self.feed_status:
+                return httpx.Response(self.feed_status)
+            if feed in self.feed_answers:
+                return httpx.Response(200, json=self.feed_answers[feed])
+            return _file(f"endorsement_feeds/{feed}.json")
         raise AssertionError(f"unexpected request: {request.method} {url}")
 
     def _arcgis(self, request: httpx.Request) -> httpx.Response:

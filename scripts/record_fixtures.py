@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
@@ -10,7 +10,9 @@ district outlines four (TIGERweb's layer list, and the Capitol's three districts
 election precincts one (the Texas Legislative Council portal's list of precinct maps; the
 tests make up the map itself), and the county precincts four (Travis's and Harris's lists of their
 map services, and the service each county's list of election precincts is in; the tests make up
-the lists themselves, from the made-up map).
+the lists themselves, from the made-up map), and the endorsement feeds one each (an organization's
+whole public list, as served), two for a feed with a token (its page first, kept as only its meta
+tags, the token's value replaced by TOKEN).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -41,6 +43,7 @@ from pallot.sources import (  # noqa: E402
     ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, polls, sos, suggestions,
     tigerweb,
 )
+from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -53,6 +56,7 @@ ADDRESSES = {
 }
 ELECTIONS = {53815: 2026, 66734: 2026, 66618: 2026}  # Nov 3, 2026: general + two specials
 COUNTIES = {227: "travis", 101: "harris"}
+TOKEN = "recorded-token"  # in place of the token an endorsement feed's page hands out
 BALLOTPEDIA_AT = ("capitol",)
 TRACKAIPAC_PEOPLE = (
     "tx-ken-paxton", "tx-james-talarico", "tx-august-pfluger", "tx-greg-casar", "tx-lloyd-doggett",
@@ -250,6 +254,26 @@ def record_county_precincts(client: httpx.Client) -> None:
              get(f"{county_precincts.services_root(layer.folder)}/{service['name']}/{layer.server}"))
 
 
+def record_endorsement_feeds(client: httpx.Client) -> None:
+    """Each live endorsement feed's whole list, as Pallot asks for it, into endorsement_feeds/<source>.json."""
+    for feed in FEEDS:
+        headers = dict(feed.headers or {})
+        if feed.token:
+            page = client.get(feed.url)
+            page.raise_for_status()
+            token = feed.token(page.text)
+            headers.update(token)
+            kept = "".join(re.findall(r"<meta\b[^>]*>", page.text, re.IGNORECASE))
+            for value in token.values():
+                kept = kept.replace(value, TOKEN)
+            path = FIXTURES / f"endorsement_feeds/{feed.source}.html"
+            path.write_text(f"<!DOCTYPE html>\n<html><head>{kept}</head><body></body></html>\n", encoding="utf-8", newline="\n")
+            print(f"endorsement_feeds/{feed.source}.html: {path.stat().st_size:,} bytes")
+        response = client.get(feed.api, headers=headers)
+        response.raise_for_status()
+        save(f"endorsement_feeds/{feed.source}.json", response.json())
+
+
 def record_tec() -> None:
     """The bundled TEC snapshot's filers and outside spending for the Travis ballot's state races."""
     bundled = ROOT / "tec_cache" / "data"
@@ -288,7 +312,7 @@ def record_voteforpeace() -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
     parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "election_precincts",
-                                           "county_precincts", "tec", "trackaipac", "voteforpeace"),
+                                           "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
@@ -309,6 +333,8 @@ def main(argv: list[str] | None = None) -> int:
             record_election_precincts(client)
         if only in (None, "county_precincts"):
             record_county_precincts(client)
+        if only in (None, "endorsement_feeds"):
+            record_endorsement_feeds(client)
     if only in (None, "tec"):
         record_tec()
     if only in (None, "trackaipac"):

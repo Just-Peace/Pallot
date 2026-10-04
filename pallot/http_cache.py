@@ -20,6 +20,11 @@ UpstreamError meanwhile. A source can also be paused as a whole when it answers 
 statuses (Ballotpedia refusing us, the FEC's rate limit): while paused, whatever is stored is
 served and nothing is fetched, not even by refresh().
 
+A source whose site hands out a token it rotates (headers_from_page) has a page fetched just
+before each of its requests is sent, and the headers read from it sent with that request; the
+page is never stored, and the headers are kept out of the stored request and the key, as
+``source_headers`` are. A stored answer that's still fresh fetches no page.
+
 Cached values are shared between callers: treat them as read-only.
 """
 
@@ -112,6 +117,10 @@ class _Stored:
     value: Any
 
 
+class Unreadable(ValueError):
+    """An answer a reader refuses; its message says why, for people (never a header's value)."""
+
+
 class UpstreamError(Exception):
     """A source could not be reached, or is paused (``until``), and nothing was cached to
     fall back on."""
@@ -183,6 +192,8 @@ def value_is_empty(value: Any, path: tuple[str, ...] = ()) -> bool:
 
 
 def describe_error(exc: Exception) -> str:
+    if isinstance(exc, Unreadable):
+        return str(exc)
     if isinstance(exc, httpx.HTTPStatusError):
         return f"HTTP {exc.response.status_code}"
     if isinstance(exc, httpx.TimeoutException):
@@ -240,6 +251,7 @@ class HttpCache:
         self._retry_after = retry_after
         self._pause_on: dict[str, tuple[frozenset[int], float]] = {}
         self._checks: dict[str, Callable[[Any], str | None]] = {}
+        self._pages: dict[str, tuple[RequestSpec, Callable[[str], dict[str, str]]]] = {}
 
     def close(self) -> None:
         self._db.close()
@@ -306,13 +318,13 @@ class HttpCache:
         until = self.paused_until(source)
         if until:
             raise UpstreamError(source, f"paused until {iso_utc(until)}", until=until)
-        await self._throttle(source)
-        stats = current_calls()
-        if stats:
-            stats.called(source)
-        headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
         written = 0
         try:
+            headers = await self._headers(source, spec)
+            await self._throttle(source)
+            stats = current_calls()
+            if stats:
+                stats.called(source)
             async with self._client.stream(
                 spec.method, spec.url, params=spec.params, json=spec.json, headers=headers
             ) as response:
@@ -349,6 +361,12 @@ class HttpCache:
 
     def paused_until(self, source: str) -> float | None:
         return self.flag_until(_pause_flag(source))
+
+    def headers_from_page(self, source: str, page: RequestSpec, read: Callable[[str], dict[str, str]]) -> None:
+        """Before each request of ``source`` is sent, fetch ``page`` (paused, throttled and counted
+        as the source's, never stored) and send the headers ``read`` finds in its text with it,
+        never stored either: a token the site rotates. ``read`` raises Unreadable when it finds none."""
+        self._pages[source] = (page, read)
 
     def check_answers(self, source: str, check: Callable[[Any], str | None]) -> None:
         """Refuse an answer of ``source`` that ``check`` finds wrong (it returns why, or None
@@ -411,16 +429,25 @@ class HttpCache:
         return Cached(stored.value, stored.fetched_at, stale=True)
 
     async def _request(self, source: str, spec: RequestSpec) -> Any:
+        response = await self._send(source, spec, await self._headers(source, spec))
+        if spec.as_bytes:
+            return base64.b64encode(response.content).decode("ascii")
+        return response.text if spec.as_text else response.json()
+
+    async def _headers(self, source: str, spec: RequestSpec) -> dict[str, str] | None:
+        """What ``spec`` is sent with: its own headers, the source's, and any read from its page."""
+        page = self._pages.get(source)
+        found = page[1]((await self._send(source, page[0], page[0].headers)).text) if page else {}
+        return {**(spec.headers or {}), **self._source_headers.get(source, {}), **found} or None
+
+    async def _send(self, source: str, spec: RequestSpec, headers: dict[str, str] | None) -> httpx.Response:
         await self._throttle(source)
         stats = current_calls()
         if stats:
             stats.called(source)
-        headers = {**(spec.headers or {}), **self._source_headers.get(source, {})} or None
         response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=headers)
         response.raise_for_status()
-        if spec.as_bytes:
-            return base64.b64encode(response.content).decode("ascii")
-        return response.text if spec.as_text else response.json()
+        return response
 
     async def _throttle(self, source: str) -> None:
         interval = self._min_interval.get(source)

@@ -36,6 +36,7 @@ from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts
+from .sources.endorsement_feeds import FEEDS, make_feeds
 from .sources.endorsements import ENDORSEMENTS_DIR, load_all
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
@@ -53,7 +54,7 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
 MIN_INTERVAL = {
     "nominatim": 1.0, "suggestions": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
-    "sboe": 1.0, "county_precincts": 0.25,
+    "sboe": 1.0, "county_precincts": 0.25, **{feed.source: 1.0 for feed in FEEDS},
 }
 
 
@@ -150,7 +151,11 @@ def create_app(
                     cache.prune, {suggestions.SOURCE, osm_tiles.SOURCE}, {census.SOURCE, nominatim.SOURCE},
                     config.ttl.prune_after,
                 )
-                lists = load_all(endorsements_dir, reserved={info.id for info in SOURCES})
+                lists = sorted(
+                    [*load_all(endorsements_dir, reserved={info.id for info in SOURCES} | {f.source for f in FEEDS}),
+                     *make_feeds(cache, config.ttl)],
+                    key=lambda found: found.label.lower(),
+                )
                 svc = Services(
                     config=config,
                     settings=Settings(config.settings_path, (found.source for found in lists)),
@@ -306,13 +311,13 @@ def create_app(
 
     @app.get("/api/endorsements", response_model=list[EndorsementListInfo])
     def endorsements(request: Request) -> list[EndorsementListInfo]:
-        """The endorsement lists that came with Pallot, for About, the FAQ and the welcome steps,
-        which list them without naming any in their HTML."""
+        """The endorsement lists that came with Pallot and the live feeds, for About, Privacy, the
+        FAQ and the welcome steps, which list them without naming any in their HTML."""
         svc = services(request)
         return [
             EndorsementListInfo(
                 source=found.source, label=found.label, organization=found.organization, url=found.url,
-                captured=found.captured, description=found.description,
+                captured=found.captured, description=found.description, live=found.live,
                 enabled=svc.settings.enabled(found.source),
             )
             for found in svc.endorsements

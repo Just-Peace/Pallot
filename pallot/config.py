@@ -49,6 +49,8 @@ class Ttls:
     election_precincts_backoff: int = HOUR  # after the TLC portal refuses us, stop asking for this long
     county_precincts: int = 7 * DAY  # counties' lists of their election precincts and maps of commissioner and JP precincts
     county_precincts_backoff: int = HOUR  # after a county's map server refuses us, stop asking them for this long
+    endorsement_feeds: int = 7 * DAY  # organizations' live endorsement lists (endorsement_feeds.py)
+    endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # at startup, delete suggestions and addresses not found that expired this long ago
 

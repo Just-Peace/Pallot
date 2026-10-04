@@ -17,7 +17,7 @@ from .models import Race, SourceCard
 from .offices import OfficeScope
 from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac, voteforpeace
 from .sources.ballotpedia import BpBallot, BpRace
-from .sources.endorsements import EndorsementList
+from .sources.endorsement_feeds import EndorsementSource, FeedUnavailable
 from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ async def run(
     sos_lookups: Lookups | None,
     use_trackaipac: bool,
     use_voteforpeace: bool = False,
-    endorsements: Sequence[EndorsementList] = (),
+    endorsements: Sequence[EndorsementSource] = (),
     use_fec: bool = False,
     use_tec: bool = False,
     use_polls: bool = False,
@@ -82,7 +82,7 @@ async def run(
             voteforpeace.cards, svc.voteforpeace, races, scopes or {}, county, bp_ballot
         )
     for found in endorsements:
-        jobs[found.source] = asyncio.to_thread(found.cards, races, scopes or {}, county, bp_ballot, state or "TX")
+        jobs[found.source] = found.lookup(races, scopes or {}, county, bp_ballot, state or "TX")
     if use_fec:
         jobs[fec.SOURCE] = fec.cards(svc.fec, races, day)
     if use_tec:
@@ -99,6 +99,10 @@ async def run(
         if source in UNAVAILABLE and isinstance(cards, UNAVAILABLE[source][0]):
             outcome.errors[source] = str(cards)
             outcome.warnings.append(UNAVAILABLE[source][1].format(cards))
+            continue
+        if isinstance(cards, FeedUnavailable):
+            outcome.errors[source] = str(cards)
+            outcome.warnings.append(cards.warning)
             continue
         if isinstance(cards, BaseException):
             raise cards
