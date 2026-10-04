@@ -395,9 +395,12 @@ class ElectionPrecincts:
 
     One download runs at a time, whoever starts it. One that fails isn't started again by a
     lookup until the index lists a changed map, or for a week (15 minutes while no map is kept);
-    Refresh always tries."""
+    a refresh always tries. pallot-cache refreshes it from another process, so when map.json
+    changes on disk, the map it names is read again.
 
-    def __init__(self, cache: HttpCache, ttl: Ttls, folder: Path, *, first_wait: float = FIRST_WAIT):
+    ``tidy``: remove what an interrupted download or swap left behind (the server, at startup)."""
+
+    def __init__(self, cache: HttpCache, ttl: Ttls, folder: Path, *, first_wait: float = FIRST_WAIT, tidy: bool = True):
         self.cache = cache
         self.ttl = ttl
         self.folder = folder
@@ -405,12 +408,14 @@ class ElectionPrecincts:
         self.last_error: str | None = None  # why the last download failed, until one succeeds
         self._lock = threading.Lock()
         self._stored: Stored | None = None
+        self._signature: tuple[int, int] | None = None  # map.json's when _stored was read
         self._index: dict[int, list[Record]] | None = None
         self._outlines: dict[tuple[int, str], list[Ring]] = {}
         self._interiors: dict[tuple[int, str, float], list[tuple[float, float]]] = {}
         self._task: asyncio.Future[None] | None = None
         cache.pause_on(SOURCE, REFUSALS, ttl.election_precincts_backoff)
-        self._tidy()
+        if tidy:
+            self._tidy()
 
     # -- lookups ----------------------------------------------------------------------------
 
@@ -529,17 +534,29 @@ class ElectionPrecincts:
     # -- the map kept -----------------------------------------------------------------------
 
     def stored(self) -> Stored | None:
-        """The map kept. Once known, without waiting for _lock, so the event loop never waits on a
-        thread reading the map."""
+        """The map kept. Once known, and while map.json is unchanged, without waiting for _lock, so
+        the event loop never waits on a thread reading the map."""
         stored = self._stored
-        if stored is not None:
+        if stored is not None and self._map_signature() == self._signature:
             return stored
         with self._lock:
             return self._stored_now()
 
+    def _map_signature(self) -> tuple[int, int] | None:
+        try:
+            stat = (self.folder / MAP_FILE).stat()
+        except OSError:
+            return None
+        return stat.st_mtime_ns, stat.st_size
+
     def _stored_now(self) -> Stored | None:
-        """map.json, read once, if its files are there; the caller holds _lock."""
+        """map.json, read once (again when another process rewrote or removed it), if its files
+        are there; the caller holds _lock."""
+        signature = self._map_signature()
+        if self._stored is not None and signature != self._signature:
+            self._stored, self._index, self._outlines, self._interiors = None, None, {}, {}
         if self._stored is None:
+            self._signature = signature
             try:
                 raw = json.loads((self.folder / MAP_FILE).read_text(encoding="utf-8"))
                 stored = Stored(Resource(**raw["resource"]), raw["stem"], float(raw["downloaded_at"]),
@@ -574,6 +591,7 @@ class ElectionPrecincts:
         """Remove the map; the next lookup downloads it again. Settings refuses while downloading."""
         with self._lock:
             self._stored, self._index, self._outlines, self._interiors = None, None, {}, {}
+            self._signature = None
             if self.folder.exists():
                 for path in self.folder.iterdir():
                     if path.is_file():
@@ -596,7 +614,7 @@ class ElectionPrecincts:
         if self.busy:
             return "Downloading the precinct map…", "info"
         if self.last_error:
-            kept = "the map kept still shows" if self.stored() else "Refresh tries again"
+            kept = "the map kept still shows" if self.stored() else "lookups try again later"
             return f"The last download of the precinct map failed ({self.last_error}); {kept}.", "warn"
         return None
 
@@ -611,9 +629,13 @@ class ElectionPrecincts:
             Fact(label="Newest on the portal", value=f"“{listed.label}” · {display_size(listed.size)}" if listed else "not asked yet"),
         ]
 
-    def refresh_size(self) -> int | None:
-        listed = self.newest_listed()
-        return listed.size if listed else None
+    def stale(self) -> str | None:
+        stored, listed = self.stored(), self.newest_listed()
+        if stored is None:
+            return "the precinct map isn't downloaded yet"
+        if listed and listed.newer_than(stored.resource):
+            return f"the portal lists a newer precinct map, “{listed.label}” ({display_size(listed.size)})"
+        return None
 
     async def refresh(self) -> str:
         """update(), with a failure worded for Settings."""
@@ -627,7 +649,7 @@ class ElectionPrecincts:
     # -- downloading ------------------------------------------------------------------------
 
     async def update(self) -> str:
-        """For Refresh: download the newest map if it's newer than the one kept, even one that
+        """For a refresh: download the newest map if it's newer than the one kept, even one that
         failed before, and say what happened."""
         resource = await self._newest()
         if resource is None:
@@ -754,6 +776,7 @@ class ElectionPrecincts:
                 "projection": asdict(projection),
             }, indent=1) + "\n")
             self._stored, self._index, self._outlines, self._interiors = stored, index, {}, {}
+            self._signature = self._map_signature()
             if old and old.stem != stem:
                 for ext in SHAPEFILE:
                     old.file(self.folder, ext).unlink(missing_ok=True)

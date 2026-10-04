@@ -4,7 +4,7 @@ The browser asks Pallot for a tile (GET /api/tiles/{z}/{x}/{y}.png) and Pallot a
 tile.openstreetmap.org, keeping each tile for 7 days. That's what OSM's tile usage policy
 asks of a proxy: a User-Agent that names Pallot (Config.user_agent), tiles kept at least 7
 days, and only the tiles someone is looking at. A prefetch or a bulk re-download is
-forbidden, so the source has Clear in Settings but no Refresh. Only tiles over Texas are
+forbidden, so pallot-cache never refreshes them: it only prunes them. Only tiles over Texas are
 asked for, so Pallot can't be used as a tile proxy for anywhere else.
 """
 

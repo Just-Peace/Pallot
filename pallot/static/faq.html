@@ -42,7 +42,7 @@
         <details class="faq" id="local-races">
           <summary>Why don't I see my city council or school board races?</summary>
           <div class="faq-body">
-            <p>Those races come from Ballotpedia, which is off until you turn it on under Sources in <a href="settings.html">Settings</a>. Its ballot is an unofficial endpoint meant for personal use, so Pallot doesn't ask it unless you choose to. While it's off, your ballot says so above the races, and the Texas Secretary of State's ballot still has every federal, state, district and county race.</p>
+            <p>Those races come from Ballotpedia, which is off until you turn it on under Sources in <a href="settings.html">Settings</a>. Its ballot is an unofficial endpoint meant for personal use, so Pallot doesn't ask it unless you choose to. While it's off, your ballot says so above the races, and the Texas Secretary of State's ballot still has every federal, state, district and county race. Your switches in Settings are kept in this browser, so turning a source on or off changes only your ballot, not anyone else's using the same Pallot.</p>
           </div>
         </details>
 
@@ -222,7 +222,7 @@
         <details class="faq" id="endorsements">
           <summary>What are the endorsement lists?</summary>
           <div class="faq-body">
-            <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. Others it fetches from the organization's own website, at most once a week, so they follow the organization's changes; Settings shows when each was last fetched, and its Refresh fetches it at once. A candidate on a list has an "Endorsed by" badge, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
+            <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. Others it fetches from the organization's own website, at most once a week, so they follow the organization's changes; Settings shows when each was last fetched. A candidate on a list has an "Endorsed by" badge, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
             <p>The lists can cover the whole country. Pallot keeps every state, and uses only the candidates in your address's state (Texas, for now), matched by name with the office and district, or the county, to confirm, like Vote for Peace's. A list can still name a district from before Texas redrew its maps: the candidate is then only a likely match, and the card says which district the list names. Each list has its own switch in <a href="settings.html">Settings</a>, and Pick by rule can pick the candidates a list endorses.</p>
             <ul><template data-endorsements="list"></template></ul>
             <p data-endorsements="none" hidden>This copy of Pallot comes with no endorsement lists yet.</p>
@@ -233,8 +233,8 @@
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
             <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. Address suggestions, and addresses that weren't found, are no use as an old copy, so Pallot deletes them the first time it starts once they've been expired for 30 days.</p>
-            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when you press Refresh; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
-            <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
+            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when whoever runs Pallot refreshes them; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
+            <p>Settings shows how old each source's copy is, but can't fetch it again: anyone who opens Pallot can open Settings, so only whoever runs Pallot can, on the computer it runs on (the README's "Keeping the cache").</p>
           </div>
         </details>
 
@@ -294,7 +294,7 @@
 
             <h3>How fresh it is</h3>
             <ul>
-              <li>Pallot keeps the FEC's answers for 7 days, then asks again. Refresh on the FEC in <a href="settings.html">Settings</a> asks right away.</li>
+              <li>Pallot keeps the FEC's answers for 7 days, then asks again. Whoever runs Pallot can have it ask right away.</li>
               <li>A report shows up in the FEC's API once the FEC has processed it, so the newest one may not be counted yet. The "reports through" date says which report the figures reach.</li>
             </ul>
 
@@ -310,7 +310,7 @@
         <details class="faq" id="tec-money">
           <summary>How are the Texas Ethics Commission figures put together?</summary>
           <div class="faq-body">
-            <p>The Texas Ethics Commission publishes every campaign finance report filed with it as one download (about 1 GB), updated nightly. Pallot boils it down to a much smaller summary, which comes with Pallot and is rebuilt only when you press Refresh on the Texas Ethics Commission in <a href="settings.html">Settings</a>. Settings shows the date of the summary and the date its money starts from.</p>
+            <p>The Texas Ethics Commission publishes every campaign finance report filed with it as one download (about 1 GB), updated nightly. Pallot boils it down to a much smaller summary, which comes with Pallot and is rebuilt only when whoever runs Pallot refreshes it. Settings shows the date of the summary and the date its money starts from.</p>
 
             <h3>Which candidates</h3>
             <ul>
@@ -350,7 +350,7 @@
               <li>Texas has no contribution limits for most state offices, so one donor can give a lot; judicial races do have limits.</li>
               <li>Donors are added up by name as written: "Bob Smith" and "Robert Smith" in the same state are two donors, and two different people with the same name in the same state are one.</li>
               <li>The Texas Ethics Commission doesn't record whether outside spending supported or opposed the candidate.</li>
-              <li>The summary is only as new as its date in Settings. Reports filed since then appear after a Refresh.</li>
+              <li>The summary is only as new as its date in Settings. Reports filed since then appear once whoever runs Pallot refreshes it.</li>
               <li>Officeholders' personal financial statements aren't online. Each candidate's TEC tab links to how to request one.</li>
             </ul>
           </div>
@@ -378,7 +378,7 @@
             <ul>
               <li>they haven't filed a report yet, or haven't raised or spent enough to have to (a congressional campaign starts reporting to the FEC after $5,000);</li>
               <li>their name is written differently in the reports than on the ballot, and Pallot leaves out a match it isn't sure of;</li>
-              <li>for state races, the Texas Ethics Commission summary is older than their first report: press Refresh on it in <a href="settings.html">Settings</a>.</li>
+              <li>for state races, the Texas Ethics Commission summary is older than their first report, until whoever runs Pallot refreshes it.</li>
             </ul>
             <p>The "Open FEC" or "Open TEC" link under the money box goes to the source's own search, where you can try other spellings.</p>
           </div>
@@ -452,8 +452,8 @@
         <details class="faq">
           <summary>How do I delete my picks and my address?</summary>
           <div class="faq-body">
-            <p>Under Data in <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins and pick rule from this browser, and "Clear browser data" also deletes your remembered address, appearance, search engine and view choices. "Clear all my data" does that and also clears everything the server saved from the sources; Undo puts back only this browser's part. "Clear picks" at the top of your ballot clears just that election's picks and notes, and "Clear" in a race's heading takes back that race's pick. All of them offer Undo for a few seconds, in case you didn't mean it.</p>
-            <p>The Pallot server also keeps a copy of address lookups and suggestions. <a href="privacy.html#server">Privacy</a> explains how to clear it.</p>
+            <p>Under Data in <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins and pick rule from this browser, and "Clear browser data" also deletes your remembered address, sources, appearance, search engine and view choices. "Clear picks" at the top of your ballot clears just that election's picks and notes, and "Clear" in a race's heading takes back that race's pick. All of them offer Undo for a few seconds, in case you didn't mean it.</p>
+            <p>The Pallot server also keeps a copy of address lookups and suggestions, which only whoever runs Pallot can clear. <a href="privacy.html#server">Privacy</a> explains how.</p>
           </div>
         </details>
       </section>

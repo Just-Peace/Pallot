@@ -1,4 +1,9 @@
-// JSON calls to the Pallot backend, with FastAPI's error detail surfaced as the message.
+// JSON calls to the Pallot backend, with FastAPI's error detail surfaced as the message. Each
+// carries the voter's choice of sources (kept in this browser), so the server uses theirs.
+
+import { sourceChoices } from "./storage.js";
+
+const SOURCES_HEADER = "X-Pallot-Sources";
 
 // ``signal`` (an AbortController's) cancels the call; the AbortError is passed on as it is.
 async function request(method, url, body, { signal } = {}) {
@@ -6,7 +11,10 @@ async function request(method, url, body, { signal } = {}) {
   try {
     response = await fetch(url, {
       method,
-      headers: body === undefined ? {} : { "Content-Type": "application/json" },
+      headers: {
+        [SOURCES_HEADER]: JSON.stringify(sourceChoices()),
+        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      },
       body: body === undefined ? undefined : JSON.stringify(body),
       signal,
     });
@@ -31,5 +39,4 @@ async function request(method, url, body, { signal } = {}) {
 export const api = {
   get: (url, options) => request("GET", url, undefined, options),
   post: (url, body = {}, options) => request("POST", url, body, options),
-  put: (url, body) => request("PUT", url, body),
 };

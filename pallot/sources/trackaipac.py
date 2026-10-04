@@ -2,7 +2,7 @@
 
 The package ships a snapshot of the site. We copy it into data/trackaipac on first use,
 so it works offline without calling trackaipac.com, and only fetch the site when asked
-from the Settings page (the package's refresh() validates before writing and writes only
+with pallot-cache (the package's refresh() validates before writing and writes only
 when the site changed). Its members of Congress are listed by current seat, so matching
 to the 2026 ballot goes by name first (see matching.match_trackaipac).
 """

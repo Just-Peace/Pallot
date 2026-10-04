@@ -3,7 +3,7 @@
 The package ships a snapshot built from TEC's nightly CSV export: for each state candidate
 and officeholder, the totals of their regular reports since the last November general
 election, their itemized donations broken down, and outside spending that named them. We
-copy it into data/tec on first use, so ballot lookups never call TEC. Refresh in Settings
+copy it into data/tec on first use, so ballot lookups never call TEC. pallot-cache's hard refresh
 rebuilds it from TEC's zip in a separate process (a big download; see tec_cache), or from
 a zip the voter downloaded into data/tec/TEC_CF_CSV.zip.
 

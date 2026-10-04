@@ -7,6 +7,8 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from pallot import settings
+
 from .conftest import get_ballot
 
 
@@ -45,11 +47,11 @@ def test_warm_up_never_downloads_a_missing_map(make_app, upstream, tmp_path):
         assert "TX" in svc.trackaipac._indexes  # the bundled snapshots are always kept
 
 
-def test_warm_up_skips_sources_turned_off(make_app, upstream):
+def test_warm_up_skips_sources_off_by_default(make_app, upstream, monkeypatch):
     with TestClient(make_app()) as client:
         get_ballot(client)
-        for source in ("election_precincts", "tec", "trackaipac", "voteforpeace"):
-            assert client.put(f"/api/sources/{source}", json={"enabled": False}).status_code == 200
+    for source in ("election_precincts", "tec", "trackaipac", "voteforpeace"):
+        monkeypatch.setitem(settings.DEFAULT_SOURCES, source, False)
     with TestClient(make_app()) as client:
         svc = warmed(client).state.svc
         assert svc.election_precincts._index is None

@@ -1,0 +1,32 @@
+# Which sources are on for a voter who hasn't changed them in Settings. A voter's own switches,
+# kept in their browser, win over these. To change them for everyone using your Pallot, don't
+# edit this file: put a sources.toml with the same [sources] table, listing only what you change,
+# in Pallot's data folder (PALLOT_DATA_DIR, data/ by default), and restart Pallot.
+#
+# The ids are the ones `uv run pallot-cache check` shows in brackets. The address lookup
+# (geocoding) is always on, so it isn't here. Every endorsement list and feed starts on unless
+# it's named here (or in the data folder's file) as false.
+
+[sources]
+# Address lookup & maps
+election_precincts = true   # the Texas Legislative Council's precinct map: your election precinct
+county_precincts = true     # seven counties' records: your commissioner and JP precincts
+tigerweb = true             # US Census TIGERweb: the outlines of your districts on the map
+osm_tiles = true            # OpenStreetMap: the street map under the outlines
+suggestions = true          # Ballotpedia's address search: suggestions as you type
+
+# Official ballot data
+sos = true                  # Texas Secretary of State: the ballot and candidate filings
+key_dates = true            # Texas Secretary of State: the election's key dates
+fec = true                  # FEC: money in congressional races
+tec = true                  # Texas Ethics Commission: money in state races
+
+# Third-party ballot data. Ballotpedia's terms forbid commercial scraping, so it starts off.
+ballotpedia = false
+
+# Third-party polls
+polls = true                # FiftyPlusOne
+
+# Third-party endorsements & scorecards
+trackaipac = true
+voteforpeace = false        # used with Organize for Peace's permission; turned on per voter

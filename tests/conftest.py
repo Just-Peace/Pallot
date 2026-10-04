@@ -9,6 +9,7 @@ feed's recorded list (tests/fixtures/endorsement_feeds/<source>.json, and the pa
 
 from __future__ import annotations
 
+import asyncio
 import copy
 import datetime as dt
 import functools
@@ -25,8 +26,10 @@ import pytest
 import respx
 from fastapi.testclient import TestClient
 
+from pallot import maintain
 from pallot.api import create_app
 from pallot import settings
+from pallot.settings import HEADER
 from pallot.config import Config
 from pallot.sources import ballotpedia, suggestions
 from pallot.sources.census import normalize_address
@@ -498,10 +501,10 @@ def make_app(tmp_path, upstream):
         tec_refreshed.append(kwargs)
         return FakeTecResult()
 
-    def build(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
-              fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements"):
-        return create_app(
-            Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, allowed_hosts=("testserver",)),
+    def options(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
+                fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements") -> dict[str, Any]:
+        return dict(
+            config=Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, allowed_hosts=("testserver",)),
             today=lambda: TODAY,
             trackaipac_bundled=FIXTURES / "trackaipac",
             trackaipac_refresh=refresh or fake_refresh,
@@ -513,8 +516,21 @@ def make_app(tmp_path, upstream):
             min_interval={},
         )
 
+    def build(*args: Any, **kwargs: Any):
+        return create_app(**options(*args, **kwargs))
+
+    def cache_command(command: str, *only: str, reset_snapshots: bool = False, delete_only: bool = False,
+                      **kwargs: Any) -> tuple[int, str]:
+        """pallot-cache's ``command`` on the same data (it may run while the app does): its exit
+        status and what it printed."""
+        lines: list[str] = []
+        status = asyncio.run(maintain.run(command, only, lines.append, reset_snapshots=reset_snapshots,
+                                          delete_only=delete_only, **options(**kwargs)))
+        return status, "\n".join(lines)
+
     build.refreshed = refreshed
     build.tec_refreshed = tec_refreshed
+    build.cache_command = cache_command
     return build
 
 
@@ -522,6 +538,13 @@ def make_app(tmp_path, upstream):
 def client(make_app):
     with TestClient(make_app()) as test_client:
         yield test_client
+
+
+def switch(client: TestClient, source: str, on: bool) -> None:
+    """Turn a source on or off for the client's later requests, as the page does: the voter's choices
+    in the header every call carries."""
+    chosen = json.loads(client.headers.get(HEADER) or "{}")
+    client.headers[HEADER] = json.dumps({**chosen, source: on})
 
 
 def get_ballot(client: TestClient, address: str = "capitol", **extra: Any) -> dict[str, Any]:

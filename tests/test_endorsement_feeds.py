@@ -17,7 +17,7 @@ from pallot.models import Candidate, Race
 from pallot.sources.endorsement_feeds import FEEDS, cair_action, emgage, meta_token, muslims_united
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, EndorsementList, read_entry
 
-from .conftest import FEED_TOKEN, fixture_bytes, get_ballot, last_use, load
+from .conftest import FEED_TOKEN, fixture_bytes, get_ballot, last_use, load, switch
 
 MUPAC = "mupac"
 FEED_HOST = "muslimsunitedpac.com"
@@ -226,32 +226,31 @@ def test_cair_matches_texas_candidates(client, upstream):
         ("Texas candidates", "17"), ("All candidates", "591 in 27 states")]
 
 
-def test_its_settings_row_refreshes_and_clears(client, upstream):
+def test_its_settings_row_and_pallot_cache_refreshes_and_rebuilds_it(client, make_app, upstream):
     get_ballot(client, "ut")
     found = row(client)
-    assert (found["label"], found["toggleable"], found["enabled"], found["frozen"], found["refreshable"],
-            found["resettable"], found["cache"]["entries"]) == (
-        "Muslims United PAC endorsements", True, True, False, True, False, 1)
+    assert (found["label"], found["toggleable"], found["enabled"], found["frozen"], found["bundled"],
+            found["cache"]["entries"]) == ("Muslims United PAC endorsements", True, True, False, False, 1)
     assert found["notice"].startswith("Fetched from [Muslims United PAC's website](https://muslimsunitedpac.com/endorsements) on ")
     assert found["notice"].endswith("; a lookup fetches it again once it's 7 days old.")
     assert [(f["label"], f["value"]) for f in found["details"]] == [
         ("Texas candidates", "3"), ("All candidates", "26 in 18 states")]
-    assert found["clear_confirm"] == "Clear everything cached from Muslims United PAC endorsements? The next lookup will fetch it again."
 
-    refreshed = client.post(f"/api/sources/{MUPAC}/refresh")
-    assert refreshed.status_code == 200
-    assert refreshed.json()["message"] == "Refreshed 1 cached response. 3 of its 26 candidates are in Texas."
+    refreshed = make_app.cache_command("hard-refresh", MUPAC)
+    assert refreshed == (0, "Muslims United PAC endorsements: Refreshed 1 saved response. 3 of its 26 candidates are in Texas.")
     assert upstream.count(FEED_HOST) == 2
 
-    cleared = client.post(f"/api/sources/{MUPAC}/clear").json()["message"]
-    assert cleared == "Cleared 1 cached response. The next lookup fetches the list again."
-    assert row(client)["details"] == []
+    rebuilt = make_app.cache_command("rebuild", MUPAC)[1]
+    assert rebuilt.startswith("Deleted 1 saved response, and what Muslims United PAC endorsements kept in files.")
+    assert upstream.count(FEED_HOST) == 3
     assert "Greg Casar" in cards_from(get_ballot(client, "ut")) and upstream.count(FEED_HOST) == 3
 
 
-def test_refresh_fetches_a_list_never_fetched(client, upstream):
-    message = client.post(f"/api/sources/{MUPAC}/refresh").json()["message"]
-    assert message == "Refreshed 0 cached responses. 3 of its 26 candidates are in Texas."
+def test_hard_refresh_fetches_a_list_never_fetched(make_app, upstream):
+    assert make_app.cache_command("refresh", MUPAC) == (0, "Muslims United PAC endorsements: nothing past its lifetime.")
+    assert upstream.count(FEED_HOST) == 0
+    message = make_app.cache_command("hard-refresh", MUPAC)[1]
+    assert message == "Muslims United PAC endorsements: Refreshed 0 saved responses. 3 of its 26 candidates are in Texas."
     assert upstream.count(FEED_HOST) == 1
 
 
@@ -282,11 +281,10 @@ def test_an_answer_it_cant_read_is_refused(client, upstream):
 
 def test_turned_off_it_isnt_asked(make_app, upstream):
     with TestClient(make_app()) as client:
-        assert client.put(f"/api/sources/{MUPAC}", json={"enabled": False}).status_code == 200
+        switch(client, MUPAC, False)
         ballot = get_ballot(client, "ut")
         assert not cards_from(ballot) and upstream.count(FEED_HOST) == 0
         assert row(client)["enabled"] is False and last_use(client, MUPAC)["status"] == "off"
-    with TestClient(make_app()) as client:  # the switch is kept
         assert next(f for f in client.get("/api/endorsements").json() if f["source"] == MUPAC)["enabled"] is False
 
 
@@ -368,10 +366,10 @@ def test_emgage_sends_the_token_and_keeps_it_nowhere(client, upstream, tmp_path)
     assert not [p for p in (tmp_path / "data").glob("cache.sqlite3*") if FEED_TOKEN.encode() in p.read_bytes()]
 
 
-def test_emgage_refresh_asks_for_a_new_token(client, upstream):
+def test_emgage_refresh_asks_for_a_new_token(client, make_app, upstream):
     get_ballot(client, "ut")
-    message = client.post(f"/api/sources/{EMGAGE}/refresh").json()["message"]
-    assert message == "Refreshed 1 cached response. 3 of its 39 candidates are in Texas."
+    message = make_app.cache_command("hard-refresh", EMGAGE)[1]
+    assert message == "Emgage PAC endorsements: Refreshed 1 saved response. 3 of its 39 candidates are in Texas."
     assert (upstream.count(EMGAGE_PAGE), upstream.count(EMGAGE_API), upstream.feed_tokens) == (2, 2, [FEED_TOKEN] * 2)
 
 

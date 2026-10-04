@@ -40,3 +40,9 @@ def test_an_explicit_mapping_ignores_the_env_file(tmp_path):
 def test_tiles_are_kept_at_least_7_days():
     assert load_config({"PALLOT_TTL_TILES": "3600"}).ttl.tiles == 7 * DAY
     assert load_config({"PALLOT_TTL_TILES": str(30 * DAY)}).ttl.tiles == 30 * DAY
+
+
+def test_the_transient_caches_caps_are_in_megabytes():
+    config = load_config({"PALLOT_TILES_MAX_MB": "100", "PALLOT_SUGGEST_MAX_MB": "0.5"})
+    assert (config.tiles_max_bytes, config.suggest_max_bytes) == (100 << 20, 512 << 10)
+    assert (load_config({}).tiles_max_bytes, load_config({}).suggest_max_bytes) == (512 << 20, 64 << 20)

@@ -1,5 +1,6 @@
 # docker compose up -d --build  ->  Pallot on http://<this machine>:8000
-# The Settings actions (refresh, clear caches) have no login: run this only on a network you trust.
+# Pallot has no login: run this only on a network you trust. Refresh and prune its cache from the host:
+#   docker compose exec pallot pallot-cache check   (also refresh, prune, hard-refresh, rebuild)
 services:
   pallot:
     build: .

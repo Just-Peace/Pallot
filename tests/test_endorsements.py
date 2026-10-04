@@ -14,10 +14,9 @@ from fastapi.testclient import TestClient
 from pallot.admin import SOURCES
 from pallot.models import Candidate, Race
 from pallot.offices import classify
-from pallot.settings import Settings
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, BadList, load_all, parse
 
-from .conftest import FIXTURES, get_ballot
+from .conftest import FIXTURES, get_ballot, switch
 
 EXAMPLE = FIXTURES / "endorsements" / "examplepac.json"
 BUILT_IN = {info.id for info in SOURCES}
@@ -153,17 +152,14 @@ def test_the_ballot_settings_and_the_pages_list(client, upstream):
     assert get_ballot(client)["meta"]["external_calls"] == 0 and len(upstream.calls) == calls
 
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "examplepac")
-    assert (row["label"], row["toggleable"], row["enabled"], row["frozen"], row["refreshable"], row["resettable"]) == (
-        "Example PAC endorsements", True, True, True, False, False)
+    assert (row["label"], row["toggleable"], row["enabled"], row["frozen"], row["bundled"]) == (
+        "Example PAC endorsements", True, True, True, False)
     assert row["notice"] == ("A frozen list from [Example Peace Action Committee](https://example.org/endorsements), "
                              "captured on Sep 20, 2026. It came with Pallot, and Pallot never fetches it.")
     assert [(f["label"], f["value"]) for f in row["details"]] == [
         ("Captured", "Sep 20, 2026"), ("Texas candidates", "5"), ("All candidates", "7 in 3 states")]
     assert row["last_use"] == {"id": "examplepac", "label": "Example PAC", "status": "used", "as_of": "2026-09-20",
                                "calls": 0, "message": None}
-    assert client.post("/api/sources/examplepac/refresh").status_code == 400
-    assert client.post("/api/sources/examplepac/clear").status_code == 400
-    assert client.post("/api/cache/clear").status_code == 200  # Clear all leaves it be
 
     assert [found for found in client.get("/api/endorsements").json() if not found["live"]] == [{
         "source": "examplepac", "label": "Example PAC", "organization": "Example Peace Action Committee",
@@ -172,25 +168,16 @@ def test_the_ballot_settings_and_the_pages_list(client, upstream):
     }]
 
 
-def test_turned_off_it_adds_no_cards_and_stays_off(make_app, tmp_path):
+def test_turned_off_it_adds_no_cards(make_app, tmp_path):
     with TestClient(make_app()) as client:
-        assert client.put("/api/sources/examplepac", json={"enabled": False}).status_code == 200
+        switch(client, "examplepac", False)
         ballot = get_ballot(client)
         assert not [c for r in ballot["races"] for p in r["candidates"] for c in p["cards"] if c["source"] == "examplepac"]
         row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "examplepac")
         assert row["enabled"] is False and row["last_use"]["status"] == "off"
-    with TestClient(make_app()) as client:
         assert next(found for found in client.get("/api/endorsements").json() if found["source"] == "examplepac")[
             "enabled"] is False
     with TestClient(make_app(endorsements_dir=tmp_path / "none")) as client:  # its file gone: its switch is ignored
+        switch(client, "examplepac", False)
         assert "examplepac" not in [s["id"] for s in client.get("/api/sources").json()["sources"]]
         assert [found["source"] for found in client.get("/api/endorsements").json() if not found["live"]] == []
-
-
-def test_settings_only_keep_switches_for_known_sources(tmp_path):
-    path = tmp_path / "settings.json"
-    path.write_text(json.dumps({"sources": {"examplepac": False, "gone": False}}), encoding="utf-8")
-    assert Settings(path, ["examplepac"]).enabled("examplepac") is False
-    assert Settings(path).enabled("examplepac") is True  # a list that's no longer there
-    with pytest.raises(KeyError):
-        Settings(path).set_enabled("examplepac", True)

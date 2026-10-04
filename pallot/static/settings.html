@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pallot · Settings</title>
-  <meta name="description" content="Choose how Pallot looks, its web search engine and sources, and clear what it has saved.">
+  <meta name="description" content="Choose how Pallot looks, its web search engine and sources, see what it has saved, and clear what this browser keeps.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
@@ -18,7 +18,7 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>Settings</h1>
-        <p class="lede">Choose how Pallot looks, your web search engine and which sources Pallot uses, see what it has saved, and clear it.</p>
+        <p class="lede">Choose how Pallot looks, your web search engine and which sources Pallot uses, see what it has saved, and clear what this browser keeps.</p>
       </header>
 
       <nav class="section-chips" aria-label="Settings sections"></nav>
@@ -49,17 +49,18 @@
       <section class="panel" aria-labelledby="sources-title">
         <h2 id="sources-title">Sources</h2>
         <p class="muted">Pallot keeps a copy of what each source sends back, so looking up the same address again doesn't ask anyone.
-          Turn a source off to build your ballot without it, refresh it to fetch its data again now, or clear its copy.</p>
+          Turn a source off to build your ballot without it. Your choices are saved in this browser, so they change only your ballot, not anyone else's.
+          Whoever runs Pallot refreshes the saved copies on the server.</p>
         <p id="sources-summary" class="fine"></p>
         <p id="sources-status" class="status" role="status" aria-live="polite"></p>
         <div id="source-groups" class="source-groups"></div>
-        <p class="fine">Ballotpedia's ballot and address search are unofficial endpoints meant for personal use; turn off "Ballotpedia" and "Address suggestions" before sharing Pallot with anyone else.</p>
+        <p class="fine">Ballotpedia's ballot and address search are unofficial endpoints meant for personal use. Whoever shares Pallot with anyone else should turn "Ballotpedia" and "Address suggestions" off for everyone, in the <code>sources.toml</code> in Pallot's data folder.</p>
       </section>
 
       <section class="panel" aria-labelledby="data-title">
         <h2 id="data-title">Data</h2>
         <p class="muted">Your picks, notes, write-ins and pick rule are kept only in this browser, with your last address and your choices on this page and the ballot.
-          The server keeps the sources' saved copies. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
+          The server keeps the sources' saved copies, which only whoever runs Pallot can clear. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
         <ul class="data-actions">
           <li class="data-action">
             <div class="data-action-text">
@@ -71,26 +72,11 @@
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear browser data</h3>
-              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine and view choices. Keeps what the server saved. Undo puts it back for a few seconds.</p>
+              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources and view choices. Your sources go back to Pallot's defaults. Undo puts it back for a few seconds.</p>
             </div>
             <button class="btn small" id="clear-browser-data" type="button">Clear browser data</button>
           </li>
-          <li class="data-action">
-            <div class="data-action-text">
-              <h3>Clear all source caches</h3>
-              <p>Removes everything the server saved from the sources<span id="cache-size"></span>, and puts the bundled snapshots back as they came with Pallot. Keeps everything in this browser. <strong>Can't be undone.</strong></p>
-            </div>
-            <button class="btn danger small" id="clear-all" type="button">Clear source caches</button>
-          </li>
-          <li class="data-action">
-            <div class="data-action-text">
-              <h3>Clear all my data</h3>
-              <p>Clears this browser's data and the source caches together. Undo puts back only what this browser kept; <strong>the server's copies can't be undone.</strong></p>
-            </div>
-            <button class="btn danger small" id="clear-everything" type="button">Clear all my data</button>
-          </li>
         </ul>
-        <p id="data-status" class="status" role="status" aria-live="polite"></p>
       </section>
     </main>
   </div>

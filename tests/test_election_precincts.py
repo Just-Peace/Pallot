@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import io
+import sqlite3
 import threading
 import types
 import zipfile
@@ -22,6 +23,7 @@ from pallot.sources import election_precincts as ep
 from pallot.sources.election_precincts import ElectionPrecincts, Lambert, StillDownloading, display_name, read_prj
 
 from .conftest import (
+    switch,
     ANDERSON, HARRIS, HOLE, LINE, OVERLAP, PRJ, PROJECTION, TRAVIS, TWO_PIECES, census_points, election_precincts_zip,
     get_ballot, last_use, load, middle, nudge, precincts_index, precincts_zip,
 )
@@ -468,7 +470,7 @@ def test_an_approximate_address_gets_no_precinct(client, upstream):
 
 
 def test_switched_off_the_portal_is_not_asked(client, upstream):
-    client.put(f"/api/sources/{ep.SOURCE}", json={"enabled": False})
+    switch(client, ep.SOURCE, False)
     ballot = get_ballot(client)
     assert ballot["districts"]["election_precinct"] is None and not [n for n in ballot["notes"] if "precinct map" in n]
     assert upstream.count("package_show") == 0 and last_use(client, ep.SOURCE)["status"] == "off"
@@ -509,49 +511,49 @@ def test_a_refusal_pauses_the_portal(client, upstream):
     assert row["notice"].startswith("Paused until") and "Texas Legislative Council's portal refused" in row["notice"]
 
 
-def test_settings_shows_refreshes_and_clears_the_map(client, upstream, tmp_path):
+def test_settings_shows_the_map_and_pallot_cache_refreshes_and_rebuilds_it(client, make_app, upstream, tmp_path):
     get_ballot(client)
     row = precincts_row(client)
     size = len(election_precincts_zip())
     kept, listed = (f["value"] for f in row["details"])
     assert kept.startswith(f"“{LABEL}”, downloaded ") and kept.endswith(" KB")
-    assert listed == f"“{LABEL}” · {size / 1024:.0f} KB"
-    assert f"downloads it ({size / 1024:.0f} KB)" in row["refresh_confirm"] and row["busy"] is False
+    assert listed == f"“{LABEL}” · {size / 1024:.0f} KB" and row["busy"] is False
     assert client.get("/api/sources").json()["total_bytes"] > size
 
-    refreshed = client.post(f"/api/sources/{ep.SOURCE}/refresh").json()["message"]
-    assert refreshed == f"Refreshed 1 cached response. The precinct map “{LABEL}” is already the newest."
+    assert make_app.cache_command("refresh", ep.SOURCE) == (0, f"{row['label']}: nothing past its lifetime.")
+    refreshed = make_app.cache_command("hard-refresh", ep.SOURCE)[1]
+    assert refreshed.endswith(f"Refreshed 1 saved response. The precinct map “{LABEL}” is already the newest.")
     assert upstream.count("package_show") == 2 and zips(upstream) == 1
 
-    cleared = client.post(f"/api/sources/{ep.SOURCE}/clear").json()["message"]
-    assert cleared == "Cleared 1 cached response. The precinct map will be downloaded again on the next lookup."
-    assert list((tmp_path / "data" / "election_precincts").iterdir()) == []
-    assert precincts_row(client)["details"][0]["value"] == "downloaded on the first lookup"
-    assert get_ballot(client)["districts"]["election_precinct"]["name"] == "300" and zips(upstream) == 2
-
-    message = client.post("/api/cache/clear").json()["message"]
-    assert "the SBOE map and the precinct map" in message
-    assert list((tmp_path / "data" / "election_precincts").iterdir()) == []
+    rebuilt = make_app.cache_command("rebuild", ep.SOURCE)[1]
+    assert rebuilt.startswith("Deleted 1 saved response, and what Election precincts (Texas Legislative Council) kept")
+    assert rebuilt.endswith(f"Downloaded the precinct map “{LABEL}” ({size / 1_048_576:.1f} MB).") and zips(upstream) == 2
+    assert len(list((tmp_path / "data" / "election_precincts").iterdir())) == 4  # map.json and the shapefile
+    assert get_ballot(client)["districts"]["election_precinct"]["name"] == "300"
+    assert get_ballot(client)["meta"]["external_calls"] == 0
 
 
-def test_refresh_downloads_a_newer_map(client, upstream):
+def test_soft_refresh_downloads_a_newer_map_which_the_running_server_reads(client, make_app, upstream, tmp_path):
     get_ballot(client)
+    old = client.app.state.svc.election_precincts.stored()
     size = len(election_precincts_zip())
     upstream.precinct_index = precincts_index(size, newer=newer_map(size))
-    message = client.post(f"/api/sources/{ep.SOURCE}/refresh").json()["message"]
-    assert message == ("Refreshed 1 cached response. Downloaded the precinct map “2026 General Election Voting Precincts” "
-                       f"({size / 1_048_576:.1f} MB).")
+    with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:  # the portal's index, a week old
+        db.execute("UPDATE responses SET expires_at = 0 WHERE source = ?", (ep.SOURCE,))
+    status, message = make_app.cache_command("refresh", ep.SOURCE)
+    assert status == 0 and message.endswith(
+        "Refreshed 1 saved response. Downloaded the precinct map “2026 General Election Voting Precincts” "
+        f"({size / 1_048_576:.1f} MB).")
+    assert client.app.state.svc.election_precincts.stored().stem != old.stem  # map.json changed on disk
     assert get_ballot(client)["districts"]["election_precinct"]["map_label"] == "2026 General Election Voting Precincts"
+    assert zips(upstream) == 2
 
 
-def test_nothing_is_cleared_while_the_map_downloads(client, upstream):
+def test_settings_says_while_the_map_downloads(client, upstream):
     precincts = client.app.state.svc.election_precincts
     precincts._task = types.SimpleNamespace(done=lambda: False)  # a download under way
     try:
         row = precincts_row(client)
         assert row["busy"] is True and row["notice"] == "Downloading the precinct map…"
-        assert client.post(f"/api/sources/{ep.SOURCE}/clear").status_code == 409
-        assert client.post(f"/api/sources/{ep.SOURCE}/refresh").status_code == 409
-        assert client.post("/api/cache/clear").status_code == 409
     finally:
         precincts._task = None

@@ -1,11 +1,13 @@
-// What Pallot keeps in this browser (localStorage). Nothing here is sent to the server. If
-// storage is blocked, reads give the fallback and writes are dropped.
+// What Pallot keeps in this browser (localStorage). Nothing here is sent to the server, except
+// the voter's choice of sources (SOURCES), which every call carries (api.js) so the server builds
+// their ballot with them. If storage is blocked, reads give the fallback and writes are dropped.
 
 export const PICKS = "pallot.picks.v1";
 export const LAST_LOOKUP = "pallot.lastLookup.v1";
 export const ADDRESS_CARD = "pallot.addressCard.v1";
 export const SETTINGS_CHANGED = "pallot.settingsChanged.v1";
 export const PICK_RULE = "pallot.pickRule.v1"; // Pick by rule's last rule, for every election
+export const SOURCES = "pallot.sources.v1"; // the sources the voter turned on or off: id → true or false
 const UI = "pallot.ui.v1";
 
 // The Settings page stamps every change that affects the ballot, so a ballot page that was
@@ -29,6 +31,13 @@ export function writeJson(key, value) {
   } catch {
     return false;
   }
+}
+
+// The voter's own switches in Settings; a source they haven't switched follows Pallot's default.
+export const sourceChoices = () => readJson(SOURCES, {});
+
+export function setSourceChoices(changes) {
+  writeJson(SOURCES, { ...sourceChoices(), ...changes });
 }
 
 // A view setting: the appearance, the search engine, the folded left pane, Compare's scale, the map.

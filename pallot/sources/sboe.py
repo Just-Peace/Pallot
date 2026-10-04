@@ -203,7 +203,7 @@ def locate(districts: list[District], lat: float, lon: float, tolerance_m: float
 class SboeMap:
     """The map kept at ``path``, downloaded by the first lookup that needs it. One that fails
     isn't downloaded again by a lookup for ``Ttls.retry_after``, and a refusal pauses the portal;
-    Refresh always tries."""
+    a refresh always tries."""
 
     def __init__(self, cache: HttpCache, ttl: Ttls, path: Path):
         self.cache = cache
@@ -321,8 +321,8 @@ class SboeMap:
     def size(self) -> int:
         return self.path.stat().st_size if self.path.exists() else 0
 
-    def refresh_size(self) -> int | None:
-        return None
+    def stale(self) -> str | None:
+        return None if self.path.exists() else "the State Board of Education map isn't downloaded yet"
 
     async def refresh(self) -> str:
         async with self._lock:

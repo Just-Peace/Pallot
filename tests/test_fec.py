@@ -11,7 +11,7 @@ from pallot.matching import NameIndex, last_first, match_person
 from pallot.sources import fec
 from pallot.text import display_org, money, money_short
 
-from .conftest import FEC_KEY, find_race, get_ballot, last_use, load
+from .conftest import FEC_KEY, find_race, get_ballot, last_use, load, switch
 
 
 def test_names_written_last_name_first():
@@ -156,7 +156,7 @@ def test_the_key_is_sent_but_never_stored(make_app, upstream, tmp_path):
 
 
 def test_fec_off(client):
-    client.put("/api/sources/fec", json={"enabled": False})
+    switch(client, "fec", False)
     ballot = get_ballot(client)
     assert [card["source"] for card in find_race(ballot, "U.S. Senator")["cards"]] == ["polls"]
     assert last_use(client, "fec")["status"] == "off"

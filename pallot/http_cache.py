@@ -1,8 +1,8 @@
 """Persistent cache for every outbound API call.
 
 One SQLite row per distinct request (method + URL + params + body), tagged with the
-source that made it, so the Settings page can show, clear or refresh one source at a
-time. A row keeps the request itself and the lifetimes it was stored with, so refresh()
+source that made it, so the Settings page can show one source at a time, and pallot-cache
+refresh or clear it. A row keeps the request itself and the lifetimes it was stored with, so refresh()
 can re-issue it without knowing what it was for. A value is parsed JSON, a web page's text
 (get_text) or an image as base64 (get_bytes). Decoded values also sit in an in-memory
 LRU bounded by their stored size, which matters for the 2.6 MB statewide candidate list;
@@ -41,7 +41,7 @@ import time
 from collections import OrderedDict
 from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import Any, Callable, Collection
+from typing import Any, Callable, Collection, Mapping
 
 import httpx
 
@@ -171,6 +171,16 @@ class SourceCacheStats:
     expired: int
     oldest: float | None
     newest: float | None
+
+
+@dataclass(frozen=True)
+class SavedRequest:
+    """A stored request and the lifetimes it was stored with, as refresh() asks it again."""
+
+    request: str
+    ttl: float
+    empty_ttl: float | None
+    empty_at: str
 
 
 @dataclass(frozen=True)
@@ -549,7 +559,7 @@ class HttpCache:
             if not spec.as_bytes:
                 self._remember(spec.key, now, value, size)
 
-    # -- Settings page -----------------------------------------------------------
+    # -- Settings page and pallot-cache ----------------------------------------------
 
     def stats(self, source: str) -> SourceCacheStats:
         with self._lock:
@@ -578,11 +588,22 @@ class HttpCache:
             self._forget_all()
         return removed
 
-    def prune(self, sources: Collection[str], misses: Collection[str], older_than: float) -> int:
+    def prune(
+        self,
+        sources: Collection[str],
+        misses: Collection[str],
+        older_than: float,
+        *,
+        caps: Mapping[str, int] | None = None,
+        vacuum: bool = True,
+    ) -> int:
         """Delete what's no use even as a fallback, once it has been expired for ``older_than``
         seconds: every row of ``sources`` (what was typed for suggestions), and the empty
         answers of ``misses`` (addresses that weren't found), told apart by the shorter
-        empty_ttl they were stored with. Expired flags go too. Returns the rows deleted."""
+        empty_ttl they were stored with. Then, past a source's ``caps`` (bytes stored), its
+        least recently fetched rows. Expired flags go too. ``vacuum`` shrinks the file when
+        anything was deleted (it holds the lock while it rewrites it); without it, the freed
+        pages are reused. Returns the rows deleted."""
         cutoff = self._clock() - older_than
         with self._lock:
             removed = 0
@@ -598,28 +619,46 @@ class HttpCache:
                     f" AND source IN ({','.join('?' * len(misses))})",
                     (cutoff, *misses),
                 ).rowcount
+            for source, cap in (caps or {}).items():
+                removed += self._db.execute(
+                    "DELETE FROM responses WHERE key IN (SELECT key FROM (SELECT key,"
+                    " SUM(bytes) OVER (ORDER BY fetched_at DESC, key) AS kept FROM responses WHERE source = ?)"
+                    " WHERE kept > ?)",
+                    (source, cap),
+                ).rowcount
             self._db.execute("DELETE FROM flags WHERE expires_at <= ?", (self._clock(),))
             if removed:
-                self._db.execute("VACUUM")
+                if vacuum:
+                    self._db.execute("VACUUM")
                 self._db.execute("PRAGMA wal_checkpoint(TRUNCATE)")
                 self._forget_all()
         return removed
 
-    async def refresh(self, source: str, *, concurrency: int = 3) -> RefreshReport:
-        """Re-fetch every stored request for ``source``; failures, and answers its check
-        refuses, keep their old copy. While
-        the source is paused (also when a refusal pauses it partway through), the rest are
-        skipped rather than asked."""
+    def saved(self, source: str, *, expired_only: bool = False) -> list[SavedRequest]:
+        """The requests stored for ``source`` (only the expired ones, with ``expired_only``), with
+        the lifetimes they were stored with, for refresh()."""
+        query = "SELECT request, ttl, empty_ttl, empty_at FROM responses WHERE source = ?"
         with self._lock:
-            rows = self._db.execute(
-                "SELECT request, ttl, empty_ttl, empty_at FROM responses WHERE source = ?", (source,)
-            ).fetchall()
+            if expired_only:
+                rows = self._db.execute(f"{query} AND expires_at <= ?", (source, self._clock())).fetchall()
+            else:
+                rows = self._db.execute(query, (source,)).fetchall()
+        return [SavedRequest(*row) for row in rows]
+
+    async def refresh(
+        self, source: str, *, concurrency: int = 3, expired_only: bool = False, saved: list[SavedRequest] | None = None
+    ) -> RefreshReport:
+        """Re-fetch every stored request for ``source`` (only the expired ones, with ``expired_only``;
+        ``saved`` instead, from before a clear); failures, and answers its check refuses, keep their
+        old copy. While the source is paused (also when a refusal pauses it partway through), the
+        rest are skipped rather than asked."""
+        rows = self.saved(source, expired_only=expired_only) if saved is None else saved
         gate = asyncio.Semaphore(max(1, concurrency))
         skipped = 0
 
-        async def one(request: str, ttl: float, empty_ttl: float | None, empty_at: str) -> str | None:
+        async def one(row: SavedRequest) -> str | None:
             nonlocal skipped
-            spec = RequestSpec.loads(request)
+            spec = RequestSpec.loads(row.request)
             async with gate:
                 if self.paused_until(source):
                     skipped += 1
@@ -633,11 +672,11 @@ class HttpCache:
             if why:
                 return f"{spec.url}: {why}"
             await asyncio.to_thread(
-                self._store, spec, source, value, self._clock(), ttl, empty_ttl, tuple(json.loads(empty_at))
+                self._store, spec, source, value, self._clock(), row.ttl, row.empty_ttl, tuple(json.loads(row.empty_at))
             )
             return None
 
-        errors = [e for e in await asyncio.gather(*(one(*row) for row in rows)) if e]
+        errors = [e for e in await asyncio.gather(*(one(row) for row in rows)) if e]
         return RefreshReport(
             refreshed=len(rows) - len(errors) - skipped,
             failed=len(errors),

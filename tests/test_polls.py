@@ -11,7 +11,7 @@ from pallot.http_cache import HttpCache
 from pallot.models import Candidate, Race
 from pallot.sources import polls
 
-from .conftest import find_race, get_ballot, last_use
+from .conftest import find_race, get_ballot, last_use, switch
 
 SENATE = Race(key="sen", name="U.S. Senator", group="federal", seat="TX-SEN", source="sos", candidates=[
     Candidate(key="paxton", name="Ken Paxton", party="R"),
@@ -166,7 +166,7 @@ def test_a_refusal_pauses_polls_and_the_ballot_still_loads(client, upstream):
 
 
 def test_polls_off(client, upstream):
-    client.put("/api/sources/polls", json={"enabled": False})
+    switch(client, "polls", False)
     ballot = get_ballot(client)
     assert upstream.count("fiftyplusone.news") == 0
     assert not [c for c in find_race(ballot, "U.S. Senator")["cards"] if c["source"] == "polls"]

@@ -14,10 +14,12 @@ dependencies = [
     "httpx>=0.27",
     # for trackaipac_cache, which lives in this repo
     "html2text>=2020.1.16",
+    "tomli>=2; python_version < '3.11'",  # sources.toml, where Python has no tomllib
 ]
 
 [project.scripts]
 pallot = "pallot.__main__:main"
+pallot-cache = "pallot.maintain:main"
 trackaipac-cache = "trackaipac_cache.__main__:main"
 tec-cache = "tec_cache.__main__:main"
 voteforpeace-cache = "voteforpeace_cache.__main__:main"
@@ -32,7 +34,7 @@ packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "votefo
 version = { attr = "pallot.__version__" }
 
 [tool.setuptools.package-data]
-pallot = ["static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*", "endorsements/*.json"]
+pallot = ["sources.toml", "static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*", "endorsements/*.json"]
 trackaipac_cache = ["data/*.json", "data/history/*.json"]
 tec_cache = ["data/*.json"]
 voteforpeace_cache = ["data/*.json", "data/history/*.json"]

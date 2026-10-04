@@ -1,10 +1,9 @@
-"""Settings-page API, elections list and static pages."""
+"""Settings-page API (what the server keeps, each voter's own switches), elections list and static pages."""
 
 from __future__ import annotations
 
 import json
 import re
-import threading
 import time
 
 import httpx
@@ -14,9 +13,10 @@ from fastapi.testclient import TestClient
 from pallot.api import host_allowed
 from pallot.config import DAY
 from pallot.http_cache import HttpCache, RequestSpec
+from pallot.settings import HEADER
 from pallot.text import display_time
 
-from .conftest import ADDRESSES, get_ballot, last_use, load
+from .conftest import ADDRESSES, get_ballot, last_use, load, switch
 
 ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't have to read
 
@@ -37,29 +37,23 @@ def test_sources_overview(client):
                                                        "trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac", "fec", "tec", "polls"]
     geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, _, _, example, _, fec, tec, polls = (
         overview["sources"])
-    assert (county["label"], county["toggleable"], county["enabled"], county["refresh_confirm"]) == (
-        "Commissioner & JP precincts (counties)", True, True, None)
+    assert (county["label"], county["toggleable"], county["enabled"]) == (
+        "Commissioner & JP precincts (counties)", True, True)
     assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
     assert (precincts["label"], precincts["toggleable"], precincts["enabled"], precincts["busy"], precincts["notice"]) == (
         "Election precincts (Texas Legislative Council)", True, True, False, None)
-    assert "(a large file)" in precincts["refresh_confirm"]  # its size once Pallot has seen the portal's list
     assert [(f["label"], f["value"]) for f in precincts["details"]] == [
         ("Map kept", "downloaded on the first lookup"), ("Newest on the portal", "not asked yet")]
-    assert tiles["refreshable"] is False and example["refreshable"] is False
-    assert all(s["refreshable"] for s in overview["sources"] if s not in (tiles, example))
     assert [s["id"] for s in overview["sources"] if s["frozen"]] == ["examplepac"]
     assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
-    assert (outlines["label"], outlines["enabled"], outlines["refresh_confirm"]) == ("District map (US Census TIGERweb)", True, None)
+    assert (outlines["label"], outlines["enabled"]) == ("District map (US Census TIGERweb)", True)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
-    assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
-    assert tracker["clear_label"] == tec["clear_label"] == "Reset to the snapshot that came with Pallot"
-    assert tracker["resettable"] and peace["resettable"] and tec["resettable"] and not sos["resettable"]
-    assert (peace["label"], peace["refresh_label"], peace["refresh_confirm"]) == (
-        "Vote for Peace", "Refresh from voteforpeace.info", None)
+    assert tiles["enabled"] is True and example["enabled"] is True
+    assert tracker["bundled"] and peace["bundled"] and tec["bundled"] and not sos["bundled"]
+    assert peace["label"] == "Vote for Peace"
     assert [(f["label"], f["value"]) for f in peace["details"]][3:] == [("Texas candidates", "164"), ("All candidates", "166")]
-    assert tec["clear_confirm"].startswith("Throw away the refreshed Texas Ethics Commission (TEC) data")
-    assert sos["clear_confirm"].startswith("Clear everything cached from Texas Secretary of State (Texas SOS)?")
-    assert "The TrackAIPAC, Vote for Peace and Texas Ethics Commission (TEC) data go back" in overview["clear_all_confirm"]
+    assert set(overview) == {"groups", "sources", "total_bytes", "last_lookup"}  # nothing to refresh or clear
+    assert not {"refresh_confirm", "clear_confirm", "refresh_label", "clear_label"} & set(sos)
     assert overview["last_lookup"] is None and sos["last_use"] is None
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
@@ -89,16 +83,26 @@ def test_settings_shows_the_last_lookup(client):
     assert overview["total_bytes"] > 0
 
 
-def test_toggles_persist_across_restarts(make_app, tmp_path):
-    with TestClient(make_app()) as client:
-        response = client.put("/api/sources/ballotpedia", json={"enabled": False})
-        assert response.status_code == 200
-        assert next(s for s in response.json()["sources"] if s["id"] == "ballotpedia")["enabled"] is False
-        assert client.put("/api/sources/geocoding", json={"enabled": False}).status_code == 400
-        assert client.put("/api/sources/nope", json={"enabled": False}).status_code == 404
-    assert json.loads((tmp_path / "data" / "settings.json").read_text())["sources"]["ballotpedia"] is False
-    with TestClient(make_app()) as client:
-        assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "ballotpedia")["enabled"] is False
+def test_switches_are_the_voters_own(client, tmp_path):
+    another_browser = {HEADER: "{}"}
+    switch(client, "ballotpedia", False)
+    switch(client, "geocoding", False)  # can't be turned off: ignored
+    switch(client, "nope", True)  # not a source: ignored
+    mine = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
+    assert mine["ballotpedia"] is False and mine["geocoding"] is True
+    get_ballot(client)
+    assert last_use(client, "ballotpedia")["status"] == "off"
+    theirs = {s["id"]: s["enabled"] for s in client.get("/api/sources", headers=another_browser).json()["sources"]}
+    assert theirs["ballotpedia"] is True  # another browser keeps the defaults
+    client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers=another_browser)
+    assert last_use(client, "ballotpedia")["status"] == "used"
+    assert not (tmp_path / "data" / "settings.json").exists()  # nothing is kept on the server
+
+
+def test_a_header_that_cant_be_read_leaves_the_defaults(client):
+    for header in ("not json", '["ballotpedia"]', '{"ballotpedia": "no"}', '{"ballotpedia": 0}'):
+        rows = client.get("/api/sources", headers={"X-Pallot-Sources": header}).json()["sources"]
+        assert next(s for s in rows if s["id"] == "ballotpedia")["enabled"] is True, header
 
 
 @pytest.mark.shipped_defaults
@@ -127,107 +131,20 @@ def test_sources_are_grouped(client):
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
     }
-    assert "can't be undone" in overview["clear_everything_confirm"]
-    assert overview["clear_everything_confirm"].endswith(overview["clear_all_confirm"].split("? ", 1)[1])
+    assert not [route.path for route in client.app.routes if "PUT" in getattr(route, "methods", ())]
 
 
-def test_a_group_of_sources_turns_on_and_off_at_once(make_app, tmp_path):
-    def enabled(overview):
-        return {s["id"]: s["enabled"] for s in overview["sources"]}
-
-    with TestClient(make_app()) as client:
-        client.put("/api/sources/fec", json={"enabled": False})
-        before = enabled(client.get("/api/sources").json())
-        response = client.put("/api/source-groups/scorecards", json={"enabled": False})
-        assert response.status_code == 200
-        after = enabled(response.json())
-        scorecards = {s["id"] for s in response.json()["sources"] if s["group"] == "scorecards"}
-        assert not any(after[source] for source in scorecards)
-        assert {k: v for k, v in after.items() if k not in scorecards} == {
-            k: v for k, v in before.items() if k not in scorecards}
-        assert after["fec"] is False and after["sos"] is True
-
-        address = client.put("/api/source-groups/address", json={"enabled": False}).json()["sources"]
-        assert {s["id"]: s["enabled"] for s in address if s["group"] == "address"} == {
-            "geocoding": True, "election_precincts": False, "county_precincts": False, "tigerweb": False,
-            "osm_tiles": False, "suggestions": False}  # the address lookup can't be turned off
-        assert client.put("/api/source-groups/nope", json={"enabled": False}).status_code == 404
-    saved = json.loads((tmp_path / "data" / "settings.json").read_text())["sources"]
-    assert saved["examplepac"] is False and saved["trackaipac"] is False and "geocoding" not in saved
-    with TestClient(make_app()) as client:
-        assert not any(s["enabled"] for s in client.get("/api/sources").json()["sources"] if s["group"] == "scorecards")
-        on = client.put("/api/source-groups/scorecards", json={"enabled": True}).json()["sources"]
-        assert all(s["enabled"] for s in on if s["group"] == "scorecards")
-
-
-def test_refresh_and_clear_a_cached_source(client, upstream):
-    get_ballot(client)
-    sos_before = upstream.count("goelect")
-    stats = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["cache"]
-    assert stats["entries"] > 0
-
-    message = client.post("/api/sources/sos/refresh").json()["message"]
-    assert message.startswith(f"Refreshed {stats['entries']} cached responses")
-    assert upstream.count("goelect") == sos_before + stats["entries"]
-
-    assert client.post("/api/sources/sos/clear").json()["message"].startswith("Cleared")
-    assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["cache"]["entries"] == 0
-    assert get_ballot(client)["meta"]["external_calls"] > 0  # fetched again
-
-
-def test_clear_geocoding_also_drops_the_sboe_map(client, tmp_path):
-    get_ballot(client)
-    assert (tmp_path / "data" / "plane2106_kml.zip").exists()
-    client.post("/api/sources/geocoding/clear")
-    assert not (tmp_path / "data" / "plane2106_kml.zip").exists()
-
-
-def test_clear_everything(client):
-    get_ballot(client)
-    assert client.post("/api/cache/clear").status_code == 200
-    overview = client.get("/api/sources").json()
-    assert all(s["cache"]["entries"] == 0 for s in overview["sources"])
-
-
-def test_a_failed_sboe_download_keeps_the_old_map(client, upstream, tmp_path):
-    get_ballot(client)
-    upstream.down.add("data.capitol.texas.gov")
-    response = client.post("/api/sources/geocoding/refresh")
-    assert response.status_code == 200
-    message = response.json()["message"]
-    assert message.startswith("Refreshed")
-    assert "Couldn't re-download the State Board of Education map (HTTP 500); kept the old one." in message
-    assert (tmp_path / "data" / "plane2106_kml.zip").exists()
-
-
-def test_sboe_portal_down_is_asked_once_until_clear(client, upstream):
-    client.put("/api/sources/election_precincts", json={"enabled": False})  # it asks the same portal
-    upstream.down.add("data.capitol.texas.gov")
-    first = get_ballot(client)
-    assert first["districts"]["sboe"] is None and any("State Board of Education map" in w for w in first["warnings"])
-    second = get_ballot(client)
-    assert upstream.count("plane2106_kml.zip") == 1 and second["meta"]["external_calls"] == 0
-    geocoding = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "geocoding")
-    assert geocoding["notice_tone"] == "warn"
-    assert geocoding["notice"].startswith("The last download of the State Board of Education map failed (HTTP 500)")
-    client.post("/api/sources/geocoding/clear")
-    upstream.down.clear()
-    assert get_ballot(client)["districts"]["sboe"] == 5 and upstream.count("plane2106_kml.zip") == 2
-
-
-def test_other_websites_cant_use_the_settings_actions(client):
-    get_ballot(client)
+def test_other_websites_cant_ask_for_a_ballot(client):
     for headers in (
         {"Sec-Fetch-Site": "cross-site", "Origin": "https://evil.example"},
         {"Sec-Fetch-Site": "same-site", "Origin": "http://testserver:3000"},  # another port on this machine
         {"Origin": "https://evil.example"},  # a browser that doesn't send Sec-Fetch-Site
         {"Origin": "null"},  # a sandboxed page
     ):
-        response = client.post("/api/cache/clear", headers=headers)
+        response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers=headers)
         assert response.status_code == 403 and "another website" in response.json()["detail"], headers
-    assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["cache"]["entries"] > 0
     own_page = {"Sec-Fetch-Site": "same-origin", "Origin": "http://testserver"}
-    assert client.post("/api/cache/clear", headers=own_page).status_code == 200
+    assert client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers=own_page).status_code == 200
     assert client.get("/api/sources", headers={"Sec-Fetch-Site": "cross-site"}).status_code == 200  # CORS hides the answer
 
 
@@ -240,66 +157,36 @@ def test_only_localhost_ip_addresses_and_allowed_names_are_answered(client):
     assert not host_allowed("nas.local", ()) and not host_allowed("", ()) and not host_allowed("[::1", ())
 
 
-def test_trackaipac_refresh_and_reset(make_app, tmp_path):
-    with TestClient(make_app()) as client:
-        message = client.post("/api/sources/trackaipac/refresh").json()["message"]
-        assert message.startswith("updated")
-        current = tmp_path / "data" / "trackaipac" / "current.json"
-        current.write_text(json.dumps({"snapshot": "edited", "candidates": []}))
-        tracker = client.app.state.svc.trackaipac
-        assert tracker.document()["snapshot"] == "edited"
-        assert client.post("/api/sources/trackaipac/clear").status_code == 200
-        assert tracker.document()["snapshot"] == load("trackaipac/current.json")["snapshot"]
+def test_settings_cant_refresh_or_clear_what_the_server_keeps(client):
+    get_ballot(client)
+    for path in ("/api/sources/sos/refresh", "/api/sources/sos/clear", "/api/cache/clear"):
+        assert client.post(path).status_code in (404, 405), path
+    assert client.put("/api/sources/sos", json={"enabled": False}).status_code in (404, 405)
+    assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["cache"]["entries"] > 0
 
 
-def test_trackaipac_refresh_failure_changes_nothing(make_app):
-    def broken(*, data_dir):
-        raise RuntimeError("site is down")
-
-    with TestClient(make_app(refresh=broken)) as client:
-        response = client.post("/api/sources/trackaipac/refresh")
-        assert response.status_code == 502 and "nothing changed" in response.json()["detail"]
-        tracker = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "trackaipac")
-    assert tracker["notice_tone"] == "warn" and "site is down" in tracker["notice"]
-
-
-def test_voteforpeace_refresh_and_reset(make_app, tmp_path):
-    with TestClient(make_app()) as client:
-        assert client.post("/api/sources/voteforpeace/refresh").json()["message"].startswith("updated")
-        current = tmp_path / "data" / "voteforpeace" / "current.json"
-        current.write_text(json.dumps({"snapshot": "edited", "candidates": []}))
-        peace = client.app.state.svc.voteforpeace
-        assert peace.document()["snapshot"] == "edited"
-        assert client.post("/api/sources/voteforpeace/clear").status_code == 200
-        assert peace.document()["snapshot"] == load("voteforpeace/current.json")["snapshot"]
+def test_sboe_portal_down_is_asked_once_until_its_wait_is_over(client, upstream, make_app):
+    switch(client, "election_precincts", False)  # it asks the same portal
+    upstream.down.add("data.capitol.texas.gov")
+    first = get_ballot(client)
+    assert first["districts"]["sboe"] is None and any("State Board of Education map" in w for w in first["warnings"])
+    second = get_ballot(client)
+    assert upstream.count("plane2106_kml.zip") == 1 and second["meta"]["external_calls"] == 0
+    geocoding = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "geocoding")
+    assert geocoding["notice_tone"] == "warn"
+    assert geocoding["notice"].startswith("The last download of the State Board of Education map failed (HTTP 500)")
+    upstream.down.clear()
+    status, printed = make_app.cache_command("refresh", "geocoding")  # stale: no map kept
+    assert status == 0 and "Re-downloaded the State Board of Education map." in printed
+    assert get_ballot(client)["districts"]["sboe"] == 5 and upstream.count("plane2106_kml.zip") == 2
 
 
 def test_voteforpeace_off_leaves_its_cards_out(client):
-    assert client.put("/api/sources/voteforpeace", json={"enabled": False}).status_code == 200
+    switch(client, "voteforpeace", False)
     ballot = get_ballot(client)
     assert not [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]
                 if card["source"] == "voteforpeace"]
     assert last_use(client, "voteforpeace")["status"] == "off"
-
-
-def test_a_second_refresh_while_one_runs_is_refused(make_app):
-    started, release = threading.Event(), threading.Event()
-
-    def slow(*, data_dir):
-        started.set()
-        release.wait(5)
-        return "done"
-
-    with TestClient(make_app(refresh=slow)) as client:
-        results = {}
-        worker = threading.Thread(target=lambda: results.update(first=client.post("/api/sources/trackaipac/refresh")))
-        worker.start()
-        assert started.wait(5)
-        second = client.post("/api/sources/trackaipac/refresh")
-        release.set()
-        worker.join(5)
-    assert second.status_code == 409
-    assert results["first"].status_code == 200
 
 
 PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]

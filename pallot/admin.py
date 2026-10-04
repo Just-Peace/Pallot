@@ -1,17 +1,20 @@
-"""What the Settings page shows and does: per-source status, on/off, refresh and clear."""
+"""What the Settings page shows about each source: on or off for this voter, what the server
+keeps, and how the last lookup used it. Refreshing and clearing what the server keeps is
+pallot-cache's (maintain.py), run on the host, never the page's."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 from .ballot import Services
-from .models import ActionResult, CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus, Tone
+from .models import CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus, Tone
+from .settings import Sources
 from .sources import (
-    KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls,
-    sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
+    KeptSource, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls, sos, suggestions,
+    tec, tigerweb, trackaipac, voteforpeace,
 )
 from .sources.endorsement_feeds import EndorsementSource
-from .text import display_size, display_time, iso_utc
+from .text import display_time, iso_utc
 
 
 @dataclass(frozen=True)
@@ -55,14 +58,11 @@ class SourceInfo:
     toggleable: bool
     cache_tags: tuple[str, ...]  # HttpCache source names holding this source's responses
     group: str  # the id of its SourceGroup
-    refresh_label: str = "Refresh now"
-    clear_label: str = "Clear cache"
-    resettable: bool = False  # a bundled snapshot rather than cached responses: "clear" resets to it
-    refresh_confirm: str | None = None  # asked before refreshing: what a refresh sends or downloads
+    bundled: bool = False  # a bundled snapshot rather than cached responses: a clear resets to it
     pause: Pause | None = None  # the source can be paused after refusing a request (HttpCache.pause_on)
-    refreshable: bool = True  # False: no Refresh, since a bulk re-download isn't allowed (OpenStreetMap's tiles)
+    refreshable: bool = True  # False: never refreshed in bulk, only fetched as it's viewed (OpenStreetMap's tiles)
     kept: str | None = None  # the Services field of a source kept in files (KeptSource), asked for its row
-    frozen: bool = False  # comes with Pallot as captured and is never fetched: no Refresh, nothing to clear
+    frozen: bool = False  # comes with Pallot as captured and is never fetched: nothing to refresh or clear
 
 
 SOURCES = (
@@ -74,8 +74,6 @@ SOURCES = (
         False,
         ("census", "nominatim"),
         group=ADDRESS,
-        refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
-        "Nominatim the ones the Census couldn't match), and downloads the State Board of Education map again. Continue?",
         pause=Pause("the address lookup refused a request", "addresses already looked up still work"),
         kept="sboe",
     ),
@@ -86,8 +84,6 @@ SOURCES = (
         True,
         (election_precincts.SOURCE,),
         group=ADDRESS,
-        refresh_confirm="Refresh asks the Texas Legislative Council for its newest precinct map and, if it's newer than "
-        "the one kept, downloads it ({size}). Continue?",
         pause=Pause("the Texas Legislative Council's portal refused a request", "the precinct map already kept still shows"),
         kept="election_precincts",
     ),
@@ -118,9 +114,8 @@ SOURCES = (
         True,
         (suggestions.SOURCE,),
         group=ADDRESS,
-        refresh_confirm="Refresh sends everything saved from the address box to Ballotpedia again, one request every "
-        "half second. Continue?",
         pause=Pause("Ballotpedia refused an address search", "suggestions it already sent still show"),
+        refreshable=False,
     ),
     SourceInfo(
         sos.SOURCE, "Texas Secretary of State (Texas SOS)", sos.DESCRIPTION, True, (sos.SOURCE,),
@@ -144,9 +139,7 @@ SOURCES = (
         True,
         (),
         group=SCORECARDS,
-        refresh_label="Refresh from trackaipac.com",
-        clear_label="Reset to the snapshot that came with Pallot",
-        resettable=True,
+        bundled=True,
         kept="trackaipac",
     ),
     SourceInfo(
@@ -156,9 +149,7 @@ SOURCES = (
         True,
         (),
         group=SCORECARDS,
-        refresh_label="Refresh from voteforpeace.info",
-        clear_label="Reset to the snapshot that came with Pallot",
-        resettable=True,
+        bundled=True,
         kept="voteforpeace",
     ),
     SourceInfo(
@@ -173,11 +164,7 @@ SOURCES = (
         True,
         (),
         group=OFFICIAL,
-        refresh_label="Refresh from the Texas Ethics Commission (downloads about 1 GB if it changed)",
-        clear_label="Reset to the snapshot that came with Pallot",
-        resettable=True,
-        refresh_confirm="Refresh first asks the Texas Ethics Commission whether its data has changed. If it has, it "
-        "downloads about 1 GB (a minute or two on a fast connection) and rebuilds the data. Continue?",
+        bundled=True,
         kept="tec",
     ),
     SourceInfo(
@@ -190,7 +177,7 @@ SOURCES = (
 
 def list_info(found: EndorsementSource) -> SourceInfo:
     """An endorsement list's row: its own switch, and nothing to refresh or clear; a live feed's
-    also has its cached copy (under its id) to refresh or clear, and a pause."""
+    also has its cached copy (under its id), and a pause."""
     if found.live:
         return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (found.source,),
                           SCORECARDS, pause=Pause(f"{found.organization}'s website refused a request",
@@ -205,79 +192,29 @@ def all_sources(lists: list[EndorsementSource]) -> tuple[SourceInfo, ...]:
     return (*SOURCES[:at], *(list_info(found) for found in lists), *SOURCES[at:])
 
 
-_SLOW = {"ballotpedia", "nominatim", "polls", "suggestions"}  # one request at a time when refreshing
-
-
-class AdminError(Exception):
-    def __init__(self, status: int, message: str):
-        super().__init__(message)
-        self.status = status
-        self.message = message
-
-
 class Admin:
     def __init__(self, svc: Services):
         self.svc = svc
-        self._busy: set[str] = set()
         self.sources = all_sources(svc.endorsements)
-        self._by_id = {info.id: info for info in self.sources}
         self._kept_sources: dict[str, KeptSource] = {
             **{info.id: getattr(svc, info.kept) for info in SOURCES if info.kept},
             **{found.source: found for found in svc.endorsements},
         }
 
-    def _info(self, source_id: str) -> SourceInfo:
-        if source_id not in self._by_id:
-            raise AdminError(404, f"Unknown source: {source_id}")
-        return self._by_id[source_id]
-
-    def _kept(self, info: SourceInfo) -> KeptSource | None:
+    def kept(self, info: SourceInfo) -> KeptSource | None:
         return self._kept_sources.get(info.id)
 
-    def _all_kept(self) -> list[KeptSource]:
-        return list(self._kept_sources.values())
-
-    def overview(self) -> SourcesOverview:
+    def overview(self, sources: Sources) -> SourcesOverview:
+        """Every source's row, on or off as ``sources`` (this voter's choices) has it."""
         return SourcesOverview(
             groups=[SourceGroupInfo(id=g.id, title=g.title, description=g.description, toggle_all=g.toggle_all)
                     for g in GROUPS],
-            sources=[self._status(info) for info in self.sources],
-            total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._all_kept()),
+            sources=[self._status(info, sources) for info in self.sources],
+            total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._kept_sources.values()),
             last_lookup=self.svc.last_lookup,
-            clear_all_confirm=f"Clear everything the server saved from every source? {self._what_clear_all_does()}",
-            clear_everything_confirm="Clear all your data? Everything Pallot keeps in this browser goes (your picks, "
-            "notes, address and choices), which Undo can put back for a few seconds. Everything the server saved from "
-            f"every source goes too, which can't be undone. {self._what_clear_all_does()}",
         )
 
-    @staticmethod
-    def _what_clear_all_does() -> str:
-        *rest, last = [info.label for info in SOURCES if info.resettable]
-        snapshots = f"{', '.join(rest)} and {last}" if rest else last
-        return (f"The {snapshots} data go back to the snapshots that came with Pallot, and the next lookups fetch "
-                "everything again.")
-
-    @staticmethod
-    def _clear_confirm(info: SourceInfo) -> str:
-        if info.frozen:
-            return f"{info.label} came with Pallot; there's nothing saved to clear."
-        if info.resettable:
-            return f"Throw away the refreshed {info.label} data and go back to the snapshot that came with Pallot?"
-        return f"Clear everything cached from {info.label}? The next lookup will fetch it again."
-
-    def _running(self, info: SourceInfo) -> bool:
-        """A refresh from Settings, or a source kept in files downloading for a lookup."""
-        kept = self._kept(info)
-        return info.id in self._busy or (kept is not None and kept.busy)
-
-    def _refresh_confirm(self, info: SourceInfo) -> str | None:
-        kept = self._kept(info)
-        if info.refresh_confirm is None or kept is None:
-            return info.refresh_confirm
-        size = kept.refresh_size()
-        return info.refresh_confirm.format(size=display_size(size) if size else "a large file")
-
-    def _status(self, info: SourceInfo) -> SourceStatus:
+    def _status(self, info: SourceInfo, sources: Sources) -> SourceStatus:
         stats = [self.svc.cache.stats(tag) for tag in info.cache_tags]
         oldest = [s.oldest for s in stats if s.oldest is not None]
         newest = [s.newest for s in stats if s.newest is not None]
@@ -289,30 +226,25 @@ class Admin:
             newest=iso_utc(max(newest)) if newest else None,
         )
         notice, tone = self._notice(info)
-        kept = self._kept(info)
+        kept = self.kept(info)
         return SourceStatus(
             id=info.id,
             label=info.label,
             description=info.description,
             group=info.group,
             toggleable=info.toggleable,
-            resettable=info.resettable,
-            enabled=self.svc.settings.enabled(info.id) if info.toggleable else True,
-            busy=self._running(info),
+            bundled=info.bundled,
+            enabled=sources.enabled(info.id) if info.toggleable else True,
+            busy=kept is not None and kept.busy,
             cache=cache,
             details=kept.details() if kept else [],
-            refresh_label=info.refresh_label,
-            clear_label=info.clear_label,
-            refresh_confirm=self._refresh_confirm(info),
-            clear_confirm=self._clear_confirm(info),
-            refreshable=info.refreshable,
             frozen=info.frozen,
             notice=notice,
             notice_tone=tone,
             last_use=self.svc.last_uses.get(info.id),
         )
 
-    def _paused(self, info: SourceInfo) -> str | None:
+    def paused(self, info: SourceInfo) -> str | None:
         """ "Paused until …" while the source is paused after refusing a request."""
         if info.pause is None:
             return None
@@ -323,94 +255,12 @@ class Admin:
 
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
         """One line under the source's description: what it's missing, or where its data stands."""
-        paused = self._paused(info)
+        paused = self.paused(info)
         if info.id == fec.SOURCE:
             if not self.svc.fec.keyed:
                 return " ".join(filter(None, (paused, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
             return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
         if paused:
             return paused, "warn"
-        kept = self._kept(info)
+        kept = self.kept(info)
         return (kept.notice() if kept else None) or (None, "info")
-
-    def set_enabled(self, source_id: str, enabled: bool) -> None:
-        if not self._info(source_id).toggleable:
-            raise AdminError(400, "This source is required and can't be turned off.")
-        self.svc.settings.set_enabled(source_id, enabled)
-
-    def set_group_enabled(self, group_id: str, enabled: bool) -> None:
-        """Every source in the group that can be turned off, in one write of the settings."""
-        if group_id not in {group.id for group in GROUPS}:
-            raise AdminError(404, f"Unknown group of sources: {group_id}")
-        self.svc.settings.set_many(dict.fromkeys(
-            (info.id for info in self.sources if info.group == group_id and info.toggleable), enabled))
-
-    async def refresh(self, source_id: str) -> ActionResult:
-        info = self._info(source_id)
-        if info.frozen:
-            raise AdminError(400, f"{info.label} is a frozen list that came with Pallot; there's nothing to refresh.")
-        if not info.refreshable:
-            raise AdminError(400, f"{info.label} is only fetched as you look at it, never all at once.")
-        if self._running(info):
-            raise AdminError(409, f"{info.label} is already refreshing.")
-        self._busy.add(source_id)
-        try:
-            return ActionResult(message=await self._refresh(info))
-        finally:
-            self._busy.discard(source_id)
-
-    async def _refresh(self, info: SourceInfo) -> str:
-        """Its cached responses, then what it keeps in files. When those files are all the row
-        has, a refresh that changed nothing is a 502; otherwise it's a sentence in the message."""
-        parts: list[str] = []
-        refreshed = failed = skipped = 0
-        errors: list[str] = []
-        paused_until: float | None = None
-        for tag in info.cache_tags:
-            report = await self.svc.cache.refresh(tag, concurrency=1 if tag in _SLOW else 3)
-            refreshed += report.refreshed
-            failed += report.failed
-            skipped += report.skipped
-            errors += report.errors
-            paused_until = paused_until or report.paused_until
-        if info.cache_tags:
-            parts.append(f"Refreshed {refreshed} cached response{'s' if refreshed != 1 else ''}.")
-        if kept := self._kept(info):
-            try:
-                parts.append(await kept.refresh())
-            except RefreshFailed as exc:
-                if not info.cache_tags:
-                    raise AdminError(502, str(exc)) from exc
-                parts.append(str(exc))
-        if failed:
-            parts.append(f"{failed} failed and kept their old copy ({'; '.join(errors)}).")
-        if paused_until:
-            parts.append(f"{info.label} is paused until {display_time(paused_until)} after refusing a request"
-                         + (f", so {skipped} weren't asked." if skipped else "."))
-        return " ".join(parts)
-
-    def clear(self, source_id: str) -> ActionResult:
-        info = self._info(source_id)
-        if info.frozen:
-            raise AdminError(400, f"{info.label} came with Pallot and saves nothing, so there's nothing to clear.")
-        if self._running(info):
-            raise AdminError(409, f"{info.label} is refreshing; try again when it's done.")
-        parts: list[str] = []
-        if info.cache_tags:
-            removed = sum(self.svc.cache.clear(tag) for tag in info.cache_tags)
-            parts.append(f"Cleared {removed} cached response{'s' if removed != 1 else ''}.")
-        if kept := self._kept(info):
-            parts.append(kept.clear())
-        return ActionResult(message=" ".join(parts))
-
-    def clear_all(self) -> ActionResult:
-        kept = self._all_kept()
-        if self._busy or any(source.busy for source in kept):
-            raise AdminError(409, "A refresh is running; try again when it's done.")
-        removed = self.svc.cache.clear()
-        for source in kept:
-            source.clear()
-        return ActionResult(
-            message=f"Cleared {removed} cached responses, the SBOE map and the precinct map, and reset TrackAIPAC, "
-            "Vote for Peace and the Texas Ethics Commission data to the snapshots that came with Pallot."
-        )

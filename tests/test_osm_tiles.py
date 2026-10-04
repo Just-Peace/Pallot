@@ -9,7 +9,7 @@ import pytest
 from pallot.sources import osm_tiles
 
 from . import conftest
-from .conftest import PNG, capitol_point
+from .conftest import PNG, capitol_point, switch
 
 
 def tile_at(z: int, lat: float, lon: float) -> tuple[int, int, int]:
@@ -59,9 +59,8 @@ def test_tiles_outside_texas_are_refused_without_asking(client, upstream):
 
 
 def test_street_map_off(client, upstream):
-    client.put(f"/api/sources/{osm_tiles.SOURCE}", json={"enabled": False})
-    assert get_tile(client, *tile_at(12, *capitol_point())).status_code == 404
-    assert client.get("/api/district-outlines", params={"hd": 49}).json()["street_map"] is False
+    switch(client, osm_tiles.SOURCE, False)
+    assert client.get("/api/district-outlines", params={"hd": 49}).json()["street_map"] is False  # so the map asks for no tiles
     assert upstream.count("tile.openstreetmap.org") == 0
 
 
@@ -81,11 +80,11 @@ def test_a_refusal_pauses_the_tiles(client, upstream, status):
         "after OpenStreetMap's tile server refused a request; tiles it already sent still show.")
 
 
-def test_tiles_can_be_cleared_but_not_refreshed(client, upstream):
+def test_tiles_are_deleted_but_never_refreshed(client, make_app, upstream):
     get_tile(client, *tile_at(12, *capitol_point()))
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == osm_tiles.SOURCE)
-    assert (row["label"], row["refreshable"], row["cache"]["entries"]) == ("Street map (OpenStreetMap)", False, 1)
-    refused = client.post(f"/api/sources/{osm_tiles.SOURCE}/refresh")
-    assert refused.status_code == 400 and "never all at once" in refused.json()["detail"]
+    assert (row["label"], row["cache"]["entries"]) == ("Street map (OpenStreetMap)", 1)
+    assert make_app.cache_command("hard-refresh", osm_tiles.SOURCE) == (0, "")
     assert upstream.count("tile.openstreetmap.org") == 1
-    assert client.post(f"/api/sources/{osm_tiles.SOURCE}/clear").json()["message"] == "Cleared 1 cached response."
+    assert make_app.cache_command("rebuild", osm_tiles.SOURCE) == (0, "Deleted 1 saved response.")
+    assert upstream.count("tile.openstreetmap.org") == 1
