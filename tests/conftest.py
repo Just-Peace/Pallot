@@ -1,6 +1,6 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
 served through respx, made-up SBOE and precinct maps and counties' lists of their precincts, and a
-VoteBot app on a temp data dir
+Pallot app on a temp data dir
 with "today" pinned, no waits between calls to a source, an FEC API key, and the TrackAIPAC,
 Vote for Peace and Texas Ethics Commission fixture snapshots."""
 
@@ -22,11 +22,11 @@ import pytest
 import respx
 from fastapi.testclient import TestClient
 
-from votebot.api import create_app
-from votebot.config import Config
-from votebot.sources import ballotpedia, suggestions
-from votebot.sources.census import normalize_address
-from votebot.sources.election_precincts import read_prj
+from pallot.api import create_app
+from pallot.config import Config
+from pallot.sources import ballotpedia, suggestions
+from pallot.sources.census import normalize_address
+from pallot.sources.election_precincts import read_prj
 
 FIXTURES = Path(__file__).parent / "fixtures"
 TODAY = dt.date(2026, 9, 27)
@@ -160,7 +160,7 @@ def precincts() -> list[tuple[int, str, list[list[tuple[float, float]]]]]:
 def precincts_zip(records: list[tuple[int, str, list[list[tuple[float, float]]]]] | None = None, *,
                   prj: str | None = PRJ, shape_type: int = 5) -> bytes:
     """A precinct map as the TLC zips it: .shp, .shx, .dbf (CNTY, COLOR and PREC), .prj and the
-    files VoteBot skips."""
+    files Pallot skips."""
     records = precincts() if records is None else records
     shapes, index, offset = [], [], 100
     for number, (_, _, rings) in enumerate(records, 1):

@@ -1,4 +1,4 @@
-# trackaipac_cache (copied into VoteBot)
+# trackaipac_cache (copied into Pallot)
 
 A local JSON copy of the congressional AIPAC funding and endorsement data on [trackaipac.com](https://www.trackaipac.com).
 
@@ -10,9 +10,9 @@ This folder is a copy of `trackaipac_cache` from `git@github.com:Fahd-Siddiqui/T
 | `/endorsements`  | `endorsed`  |
 | `/congress`      | `congress`  |
 
-## How VoteBot uses it
+## How Pallot uses it
 
-VoteBot copies `trackaipac_cache/data/` into `data/trackaipac/` on first run and reads `current.json` from there. The **Refresh from trackaipac.com** button on the Settings page calls `refresh(data_dir="data/trackaipac")`; **Reset to bundled snapshot** goes back to the files in this folder.
+Pallot copies `trackaipac_cache/data/` into `data/trackaipac/` on first run and reads `current.json` from there. The **Refresh from trackaipac.com** button on the Settings page calls `refresh(data_dir="data/trackaipac")`; **Reset to bundled snapshot** goes back to the files in this folder.
 
 ## Read
 

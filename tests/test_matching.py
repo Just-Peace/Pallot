@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from votebot.matching import (
+from pallot.matching import (
     NameIndex, full_key, initial_key, match_trackaipac, match_unique, name_tokens, seats_in, short_key,
 )
 

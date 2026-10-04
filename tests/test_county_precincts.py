@@ -10,11 +10,11 @@ from pathlib import Path
 import httpx
 import pytest
 
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache, UpstreamError, track_calls
-from votebot.sources import county_precincts as cp
-from votebot.sources.county_precincts import Areas, County, CountyPrecincts, Layer, Table, number, pick, services_root
-from votebot.sources.election_precincts import ElectionPrecincts
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache, UpstreamError, track_calls
+from pallot.sources import county_precincts as cp
+from pallot.sources.county_precincts import Areas, County, CountyPrecincts, Layer, Table, number, pick, services_root
+from pallot.sources.election_precincts import ElectionPrecincts
 
 from .conftest import (
     ANDERSON, HARRIS, PROJECTION, TRAVIS, TRAVIS_LIST, TRAVIS_QUERY, box, census_points, get_ballot, last_use, middle,
@@ -313,7 +313,7 @@ def test_maps_on_the_ballot(client, upstream, monkeypatch):
     assert (d["commissioner"], d["jp"], d["county_source"]) == (2, None, {"county": "Travis", "method": "maps"})
     assert d["precinct_sources"] == {"commissioner": "county"}
     assert ("Your election precinct isn't wholly inside one of Travis County's justice of the peace precincts on its map, "
-            "so VoteBot doesn't guess your justice of the peace precinct; it's on your voter registration certificate."
+            "so Pallot doesn't guess your justice of the peace precinct; it's on your voter registration certificate."
             ) in ballot["notes"]
     assert "precinct" in [s["id"] for s in ballot["maybe"]]  # the JP and constable races wait for the voter
 

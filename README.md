@@ -1,16 +1,18 @@
-# VoteBot
+# Pallot
 
-A voter's personal ballot, currently for Texas addresses. Enter a home address and VoteBot shows every race on that voter's ballot, with candidates in ballot order. Each candidate carries information from several sources. You can pick candidates, write notes, and print your picks to take to the polls.
+A voter's personal ballot, currently for Texas addresses. Enter a home address and Pallot shows every race on that voter's ballot, with candidates in ballot order. Each candidate carries information from several sources. You can pick candidates, write notes, and print your picks to take to the polls.
 
 You run it yourself, in Docker or with uv, and use it in your browser.
+
+The name joins Palestine and ballot, and the logo is the Palestinian flag. Pallot is made by [Just-Peace](https://github.com/Just-Peace), which stands for justice and peace.
 
 ## Quick start
 
 Get the code, and optionally a settings file:
 
 ```bash
-git clone https://github.com/Fahd-Siddiqui/VoteBot.git
-cd VoteBot
+git clone https://github.com/Just-Peace/Pallot.git
+cd Pallot
 cp .env.example .env    # optional: this is where the FEC key goes (see below)
 ```
 
@@ -21,8 +23,8 @@ Then run it one of two ways.
 Needs [Docker](https://docs.docker.com/get-docker/) with Compose 2.24 or later.
 
 ```bash
-mkdir -p data                   # where VoteBot keeps its cache and settings
-docker compose up -d --build    # build the image and start VoteBot in the background
+mkdir -p data                   # where Pallot keeps its cache and settings
+docker compose up -d --build    # build the image and start Pallot in the background
 ```
 
 Open http://localhost:8000, or `http://<this machine's address>:8000` from another device. It listens on every network interface, and the Settings page has no login, so run it only on a network you trust. To keep it to this machine, see [Docker](#docker).
@@ -38,20 +40,20 @@ git pull && docker compose up -d --build   # update to the latest version
 Needs [uv](https://docs.astral.sh/uv/): `curl -LsSf https://astral.sh/uv/install.sh | sh`.
 
 ```bash
-uv sync           # installs VoteBot and its dependencies (and Python, if needed) into .venv, pinned by uv.lock
-uv run votebot    # serves http://127.0.0.1:8000 until Ctrl+C (--port picks another port)
+uv sync           # installs Pallot and its dependencies (and Python, if needed) into .venv, pinned by uv.lock
+uv run pallot    # serves http://127.0.0.1:8000 until Ctrl+C (--port picks another port)
 ```
 
-Open http://127.0.0.1:8000. It only listens on this machine, because the Settings page has no login; to use VoteBot from other devices, run it with Docker on a network you trust. To update: `git pull && uv sync`, then start it again.
+Open http://127.0.0.1:8000. It only listens on this machine, because the Settings page has no login; to use Pallot from other devices, run it with Docker on a network you trust. To update: `git pull && uv sync`, then start it again.
 
 ### The FEC key (optional)
 
-VoteBot needs no keys to run. To break down congressional candidates' money (where it came from, donation sizes, largest donors, outside spending), it needs a free FEC key:
+Pallot needs no keys to run. To break down congressional candidates' money (where it came from, donation sizes, largest donors, outside spending), it needs a free FEC key:
 1. Get one from the [OpenFEC developers page](https://api.open.fec.gov/developers/); api.data.gov emails it to you.
-2. Put it in `.env` as `VOTEBOT_FEC_API_KEY=...`.
-3. Restart VoteBot: `docker compose up -d`, or Ctrl+C and `uv run votebot` again.
+2. Put it in `.env` as `PALLOT_FEC_API_KEY=...`.
+3. Restart Pallot: `docker compose up -d`, or Ctrl+C and `uv run pallot` again.
 
-Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals and runs out after a few requests. The other settings are under [Configuration](#configuration).
+Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals and runs out after a few requests. The other settings are under [Configuration](#configuration).
 
 ## Using it
 
@@ -62,9 +64,9 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
   - on Settings, FAQ, About and Privacy, the list of that page's sections, to jump to one. The section on screen is highlighted as you scroll. On a phone they're under **Menu**, which closes when you pick one; in the folded rail they're hidden.
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
-- **Footer**, on every page, always in view at the bottom of the window: a reminder that VoteBot is unofficial, **Sources** (About's list of where the information comes from), and the version you're running with its commit, such as `v0.9.0-g1a2b3c4`. About shows it too.
+- **Footer**, on every page, always in view at the bottom of the window: a reminder that Pallot is unofficial, **Sources** (About's list of where the information comes from), and the version you're running with its commit, such as `v0.9.0-g1a2b3c4`. About shows it too.
 - **Back to top:** once you've scrolled a screen, a round arrow button at the bottom right goes back to the top.
-- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant. The very first lookup after installing VoteBot (or after clearing the precinct map in Settings) also downloads the election precinct map, about 45 MB, and waits up to 20 seconds for it. If it isn't done by then, the ballot shows without your election precinct and says to reload the page in a minute. Lookups while it's still downloading don't wait for it.
+- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant. The very first lookup after installing Pallot (or after clearing the precinct map in Settings) also downloads the election precinct map, about 45 MB, and waits up to 20 seconds for it. If it isn't done by then, the ballot shows without your election precinct and says to reload the page in a minute. Lookups while it's still downloading don't wait for it.
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
@@ -83,13 +85,13 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - your county, with your election precinct, your commissioner precinct and your justice of the peace precinct (which is also your constable's);
   - your city, city council district and school district.
 
-  A State Senate or State Board of Education seat that isn't up this time is in a gray chip, with a line saying so ("State Senate 14 isn't up for election this time"). The commissioner and JP precincts come from your county's own records when VoteBot has them (see below), and otherwise from Ballotpedia, which names a precinct only when it has a race on this ballot; the city council district comes from Ballotpedia. The card's small print says which gave each. The pencil at the top of the card turns every number (U.S. House, State Senate, State House, SBOE, commissioner and JP) into a box in its place, to change it from your voter registration certificate; the reset arrow next to it puts the looked-up numbers back (it's grayed out until you've changed one). Only the numbers you change become yours; the others keep following your address, your county's records and Ballotpedia. A district you enter decides which of the state's races are on your ballot, and the map draws it. When races depend on a precinct VoteBot doesn't know, it shows as an amber dash, and the card says which precinct to enter from your voter registration certificate; **Enter it** opens the boxes, as the pencil does. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to the races for your commissioner and JP precincts. If the address could only be placed approximately, the card says to check the districts.
+  A State Senate or State Board of Education seat that isn't up this time is in a gray chip, with a line saying so ("State Senate 14 isn't up for election this time"). The commissioner and JP precincts come from your county's own records when Pallot has them (see below), and otherwise from Ballotpedia, which names a precinct only when it has a race on this ballot; the city council district comes from Ballotpedia. The card's small print says which gave each. The pencil at the top of the card turns every number (U.S. House, State Senate, State House, SBOE, commissioner and JP) into a box in its place, to change it from your voter registration certificate; the reset arrow next to it puts the looked-up numbers back (it's grayed out until you've changed one). Only the numbers you change become yours; the others keep following your address, your county's records and Ballotpedia. A district you enter decides which of the state's races are on your ballot, and the map draws it. When races depend on a precinct Pallot doesn't know, it shows as an amber dash, and the card says which precinct to enter from your voter registration certificate; **Enter it** opens the boxes, as the pencil does. After **Update my ballot**, a message at the foot of the window offers **Show**, which goes to the races for your commissioner and JP precincts. If the address could only be placed approximately, the card says to check the districts.
 
   Your **election precinct** ("Precinct 300", the "Pct" on your voter registration certificate) comes from the Texas Legislative Council's map of every county's election precincts; the card's small print names the map. It's not your commissioner or JP precinct. It isn't shown for an address that could only be placed approximately, or one near the line between two precincts, and a note under the ballot says why. Your certificate wins if they differ.
 
   Each election precinct lies inside one commissioner precinct and one JP precinct, so in seven counties your election precinct also gives those two, from the county's own records:
-  - **Harris, Dallas, Tarrant, Travis and Fort Bend** publish a list of their election precincts with each one's commissioner and JP precinct (Fort Bend's has commissioner precincts only, so its JP precinct comes from Ballotpedia). VoteBot uses a county's list only when it has exactly the precincts on the Texas Legislative Council's map, so it's never another year's.
-  - **Bexar and Denton** publish maps of their commissioner and JP precincts instead. VoteBot takes points spread through your election precinct, each at least 160 feet from its edges, and gives a number only when they all fall in the same one.
+  - **Harris, Dallas, Tarrant, Travis and Fort Bend** publish a list of their election precincts with each one's commissioner and JP precinct (Fort Bend's has commissioner precincts only, so its JP precinct comes from Ballotpedia). Pallot uses a county's list only when it has exactly the precincts on the Texas Legislative Council's map, so it's never another year's.
+  - **Bexar and Denton** publish maps of their commissioner and JP precincts instead. Pallot takes points spread through your election precinct, each at least 160 feet from its edges, and gives a number only when they all fall in the same one.
 
   A number you enter wins over the county's, and the county's over Ballotpedia's; when the county and Ballotpedia differ, a note says so. Near the line between two election precincts, a number is given only when both precincts have the same one. Other counties work as before.
 
@@ -97,7 +99,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - Right above the map, a button for each district, with a sample of its line: pick one, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Hover over a line to see which district it is.
   - Drag the map to move it, and zoom with **+** and **−**, or with the scroll wheel once you've clicked the map (so scrolling the page never zooms it by accident). On a phone, move and zoom it with two fingers; one finger scrolls the page. With the map selected, the arrow keys move it.
   - The outlines are simplified to about 160 feet (your election precinct to about 16 feet), so near a boundary, go by the district numbers.
-  - The street map's tiles come from OpenStreetMap through the VoteBot server, which keeps them. Turn the street map off in Settings to see the outlines alone.
+  - The street map's tiles come from OpenStreetMap through the Pallot server, which keeps them. Turn the street map off in Settings to see the outlines alone.
   - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's shown at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
 - **Precincts:** until your commissioner and JP precincts are known, the races that depend on them are listed under "Depends on your commissioner or JP precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
@@ -153,19 +155,19 @@ Picks, notes, collapsed races and your pick rule are kept in the browser's `loca
 | Texas Legislative Council precinct map (data.capitol.texas.gov, the `precincts` maps) | your election precinct, and its outline on the map | the portal's list of maps is asked once a week; the newest map, a primary's or a general's (now the 2026 primary's, about 45 MB), is downloaded on the first lookup and again only when a newer one is listed. Nothing about you is sent |
 | County map servers: Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton | your commissioner and JP precincts, from your election precinct | each county's list of its election precincts, or its maps of its commissioner and JP precincts, found by name (the newest year, never a proposal) and downloaded whole, at most once a week, when you look up an address there. Nothing about you is sent |
 | US Census TIGERweb | the outlines of your U.S. House, State Senate and State House districts, for the map | one request per district, with its number and never your address |
-| OpenStreetMap tiles (tile.openstreetmap.org) | the street map under the outlines | through the VoteBot server, only the tiles of the area you look at, following OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); drawn with [Leaflet](https://leafletjs.com), which comes with VoteBot |
+| OpenStreetMap tiles (tile.openstreetmap.org) | the street map under the outlines | through the Pallot server, only the tiles of the area you look at, following OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); drawn with [Leaflet](https://leafletjs.com), which comes with Pallot |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
 | Ballotpedia | city council, school board and special-district races, and others the state doesn't list (appraisal district boards); notes on races; JP/constable/commissioner precinct (when it has a race on this ballot) and city council district; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
-| TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with VoteBot (see [Bundled snapshots](#bundled-snapshots)) |
-| Vote for Peace (voteforpeace.info, from Organize for Peace) | whether it rates a candidate an Ally, Neutral or Opposed, on war, human rights and lobby money, with the groups it cites and its notes; every level, from Congress to county courts and city councils | bundled with VoteBot, used with Organize for Peace's permission (see [Bundled snapshots](#bundled-snapshots)) |
+| TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with Pallot (see [Bundled snapshots](#bundled-snapshots)) |
+| Vote for Peace (voteforpeace.info, from Organize for Peace) | whether it rates a candidate an Ally, Neutral or Opposed, on war, human rights and lobby money, with the groups it cites and its notes; every level, from Congress to county courts and city councils | bundled with Pallot, used with Organize for Peace's permission (see [Bundled snapshots](#bundled-snapshots)) |
 | FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. Without your own key, race totals only (see [The FEC key](#the-fec-key-optional)) |
-| Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | bundled with VoteBot, built from TEC's nightly CSV export (see [Bundled snapshots](#bundled-snapshots)) |
+| Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | bundled with Pallot, built from TEC's nightly CSV export (see [Bundled snapshots](#bundled-snapshots)) |
 | FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API |
 
-The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's commissioner and JP precincts. Those come from the numbers the voter enters under Your districts, the county's records (in the seven counties above), or Ballotpedia, in that order, where one number covers both the JP and the constable, since each justice precinct elects one of each; otherwise those races are listed under "Depends on your commissioner or JP precinct". Ballotpedia names a precinct only when it has a race on this ballot, from its district's name or, when that doesn't say which kind ("Fort Bend County Precinct 1"), from the races in it. Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". Ballotpedia's other races are added when the state lists none of their candidates for that day, such as an appraisal district's board. The county's ballot order lists only the names printed on the ballot, so the declared write-ins come from the state's statewide candidate list, matched to the county's races by office (a county office's only from that county). A race with only write-ins isn't on the county's ballot order, so it's shown when VoteBot can place it: a federal or statewide race, one of the voter's districts, or one of the county's own offices. A district judge or DA race with only write-ins isn't shown, since the list doesn't say which counties it covers. When Texas SOS has no ballot for the county, as for a special election, VoteBot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
+The Texas SOS data covers every race touching a county. Pallot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's commissioner and JP precincts. Those come from the numbers the voter enters under Your districts, the county's records (in the seven counties above), or Ballotpedia, in that order, where one number covers both the JP and the constable, since each justice precinct elects one of each; otherwise those races are listed under "Depends on your commissioner or JP precinct". Ballotpedia names a precinct only when it has a race on this ballot, from its district's name or, when that doesn't say which kind ("Fort Bend County Precinct 1"), from the races in it. Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". Ballotpedia's other races are added when the state lists none of their candidates for that day, such as an appraisal district's board. The county's ballot order lists only the names printed on the ballot, so the declared write-ins come from the state's statewide candidate list, matched to the county's races by office (a county office's only from that county). A race with only write-ins isn't on the county's ballot order, so it's shown when Pallot can place it: a federal or statewide race, one of the voter's districts, or one of the county's own offices. A district judge or DA race with only write-ins isn't shown, since the list doesn't say which counties it covers. When Texas SOS has no ballot for the county, as for a special election, Pallot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
 
-The election precinct comes from the newest precinct map, whether a primary's or a general's. The Texas Legislative Council publishes a general election's map only after that election, and counties can only redraw precincts in March or April of odd-numbered years, so a primary's precincts carry over to its general: 99.5% did in 2022 and 99.9% in 2024. An address's point and the middle of its census block must fall in the same precinct; when they don't, VoteBot names both and doesn't pick one. That can't catch the geocoder putting an address on the wrong side of a street that's a precinct line, so your voter registration certificate wins.
+The election precinct comes from the newest precinct map, whether a primary's or a general's. The Texas Legislative Council publishes a general election's map only after that election, and counties can only redraw precincts in March or April of odd-numbered years, so a primary's precincts carry over to its general: 99.5% did in 2022 and 99.9% in 2024. An address's point and the middle of its census block must fall in the same precinct; when they don't, Pallot names both and doesn't pick one. That can't catch the geocoder putting an address on the wrong side of a street that's a precinct line, so your voter registration certificate wins.
 
 Campaign money covers congressional races (FEC) and state races (TEC), which includes:
 - statewide offices;
@@ -180,11 +182,11 @@ What "raised" covers (the FAQ's "How are the FEC figures put together?" and "How
 - **TEC totals:** the reports whose period ends after the last November general election, excluding daily pre-election and special-session reports, whose money is reported again later.
 - **FEC totals:** the whole election period (two years for the House, six for the Senate).
 
-Candidates are matched across sources by name, with seat and party as corroboration. Every match is labeled **exact** ("Matched") or **likely** ("Likely match"), and ambiguous ones are left unmatched. A state race's candidates are matched to Ballotpedia within that race's own race on Ballotpedia's ballot (the one its candidates are found in), with the party to confirm, so a middle initial on one side still matches exactly; first names that only share an initial ("Tom" and "Thomas") stay "likely". With Texas SOS off, a state race's seat for the Texas Ethics Commission match comes from Ballotpedia's district ("Texas House of Representatives District 49" is State Representative, District 49), so a namesake elsewhere in Texas isn't taken for the candidate. TrackAIPAC lists members of Congress by their current seat, so a 2026 seat change after the 2025 redistricting shows up as "likely" unless TrackAIPAC's entry mentions the new seat. Vote for Peace names a candidate's office its own way ("TX State Representative", "Harris District County Court Judge" and a number), which VoteBot reads as the seat; a court named without its place ("TX Supreme Court Justice") counts for any place on that court, and a county or city office for the county it names. In one race, one entry goes to one candidate: the closest name takes it, so "Kristen Hawkins" isn't also given to "Kyle Hawkins".
+Candidates are matched across sources by name, with seat and party as corroboration. Every match is labeled **exact** ("Matched") or **likely** ("Likely match"), and ambiguous ones are left unmatched. A state race's candidates are matched to Ballotpedia within that race's own race on Ballotpedia's ballot (the one its candidates are found in), with the party to confirm, so a middle initial on one side still matches exactly; first names that only share an initial ("Tom" and "Thomas") stay "likely". With Texas SOS off, a state race's seat for the Texas Ethics Commission match comes from Ballotpedia's district ("Texas House of Representatives District 49" is State Representative, District 49), so a namesake elsewhere in Texas isn't taken for the candidate. TrackAIPAC lists members of Congress by their current seat, so a 2026 seat change after the 2025 redistricting shows up as "likely" unless TrackAIPAC's entry mentions the new seat. Vote for Peace names a candidate's office its own way ("TX State Representative", "Harris District County Court Judge" and a number), which Pallot reads as the seat; a court named without its place ("TX Supreme Court Justice") counts for any place on that court, and a county or city office for the county it names. In one race, one entry goes to one candidate: the closest name takes it, so "Kristen Hawkins" isn't also given to "Kyle Hawkins".
 
 ## Caching
 
-VoteBot saves every answer it gets in `data/`, so looking up the same address again makes **zero** external calls, even after a restart. Settings shows how the last lookup used each source.
+Pallot saves every answer it gets in `data/`, so looking up the same address again makes **zero** external calls, even after a restart. Settings shows how the last lookup used each source.
 
 - Lifetimes:
   - reference data: 30 days
@@ -201,68 +203,68 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - counties' lists of their election precincts, and their maps of commissioner and JP precincts: 7 days
   - street map tiles: 7 days, the least OpenStreetMap's policy allows
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
-  - address suggestions, street map tiles, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
-  - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
-- The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with VoteBot, so lookups never contact any of them; they're only fetched again when you press Refresh.
+  - address suggestions, street map tiles, and addresses that weren't found, are deleted when Pallot starts once they've been expired for 30 days (`PALLOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
+  - Override any of these with `PALLOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
+- The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot, so lookups never contact any of them; they're only fetched again when you press Refresh.
 - Candidate details and the declared write-ins come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
 - An error that a source sends as if it were an answer counts as a failure too, so it never replaces the good copy: TIGERweb's and the counties' map servers answering with an error, or the Texas SOS's dates page coming back without its election dates (a maintenance page, say). With no good copy yet, the error is kept for 15 minutes, so lookups meanwhile don't ask again.
-- If the Census geocoder or Nominatim (each on its own), Texas SOS, Ballotpedia (its ballot or its address search, each on its own), FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, VoteBot stops asking it for an hour; if a county's map server does, it stops asking all seven counties for an hour. What it already sent still shows.
+- If the Census geocoder or Nominatim (each on its own), Texas SOS, Ballotpedia (its ballot or its address search, each on its own), FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, Pallot stops asking it for an hour; if a county's map server does, it stops asking all seven counties for an hour. What it already sent still shows.
 - If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. Refresh in Settings always tries.
 - If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. Refresh in Settings always tries.
-- If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
+- If the FEC answers that its rate limit is reached, Pallot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
 - Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through. TrackAIPAC's and Vote for Peace's Refresh stop at once if their site refuses them.
 
 ## Settings
 
 The **Settings** page, linked from the left pane:
-- sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open VoteBot tab;
+- sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
 - picks the web search engine;
 - turns election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, Vote for Peace, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC, Vote for Peace and the Texas Ethics Commission to the snapshots that came with VoteBot. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
+- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC, Vote for Peace and the Texas Ethics Commission to the snapshots that came with Pallot. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
 - has "Clear my picks & notes" (your pick rule too), and "Clear all browser data", which also forgets your address, appearance, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
-Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
+Settings has no login, but its buttons only work from Pallot's own pages: a request that another website makes from your browser is refused.
 
 When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
 ## Bundled snapshots
 
-The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with VoteBot as snapshots in the repo. VoteBot copies them into `data/` on first run, so ballot lookups never contact trackaipac.com, voteforpeace.info or TEC. Each has a row in Settings:
+The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot as snapshots in the repo. Pallot copies them into `data/` on first run, so ballot lookups never contact trackaipac.com, voteforpeace.info or TEC. Each has a row in Settings:
 - **Refresh** fetches a new copy.
   - TrackAIPAC's checks the site's pages and saves only if the site changed.
   - Vote for Peace's fetches its All Candidates page (one request, about 7 MB) and saves only if a candidate changed.
   - TEC's first makes one small request to see whether TEC's nightly export (`TEC_CF_CSV.zip`, about 1 GB) has changed; if not, that's all. If it has, it downloads the zip in one request (a minute or two on a fast connection) and rebuilds the snapshot.
-- **Reset** goes back to the snapshot that came with VoteBot.
+- **Reset** goes back to the snapshot that came with Pallot.
 - **TEC's download server blocks bursts of requests.** If a refresh says it was refused, try later, or download the zip in a browser, save it as `data/tec/TEC_CF_CSV.zip`, and press Refresh again.
 
 ## Configuration
 
-Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/votebot uv run votebot`, or in a `.env` file in the project folder: `cp .env.example .env` and fill it in. VoteBot reads `.env` at startup, and git ignores it. Variables already set in the environment win over `.env`. Docker Compose reads the same `.env` and passes it to the container, where `VOTEBOT_DATA_DIR` is always `/data`: the folder it names on the host is mounted there.
+Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot uv run pallot`, or in a `.env` file in the project folder: `cp .env.example .env` and fill it in. Pallot reads `.env` at startup, and git ignores it. Variables already set in the environment win over `.env`. Docker Compose reads the same `.env` and passes it to the container, where `PALLOT_DATA_DIR` is always `/data`: the folder it names on the host is mounted there.
 
 | Variable | Default |
 |---|---|
-| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data; git-ignored) |
-| `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and VoteBot never writes it anywhere |
-| `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper; +https://github.com/Fahd-Siddiqui/VoteBot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
-| `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
-| `VOTEBOT_ALLOWED_HOSTS` | none: VoteBot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `VOTEBOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `VOTEBOT_TTL_GEOCODE_BACKOFF` and `VOTEBOT_TTL_SOS_BACKOFF` for how long the address lookup and Texas SOS are left alone after refusing a request, `VOTEBOT_TTL_KEY_DATES` for the key election dates, `VOTEBOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `VOTEBOT_TTL_OUTLINES` for the district map's outlines, `VOTEBOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `VOTEBOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request, for both the precinct and SBOE maps), `VOTEBOT_TTL_COUNTY_PRECINCTS` for the counties' lists and maps of their precincts (and `VOTEBOT_TTL_COUNTY_PRECINCTS_BACKOFF` for how long the counties are left alone after one refuses a request), `VOTEBOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks: a shorter one is raised to 7 days), and `VOTEBOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
+| `PALLOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data; git-ignored) |
+| `PALLOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and Pallot never writes it anywhere |
+| `PALLOT_USER_AGENT` | `Pallot/0.1 (personal ballot helper; +https://github.com/Just-Peace/Pallot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
+| `PALLOT_HTTP_TIMEOUT` | `30` seconds |
+| `PALLOT_ALLOWED_HOSTS` | none: Pallot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
+| `PALLOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `PALLOT_TTL_GEOCODE_BACKOFF` and `PALLOT_TTL_SOS_BACKOFF` for how long the address lookup and Texas SOS are left alone after refusing a request, `PALLOT_TTL_KEY_DATES` for the key election dates, `PALLOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `PALLOT_TTL_OUTLINES` for the district map's outlines, `PALLOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `PALLOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request, for both the precinct and SBOE maps), `PALLOT_TTL_COUNTY_PRECINCTS` for the counties' lists and maps of their precincts (and `PALLOT_TTL_COUNTY_PRECINCTS_BACKOFF` for how long the counties are left alone after one refuses a request), `PALLOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks: a shorter one is raised to 7 days), and `PALLOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
 
 ### Docker
 
-- `compose.yaml` mounts `data/` (or the folder `VOTEBOT_DATA_DIR` names) at `/data`, so Docker and `uv run votebot` share the cache, settings, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
-- It's published on every network interface. To keep it to this machine, change the `ports` line in `compose.yaml` to `"127.0.0.1:8000:8000"`. `VOTEBOT_PORT` in `.env` changes the port.
-- To open it by a name rather than an address (`http://nas.local:8000`, or through a reverse proxy), add the name to `VOTEBOT_ALLOWED_HOSTS` in `.env`. A reverse proxy must pass the original `Host` header on.
-- The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `VOTEBOT_UID` and `VOTEBOT_GID` in `.env`.
+- `compose.yaml` mounts `data/` (or the folder `PALLOT_DATA_DIR` names) at `/data`, so Docker and `uv run pallot` share the cache, settings, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
+- It's published on every network interface. To keep it to this machine, change the `ports` line in `compose.yaml` to `"127.0.0.1:8000:8000"`. `PALLOT_PORT` in `.env` changes the port.
+- To open it by a name rather than an address (`http://nas.local:8000`, or through a reverse proxy), add the name to `PALLOT_ALLOWED_HOSTS` in `.env`. A reverse proxy must pass the original `Host` header on.
+- The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `PALLOT_UID` and `PALLOT_GID` in `.env`.
 - `.env` is passed in when the container starts, never built into the image.
 
 ## Not built yet
 
-Known bugs, planned improvements and features, and UI ideas are [GitHub issues](https://github.com/Fahd-Siddiqui/VoteBot/issues).
+Known bugs, planned improvements and features, and UI ideas are [GitHub issues](https://github.com/Just-Peace/Pallot/issues).
 
-## Working on VoteBot
+## Working on Pallot
 
 How it's put together, the tests, and adding a source: [DEVELOPMENT.md](DEVELOPMENT.md).

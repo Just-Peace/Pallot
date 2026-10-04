@@ -175,7 +175,7 @@ class RemoteZip:
         self._client = client or httpx.Client(
             timeout=httpx.Timeout(60.0, read=120.0),
             follow_redirects=True,
-            headers={"User-Agent": user_agent or "tec_cache (VoteBot personal ballot helper)"},
+            headers={"User-Agent": user_agent or "tec_cache (Pallot personal ballot helper)"},
         )
         self._owns_client = client is None
         self._pause = pause

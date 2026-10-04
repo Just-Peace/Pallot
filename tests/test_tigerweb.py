@@ -7,10 +7,10 @@ import httpx
 import pytest
 import respx
 
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache, UpstreamError
-from votebot.sources import tigerweb
-from votebot.sources.sboe import _inside
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache, UpstreamError
+from pallot.sources import tigerweb
+from pallot.sources.sboe import _inside
 
 from .conftest import capitol_point, get_ballot, load
 

@@ -58,7 +58,7 @@ def test_warm_up_skips_sources_turned_off(make_app, upstream):
 
 
 def test_a_lookup_during_the_warm_up_reads_each_map_once(make_app, upstream, monkeypatch):
-    from votebot.sources import election_precincts, sboe
+    from pallot.sources import election_precincts, sboe
 
     with TestClient(make_app()) as client:
         get_ballot(client)

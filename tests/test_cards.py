@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from votebot.models import Match
-from votebot.sources import trackaipac
-from votebot.sources.ballotpedia import BpCandidate, BpRace, card as ballotpedia_card
+from pallot.models import Match
+from pallot.sources import trackaipac
+from pallot.sources.ballotpedia import BpCandidate, BpRace, card as ballotpedia_card
 
 EXACT = Match(confidence="exact", method="full name, in the same seat")
 
@@ -41,7 +41,7 @@ def test_trackaipac_lists_and_money_for_pick_by_rule():
     assert trackaipac.card(watched, EXACT, None).figures == {"israel_lobby": 0}
 
 
-def test_trackaipac_notes_link_to_the_site_not_to_votebot():
+def test_trackaipac_notes_link_to_the_site_not_to_pallot():
     person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"], "listings": [listing(
         "watchlist", 0, notes=["[This candidate is pro-israel.](/james-talarico)",
                                "Said so [on X](https://x.com/someone/status/1) and [here](/endorsements)."])]}

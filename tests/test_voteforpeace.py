@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from votebot.models import Candidate, Match, Race
-from votebot.offices import classify
-from votebot.sources import voteforpeace
-from votebot.sources.voteforpeace import VoteForPeace, card, cards, entry_seats
+from pallot.models import Candidate, Match, Race
+from pallot.offices import classify
+from pallot.sources import voteforpeace
+from pallot.sources.voteforpeace import VoteForPeace, card, cards, entry_seats
 
 from .conftest import FIXTURES
 

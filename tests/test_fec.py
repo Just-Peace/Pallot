@@ -7,9 +7,9 @@ import sqlite3
 
 from fastapi.testclient import TestClient
 
-from votebot.matching import NameIndex, last_first, match_person
-from votebot.sources import fec
-from votebot.text import display_org, money, money_short
+from pallot.matching import NameIndex, last_first, match_person
+from pallot.sources import fec
+from pallot.text import display_org, money, money_short
 
 from .conftest import FEC_KEY, find_race, get_ballot, last_use, load
 
@@ -88,7 +88,7 @@ def test_demo_key_shows_totals_only(make_app, upstream):
     card = next(c for c in senate["candidates"][1]["cards"] if c["source"] == "fec")
     assert card["badges"][0]["text"] == "FEC: raised $68.6M" and card["breakdowns"] == []
     assert card["figures"]["raised"] == 68560930.42 and not {"outside_for", "small_share", "self_share"} & set(card["figures"])  # not asked for, so not 0
-    assert any("VOTEBOT_FEC_API_KEY" in note for note in ballot["notes"])
+    assert any("PALLOT_FEC_API_KEY" in note for note in ballot["notes"])
     assert all("/elections/" in call for call in upstream.calls if "open.fec.gov" in call)
     assert upstream.fec_keys == {"DEMO_KEY"}
     fec_row = next(s for s in overview["sources"] if s["id"] == "fec")
@@ -143,7 +143,7 @@ def test_a_refused_key_is_explained(make_app, upstream):
     upstream.fec_status = 403
     with TestClient(make_app()) as client:
         ballot = get_ballot(client)
-    assert any("VOTEBOT_FEC_API_KEY" in w for w in ballot["warnings"])
+    assert any("PALLOT_FEC_API_KEY" in w for w in ballot["warnings"])
 
 
 def test_the_key_is_sent_but_never_stored(make_app, upstream, tmp_path):

@@ -1,0 +1,1071 @@
+/* Pallot — one stylesheet: left pane + ballot, the other pages, light/dark, plus the print sheet. */
+
+:root {
+  --bg: #f4f6f8;
+  --panel: #ffffff;
+  --panel-2: #f8fafb;
+  --text: #17202b;
+  --muted: #56616e;
+  --line: #dfe4ea;
+  --line-strong: #c5ced8;
+  --accent: #0b5a8a;
+  --accent-hover: #084a72;
+  --accent-contrast: #ffffff;
+  --accent-soft: #e5f0f7;
+  --focus: #1a73c7;
+  --good: #1d6f41;
+  --good-soft: #e3f3e9;
+  --warn: #8f4300;
+  --warn-soft: #fcefdf;
+  --info: #24519e;
+  --info-soft: #e7edf9;
+  --neutral-soft: #eceff3;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  /* party colours: solid (badges, picked borders) and a soft tint (picked rows) */
+  --party-r: #c62828;
+  --party-r-soft: #fbe2df;
+  --party-d: #1f5fd1;
+  --party-d-soft: #dfe9fc;
+  --party-l: #f2c200;
+  --party-l-ink: #3d2f00;
+  --party-l-text: #8a6a00; /* yellow text is unreadable on white */
+  --party-l-soft: #fcf0c2;
+  --party-g: #2e7d32;
+  --party-g-soft: #dcefdd;
+  --party-other: #ffffff;       /* independents, nonpartisan, write-ins, … */
+  --party-other-ink: #17202b;
+  --party-other-pick: #17202b;  /* a white pick still needs a visible edge */
+  --party-other-soft: #ffffff;
+  /* the district map's outlines: no party blue or red, each also with its own dash; checked for
+     colour blindness and 3:1 contrast against --panel, the map's background */
+  --map-cd: #a37eed;
+  --map-sd: #ec6d13;
+  --map-hd: #169c7b;
+  --map-sboe: #813160;
+  --map-election-precinct: #48542a; /* olive: told apart from the rest by its lightness in every kind of colour blindness */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.07);
+  --shadow-pop: 0 8px 24px rgba(16, 24, 40, 0.16); /* what floats over the page: menus, suggestions, dialogs, the toast */
+  --on-solid: #ffffff; /* text and marks on a solid colour: party badges, the switch's knob */
+  --sidebar: 320px;
+  --content-max: 1360px;
+  color-scheme: light;
+}
+
+/* theme.js sets data-theme from Settings' Appearance, or from the device's setting */
+:root[data-theme="dark"] {
+  --bg: #0e1319;
+  --panel: #151c24;
+  --panel-2: #1a222c;
+  --text: #e5ebf1;
+  --muted: #9ba7b4;
+  --line: #25303c;
+  --line-strong: #34414f;
+  --accent: #5aa7e0;
+  --accent-hover: #7cbbeb;
+  --accent-contrast: #07121c;
+  --accent-soft: #14283a;
+  --focus: #7cbbeb;
+  --good: #6fcf97;
+  --good-soft: #16301f;
+  --warn: #f0a55a;
+  --warn-soft: #34240f;
+  --info: #8fb4f5;
+  --info-soft: #172642;
+  --neutral-soft: #212b36;
+  --danger: #f4877e;
+  --danger-soft: #3a1714;
+  --party-r: #d64541;
+  --party-r-soft: #3a1a18;
+  --party-d: #3d7be6;
+  --party-d-soft: #172642;
+  --party-l: #e8c026;
+  --party-l-ink: #2b2100;
+  --party-l-text: #e8c026;
+  --party-l-soft: #332b0c;
+  --party-g: #3f9a45;
+  --party-g-soft: #16301f;
+  --party-other: #ffffff;
+  --party-other-ink: #0e1319;
+  --party-other-pick: #ffffff;
+  --party-other-soft: #202a35;
+  --map-cd: #8b68f3;
+  --map-sd: #d2781e;
+  --map-hd: #36a4ba;
+  --map-sboe: #ba3678;
+  --map-election-precinct: #cbd99a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 72px; scroll-padding-bottom: var(--footer-h, 0px); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+a:hover { color: var(--accent-hover); }
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+
+h1, h2, h3 { line-height: 1.25; margin: 0 0 0.4em; }
+h1 { font-size: 1.75rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0 0 0.75em; }
+
+button, input, select, textarea { font: inherit; }
+
+/* Small uppercase headings: each sets its own size and margins */
+.side-title, .data-table thead th, .faq-body h3, .key-dates h2, .districts-card h2, .district-map h2, .group-title,
+.quotes-title, .breakdown-title { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+/* the section chips in the sticky strip say what they are, so their heading is for screen readers only */
+.sr-only, .progress-strip .side-title {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip { position: absolute; left: -999px; top: 8px; background: var(--panel); padding: 8px 12px; z-index: 20; }
+.skip:focus { left: 8px; }
+
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+.fine { color: var(--muted); font-size: 0.82rem; margin: 0.6em 0 0; }
+.lede { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+
+.icon { width: 1.1em; height: 1.1em; flex: none; }
+.with-icon { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---- app shell: left pane + ballot ---- */
+
+.app { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+/* chrome.js draws the pane; until then, the page's own parts of it (the ballot's form) stay hidden. */
+.sidebar > :not(.side-inner) { display: none; }
+/* A column: "Your ballot" and the address at the top, Settings, FAQ, About and Privacy at the foot. */
+.side-inner { position: relative; display: flex; flex-direction: column; gap: 18px; min-height: 100%; padding: 20px 20px 24px; }
+.brand { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+.brand-name > span { color: var(--accent); }
+.logo { width: 28px; height: 28px; }
+
+.side-section { border-top: 1px solid var(--line); padding-top: 16px; }
+.side-address { margin-top: -6px; } /* belongs with "Your ballot" above it */
+.side-bottom { margin-top: auto; }
+.side-title { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; margin: 0 0 12px; }
+.side-title .icon { width: 16px; height: 16px; color: var(--accent); }
+/* « in the brand's row folds the pane to a rail of icons (chrome.js); see the end of the file */
+.pane-toggle { position: absolute; top: 21px; right: 14px; }
+
+/* centred beside the pane, wide; the bottom clears the pinned footer */
+.content { width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 24px 32px calc(var(--footer-h, 36px) + 32px); }
+
+/* The footer, on every page (chrome.js): pinned to the bottom of the window, beside the pane. */
+.site-footer { position: fixed; left: var(--sidebar); right: 0; bottom: 0; z-index: 6; padding: 6px 0;
+  background: var(--bg); border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; }
+.site-footer p { max-width: var(--content-max); margin: 0 auto; padding: 0 32px; } /* lined up with the content */
+
+/* Back to top (chrome.js): once you've scrolled a screen, above the footer */
+.to-top { position: fixed; right: 20px; bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--panel);
+  color: var(--accent); box-shadow: var(--shadow-pop); cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 0.15s, transform 0.15s, visibility 0.15s; }
+.to-top.shown { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { background: var(--accent-soft); }
+.to-top .icon { width: 20px; height: 20px; }
+@media (prefers-reduced-motion: reduce) { .to-top { transition: none; } }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* ---- left pane: address ---- */
+
+.address-card { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; }
+.address-line { font-weight: 650; margin: 0 0 2px; overflow-wrap: anywhere; }
+.address-card .muted { margin: 0; }
+
+/* ---- forms and buttons ---- */
+
+.lookup-form { display: grid; gap: 12px; }
+.field { position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field.small { min-width: 150px; flex: 1 1 150px; }
+label { font-weight: 600; font-size: 0.9rem; }
+
+input[type="text"], input[type="number"], select, textarea {
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  width: 100%;
+}
+textarea { resize: vertical; min-height: 60px; }
+
+/* Address suggestions: a list under the address box while typing (suggest.js). */
+.suggestions {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 30; margin-top: 4px;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop); overflow: hidden;
+}
+.suggestions ul { list-style: none; margin: 0; padding: 4px 0; }
+.suggestion { padding: 7px 11px; cursor: pointer; font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.suggestion:hover, .suggestion[aria-selected="true"] { background: var(--accent-soft); }
+.suggestion[aria-selected="true"] { box-shadow: inset 3px 0 0 var(--accent); }
+.suggestions-credit { margin: 0; padding: 5px 11px 7px; border-top: 1px solid var(--line); font-size: 0.72rem; color: var(--muted); }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
+
+.btn {
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--text);
+  padding: 9px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { background: var(--neutral-soft); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.btn.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.ghost { background: transparent; }
+.btn.primary.ghost { background: transparent; color: var(--accent); }
+.btn.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+.btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
+.btn.small { padding: 6px 12px; font-size: 0.85rem; }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.button-row.end { justify-content: flex-end; }
+
+.link-btn { font-size: 0.85rem; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 2px 0;
+  white-space: nowrap; }
+.link-btn:hover { text-decoration: underline; }
+.link-btn .icon { width: 14px; height: 14px; }
+
+.icon-btn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.icon-btn:hover:not(:disabled) { color: var(--text); border-color: var(--line-strong); background: var(--neutral-soft); }
+.icon-btn:disabled { opacity: 0.5; cursor: default; }
+.icon-btn.has-note { color: var(--accent); border-color: var(--accent); }
+a.icon-btn, a.btn, a.link-btn { display: inline-block; text-decoration: none; }
+a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
+
+/* ---- status line (working / errors only) ---- */
+
+.status { margin: 12px 0 0; font-weight: 500; font-size: 0.9rem; }
+.status:empty { display: none; }
+.status-busy { color: var(--muted); }
+.status-busy::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: -1px;
+  border: 2px solid var(--line-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.status-ok { color: var(--good); }
+.status-error { color: var(--danger); background: var(--danger-soft); padding: 10px 12px; border-radius: var(--radius-sm); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .status-busy::before { animation: none; } html { scroll-behavior: auto; } }
+
+/* ---- left pane: sections ---- */
+
+.jump-list, .badges, .links { list-style: none; margin: 0; padding: 0; }
+.jump-list { display: grid; gap: 1px; margin: 0 -8px; }
+.jump-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 6px 8px;
+  border-radius: var(--radius-sm); color: var(--text); text-decoration: none; font-size: 0.92rem; }
+.jump-list a:hover { background: var(--neutral-soft); }
+.jump-list a.maybe-link { color: var(--muted); }
+.jump-list .count { color: var(--muted); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.jump-list .count.complete { color: var(--good); font-weight: 700; }
+/* the section on screen (ballot-nav.js, or page.js on the other pages, marks it as you scroll) */
+.jump-list a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+/* in the sticky strip (a phone, or the pane folded): a row of chips */
+.progress-strip .jump-list { display: flex; align-items: center; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
+/* a chip as wide as the row at most: a long title ("Depends on your commissioner or JP precinct") wraps */
+.progress-strip .jump-list li { flex: none; max-width: 100%; }
+.progress-strip .jump-list a { border: 1px solid var(--line); border-radius: 999px; }
+.progress-strip .jump-list a[aria-current] { border-color: var(--accent); }
+.progress-strip .side-section { flex: 1 1 100%; min-width: 0; border-top: 0; padding-top: 0; }
+
+/* ---- left pane: links to the pages ---- */
+
+.site-nav ul { list-style: none; margin: 0 -8px; padding: 0; display: grid; gap: 1px; }
+.site-nav a { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: var(--radius-sm); color: var(--text);
+  text-decoration: none; font-size: 0.92rem; }
+.site-nav a:hover { background: var(--neutral-soft); }
+.site-nav .icon { width: 16px; height: 16px; color: var(--muted); }
+.site-nav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+.site-nav a[aria-current="page"] .icon { color: var(--accent); }
+
+/* ---- left pane: the top bar's buttons on narrow screens (topbar.js) ---- */
+
+.topbar-buttons { display: none; }
+.topbar-btn { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 0.88rem; font-weight: 600;
+  color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.topbar-btn:hover { border-color: var(--line-strong); background: var(--neutral-soft); }
+.topbar-btn .icon { width: 16px; height: 16px; color: var(--accent); }
+.topbar-btn[aria-expanded="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.topbar-address { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- pages other than the ballot ---- */
+
+.page-head { margin: 8px 0 20px; }
+.page-head h1 { margin: 0 0 6px; }
+.page-head .lede { margin: 0; }
+.updated { color: var(--muted); font-size: 0.85rem; margin: 8px 0 0; }
+
+.panel > h2 { font-size: 1.15rem; margin-bottom: 10px; }
+.prose p, .prose ul { max-width: 72ch; }
+.prose ul { padding-left: 20px; margin: 0 0 0.75em; }
+.prose li + li { margin-top: 6px; }
+.prose > :last-child { margin-bottom: 0; }
+
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.88em; background: var(--neutral-soft);
+  padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+
+.table-wrap { overflow-x: auto; margin: 4px 0 14px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.data-table th, .data-table td { text-align: left; vertical-align: top; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); }
+.data-table thead th { font-size: 0.75rem; padding-top: 0; border-bottom-color: var(--line-strong); }
+.data-table tbody th { font-weight: 600; }
+.data-table.stack tbody th { width: 40%; }
+.data-table tbody tr:last-child > * { border-bottom: 0; }
+
+.faq-group { margin-bottom: 24px; }
+.faq { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 8px; }
+.faq > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 16px; font-weight: 650; }
+.faq > summary::-webkit-details-marker { display: none; }
+.faq > summary::before { margin: 0 4px; color: var(--muted); } /* a chevron, drawn with the race's */
+.faq > summary:hover { color: var(--accent); }
+.faq-body { padding: 0 16px 14px 42px; }
+.faq-body p { max-width: 72ch; }
+.faq-body h3 { font-size: 0.75rem; margin: 1.4em 0 0.5em; }
+.faq-body ul { max-width: 72ch; padding-left: 20px; margin: 0 0 0.75em; }
+.faq-body li + li { margin-top: 5px; }
+/* "What each figure is": the figure's name, then what it counts */
+.faq-body dl { max-width: 72ch; margin: 0 0 0.75em; }
+.faq-body dt { font-weight: 650; }
+.faq-body dd { margin: 2px 0 10px; }
+.faq-body > :last-child { margin-bottom: 0; }
+.faq-body p:last-child { margin-bottom: 0; }
+
+/* ---- settings page ---- */
+
+.setting-row { display: grid; gap: 4px; max-width: 360px; margin: 4px 0 0; }
+.setting-row .fine { margin: 0; }
+.setting-row .seg { justify-self: start; }
+.setting-row .seg-option { padding: 6px 16px; font-size: 0.9rem; }
+
+.source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 14px 0; }
+.source-row { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
+  padding: 10px 12px; }
+.source-row.is-off { opacity: 0.75; }
+.source-row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.source-name { font-weight: 650; font-size: 0.92rem; }
+.source-name-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.source-desc { font-size: 0.78rem; color: var(--muted); margin: 6px 0 4px; }
+.source-notice, .source-cache, .source-last { font-size: 0.78rem; color: var(--muted); margin: 4px 0; }
+.source-notice.tone-warn, .source-last.tone-warn { color: var(--warn); }
+.source-facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 4px 0; font-size: 0.78rem; }
+.source-facts dt { color: var(--muted); }
+.source-facts dd { margin: 0; overflow-wrap: anywhere; }
+.source-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
+.source-state { display: contents; }
+
+.switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+.switch input { appearance: none; flex: none; width: 36px; height: 20px; border-radius: 999px; background: var(--line-strong);
+  position: relative; margin: 0; cursor: pointer; transition: background 0.15s; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--on-solid); transition: transform 0.15s; }
+.switch input:checked { background: var(--accent); }
+.switch input:checked::after { transform: translateX(16px); }
+.switch input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ---- ballot area ---- */
+
+.welcome { padding: 28px 32px; margin-top: 8px; }
+.steps { margin: 16px 0 0; padding-left: 22px; display: grid; gap: 8px; }
+
+.ballot-head h1 { margin: 0; }
+.ballot-head p { margin: 2px 0 0; }
+
+.ballot-top { display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; margin: 8px 0 4px; }
+/* When to vote and Your districts side by side, the map under both, the full width */
+.key-dates, .districts-card, .district-map { min-width: 0; background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 14px 18px; }
+.key-dates, .districts-card { display: flex; flex-direction: column; flex: 1 1 340px; }
+.key-dates h2, .districts-card h2, .district-map h2 { font-size: 0.78rem; margin: 0 0 8px; }
+.key-dates .fine, .districts-card .fine { margin-top: auto; padding-top: 10px; }
+
+/* When to vote (key-dates.js): a date per line, the next one in bold, past ones in grey; the
+   mail-ballot deadline apart, under a closed "Voting by mail?". */
+.key-date-list { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 20px; margin: 0 0 10px; }
+.key-date { display: contents; }
+.key-date dt { color: var(--muted); }
+.key-date dd { margin: 0; }
+.key-date.next dt, .key-date.next dd { color: var(--text); font-weight: 700; }
+.key-date.passed dt, .key-date.passed dd { color: var(--muted); }
+.key-date .when { margin-left: 10px; font-size: 0.85rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.key-date.passed .when { color: inherit; font-weight: 400; }
+.cal-link { display: inline-flex; vertical-align: -2px; margin: -3.5px -3.5px -3.5px 1.5px; padding: 4.5px; color: var(--muted); }
+.cal-link:hover { color: var(--accent); }
+.cal-link .icon, .key-actions .icon { width: 15px; height: 15px; }
+.key-actions { margin: 2px 0 0; }
+.key-actions .btn { flex: 1 1 auto; justify-content: center; }
+.key-actions .icon { color: var(--accent); }
+.mail-voting { margin-top: 10px; font-size: 0.9rem; }
+.mail-voting > summary { cursor: pointer; color: var(--accent); font-weight: 600; width: max-content; }
+.mail-voting p { margin: 6px 0 0; max-width: 70ch; }
+
+.district-line { margin: 0 0 4px; font-size: 0.93rem; color: var(--muted); }
+.district { white-space: nowrap; }
+.district strong { color: var(--text); font-weight: 650; }
+.district strong.unknown, .district.not-up strong { color: var(--muted); font-weight: 400; }
+/* a seat that isn't up: a grey chip; a missing number races wait on: an amber one */
+.district.not-up strong, .district.missing strong { display: inline-block; padding: 0 6px; border-radius: var(--radius-sm);
+  line-height: 1.5; }
+.district.not-up strong { background: var(--neutral-soft); }
+.district.missing strong { background: var(--warn-soft); color: var(--warn); font-weight: 650; }
+.district-note { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); }
+.precinct-prompt + .district-note, .district-warn + .district-note { margin-top: 8px; }
+.district abbr { text-decoration: none; }
+.districts-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 8px; }
+.districts-card .districts-head h2 { margin: 0; }
+.district-actions { display: flex; gap: 2px; margin: -6px -8px -6px 0; }
+.icon-only { display: inline-flex; padding: 6px; background: none; border: 0; border-radius: var(--radius-sm); color: var(--muted);
+  cursor: pointer; }
+.icon-only:hover { color: var(--accent); background: var(--neutral-soft); }
+.icon-only[aria-pressed="true"] { color: var(--accent); }
+.icon-only:disabled { opacity: 0.35; cursor: default; background: none; color: var(--muted); }
+.icon-only .icon { width: 16px; height: 16px; }
+/* a number open for editing: a box in its place, in the same line */
+/* while editing, a line's numbers sit in a row with even gaps, wrapping whole, without the dots */
+.district-line:has(.editing) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; line-height: 2; }
+.district-line:has(.editing) .sep { display: none; }
+.district.editing { font-weight: inherit; font-size: inherit; }
+/* a box the size of the number it stands for: no spinner, the text's height and weight */
+input.district-input { width: calc(3ch + 12px); height: 1.6em; padding: 0 5px; margin-left: 2px; font-size: inherit;
+  font-weight: 650; line-height: 1; text-align: center; vertical-align: baseline; border-radius: 4px;
+  appearance: textfield; -moz-appearance: textfield; }
+input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.districts-form .button-row { margin: 8px 0 0; align-items: center; }
+/* the map's legend: a button per district, right above it, that highlights the district */
+.map-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.map-picks:empty { display: none; }
+.map-pick { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; font-size: 0.88rem; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
+  border-radius: 999px; cursor: pointer; }
+.map-pick strong { color: var(--text); font-weight: 650; }
+.map-pick.not-up strong { color: var(--muted); font-weight: 400; }
+.map-pick:hover { background: var(--neutral-soft); }
+.map-pick[aria-pressed="true"] { color: var(--text); background: var(--accent-soft); border-color: var(--kind);
+  box-shadow: inset 0 0 0 1px var(--kind); }
+.map-pick.cd { --kind: var(--map-cd); }
+.map-pick.sd { --kind: var(--map-sd); }
+.map-pick.hd { --kind: var(--map-hd); }
+.map-pick.sboe { --kind: var(--map-sboe); }
+.map-pick.election_precinct { --kind: var(--map-election-precinct); }
+.map-swatch { width: 16px; height: 8px; flex: none; align-self: center; }
+
+/* Map of your districts (district-map.js, drawn by Leaflet) */
+.district-map { flex: 1 1 100%; }
+.district-map h2 { margin: 0; }
+/* the heading folds the map away, with a race's chevron */
+.map-toggle { display: flex; align-items: center; gap: 6px; width: 100%; margin: -3px 0 -3px -4px; padding: 0; border: 0;
+  background: none; color: inherit; letter-spacing: inherit; text-transform: inherit; text-align: left;
+  cursor: pointer; }
+.map-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
+#district-map-body { margin-top: 4px; }
+.map-hint { margin: 0 0 8px; font-size: 0.88rem; color: var(--muted); }
+/* its own stacking context, so Leaflet's panes and controls (z-index up to 1000) stay under the sticky strip */
+.map-canvas { position: relative; z-index: 0; height: clamp(260px, 45vw, 400px); margin: 0 0 8px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+.map-canvas.leaflet-container { background: var(--panel-2); font: inherit; font-size: 0.8rem; }
+.map-canvas.leaflet-container a { color: var(--accent); }
+.map-canvas .leaflet-bar { border: 1px solid var(--line-strong); box-shadow: none; }
+.map-canvas .leaflet-bar a { background: var(--panel); color: var(--text); border-bottom-color: var(--line); }
+.map-canvas .leaflet-bar a:hover { background: var(--neutral-soft); }
+.map-canvas .leaflet-bar a.map-home { display: grid; place-items: center; color: var(--accent); }
+.map-home .icon { width: 16px; height: 16px; }
+.map-canvas .leaflet-control-attribution, .map-canvas .leaflet-control-scale-line {
+  background: color-mix(in srgb, var(--panel) 85%, transparent); color: var(--text); }
+.map-canvas .leaflet-control-scale-line { border-color: var(--muted); }
+.map-canvas .leaflet-tooltip { background: var(--panel); color: var(--text); border-color: var(--line-strong); }
+.map-notes .district-note:last-child { margin-bottom: 8px; }
+.map-foot { margin: 0; }
+.map-outline { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.map-outline.cd { color: var(--map-cd); }
+.map-outline.sd { color: var(--map-sd); stroke-dasharray: 9 5; }
+.map-outline.hd { color: var(--map-hd); stroke-dasharray: 0.1 5; stroke-width: 2.6; }
+.map-outline.sboe { color: var(--map-sboe); stroke-dasharray: 12 4 2 4; }
+.map-outline.election_precinct { color: var(--map-election-precinct); stroke-dasharray: 10 4 0.1 4 0.1 4; }
+.map-outline.is-highlighted { stroke-width: 3.5; fill: currentColor; fill-opacity: 0.1; }
+.map-outline.hd.is-highlighted { stroke-width: 4; }
+.map-outline.is-faded, .map-halo.is-faded { opacity: 0.45; }
+/* under each line, in the panel's colour: the line's contrast was checked against it */
+.map-halo { fill: none; stroke: var(--panel); stroke-width: 6; stroke-opacity: 0.75; stroke-linejoin: round; }
+.map-pin { fill: var(--text); fill-opacity: 1; stroke: var(--panel); stroke-width: 3; }
+.map-swatch .map-outline { stroke-width: 2.2; }
+.map-swatch .map-outline.sd { stroke-dasharray: 4 2.5; }
+.map-swatch .map-outline.hd { stroke-dasharray: 0.1 3.5; }
+.map-swatch .map-outline.sboe { stroke-dasharray: 6 2 1 2; }
+.map-swatch .map-outline.election_precinct { stroke-dasharray: 4.5 2.5 0.1 2.5 0.1 2.5; }
+[data-theme="dark"] .map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); } /* OpenStreetMap's tiles are light */
+.district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
+  background: var(--warn-soft); color: var(--warn); }
+.precinct-prompt .link-btn, .district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
+.precinct-link { margin: 0 0 12px; }
+
+.progress-strip {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.progress-info { flex: 1 1 260px; display: flex; align-items: center; gap: 12px; min-width: 0; }
+.bar { flex: 1; height: 8px; border-radius: 999px; background: var(--neutral-soft); overflow: hidden; }
+.bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.2s; }
+.progress { margin: 0; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+#next-race { flex: none; }
+
+/* The View menu: a <details> whose panel drops down over the ballot. A dot on it while picked
+   races are hidden. */
+.menu { position: relative; }
+.menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
+.menu > summary::-webkit-details-marker { display: none; }
+.menu.filtered > summary::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.menu-panel { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max-content; max-width: min(300px, calc(100vw - 32px));
+  padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop); }
+.menu-panel .check { font-size: 0.9rem; }
+
+/* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
+   section stays, for its explanation and its link to the precinct form). */
+.race.hidden-picked { display: none; }
+.group:not(.maybe):not(:has(.race:not(.hidden-picked))) { display: none; }
+
+/* While a lookup runs: a skeleton ballot under a line about first lookups. */
+.loading-line { color: var(--muted); max-width: 70ch; margin: 8px 0 16px; }
+.loading-line strong { color: var(--text); }
+.race.skeleton { height: 76px; background: linear-gradient(100deg, var(--panel) 35%, var(--neutral-soft) 50%, var(--panel) 65%) 0 0 / 300% 100%;
+  animation: shimmer 1.4s ease-in-out infinite; }
+.race.skeleton:nth-child(2) { height: 150px; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .race.skeleton { animation: none; } }
+
+/* A message at the foot of the window ("Cleared your picks and notes. Undo"; toast.js). Empty,
+   it's invisible but stays in the page, so each new message is announced. */
+.toast { position: fixed; left: 50%; bottom: calc(var(--footer-h, 0px) + 12px); z-index: 40; transform: translateX(-50%); display: flex; align-items: center; gap: 16px;
+  width: max-content; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: var(--radius-sm); background: var(--text); color: var(--bg);
+  box-shadow: var(--shadow-pop); font-size: 0.92rem; }
+.toast:empty { opacity: 0; pointer-events: none; }
+.toast .link-btn { color: inherit; font-size: inherit; font-weight: 700; text-decoration: underline; }
+
+.notice { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--info); border-radius: var(--radius-sm);
+  padding: 10px 14px; margin: 12px 0 0; }
+.notice-warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.notice .link-btn { font-size: inherit; padding: 0; text-decoration: underline; }
+
+.group { margin: 22px 0 8px; }
+.group-title { font-size: 0.95rem; margin: 0 0 10px; }
+.group.maybe { border: 2px dashed var(--line-strong); border-radius: var(--radius); padding: 16px; }
+.explain { max-width: 70ch; }
+
+/* A party's colour, set only on the four parties: on a candidate row, a race (via data-pick-party),
+   a money or poll bar. It isn't inherited, so whatever reads it falls back on its own
+   (var(--party, …)), even inside a race picked for a party. */
+@property --party { syntax: "*"; inherits: false; }
+@property --party-soft { syntax: "*"; inherits: false; }
+@property --party-text { syntax: "*"; inherits: false; }
+[data-party="R"], [data-pick-party="R"] { --party: var(--party-r); --party-soft: var(--party-r-soft); }
+[data-party="D"], [data-pick-party="D"] { --party: var(--party-d); --party-soft: var(--party-d-soft); }
+[data-party="L"], [data-pick-party="L"] { --party: var(--party-l); --party-soft: var(--party-l-soft); --party-text: var(--party-l-text); }
+[data-party="G"], [data-pick-party="G"] { --party: var(--party-g); --party-soft: var(--party-g-soft); }
+/* the picked party's colour, for the race and its candidate rows; anyone else picks in white */
+.race, .cand { --pick: var(--party, var(--party-other-pick)); --pick-soft: var(--party-soft, var(--party-other-soft));
+  --pick-text: var(--party-text, var(--pick)); }
+
+.race {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 10px;
+  overflow: clip; /* keeps the heading in the rounded corners; unlike hidden, sticky still works */
+}
+/* Cards off screen aren't laid out or painted; a card not drawn yet counts as this tall. A
+   collapsed card is one line, cheap to lay out, so it always is: Collapse all then sizes the page. */
+.race:not(.skeleton) { content-visibility: auto; contain-intrinsic-size: auto 400px; }
+.race.collapsed { content-visibility: visible; }
+.race.has-pick { border-left-color: var(--pick); }
+
+/* The heading stays under the strip (--strip-h, ballot.js) until its card has scrolled by. */
+.race-head { position: sticky; top: var(--strip-h, 0px); z-index: 1; display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 16px; background: var(--panel); }
+.race:not(.collapsed) .race-head { border-bottom: 1px solid var(--line); }
+.race.collapsed .race-head { padding-top: 11px; padding-bottom: 11px; }
+.clear-pick { flex: none; gap: 4px; margin-top: -2px; }
+.clear-pick .icon { width: 12px; height: 12px; }
+.clear-pick:hover:not(:disabled) { color: var(--danger); border-color: var(--danger); background: var(--danger-soft); }
+.race-head h3 { flex: 1; min-width: 0; margin: 0; font-size: inherit; }
+.race-toggle {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  grid-template-areas: "chevron name status" ". meta meta";
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.chevron { grid-area: chevron; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+  border-radius: 6px; color: var(--muted); }
+/* A chevron: down while open, right while folded (a race, the map, a FAQ answer; the View menu only points down) */
+.chevron::before, .faq > summary::before, .menu > summary::after { content: ""; flex: none; width: 7px; height: 7px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s; }
+.race.collapsed .chevron::before, .district-map.collapsed .chevron::before, .faq:not([open]) > summary::before {
+  transform: translateX(-2px) rotate(-45deg); }
+.race-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
+.race-name { grid-area: name; font-weight: 700; font-size: 1.05rem; min-width: 0; }
+.race-meta { grid-area: meta; color: var(--muted); font-size: 0.85rem; font-weight: 400; margin-top: 1px; }
+.race-status { grid-area: status; min-width: 0; max-width: 26em; font-size: 0.92rem; font-weight: 600; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.race-status.done { color: var(--pick-text); }
+.race-status.done::before { content: "✓ "; }
+.race:not(.collapsed) .race-status:not(.done) { display: none; }
+.race.collapsed .race-meta { display: none; }
+.race.collapsed .race-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.race-body { padding: 12px 16px 14px; }
+.race-note { margin: 0 0 10px; overflow-wrap: anywhere; }
+
+.race-options, .measure-options { border: 0; margin: 0; padding: 0; min-width: 0; }
+.cands { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+.cand { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--panel-2);
+  transition: background 0.15s, border-color 0.15s; }
+.cand.picked { border-color: var(--pick); background: var(--pick-soft); box-shadow: inset 4px 0 0 var(--pick); }
+.cand-main { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pick-input { width: 20px; height: 20px; margin: 0; accent-color: var(--pick); flex: none; cursor: pointer; }
+.cand-label { display: flex; align-items: center; gap: 10px; flex: 1 1 240px; cursor: pointer; font-weight: 400; min-width: 0; }
+.cand-text { display: flex; flex-direction: column; min-width: 0; }
+.cand-name { font-weight: 650; font-size: 1rem; }
+.cand-sub { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.8rem; margin: 3px 0 0; }
+.cand-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+
+.avatar { width: 38px; height: 38px; border-radius: 50%; flex: none; object-fit: cover; background: var(--neutral-soft);
+  color: var(--muted); display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+.avatar.large { width: 64px; height: 64px; font-size: 1.2rem; }
+
+/* Party badges: solid fills, so they read differently from the soft source badges below them. */
+.party { display: inline-flex; align-items: center; border-radius: 999px; padding: 1px 9px; font-size: 0.7rem; font-weight: 800;
+  letter-spacing: 0.04em; text-transform: uppercase; background: var(--party-other); color: var(--party-other-ink);
+  box-shadow: inset 0 0 0 1px var(--line-strong); }
+.party-R { background: var(--party-r); color: var(--on-solid); box-shadow: none; }
+.party-D { background: var(--party-d); color: var(--on-solid); box-shadow: none; }
+.party-L { background: var(--party-l); color: var(--party-l-ink); box-shadow: none; }
+.party-G { background: var(--party-g); color: var(--on-solid); box-shadow: none; }
+.pill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-weight: 600; font-size: 0.75rem;
+  background: var(--neutral-soft); color: var(--muted); }
+
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 30px; }
+.card-panel .badges { margin: 8px 0; }
+.badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 6px; padding: 2px 8px; font-size: 0.78rem;
+  font-weight: 600; background: var(--neutral-soft); color: var(--text); }
+a.badge-link { text-decoration: none; }
+a.badge-link:hover { text-decoration: underline; filter: brightness(0.96); }
+.badge-arrow { font-size: 0.7rem; opacity: 0.7; }
+.badge.tone-info { background: var(--info-soft); color: var(--info); }
+.badge.tone-good { background: var(--good-soft); color: var(--good); }
+.badge.tone-warn { background: var(--warn-soft); color: var(--warn); }
+
+.cand.write-in { background: transparent; border-style: dashed; }
+.cand.write-in.picked { border-style: solid; background: var(--pick-soft); }
+.write-in-label { font-weight: 650; cursor: pointer; }
+.write-in-name { flex: 1 1 220px; min-width: 0; max-width: 360px; padding: 6px 10px; }
+.write-in-note { margin: 8px 0 0 30px; }
+
+.note { margin: 10px 0 0 30px; }
+.note label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+.saved { font-size: 0.8rem; color: var(--good); margin-left: 4px; }
+
+
+.measure .race-body p { margin: 6px 0; }
+.measure-options { display: flex; gap: 10px; margin-top: 8px; }
+.measure-option { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 6px 14px; background: var(--panel-2); cursor: pointer; }
+.measure-option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.measure .race-status.done { color: var(--accent); }
+.measure.has-pick { border-left-color: var(--accent); }
+
+
+/* ---- details dialog ---- */
+
+dialog {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  padding: 0;
+  box-shadow: var(--shadow-pop);
+}
+dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
+.details { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 10vh); margin: 5vh auto auto; }
+.details-head { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
+.details-title { flex: 1; min-width: 0; }
+.details-title h2 { margin: 0 0 2px; }
+.details-title p { margin: 0 0 4px; }
+.icon-btn.close { font-size: 1rem; padding: 4px 10px; }
+/* ‹ and › step through the race's candidates */
+.details-nav { display: flex; align-items: center; gap: 6px; flex: none; }
+.icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
+.details-empty { margin: 14px 0; }
+.details-tabs { padding: 0 20px; }
+.details-foot { padding: 12px 20px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 0 -20px; padding: 0 20px; overflow-x: auto; }
+.tab { font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
+  padding: 10px 12px 8px; cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+/* "?": a source only likely matched this candidate (on its tab, badges and Details button) */
+.likely-flag { display: inline-block; margin-left: 6px; width: 16px; height: 16px; line-height: 16px; border-radius: 50%;
+  font-size: 0.7rem; font-weight: 700; background: var(--warn-soft); color: var(--warn); text-align: center; }
+.badge .likely-flag { margin-left: 2px; width: 14px; height: 14px; line-height: 14px; box-shadow: 0 0 0 1px var(--warn); }
+.tab-panel { padding: 14px 0 6px; }
+
+/* The labels' column fits the longest label, up to 40%: a long one (a pollster's full name)
+   wraps rather than squeezing the values. */
+.facts { display: grid; grid-template-columns: fit-content(40%) 1fr; gap: 6px 16px; margin: 10px 0; }
+.facts dt { min-width: 120px; color: var(--muted); font-size: 0.88rem; }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+
+.match { padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.9rem; margin: 8px 0; }
+.match-exact { background: var(--good-soft); color: var(--good); }
+.match-likely { background: var(--warn-soft); color: var(--warn); }
+
+.quotes { margin: 12px 0; }
+.quotes-title { font-size: 0.82rem; margin-bottom: 6px; }
+blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--line-strong); background: var(--panel-2);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.92rem; overflow-wrap: anywhere; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0; font-size: 0.92rem; }
+
+/* Money breakdowns: each row a label (with its note), a bar and the amount. A race's
+   comparison sits above its candidates, the bars in the candidates' party colours. The
+   rows share the list's columns (subgrid), so every bar starts on the same line and the
+   amounts line up, however wide each amount is. */
+.breakdown { margin: 14px 0; }
+.breakdown-title { font-size: 0.82rem; margin: 0 0 6px; }
+.breakdown-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 12px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content; }
+.breakdown .fine { margin-top: 6px; }
+.share { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1.3fr) minmax(60px, 1fr) max-content;
+  grid-template-columns: subgrid; align-items: center; gap: 2px 12px; font-size: 0.9rem;
+  --bar: var(--party, var(--tone, var(--accent))); }
+.share .bar span { background: var(--bar); transition: none; }
+.share.tone-info { --tone: var(--info); }
+.share.tone-warn { --tone: var(--warn); }
+.share.tone-good { --tone: var(--good); }
+.share-label { min-width: 0; overflow-wrap: anywhere; }
+.share-note { display: block; color: var(--muted); font-size: 0.8rem; }
+.share-amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+.share-pct { margin-left: 6px; color: var(--muted); font-weight: 400; }
+.race-money { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); padding: 10px 12px;
+  margin: 0 0 10px; }
+.race-money .breakdown { margin: 0; }
+.breakdown-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin: 0 0 6px; }
+.breakdown-head .breakdown-title { margin: 0; }
+.compare-btn { color: var(--accent); border-color: var(--accent); }
+.compare-btn:hover:not(:disabled) { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--accent-soft); }
+.compare-btn .icon { width: 14px; height: 14px; }
+.badge.share-tag { margin-left: 6px; padding: 0 6px; font-size: 0.72rem; vertical-align: 1px; }
+
+/* A poll: one bar with a segment per candidate in their party colour and the rest
+   (undecided or other) left grey, then a legend. */
+.stack-bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--neutral-soft); }
+.stack-bar > span, .stack-legend li { --bar: var(--party, var(--accent)); }
+.stack-bar > span { flex: none; background: var(--bar); }
+.stack-bar > span + span { border-left: 2px solid var(--panel-2); }
+.stack-bar > .rest { background: transparent; }
+.stack-legend { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.88rem; }
+.stack-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.stack-legend strong { font-variant-numeric: tabular-nums; }
+.stack-legend .rest { color: var(--muted); }
+.stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
+
+/* ---- compare dialog ---- */
+
+/* A race's candidates side by side. Each category is a tight group of thin bars, one per
+   candidate (the main page's rows are roomier). Every bar carries two widths and the
+   dialog's data-scale picks one: its dollars against the section's largest, or its share of
+   that candidate's own money. The groups share their section's columns (nested subgrids),
+   so every bar starts on the same line. */
+.compare { width: min(960px, calc(100vw - 32px)); }
+.compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--party, var(--accent)); } /* no party, or one without a colour: the accent */
+.cmp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 20px; border-bottom: 1px solid var(--line);
+  background: var(--panel-2); }
+.cmp-controls .fine { flex: 1 1 260px; margin: 0; }
+.seg { display: inline-flex; gap: 2px; margin: 0; padding: 2px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel); }
+.seg-option { position: relative; padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--muted);
+  cursor: pointer; white-space: nowrap; }
+.seg-option input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.seg-option:has(input:checked) { background: var(--accent); color: var(--accent-contrast); }
+.seg-option:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.cmp-legend { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.cmp-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--panel-2); font-size: 0.85rem; }
+.cmp-chip-name { font-weight: 650; }
+.cmp-chip-sub { color: var(--muted); font-size: 0.78rem; }
+.cmp-chip.missing { border-style: dashed; opacity: 0.65; }
+.cmp-swatch { width: 10px; height: 10px; flex: none; border-radius: 3px; background: var(--bar); }
+.cmp-chip.missing .cmp-swatch { background: var(--line-strong); }
+
+.cmp-section { margin: 20px 0 0; }
+.cmp-section .breakdown-title { margin-bottom: 8px; }
+.cmp-grid { display: grid; grid-template-columns: minmax(0, 10em) minmax(60px, 1fr) max-content max-content; column-gap: 10px; row-gap: 10px; }
+.cmp-group, .cmp-bars, .cmp-bar { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 10em) minmax(60px, 1fr) max-content max-content;
+  grid-template-columns: subgrid; }
+.cmp-cat { grid-column: 1 / -1; margin: 0 0 3px; font-size: 0.88rem; font-weight: 600; }
+.cmp-bars { list-style: none; margin: 0; padding: 0; row-gap: 2px; }
+.cmp-bar { align-items: center; font-size: 0.82rem; line-height: 1.3; }
+.cmp-bar .bar { height: 10px; border-radius: 3px; }
+.cmp-bar .bar span { width: var(--w-dollars); background: var(--bar); }
+.compare[data-scale="share"] .has-shares .cmp-bar .bar span { width: var(--w-share); }
+.cmp-name { overflow: hidden; color: var(--muted); white-space: nowrap; text-overflow: ellipsis; }
+.cmp-amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+.cmp-count { color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
+
+.cmp-shared-note { margin: -2px 0 8px; color: var(--info); font-size: 0.85rem; }
+.cmp-flag { margin-right: 4px; color: var(--info); font-weight: 700; }
+.cmp-columns { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.cmp-col { min-width: 0; padding: 8px 10px 10px; border: 1px solid var(--line); border-top: 3px solid var(--bar); border-radius: var(--radius-sm);
+  background: var(--panel-2); }
+.cmp-col-head { margin: 0 0 6px; font-size: 0.9rem; }
+.cmp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.cmp-entry { display: grid; grid-template-columns: minmax(0, 1fr) max-content; gap: 1px 8px; margin: 0 -5px; padding: 3px 5px; border-radius: 6px;
+  font-size: 0.82rem; line-height: 1.35; }
+.cmp-entry.tone-info { --bar: var(--info); }
+.cmp-entry.tone-warn { --bar: var(--warn); }
+.cmp-entry-name { min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+.cmp-entry-note, .cmp-also, .cmp-entry .bar { grid-column: 1 / -1; }
+.cmp-entry-note { color: var(--muted); font-size: 0.76rem; }
+.cmp-also { color: var(--info); font-size: 0.76rem; font-weight: 600; }
+.cmp-entry .bar { height: 5px; margin-top: 2px; }
+.cmp-entry .bar span { background: var(--bar); transition: none; }
+.cmp-entry.shared { background: var(--info-soft); }
+.cmp-entry.linked { box-shadow: 0 0 0 2px var(--info); }
+
+.small-dialog { width: min(460px, calc(100vw - 32px)); }
+.small-dialog form { padding: 20px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
+.check input { margin-top: 4px; accent-color: var(--accent); }
+.print-layout { border: 0; margin: 0 0 6px; padding: 0; }
+.print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
+
+/* ---- Pick by rule (pick-rule-dialog.js) ---- */
+.rules { width: min(620px, calc(100vw - 32px)); }
+.rule-body { padding: 4px 20px 8px; }
+.rule-set { border: 1px solid var(--line); border-radius: var(--radius-sm); margin: 12px 0; padding: 4px 14px 6px; min-width: 0; }
+.rule-set legend { font-weight: 700; padding: 0 6px; }
+.rule-set > .fine { margin: 8px 0 2px; }
+.rule-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.rule-row .check { margin: 8px 0; flex: 0 1 auto; }
+.rule-row.disabled .check { color: var(--muted); }
+.rule-label { min-width: 5.5em; }
+.rule-row.stacked .rule-inputs { flex-basis: 100%; margin: -4px 0 6px 26px; }
+.rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rule-inputs select { width: auto; padding: 6px 9px; }
+.rule-body > .rule-row:first-child { margin: 10px 0 0; }
+.rule-amount-wrap { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+input.rule-amount { width: 8.5em; padding: 6px 9px; }
+input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
+.rule-parties { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.rule-party { --swatch: var(--party, var(--line-strong)); display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
+  font-size: 0.88rem; font-weight: 600; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
+  border-radius: 999px; cursor: pointer; }
+.rule-party:hover { background: var(--neutral-soft); }
+.rule-party[aria-pressed="true"] { color: var(--text); background: var(--party-soft, var(--accent-soft)); border-color: var(--party, var(--accent));
+  box-shadow: inset 0 0 0 1px var(--party, var(--accent)); }
+.rule-party[aria-pressed="true"]::before { content: "✓"; }
+.rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
+.rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.rule-preview { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; }
+.rule-summary { font-weight: 650; margin: 4px 0 6px; }
+.rule-details > summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
+.rule-races { list-style: none; margin: 6px 0 0; padding: 0; font-size: 0.88rem; max-height: 14em; overflow-y: auto; }
+.rule-race { padding: 4px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.rule-race-name { font-weight: 650; }
+.rule-pick, .rule-same { color: var(--good); }
+.rule-pick .rule-race-name, .rule-same .rule-race-name, .rule-none .rule-race-name { color: var(--text); }
+.rule-none { color: var(--muted); }
+.rule-btn { flex: none; display: inline-flex; align-items: center; margin-top: -2px; padding: 5px 8px; }
+.rule-btn .icon { width: 14px; height: 14px; }
+.pill.rule-mark.tone-good { background: var(--good-soft); color: var(--good); }
+.pill.rule-mark.tone-warn { background: var(--warn-soft); color: var(--warn); }
+
+/* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
+   its two buttons (topbar.js); on the ballot the section chips join the sticky strip ---- */
+
+@media (max-width: 960px) {
+  .app { display: block; }
+  /* min-height: the closed top bar's height, so the page doesn't move when chrome.js draws it */
+  .sidebar { position: static; height: auto; min-height: 56px; overflow: visible; border-right: 0; border-bottom: 1px solid var(--line); }
+  .side-inner { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 0; padding: 10px 16px; }
+  .brand { font-size: 1.2rem; }
+  .logo { width: 24px; height: 24px; }
+  .topbar-buttons { display: flex; flex: 1 1 0; justify-content: flex-end; gap: 8px; min-width: 0; }
+  .side-inner > :not(.brand, .topbar-buttons) { flex: 1 1 100%; }
+  .sidebar:not([data-open="address"]) .side-address, .sidebar:not([data-open="menu"]) :is(.site-nav, .page-sections) { display: none; }
+  .side-address { margin-top: 0; padding-bottom: 6px; }
+  .side-bottom { margin-top: 0; }
+  .content { padding: 20px 16px calc(var(--footer-h, 52px) + 24px); }
+  .pane-toggle { display: none; }
+  .site-footer { left: 0; }
+  .site-footer p { padding: 0 16px; }
+  .to-top { right: 16px; }
+  .ballot-tools { margin: 12px 0 4px; }
+}
+
+/* ---- the left pane folded (chrome.js): a rail of icons, each name a tooltip ---- */
+
+@media (min-width: 961px) {
+  html.pane-collapsed { --sidebar: 64px; }
+  .pane-collapsed .side-inner { align-items: center; gap: 14px; padding: 18px 10px 20px; }
+  .pane-collapsed .brand { align-self: center; }
+  .pane-collapsed .brand-name, .pane-collapsed .nav-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .pane-collapsed .pane-toggle { position: static; }
+  .pane-collapsed :is(.side-address, .page-sections) { display: none; }
+  .pane-collapsed .site-nav { align-self: stretch; }
+  .pane-collapsed .site-nav ul { margin: 0; }
+  .pane-collapsed .site-nav a { justify-content: center; padding: 8px; }
+  .pane-collapsed .site-nav .icon { width: 18px; height: 18px; }
+}
+
+@media (max-width: 640px) {
+  h1 { font-size: 1.45rem; }
+  .panel, .welcome { padding: 16px; }
+  .progress-strip { gap: 8px; padding: 8px 0; }
+  .progress-strip .btn.small { padding: 5px 10px; font-size: 0.8rem; }
+  /* the bar on a line of its own, the count (wrapping if need be) and Next under it */
+  .progress-info { flex-wrap: wrap; row-gap: 6px; }
+  .progress-info .bar { flex: 1 1 100%; }
+  .progress { flex: 1 1 0; min-width: 0; white-space: normal; font-size: 0.85rem; }
+  .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
+  .race-status { max-width: none; }
+  .cand-actions { margin-left: 30px; }
+  .badges, .note { margin-left: 0; }
+  .facts { grid-template-columns: 1fr; gap: 0 0; }
+  .facts dd { margin-bottom: 8px; }
+  .breakdown-rows { grid-template-columns: minmax(0, 1fr) max-content; }
+  .share { grid-template-columns: minmax(0, 1fr) max-content; grid-template-columns: subgrid; }
+  .share-label { grid-column: 1; grid-row: 1; }
+  .share-amount { grid-column: 2; grid-row: 1; }
+  .share .bar { grid-column: 1 / -1; grid-row: 2; }
+  .details-head { padding: 14px 16px 10px; }
+  .details-tabs { padding: 0 16px; }
+  .cmp-controls { padding: 10px 16px; }
+  /* each bar: the name, amount and count on one line, the bar under them */
+  .cmp-grid { grid-template-columns: minmax(0, 1fr) max-content max-content; }
+  .cmp-group, .cmp-bars, .cmp-bar { grid-template-columns: minmax(0, 1fr) max-content max-content; grid-template-columns: subgrid; }
+  .cmp-bar { row-gap: 1px; }
+  .cmp-bar .cmp-name { grid-column: 1; grid-row: 1; }
+  .cmp-bar .cmp-amount { grid-column: 2; grid-row: 1; }
+  .cmp-bar .cmp-count { grid-column: 3; grid-row: 1; }
+  .cmp-bar .bar { grid-column: 1 / -1; grid-row: 2; }
+  .cmp-columns { grid-auto-flow: row; grid-auto-columns: auto; overflow-x: visible; }
+  .tabs { margin: 0 -16px; padding: 0 16px; }
+  .faq-body { padding-left: 16px; }
+  /* three-column tables become one block per row, each cell labelled */
+  .data-table.stack thead { display: none; }
+  .data-table.stack, .data-table.stack tbody, .data-table.stack tr, .data-table.stack tbody th, .data-table.stack td { display: block; width: auto; }
+  .data-table.stack tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .data-table.stack tbody tr:last-child { border-bottom: 0; }
+  .data-table.stack th, .data-table.stack td { border: 0; padding: 2px 0; }
+  .data-table.stack td::before { content: attr(data-label) ": "; color: var(--muted); font-weight: 600; }
+}
+
+/* ---- print: only the picks sheet ---- */
+
+.print-sheet { display: none; }
+
+@media print {
+  @page { margin: 14mm; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  body > :not(#print-sheet) { display: none !important; }
+  .print-sheet { display: block !important; }
+  .print-sheet header { border-bottom: 2px solid #000; margin-bottom: 10pt; padding-bottom: 6pt; }
+  .print-sheet h1 { font-size: 18pt; margin: 0 0 4pt; }
+  .print-sheet h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 0.04em; margin: 12pt 0 4pt; }
+  .print-sheet p { margin: 0 0 3pt; }
+  .print-sheet .small { font-size: 9pt; color: #333; }
+  .print-sheet table { width: 100%; border-collapse: collapse; page-break-inside: auto; table-layout: fixed; }
+  .print-sheet th:nth-child(1), .print-sheet td:nth-child(1) { width: 50%; }
+  .print-sheet th:nth-child(2), .print-sheet td:nth-child(2) { width: 50%; }
+  .print-sheet table.with-notes th:nth-child(1), .print-sheet table.with-notes td:nth-child(1) { width: 36%; }
+  .print-sheet table.with-notes th:nth-child(2), .print-sheet table.with-notes td:nth-child(2) { width: 32%; }
+  .print-sheet table.with-notes th:nth-child(3), .print-sheet table.with-notes td:nth-child(3) { width: 32%; }
+  .print-sheet table.measures td:nth-child(1) { width: 70%; }
+  .print-sheet table.measures td:nth-child(2) { width: 30%; }
+  .print-sheet tr { page-break-inside: avoid; }
+  .print-sheet th, .print-sheet td { border-bottom: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+  .print-sheet th { font-size: 9pt; text-transform: uppercase; color: #333; }
+  .print-sheet td.blank { border-bottom: 1px solid #000; min-width: 45%; }
+  .print-sheet footer { margin-top: 14pt; border-top: 1px solid #000; padding-top: 6pt; }
+  .print-sheet .election-day { font-weight: 700; }
+  /* the wallet card: cut along the dashed edge, and fold it if it's long */
+  .print-sheet .wallet-card { width: 3.5in; padding: 8pt 9pt; border: 1px dashed #000; font-size: 7.5pt; line-height: 1.3; }
+  .print-sheet .wallet-card h1 { font-size: 10pt; margin: 0 0 2pt; }
+  .print-sheet .wallet-card .wallet-day { font-size: 8pt; font-weight: 700; margin: 0 0 4pt; padding-bottom: 4pt; border-bottom: 1px solid #000; }
+  .print-sheet .wallet-early { font-weight: 400; }
+  .print-sheet .wallet-card h2 { font-size: 6.5pt; margin: 5pt 0 1pt; }
+  .print-sheet .wallet-card .wallet-line { margin: 0 0 1.5pt; break-inside: avoid; }
+  .print-sheet .wallet-pick { font-weight: 700; }
+  .print-sheet .wallet-pick.blank { display: inline-block; width: 1.2in; border-bottom: 0.5pt solid #000; }
+  .print-sheet .wallet-card .wallet-foot { margin: 5pt 0 0; font-size: 6pt; color: #333; }
+}

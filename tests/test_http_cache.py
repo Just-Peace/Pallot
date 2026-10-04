@@ -7,7 +7,7 @@ import httpx
 import pytest
 import respx
 
-from votebot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls, value_is_empty
+from pallot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls, value_is_empty
 
 pytestmark = pytest.mark.anyio
 

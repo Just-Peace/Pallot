@@ -3,8 +3,8 @@ side, and name lists into columns with names more than one candidate has flagged
 
 from __future__ import annotations
 
-from votebot.models import Breakdown, Share
-from votebot.sources import compare
+from pallot.models import Breakdown, Share
+from pallot.sources import compare
 
 
 def breakdown(*parts, total=None):

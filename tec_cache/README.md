@@ -7,9 +7,9 @@ A git-bundled snapshot of Texas Ethics Commission (TEC) campaign finance for sta
 
 It's rebuilt from TEC's nightly CSV export, [`TEC_CF_CSV.zip`](https://prd.tecprd.ethicsefile.com/public/cf/public/TEC_CF_CSV.zip) (about 1 GB). The record layouts are in `CFS-ReadMe.txt` inside the zip.
 
-## How VoteBot uses it
+## How Pallot uses it
 
-VoteBot copies `tec_cache/data/` into `data/tec/` on first run and reads `current.json` from there, so ballot lookups never contact TEC.
+Pallot copies `tec_cache/data/` into `data/tec/` on first run and reads `current.json` from there, so ballot lookups never contact TEC.
 - **Refresh** (the Texas Ethics Commission row in Settings) runs `python -m tec_cache refresh --data-dir data/tec` in a separate process.
 - **Reset** goes back to the files in this folder. A zip you downloaded into `data/tec/` stays.
 
@@ -35,7 +35,7 @@ It doesn't download just those files as separate byte ranges. TEC stores its fil
 
 **Even so, TEC may block the download.** A 403 "Request blocked" can last from minutes to hours. If a refresh reports `BlockedError`:
 1. Wait, or download the zip in a browser.
-2. Run the refresh with `--zip`. For VoteBot's copy, you can instead put the file at `data/tec/TEC_CF_CSV.zip` and press Refresh.
+2. Run the refresh with `--zip`. For Pallot's copy, you can instead put the file at `data/tec/TEC_CF_CSV.zip` and press Refresh.
 
 If a file is missing a column the snapshot needs, or the counts are implausibly low, the refresh aborts without writing anything (`ValidationError`).
 

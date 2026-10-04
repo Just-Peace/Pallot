@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from votebot import version
+from pallot import version
 
 A = "1a2b3c4d" * 5
 B = "9f8e7d6c" * 5

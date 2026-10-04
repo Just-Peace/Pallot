@@ -16,10 +16,10 @@ import httpx
 import pytest
 import respx
 
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache, UpstreamError
-from votebot.sources import election_precincts as ep
-from votebot.sources.election_precincts import ElectionPrecincts, Lambert, StillDownloading, display_name, read_prj
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache, UpstreamError
+from pallot.sources import election_precincts as ep
+from pallot.sources.election_precincts import ElectionPrecincts, Lambert, StillDownloading, display_name, read_prj
 
 from .conftest import (
     ANDERSON, HARRIS, HOLE, LINE, OVERLAP, PRJ, PROJECTION, TRAVIS, TWO_PIECES, census_points, election_precincts_zip,
@@ -359,7 +359,7 @@ async def test_with_no_map_a_failed_download_waits_before_trying_again(tmp_path,
     async with service(tmp_path) as precincts:
         with pytest.raises(UpstreamError, match="larger than 1,000 bytes"):
             await precincts.at(TRAVIS, *census_points("capitol"))
-        with pytest.raises(UpstreamError, match="the last download failed .* VoteBot tries again after"):
+        with pytest.raises(UpstreamError, match="the last download failed .* Pallot tries again after"):
             await precincts.at(TRAVIS, *census_points("capitol"))
         assert zips(upstream) == 1 and list(precincts.folder.iterdir()) == []
         upstream.precinct_index = None

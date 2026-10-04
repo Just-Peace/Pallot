@@ -1,21 +1,21 @@
-# docker compose up -d --build  ->  VoteBot on http://<this machine>:8000
+# docker compose up -d --build  ->  Pallot on http://<this machine>:8000
 # The Settings actions (refresh, clear caches) have no login: run this only on a network you trust.
 services:
-  votebot:
+  pallot:
     build: .
-    image: votebot
+    image: pallot
     init: true  # reaps the process a TEC refresh runs in
     restart: unless-stopped
     ports:
-      - "${VOTEBOT_PORT:-8000}:8000"  # every interface; "127.0.0.1:8000:8000" keeps it to this machine
+      - "${PALLOT_PORT:-8000}:8000"  # every interface; "127.0.0.1:8000:8000" keeps it to this machine
     env_file:
-      - path: .env  # the same .env as `uv run votebot` (FEC key, cache lifetimes)
+      - path: .env  # the same .env as `uv run pallot` (FEC key, cache lifetimes)
         required: false
     environment:
-      VOTEBOT_DATA_DIR: /data  # wins over a host path in .env
-    user: "${VOTEBOT_UID:-1000}:${VOTEBOT_GID:-1000}"  # whoever owns data/ on a Linux host
+      PALLOT_DATA_DIR: /data  # wins over a host path in .env
+    user: "${PALLOT_UID:-1000}:${PALLOT_GID:-1000}"  # whoever owns data/ on a Linux host
     volumes:
-      - ${VOTEBOT_DATA_DIR:-./data}:/data  # the folder `uv run votebot` uses, so its cache carries over
+      - ${PALLOT_DATA_DIR:-./data}:/data  # the folder `uv run pallot` uses, so its cache carries over
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=5)"]
       interval: 30s

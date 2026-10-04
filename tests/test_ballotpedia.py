@@ -6,10 +6,10 @@ import httpx
 import pytest
 import respx
 
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache
-from votebot.models import Candidate, Race
-from votebot.sources.ballotpedia import (
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache
+from pallot.models import Candidate, Race
+from pallot.sources.ballotpedia import (
     SOURCE, URL, Ballotpedia, BallotpediaUnavailable, BpNote, cards, council_district_in, counterparts, parse,
     precincts_in,
 )
