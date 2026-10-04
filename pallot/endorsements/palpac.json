@@ -23,6 +23,6 @@
     {"name": "Chris Rabb", "state": "PA", "office": "U.S. House", "district": "3", "url": "https://www.chrisrabb.com/"},
     {"name": "Summer Lee", "state": "PA", "office": "U.S. House", "district": "12", "url": "https://summerforpa.com/"},
     {"name": "Justin Pearson", "state": "TN", "office": "U.S. House", "district": "9", "url": "https://www.votejustinj.com/"},
-    {"name": "Frederick D. Haynes III", "state": "TX", "office": "U.S. House", "district": "30", "note": "Listed as Rev. Frederick D. Haynes III.", "url": "https://www.haynesforcongress.com/"}
+    {"name": "Rev. Frederick D. Haynes III", "state": "TX", "office": "U.S. House", "district": "30", "url": "https://www.haynesforcongress.com/"}
   ]
 }

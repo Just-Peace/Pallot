@@ -62,6 +62,7 @@ async def run(
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
+    city: str | None = None,
     state: str | None = None,
     bp_counterparts: dict[str, BpRace] | None = None,
 ) -> Outcome:
@@ -79,10 +80,10 @@ async def run(
         jobs[trackaipac.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races)))
     if use_voteforpeace:
         jobs[voteforpeace.SOURCE] = asyncio.to_thread(
-            voteforpeace.cards, svc.voteforpeace, races, scopes or {}, county, bp_ballot
+            voteforpeace.cards, svc.voteforpeace, races, scopes or {}, county, bp_ballot, city
         )
     for found in endorsements:
-        jobs[found.source] = found.lookup(races, scopes or {}, county, bp_ballot, state or "TX")
+        jobs[found.source] = found.lookup(races, scopes or {}, county, bp_ballot, state or "TX", city)
     if use_fec:
         jobs[fec.SOURCE] = fec.cards(svc.fec, races, day)
     if use_tec:

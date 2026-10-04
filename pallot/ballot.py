@@ -377,6 +377,7 @@ class _Builder:
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,
+            city=place.city,
             state=place.state,
             bp_counterparts=bp_counterparts,
         )

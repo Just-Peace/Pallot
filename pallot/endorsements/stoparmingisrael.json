@@ -1,0 +1,29 @@
+{
+  "source": "stoparmingisrael",
+  "label": "Stop Arming Israel",
+  "organization": "Stop Arming Israel, Tariq Habash's voter guide on Sway",
+  "url": "https://www.sway.co/tariq/recs",
+  "captured": "2026-10-04",
+  "description": "A voter guide recommending candidates who would stop the U.S. sending weapons to Israel; partial: only the picks its page shows before loading more (U.S. Senate, and U.S. House in Arizona, Arkansas and California), not its other races or the picks it takes from other groups.",
+  "candidates": [
+    {"name": "Jon Ossoff", "state": "GA", "office": "U.S. Senate", "note": "This candidate has been identified as a recipient of funding from AIPAC and affiliated lobbying organizations. However, in his most recent vote in on SJ 32, he voted to block additional bombs and bulldozers to Israel, joining 40 senators. Based on this recent shift towards military aid, he is seen by local coalitions as more favorable to opponents.\n\nPrimary: May 19, 2026"},
+    {"name": "Robin Kelly", "state": "IL", "office": "U.S. Senate"},
+    {"name": "Charles Booker", "state": "KY", "office": "U.S. Senate"},
+    {"name": "Abdul El-Sayed", "state": "MI", "office": "U.S. Senate"},
+    {"name": "Dan Osborn", "state": "NE", "office": "U.S. Senate"},
+    {"name": "Brian McGinnis", "state": "NC", "office": "U.S. Senate"},
+    {"name": "Gregory Levy", "state": "OH", "office": "U.S. Senate"},
+    {"name": "Jeff Merkley", "state": "OR", "office": "U.S. Senate"},
+    {"name": "James Talarico", "state": "TX", "office": "U.S. Senate", "note": "Candidate's foreign policy stances need to be more consistent and stronger (for example currently allowing allowing for aid for defensive weapons to Israel). He is seen by some local groups as more favorable to Jasmine Crockett given he has made public statements calling for a ban on offensive weapons to Israel called what is happening in Gaza \"war crimes\" and has spoken out against AIPAC. He also is seen by some local pro-peace groups as being more receptive to advocacy and dialgoue\n\nGeneral: Nov 3, 2026"},
+    {"name": "Adelita Grijalva", "state": "AZ", "office": "U.S. House", "district": "7"},
+    {"name": "Robb Ryerse", "state": "AR", "office": "U.S. House", "district": "3"},
+    {"name": "Mai Vang", "state": "CA", "office": "U.S. House", "district": "7"},
+    {"name": "Julie Gonzales", "state": "CO", "office": "U.S. Senate"},
+    {"name": "Graham Platner", "state": "ME", "office": "U.S. Senate"},
+    {"name": "Karishma Manzur", "state": "NH", "office": "U.S. Senate"},
+    {"name": "Kai Newkirk", "state": "AZ", "office": "U.S. House", "district": "4"},
+    {"name": "Audrey Denney", "state": "CA", "office": "U.S. House", "district": "1"},
+    {"name": "Rose Penelope Yee", "state": "CA", "office": "U.S. House", "district": "2"},
+    {"name": "Chris Bennett", "state": "CA", "office": "U.S. House", "district": "3"}
+  ]
+}

@@ -74,13 +74,10 @@ class VoteForPeace(BundledSnapshot):
 
         return self._index(state, build)
 
-    def snapshot_date(self) -> str | None:
-        return self.meta().get("latest_snapshot")
-
     def details(self) -> list[Fact]:
         meta = self.meta()
         return [
-            Fact(label="Snapshot", value=display_date(meta.get("latest_snapshot")) or "none"),
+            Fact(label="Snapshot", value=display_date(self.snapshot_date()) or "none"),
             Fact(label="Last changed", value=display_time(meta.get("last_refresh")) or "never"),
             Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
             Fact(label="Texas candidates", value=f"{len(self.people('TX')):,}"),
@@ -138,8 +135,10 @@ def cards(
     scopes: dict[str, OfficeScope],
     county: str | None,
     bp_ballot: BpBallot | None = None,
+    city: str | None = None,
 ) -> CardSet:
     """Cards for the candidates Vote for Peace rates in Texas, in any race (seats.match_entries)."""
-    snapshot = vfp.document().get("snapshot")
-    found = match_entries(vfp.name_index("TX"), races, scopes, county, bp_ballot, source=LABEL, entry_id="candidate_id")
+    snapshot = vfp.snapshot_date()
+    found = match_entries(vfp.name_index("TX"), races, scopes, county, bp_ballot, source=LABEL,
+                          entry_id="candidate_id", city=city)
     return CardSet(candidates={key: card(person, match, snapshot) for key, (person, match) in found.items()})

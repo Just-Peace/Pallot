@@ -155,10 +155,11 @@ class EndorsementFeed:
         county: str | None,
         bp_ballot: BpBallot | None = None,
         state: str = "TX",
+        city: str | None = None,
     ) -> CardSet:
         """The list's cards (EndorsementList.cards), fetched or from the copy kept."""
         found = await self.fetch()
-        return await found.lookup(races, scopes, county, bp_ballot, state)
+        return await found.lookup(races, scopes, county, bp_ballot, state, city)
 
     # -- Settings (KeptSource) ----------------------------------------------------------------
 
