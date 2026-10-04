@@ -72,6 +72,7 @@ class Config:
     # go first past it (services.prune, at startup and every few hours).
     tiles_max_bytes: int = 512 << 20
     suggest_max_bytes: int = 64 << 20
+    host: str = "127.0.0.1"
     port: int = 8000  # `uv run pallot`'s default port; the Docker image always listens on 8000
     prune_every: int = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
 
@@ -149,6 +150,7 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         ),
         tiles_max_bytes=_megabytes(env.get("PALLOT_TILES_MAX_MB")) or Config.tiles_max_bytes,
         suggest_max_bytes=_megabytes(env.get("PALLOT_SUGGEST_MAX_MB")) or Config.suggest_max_bytes,
+        host=env.get("PALLOT_HOST") or Config.host,
         port=int(env.get("PALLOT_PORT") or Config.port),
         prune_every=int(env.get("PALLOT_PRUNE_EVERY") or Config.prune_every),
     )
