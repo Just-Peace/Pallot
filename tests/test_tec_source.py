@@ -13,7 +13,7 @@ from pallot.offices import classify
 from pallot.sources import tec
 from pallot.sources.ballotpedia import BpBallot, BpRace, parse
 
-from .conftest import FIXTURES, get_ballot, load
+from .conftest import FIXTURES, get_ballot, load, switch
 
 WINDOW = "2024-11-06"
 
@@ -296,11 +296,11 @@ def test_clear_keeps_a_downloaded_zip(tmp_path):
     assert source.document()["snapshot"] == "2026-09-27" and source.local_zip.exists()
 
 
-def test_refresh_and_reset_from_settings(make_app, tmp_path):
-    with TestClient(make_app()) as client:
-        message = client.post("/api/sources/tec/refresh").json()["message"]
-        assert message.startswith("updated snapshot")
-        assert client.post("/api/sources/tec/clear").json()["message"].startswith("Back to the snapshot that came with Pallot")
+def test_a_hard_refresh_rebuilds_it_and_a_soft_one_leaves_it(make_app, tmp_path):
+    assert make_app.cache_command("refresh", "tec") == (0, "Texas Ethics Commission (TEC): nothing past its lifetime.")
+    assert make_app.tec_refreshed == []
+    status, message = make_app.cache_command("hard-refresh", "tec")
+    assert status == 0 and message.startswith("Texas Ethics Commission (TEC): updated snapshot")
     [call] = make_app.tec_refreshed
     assert call == {"data_dir": tmp_path / "data" / "tec", "zip_path": None}
 
@@ -309,11 +309,8 @@ def test_a_failed_refresh_changes_nothing_and_says_why(make_app):
     def blocked(**_kwargs):
         raise RuntimeError("TEC's download server refused the request (HTTP 403)")
 
-    with TestClient(make_app(tec_refresh=blocked)) as client:
-        response = client.post("/api/sources/tec/refresh")
-        assert response.status_code == 502 and "nothing changed" in response.json()["detail"]
-        tec_row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "tec")
-    assert tec_row["notice_tone"] == "warn" and "HTTP 403" in tec_row["notice"]
+    status, message = make_app.cache_command("hard-refresh", "tec", tec_refresh=blocked)
+    assert status == 1 and "nothing changed" in message and "HTTP 403" in message
 
 
 @pytest.mark.skipif(not load("tec/current.json").get("filers") if (FIXTURES / "tec" / "current.json").exists() else True,
@@ -329,7 +326,7 @@ def test_capitol_ballot_state_races_get_tec_money(client):
 
 
 def test_a_ballotpedia_only_ballot_matches_tec_filers_by_seat(client):
-    client.put("/api/sources/sos", json={"enabled": False})
+    switch(client, "sos", False)
     ballot = get_ballot(client)
     for office, name in (
         ("Governor of Texas", "Greg Abbott"),

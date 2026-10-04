@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from pallot.sources.suggestions import normalize, parse, query, wanted
 
-from .conftest import SUGGEST
+from .conftest import SUGGEST, switch
 
 
 def labels(*texts: str) -> list[str]:
@@ -47,13 +47,13 @@ def test_suggest_route(client, upstream):
     assert again == first and upstream.count("address_autocomplete") == 1  # the same text, cached
 
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "suggestions")
-    assert row["enabled"] and row["cache"]["entries"] == 1 and row["refresh_confirm"]
+    assert row["enabled"] and row["cache"]["entries"] == 1
     assert upstream.count("myvote") == 0  # the ballot's endpoint wasn't asked
 
 
 def test_suggestions_off_ask_nobody(make_app, upstream):
     with TestClient(make_app()) as client:
-        client.put("/api/sources/suggestions", json={"enabled": False})
+        switch(client, "suggestions", False)
         answer = client.get("/api/suggest", params={"q": SUGGEST["congress"]}).json()
     assert answer == {"enabled": False, "suggestions": []} and upstream.count("address_autocomplete") == 0
 

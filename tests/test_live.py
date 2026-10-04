@@ -12,7 +12,8 @@ from fastapi.testclient import TestClient
 from tec_cache.models import ZIP_URL
 from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
-from pallot.api import MIN_INTERVAL, create_app
+from pallot.api import create_app
+from pallot.services import MIN_INTERVAL
 from pallot.config import DEMO_KEY, Config, Ttls, load_config
 from pallot.http_cache import HttpCache, track_calls
 from pallot.sources import fec, key_dates, polls
@@ -21,7 +22,7 @@ from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
 from pallot.sources.endorsement_feeds import make_feeds
 from pallot.sources.sboe import _inside
 
-from .conftest import census_points
+from .conftest import census_points, switch
 
 pytestmark = [pytest.mark.live, pytest.mark.xdist_group("live")]  # one worker, so one call at a time
 FEC_KEY = load_config().fec_api_key  # from the environment or .env
@@ -35,7 +36,7 @@ def precinct_map_dir(tmp_path_factory) -> Path:
 
 def test_capitol_ballot_live(tmp_path):
     with TestClient(create_app(Config(data_dir=tmp_path / "data", fec_api_key=FEC_KEY, allowed_hosts=("testserver",)))) as client:
-        client.put("/api/sources/election_precincts", json={"enabled": False})  # its own test downloads the map, once
+        switch(client, "election_precincts", False)  # its own test downloads the map, once
         response = client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"})
         assert response.status_code == 200, response.text
         ballot = response.json()

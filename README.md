@@ -27,7 +27,7 @@ mkdir -p data                   # where Pallot keeps its cache and settings
 docker compose up -d --build    # build the image and start Pallot in the background
 ```
 
-Open http://localhost:8000, or `http://<this machine's address>:8000` from another device. It listens on every network interface, and the Settings page has no login, so run it only on a network you trust. To keep it to this machine, see [Docker](#docker).
+Open http://localhost:8000, or `http://<this machine's address>:8000` from another device. It listens on every network interface, and Pallot has no login, so run it only on a network you trust. To keep it to this machine, see [Docker](#docker).
 
 ```bash
 docker compose logs -f                     # follow the server log
@@ -44,7 +44,7 @@ uv sync           # installs Pallot and its dependencies (and Python, if needed)
 uv run pallot    # serves http://127.0.0.1:8000 until Ctrl+C (--port picks another port)
 ```
 
-Open http://127.0.0.1:8000. It only listens on this machine, because the Settings page has no login; to use Pallot from other devices, run it with Docker on a network you trust. To update: `git pull && uv sync`, then start it again.
+Open http://127.0.0.1:8000. It only listens on this machine, because Pallot has no login; to use Pallot from other devices, run it with Docker on a network you trust. To update: `git pull && uv sync`, then start it again.
 
 ### The FEC key (optional)
 
@@ -66,7 +66,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - at the bottom, links to **Settings**, **FAQ**, **About** and **Privacy**
 - **Footer**, on every page, always in view at the bottom of the window: a reminder that Pallot is unofficial, **Sources** (About's list of where the information comes from), and the version you're running with its commit, such as `v0.9.0-g1a2b3c4`. About shows it too.
 - **Back to top:** once you've scrolled a screen, a round arrow button at the bottom right goes back to the top.
-- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant. The very first lookup after installing Pallot (or after clearing the precinct map in Settings) also downloads the election precinct map, about 45 MB, and waits up to 20 seconds for it. If it isn't done by then, the ballot shows without your election precinct and says to reload the page in a minute. Lookups while it's still downloading don't wait for it.
+- **First lookup:** a lookup whose data isn't saved yet can take several seconds, and a skeleton ballot shows meanwhile. Looking the same address up again is instant. The very first lookup after installing Pallot (or after `pallot-cache rebuild` deleted the precinct map) also downloads the election precinct map, about 45 MB, and waits up to 20 seconds for it. If it isn't done by then, the ballot shows without your election precinct and says to reload the page in a minute. Lookups while it's still downloading don't wait for it.
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
@@ -212,22 +212,22 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
   - street map tiles: 7 days, the least OpenStreetMap's policy allows
   - endorsement lists fetched from an organization's website: 7 days
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
-  - address suggestions, street map tiles, and addresses that weren't found, are deleted when Pallot starts once they've been expired for 30 days (`PALLOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
+  - address suggestions, street map tiles, and addresses that weren't found, are deleted once they've been expired for 30 days (`PALLOT_TTL_PRUNE_AFTER`), when Pallot starts and every 6 hours while it runs. The street map's tiles are also kept under 512 MB and the suggestions under 64 MB, the oldest deleted first (`PALLOT_TILES_MAX_MB`, `PALLOT_SUGGEST_MAX_MB`). Everything else stays as the copy to show when a source is down.
   - Override any of these with `PALLOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
-- The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot, so lookups never contact any of them; they're only fetched again when you press Refresh.
+- The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot, so lookups never contact any of them; they're only fetched again by `pallot-cache hard-refresh` (see [Keeping the cache](#keeping-the-cache)).
 - The endorsement lists that come with Pallot are part of it and are never fetched at all. The live ones are fetched whole, one request per list, at most once a week.
 - Candidate details and the declared write-ins come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
 - An error that a source sends as if it were an answer counts as a failure too, so it never replaces the good copy: TIGERweb's and the counties' map servers answering with an error, or the Texas SOS's dates page coming back without its election dates (a maintenance page, say). With no good copy yet, the error is kept for 15 minutes, so lookups meanwhile don't ask again.
 - If the Census geocoder or Nominatim (each on its own), Texas SOS, Ballotpedia (its ballot or its address search, each on its own), FiftyPlusOne, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, Pallot stops asking it for an hour; if a county's map server does, it stops asking all seven counties for an hour. What it already sent still shows.
-- If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. Refresh in Settings always tries.
-- If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. Refresh in Settings always tries.
+- If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. `pallot-cache refresh` always tries.
+- If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. `pallot-cache refresh` always tries.
 - If the FEC answers that its rate limit is reached, Pallot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
-- Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through. TrackAIPAC's and Vote for Peace's Refresh stop at once if their site refuses them.
+- `pallot-cache` doesn't ask a paused source either, and stops asking one that pauses partway through. Its refresh of TrackAIPAC and Vote for Peace stops at once if their site refuses it.
 
 ## Settings
 
-The **Settings** page, linked from the left pane, has four sections: **Appearance**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. The page:
+The **Settings** page, linked from the left pane, has four sections: **Appearance**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot. The page:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
 - picks the web search engine;
 - lists the sources in five groups, each with how many of its sources are on, and folds a group away when you click its heading (it stays folded in this browser):
@@ -236,31 +236,62 @@ The **Settings** page, linked from the left pane, has four sections: **Appearanc
   - **Third-party ballot data**: Ballotpedia;
   - **Third-party polls**: FiftyPlusOne's polls;
   - **Third-party endorsements & scorecards**: TrackAIPAC, Vote for Peace and each endorsement list, with **Turn all on** and **Turn all off** for the whole group;
-- turns each of those sources on or off, except the address lookup;
+- turns each of those sources on or off for you, except the address lookup. Your switches are kept in this browser and sent with each request, so the server builds your ballot with them; a source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on));
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, how old the Texas Ethics Commission snapshot is, when each endorsement list was captured or fetched, and how many candidates it has in Texas and in all;
-- shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk; an endorsement list that comes with Pallot has neither, since it's frozen and saves nothing; a fetched one has both). Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
-- under **Data**, clears what Pallot keeps, from the least to the most:
+- shows what the server has saved for each source (responses, size, when they were fetched, how many are past their lifetime) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
+- under **Data**, clears what this browser keeps:
   - **Clear my picks & notes**: your picks, notes, write-ins and pick rule. Your address stays;
-  - **Clear browser data**: everything Pallot keeps in this browser, your address, appearance, search engine and view choices included;
-  - **Clear all source caches**: everything the server saved from every source (it shows how much), and TrackAIPAC, Vote for Peace and the Texas Ethics Commission go back to the snapshots that came with Pallot. It asks first, and can't be undone;
-  - **Clear all my data**: both of the last two. It asks first; the server's part can't be undone.
+  - **Clear browser data**: everything Pallot keeps in this browser, your address, sources, appearance, search engine and view choices included.
 
-  The first two clear at once and offer **Undo** for 10 seconds; after "Clear all my data", Undo puts back only what this browser kept. The server's Clears wait while a source is refreshing.
+  Both clear at once and offer **Undo** for 10 seconds.
 
-Settings has no login, but its buttons only work from Pallot's own pages: a request that another website makes from your browser is refused.
+Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).
 
 Ballotpedia and Vote for Peace start off. Turn Ballotpedia on to add city council, school board and special district races (the ballot says so while it's off), and Vote for Peace to add its ratings. When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
+### Which sources start on
+
+`pallot/sources.toml` declares which sources are on for someone who hasn't switched them, under `[sources]`, one `id = true` or `false` each (the ids `pallot-cache check` shows in brackets). Every endorsement list starts on. To change the defaults for everyone using your Pallot, don't edit that file: put a `sources.toml` in the data folder (`data/`, or `PALLOT_DATA_DIR`), listing only what you change, and restart Pallot. For example, to share Pallot with others without Ballotpedia's unofficial endpoints:
+
+```toml
+[sources]
+ballotpedia = false
+suggestions = false
+```
+
+A file Pallot can't use (a source that doesn't exist, a value that isn't `true` or `false`) stops it from starting, with a message saying what's wrong. Each person's own switches in Settings still win.
+
+## Keeping the cache
+
+`pallot-cache` checks, refreshes and prunes what Pallot keeps in its data folder. Run it on the machine Pallot runs on, with uv, or inside the container with Docker. It can run while Pallot does: the server picks up what it fetched.
+
+```bash
+uv run pallot-cache check                          # each source's saved copies, and how many are stale (past their lifetime)
+uv run pallot-cache refresh                        # soft refresh: fetch again only what's stale, and a missing or newer map
+uv run pallot-cache prune                          # delete what's no use even as a fallback, then shrink the file
+uv run pallot-cache hard-refresh                   # fetch everything again, and refresh the bundled snapshots
+uv run pallot-cache rebuild                        # delete everything saved, then fetch it all again (asks first)
+docker compose exec pallot pallot-cache check      # the same, in the container
+```
+
+- **check** changes nothing and asks no one: for each source, its saved responses, their size, how many are stale, when they were fetched, whether it's paused, its maps or snapshot, and whether a map is missing or the portal lists a newer one.
+- **refresh** asks again only for the responses past their lifetime, downloads the SBOE or precinct map when none is kept, and the precinct map when the portal lists a newer one (about 45 MB). The snapshots have no lifetime, so it leaves them.
+- **prune** deletes expired address suggestions and street map tiles, addresses that weren't found, and the oldest tiles and suggestions past their caps, then shrinks the file. Pallot does the same when it starts, and every 6 hours without shrinking the file. It never deletes another source's copies, which stay to show when a source is down.
+- **hard-refresh** asks again for every saved response, re-downloads the SBOE map, checks for a newer precinct map, and refreshes TrackAIPAC, Vote for Peace and the Texas Ethics Commission (see [Bundled snapshots](#bundled-snapshots); TEC's may download about 1 GB).
+- **rebuild** deletes every saved response, pause and map, then fetches them all again, as hard-refresh does. The snapshots aren't deleted, only refreshed; `--reset-snapshots` puts them back as they came with Pallot first. `--delete-only` deletes and fetches nothing again: the next lookups fetch what they need, which is how to erase the addresses Pallot saved (`--only geocoding suggestions ballotpedia`). It asks first, unless you add `--yes`.
+- The street map's tiles and the address suggestions are never fetched in bulk: they're only fetched as someone looks at the map or types an address, as OpenStreetMap's tile policy asks.
+- `--only` takes source ids (`--only sos fec`) for every command but prune.
+- It exits with 1 when something couldn't be fetched (the old copy stays), so it can run from cron or a systemd timer, for example once a night: `uv run pallot-cache refresh`.
+
 ## Bundled snapshots
 
-The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot as snapshots in the repo. Pallot copies them into `data/` on first run, so ballot lookups never contact trackaipac.com, voteforpeace.info or TEC. Each has a row in Settings:
-- **Refresh** fetches a new copy.
+The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot as snapshots in the repo. Pallot copies them into `data/` on first run, so ballot lookups never contact trackaipac.com, voteforpeace.info or TEC. Each has a row in Settings, which says how old it is:
+- `pallot-cache hard-refresh` (or with `--only trackaipac`, `voteforpeace` or `tec`) fetches a new copy.
   - TrackAIPAC's checks the site's pages and saves only if the site changed.
   - Vote for Peace's fetches its All Candidates page (one request, about 7 MB) and saves only if a candidate changed.
   - TEC's first makes one small request to see whether TEC's nightly export (`TEC_CF_CSV.zip`, about 1 GB) has changed; if not, that's all. If it has, it downloads the zip in one request (a minute or two on a fast connection) and rebuilds the snapshot.
-- **Reset** goes back to the snapshot that came with Pallot.
-- **TEC's download server blocks bursts of requests.** If a refresh says it was refused, try later, or download the zip in a browser, save it as `data/tec/TEC_CF_CSV.zip`, and press Refresh again.
+- `pallot-cache rebuild --reset-snapshots --only trackaipac` (or `voteforpeace`, `tec`) goes back to the snapshot that came with Pallot, then refreshes it.
+- **TEC's download server blocks bursts of requests.** If a refresh says it was refused, try later, or download the zip in a browser, save it as `data/tec/TEC_CF_CSV.zip`, and run the refresh again.
 
 ## Configuration
 
@@ -268,16 +299,18 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 
 | Variable | Default |
 |---|---|
-| `PALLOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data; git-ignored) |
+| `PALLOT_DATA_DIR` | `data/` in the project (cache, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data, and your `sources.toml` if you add one; git-ignored) |
 | `PALLOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and Pallot never writes it anywhere |
 | `PALLOT_USER_AGENT` | `Pallot/0.1 (personal ballot helper; +https://github.com/Just-Peace/Pallot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `PALLOT_HTTP_TIMEOUT` | `30` seconds |
 | `PALLOT_ALLOWED_HOSTS` | none: Pallot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
-| `PALLOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `PALLOT_TTL_GEOCODE_BACKOFF` and `PALLOT_TTL_SOS_BACKOFF` for how long the address lookup and Texas SOS are left alone after refusing a request, `PALLOT_TTL_KEY_DATES` for the key election dates, `PALLOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `PALLOT_TTL_OUTLINES` for the district map's outlines, `PALLOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `PALLOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request, for both the precinct and SBOE maps), `PALLOT_TTL_COUNTY_PRECINCTS` for the counties' lists and maps of their precincts (and `PALLOT_TTL_COUNTY_PRECINCTS_BACKOFF` for how long the counties are left alone after one refuses a request), `PALLOT_TTL_ENDORSEMENT_FEEDS` for the endorsement lists fetched from organizations' websites (and `PALLOT_TTL_ENDORSEMENT_FEEDS_BACKOFF` for how long an organization's website is left alone after refusing a request), `PALLOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks: a shorter one is raised to 7 days), and `PALLOT_TTL_PRUNE_AFTER` for how long expired address suggestions and addresses not found are kept |
+| `PALLOT_TTL_*` | cache lifetimes, see [Caching](#caching); for example `PALLOT_TTL_GEOCODE_BACKOFF` and `PALLOT_TTL_SOS_BACKOFF` for how long the address lookup and Texas SOS are left alone after refusing a request, `PALLOT_TTL_KEY_DATES` for the key election dates, `PALLOT_TTL_KEY_DATES_BACKOFF` for how long that page is left alone after refusing a request, `PALLOT_TTL_OUTLINES` for the district map's outlines, `PALLOT_TTL_ELECTION_PRECINCTS` for the list of precinct maps (and `PALLOT_TTL_ELECTION_PRECINCTS_BACKOFF` for how long the portal is left alone after refusing a request, for both the precinct and SBOE maps), `PALLOT_TTL_COUNTY_PRECINCTS` for the counties' lists and maps of their precincts (and `PALLOT_TTL_COUNTY_PRECINCTS_BACKOFF` for how long the counties are left alone after one refuses a request), `PALLOT_TTL_ENDORSEMENT_FEEDS` for the endorsement lists fetched from organizations' websites (and `PALLOT_TTL_ENDORSEMENT_FEEDS_BACKOFF` for how long an organization's website is left alone after refusing a request), `PALLOT_TTL_TILES` for the street map's tiles (at least 7 days, as OpenStreetMap asks: a shorter one is raised to 7 days), and `PALLOT_TTL_PRUNE_AFTER` for how long expired address suggestions, tiles and addresses not found are kept |
+| `PALLOT_TILES_MAX_MB` | `512`: the most the street map's tiles take in the cache; past it, the oldest are deleted when Pallot prunes |
+| `PALLOT_SUGGEST_MAX_MB` | `64`: the same for the address suggestions |
 
 ### Docker
 
-- `compose.yaml` mounts `data/` (or the folder `PALLOT_DATA_DIR` names) at `/data`, so Docker and `uv run pallot` share the cache, settings, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
+- `compose.yaml` mounts `data/` (or the folder `PALLOT_DATA_DIR` names) at `/data`, so Docker and `uv run pallot` share the cache, `sources.toml`, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
 - It's published on every network interface. To keep it to this machine, change the `ports` line in `compose.yaml` to `"127.0.0.1:8000:8000"`. `PALLOT_PORT` in `.env` changes the port.
 - To open it by a name rather than an address (`http://nas.local:8000`, or through a reverse proxy), add the name to `PALLOT_ALLOWED_HOSTS` in `.env`. A reverse proxy must pass the original `Host` header on.
 - The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `PALLOT_UID` and `PALLOT_GID` in `.env`.

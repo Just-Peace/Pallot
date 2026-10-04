@@ -11,6 +11,7 @@ from pallot.ballot import _jp_is_constable
 from pallot.sources.sos import still_running
 
 from .conftest import (
+    switch,
     ADDRESSES, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
 )
 
@@ -167,7 +168,7 @@ def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, up
 
 
 def test_harris_county_gets_exactly_one_sboe_race(client):
-    client.put("/api/sources/ballotpedia", json={"enabled": False})
+    switch(client, "ballotpedia", False)
     ballot = get_ballot(client, "harris")
     assert ballot["districts"]["sboe"] == 4 and ballot["location"]["county"] == "Harris"
     sboe = [r["name"] for r in ballot["races"] if "Board of Education" in r["name"]]
@@ -259,7 +260,7 @@ def test_a_race_with_only_write_ins_is_shown_where_it_can_be_placed(client, upst
 def test_a_write_in_only_district_race_isnt_guessed(client, upstream):
     """Without the voter's district, the statewide list's races for every district in Texas
     would otherwise all land under "Couldn't confirm"."""
-    client.put("/api/sources/election_precincts", json={"enabled": False})
+    switch(client, "election_precincts", False)
     upstream.down.add("data.capitol.texas.gov")
     upstream.extra_candidates[53815] = [
         _write_in(990001, 900001, "SID ELSEWHERE", cdOfficeType="SR",
@@ -280,7 +281,7 @@ def test_a_failed_write_in_list_keeps_the_printed_ballot(client, upstream):
 
 
 def test_ballotpedia_off(client):
-    client.put("/api/sources/ballotpedia", json={"enabled": False})
+    switch(client, "ballotpedia", False)
     ballot = get_ballot(client)
     assert not [r for r in ballot["races"] if r["source"] == "ballotpedia"]
     maybe = {s["id"]: [r["name"] for r in s["races"]] for s in ballot["maybe"]}
@@ -292,7 +293,7 @@ def test_ballotpedia_off(client):
 
 
 def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):
-    client.put("/api/sources/sos", json={"enabled": False})
+    switch(client, "sos", False)
     ballot = get_ballot(client)
     assert upstream.count("goelect") == 0
     assert ballot["elections"][0]["name"] == "Ballotpedia sample ballot"
@@ -339,7 +340,7 @@ def test_a_precinct_ballotpedia_names_without_its_kind(client, upstream):
         next(d for d in _bp_districts(payload) if d["type"] == "County subdivision")["name"] = "Travis County Precinct 5"
 
     upstream.ballotpedia_edit = generic_name
-    client.put("/api/sources/county_precincts", json={"enabled": False})
+    switch(client, "county_precincts", False)
     d = get_ballot(client)["districts"]
     assert (d["jp"], d["constable"]) == (5, 5)
     assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"}
@@ -362,8 +363,8 @@ def test_ballotpedia_can_say_who_holds_the_seat(client, upstream):
 
 
 def test_no_ballot_source_is_an_error(client):
-    client.put("/api/sources/sos", json={"enabled": False})
-    client.put("/api/sources/ballotpedia", json={"enabled": False})
+    switch(client, "sos", False)
+    switch(client, "ballotpedia", False)
     response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
     assert response.status_code == 400 and "Settings" in response.json()["detail"]
 
@@ -394,7 +395,7 @@ def test_no_precincts_sent_brings_the_countys_numbers_back(client):
 
 
 def test_without_the_countys_list_ballotpedia_gives_the_precincts(client, upstream):
-    client.put("/api/sources/county_precincts", json={"enabled": False})
+    switch(client, "county_precincts", False)
     ballot = get_ballot(client)
     d = ballot["districts"]
     assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, None)
@@ -437,7 +438,7 @@ def test_entered_districts_win_over_the_addresss(client):
 
 
 def test_nominatim_fallback_is_marked_approximate(client):
-    client.put("/api/sources/ballotpedia", json={"enabled": False})
+    switch(client, "ballotpedia", False)
     ballot = get_ballot(client, "mopac")
     assert ballot["location"]["geocoder"] == "nominatim" and ballot["location"]["approximate"]
     assert any("approximately" in w for w in ballot["warnings"])
@@ -504,7 +505,7 @@ def test_ballotpedia_refusal_degrades_gracefully(client, upstream):
 
 
 def test_state_site_down_with_nothing_cached(client, upstream):
-    client.put("/api/sources/ballotpedia", json={"enabled": False})
+    switch(client, "ballotpedia", False)
     upstream.down.add("goelect.txelections.civixapps.com")
     response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
     assert response.status_code == 502

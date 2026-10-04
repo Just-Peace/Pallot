@@ -2,7 +2,7 @@
 
 The package ships a snapshot of the site's All Candidates page. We copy it into
 data/voteforpeace on first use, so lookups never call voteforpeace.info, and only fetch the
-site when asked from the Settings page (the package's refresh() validates before writing and
+site when pallot-cache asks (the package's refresh() validates before writing and
 writes only when the site changed). The site rates candidates at every level, from Congress to
 a county's courts, so its entries are matched to races by seat and name (seats.py).
 """

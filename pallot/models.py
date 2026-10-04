@@ -342,7 +342,7 @@ class AddressSuggestion(BaseModel):
 
 
 class SuggestResult(BaseModel):
-    enabled: bool  # suggestions are on in Settings
+    enabled: bool  # suggestions are on, as this voter has them in Settings
     suggestions: list[AddressSuggestion]
 
 
@@ -360,17 +360,12 @@ class SourceStatus(BaseModel):
     description: str
     group: str  # the id of the SourceGroupInfo it's drawn under
     toggleable: bool
-    resettable: bool  # comes with a bundled snapshot: "clear" resets to it
-    enabled: bool
-    busy: bool
+    bundled: bool  # comes with a bundled snapshot, which its details date, rather than cached responses
+    enabled: bool  # for this voter: their choice in this browser, or else Pallot's default
+    busy: bool  # a download running (the precinct map, for a lookup)
     cache: CacheStatus
     details: list[Fact]
-    refresh_label: str
-    clear_label: str
-    refresh_confirm: str | None = None  # asked before refreshing, when a refresh sends or downloads a lot
-    clear_confirm: str  # asked before clearing
-    refreshable: bool = True  # False: no Refresh (OpenStreetMap's tiles may only be fetched as they're viewed)
-    frozen: bool = False  # comes with Pallot as captured, never fetched: no Refresh or Clear, nothing saved (an endorsement list)
+    frozen: bool = False  # comes with Pallot as captured, never fetched, nothing saved (an endorsement list)
     notice: str | None = None  # one line shown under the description, e.g. what the source is missing
     notice_tone: Tone = "info"
     last_use: SourceUse | None = None  # in the last lookup
@@ -382,7 +377,7 @@ class SourceGroupInfo(BaseModel):
     id: str
     title: str
     description: str
-    toggle_all: bool  # offers "Turn all on" and "Turn all off" (PUT /api/source-groups/{id})
+    toggle_all: bool  # offers "Turn all on" and "Turn all off"
 
 
 class SourcesOverview(BaseModel):
@@ -390,8 +385,6 @@ class SourcesOverview(BaseModel):
     sources: list[SourceStatus]
     total_bytes: int
     last_lookup: LastLookup | None = None
-    clear_all_confirm: str  # asked before "Clear all source caches"
-    clear_everything_confirm: str  # asked before "Clear all my data": the source caches and the browser's data
 
 
 class EndorsementListInfo(BaseModel):
@@ -404,12 +397,4 @@ class EndorsementListInfo(BaseModel):
     captured: str | None  # ISO date: when it was copied, or a live list's copy kept was fetched (None: not yet)
     description: str
     live: bool = False
-    enabled: bool
-
-
-class SourceToggle(BaseModel):
-    enabled: bool
-
-
-class ActionResult(BaseModel):
-    message: str
+    enabled: bool  # for this voter

@@ -27,7 +27,7 @@ from .models import (
     KeyDates, LastLookup, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, RaceNote, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
-from .settings import Settings
+from .settings import Sources
 from .sources import ballotpedia as ballotpedia_source
 from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
@@ -81,7 +81,7 @@ class BallotError(Exception):
 @dataclass
 class Services:
     config: Config
-    settings: Settings
+    sources: Sources  # the defaults; a request's own come from Sources.chosen()
     cache: HttpCache
     census: Census
     nominatim: Nominatim
@@ -258,8 +258,9 @@ def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
     )
 
 
-async def build_ballot(svc: Services, request: BallotRequest) -> Ballot:
-    return await _Builder(svc, request, track_calls()).run()
+async def build_ballot(svc: Services, request: BallotRequest, sources: Sources | None = None) -> Ballot:
+    """The ballot for ``request``, with the sources the voter has on (by default, Pallot's defaults)."""
+    return await _Builder(svc, request, track_calls(), sources or svc.sources).run()
 
 
 async def _nothing() -> None:
@@ -267,22 +268,22 @@ async def _nothing() -> None:
 
 
 class _Builder:
-    def __init__(self, svc: Services, request: BallotRequest, calls: CallStats):
+    def __init__(self, svc: Services, request: BallotRequest, calls: CallStats, sources: Sources):
         self.svc = svc
         self.request = request
         self.calls = calls
         self.started = time.monotonic()
-        self.use_sos = svc.settings.enabled("sos")
-        self.use_bp = svc.settings.enabled("ballotpedia")
-        self.use_tap = svc.settings.enabled("trackaipac")
-        self.use_vfp = svc.settings.enabled("voteforpeace")
-        self.lists = [found for found in svc.endorsements if svc.settings.enabled(found.source)]
-        self.use_fec = svc.settings.enabled("fec")
-        self.use_tec = svc.settings.enabled("tec")
-        self.use_polls = svc.settings.enabled("polls")
-        self.use_key_dates = svc.settings.enabled(key_dates_source.SOURCE)
-        self.use_election_precincts = svc.settings.enabled(election_precincts_source.SOURCE)
-        self.use_county_precincts = self.use_election_precincts and svc.settings.enabled(county_precincts_source.SOURCE)
+        self.use_sos = sources.enabled("sos")
+        self.use_bp = sources.enabled("ballotpedia")
+        self.use_tap = sources.enabled("trackaipac")
+        self.use_vfp = sources.enabled("voteforpeace")
+        self.lists = [found for found in svc.endorsements if sources.enabled(found.source)]
+        self.use_fec = sources.enabled("fec")
+        self.use_tec = sources.enabled("tec")
+        self.use_polls = sources.enabled("polls")
+        self.use_key_dates = sources.enabled(key_dates_source.SOURCE)
+        self.use_election_precincts = sources.enabled(election_precincts_source.SOURCE)
+        self.use_county_precincts = self.use_election_precincts and sources.enabled(county_precincts_source.SOURCE)
         self.notes: list[str] = []
         self.warnings: list[str] = []
         self.errors: dict[str, str] = {}
@@ -752,7 +753,7 @@ class _Builder:
                 label=label,
                 status="used" if taken else "unused",
                 as_of=taken,
-                message=None if taken else f"no {label} data yet; refresh it in Settings",
+                message=None if taken else f"no {label} data yet",
             )
 
         geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim", "sboe"))

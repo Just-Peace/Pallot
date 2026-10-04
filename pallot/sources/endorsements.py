@@ -88,7 +88,7 @@ class EndorsementList:
     def size(self) -> int:
         return 0  # nothing in data/: the file is part of Pallot
 
-    def refresh_size(self) -> int | None:
+    def stale(self) -> str | None:
         return None
 
     async def refresh(self) -> str:

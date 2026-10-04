@@ -3,7 +3,7 @@ week (Ttls.endorsement_feeds). Each organization is a Feed in FEEDS: its names, 
 an adapter that turns its answer into an endorsement file's candidates (endorsements.read_entry
 checks each, and leaves out one it refuses). Once fetched, a feed is an EndorsementList, so its
 cards, matching and Pick by rule flag are the frozen lists'. What differs: the fetch, its pause
-after a refusal, Refresh and Clear in Settings, and an answer the adapter can't read is refused
+after a refusal, a refresh and clear by pallot-cache, and an answer the adapter can't read is refused
 (HttpCache.check_answers), so it never replaces a good copy. A site that wants a token it rotates
 has its list page fetched first, only when the list itself is (HttpCache.headers_from_page).
 """
@@ -184,11 +184,11 @@ class EndorsementFeed:
     def size(self) -> int:
         return 0  # its copy is a cache row, counted with the cache
 
-    def refresh_size(self) -> int | None:
-        return None
+    def stale(self) -> str | None:
+        return None  # its cache row has a lifetime, which pallot-cache checks
 
     async def refresh(self) -> str:
-        """Settings refreshed the copy kept already (its cache rows); with none, fetch it now."""
+        """pallot-cache refreshed the copy kept already (its cache rows); with none, fetch it now."""
         if self.cache.peek(self.spec) is None:
             try:
                 await self.fetch()

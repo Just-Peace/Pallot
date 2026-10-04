@@ -1,8 +1,9 @@
 """A data set that ships inside a package in this repo (trackaipac_cache, voteforpeace_cache, tec_cache) and is
 copied into Pallot's data folder on first use. Lookups read the copy, reloading it when
-its file changes; only Refresh in Settings fetches anything, and Reset (clear()) goes back
-to the bundled one. Lookups and Settings read it from worker threads, so a lock makes them
-parse each version once and never read a file that a Reset is still copying.
+its file changes (pallot-cache refreshes it from another process); only a refresh fetches
+anything, and a reset (clear()) goes back to the bundled one. Lookups and Settings read it from
+worker threads, so a lock makes them parse each version once and never read a file that a reset
+is still copying.
 """
 
 from __future__ import annotations
@@ -155,5 +156,5 @@ class BundledSnapshot:
     def size(self) -> int:
         return sum(p.stat().st_size for p in self.data_dir.rglob("*") if p.is_file()) if self.data_dir.exists() else 0
 
-    def refresh_size(self) -> int | None:
-        return None
+    def stale(self) -> str | None:
+        return None  # no lifetime: only a hard refresh fetches it

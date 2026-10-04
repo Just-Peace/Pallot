@@ -12,7 +12,7 @@ from pallot.http_cache import HttpCache, UpstreamError
 from pallot.sources import tigerweb
 from pallot.sources.sboe import _inside
 
-from .conftest import capitol_point, get_ballot, load
+from .conftest import capitol_point, get_ballot, load, switch
 
 CAPITOL = {"cd": 10, "sd": 14, "hd": 49, "sboe": 5}
 
@@ -129,7 +129,7 @@ def test_a_district_tigerweb_does_not_have(client, upstream):
 
 
 def test_tigerweb_off(client, upstream):
-    client.put(f"/api/sources/{tigerweb.SOURCE}", json={"enabled": False})
+    switch(client, tigerweb.SOURCE, False)
     got = outlines(client, **CAPITOL)
     assert [o["kind"] for o in got["outlines"]] == ["sboe"]
     assert got["notes"] == ["U.S. House, State Senate and State House outlines are turned off in Settings."]
@@ -190,11 +190,13 @@ def test_numbers_out_of_range_are_refused(client, upstream, numbers):
     assert upstream.calls == []
 
 
-def test_refresh_and_clear_outlines(client, upstream):
+def test_pallot_cache_refreshes_and_rebuilds_outlines(client, make_app, upstream):
     outlines(client, **CAPITOL)
-    refreshed = client.post(f"/api/sources/{tigerweb.SOURCE}/refresh").json()["message"]
-    assert refreshed == "Refreshed 4 cached responses." and upstream.count("tigerweb") == 8
-    assert client.post(f"/api/sources/{tigerweb.SOURCE}/clear").json()["message"] == "Cleared 4 cached responses."
+    refreshed = make_app.cache_command("hard-refresh", tigerweb.SOURCE)
+    assert refreshed == (0, "District map (US Census TIGERweb): Refreshed 4 saved responses.")
+    assert upstream.count("tigerweb") == 8
+    assert make_app.cache_command("rebuild", tigerweb.SOURCE)[1].startswith("Deleted 4 saved responses.\n")
+    assert upstream.count("tigerweb") == 12
     outlines(client, **CAPITOL)
     assert upstream.count("tigerweb") == 12
 
@@ -233,6 +235,6 @@ def test_an_unknown_precinct_is_a_note_not_an_error(client, upstream):
 
 def test_election_precincts_off(client, upstream):
     get_ballot(client)
-    client.put("/api/sources/election_precincts", json={"enabled": False})
+    switch(client, "election_precincts", False)
     got = outlines(client, **PRECINCT)
     assert got["outlines"] == [] and got["notes"] == ["Election precinct outlines are turned off in Settings."]

@@ -17,6 +17,7 @@ from pallot.sources.county_precincts import Areas, County, CountyPrecincts, Laye
 from pallot.sources.election_precincts import ElectionPrecincts
 
 from .conftest import (
+    switch,
     ANDERSON, HARRIS, PROJECTION, TRAVIS, TRAVIS_LIST, TRAVIS_QUERY, box, census_points, get_ballot, last_use, middle,
     travis_rows,
 )
@@ -288,7 +289,7 @@ def test_a_repeat_lookup_asks_the_county_nothing(client, upstream):
 
 
 def test_without_election_precincts_the_county_isnt_asked(client, upstream):
-    client.put("/api/sources/election_precincts", json={"enabled": False})
+    switch(client, "election_precincts", False)
     d = get_ballot(client)["districts"]
     assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"}
     assert upstream.count("traviscountytx") == 0 and last_use(client, cp.SOURCE)["status"] == "off"
@@ -307,7 +308,7 @@ def test_maps_on_the_ballot(client, upstream, monkeypatch):
     monkeypatch.setitem(cp.COUNTIES, TRAVIS, MAPS)
     serve_maps(upstream, [area("COMM", 2, 2000, 2000, 2000, 2000)],
                [area("JP", 1, 2000, 2000, 0, 2000), area("JP", 5, 0, 2000, 2000, 2000)])
-    client.put("/api/sources/ballotpedia", json={"enabled": False})
+    switch(client, "ballotpedia", False)
     ballot = get_ballot(client)
     d = ballot["districts"]
     assert (d["commissioner"], d["jp"], d["county_source"]) == (2, None, {"county": "Travis", "method": "maps"})
@@ -318,14 +319,17 @@ def test_maps_on_the_ballot(client, upstream, monkeypatch):
     assert "precinct" in [s["id"] for s in ballot["maybe"]]  # the JP and constable races wait for the voter
 
 
-def test_settings_refreshes_and_clears_the_countys_records(client, upstream):
+def test_pallot_cache_refreshes_and_rebuilds_the_countys_records(client, make_app, upstream):
     get_ballot(client)
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == cp.SOURCE)
     assert row["cache"]["entries"] == 3 and row["notice"] is None
-    refreshed = client.post(f"/api/sources/{cp.SOURCE}/refresh").json()["message"]
-    assert refreshed == "Refreshed 3 cached responses." and upstream.count("traviscountytx") == 6
-    assert client.post(f"/api/sources/{cp.SOURCE}/clear").json()["message"] == "Cleared 3 cached responses."
+    refreshed = make_app.cache_command("hard-refresh", cp.SOURCE)
+    assert refreshed == (0, "Commissioner & JP precincts (counties): Refreshed 3 saved responses.")
+    assert upstream.count("traviscountytx") == 6
+    rebuilt = make_app.cache_command("rebuild", cp.SOURCE)
+    assert rebuilt == (0, "Deleted 3 saved responses.\nCommissioner & JP precincts (counties): Refreshed 3 saved responses.")
     upstream.county_status = 429
+    client.app.state.svc.cache.clear(cp.SOURCE)
     get_ballot(client)
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == cp.SOURCE)
     assert row["notice"].startswith("Paused until ") and "after a county's map server refused a request" in row["notice"]

@@ -16,6 +16,7 @@ import zipfile
 from .ballot import Services
 from .http_cache import UpstreamError, track_calls
 from .models import DistrictOutlines, Meta, Outline
+from .settings import Sources
 from .sources import election_precincts, osm_tiles, tigerweb
 from .sources.sboe import Ring
 
@@ -23,13 +24,15 @@ LABELS = {"cd": "U.S. House", "sd": "State Senate", "hd": "State House", "sboe":
 
 
 async def district_outlines(
-    svc: Services, wanted: dict[str, int | None], precinct: tuple[int, str] | None = None
+    svc: Services, wanted: dict[str, int | None], precinct: tuple[int, str] | None = None,
+    sources: Sources | None = None,
 ) -> DistrictOutlines:
     """The districts in ``wanted`` (kind -> number), then the election precinct (county FIPS, the
-    map's code for it)."""
+    map's code for it), with the sources the voter has on (by default, Pallot's defaults)."""
     calls = track_calls()
     started = time.monotonic()
-    use_tigerweb = svc.settings.enabled(tigerweb.SOURCE)
+    sources = sources or svc.sources
+    use_tigerweb = sources.enabled(tigerweb.SOURCE)
     notes: list[str] = []
 
     async def one(kind: str, number: int) -> tuple[list[Ring] | None, str | None]:
@@ -54,7 +57,7 @@ async def district_outlines(
     async def election_precinct(county: int, code: str) -> tuple[list[Ring] | None, str | None]:
         """The precinct's rings from the map kept, or None and why."""
         label = f"Election precinct {election_precincts.display_name(code)}"
-        if not svc.settings.enabled(election_precincts.SOURCE):
+        if not sources.enabled(election_precincts.SOURCE):
             return None, "Election precinct outlines are turned off in Settings."
         if svc.election_precincts.stored() is None:
             return None, f"The election precinct map hasn't downloaded yet, so {label} isn't drawn."
@@ -78,7 +81,7 @@ async def district_outlines(
     return DistrictOutlines(
         outlines=[Outline(kind=kind, number=number, rings=rings) for (kind, number), (rings, _) in drawn if rings],
         notes=notes,
-        street_map=svc.settings.enabled(osm_tiles.SOURCE),
+        street_map=sources.enabled(osm_tiles.SOURCE),
         meta=Meta(
             external_calls=calls.external_calls,
             cache_hits=calls.cache_hits,

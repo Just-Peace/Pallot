@@ -15,7 +15,7 @@ from pallot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls
 from pallot.sources import key_dates
 from pallot.sources.key_dates import Deadlines, parse
 
-from .conftest import FIXTURES, get_ballot, last_use
+from .conftest import FIXTURES, get_ballot, last_use, switch
 
 D = dt.date
 NOV_3 = Deadlines(D(2026, 11, 3), "Uniform Election Date", register_by=D(2026, 10, 5), mail_apply_by=D(2026, 10, 23),
@@ -194,10 +194,9 @@ def test_the_ballot_has_its_elections_key_dates(client, upstream):
 
 
 def test_key_dates_off(client, upstream):
-    client.put("/api/sources/key_dates", json={"enabled": False})
+    switch(client, "key_dates", False)
     assert get_ballot(client)["key_dates"] is None
     assert upstream.count("sos.state.tx.us") == 0 and last_use(client, key_dates.SOURCE)["status"] == "off"
-    assert client.get("/api/key-dates.ics", params={"date": "2026-11-03"}).status_code == 404
 
 
 def test_a_refusal_pauses_key_dates_and_the_ballot_still_loads(client, upstream):
@@ -227,9 +226,10 @@ def test_calendar_downloads(client, upstream):
     assert upstream.count("sos.state.tx.us") == 1
 
 
-def test_refresh_and_clear_key_dates(client, upstream):
+def test_pallot_cache_refreshes_and_rebuilds_key_dates(client, make_app, upstream):
     get_ballot(client)
-    assert client.post("/api/sources/key_dates/refresh").json()["message"].startswith("Refreshed 1 cached response.")
+    assert make_app.cache_command("hard-refresh", "key_dates") == (0, "Key election dates (Texas SOS): Refreshed 1 saved response.")
     assert upstream.count("sos.state.tx.us") == 2
-    assert client.post("/api/sources/key_dates/clear").json()["message"] == "Cleared 1 cached response."
+    assert make_app.cache_command("rebuild", "key_dates")[1].startswith("Deleted 1 saved response.\n")
+    assert upstream.count("sos.state.tx.us") == 3
     assert get_ballot(client)["key_dates"]["register_by"] == "2026-10-05" and upstream.count("sos.state.tx.us") == 3

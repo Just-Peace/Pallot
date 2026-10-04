@@ -57,7 +57,8 @@ Update the docs in the same commit as the change.
 | Anything the voter sees or does                                           | `README.md` ("Using it", "Where the data comes from", "Caching", "Settings")                                                             |
 | Internals, commands, layout, a source's quirks                            | `DEVELOPMENT.md`                                                                                                                         |
 | Something a voter might ask about, especially how a figure is worked out  | `pallot/static/faq.html`                                                                                                                |
-| A source's row in Settings (label, description, notices, confirm prompts) | `SOURCES` in `pallot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, Refresh and Clear in its `KeptSource` methods), and `pallot/static/settings.html` if the page's text changes |
+| A source's row in Settings (label, description, notices) or in `pallot-cache` | `SOURCES` in `pallot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, staleness, refresh and clear in its `KeptSource` methods), and `pallot/static/settings.html` if the page's text changes |
+| Which sources start on | `pallot/sources.toml`, and README's "Which sources start on" |
 | A page, or a link in the left pane                                        | `PAGES` in `pallot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
 | A new source, or what's sent to or kept from one                          | the tables in `pallot/static/privacy.html` and `pallot/static/about.html`; the welcome steps in `pallot/static/index.html`            |
 | A new endorsement list                                                    | only its file, `pallot/endorsements/<source>.json` (DEVELOPMENT.md's "Endorsement lists"): the pages name the lists from it |
@@ -99,19 +100,21 @@ How to write them:
   - A repeat lookup of the same address makes zero external calls.
   - Prefer one bulk call that's cached over a call per candidate.
   - Lifetimes live in `Ttls`, each overridable with `PALLOT_TTL_<NAME>`.
-  - Every source appears in Settings with Refresh and Clear, and gets an on/off switch (`DEFAULT_SOURCES` in `pallot/settings.py`) unless the ballot can't work without it.
+  - Every source appears in Settings and in `pallot-cache` (check, refresh, prune, rebuild), and gets an on/off switch (its default in `pallot/sources.toml`) unless the ballot can't work without it.
+  - Settings only shows what the server keeps. Refreshing or deleting it is `pallot-cache`'s, on the host (`pallot/maintain.py`), never an API route: Pallot has no login.
+  - A voter's switches stay in their browser and travel with each request (`X-Pallot-Sources`); never keep them on the server, where they'd change everyone's ballot.
 - **Keys stay out of the cache.** API keys go in `HttpCache`'s `source_headers`, never in a `RequestSpec`, a cache key, a log line or an error message.
 - **Be gentle with the sources:**
-  - Throttle with `MIN_INTERVAL` in `api.py`, and pause a source when it refuses a request (`pause_on`).
+  - Throttle with `MIN_INTERVAL` in `services.py`, and pause a source when it refuses a request (`pause_on`).
   - Never fetch TEC's zip in a loop or in many ranges: its server blocks an IP after a burst. Use one streaming request, or `--zip` with a copy you downloaded.
   - FiftyPlusOne answers 403 unless the request carries browser headers.
   - Nominatim forbids search-as-you-type, which is why Ballotpedia's address search does the suggestions.
   - Ballotpedia's endpoints (the ballot and the address search) are unofficial and for personal use only.
-  - OpenStreetMap's tiles come through the server and are kept at least 7 days, fetched only as the voter looks at them. Never prefetch them or re-download them in bulk, which its tile policy forbids: that's why the street map has Clear in Settings but no Refresh.
+  - OpenStreetMap's tiles come through the server and are kept at least 7 days, fetched only as the voter looks at them. Never prefetch them or re-download them in bulk, which its tile policy forbids: that's why `pallot-cache` prunes and deletes the street map's tiles but never refreshes them.
   - The Texas Legislative Council's precinct map (about 45 MB) is downloaded only when its portal's index lists a newer one, one download at a time, never in a loop. A map that fails isn't started again by a lookup until the index lists a changed one, or for a week (15 minutes while none is kept). Tests make the map up (`conftest.py`); only the live test downloads the real one.
 - **Match across sources by name, with seat and party as corroboration** (`pallot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
-- **Settings has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
+- **Pallot has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
 - **Don't reinstall** `trackaipac_cache` **from its own repo.** It's a copy of the maintainer's library, and edits here aren't synced back.
 - **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`). Never edit them by hand.
 

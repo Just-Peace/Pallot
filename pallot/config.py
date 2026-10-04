@@ -52,7 +52,7 @@ class Ttls:
     endorsement_feeds: int = 7 * DAY  # organizations' live endorsement lists (endorsement_feeds.py)
     endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
-    prune_after: int = 30 * DAY  # at startup, delete suggestions and addresses not found that expired this long ago
+    prune_after: int = 30 * DAY  # delete expired suggestions, tiles and addresses not found once expired this long
 
 
 @dataclass(frozen=True)
@@ -68,14 +68,19 @@ class Config:
     # Names Pallot answers to besides localhost and IP addresses, such as a LAN name or a
     # reverse proxy's domain ("*": any). Other names are refused, against DNS rebinding.
     allowed_hosts: tuple[str, ...] = ()
+    # The most the street map's tiles and the address suggestions keep in the cache; the oldest
+    # go first past it (services.prune, at startup and every few hours).
+    tiles_max_bytes: int = 512 << 20
+    suggest_max_bytes: int = 64 << 20
 
     @property
     def cache_path(self) -> Path:
         return self.data_dir / "cache.sqlite3"
 
     @property
-    def settings_path(self) -> Path:
-        return self.data_dir / "settings.json"
+    def sources_path(self) -> Path:
+        """Changes to which sources are on by default, for everyone (settings.py); optional."""
+        return self.data_dir / "sources.toml"
 
     @property
     def sboe_path(self) -> Path:
@@ -140,4 +145,10 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         allowed_hosts=tuple(
             name.strip().lower() for name in (env.get("PALLOT_ALLOWED_HOSTS") or "").split(",") if name.strip()
         ),
+        tiles_max_bytes=_megabytes(env.get("PALLOT_TILES_MAX_MB")) or Config.tiles_max_bytes,
+        suggest_max_bytes=_megabytes(env.get("PALLOT_SUGGEST_MAX_MB")) or Config.suggest_max_bytes,
     )
+
+
+def _megabytes(value: str | None) -> int | None:
+    return int(float(value) * (1 << 20)) if value else None

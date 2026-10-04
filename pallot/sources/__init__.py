@@ -36,17 +36,17 @@ def arcgis_error(answer: Any) -> str | None:
 
 
 class RefreshFailed(Exception):
-    """A Refresh that changed nothing; its message is the whole sentence for Settings."""
+    """A refresh that changed nothing; its message is the whole sentence pallot-cache prints."""
 
 
 class KeptSource(Protocol):
     """A source kept in files rather than HttpCache rows (the SBOE and precinct maps, the
-    bundled snapshots). Settings asks it for its row's state and actions (admin.py), so a new
-    one only needs its SourceInfo."""
+    bundled snapshots). Settings asks it for its row's state (admin.py), and pallot-cache
+    (maintain.py) to check, refresh and clear it, so a new one only needs its SourceInfo."""
 
     @property
     def busy(self) -> bool:
-        """A download running, which Refresh and Clear must wait for."""
+        """A download running in this process (Settings says so)."""
 
     def notice(self) -> tuple[str, Tone] | None:
         """One line for Settings: a download under way, a failure, or where its data stands."""
@@ -56,11 +56,12 @@ class KeptSource(Protocol):
     def size(self) -> int:
         """Bytes on disk."""
 
-    def refresh_size(self) -> int | None:
-        """Bytes a Refresh may download, for the confirm prompt's {size}; None if unknown."""
+    def stale(self) -> str | None:
+        """Why a soft refresh (pallot-cache refresh) should fetch it now, or None: a map not
+        downloaded yet, or one the portal lists a newer one of. A snapshot is never stale."""
 
     async def refresh(self) -> str:
-        """What a Refresh did, as a sentence; RefreshFailed when it changed nothing."""
+        """What a refresh did, as a sentence; RefreshFailed when it changed nothing."""
 
     def clear(self) -> str:
         """Throw away what's kept and say what happens next, as a sentence."""
