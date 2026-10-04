@@ -46,3 +46,9 @@ def test_the_transient_caches_caps_are_in_megabytes():
     config = load_config({"PALLOT_TILES_MAX_MB": "100", "PALLOT_SUGGEST_MAX_MB": "0.5"})
     assert (config.tiles_max_bytes, config.suggest_max_bytes) == (100 << 20, 512 << 10)
     assert (load_config({}).tiles_max_bytes, load_config({}).suggest_max_bytes) == (512 << 20, 64 << 20)
+
+
+def test_port_and_prune_interval_come_from_the_environment():
+    assert (load_config({}).port, load_config({}).prune_every) == (8000, 6 * 3600)
+    config = load_config({"PALLOT_PORT": "9000", "PALLOT_PRUNE_EVERY": "600"})
+    assert (config.port, config.prune_every) == (9000, 600)
