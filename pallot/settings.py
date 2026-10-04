@@ -15,7 +15,7 @@ DEFAULT_SOURCES: dict[str, bool] = {
 
 
 class Settings:
-    """``extra``: the ids of sources found at startup (the endorsement lists), on by default."""
+    """``extra``: the ids of the endorsement lists and feeds, on by default."""
 
     def __init__(self, path: Path, extra: Iterable[str] = ()):
         self.path = path

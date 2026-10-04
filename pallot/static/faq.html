@@ -215,7 +215,7 @@
         <details class="faq" id="endorsements">
           <summary>What are the endorsement lists?</summary>
           <div class="faq-body">
-            <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. A candidate on a list has an "Endorsed by" badge, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
+            <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. Others it fetches from the organization's own website, at most once a week, so they follow the organization's changes; Settings shows when each was last fetched, and its Refresh fetches it at once. A candidate on a list has an "Endorsed by" badge, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
             <p>The lists can cover the whole country. Pallot keeps every state, and uses only the candidates in your address's state (Texas, for now), matched by name with the office and district, or the county, to confirm, like Vote for Peace's. Each list has its own switch in <a href="settings.html">Settings</a>, and Pick by rule can pick the candidates a list endorses.</p>
             <ul><template data-endorsements="list"></template></ul>
             <p data-endorsements="none" hidden>This copy of Pallot comes with no endorsement lists yet.</p>
@@ -226,7 +226,7 @@
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
             <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. Address suggestions, and addresses that weren't found, are no use as an old copy, so Pallot deletes them the first time it starts once they've been expired for 30 days.</p>
-            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when you press Refresh; Settings shows how old each one is. The endorsement lists come with Pallot too, and are never fetched again. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
+            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when you press Refresh; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
           </div>
         </details>

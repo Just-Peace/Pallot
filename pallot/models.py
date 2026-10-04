@@ -383,14 +383,15 @@ class SourcesOverview(BaseModel):
 
 
 class EndorsementListInfo(BaseModel):
-    """An organization's endorsement list that came with Pallot."""
+    """An organization's endorsement list that came with Pallot, or that Pallot fetches (``live``)."""
 
     source: str
     label: str  # "JVP Action"
     organization: str  # "Jewish Voice for Peace Action"
     url: str
-    captured: str  # ISO date
+    captured: str | None  # ISO date: when it was copied, or a live list's copy kept was fetched (None: not yet)
     description: str
+    live: bool = False
     enabled: bool
 
 

@@ -18,6 +18,7 @@ from pallot.http_cache import HttpCache, track_calls
 from pallot.sources import fec, key_dates, polls
 from pallot.sources.county_precincts import COUNTIES, CountyPrecincts
 from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
+from pallot.sources.endorsement_feeds import make_feeds
 from pallot.sources.sboe import _inside
 
 from .conftest import census_points
@@ -179,3 +180,21 @@ async def test_county_precincts_live(tmp_path, precinct_map_dir):
             cache.close()
     assert all(n == 20 if method == "table" else n >= 15 for n, method in settled.values()), settled  # maps: most
     assert stats.external_calls == 0
+
+
+@pytest.mark.anyio
+async def test_endorsement_feeds_live(tmp_path):
+    """Each organization's feed still answers in the shape its adapter reads, every candidate it
+    gives passes as a file's would, and a second fetch comes from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=60) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        try:
+            for feed in make_feeds(cache, Ttls()):
+                found = await feed.fetch()
+                assert found.entries and len(found.entries) == len(feed.feed.read(cache.peek(feed.spec).value)), feed.source
+                stats = track_calls()
+                await feed.fetch()
+                assert stats.external_calls == 0
+        finally:
+            cache.close()

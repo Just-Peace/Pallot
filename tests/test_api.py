@@ -34,8 +34,8 @@ def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts", "tigerweb",
                                                        "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
-                                                       "trackaipac", "voteforpeace", "examplepac", "fec", "tec", "polls"]
-    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, example, fec, tec, polls = (
+                                                       "trackaipac", "voteforpeace", "examplepac", "mupac", "fec", "tec", "polls"]
+    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, example, _, fec, tec, polls = (
         overview["sources"])
     assert (county["label"], county["toggleable"], county["enabled"], county["refresh_confirm"]) == (
         "Commissioner & JP precincts (counties)", True, True, None)

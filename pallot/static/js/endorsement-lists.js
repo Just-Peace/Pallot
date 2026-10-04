@@ -1,16 +1,18 @@
-// The endorsement lists that came with Pallot (/api/endorsements), named on the pages that list
-// the sources, so adding an organization's file needs no HTML. A page marks the spots with
-// data-endorsements:
+// The endorsement lists that came with Pallot and the ones it fetches live (/api/endorsements),
+// named on the pages that list the sources, so adding an organization's file or feed needs no HTML.
+// A page marks the spots with data-endorsements:
 //   "clause", a <span> in a sentence: ", whether A endorses them" or ", which of A and B endorse them";
+//   "live", a <span> in a sentence: " (A and B)", the lists fetched live;
 //   "rows", "credits" or "list", a <template> in a table body or a list, replaced by a row or an
 //     item per list;
-//   "none", shown only when no list came with Pallot.
+//   "none", shown only when there's no list.
 
 import { api } from "./api.js";
 import { extLink, h } from "./dom.js";
 import { SHORT_DATE, formatDate, listed } from "./format.js";
 
 const captured = (list) => formatDate(list.captured, SHORT_DATE);
+const FETCHED = "fetched from its website at most once a week";
 
 function clause(lists) {
   if (!lists.length) return "";
@@ -18,14 +20,21 @@ function clause(lists) {
   return `, which of ${listed(lists.map((list) => list.label))} endorse them`;
 }
 
+const when = (list) => (list.live ? FETCHED : `as captured on ${captured(list)}`);
+
 const FILL = {
   rows: (list) => h("tr", {}, h("th", { scope: "row" }, list.label),
-    h("td", {}, `The candidates ${list.organization} endorses, from its list as captured on ${captured(list)}`)),
+    h("td", {}, `The candidates ${list.organization} endorses, from its list, ${when(list)}`)),
   credits: (list) => h("li", {}, h("strong", {}, list.label), `: the candidates ${list.organization} endorses, from its `,
-    extLink(list.url, "endorsement list"), `, as captured on ${captured(list)}.`),
+    extLink(list.url, "endorsement list"), `, ${when(list)}.`),
   list: (list) => h("li", {}, h("strong", {}, list.label), `: ${list.description} `,
-    extLink(list.url, "Its list"), `, as captured on ${captured(list)}.`),
+    extLink(list.url, "Its list"), `, ${when(list)}.`),
 };
+
+function live(lists) {
+  const fetched = lists.filter((list) => list.live).map((list) => list.label);
+  return fetched.length ? ` (${listed(fetched)})` : "";
+}
 
 export async function showEndorsementLists() {
   const spots = [...document.querySelectorAll("[data-endorsements]")];
@@ -40,6 +49,7 @@ export async function showEndorsementLists() {
     const kind = spot.dataset.endorsements;
     if (kind === "none") spot.hidden = lists.length > 0;
     else if (kind === "clause") spot.textContent = clause(lists);
+    else if (kind === "live") spot.textContent = live(lists);
     else if (FILL[kind]) spot.replaceWith(...lists.map(FILL[kind]));
   }
 }

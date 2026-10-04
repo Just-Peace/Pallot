@@ -37,7 +37,7 @@ from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot, 
 from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
-from .sources.endorsements import EndorsementList
+from .sources.endorsement_feeds import EndorsementSource
 from .sources.fec import Fec
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
@@ -93,7 +93,7 @@ class Services:
     ballotpedia: Ballotpedia
     trackaipac: TrackAipac
     voteforpeace: VoteForPeace
-    endorsements: list[EndorsementList]  # the frozen lists found at startup, by label
+    endorsements: list[EndorsementSource]  # the frozen lists found at startup and the live feeds, by label
     fec: Fec
     tec: Tec
     polls: Polls
@@ -731,8 +731,11 @@ class _Builder:
                 id=source_id, label=label, status="stale" if stale else "used", as_of=iso_utc(min(used)), calls=calls
             )
 
-        def frozen(found: EndorsementList) -> SourceUse:
-            if not any(found.source == on.source for on in self.lists):
+        def endorsements(found: EndorsementSource) -> SourceUse:
+            on = any(found.source == used.source for used in self.lists)
+            if found.live:
+                return status(found.source, found.label, on, (found.source,))
+            if not on:
                 return SourceUse(id=found.source, label=found.label, status="off")
             return SourceUse(id=found.source, label=found.label, status="used", as_of=found.captured)
 
@@ -757,7 +760,7 @@ class _Builder:
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             snapshot("voteforpeace", "Vote for Peace", self.use_vfp, self.svc.voteforpeace.document),
-            *(frozen(found) for found in self.svc.endorsements),
+            *(endorsements(found) for found in self.svc.endorsements),
             status("fec", "FEC", self.use_fec, ("fec",)),
             snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
             status("polls", "Polls", self.use_polls, ("polls",)),

@@ -1,0 +1,267 @@
+"""Organizations' endorsement lists fetched from their own public JSON, through HttpCache, kept a
+week (Ttls.endorsement_feeds). Each organization is a Feed in FEEDS: its names, its endpoint, and
+an adapter that turns its answer into an endorsement file's candidates (endorsements.read_entry
+checks each, and leaves out one it refuses). Once fetched, a feed is an EndorsementList, so its
+cards, matching and Pick by rule flag are the frozen lists'. What differs: the fetch, its pause
+after a refusal, Refresh and Clear in Settings, and an answer the adapter can't read is refused
+(HttpCache.check_answers), so it never replaces a good copy.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import datetime as dt
+import re
+import threading
+from dataclasses import dataclass
+from typing import Any, Callable, Union
+
+from ..config import DAY, HOUR, Ttls
+from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
+from ..models import Fact, Race, Tone
+from ..offices import OfficeScope
+from ..text import display_time
+from . import CardSet, RefreshFailed
+from .ballotpedia import BpBallot
+from .endorsements import BadList, EndorsementList, read_entry
+from .seats import entry_seats
+
+REFUSALS = (403, 429)  # answers that pause a feed for Ttls.endorsement_feeds_backoff
+_SLUG = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+
+
+@dataclass(frozen=True)
+class Feed:
+    """One organization's live list. ``read`` is its adapter: the endpoint's JSON -> candidates in
+    an endorsement file's shape (``name``, ``state``, ``office``, and optionally ``district``,
+    ``jurisdiction``, ``party``, ``note``, ``url``), raising ValueError for an answer it can't read."""
+
+    source: str  # its id: lowercase letters, digits and _, no other source's
+    label: str  # the short name on badges, tabs and Settings
+    organization: str  # its full name
+    url: str  # the page people read the list on
+    api: str  # the public JSON endpoint Pallot asks
+    description: str  # one sentence for Settings and the Details tab
+    read: Callable[[Any], list[dict[str, Any]]]
+    headers: dict[str, str] | None = None  # any the endpoint needs; never a key
+
+
+class FeedUnavailable(Exception):
+    """The feed couldn't be fetched (refused, paused, down) and nothing was kept."""
+
+    def __init__(self, label: str, reason: str):
+        super().__init__(reason)
+        self.label = label
+
+    @property
+    def warning(self) -> str:
+        return f"Couldn't load {self.label}'s endorsements ({self})."
+
+
+def _lifetime(seconds: float) -> str:
+    """604800 -> "7 days", 3600 -> "1 hour"."""
+    count, unit = (seconds / DAY, "day") if seconds >= DAY else (seconds / HOUR, "hour")
+    return f"{count:g} {unit}{'' if count == 1 else 's'}"
+
+
+class EndorsementFeed:
+    """A Feed on the ballot and in Settings (a KeptSource whose responses are its HttpCache rows,
+    under its source id). The parsed list is kept per stored copy (its ``fetched_at``)."""
+
+    busy = False  # a fetch is one small request, never a download to wait for
+    live = True
+
+    def __init__(self, feed: Feed, cache: HttpCache, ttl: Ttls):
+        self.feed = feed
+        self.cache = cache
+        self.ttl = ttl
+        self._built: tuple[float, EndorsementList] | None = None
+        self._lock = threading.Lock()
+        cache.pause_on(feed.source, REFUSALS, ttl.endorsement_feeds_backoff)
+        cache.check_answers(feed.source, self._check)
+
+    source = property(lambda self: self.feed.source)
+    label = property(lambda self: self.feed.label)
+    organization = property(lambda self: self.feed.organization)
+    url = property(lambda self: self.feed.url)
+    description = property(lambda self: self.feed.description)
+
+    @property
+    def spec(self) -> RequestSpec:
+        return RequestSpec("GET", self.feed.api, headers=self.feed.headers)
+
+    def entries(self, answer: Any) -> list[dict[str, Any]]:
+        """The adapter's candidates, each checked as a file's would be; one it refuses is left out."""
+        found: list[dict[str, Any]] = []
+        for raw in self.feed.read(answer):
+            try:
+                found.append(read_entry(raw, len(found), self.feed.source))
+            except BadList:
+                continue
+        return found
+
+    def _check(self, answer: Any) -> str | None:
+        try:
+            found = self.entries(answer)
+        except (ValueError, TypeError, KeyError, AttributeError) as exc:
+            return f"an answer Pallot can't read ({exc})"
+        return None if found else "a list with no candidate Pallot can read"
+
+    def _list(self, got: Cached) -> EndorsementList:
+        with self._lock:
+            if self._built and self._built[0] == got.fetched_at:
+                return self._built[1]
+            found = EndorsementList(
+                source=self.source, label=self.label, organization=self.organization, url=self.url,
+                captured=dt.date.fromtimestamp(got.fetched_at).isoformat(), description=self.description,
+                entries=self.entries(got.value), live=True,
+            )
+            self._built = (got.fetched_at, found)
+            return found
+
+    def _kept(self) -> EndorsementList | None:
+        """The stored copy's list, without asking anyone; None if none is kept, or it's refused."""
+        got = self.cache.peek(self.spec)
+        if got is None or self._check(got.value):
+            return None
+        return self._list(got)
+
+    @property
+    def captured(self) -> str | None:
+        """The day the copy kept was fetched, for /api/endorsements."""
+        kept = self._kept()
+        return kept.captured if kept else None
+
+    async def fetch(self) -> EndorsementList:
+        try:
+            got = await self.cache.get_json(self.source, self.spec, ttl=self.ttl.endorsement_feeds)
+        except UpstreamError as exc:
+            if exc.until:
+                raise FeedUnavailable(self.label, f"paused until {display_time(exc.until)} after "
+                                                  f"{self.organization}'s website refused a request") from exc
+            raise FeedUnavailable(self.label, str(exc).removeprefix(f"{self.source}: ")) from exc
+        return await asyncio.to_thread(self._list, got)
+
+    async def lookup(
+        self,
+        races: list[Race],
+        scopes: dict[str, OfficeScope],
+        county: str | None,
+        bp_ballot: BpBallot | None = None,
+        state: str = "TX",
+    ) -> CardSet:
+        """The list's cards (EndorsementList.cards), fetched or from the copy kept."""
+        found = await self.fetch()
+        return await found.lookup(races, scopes, county, bp_ballot, state)
+
+    # -- Settings (KeptSource) ----------------------------------------------------------------
+
+    def notice(self) -> tuple[str, Tone]:
+        got = self.cache.peek(self.spec)
+        if got is None:
+            return (f"Not fetched yet: the first lookup with it on fetches [{self.organization}'s list]({self.url}) "
+                    "from its website."), "info"
+        return (f"Fetched from [{self.organization}'s website]({self.url}) on {display_time(got.fetched_at)}; "
+                f"a lookup fetches it again once it's {_lifetime(self.ttl.endorsement_feeds)} old."), "info"
+
+    def details(self) -> list[Fact]:
+        kept = self._kept()
+        if kept is None:
+            return []
+        states = kept.states()
+        return [
+            Fact(label="Texas candidates", value=f"{kept.count('TX'):,}"),
+            Fact(label="All candidates", value=f"{kept.count():,} in {states} {'state' if states == 1 else 'states'}"),
+        ]
+
+    def size(self) -> int:
+        return 0  # its copy is a cache row, counted with the cache
+
+    def refresh_size(self) -> int | None:
+        return None
+
+    async def refresh(self) -> str:
+        """Settings refreshed the copy kept already (its cache rows); with none, fetch it now."""
+        if self.cache.peek(self.spec) is None:
+            try:
+                await self.fetch()
+            except FeedUnavailable as exc:
+                raise RefreshFailed(f"Couldn't fetch {self.label}'s list ({exc}).") from exc
+        kept = self._kept()
+        if kept is None:
+            raise RefreshFailed(f"{self.label}'s list kept can't be read.")
+        return f"{kept.count('TX'):,} of its {kept.count():,} candidates are in Texas."
+
+    def clear(self) -> str:
+        with self._lock:
+            self._built = None
+        return "The next lookup fetches the list again."
+
+
+# -- the organizations ------------------------------------------------------------------------
+
+MUPAC_SITE = "https://muslimsunitedpac.com"
+_MUPAC_OFFICES = {"US HOUSE": "U.S. House", "US SENATE": "U.S. Senate"}
+
+
+def _text(value: Any) -> str | None:
+    return value.strip() or None if isinstance(value, str) else None
+
+
+def muslims_united(answer: Any) -> list[dict[str, Any]]:
+    """Muslims United PAC's /api/public/endorsements: an object of categories ("incumbents",
+    "challengers"), each a list of candidates (and counts, as "total", which are skipped). The
+    office is "U.S. House" or "U.S. Senate" for its officeType "US House" or "US Senate" (with
+    district "18", TX-18); otherwise its officeName ("Governor of Georgia") or officeType, the
+    first that names a seat, or else the officeName ("Mayor of New York City"). Its jurisdiction
+    ("federal", "state", "local") names no county, so it's left out. The note is its "ourTake",
+    or the bio."""
+    if not isinstance(answer, dict):
+        raise ValueError("expected an object of categories")
+    found: list[dict[str, Any]] = []
+    seen: set[Any] = set()
+    for group in answer.values():
+        if not isinstance(group, list):
+            continue
+        for raw in group:
+            if not isinstance(raw, dict) or (raw.get("id") is not None and raw.get("id") in seen):
+                continue
+            seen.add(raw.get("id"))
+            kind, name = _text(raw.get("officeType")), _text(raw.get("officeName"))
+            federal = _MUPAC_OFFICES.get((kind or "").upper())
+            office = federal or next(
+                (title for title in (name, kind) if title and entry_seats(
+                    {"state": raw.get("state"), "office_title": title, "district": raw.get("district")})),
+                name or kind,
+            )
+            slug = _text(raw.get("slug"))
+            found.append({
+                "name": _text(raw.get("name")),
+                "state": _text(raw.get("state")),
+                "office": office,
+                "district": raw.get("district"),
+                "party": _text(raw.get("party")),
+                "note": _text(raw.get("ourTake")) or _text(raw.get("bio")),
+                "url": f"{MUPAC_SITE}/endorsements/{slug}" if slug and _SLUG.match(slug) else None,
+            })
+    return found
+
+
+FEEDS = (
+    Feed(
+        source="mupac",
+        label="Muslims United PAC",
+        organization="Muslims United PAC",
+        url=f"{MUPAC_SITE}/endorsements",
+        api=f"{MUPAC_SITE}/api/public/endorsements",
+        description="The candidates Muslims United PAC endorses, from the public list on its website. Pallot "
+        "downloads the whole list, so nothing about you is sent.",
+        read=muslims_united,
+    ),
+)
+
+EndorsementSource = Union[EndorsementList, EndorsementFeed]  # what Services.endorsements holds
+
+
+def make_feeds(cache: HttpCache, ttl: Ttls) -> list[EndorsementFeed]:
+    return [EndorsementFeed(feed, cache, ttl) for feed in FEEDS]

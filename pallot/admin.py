@@ -10,7 +10,7 @@ from .sources import (
     KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls,
     sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
 )
-from .sources.endorsements import EndorsementList
+from .sources.endorsement_feeds import EndorsementSource
 from .text import display_size, display_time, iso_utc
 
 
@@ -148,14 +148,19 @@ SOURCES = (
 )
 
 
-def list_info(found: EndorsementList) -> SourceInfo:
-    """An endorsement list's row: its own switch, and nothing to refresh or clear."""
+def list_info(found: EndorsementSource) -> SourceInfo:
+    """An endorsement list's row: its own switch, and nothing to refresh or clear; a live feed's
+    also has its cached copy (under its id) to refresh or clear, and a pause."""
+    if found.live:
+        return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (found.source,),
+                          pause=Pause(f"{found.organization}'s website refused a request",
+                                      "the list already fetched still shows"))
     return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (), refreshable=False,
                       frozen=True)
 
 
-def all_sources(lists: list[EndorsementList]) -> tuple[SourceInfo, ...]:
-    """SOURCES, with the endorsement lists found at startup after Vote for Peace."""
+def all_sources(lists: list[EndorsementSource]) -> tuple[SourceInfo, ...]:
+    """SOURCES, with the endorsement lists and feeds after Vote for Peace."""
     at = next(i for i, info in enumerate(SOURCES) if info.id == voteforpeace.SOURCE) + 1
     return (*SOURCES[:at], *(list_info(found) for found in lists), *SOURCES[at:])
 
