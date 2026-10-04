@@ -142,7 +142,7 @@ export function clearPicksAndNotes() {
   return removeRaw([PICKS, PICK_RULE]);
 }
 
-// "Clear all browser data" in Settings: everything Pallot keeps in this browser, the remembered
+// "Clear browser data" (and "Clear all my data") in Settings: everything Pallot keeps in this browser, the remembered
 // address and the search engine included. Returns what was removed, for Undo. The settings
 // stamp stays: it isn't the voter's, and the caller renews it.
 export function clearBrowserData() {

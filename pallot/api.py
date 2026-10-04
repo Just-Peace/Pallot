@@ -328,6 +328,11 @@ def create_app(
         admin(request).set_enabled(source_id, body.enabled)
         return admin(request).overview()
 
+    @app.put("/api/source-groups/{group_id}", response_model=SourcesOverview)
+    def toggle_group(group_id: str, body: SourceToggle, request: Request) -> SourcesOverview:
+        admin(request).set_group_enabled(group_id, body.enabled)
+        return admin(request).overview()
+
     @app.post("/api/sources/{source_id}/refresh", response_model=ActionResult)
     async def refresh(source_id: str, request: Request) -> ActionResult:
         return await admin(request).refresh(source_id)

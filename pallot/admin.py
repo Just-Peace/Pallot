@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .ballot import Services
-from .models import ActionResult, CacheStatus, SourcesOverview, SourceStatus, Tone
+from .models import ActionResult, CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus, Tone
 from .sources import (
     KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls,
     sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
@@ -23,12 +23,37 @@ class Pause:
 
 
 @dataclass(frozen=True)
+class SourceGroup:
+    """A heading Settings draws its sources under, in GROUPS' order."""
+
+    id: str
+    title: str
+    description: str
+    toggle_all: bool = False  # Settings offers "Turn all on" and "Turn all off" for it
+
+
+OFFICIAL, SCORECARDS, ADDRESS, OTHER = "official", "scorecards", "address", "other"
+GROUPS = (
+    SourceGroup(OFFICIAL, "Official sources", "Government sources: the state's ballot and election dates, and the "
+                "campaign money reported to the FEC and the Texas Ethics Commission."),
+    SourceGroup(SCORECARDS, "Endorsements & scorecards", "Organizations that track, rate or endorse candidates, most "
+                "of them on Palestinian rights, U.S. military aid to Israel and pro-Israel lobby money. Each adds "
+                "badges to the candidates it covers.", toggle_all=True),
+    SourceGroup(ADDRESS, "Address lookup & maps", "Find your districts and precincts from your address, draw them on "
+                "a map, and suggest addresses as you type."),
+    SourceGroup(OTHER, "Other ballot data", "Not official, but they fill in what the state doesn't publish: local "
+                "races, candidate profiles and polls."),
+)
+
+
+@dataclass(frozen=True)
 class SourceInfo:
     id: str
     label: str
     description: str
     toggleable: bool
     cache_tags: tuple[str, ...]  # HttpCache source names holding this source's responses
+    group: str  # the id of its SourceGroup
     refresh_label: str = "Refresh now"
     clear_label: str = "Clear cache"
     resettable: bool = False  # a bundled snapshot rather than cached responses: "clear" resets to it
@@ -47,6 +72,7 @@ SOURCES = (
         "address, and the Texas Legislative Council's State Board of Education map.",
         False,
         ("census", "nominatim"),
+        group=ADDRESS,
         refresh_confirm="Refresh sends every saved address to the US Census geocoder again (and to OpenStreetMap "
         "Nominatim the ones the Census couldn't match), and downloads the State Board of Education map again. Continue?",
         pause=Pause("the address lookup refused a request", "addresses already looked up still work"),
@@ -58,6 +84,7 @@ SOURCES = (
         election_precincts.DESCRIPTION,
         True,
         (election_precincts.SOURCE,),
+        group=ADDRESS,
         refresh_confirm="Refresh asks the Texas Legislative Council for its newest precinct map and, if it's newer than "
         "the one kept, downloads it ({size}). Continue?",
         pause=Pause("the Texas Legislative Council's portal refused a request", "the precinct map already kept still shows"),
@@ -69,14 +96,17 @@ SOURCES = (
         county_precincts.DESCRIPTION,
         True,
         (county_precincts.SOURCE,),
+        group=ADDRESS,
         pause=Pause("a county's map server refused a request", "what the counties already sent still shows"),
     ),
     SourceInfo(
         tigerweb.SOURCE, "District map (US Census TIGERweb)", tigerweb.DESCRIPTION, True, (tigerweb.SOURCE,),
+        group=ADDRESS,
         pause=Pause("the Census's map service refused a request", "outlines it already sent still show"),
     ),
     SourceInfo(
         osm_tiles.SOURCE, "Street map (OpenStreetMap)", osm_tiles.DESCRIPTION, True, (osm_tiles.SOURCE,),
+        group=ADDRESS,
         pause=Pause("OpenStreetMap's tile server refused a request", "tiles it already sent still show"),
         refreshable=False,
     ),
@@ -86,20 +116,24 @@ SOURCES = (
         suggestions.DESCRIPTION,
         True,
         (suggestions.SOURCE,),
+        group=ADDRESS,
         refresh_confirm="Refresh sends everything saved from the address box to Ballotpedia again, one request every "
         "half second. Continue?",
         pause=Pause("Ballotpedia refused an address search", "suggestions it already sent still show"),
     ),
     SourceInfo(
         sos.SOURCE, "Texas Secretary of State (Texas SOS)", sos.DESCRIPTION, True, (sos.SOURCE,),
+        group=OFFICIAL,
         pause=Pause("Texas SOS refused a request", "ballots it already sent still show"),
     ),
     SourceInfo(
         key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,),
+        group=OFFICIAL,
         pause=Pause("the Texas SOS website refused a request", "dates it already sent still show"),
     ),
     SourceInfo(
         ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,),
+        group=OTHER,
         pause=Pause("Ballotpedia refused a request", "ballots it already sent still show"),
     ),
     SourceInfo(
@@ -108,6 +142,7 @@ SOURCES = (
         trackaipac.DESCRIPTION,
         True,
         (),
+        group=SCORECARDS,
         refresh_label="Refresh from trackaipac.com",
         clear_label="Reset to the snapshot that came with Pallot",
         resettable=True,
@@ -119,6 +154,7 @@ SOURCES = (
         voteforpeace.DESCRIPTION,
         True,
         (),
+        group=SCORECARDS,
         refresh_label="Refresh from voteforpeace.info",
         clear_label="Reset to the snapshot that came with Pallot",
         resettable=True,
@@ -126,6 +162,7 @@ SOURCES = (
     ),
     SourceInfo(
         fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
+        group=OFFICIAL,
         pause=Pause("reaching the FEC's rate limit", "what it already sent still shows"),
     ),
     SourceInfo(
@@ -134,6 +171,7 @@ SOURCES = (
         tec.DESCRIPTION,
         True,
         (),
+        group=OFFICIAL,
         refresh_label="Refresh from the Texas Ethics Commission (downloads about 1 GB if it changed)",
         clear_label="Reset to the snapshot that came with Pallot",
         resettable=True,
@@ -143,6 +181,7 @@ SOURCES = (
     ),
     SourceInfo(
         polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,),
+        group=OTHER,
         pause=Pause("FiftyPlusOne refused a request", "polls it already sent still show"),
     ),
 )
@@ -153,10 +192,10 @@ def list_info(found: EndorsementSource) -> SourceInfo:
     also has its cached copy (under its id) to refresh or clear, and a pause."""
     if found.live:
         return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (found.source,),
-                          pause=Pause(f"{found.organization}'s website refused a request",
+                          SCORECARDS, pause=Pause(f"{found.organization}'s website refused a request",
                                       "the list already fetched still shows"))
-    return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (), refreshable=False,
-                      frozen=True)
+    return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (), SCORECARDS,
+                      refreshable=False, frozen=True)
 
 
 def all_sources(lists: list[EndorsementSource]) -> tuple[SourceInfo, ...]:
@@ -199,18 +238,23 @@ class Admin:
 
     def overview(self) -> SourcesOverview:
         return SourcesOverview(
+            groups=[SourceGroupInfo(id=g.id, title=g.title, description=g.description, toggle_all=g.toggle_all)
+                    for g in GROUPS],
             sources=[self._status(info) for info in self.sources],
             total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._all_kept()),
             last_lookup=self.svc.last_lookup,
-            clear_all_confirm=self._clear_all_confirm(),
+            clear_all_confirm=f"Clear everything the server saved from every source? {self._what_clear_all_does()}",
+            clear_everything_confirm="Clear all your data? Everything Pallot keeps in this browser goes (your picks, "
+            "notes, address and choices), which Undo can put back for a few seconds. Everything the server saved from "
+            f"every source goes too, which can't be undone. {self._what_clear_all_does()}",
         )
 
     @staticmethod
-    def _clear_all_confirm() -> str:
+    def _what_clear_all_does() -> str:
         *rest, last = [info.label for info in SOURCES if info.resettable]
         snapshots = f"{', '.join(rest)} and {last}" if rest else last
-        return (f"Clear everything the server saved from every source? The {snapshots} data go back to the snapshots "
-                "that came with Pallot, and the next lookups fetch everything again.")
+        return (f"The {snapshots} data go back to the snapshots that came with Pallot, and the next lookups fetch "
+                "everything again.")
 
     @staticmethod
     def _clear_confirm(info: SourceInfo) -> str:
@@ -249,6 +293,7 @@ class Admin:
             id=info.id,
             label=info.label,
             description=info.description,
+            group=info.group,
             toggleable=info.toggleable,
             resettable=info.resettable,
             enabled=self.svc.settings.enabled(info.id) if info.toggleable else True,
@@ -291,6 +336,13 @@ class Admin:
         if not self._info(source_id).toggleable:
             raise AdminError(400, "This source is required and can't be turned off.")
         self.svc.settings.set_enabled(source_id, enabled)
+
+    def set_group_enabled(self, group_id: str, enabled: bool) -> None:
+        """Every source in the group that can be turned off, in one write of the settings."""
+        if group_id not in {group.id for group in GROUPS}:
+            raise AdminError(404, f"Unknown group of sources: {group_id}")
+        self.svc.settings.set_many(dict.fromkeys(
+            (info.id for info in self.sources if info.group == group_id and info.toggleable), enabled))
 
     async def refresh(self, source_id: str) -> ActionResult:
         info = self._info(source_id)

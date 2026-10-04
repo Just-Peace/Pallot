@@ -16,12 +16,16 @@ import { openPanel } from "./topbar.js";
 // the page scrolls: the last whose top has reached the line a jump scrolls to (the last at the
 // foot of the page), or the one just jumped to while it's in view, until the voter scrolls, since
 // a short section near the end never reaches that line. On a phone the list is in the Menu panel, which a jump
-// closes; in the folded rail it's hidden.
+// closes; in the folded rail it's hidden. A page with a <nav class="section-chips"> (Settings) also
+// gets the list there, as a row of chips that stays in view where the pane's list is hidden.
 function listSections() {
   const sidebar = document.querySelector(".sidebar");
+  const chips = document.querySelector(".section-chips");
   const entries = [...document.querySelectorAll("main > section[aria-labelledby]")].flatMap((section) => {
     const heading = document.getElementById(section.getAttribute("aria-labelledby"));
-    return heading ? [{ section, link: h("a", { href: `#${heading.id}` }, heading.textContent.trim()) }] : [];
+    if (!heading) return [];
+    const link = () => h("a", { href: `#${heading.id}` }, heading.textContent.trim());
+    return [{ section, links: chips ? [link(), link()] : [link()] }];
   });
   if (!sidebar || entries.length < 2) return;
   let jumped = null;
@@ -33,20 +37,25 @@ function listSections() {
     for (const entry of entries) if (top(entry) <= line) current = entry;
     if (innerHeight + scrollY >= html.scrollHeight - 2) current = entries[entries.length - 1];
     if (jumped && top(jumped) >= 0 && top(jumped) < innerHeight) current = jumped;
-    for (const { link } of entries) {
-      if (link === current.link) link.setAttribute("aria-current", "true");
-      else link.removeAttribute("aria-current");
+    for (const entry of entries) {
+      for (const link of entry.links) {
+        if (entry === current) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
     }
   };
   for (const entry of entries) {
-    entry.link.addEventListener("click", () => {
-      openPanel(null);
-      jumped = entry;
-    });
+    for (const link of entry.links) {
+      link.addEventListener("click", () => {
+        openPanel(null);
+        jumped = entry;
+      });
+    }
   }
   sidebar.append(h("nav", { class: "side-section page-sections", "aria-labelledby": "page-sections-title" },
     h("h2", { class: "side-title", id: "page-sections-title" }, icon("list"), "Sections"),
-    h("ul", { class: "jump-list" }, entries.map(({ link }) => h("li", {}, link)))));
+    h("ul", { class: "jump-list" }, entries.map(({ links }) => h("li", {}, links[0])))));
+  chips?.append(h("ul", {}, entries.map(({ links }) => h("li", {}, links[1]))));
   for (const type of ["wheel", "touchmove", "keydown"]) addEventListener(type, () => { jumped = null; }, { passive: true });
   addEventListener("scroll", onFrame(mark), { passive: true });
   addEventListener("resize", onFrame(mark));

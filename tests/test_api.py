@@ -101,6 +101,51 @@ def test_toggles_persist_across_restarts(make_app, tmp_path):
         assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "ballotpedia")["enabled"] is False
 
 
+def test_sources_are_grouped(client):
+    overview = client.get("/api/sources").json()
+    assert [(g["id"], g["title"], g["toggle_all"]) for g in overview["groups"]] == [
+        ("official", "Official sources", False), ("scorecards", "Endorsements & scorecards", True),
+        ("address", "Address lookup & maps", False), ("other", "Other ballot data", False)]
+    grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
+    assert grouped == {
+        "official": ["sos", "key_dates", "fec", "tec"],
+        "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
+        "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
+        "other": ["ballotpedia", "polls"],
+    }
+    assert "can't be undone" in overview["clear_everything_confirm"]
+    assert overview["clear_everything_confirm"].endswith(overview["clear_all_confirm"].split("? ", 1)[1])
+
+
+def test_a_group_of_sources_turns_on_and_off_at_once(make_app, tmp_path):
+    def enabled(overview):
+        return {s["id"]: s["enabled"] for s in overview["sources"]}
+
+    with TestClient(make_app()) as client:
+        client.put("/api/sources/fec", json={"enabled": False})
+        before = enabled(client.get("/api/sources").json())
+        response = client.put("/api/source-groups/scorecards", json={"enabled": False})
+        assert response.status_code == 200
+        after = enabled(response.json())
+        scorecards = {s["id"] for s in response.json()["sources"] if s["group"] == "scorecards"}
+        assert not any(after[source] for source in scorecards)
+        assert {k: v for k, v in after.items() if k not in scorecards} == {
+            k: v for k, v in before.items() if k not in scorecards}
+        assert after["fec"] is False and after["sos"] is True
+
+        address = client.put("/api/source-groups/address", json={"enabled": False}).json()["sources"]
+        assert {s["id"]: s["enabled"] for s in address if s["group"] == "address"} == {
+            "geocoding": True, "election_precincts": False, "county_precincts": False, "tigerweb": False,
+            "osm_tiles": False, "suggestions": False}  # the address lookup can't be turned off
+        assert client.put("/api/source-groups/nope", json={"enabled": False}).status_code == 404
+    saved = json.loads((tmp_path / "data" / "settings.json").read_text())["sources"]
+    assert saved["examplepac"] is False and saved["trackaipac"] is False and "geocoding" not in saved
+    with TestClient(make_app()) as client:
+        assert not any(s["enabled"] for s in client.get("/api/sources").json()["sources"] if s["group"] == "scorecards")
+        on = client.put("/api/source-groups/scorecards", json={"enabled": True}).json()["sources"]
+        assert all(s["enabled"] for s in on if s["group"] == "scorecards")
+
+
 def test_refresh_and_clear_a_cached_source(client, upstream):
     get_ballot(client)
     sos_before = upstream.count("goelect")

@@ -61,14 +61,14 @@
                 <td data-label="Kept until">Your next lookup replaces it; kept until you clear it</td>
               </tr>
               <tr>
-                <th scope="row">Your appearance (System, Light or Dark), web search engine, and view choices: "Dollars" or "Share of their money" in Compare, collapsing a race when you pick, hiding the races you've picked, hiding the map of your districts, and folding the left pane away</th>
+                <th scope="row">Your appearance (System, Light or Dark), web search engine, and view choices: "Dollars" or "Share of their money" in Compare, collapsing a race when you pick, hiding the races you've picked, hiding the map of your districts, folding the left pane away, and the groups of sources you folded in Settings</th>
                 <td data-label="Why">Your choices in Settings and on the ballot</td>
-                <td data-label="Kept until">You clear them with "Clear all browser data" in Settings, or clear this site's data in your browser</td>
+                <td data-label="Kept until">You clear them with "Clear browser data" in Settings, or clear this site's data in your browser</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p>In <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins, collapsed races and pick rule, and "Clear all browser data" deletes everything above, your last lookup, appearance, search engine and view choices included. Private windows forget everything when they close.</p>
+        <p>Under Data in <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins, collapsed races and pick rule, "Clear browser data" deletes everything above, your last lookup, appearance, search engine and view choices included, and "Clear all my data" deletes all that and everything the server saved. Private windows forget everything when they close.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="lookups">
@@ -200,7 +200,7 @@
           </table>
         </div>
         <p><strong>Apart from suggestions and addresses that weren't found, the times above only decide when Pallot asks a source again. They don't delete anything:</strong> an address that was found stays in the server's copy until it's cleared, as the copy to use when the Census doesn't answer.</p>
-        <p>To clear it, go to <a href="settings.html">Settings</a>. Clear on "Address lookup &amp; districts" deletes every saved address lookup, Clear on "Address suggestions" deletes everything saved from the address box, Clear on Ballotpedia deletes its saved lookups, and "Clear all caches" deletes everything saved from every source. Clearing overwrites what it deletes, so it can't be read back from the files. You can also stop Pallot and delete its data folder (<code>data/</code>, unless <code>PALLOT_DATA_DIR</code> points elsewhere).</p>
+        <p>To clear it, go to <a href="settings.html">Settings</a>. Clear on "Address lookup &amp; districts" deletes every saved address lookup, Clear on "Address suggestions" deletes everything saved from the address box, Clear on Ballotpedia deletes its saved lookups, and "Clear all source caches" (or "Clear all my data", which also clears this browser) under Data deletes everything saved from every source. Clearing overwrites what it deletes, so it can't be read back from the files. You can also stop Pallot and delete its data folder (<code>data/</code>, unless <code>PALLOT_DATA_DIR</code> points elsewhere).</p>
         <p>Addresses travel in the body of requests, which isn't logged. If something goes wrong, though, an error report in the log can include the request Pallot was making, address included.</p>
       </section>
 
