@@ -69,7 +69,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
   - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
-  - **Pick by rule** picks by party, TrackAIPAC, money and polls (below).
+  - **Pick by rule** picks by party, TrackAIPAC, Vote for Peace, money and polls (below).
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
 - Under it, two cards, side by side (and as tall as each other) on a wide screen, and one above the other on a phone, then the map of your districts.
@@ -120,7 +120,7 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
 - **Each candidate has:**
   - a pick button
   - a note
-  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia and TrackAIPAC. It opens on the first. The badges on the candidate's row come in the same order. **‹** and **›** step through the race's other candidates without closing it.
+  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC and Vote for Peace. It opens on the first. The badges on the candidate's row come in the same order. **‹** and **›** step through the race's other candidates without closing it.
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
   A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
@@ -128,11 +128,12 @@ Without a key, VoteBot uses the shared `DEMO_KEY`, which only allows race totals
   - **Pick:** any of the parties you choose (a chip for each party on your ballot, with how many races it's in, and one for the declared write-ins), and then only if all of these hold:
     - incumbents only, or challengers only;
     - TrackAIPAC endorses them;
+    - Vote for Peace rates them an ally;
     - what they raised, spent, have on hand, or had spent for them from outside is under (or over) an amount, or the least (or the most) in the race;
     - small donations, of $200 or less from a donor, make up at least a share of what they raised (50% at first; congressional races only);
     - they lead the polls.
-  - **Don't pick, and take back:** anyone on TrackAIPAC's watchlist, with Israel lobby money over an amount ($0 at first), whose own gifts and loans make up over a share of what their campaign raised (50% at first; congressional races only), or polling under a share (5% at first). A pick of theirs is taken back, even one you made yourself.
-  - A TrackAIPAC, money or polls condition counts only in races its source covers: "Democrats who spent under $1M" still picks a county race's Democrat. Small donations and self-funding need an FEC key in congressional races. Without the Write-ins chip, a rule picks only the names printed on the ballot.
+  - **Don't pick, and take back:** anyone on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount ($0 at first), whose own gifts and loans make up over a share of what their campaign raised (50% at first; congressional races only), or polling under a share (5% at first). A pick of theirs is taken back, even one you made yourself.
+  - A TrackAIPAC, Vote for Peace, money or polls condition counts only in races its source covers (Vote for Peace's, the races where it rates someone): "Democrats who spent under $1M" still picks a county race's Democrat. Small donations and self-funding need an FEC key in congressional races. Without the Write-ins chip, a rule picks only the names printed on the ballot.
   - A race with more matches than seats is left for you, never guessed, a tie for the least or the most included. **Don't replace picks I've already made** (on at first) leaves the races you've picked alone, apart from what Don't pick takes back.
   - As you change the rule, the dialog says what it would do ("Picks 43 races · takes back 1 pick · 5 with no match"), race by race. Nothing changes until **Apply**, which offers **Undo** for 10 seconds.
   - **Mark who matches** picks nobody: it marks each candidate your rule would pick ("✓ Matches your rule") or skip ("✕ Your rule skips: on TrackAIPAC's watchlist"), on the whole ballot, until **Stop marking** in the note above the races.
@@ -156,9 +157,10 @@ Picks, notes, collapsed races and your pick rule are kept in the browser's `loca
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
 | Ballotpedia | city council, school board and special-district races, and others the state doesn't list (appraisal district boards); notes on races; JP/constable/commissioner precinct (when it has a race on this ballot) and city council district; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
-| TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with VoteBot (see [TrackAIPAC and TEC snapshots](#trackaipac-and-tec-snapshots)) |
+| TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with VoteBot (see [Bundled snapshots](#bundled-snapshots)) |
+| Vote for Peace (voteforpeace.info, from Organize for Peace) | whether it rates a candidate an Ally, Neutral or Opposed, on war, human rights and lobby money, with the groups it cites and its notes; every level, from Congress to county courts and city councils | bundled with VoteBot, used with Organize for Peace's permission (see [Bundled snapshots](#bundled-snapshots)) |
 | FEC (Federal Election Commission) | money raised and spent by congressional campaigns, where it came from, and outside spending for or against them | the OpenFEC API. Without your own key, race totals only (see [The FEC key](#the-fec-key-optional)) |
-| Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | bundled with VoteBot, built from TEC's nightly CSV export (see [TrackAIPAC and TEC snapshots](#trackaipac-and-tec-snapshots)) |
+| Texas Ethics Commission | the same for state candidates and officeholders, plus their largest donors | bundled with VoteBot, built from TEC's nightly CSV export (see [Bundled snapshots](#bundled-snapshots)) |
 | FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API |
 
 The Texas SOS data covers every race touching a county. VoteBot keeps only the voter's congressional, legislative and SBOE districts; judicial and DA districts are whole counties. Commissioner, JP and constable races depend on the voter's commissioner and JP precincts. Those come from the numbers the voter enters under Your districts, the county's records (in the seven counties above), or Ballotpedia, in that order, where one number covers both the JP and the constable, since each justice precinct elects one of each; otherwise those races are listed under "Depends on your commissioner or JP precinct". Ballotpedia names a precinct only when it has a race on this ballot, from its district's name or, when that doesn't say which kind ("Fort Bend County Precinct 1"), from the races in it. Ballotpedia lists MUDs and water districts for a whole county, so those appear under "Special districts" as "may be on your ballot". Ballotpedia's other races are added when the state lists none of their candidates for that day, such as an appraisal district's board. The county's ballot order lists only the names printed on the ballot, so the declared write-ins come from the state's statewide candidate list, matched to the county's races by office (a county office's only from that county). A race with only write-ins isn't on the county's ballot order, so it's shown when VoteBot can place it: a federal or statewide race, one of the voter's districts, or one of the county's own offices. A district judge or DA race with only write-ins isn't shown, since the list doesn't say which counties it covers. When Texas SOS has no ballot for the county, as for a special election, VoteBot uses its statewide candidate list instead. That list doesn't say which counties judicial, DA and county races cover, so only federal, statewide, congressional, legislative and SBOE races are shown, and a note says so.
@@ -178,7 +180,7 @@ What "raised" covers (the FAQ's "How are the FEC figures put together?" and "How
 - **TEC totals:** the reports whose period ends after the last November general election, excluding daily pre-election and special-session reports, whose money is reported again later.
 - **FEC totals:** the whole election period (two years for the House, six for the Senate).
 
-Candidates are matched across sources by name, with seat and party as corroboration. Every match is labeled **exact** ("Matched") or **likely** ("Likely match"), and ambiguous ones are left unmatched. A state race's candidates are matched to Ballotpedia within that race's own race on Ballotpedia's ballot (the one its candidates are found in), with the party to confirm, so a middle initial on one side still matches exactly; first names that only share an initial ("Tom" and "Thomas") stay "likely". With Texas SOS off, a state race's seat for the Texas Ethics Commission match comes from Ballotpedia's district ("Texas House of Representatives District 49" is State Representative, District 49), so a namesake elsewhere in Texas isn't taken for the candidate. TrackAIPAC lists members of Congress by their current seat, so a 2026 seat change after the 2025 redistricting shows up as "likely" unless TrackAIPAC's entry mentions the new seat.
+Candidates are matched across sources by name, with seat and party as corroboration. Every match is labeled **exact** ("Matched") or **likely** ("Likely match"), and ambiguous ones are left unmatched. A state race's candidates are matched to Ballotpedia within that race's own race on Ballotpedia's ballot (the one its candidates are found in), with the party to confirm, so a middle initial on one side still matches exactly; first names that only share an initial ("Tom" and "Thomas") stay "likely". With Texas SOS off, a state race's seat for the Texas Ethics Commission match comes from Ballotpedia's district ("Texas House of Representatives District 49" is State Representative, District 49), so a namesake elsewhere in Texas isn't taken for the candidate. TrackAIPAC lists members of Congress by their current seat, so a 2026 seat change after the 2025 redistricting shows up as "likely" unless TrackAIPAC's entry mentions the new seat. Vote for Peace names a candidate's office its own way ("TX State Representative", "Harris District County Court Judge" and a number), which VoteBot reads as the seat; a court named without its place ("TX Supreme Court Justice") counts for any place on that court, and a county or city office for the county it names. In one race, one entry goes to one candidate: the closest name takes it, so "Kristen Hawkins" isn't also given to "Kyle Hawkins".
 
 ## Caching
 
@@ -201,7 +203,7 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
   - after a failed request: its old copy is served for 15 minutes before the source is asked again
   - address suggestions, street map tiles, and addresses that weren't found, are deleted when VoteBot starts once they've been expired for 30 days (`VOTEBOT_TTL_PRUNE_AFTER`). Everything else stays as the copy to show when a source is down.
   - Override any of these with `VOTEBOT_TTL_<NAME>` in seconds; see [Configuration](#configuration).
-- The TrackAIPAC and Texas Ethics Commission data come with VoteBot, so lookups never contact either; they're only fetched again when you press Refresh.
+- The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with VoteBot, so lookups never contact any of them; they're only fetched again when you press Refresh.
 - Candidate details and the declared write-ins come from one statewide list per election (~2.6 MB, one request per day), not one request per candidate.
 - If a refresh fails, the old copy is shown with a "data as of" note, and that request isn't retried for 15 minutes, so a source that's down doesn't slow every lookup. A source that fails before answering once has nothing to fall back on.
 - An error that a source sends as if it were an answer counts as a failure too, so it never replaces the good copy: TIGERweb's and the counties' map servers answering with an error, or the Texas SOS's dates page coming back without its election dates (a maintenance page, say). With no good copy yet, the error is kept for 15 minutes, so lookups meanwhile don't ask again.
@@ -209,28 +211,29 @@ VoteBot saves every answer it gets in `data/`, so looking up the same address ag
 - If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. Refresh in Settings always tries.
 - If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. Refresh in Settings always tries.
 - If the FEC answers that its rate limit is reached, VoteBot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
-- Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through. TrackAIPAC's Refresh stops at once if trackaipac.com refuses it.
+- Refresh in Settings doesn't ask a paused source either, and stops when a source pauses partway through. TrackAIPAC's and Vote for Peace's Refresh stop at once if their site refuses them.
 
 ## Settings
 
 The **Settings** page, linked from the left pane:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open VoteBot tab;
 - picks the web search engine;
-- turns election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, the FEC, the Texas Ethics Commission and polls on or off;
+- turns election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, Vote for Peace, the FEC, the Texas Ethics Commission and polls on or off;
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, and how old the Texas Ethics Commission snapshot is;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC and the Texas Ethics Commission to the snapshots that came with VoteBot. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
+- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk), plus "Clear all caches", which also resets TrackAIPAC, Vote for Peace and the Texas Ethics Commission to the snapshots that came with VoteBot. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
 - has "Clear my picks & notes" (your pick rule too), and "Clear all browser data", which also forgets your address, appearance, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
 
 Settings has no login, but its buttons only work from VoteBot's own pages: a request that another website makes from your browser is refused.
 
 When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
-## TrackAIPAC and TEC snapshots
+## Bundled snapshots
 
-The TrackAIPAC and Texas Ethics Commission data come with VoteBot as snapshots in the repo. VoteBot copies them into `data/` on first run, so ballot lookups never contact trackaipac.com or TEC. Each has a row in Settings:
+The TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with VoteBot as snapshots in the repo. VoteBot copies them into `data/` on first run, so ballot lookups never contact trackaipac.com, voteforpeace.info or TEC. Each has a row in Settings:
 - **Refresh** fetches a new copy.
   - TrackAIPAC's checks the site's pages and saves only if the site changed.
+  - Vote for Peace's fetches its All Candidates page (one request, about 7 MB) and saves only if a candidate changed.
   - TEC's first makes one small request to see whether TEC's nightly export (`TEC_CF_CSV.zip`, about 1 GB) has changed; if not, that's all. If it has, it downloads the zip in one request (a minute or two on a fast connection) and rebuilds the snapshot.
 - **Reset** goes back to the snapshot that came with VoteBot.
 - **TEC's download server blocks bursts of requests.** If a refresh says it was refused, try later, or download the zip in a browser, save it as `data/tec/TEC_CF_CSV.zip`, and press Refresh again.
@@ -241,7 +244,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 
 | Variable | Default |
 |---|---|
-| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE and precinct maps, TrackAIPAC and TEC data; git-ignored) |
+| `VOTEBOT_DATA_DIR` | `data/` in the project (cache, settings, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data; git-ignored) |
 | `VOTEBOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and VoteBot never writes it anywhere |
 | `VOTEBOT_USER_AGENT` | `VoteBot/0.1 (personal ballot helper; +https://github.com/Fahd-Siddiqui/VoteBot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `VOTEBOT_HTTP_TIMEOUT` | `30` seconds |
@@ -250,7 +253,7 @@ Set these as environment variables, for example `VOTEBOT_DATA_DIR=/var/lib/voteb
 
 ### Docker
 
-- `compose.yaml` mounts `data/` (or the folder `VOTEBOT_DATA_DIR` names) at `/data`, so Docker and `uv run votebot` share the cache, settings, TrackAIPAC and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
+- `compose.yaml` mounts `data/` (or the folder `VOTEBOT_DATA_DIR` names) at `/data`, so Docker and `uv run votebot` share the cache, settings, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
 - It's published on every network interface. To keep it to this machine, change the `ports` line in `compose.yaml` to `"127.0.0.1:8000:8000"`. `VOTEBOT_PORT` in `.env` changes the port.
 - To open it by a name rather than an address (`http://nas.local:8000`, or through a reverse proxy), add the name to `VOTEBOT_ALLOWED_HOSTS` in `.env`. A reverse proxy must pass the original `Host` header on.
 - The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `VOTEBOT_UID` and `VOTEBOT_GID` in `.env`.

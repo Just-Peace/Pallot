@@ -9,7 +9,7 @@ from .fsutil import write_text_atomic
 
 DEFAULT_SOURCES: dict[str, bool] = {
     "tigerweb": True, "osm_tiles": True, "suggestions": True, "sos": True, "key_dates": True, "ballotpedia": True,
-    "trackaipac": True, "fec": True, "tec": True, "polls": True, "election_precincts": True, "county_precincts": True,
+    "trackaipac": True, "voteforpeace": True, "fec": True, "tec": True, "polls": True, "election_precincts": True, "county_precincts": True,
 }
 
 

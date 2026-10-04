@@ -91,6 +91,10 @@ class Config:
     def tec_dir(self) -> Path:
         return self.data_dir / "tec"
 
+    @property
+    def voteforpeace_dir(self) -> Path:
+        return self.data_dir / "voteforpeace"
+
 
 def read_env_file(path: Path) -> dict[str, str]:
     """KEY=VALUE lines of a .env file ("#" comments, optional quotes and "export"); {} if

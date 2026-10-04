@@ -1,7 +1,7 @@
 """Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, tec, trackaipac)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
@@ -16,7 +16,7 @@ The FEC responses cover the Capitol ballot's federal races, plus the full breakd
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
 an hour fit one; set VOTEBOT_FEC_API_KEY, in the environment or .env, for the rest). These
 requests skip VoteBot's cache, and with DEMO_KEY they use up the same per-IP allowance as
-a running VoteBot. The TrackAIPAC and Texas Ethics
+a running VoteBot. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -58,6 +58,8 @@ TRACKAIPAC_PEOPLE = (
     "tx-ken-paxton", "tx-james-talarico", "tx-august-pfluger", "tx-greg-casar", "tx-lloyd-doggett",
     "tx-michael-cloud", "tx-tanya-lloyd", "tx-ted-cruz", "tx-michael-mccaul", "tx-christian-menefee",
 )
+# Vote for Peace's Texas candidates, plus these from other states, to show the ballot keeps to Texas.
+VOTEFORPEACE_ELSEWHERE = ("juan-ciscomani", "shirley-weber")
 FEC_CYCLE = 2026
 FEC_RACES = ("TX-SEN", "TX-10")  # the Capitol ballot's federal races
 FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
@@ -275,10 +277,18 @@ def record_trackaipac() -> None:
     save("trackaipac/meta.json", json.loads((bundled / "meta.json").read_text(encoding="utf-8")))
 
 
+def record_voteforpeace() -> None:
+    bundled = ROOT / "voteforpeace_cache" / "data"
+    current = json.loads((bundled / "current.json").read_text(encoding="utf-8"))
+    people = [p for p in current["candidates"] if p["state"] == "TX" or p["slug"] in VOTEFORPEACE_ELSEWHERE]
+    save("voteforpeace/current.json", {"snapshot": current["snapshot"], "candidates": people})
+    save("voteforpeace/meta.json", json.loads((bundled / "meta.json").read_text(encoding="utf-8")))
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
     parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "election_precincts",
-                                           "county_precincts", "tec", "trackaipac"),
+                                           "county_precincts", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     only = parser.parse_args(argv).only
     config = load_config()
@@ -303,6 +313,8 @@ def main(argv: list[str] | None = None) -> int:
         record_tec()
     if only in (None, "trackaipac"):
         record_trackaipac()
+    if only in (None, "voteforpeace"):
+        record_voteforpeace()
     return 0
 
 

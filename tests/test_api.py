@@ -16,7 +16,7 @@ from votebot.config import DAY
 from votebot.http_cache import HttpCache, RequestSpec
 from votebot.text import display_time
 
-from .conftest import ADDRESSES, get_ballot, load
+from .conftest import ADDRESSES, get_ballot, last_use, load
 
 ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't have to read
 
@@ -34,8 +34,8 @@ def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts", "tigerweb",
                                                        "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
-                                                       "trackaipac", "fec", "tec", "polls"]
-    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, fec, tec, polls = overview["sources"]
+                                                       "trackaipac", "voteforpeace", "fec", "tec", "polls"]
+    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, fec, tec, polls = overview["sources"]
     assert (county["label"], county["toggleable"], county["enabled"], county["refresh_confirm"]) == (
         "Commissioner & JP precincts (counties)", True, True, None)
     assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
@@ -50,10 +50,13 @@ def test_sources_overview(client):
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
     assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
     assert tracker["clear_label"] == tec["clear_label"] == "Reset to the snapshot that came with VoteBot"
-    assert tracker["resettable"] and tec["resettable"] and not sos["resettable"]
+    assert tracker["resettable"] and peace["resettable"] and tec["resettable"] and not sos["resettable"]
+    assert (peace["label"], peace["refresh_label"], peace["refresh_confirm"]) == (
+        "Vote for Peace", "Refresh from voteforpeace.info", None)
+    assert [(f["label"], f["value"]) for f in peace["details"]][3:] == [("Texas candidates", "164"), ("All candidates", "166")]
     assert tec["clear_confirm"].startswith("Throw away the refreshed Texas Ethics Commission (TEC) data")
     assert sos["clear_confirm"].startswith("Clear everything cached from Texas Secretary of State (Texas SOS)?")
-    assert "The TrackAIPAC and Texas Ethics Commission (TEC) data go back" in overview["clear_all_confirm"]
+    assert "The TrackAIPAC, Vote for Peace and Texas Ethics Commission (TEC) data go back" in overview["clear_all_confirm"]
     assert overview["last_lookup"] is None and sos["last_use"] is None
     assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
@@ -196,6 +199,25 @@ def test_trackaipac_refresh_failure_changes_nothing(make_app):
         assert response.status_code == 502 and "nothing changed" in response.json()["detail"]
         tracker = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "trackaipac")
     assert tracker["notice_tone"] == "warn" and "site is down" in tracker["notice"]
+
+
+def test_voteforpeace_refresh_and_reset(make_app, tmp_path):
+    with TestClient(make_app()) as client:
+        assert client.post("/api/sources/voteforpeace/refresh").json()["message"].startswith("updated")
+        current = tmp_path / "data" / "voteforpeace" / "current.json"
+        current.write_text(json.dumps({"snapshot": "edited", "candidates": []}))
+        peace = client.app.state.svc.voteforpeace
+        assert peace.document()["snapshot"] == "edited"
+        assert client.post("/api/sources/voteforpeace/clear").status_code == 200
+        assert peace.document()["snapshot"] == load("voteforpeace/current.json")["snapshot"]
+
+
+def test_voteforpeace_off_leaves_its_cards_out(client):
+    assert client.put("/api/sources/voteforpeace", json={"enabled": False}).status_code == 200
+    ballot = get_ballot(client)
+    assert not [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]
+                if card["source"] == "voteforpeace"]
+    assert last_use(client, "voteforpeace")["status"] == "off"
 
 
 def test_a_second_refresh_while_one_runs_is_refused(make_app):

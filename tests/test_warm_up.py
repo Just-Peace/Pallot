@@ -31,6 +31,7 @@ def test_warm_up_reads_what_is_kept_without_external_calls(make_app, upstream):
         assert len(upstream.calls) == calls
         assert svc.sboe._districts is not None and svc.election_precincts._index is not None
         assert {"filers", "outside"} <= svc.tec._indexes.keys() and "TX" in svc.trackaipac._indexes
+        assert "TX" in svc.voteforpeace._indexes
         assert get_ballot(client)["meta"]["external_calls"] == 0
     assert len(upstream.calls) == calls
 
@@ -47,12 +48,12 @@ def test_warm_up_never_downloads_a_missing_map(make_app, upstream, tmp_path):
 def test_warm_up_skips_sources_turned_off(make_app, upstream):
     with TestClient(make_app()) as client:
         get_ballot(client)
-        for source in ("election_precincts", "tec", "trackaipac"):
+        for source in ("election_precincts", "tec", "trackaipac", "voteforpeace"):
             assert client.put(f"/api/sources/{source}", json={"enabled": False}).status_code == 200
     with TestClient(make_app()) as client:
         svc = warmed(client).state.svc
         assert svc.election_precincts._index is None
-        assert svc.tec._indexes == {} and svc.trackaipac._indexes == {}
+        assert svc.tec._indexes == {} and svc.trackaipac._indexes == {} and svc.voteforpeace._indexes == {}
         assert svc.sboe._districts is not None  # the ballot can't do without it, so it has no switch
 
 

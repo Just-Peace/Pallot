@@ -15,14 +15,16 @@ from typing import TYPE_CHECKING, Any, Awaitable
 
 from .models import Race, SourceCard
 from .offices import OfficeScope
-from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac
+from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac, voteforpeace
 from .sources.ballotpedia import BpBallot, BpRace
 from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
     from .ballot import Services
 
-CARD_ORDER = (fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE)
+CARD_ORDER = (
+    fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE, voteforpeace.SOURCE,
+)
 UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
     fec.SOURCE: (fec.FecUnavailable, "Couldn't load FEC campaign finance ({})."),
     polls.SOURCE: (polls.PollsUnavailable, "Couldn't load polls from FiftyPlusOne ({})."),
@@ -51,6 +53,7 @@ async def run(
     bp_ballot: BpBallot | None,
     sos_lookups: Lookups | None,
     use_trackaipac: bool,
+    use_voteforpeace: bool = False,
     use_fec: bool = False,
     use_tec: bool = False,
     use_polls: bool = False,
@@ -71,6 +74,10 @@ async def run(
         jobs[ballotpedia.SOURCE] = asyncio.to_thread(ballotpedia.cards, bp_ballot, races, bp_counterparts)
     if use_trackaipac:
         jobs[trackaipac.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races)))
+    if use_voteforpeace:
+        jobs[voteforpeace.SOURCE] = asyncio.to_thread(
+            voteforpeace.cards, svc.voteforpeace, races, scopes or {}, county, bp_ballot
+        )
     if use_fec:
         jobs[fec.SOURCE] = fec.cards(svc.fec, races, day)
     if use_tec:

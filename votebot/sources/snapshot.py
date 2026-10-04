@@ -1,4 +1,4 @@
-"""A data set that ships inside a package in this repo (trackaipac_cache, tec_cache) and is
+"""A data set that ships inside a package in this repo (trackaipac_cache, voteforpeace_cache, tec_cache) and is
 copied into VoteBot's data folder on first use. Lookups read the copy, reloading it when
 its file changes; only Refresh in Settings fetches anything, and Reset (clear()) goes back
 to the bundled one. Lookups and Settings read it from worker threads, so a lock makes them
