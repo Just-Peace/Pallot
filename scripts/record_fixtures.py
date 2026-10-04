@@ -1,4 +1,4 @@
-"""Record the live API responses that VoteBot's tests replay, into tests/fixtures/.
+"""Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
     python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, tigerweb, election_precincts, county_precincts, tec, trackaipac, voteforpeace)
@@ -14,9 +14,9 @@ the lists themselves, from the made-up map).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
-an hour fit one; set VOTEBOT_FEC_API_KEY, in the environment or .env, for the rest). These
-requests skip VoteBot's cache, and with DEMO_KEY they use up the same per-IP allowance as
-a running VoteBot. The TrackAIPAC, Vote for Peace and Texas Ethics
+an hour fit one; set PALLOT_FEC_API_KEY, in the environment or .env, for the rest). These
+requests skip Pallot's cache, and with DEMO_KEY they use up the same per-IP allowance as
+a running Pallot. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -35,13 +35,13 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from votebot.config import DEMO_KEY, load_config  # noqa: E402
-from votebot.offices import classify  # noqa: E402
-from votebot.sources import (  # noqa: E402
+from pallot.config import DEMO_KEY, load_config  # noqa: E402
+from pallot.offices import classify  # noqa: E402
+from pallot.sources import (  # noqa: E402
     ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, polls, sos, suggestions,
     tigerweb,
 )
-from votebot.sources.tec import _seats, tec_seat  # noqa: E402
+from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
 ADDRESSES = {
@@ -176,7 +176,7 @@ def record_fec(client: httpx.Client, key: str) -> None:
         if exc.response.status_code != 429:
             raise
         print("The FEC's hourly limit ran out; the rest of the FEC fixtures were not recorded. "
-              "Set VOTEBOT_FEC_API_KEY, or run --only fec again in an hour.")
+              "Set PALLOT_FEC_API_KEY, or run --only fec again in an hour.")
 
 
 def record_polls(client: httpx.Client) -> None:
@@ -209,7 +209,7 @@ def record_key_dates(client: httpx.Client) -> None:
 
 
 def record_tigerweb(client: httpx.Client) -> None:
-    """TIGERweb's layer list, then the Capitol's districts, sent as VoteBot sends them."""
+    """TIGERweb's layer list, then the Capitol's districts, sent as Pallot sends them."""
 
     def get(spec) -> dict:
         response = client.get(spec.url, params=spec.params)
@@ -224,7 +224,7 @@ def record_tigerweb(client: httpx.Client) -> None:
 
 
 def record_election_precincts(client: httpx.Client) -> None:
-    """The portal's index of precinct maps, as VoteBot asks for it (never the 45 MB map)."""
+    """The portal's index of precinct maps, as Pallot asks for it (never the 45 MB map)."""
     spec = election_precincts.index_spec()
     response = client.get(spec.url, params=spec.params)
     response.raise_for_status()
@@ -233,7 +233,7 @@ def record_election_precincts(client: httpx.Client) -> None:
 
 def record_county_precincts(client: httpx.Client) -> None:
     """The fixture addresses' counties' lists of their map services, cut down to the services named
-    like the one VoteBot reads, and that service's layers, as VoteBot asks for them."""
+    like the one Pallot reads, and that service's layers, as Pallot asks for them."""
 
     def get(url: str) -> dict:
         response = client.get(url, params={"f": "json"})
@@ -286,7 +286,7 @@ def record_voteforpeace() -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Record the responses VoteBot's tests replay.")
+    parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
     parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "tigerweb", "election_precincts",
                                            "county_precincts", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")

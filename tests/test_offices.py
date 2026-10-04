@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from votebot.offices import classify, clean_office_name
-from votebot.text import display_office, display_person, web_url
+from pallot.offices import classify, clean_office_name
+from pallot.text import display_office, display_person, web_url
 
 COUNTIES = {"TRAVIS", "HARRIS"}
 

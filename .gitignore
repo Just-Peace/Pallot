@@ -6,5 +6,5 @@ __pycache__/
 *.pyc
 *.egg-info/
 build/
-# the commit the Docker image was built from (votebot/version.py)
-votebot/COMMIT
+# the commit the Docker image was built from (pallot/version.py)
+pallot/COMMIT

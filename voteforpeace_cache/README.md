@@ -1,12 +1,12 @@
 # voteforpeace_cache
 
-A local JSON copy of the candidates rated on [Vote for Peace](https://voteforpeace.info/candidates) (Organize for Peace), used in VoteBot with their permission.
+A local JSON copy of the candidates rated on [Vote for Peace](https://voteforpeace.info/candidates) (Organize for Peace), used in Pallot with their permission.
 
 The site rates each candidate **Ally** (`vote`), **Neutral** (`neutral`) or **Opposed** (`reject`), on their stance on war, human rights and lobby money such as AIPAC's, and cites the groups behind each rating. It covers every level, from Congress to county courts and city councils, in about 34 states.
 
-## How VoteBot uses it
+## How Pallot uses it
 
-VoteBot copies `voteforpeace_cache/data/` into `data/voteforpeace/` on first run and reads `current.json` from there. The **Refresh from voteforpeace.info** button on the Settings page calls `refresh(data_dir="data/voteforpeace")`; **Reset to the snapshot that came with VoteBot** goes back to the files in this folder.
+Pallot copies `voteforpeace_cache/data/` into `data/voteforpeace/` on first run and reads `current.json` from there. The **Refresh from voteforpeace.info** button on the Settings page calls `refresh(data_dir="data/voteforpeace")`; **Reset to the snapshot that came with Pallot** goes back to the files in this folder.
 
 ## Refresh the bundled snapshot
 

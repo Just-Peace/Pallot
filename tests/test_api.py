@@ -11,10 +11,10 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from votebot.api import host_allowed
-from votebot.config import DAY
-from votebot.http_cache import HttpCache, RequestSpec
-from votebot.text import display_time
+from pallot.api import host_allowed
+from pallot.config import DAY
+from pallot.http_cache import HttpCache, RequestSpec
+from pallot.text import display_time
 
 from .conftest import ADDRESSES, get_ballot, last_use, load
 
@@ -41,7 +41,7 @@ def test_sources_overview(client):
     assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
     assert (precincts["label"], precincts["toggleable"], precincts["enabled"], precincts["busy"], precincts["notice"]) == (
         "Election precincts (Texas Legislative Council)", True, True, False, None)
-    assert "(a large file)" in precincts["refresh_confirm"]  # its size once VoteBot has seen the portal's list
+    assert "(a large file)" in precincts["refresh_confirm"]  # its size once Pallot has seen the portal's list
     assert [(f["label"], f["value"]) for f in precincts["details"]] == [
         ("Map kept", "downloaded on the first lookup"), ("Newest on the portal", "not asked yet")]
     assert tiles["refreshable"] is False and all(s["refreshable"] for s in overview["sources"] if s is not tiles)
@@ -49,7 +49,7 @@ def test_sources_overview(client):
     assert (outlines["label"], outlines["enabled"], outlines["refresh_confirm"]) == ("District map (US Census TIGERweb)", True, None)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
     assert geocoding["refresh_confirm"] and "1 GB" in tec["refresh_confirm"] and sos["refresh_confirm"] is None
-    assert tracker["clear_label"] == tec["clear_label"] == "Reset to the snapshot that came with VoteBot"
+    assert tracker["clear_label"] == tec["clear_label"] == "Reset to the snapshot that came with Pallot"
     assert tracker["resettable"] and peace["resettable"] and tec["resettable"] and not sos["resettable"]
     assert (peace["label"], peace["refresh_label"], peace["refresh_confirm"]) == (
         "Vote for Peace", "Refresh from voteforpeace.info", None)
@@ -173,7 +173,7 @@ def test_only_localhost_ip_addresses_and_allowed_names_are_answered(client):
     for host in ("localhost:8000", "127.0.0.1:8000", "192.168.1.20:8000", "[::1]:8000"):
         assert client.get("/api/sources", headers={"Host": host}).status_code == 200, host
     response = client.get("/", headers={"Host": "rebind.evil.example:8000"})  # DNS rebinding
-    assert response.status_code == 400 and "VOTEBOT_ALLOWED_HOSTS" in response.json()["detail"]
+    assert response.status_code == 400 and "PALLOT_ALLOWED_HOSTS" in response.json()["detail"]
     assert host_allowed("nas.local:8000", ("nas.local",)) and host_allowed("anything.example", ("*",))
     assert not host_allowed("nas.local", ()) and not host_allowed("", ()) and not host_allowed("[::1", ())
 
@@ -323,8 +323,8 @@ def test_startup_deletes_old_suggestions_and_addresses_not_found(make_app, tmp_p
 
 
 def test_the_footer_shows_the_running_version(client):
-    from votebot import __version__
-    from votebot.version import short_commit
+    from pallot import __version__
+    from pallot.version import short_commit
     response = client.get("/js/version.js")
     assert response.headers["content-type"].startswith("text/javascript")
     assert response.text == f'export const VERSION = "{__version__}";\nexport const COMMIT = {json.dumps(short_commit())};\n'

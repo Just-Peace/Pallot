@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from votebot.sources.suggestions import normalize, parse, query, wanted
+from pallot.sources.suggestions import normalize, parse, query, wanted
 
 from .conftest import SUGGEST
 

@@ -1,10 +1,10 @@
 # AGENTS.md
 
-Rules for coding agents (and people) changing VoteBot. Read these first:
+Rules for coding agents (and people) changing Pallot. Read these first:
 
-- [README.md](README.md) for what VoteBot does;
+- [README.md](README.md) for what Pallot does;
 - [DEVELOPMENT.md](DEVELOPMENT.md) for how it works inside;
-- [GitHub issues](https://github.com/Fahd-Siddiqui/VoteBot/issues) for known bugs and what's planned (`gh issue list`).
+- [GitHub issues](https://github.com/Just-Peace/Pallot/issues) for known bugs and what's planned (`gh issue list`).
 
 ## Workflow
 
@@ -56,11 +56,11 @@ Update the docs in the same commit as the change.
 | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | Anything the voter sees or does                                           | `README.md` ("Using it", "Where the data comes from", "Caching", "Settings")                                                             |
 | Internals, commands, layout, a source's quirks                            | `DEVELOPMENT.md`                                                                                                                         |
-| Something a voter might ask about, especially how a figure is worked out  | `votebot/static/faq.html`                                                                                                                |
-| A source's row in Settings (label, description, notices, confirm prompts) | `SOURCES` in `votebot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, Refresh and Clear in its `KeptSource` methods), and `votebot/static/settings.html` if the page's text changes |
-| A page, or a link in the left pane                                        | `PAGES` in `votebot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
-| A new source, or what's sent to or kept from one                          | the tables in `votebot/static/privacy.html` and `votebot/static/about.html`; the welcome steps in `votebot/static/index.html`            |
-| A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `votebot/config.py`, and README's "Configuration"                                                  |
+| Something a voter might ask about, especially how a figure is worked out  | `pallot/static/faq.html`                                                                                                                |
+| A source's row in Settings (label, description, notices, confirm prompts) | `SOURCES` in `pallot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, Refresh and Clear in its `KeptSource` methods), and `pallot/static/settings.html` if the page's text changes |
+| A page, or a link in the left pane                                        | `PAGES` in `pallot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
+| A new source, or what's sent to or kept from one                          | the tables in `pallot/static/privacy.html` and `pallot/static/about.html`; the welcome steps in `pallot/static/index.html`            |
+| A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `pallot/config.py`, and README's "Configuration"                                                  |
 | Something found along the way                                             | a GitHub issue (see [Things you notice along the way](#things-you-notice-along-the-way))                                                 |
 
 
@@ -74,13 +74,13 @@ How to write them:
 
 ## Code
 
-- **Leave it clean.** Remove what your change made unused, in the same commit: functions, JS exports, CSS classes, API fields, fixtures, imports. Before deleting a name, grep for it across `votebot/`, `tests/` and `scripts/`.
+- **Leave it clean.** Remove what your change made unused, in the same commit: functions, JS exports, CSS classes, API fields, fixtures, imports. Before deleting a name, grep for it across `pallot/`, `tests/` and `scripts/`.
 - **Match the code around you:**
   - `from __future__ import annotations` and type hints;
-  - dataclasses for internal shapes, and Pydantic models only in `votebot/models.py` (what the API returns);
+  - dataclasses for internal shapes, and Pydantic models only in `pallot/models.py` (what the API returns);
   - short docstrings that say what and why, as dense as the neighbouring ones.
 - **Frontend:**
-  - Plain ES modules in `votebot/static/js/`, with no build step, no framework, and nothing loaded from a CDN (icons are inline SVG). A library the page can't do without is copied into `votebot/static/vendor/`, with its licence, as Leaflet is for the map.
+  - Plain ES modules in `pallot/static/js/`, with no build step, no framework, and nothing loaded from a CDN (icons are inline SVG). A library the page can't do without is copied into `pallot/static/vendor/`, with its licence, as Leaflet is for the map.
   - Insert data from the API as text with `h()` (`dom.js`), never through `innerHTML`.
   - Build links with `safeUrl`/`extLink`.
 - **Dependencies:**
@@ -92,13 +92,13 @@ How to write them:
 
 
 
-## Rules VoteBot depends on
+## Rules Pallot depends on
 
-- **Every outbound call goes through** `HttpCache` (`votebot/http_cache.py`):
+- **Every outbound call goes through** `HttpCache` (`pallot/http_cache.py`):
   - A repeat lookup of the same address makes zero external calls.
   - Prefer one bulk call that's cached over a call per candidate.
-  - Lifetimes live in `Ttls`, each overridable with `VOTEBOT_TTL_<NAME>`.
-  - Every source appears in Settings with Refresh and Clear, and gets an on/off switch (`DEFAULT_SOURCES` in `votebot/settings.py`) unless the ballot can't work without it.
+  - Lifetimes live in `Ttls`, each overridable with `PALLOT_TTL_<NAME>`.
+  - Every source appears in Settings with Refresh and Clear, and gets an on/off switch (`DEFAULT_SOURCES` in `pallot/settings.py`) unless the ballot can't work without it.
 - **Keys stay out of the cache.** API keys go in `HttpCache`'s `source_headers`, never in a `RequestSpec`, a cache key, a log line or an error message.
 - **Be gentle with the sources:**
   - Throttle with `MIN_INTERVAL` in `api.py`, and pause a source when it refuses a request (`pause_on`).
@@ -108,9 +108,9 @@ How to write them:
   - Ballotpedia's endpoints (the ballot and the address search) are unofficial and for personal use only.
   - OpenStreetMap's tiles come through the server and are kept at least 7 days, fetched only as the voter looks at them. Never prefetch them or re-download them in bulk, which its tile policy forbids: that's why the street map has Clear in Settings but no Refresh.
   - The Texas Legislative Council's precinct map (about 45 MB) is downloaded only when its portal's index lists a newer one, one download at a time, never in a loop. A map that fails isn't started again by a lookup until the index lists a changed one, or for a week (15 minutes while none is kept). Tests make the map up (`conftest.py`); only the live test downloads the real one.
-- **Match across sources by name, with seat and party as corroboration** (`votebot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
+- **Match across sources by name, with seat and party as corroboration** (`pallot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
-- **Settings has no login.** Keep `uv run votebot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
+- **Settings has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
 - **Don't reinstall** `trackaipac_cache` **from its own repo.** It's a copy of the maintainer's library, and edits here aren't synced back.
 - **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`). Never edit them by hand.
 
@@ -125,10 +125,10 @@ How to write them:
   - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|tigerweb|election_precincts|tec|trackaipac|voteforpeace`.
 - `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address.
 - For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
-- For a UI change, run `uv run votebot` and look at what changed:
+- For a UI change, run `uv run pallot` and look at what changed:
   - the ballot, Details, Compare, Settings and the print preview;
   - at desktop and phone widths;
   - in light and dark mode.
-- For a Docker change, build the image and test it against a copy of `data/`, never the live one. Don't run the container and `uv run votebot` on the same `data/` at once, because they'd share one SQLite file.
+- For a Docker change, build the image and test it against a copy of `data/`, never the live one. Don't run the container and `uv run pallot` on the same `data/` at once, because they'd share one SQLite file.
 - Never commit `data/`, `.env` or a key. `docker compose config` prints `.env`, the FEC key included.
 

@@ -3,8 +3,8 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "votebot"
-dynamic = ["version"]  # votebot.__version__
+name = "pallot"
+dynamic = ["version"]  # pallot.__version__
 description = "Personal ballot helper: your races, candidates enriched from several sources, picks, notes and a printable list."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-votebot = "votebot.__main__:main"
+pallot = "pallot.__main__:main"
 trackaipac-cache = "trackaipac_cache.__main__:main"
 tec-cache = "tec_cache.__main__:main"
 voteforpeace-cache = "voteforpeace_cache.__main__:main"
@@ -26,13 +26,13 @@ voteforpeace-cache = "voteforpeace_cache.__main__:main"
 dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21"]  # installed by `uv sync`
 
 [tool.setuptools]
-packages = ["votebot", "votebot.sources", "trackaipac_cache", "tec_cache", "voteforpeace_cache"]
+packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "voteforpeace_cache"]
 
 [tool.setuptools.dynamic]
-version = { attr = "votebot.__version__" }
+version = { attr = "pallot.__version__" }
 
 [tool.setuptools.package-data]
-votebot = ["static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*"]
+pallot = ["static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*"]
 trackaipac_cache = ["data/*.json", "data/history/*.json"]
 tec_cache = ["data/*.json"]
 voteforpeace_cache = ["data/*.json", "data/history/*.json"]

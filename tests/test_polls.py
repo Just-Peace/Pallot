@@ -6,10 +6,10 @@ import httpx
 import pytest
 import respx
 
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache
-from votebot.models import Candidate, Race
-from votebot.sources import polls
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache
+from pallot.models import Candidate, Race
+from pallot.sources import polls
 
 from .conftest import find_race, get_ballot, last_use
 

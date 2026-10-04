@@ -12,13 +12,13 @@ from fastapi.testclient import TestClient
 from tec_cache.models import ZIP_URL
 from tec_cache.parse import REQUIRED, lines
 from tec_cache.remote_zip import RemoteZip
-from votebot.api import MIN_INTERVAL, create_app
-from votebot.config import DEMO_KEY, Config, Ttls, load_config
-from votebot.http_cache import HttpCache, track_calls
-from votebot.sources import fec, key_dates, polls
-from votebot.sources.county_precincts import COUNTIES, CountyPrecincts
-from votebot.sources.election_precincts import ElectionPrecincts, read_dbf
-from votebot.sources.sboe import _inside
+from pallot.api import MIN_INTERVAL, create_app
+from pallot.config import DEMO_KEY, Config, Ttls, load_config
+from pallot.http_cache import HttpCache, track_calls
+from pallot.sources import fec, key_dates, polls
+from pallot.sources.county_precincts import COUNTIES, CountyPrecincts
+from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
+from pallot.sources.sboe import _inside
 
 from .conftest import census_points
 
@@ -47,7 +47,7 @@ def test_capitol_ballot_live(tmp_path):
     assert again["meta"]["external_calls"] == 0
 
 
-@pytest.mark.skipif(FEC_KEY == DEMO_KEY, reason="needs VOTEBOT_FEC_API_KEY (DEMO_KEY runs out fast)")
+@pytest.mark.skipif(FEC_KEY == DEMO_KEY, reason="needs PALLOT_FEC_API_KEY (DEMO_KEY runs out fast)")
 def test_fec_race_totals_live():
     response = httpx.get(
         f"{fec.API}/elections/",
@@ -113,8 +113,8 @@ def test_district_outlines_live(tmp_path):
 
 
 def test_street_map_tile_live(tmp_path):
-    """One OpenStreetMap tile over Austin, through VoteBot, which OpenStreetMap still serves to
-    VoteBot's User-Agent; asked again, from the cache."""
+    """One OpenStreetMap tile over Austin, through Pallot, which OpenStreetMap still serves to
+    Pallot's User-Agent; asked again, from the cache."""
     with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
         first = client.get("/api/tiles/12/935/1686.png")
         again = client.get("/api/tiles/12/935/1686.png")
@@ -127,7 +127,7 @@ def test_street_map_tile_live(tmp_path):
 @pytest.mark.anyio
 async def test_election_precincts_live(tmp_path, precinct_map_dir):
     """The Texas Legislative Council's portal still lists its precinct maps, and the newest one (a
-    single download, about 45 MB) reads as VoteBot expects: the recorded addresses land in their
+    single download, about 45 MB) reads as Pallot expects: the recorded addresses land in their
     precincts, every precinct's code fits the outlines API, and a second lookup asks nothing."""
     async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
                                  timeout=60) as client:
@@ -154,7 +154,7 @@ async def test_election_precincts_live(tmp_path, precinct_map_dir):
 
 @pytest.mark.anyio
 async def test_county_precincts_live(tmp_path, precinct_map_dir):
-    """Each county's records are still found by name and read as VoteBot expects, against the
+    """Each county's records are still found by name and read as Pallot expects, against the
     precinct map: a list of exactly the map's precincts, or maps that settle most of a sample of
     them, 20 spread through the county; asked again, from the cache."""
     async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,

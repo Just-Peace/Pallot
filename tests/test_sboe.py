@@ -9,10 +9,10 @@ import httpx
 import pytest
 import respx
 
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache, UpstreamError
-from votebot.sources import RefreshFailed
-from votebot.sources.sboe import (
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache, UpstreamError
+from pallot.sources import RefreshFailed
+from pallot.sources.sboe import (
     FAILED_FLAG, KML_URL, SOURCE, District, Polygon, SboeMap, locate, outline, parse_zip, simplify,
 )
 
@@ -102,7 +102,7 @@ async def test_a_failed_download_isnt_asked_again_by_lookups_for_a_while(tmp_pat
         async with service(tmp_path) as sboe:
             with pytest.raises(UpstreamError):
                 await sboe.district_at(*CAPITOL)
-            with pytest.raises(UpstreamError, match="the last download failed \\(HTTP 500\\); VoteBot tries again after"):
+            with pytest.raises(UpstreamError, match="the last download failed \\(HTTP 500\\); Pallot tries again after"):
                 await sboe.district_at(*CAPITOL)
             assert route.call_count == 1
             notice, tone = sboe.notice()

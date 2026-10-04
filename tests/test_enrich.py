@@ -8,9 +8,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from votebot import enrich
-from votebot.models import Candidate, Race, SourceCard
-from votebot.sources import CardSet, fec, polls
+from pallot import enrich
+from pallot.models import Candidate, Race, SourceCard
+from pallot.sources import CardSet, fec, polls
 
 pytestmark = pytest.mark.anyio
 

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pallot · Settings</title>
+  <meta name="description" content="Choose how Pallot looks, its web search engine and sources, and clear what it has saved.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/settings.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the settings</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Your ballot, address and pages"></aside>
+
+    <main id="main" class="content">
+      <header class="page-head">
+        <h1>Settings</h1>
+        <p class="lede">Choose how Pallot looks, your web search engine and which sources Pallot uses, see what it has saved, and clear it.</p>
+      </header>
+
+      <section class="panel" aria-labelledby="appearance-title">
+        <h2 id="appearance-title">Appearance</h2>
+        <div class="setting-row">
+          <fieldset class="seg" id="theme">
+            <legend class="sr-only">Color theme</legend>
+            <label class="seg-option"><input type="radio" name="theme" value="system">System</label>
+            <label class="seg-option"><input type="radio" name="theme" value="light">Light</label>
+            <label class="seg-option"><input type="radio" name="theme" value="dark">Dark</label>
+          </fieldset>
+          <p class="fine">System follows your device's light or dark setting. Saved in this browser.</p>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="search-title">
+        <h2 id="search-title">Web search</h2>
+        <div class="setting-row">
+          <label for="search-engine">Search engine</label>
+          <select id="search-engine"></select>
+          <p class="fine">Used by each candidate's "Web search" link. Saved in this browser.</p>
+        </div>
+        <p id="search-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="sources-title">
+        <h2 id="sources-title">Sources</h2>
+        <p class="muted">Pallot keeps a copy of what each source sends back, so looking up the same address again doesn't ask anyone.
+          Turn a source off to build your ballot without it, refresh it to fetch its data again now, or clear its copy.</p>
+        <p id="sources-summary" class="fine"></p>
+        <div id="source-list" class="source-list"></div>
+        <div class="button-row">
+          <button class="btn danger small" id="clear-all" type="button">Clear all caches</button>
+        </div>
+        <p id="sources-status" class="status" role="status" aria-live="polite"></p>
+        <p class="fine">Ballotpedia's ballot and address search are unofficial endpoints meant for personal use; turn off "Ballotpedia" and "Address suggestions" before sharing Pallot with anyone else.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="picks-title">
+        <h2 id="picks-title">In this browser</h2>
+        <p class="muted">Your picks, notes, write-ins and pick rule are kept only in this browser. It also remembers your last address (so your ballot is there when you come back), your appearance and search engine, and view choices such as collapsing a race when you pick.
+          <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
+        <div class="button-row">
+          <button class="btn danger small" id="clear-my-picks" type="button">Clear my picks &amp; notes</button>
+          <button class="btn danger small" id="clear-browser-data" type="button">Clear all browser data</button>
+        </div>
+        <p class="fine">"Clear my picks &amp; notes" keeps your address. "Clear all browser data" also forgets your address, appearance, search engine and view choices, as if you'd never used Pallot in this browser. Both happen at once, with Undo for a few seconds. Neither touches what the server saved; that's under Sources.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

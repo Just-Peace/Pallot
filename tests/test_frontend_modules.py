@@ -9,7 +9,7 @@ import re
 
 import pytest
 
-from votebot.api import STATIC_DIR
+from pallot.api import STATIC_DIR
 
 PAGES = ["/", "/settings.html", "/faq.html", "/about.html", "/privacy.html"]
 

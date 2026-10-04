@@ -9,11 +9,11 @@ import httpx
 import pytest
 import respx
 
-from votebot import ics
-from votebot.config import Ttls
-from votebot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls
-from votebot.sources import key_dates
-from votebot.sources.key_dates import Deadlines, parse
+from pallot import ics
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls
+from pallot.sources import key_dates
+from pallot.sources.key_dates import Deadlines, parse
 
 from .conftest import FIXTURES, get_ballot, last_use
 
@@ -86,8 +86,8 @@ def test_the_calendar_file():
     assert all(len(line.encode()) <= 75 for line in text.split("\r\n"))
     unfolded = text.replace("\r\n ", "")
     assert [line.removeprefix("UID:") for line in unfolded.split("\r\n") if line.startswith("UID:")] == [
-        "tx-2026-11-03-register@votebot", "tx-2026-11-03-early_start@votebot", "tx-2026-11-03-early_end@votebot",
-        "tx-2026-11-03-election@votebot",
+        "tx-2026-11-03-register@pallot", "tx-2026-11-03-early_start@pallot", "tx-2026-11-03-early_end@pallot",
+        "tx-2026-11-03-election@pallot",
     ]  # the mail-ballot deadline only when asked for: most voters can't vote by mail
     assert "DTSTART;VALUE=DATE:20261005\r\nDTEND;VALUE=DATE:20261006" in unfolded
     assert "DTSTAMP:20260927T120000Z" in unfolded and "LOCATION" not in unfolded
@@ -98,7 +98,7 @@ def test_the_calendar_file():
 
 def test_one_event_and_dates_already_past():
     mail = ics.calendar(NOV_3, today=D(2026, 9, 27), stamp=STAMP, only="mail").replace("\r\n ", "")
-    assert mail.count("BEGIN:VEVENT") == 1 and "UID:tx-2026-11-03-mail@votebot" in mail and "received\\, not postmarked" in mail
+    assert mail.count("BEGIN:VEVENT") == 1 and "UID:tx-2026-11-03-mail@pallot" in mail and "received\\, not postmarked" in mail
     later = ics.calendar(NOV_3, today=D(2026, 10, 20), stamp=STAMP)
     assert later.count("BEGIN:VEVENT") == 2  # the last day of early voting, and Election Day
     assert ics.calendar(NOV_3, today=D(2026, 11, 4), stamp=STAMP) is None

@@ -1,15 +1,15 @@
-# Developing VoteBot
+# Developing Pallot
 
-How VoteBot works inside, and how to test and change it. To run it, see the [README's quick start](README.md#quick-start). The rules for a change (branches, commits, which docs to update) are in [AGENTS.md](AGENTS.md), and known bugs and planned work are [GitHub issues](https://github.com/Fahd-Siddiqui/VoteBot/issues).
+How Pallot works inside, and how to test and change it. To run it, see the [README's quick start](README.md#quick-start). The rules for a change (branches, commits, which docs to update) are in [AGENTS.md](AGENTS.md), and known bugs and planned work are [GitHub issues](https://github.com/Just-Peace/Pallot/issues).
 
-VoteBot is one Python process (FastAPI) serving a plain HTML/JS page from `votebot/static/`. There's no frontend build step and no database server: everything it keeps is files in `data/`.
+Pallot is one Python process (FastAPI) serving a plain HTML/JS page from `pallot/static/`. There's no frontend build step and no database server: everything it keeps is files in `data/`.
 
 ## Commands
 
-`uv sync` installs VoteBot with the dev tools (pytest, pytest-xdist, respx), pinned by `uv.lock`.
+`uv sync` installs Pallot with the dev tools (pytest, pytest-xdist, respx), pinned by `uv.lock`.
 
 ```bash
-uv run votebot --reload                    # restart on code changes
+uv run pallot --reload                    # restart on code changes
 uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's, voteforpeace_cache's and tec_cache's own tests
 uv run pytest -n 0 --pdb                   # the same in one process, to use the debugger or see print()
 uv run pytest -m live                      # smoke tests against the real services (the FEC one needs an FEC key)
@@ -19,7 +19,7 @@ uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the l
 Keep the default `127.0.0.1` binding (there is a `--host` option, but don't change it), because the Settings actions have no login. The Docker image is the one exception: it binds `0.0.0.0` inside the container, and `compose.yaml` decides where that's published.
 
 A middleware in `api.py` guards the Settings actions from the voter's own browser:
-- It answers only to `localhost`, IP addresses and the names in `VOTEBOT_ALLOWED_HOSTS`. Any other `Host` could be DNS rebinding, which makes an attacker's page the same origin as VoteBot.
+- It answers only to `localhost`, IP addresses and the names in `PALLOT_ALLOWED_HOSTS`. Any other `Host` could be DNS rebinding, which makes an attacker's page the same origin as Pallot.
 - It refuses a POST or PUT that another page started: `Sec-Fetch-Site` other than `same-origin`, or an `Origin` that isn't the `Host`. That includes another port on localhost.
 - The tests' `make_app` allows `testserver`, TestClient's host name.
 
@@ -27,12 +27,12 @@ How responses are sent:
 - **Static files with `Cache-Control: no-cache`** (`RevalidatedFiles` in `api.py`). The browser keeps them but asks each time, with the `ETag`, and gets a short 304 when nothing changed. Without it, the browser guessed how long each file stays fresh, and after an update a page could mix old modules with new ones and stop at an import error. The `/api` routes set their own `Cache-Control`, or none.
 - **Gzipped when the browser asks** (`GZipMiddleware`, at least 1000 bytes, level 6: the ballot is compressed on every lookup, and level 9 took nearly twice as long for 2 KB less). The ballot shrinks from about 850 KB to 64 KB, Leaflet from 424 KB to 110 KB. PNGs (the map tiles) are left alone, as Starlette excludes them.
 
-The live tests and `record_fixtures.py` call the real services. With `DEMO_KEY`, the FEC's rate limit is shared by everything on your IP address, VoteBot itself included.
+The live tests and `record_fixtures.py` call the real services. With `DEMO_KEY`, the FEC's rate limit is shared by everything on your IP address, Pallot itself included.
 
 How the tests run:
 - **In parallel.** `pytest-xdist` runs one worker per CPU (`-n auto --dist loadgroup` in `pyproject.toml`). Each test has its own data folder under `tmp_path`, so no test depends on another.
 - **The live tests, one at a time.** They share one worker (`xdist_group("live")`), so the real services never get more than one call at once.
-- **Without throttling waits.** The tests' `make_app` passes `min_interval={}`, so the calls to a source aren't spaced out. `test_calls_to_one_source_are_spaced_out` in `test_http_cache.py` checks the throttling itself. `uv run votebot` and the live tests use the real intervals, `MIN_INTERVAL` in `api.py`.
+- **Without throttling waits.** The tests' `make_app` passes `min_interval={}`, so the calls to a source aren't spaced out. `test_calls_to_one_source_are_spaced_out` in `test_http_cache.py` checks the throttling itself. `uv run pallot` and the live tests use the real intervals, `MIN_INTERVAL` in `api.py`.
 - **Fixtures read once.** `conftest.py` keeps each recorded response in memory (`fixture_bytes`) for the rest of the run.
 - **Made-up maps.** `conftest.py` makes the SBOE map (KML) and the precinct map (a shapefile in EPSG:3081, written with `struct`, with the real `.prj`). Every exact fixture address's two points fall in one precinct; the rest are a precinct in two pieces, one with a hole another fills, two that overlap, two that meet, and another county's over the Capitol. `record_fixtures.py --only election_precincts` records only the portal's index, never the 45 MB map.
 - **Made-up county lists.** `Upstream.arcgis` serves Travis's and Harris's ArcGIS servers: their lists of services and the service with the list are recorded (`--only county_precincts`), and the lists themselves are made up from the made-up map's precincts (`TRAVIS_LIST`, `HARRIS_LIST`), since a county's list must have exactly the map's precincts. A test swaps in its own rows, or a county's maps on a made-up host (`test_county_precincts.py`). The live tests download the real precinct map once, into a folder both share.
@@ -40,7 +40,7 @@ How the tests run:
 ## Layout
 
 ```
-votebot/
+pallot/
   api.py            routes + static files          ballot.py   assembles the ballot
   http_cache.py     persistent request cache       enrich.py   adds each source's cards to candidates
   offices.py        SOS office names -> districts  matching.py cross-source name matching
@@ -61,20 +61,20 @@ trackaipac_cache/   TrackAIPAC library (copied in)
 voteforpeace_cache/ Vote for Peace snapshot and its builder
 tec_cache/          Texas Ethics Commission snapshot and its builder
 scripts/            record_fixtures.py, capture_trackaipac_fixtures.py, capture_voteforpeace_fixture.py
-tests/              VoteBot tests + tests/trackaipac/ + tests/voteforpeace/ + tests/tec/
+tests/              Pallot tests + tests/trackaipac/ + tests/voteforpeace/ + tests/tec/
 Dockerfile          the container image; compose.yaml runs it
 ```
 
 ## Caching
 
-Every outbound call goes through `votebot/http_cache.py`, a SQLite cache in `data/cache.sqlite3`. Each `/api/ballot` response reports `meta.external_calls`, and Settings shows the last lookup's, source by source.
+Every outbound call goes through `pallot/http_cache.py`, a SQLite cache in `data/cache.sqlite3`. Each `/api/ballot` response reports `meta.external_calls`, and Settings shows the last lookup's, source by source.
 
 - Concurrent identical requests share one fetch.
 - Only answers that succeed are cached.
 - Some sources answer an error with a 200, so a source registers a check of its answers with `check_answers`, as it registers `pause_on`: `arcgis_error` for TIGERweb and the counties (an ArcGIS `error` body), `no_elections` for the key dates page (no election table: a maintenance page, or wherever a redirect led). An answer the check refuses is handled like a failed request. With a good copy stored, that copy is served, marked stale, and asked for again after `retry_after`; Refresh keeps it and counts a failure with the check's message. With none, the refused answer is stored for `retry_after` only (its usual lifetimes stay in the row for Refresh), and `get_json` raises `UpstreamError` with the check's message meanwhile, without asking. A stored answer the check refuses is never served, nor used as a fallback.
 - `get_json` stores the parsed JSON. `get_text` stores a web page's body as a string (`RequestSpec.as_text`), so Refresh fetches it as text again. `get_bytes` stores an image (the street map's tiles) as base64 text (`RequestSpec.as_bytes`).
 - `download` streams a file too big for the database (the precinct and SBOE maps) into a path: the same pause, throttling, call count and refusals as `get_json`, refused past `max_bytes` or when a redirect leaves `hosts`, but nothing is stored, so whoever keeps the file decides when it's fetched again. `peek` reads a stored copy without asking anyone, for Settings' plain-function routes.
-- The lifetimes are `Ttls` in `votebot/config.py`, each overridable with `VOTEBOT_TTL_<NAME>`.
+- The lifetimes are `Ttls` in `pallot/config.py`, each overridable with `PALLOT_TTL_<NAME>`.
 - Each row stores its `value` before its dates and size, so reading those from the table walks the whole value (207 ms for the candidate list). Two covering indexes avoid that: `responses_key_dates` (`key, fetched_at, expires_at`), which `_load` names with `INDEXED BY` since SQLite would pick the primary key's index, and `responses_source_stats` (`source, fetched_at, expires_at, bytes`), which `stats()` uses for Settings. `_load` reads the dates first, and the value only when memory doesn't hold that copy, by `key` and `fetched_at`, so a Clear or a newer copy in between is a miss.
 - Decoded values stay in memory, least recently used dropped first, up to `memory_bytes` (64 MB) of stored text: a ballot's 60-odd values all fit. The street map's tiles stay out, since the browser keeps them too.
 - Reading and writing a row (`_load`, `_store`) runs in a worker thread (`asyncio.to_thread`), and `self._lock` guards the SQLite connection and the in-memory copies. SQLite and file I/O release the GIL, so other requests (address suggestions typed during a first lookup, say) go on meanwhile. `json.loads` of a big value (the 2.6 MB candidate list) still holds the GIL while it parses, in C.
@@ -112,11 +112,11 @@ Notes on how each source is called, beyond the README's table:
   - The election precinct comes from the precinct map the ballot lookup downloaded, never downloaded here. It's asked by the map's code for it (`0300`) and the county's FIPS code, since two codes can share a display name, and comes back with `Outline.number` set to the display name (`"300"`). It's simplified to 0.00005° (about 5 m), since a precinct is a few streets across: a city precinct goes from 58–165 points to 20–40. The parameter only has a length limit, no pattern: one that a real code failed would make FastAPI refuse the whole request, the other outlines with it; an unknown code is the usual note.
 - **Street map** (`GET /api/tiles/{z}/{x}/{y}.png`, `sources/osm_tiles.py`): OpenStreetMap's standard tiles, which the server fetches for the browser and keeps. Its [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) sets the rules:
   - a User-Agent that names the app and a way to reach it (`Config.user_agent` includes the project's URL);
-  - each tile kept at least 7 days (`Ttls.tiles`; `load_config` raises a shorter `VOTEBOT_TTL_TILES` to 7 days); the browser also keeps a tile for a day (`Cache-Control`);
+  - each tile kept at least 7 days (`Ttls.tiles`; `load_config` raises a shorter `PALLOT_TTL_TILES` to 7 days); the browser also keeps a tile for a day (`Cache-Control`);
   - only the tiles someone is looking at: no prefetching, and no bulk re-download, so its Settings row has Clear but no Refresh (`SourceInfo.refreshable`), and `POST …/refresh` answers 400;
   - the attribution on the map, bottom right.
 
-  The server only fetches zooms 5 to 18 over Texas and 2° around it (`osm_tiles.wanted`), so VoteBot can't be used as a tile proxy for anywhere else, while a view near the state line still has streets; the page's map keeps to the same box (`maxBounds`). A 403, 418 or 429 pauses it for an hour.
+  The server only fetches zooms 5 to 18 over Texas and 2° around it (`osm_tiles.wanted`), so Pallot can't be used as a tile proxy for anywhere else, while a view near the state line still has streets; the page's map keeps to the same box (`maxBounds`). A 403, 418 or 429 pauses it for an hour.
 - **Declared write-ins:** a county's ballot order lists only the printed names. `_rows` in `ballot.py` fetches the statewide candidate list beside it (the SOS cards read the same copy, so it costs no request) and adds its `cdParty "W"` rows for the offices on the ballot order: still running (not rejected, withdrawn, declared ineligible or deceased; `still_running` in `sos.py`), and a county office's only when its `txCountyName` is the voter's county. `_sos_candidate` gives them `write_in` and no party, since "W" isn't one and a party would make every match from another source look like a disagreement. If the list fails, the printed ballot stays, with a note. An office with only write-ins has no ballot-order row, so `_declared_write_ins` also keeps write-ins for offices off the ballot order when it can place them: the voter's county's own offices, and what `_placeable` allows (federal, statewide, congressional, legislative, SBOE). District judges and DAs name no county, so theirs are left out. The statewide list has no `nbOfficeTypeOrder`, so it's copied from a ballot-order row of the same `cdOfficeType`, which sorts the race into its place. Those races' keys go in `_Builder.unlisted`, and `_sos_races` drops one whose district isn't known rather than put every district's race in Texas under "Couldn't confirm".
 - **Key dates:** the Texas SOS's "Important Election Dates" page (`sources/key_dates.py`), fetched as text and parsed with the standard library's `HTMLParser`. Each election is a `<table class="norm-5px">`, titled by its `summary` attribute or its heading row ("Tuesday, November 3, 2026 - Uniform Election Date"); the ballot takes the table whose date is its election day. Its quirks:
   - earlier years' tables are still in the page, inside HTML comments, which the parser skips;
@@ -135,19 +135,19 @@ Notes on how each source is called, beyond the README's table:
 - **TEC seats:** a Texas SOS race's seat comes from its office (`tec_seat`); on a ballot from Ballotpedia alone, from Ballotpedia's district type and office name (`bp_seat`: "State Legislative (Lower)" and "District 49" is `STATEREP:49`, "Texas Third District Court of Appeals Chief Justice" is `CHIEFJUSTICE_COA:3`). Without a seat, a match by name is only ever "likely". Ballotpedia lists county courts at law and probate courts as judicial districts, but their judges file with the county, so those races get no TEC card (`_BP_COUNTY_COURT`), as the Texas SOS's county courts don't.
 - **Vote for Peace** (`sources/voteforpeace.py`): every level of office, so a race's seat is spelled as the TEC's are (`race_seat`: `tec_seat` or `bp_seat`), Congress as `TX-37`, and a county, precinct, city or judicial race with no such seat as `COUNTY:TRAVIS`. `entry_seats` reads the site's office and district the same way: "TX State Senator" and `sd-9` is `STATESEN:9`, "Harris District County Court Judge" and `228` is `JUDGEDIST:228`, a county or local office its `jurisdiction` and any "X County" in its title. The site names the Supreme Court, the Court of Criminal Appeals and the courts of appeals without the place, so those are `JUSTICE_SC:*` and the like, which `_fit` turns into the race's own seat on that court. In one race, an entry goes to one candidate: the strongest name match (full name, then first and last, then initial, then last name in the seat), and a tie gets no card, since "K Hawkins" is both Kristen and Kyle. A county seat is every office in the county, so there a last name alone isn't a match (Ebony Williams isn't LaShawn Williams), and "X County" in any office's title counts, since the site files "Harris County Treasurer" as statewide. A title before the name ("Dr.") is dropped when indexing. The rating is the card's badge (`vote` is Ally, `reject` Opposed, as the site words them on a candidate's page) and its flag for Pick by rule (`ally`, `opposed`, `neutral`).
 - **FiftyPlusOne:** the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's.
-- **State-specific text** (the official elections site, the registration check, who can vote by mail, the polls' hours, the print sheet's voting rules, the highest district numbers) comes from `STATES` in `votebot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
+- **State-specific text** (the official elections site, the registration check, who can vote by mail, the polls' hours, the print sheet's voting rules, the highest district numbers) comes from `STATES` in `pallot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
 
 ## The pages
 
 Every page has an empty `<aside class="sidebar">`, and `chrome.js` draws the left pane into it: the brand, "Your ballot", the address card, and the other pages from its `PAGES` list, marking the current one. The ballot page puts its own parts in the aside: the form and status line (`data-slot="address"`) go under the address card, and the section list (`#jump`) above the other pages. The other pages' section list is built by `listSections()` in `page.js`, from each `<section aria-labelledby>` directly in `<main>` (named by its heading, linked to the heading's id), and appended to the aside just before `initChrome()`, so it lands in the same place. It marks the section on screen as the page scrolls, like the ballot's, except that a section just jumped to stays marked while it's in view until the voter scrolls (wheel, touch or a key), since short sections at the end of a page never reach the line. It's `.page-sections`: on a phone it's in the Menu panel (`topbar.js`'s `aria-controls` includes it) and a jump closes the panel; in the folded rail it's hidden. Nothing draws when it's imported: each entry script (`ballot.js`, `page.js`) calls `initChrome()` before its own code looks for the pane, and `settings.js` imports `page.js` first. `toast.js` makes its element the first time it shows a message. The favicon is `favicon.svg`.
 
 `chrome.js` also draws what else every page shares, so no page has its own:
-- **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). `trackHeight()` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear. It ends with the running version and the short hash of its commit, as `git describe` writes them (`v0.9.0-g1a2b3c4`), as plain text; `initChrome()` also writes it into any element marked `data-version` (About's credits). Both come from `/js/version.js`, a module `api.py` writes at startup, so the footer imports them rather than fetching them. The version is `votebot.__version__`. The commit comes from `votebot/version.py`, which reads the checkout's `.git` files (HEAD, then the loose ref or `packed-refs`, worktrees included) without running git. The Docker image has neither git nor `.git`, so `.dockerignore` lets just those files into the build stage, and the build writes the full hash into the installed package as `votebot/COMMIT`. Without either, the footer shows just the version.
+- **The footer:** inserted after `.app`, so it's the page's contentinfo landmark. It's `position: fixed` at the bottom of the window, beside the pane (`left: var(--sidebar)`). `trackHeight()` keeps `--footer-h` at its height, however many lines it wraps to. The content's bottom padding, Back to top, the toasts and `scroll-padding-bottom` all use it to stay clear. It ends with the running version and the short hash of its commit, as `git describe` writes them (`v0.9.0-g1a2b3c4`), as plain text; `initChrome()` also writes it into any element marked `data-version` (About's credits). Both come from `/js/version.js`, a module `api.py` writes at startup, so the footer imports them rather than fetching them. The version is `pallot.__version__`. The commit comes from `pallot/version.py`, which reads the checkout's `.git` files (HEAD, then the loose ref or `packed-refs`, worktrees included) without running git. The Docker image has neither git nor `.git`, so `.dockerignore` lets just those files into the build stage, and the build writes the full hash into the installed package as `pallot/COMMIT`. Without either, the footer shows just the version.
 - **Back to top:** it shows once the page has scrolled one screen.
-- **Folding the pane:** wider than 960px, « folds the pane to a 64px rail (`html.pane-collapsed`, which sets `--sidebar`), saved as `paneCollapsed` in `votebot.ui.v1`. `theme.js` sets the class before the first paint, so a folded pane doesn't show open while the modules load; `initChrome` then draws the toggle to match. The address card is hidden there, and the link names become tooltips.
+- **Folding the pane:** wider than 960px, « folds the pane to a 64px rail (`html.pane-collapsed`, which sets `--sidebar`), saved as `paneCollapsed` in `pallot.ui.v1`. `theme.js` sets the class before the first paint, so a folded pane doesn't show open while the modules load; `initChrome` then draws the toggle to match. The address card is hidden there, and the link names become tooltips.
   - `setPaneCollapsed()` and `onPaneToggle()` are exported. `ballot.js`'s `showAddressPanel()` unfolds the pane for the form, an error or a first visit, as `openPanel("address")` does on a phone.
 
-The address card's last line is the election (`electionLine()` in `ballot-shared.js`), saved with the card in `votebot.addressCard.v1`, so the other pages show it.
+The address card's last line is the election (`electionLine()` in `ballot-shared.js`), saved with the card in `pallot.addressCard.v1`, so the other pages show it.
 
 At 960px and less (a phone; `narrow` in `chrome.js`, the same breakpoint as `app.css`), the left pane becomes a top bar. `chrome.js` then calls `initTopBar()` in `topbar.js`, which adds its two buttons (the address and Menu). The empty aside is already the closed bar's height, so the page doesn't move when it's drawn. On the ballot, `placeForWidth()` in `ballot-nav.js` moves the section list (`#jump`) into the sticky progress strip, and the View, Clear picks and Print buttons (`#ballot-tools`) under the heading. With the pane folded, wider than that, only the section list moves into the strip. The chip styles are scoped to `.progress-strip` for this reason.
 
@@ -157,11 +157,11 @@ The ballot page is split by part. `ballot.js` looks the ballot up, draws it and 
 
 `renderCards()` in `race-cards.js` builds the cards blank, for a new ballot only; each card registers its redraw, which sets its picks, folding, note boxes (their text, and the Note button) and write-in name from `page.picks`, leaving alone a box that has the focus. `redrawCards()` runs them all, and everything else redraws in place: a pick, Clear picks and its Undo, another tab's change. The card handlers read `page.picks` when they run, never a copy kept at build time. In `app.css`, `.race` has `content-visibility: auto` with `contain-intrinsic-size: auto 400px`, so the browser skips laying out and painting the cards off screen (a 62-race ballot lays out in 1–2 ms instead of 55–85 ms, and Details and Compare, which make the page inert, open faster). A collapsed card is one line and stays `visible`, so Collapse all sizes the page at once instead of keeping the cards' remembered heights.
 
-`collapsibleCard()` in `race-cards.js` gives races and propositions their heading. Once there's a pick, the heading shows it (expanded too) with ✕ Clear, which clears it at once and offers Undo. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, counting a section once its top reaches the line jumps scroll to (`SCROLL_GAP` below the strip, the gap `scroll-padding-top` leaves), so a section jumped to is the one marked; and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `votebot.ui.v1`.
+`collapsibleCard()` in `race-cards.js` gives races and propositions their heading. Once there's a pick, the heading shows it (expanded too) with ✕ Clear, which clears it at once and offers Undo. `markCurrentSection()` marks the section on screen in the list (`aria-current`) as the page scrolls, counting a section once its top reaches the line jumps scroll to (`SCROLL_GAP` below the strip, the gap `scroll-padding-top` leaves), so a section jumped to is the one marked; and on a phone scrolls the chip row to it. The View menu's two options are saved with the other view choices in `localStorage` under `pallot.ui.v1`.
 
 Under the strip, `.ballot-top` holds When to vote (`key-dates.js`) and Your districts (`renderDistricts()` in `districts-card.js`), side by side when there's room and stacked on a phone (flex-wrap, 340px each at least). The map of your districts (`district-map.js`) is always under them, the full width, so the cards stay as tall as each other. Right above it, a row of buttons, one per district, is its legend and picks a district; picking only flips `aria-pressed`, so focus stays on the button. Leaflet draws it:
 - `vendor/leaflet/` holds Leaflet 1.9.4's ES module build, its CSS and its licence, copied from the npm package (checked against the registry's hash), with only the source-map comment removed. `district-map.js` imports it with `import()` once there's a ballot, so the other pages never load it.
-- The card's heading is a button that folds the map away, with a race's chevron (`.map-toggle`, `.district-map.collapsed`), remembered as `showMap` in `votebot.ui.v1` (shown when unset). While it's folded, nothing is fetched or drawn: `syncMap` only notes the new districts, and showing the map loads and draws them, at the map's real size.
+- The card's heading is a button that folds the map away, with a race's chevron (`.map-toggle`, `.district-map.collapsed`), remembered as `showMap` in `pallot.ui.v1` (shown when unset). While it's folded, nothing is fetched or drawn: `syncMap` only notes the new districts, and showing the map loads and draws them, at the map's real size.
 - The map is made once and kept: a precinct update leaves it where the voter left it; new districts load new outlines and go back to the address. The outlines are fetched once per set of districts and kept for the page's life.
 - It opens centred on the pin, zoomed so the smallest district's outline fits around it, within zooms 10 to 14 (`fitView`, `HOME_ZOOM`), so the streets are always readable. With an election precinct, that's the precinct, so it usually opens at zoom 14. A picked district fills the map instead; picking it again, or the pin button under + and −, goes back.
 - `.map-canvas` is its own stacking context (`z-index: 0`), so Leaflet's panes and controls (z-index up to 1000) stay under the sticky strip.
@@ -172,10 +172,10 @@ The strip comes first so that Next and the section chips stay on a phone's first
 
 Clearing what the voter keeps in the browser (Clear picks on the ballot, and the two Clear buttons in Settings) happens at once, then `toast.js` offers Undo for 10 seconds. On the ballot, Clear picks and its Undo redraw only the races in place, the progress and the filter (`renderRaces()`), so an open edit of the districts stays open. The clear functions in `picks.js` return what they removed, for Undo to put back. Clearing what the server saved can't be undone, so those buttons still ask first. `admin.py` words every prompt (`refresh_confirm`, `clear_confirm`, and the overview's `clear_all_confirm`, which names the bundled snapshots it resets), so `settings.js` holds no source's name. `settings.js` draws each source's row once and updates it in place by `source.id`, so a change, or the 5-second poll while a refresh runs, keeps the focus where it was.
 
-Everything kept in the browser goes through `storage.js`: the keys, `readJson`/`writeJson` (which swallow blocked storage), and `uiPref`/`setUiPref` for the view settings in `votebot.ui.v1`. `picks.js` keeps `Picks`, one bucket per election in `votebot.picks.v1`. Each save re-reads the stored picks and replaces only its own election's bucket, so two ballot tabs don't overwrite each other's elections, and a `storage` listener (`onPicksChanged`) redraws the ballot when another tab changes them: `Picks.reload()` reads the bucket again into the same object, then `renderRaces()` redraws the cards in place, so a note being typed keeps its box and focus, and its autosave saves on top of the other tab's change. If storage refuses a save, the bucket is kept in memory until the page closes.
+Everything kept in the browser goes through `storage.js`: the keys, `readJson`/`writeJson` (which swallow blocked storage), and `uiPref`/`setUiPref` for the view settings in `pallot.ui.v1`. `picks.js` keeps `Picks`, one bucket per election in `pallot.picks.v1`. Each save re-reads the stored picks and replaces only its own election's bucket, so two ballot tabs don't overwrite each other's elections, and a `storage` listener (`onPicksChanged`) redraws the ballot when another tab changes them: `Picks.reload()` reads the bucket again into the same object, then `renderRaces()` redraws the cards in place, so a note being typed keeps its box and focus, and its autosave saves on top of the other tab's change. If storage refuses a save, the bucket is kept in memory until the page closes.
 
 Pick by rule is two modules. `pick-rules.js` is the logic, with no DOM:
-- the rule, saved in `votebot.pickRule.v1` for every election (`loadRule()` lays it over `DEFAULT_RULE`, so an older rule still loads);
+- the rule, saved in `pallot.pickRule.v1` for every election (`loadRule()` lays it over `DEFAULT_RULE`, so an older rule still loads);
 - `plan(races, rule, picks)`, what it would do race by race;
 - `verdicts(ballot, rule)`, for the marks.
 
@@ -188,7 +188,7 @@ It reads candidates' `party`, `incumbent` and `write_in`, and the `figures` and 
 
 `pick-rule-dialog.js` draws the dialog (`openRules(raceKey)`, scoped to that race when it comes from a race heading's funnel) and recomputes `plan()` on every change. Apply saves the races with one `Picks.setMany()`, which returns the old picks for Undo. "Mark who matches" saves `mark: true`. `renderRaces()` calls `syncMarks()` first, which puts `verdicts()` in `page.marks` for each candidate row's `sync()` to draw as a pill, and shows `markingNote`. `onPicksChanged` fires for the rule's key too, so another tab's rule shows here. "Clear my picks & notes" removes the rule with the picks.
 
-Light or dark is the `theme` view setting (`system`, `light` or `dark`; System when unset), chosen under Appearance in Settings. `theme.js` is the one classic script, loaded in every page's `<head>` before the stylesheet, so `<html>` has `data-theme="light"` or `"dark"` before the first paint (a module runs too late and would flash). It reads `votebot.ui.v1` itself, since it can't import `storage.js`, and applies the choice again when the device's setting changes, when another tab changes it (`storage`), and when Settings fires `votebot:theme` on `document`. `app.css`'s dark colours and the map tiles' dark filter key off `[data-theme="dark"]`, never `prefers-color-scheme`.
+Light or dark is the `theme` view setting (`system`, `light` or `dark`; System when unset), chosen under Appearance in Settings. `theme.js` is the one classic script, loaded in every page's `<head>` before the stylesheet, so `<html>` has `data-theme="light"` or `"dark"` before the first paint (a module runs too late and would flash). It reads `pallot.ui.v1` itself, since it can't import `storage.js`, and applies the choice again when the device's setting changes, when another tab changes it (`storage`), and when Settings fires `pallot:theme` on `document`. `app.css`'s dark colours and the map tiles' dark filter key off `[data-theme="dark"]`, never `prefers-color-scheme`.
 
 The modules share their small helpers rather than writing them out again:
 - `dom.js`: `h()` and `svg()` build elements (`class` takes a string or an array whose falsy entries are dropped, `on: { click }` adds listeners), `$`, `extLink` (a new-tab link, its label text or nodes, shown unlinked without a usable url), `linkedText` (text from the server whose `[label](url)` parts become links: a Settings notice, a ballot note, a TrackAIPAC quote), `setStatus` for a status line, `onFrame` (at most once a frame), `trackHeight` (an element's height in a CSS variable), `onReturn` (the voter comes back to the page), `autosave` for the note and write-in boxes, and `dialogHead()` and `closeOnBackdrop()` for the dialogs.
@@ -200,7 +200,7 @@ The modules share their small helpers rather than writing them out again:
 
 ## trackaipac_cache
 
-`trackaipac_cache/` is a copy of the TrackAIPAC library from `git@github.com:Fahd-Siddiqui/TrackAipacCache.git` (develop, commit `423443a`), with its tests in `tests/trackaipac/`. VoteBot copies its bundled snapshot into `data/trackaipac/` on first run, so it works without calling trackaipac.com.
+`trackaipac_cache/` is a copy of the TrackAIPAC library from `git@github.com:Fahd-Siddiqui/TrackAipacCache.git` (develop, commit `423443a`), with its tests in `tests/trackaipac/`. Pallot copies its bundled snapshot into `data/trackaipac/` on first run, so it works without calling trackaipac.com.
 
 - **Refresh** (TrackAIPAC's row in Settings) runs the package's `refresh()`, which validates the pages and writes only if the site changed. Its fetch (`fetch.py`, with `httpx`) retries a connection error or a 5xx twice, 2 and 4 seconds apart, and stops at once at any 4xx, a 429 included.
 - **Reset** goes back to the copy in the repo.
@@ -208,7 +208,7 @@ The modules share their small helpers rather than writing them out again:
 
 ## voteforpeace_cache
 
-`voteforpeace_cache/` keeps a snapshot of the candidates rated on voteforpeace.info (Organize for Peace), used with their permission, with its tests in `tests/voteforpeace/`. VoteBot copies its bundled snapshot into `data/voteforpeace/` on first run, so it works without calling the site.
+`voteforpeace_cache/` keeps a snapshot of the candidates rated on voteforpeace.info (Organize for Peace), used with their permission, with its tests in `tests/voteforpeace/`. Pallot copies its bundled snapshot into `data/voteforpeace/` on first run, so it works without calling the site.
 
 - **The page.** `/candidates` is a Next.js app, and lists every rated candidate in every state (about 790). Besides the HTML, it carries its own data in `self.__next_f.push([1, "…"])` scripts; `parser.py` joins and unescapes those, then reads the one `{"sections": [...]}` object, a section per state. Reading the data, not the HTML, keeps a change of styling from breaking it. A candidate's page is `/<the section's stateSlug>/<slug>`. Its notes are sometimes HTML, kept as plain text.
 - **Refresh** (Vote for Peace's row in Settings) runs the package's `refresh()`: one GET (about 7 MB), then `guard.py` refuses the whole refresh for under 100 candidates, an unknown rating, the same id twice, or fields that went missing, and it writes only when the rows' hash changed. Its fetch retries a connection error or a 5xx twice, 2 and 4 seconds apart, and stops at once at any 4xx.
@@ -217,7 +217,7 @@ The modules share their small helpers rather than writing them out again:
 
 ## tec_cache
 
-`tec_cache/` builds the Texas Ethics Commission snapshot from TEC's nightly export, `TEC_CF_CSV.zip` (about 1 GB), and bundles it in the repo. VoteBot copies it into `data/tec/` on first run, so ballot lookups never contact TEC.
+`tec_cache/` builds the Texas Ethics Commission snapshot from TEC's nightly export, `TEC_CF_CSV.zip` (about 1 GB), and bundles it in the repo. Pallot copies it into `data/tec/` on first run, so ballot lookups never contact TEC.
 - **Refresh** (the Texas Ethics Commission row in Settings) rebuilds it in a separate process (`python -m tec_cache`), which reads a couple of GB of CSV.
   - It first makes one small request to see whether TEC's zip has changed; if not, that's all.
   - If it has, it downloads the zip in one request, reading just the files it needs as they arrive.
@@ -227,21 +227,21 @@ The modules share their small helpers rather than writing them out again:
 
 ## Docker image
 
-- The `Dockerfile` installs VoteBot as a regular (not editable) package into `/app/.venv`, from `uv.lock` with `--locked` and without the dev tools. After changing dependencies in `pyproject.toml`, run `uv lock`, or the build fails.
-- Because the install isn't editable, the static files and the bundled snapshots reach the image only as package data (`[tool.setuptools.package-data]` in `pyproject.toml`). A new kind of file, such as an image under `votebot/static/`, needs a pattern there (Leaflet's files have `static/vendor/*/*`). Otherwise it works with `uv run` but is missing from the container.
-- `.dockerignore` keeps `.env`, `data/`, the tests and scripts out of the build. The image has VoteBot and its locked dependencies, not the dev tools or tests.
-- Everything VoteBot writes goes under `VOTEBOT_DATA_DIR` (`/data` in the container); a TEC refresh stages its work in `/tmp`.
+- The `Dockerfile` installs Pallot as a regular (not editable) package into `/app/.venv`, from `uv.lock` with `--locked` and without the dev tools. After changing dependencies in `pyproject.toml`, run `uv lock`, or the build fails.
+- Because the install isn't editable, the static files and the bundled snapshots reach the image only as package data (`[tool.setuptools.package-data]` in `pyproject.toml`). A new kind of file, such as an image under `pallot/static/`, needs a pattern there (Leaflet's files have `static/vendor/*/*`). Otherwise it works with `uv run` but is missing from the container.
+- `.dockerignore` keeps `.env`, `data/`, the tests and scripts out of the build. The image has Pallot and its locked dependencies, not the dev tools or tests.
+- Everything Pallot writes goes under `PALLOT_DATA_DIR` (`/data` in the container); a TEC refresh stages its work in `/tmp`.
 
 ## Releases
 
-- The version lives in one place, `__version__` in `votebot/__init__.py`. `pyproject.toml` reads it (`[tool.setuptools.dynamic]`), and the footer shows it.
+- The version lives in one place, `__version__` in `pallot/__init__.py`. `pyproject.toml` reads it (`[tool.setuptools.dynamic]`), and the footer shows it.
 - To release, bump it in a pull request into `develop` (`feat: release vX.Y.Z`). Once that's merged, tag the merge commit with an annotated tag, push the tag, and publish the release from it:
 
 ```bash
 git switch develop && git pull
-git tag -a vX.Y.Z -m "VoteBot X.Y.Z"
+git tag -a vX.Y.Z -m "Pallot X.Y.Z"
 git push origin vX.Y.Z
-gh release create vX.Y.Z --verify-tag --title "VoteBot X.Y.Z" --notes-file NOTES.md
+gh release create vX.Y.Z --verify-tag --title "Pallot X.Y.Z" --notes-file NOTES.md
 ```
 
 - `--verify-tag` stops `gh` from making a lightweight tag of its own when the annotated one isn't pushed yet.
@@ -250,7 +250,7 @@ gh release create vX.Y.Z --verify-tag --title "VoteBot X.Y.Z" --notes-file NOTES
 
 Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, links and match confidence. A source can also add a card to a race, such as the money comparison. The page renders them all generically, as badges on the candidate row, a tab in Details, and a block at the top of the race. So a new source only needs:
 
-1. A module in `votebot/sources/` that fetches through `HttpCache` and builds cards.
+1. A module in `pallot/sources/` that fetches through `HttpCache` and builds cards.
 2. A field on `Services` in `ballot.py`, created in `api.py`'s startup.
 3. A job in `enrich.py`, and its place in `CARD_ORDER` (where its tab goes in Details). A `cards()` without I/O runs through `asyncio.to_thread`.
 4. An entry in `admin.py` so it appears in Settings, and one in `DEFAULT_SOURCES` in `settings.py` if it can be turned off. A source kept in files rather than `HttpCache` rows (a map, a bundled snapshot) names its `Services` field in `SourceInfo.kept` and implements `KeptSource` (`sources/__init__.py`): `busy`, `notice()`, `details()`, `size()`, `refresh_size()`, `refresh()` and `clear()`. Settings asks it for its row instead of special-casing it. A `refresh()` that changes nothing raises `RefreshFailed`, which is a 502 when the row has no cached responses, and a sentence in the message otherwise.

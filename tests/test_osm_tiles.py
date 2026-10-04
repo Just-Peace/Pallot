@@ -1,4 +1,4 @@
-"""The street map's tiles: OpenStreetMap's, through VoteBot (GET /api/tiles/{z}/{x}/{y}.png)."""
+"""The street map's tiles: OpenStreetMap's, through Pallot (GET /api/tiles/{z}/{x}/{y}.png)."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import math
 
 import pytest
 
-from votebot.sources import osm_tiles
+from pallot.sources import osm_tiles
 
 from . import conftest
 from .conftest import PNG, capitol_point
@@ -33,7 +33,7 @@ def test_only_tiles_over_texas_at_the_maps_zooms():
     assert not osm_tiles.wanted(12, -1, 0) and not osm_tiles.wanted(12, 0, 4096)
 
 
-def test_a_tile_is_asked_for_once_and_names_votebot(client, upstream):
+def test_a_tile_is_asked_for_once_and_names_pallot(client, upstream):
     z, x, y = tile_at(14, *capitol_point())
     first = get_tile(client, z, x, y)
     assert first.status_code == 200 and first.content == PNG
@@ -41,7 +41,7 @@ def test_a_tile_is_asked_for_once_and_names_votebot(client, upstream):
     assert get_tile(client, z, x, y).content == PNG
     assert upstream.count("tile.openstreetmap.org") == 1
     (agent,) = upstream.tile_agents  # OpenStreetMap's tile policy: a User-Agent that names the app and how to reach it
-    assert agent.startswith("VoteBot/") and "github.com/Fahd-Siddiqui/VoteBot" in agent
+    assert agent.startswith("Pallot/") and "github.com/Just-Peace/Pallot" in agent
 
 
 def test_tiles_are_not_gzipped(client, upstream, monkeypatch):

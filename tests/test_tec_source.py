@@ -8,10 +8,10 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from votebot.models import Candidate, Race
-from votebot.offices import classify
-from votebot.sources import tec
-from votebot.sources.ballotpedia import BpBallot, BpRace, parse
+from pallot.models import Candidate, Race
+from pallot.offices import classify
+from pallot.sources import tec
+from pallot.sources.ballotpedia import BpBallot, BpRace, parse
 
 from .conftest import FIXTURES, get_ballot, load
 
@@ -292,7 +292,7 @@ def test_clear_keeps_a_downloaded_zip(tmp_path):
     source.ensure_seeded()
     source.local_zip.write_bytes(b"zip")
     (tmp_path / "data" / "current.json").write_text('{"snapshot": "edited", "filers": []}', encoding="utf-8")
-    assert source.clear() == "Back to the snapshot that came with VoteBot (Sep 27, 2026)."
+    assert source.clear() == "Back to the snapshot that came with Pallot (Sep 27, 2026)."
     assert source.document()["snapshot"] == "2026-09-27" and source.local_zip.exists()
 
 
@@ -300,7 +300,7 @@ def test_refresh_and_reset_from_settings(make_app, tmp_path):
     with TestClient(make_app()) as client:
         message = client.post("/api/sources/tec/refresh").json()["message"]
         assert message.startswith("updated snapshot")
-        assert client.post("/api/sources/tec/clear").json()["message"].startswith("Back to the snapshot that came with VoteBot")
+        assert client.post("/api/sources/tec/clear").json()["message"].startswith("Back to the snapshot that came with Pallot")
     [call] = make_app.tec_refreshed
     assert call == {"data_dir": tmp_path / "data" / "tec", "zip_path": None}
 

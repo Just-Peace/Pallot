@@ -7,8 +7,8 @@ import copy
 import pytest
 from fastapi.testclient import TestClient
 
-from votebot.ballot import _jp_is_constable
-from votebot.sources.sos import still_running
+from pallot.ballot import _jp_is_constable
+from pallot.sources.sos import still_running
 
 from .conftest import (
     ADDRESSES, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
