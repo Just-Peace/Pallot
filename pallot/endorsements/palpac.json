@@ -1,0 +1,28 @@
+{
+  "source": "palpac",
+  "label": "PAL PAC",
+  "organization": "Peace, Accountability, and Leadership PAC",
+  "url": "https://pal.vote/candidates",
+  "captured": "2026-10-04",
+  "description": "A political action committee working for Palestinian human rights and an end to U.S. military support for Israel's abuses; these are the congressional candidates it endorses and raises money for.",
+  "candidates": [
+    {"name": "Connie Chan", "state": "CA", "office": "U.S. House", "district": "11", "url": "https://www.conniechansf.com/"},
+    {"name": "Saikat Chakrabarti", "state": "CA", "office": "U.S. House", "district": "11", "url": "https://www.saikat.us/en"},
+    {"name": "Melat Kiros", "state": "CO", "office": "U.S. House", "district": "1", "url": "https://www.kirosforco.com/"},
+    {"name": "Delia Ramirez", "state": "IL", "office": "U.S. House", "district": "3", "url": "https://www.deliaforcongress.com/"},
+    {"name": "Junaid Ahmed", "state": "IL", "office": "U.S. House", "district": "8", "url": "https://junaidforus.com/"},
+    {"name": "Kat Abughazaleh", "state": "IL", "office": "U.S. House", "district": "9", "url": "https://katforillinois.com/"},
+    {"name": "Donavan McKinney", "state": "MI", "office": "U.S. House", "district": "13", "url": "https://www.donavanforcongress.com/"},
+    {"name": "Rashida Tlaib", "state": "MI", "office": "U.S. House", "district": "12", "url": "https://rashidaforcongress.com/"},
+    {"name": "Abdul El-Sayed", "state": "MI", "office": "U.S. Senate", "url": "https://abdulforsenate.com/about/"},
+    {"name": "Ilhan Omar", "state": "MN", "office": "U.S. House", "district": "5", "url": "https://ilhanomar.com/"},
+    {"name": "Cori Bush", "state": "MO", "office": "U.S. House", "district": "1", "url": "https://www.coribush.org/"},
+    {"name": "Adam Hamawy", "state": "NJ", "office": "U.S. House", "district": "12", "url": "https://hamawyfornj.com/"},
+    {"name": "Claire Valdez", "state": "NY", "office": "U.S. House", "district": "7", "url": "https://clairevaldezforcongress.com/"},
+    {"name": "Darializa Avila Chevalier", "state": "NY", "office": "U.S. House", "district": "13", "url": "https://www.darializaforcongress.com/"},
+    {"name": "Chris Rabb", "state": "PA", "office": "U.S. House", "district": "3", "url": "https://www.chrisrabb.com/"},
+    {"name": "Summer Lee", "state": "PA", "office": "U.S. House", "district": "12", "url": "https://summerforpa.com/"},
+    {"name": "Justin Pearson", "state": "TN", "office": "U.S. House", "district": "9", "url": "https://www.votejustinj.com/"},
+    {"name": "Frederick D. Haynes III", "state": "TX", "office": "U.S. House", "district": "30", "note": "Listed as Rev. Frederick D. Haynes III.", "url": "https://www.haynesforcongress.com/"}
+  ]
+}
