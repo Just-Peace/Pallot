@@ -138,8 +138,10 @@ def cards(
     scopes: dict[str, OfficeScope],
     county: str | None,
     bp_ballot: BpBallot | None = None,
+    city: str | None = None,
 ) -> CardSet:
     """Cards for the candidates Vote for Peace rates in Texas, in any race (seats.match_entries)."""
     snapshot = vfp.document().get("snapshot")
-    found = match_entries(vfp.name_index("TX"), races, scopes, county, bp_ballot, source=LABEL, entry_id="candidate_id")
+    found = match_entries(vfp.name_index("TX"), races, scopes, county, bp_ballot, source=LABEL,
+                          entry_id="candidate_id", city=city)
     return CardSet(candidates={key: card(person, match, snapshot) for key, (person, match) in found.items()})

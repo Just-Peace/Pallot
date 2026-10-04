@@ -4,6 +4,7 @@ holds a made-up one)."""
 
 from __future__ import annotations
 
+import asyncio
 import json
 from pathlib import Path
 
@@ -133,6 +134,14 @@ def test_a_title_before_the_name_still_matches_exactly(tmp_path, listed):
         [race("U.S. Representative District 30", ("FREDERICK HAYNES", "D"), key="sos:1:30", group="federal", seat="TX-30")],
         {}, None).candidates
     assert found["sos:1:30:0"].match.confidence == "exact"
+
+
+def test_a_city_office_matches_in_the_voters_city(tmp_path):
+    entry = {"name": "Zohaib Qadri", "state": "TX", "office": "Austin City Council", "district": "9", "jurisdiction": "Austin"}
+    example = parse(write(tmp_path, lambda d: d["candidates"].append(entry)))
+    council = [race("City Council Member, District 9", ("Zohaib Qadri", None), key="bp:9", group="local")]
+    assert asyncio.run(example.lookup(council, {}, "Travis", city="Austin")).candidates["bp:9:0"].match.confidence == "exact"
+    assert example.cards(council, {}, "Travis").candidates["bp:9:0"].match.confidence == "likely"
 
 
 def test_the_ballot_settings_and_the_pages_list(client, upstream):

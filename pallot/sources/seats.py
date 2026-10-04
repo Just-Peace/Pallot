@@ -1,8 +1,9 @@
 """Lists of candidates that name each one's office in their own words (Vote for Peace's ratings,
 the endorsement lists), matched to the ballot's races. An entry's office and district are read as
 a seat spelled the way the ballot's races are (entry_seats, race_seat): the TEC's spelling for a
-state office, Congress as "TX-37", and a county, precinct or city office as its county. In one
-race an entry goes to one candidate, the closest name (match_entries).
+state office, Congress as "TX-37", and a county, precinct or city office as its county (a city
+office also as the voter's city). In one race an entry goes to one candidate, the closest name
+(match_entries).
 """
 
 from __future__ import annotations
@@ -87,10 +88,12 @@ def entry_seats(entry: dict[str, Any]) -> set[str]:
     return seats
 
 
-def fit(seats: set[str], seat: str | None) -> set[str]:
+def fit(seats: set[str], seat: str | None, city: str | None = None) -> set[str]:
     """An entry's seats, with a court named without its place ("JUSTICE_SC:*") standing for
-    the race's own place on that court."""
-    return {seat if s.endswith("*") and seat and seat.startswith(s[:-1]) else s for s in seats}
+    the race's own place on that court, and a jurisdiction that is the voter's city ("Austin",
+    read as "COUNTY:AUSTIN") for a city race's seat (the county's, race_seat)."""
+    place = f"COUNTY:{city.upper()}" if city else None
+    return {seat if (s.endswith("*") and seat and seat.startswith(s[:-1])) or s == place else s for s in seats}
 
 
 def race_seat(race: Race, scope: OfficeScope | None, bp_race: Any, county: str | None) -> str | None:
@@ -133,22 +136,26 @@ def match_entries(
     *,
     source: str,
     entry_id: str,
+    city: str | None = None,
 ) -> dict[str, tuple[dict[str, Any], Match]]:
     """Candidate key -> (entry, match), in any race. A race's seat comes from race_seat, so a
     name found for another seat or county is only "likely". One entry goes to one candidate in a
     race: "Kristen Hawkins" is also "K Hawkins", as Kyle Hawkins in the same race is, so the
     strongest match by name takes it, and a tie leaves it unmatched. A county seat is every office
     in the county, so there a last name alone ("Ebony Williams" for LaShawn Williams) isn't a
-    match. ``source`` names the list in a match's notes; ``entry_id`` is the entries' unique key."""
+    match. A city race also takes an entry whose jurisdiction is the voter's ``city`` (Vote for
+    Peace files Austin's council as "Austin"). ``source`` names the list in a match's notes;
+    ``entry_id`` is the entries' unique key."""
     bp_races = {f"bp:{r.id}": r for r in bp_ballot.races} if bp_ballot else {}
     out: dict[str, tuple[dict[str, Any], Match]] = {}
     for race in races:
         seat = race_seat(race, scopes.get(race.key), bp_races.get(race.key), county)
+        place = city if race.group == "local" and seat and seat.startswith("COUNTY:") else None
         claims: dict[Hashable, list[tuple[int, str, dict[str, Any], Match]]] = defaultdict(list)
         for candidate in race.candidates:
             found = match_person(
                 index, candidate.name, candidate.party, seat,
-                seats_of=lambda entry: fit(entry_seats(entry), seat), party_of=party_code, source=source,
+                seats_of=lambda entry: fit(entry_seats(entry), seat, place), party_of=party_code, source=source,
                 seat_text=office_text, name_of=lambda entry: entry.get("name"),
             )
             if found and not (_strength(found[1]) == _LAST_NAME and seat and seat.startswith("COUNTY:")):

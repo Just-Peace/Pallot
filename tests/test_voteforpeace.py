@@ -142,3 +142,10 @@ def test_a_title_before_the_name_is_left_out(snapshot):
     assert "sos:1:26:0" in cards(snapshot, [house], {}, None).candidates  # "Dr. Eliz Markowitz" on the site
     assert party_code({"party": "Democrat"}) == "D" and party_code({"party": "Nonpartisan"}) is None
     assert party_code({"party": "r"}) == "R"
+
+
+@pytest.mark.parametrize("city, confidence", [("Austin", "exact"), ("Round Rock", "likely"), (None, "likely")])
+def test_a_city_as_the_jurisdiction_is_the_voters_city(snapshot, city, confidence):
+    council = race("City Council Member, District 9", ("Zohaib Qadri", None), key="bp:9", group="local")
+    match = cards(snapshot, [council], {}, "Travis", city=city).candidates["bp:9:0"].match  # "Austin" on the site
+    assert match.confidence == confidence

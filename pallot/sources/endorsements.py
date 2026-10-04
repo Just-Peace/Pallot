@@ -106,9 +106,10 @@ class EndorsementList:
         county: str | None,
         bp_ballot: BpBallot | None = None,
         state: str = "TX",
+        city: str | None = None,
     ) -> CardSet:
         """cards() in a thread, as enrich.run asks every list and feed."""
-        return await asyncio.to_thread(self.cards, races, scopes, county, bp_ballot, state)
+        return await asyncio.to_thread(self.cards, races, scopes, county, bp_ballot, state, city)
 
     def cards(
         self,
@@ -117,10 +118,12 @@ class EndorsementList:
         county: str | None,
         bp_ballot: BpBallot | None = None,
         state: str = "TX",
+        city: str | None = None,
     ) -> CardSet:
         """Cards for the candidates it endorses in the ballot's state, in any race (seats.match_entries).
         The file keeps every state; only the ballot's is matched."""
-        found = match_entries(self.index(state), races, scopes, county, bp_ballot, source=self.label, entry_id="entry_id")
+        found = match_entries(self.index(state), races, scopes, county, bp_ballot, source=self.label,
+                              entry_id="entry_id", city=city)
         return CardSet(candidates={key: self.card(entry, match) for key, (entry, match) in found.items()})
 
     def card(self, entry: dict[str, Any], match: Match) -> SourceCard:
