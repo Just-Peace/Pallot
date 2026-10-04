@@ -1,13 +1,14 @@
-// The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees race by race what it
-// would change, then applies it (with Undo) or marks who matches on the ballot. Opened from the
-// strip for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
+// The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees in words and race by race
+// what it would change, then applies it (with Undo) or marks who matches on the ballot. Opened
+// from the strip for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
 
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
-import { COUNT, plural } from "./format.js";
+import { COUNT, listed, plural } from "./format.js";
 import { icon } from "./icons.js";
 import {
-  MONEY, WRITE_INS, allRaces, available, ballotParties, loadRule, parseAmount, plan, saveRule, scopes, verdicts,
+  DEFAULT_RULE, MONEY, WRITE_INS, allRaces, available, ballotParties, describeRule, loadRule, parseAmount, plan, saveRule, scopes,
+  verdicts,
 } from "./pick-rules.js";
 import { showToast } from "./toast.js";
 
@@ -41,21 +42,36 @@ export function syncMarks() {
 
 // ---- the controls ---------------------------------------------------------------------
 
-const NO_DATA = "no data on your ballot";
-
 // A checkbox and its label, then ``extra`` (the amount boxes it goes with).
 // ``stacked``: the boxes on a line of their own, under the label.
-function checkRow(label, checked, onChange, { disabled = false, extra = null, stacked = false } = {}) {
-  const box = h("input", { type: "checkbox", checked, disabled, on: { change: (event) => onChange(event.target.checked) } });
-  return h("div", { class: ["rule-row", disabled && "disabled", stacked && "stacked"] },
-    h("label", { class: "check" }, box, h("span", {}, label, disabled ? h("span", { class: "muted" }, ` (${NO_DATA})`) : null)),
+function checkRow(label, checked, onChange, { extra = null, stacked = false } = {}) {
+  const box = h("input", { type: "checkbox", checked, on: { change: (event) => onChange(event.target.checked) } });
+  return h("div", { class: ["rule-row", stacked && "stacked"] },
+    h("label", { class: "check" }, box, h("span", {}, label)),
     extra ? h("div", { class: "rule-inputs" }, extra) : null);
 }
 
+// A chip that toggles (a party, an endorsement list). ``party``: its code, for its colour and a
+// swatch ("" for a swatch with no colour); ``count``: room for a number after the label.
+function chip(label, pressed, onToggle, { party = null, count = false } = {}) {
+  const button = h("button", {
+    type: "button", class: "rule-chip", "data-party": party || null, "aria-pressed": String(pressed),
+    on: {
+      click: () => {
+        const on = button.getAttribute("aria-pressed") !== "true";
+        button.setAttribute("aria-pressed", String(on));
+        onToggle(on);
+      },
+    },
+  }, party !== null ? h("span", { class: "rule-swatch", "aria-hidden": "true" }) : null, label,
+  count ? h("span", { class: "rule-count" }) : null);
+  return button;
+}
+
 // A box for an amount ("1M", "250,000"): its number goes to ``set``, or NaN while it isn't one.
-function amountBox(value, set, { label, prefix = "$", suffix = "", disabled = false }) {
+function amountBox(value, set, { label, prefix = "$", suffix = "" }) {
   const box = h("input", {
-    type: "text", inputmode: "decimal", class: "rule-amount", value: Number.isFinite(value) ? COUNT.format(value) : "", disabled, "aria-label": label,
+    type: "text", inputmode: "decimal", class: "rule-amount", value: Number.isFinite(value) ? COUNT.format(value) : "", "aria-label": label,
     on: {
       input: (event) => {
         const amount = parseAmount(event.target.value);
@@ -68,24 +84,34 @@ function amountBox(value, set, { label, prefix = "$", suffix = "", disabled = fa
     suffix ? h("span", { "aria-hidden": "true" }, suffix) : null);
 }
 
-function select(label, options, value, onChange, { disabled = false } = {}) {
-  return h("select", { "aria-label": label, disabled, on: { change: (event) => onChange(event.target.value) } },
+function select(label, options, value, onChange) {
+  return h("select", { "aria-label": label, on: { change: (event) => onChange(event.target.value) } },
     options.map(([id, text, off]) => h("option", { value: id, selected: id === value, disabled: Boolean(off) }, text)));
+}
+
+// A heading's conditions, inside Pick; nothing when none of them has data on this ballot.
+function group(title, ...rows) {
+  const shown = rows.filter(Boolean);
+  return shown.length ? h("fieldset", { class: "rule-sub" }, h("legend", {}, title), shown) : null;
 }
 
 // ---- the preview ----------------------------------------------------------------------
 
-function summary(result, active) {
-  const parts = [
-    result.picked ? `Picks ${plural(result.picked, "race")}` : null,
-    result.takenBack ? `takes back ${plural(result.takenBack, "pick")}` : null,
-    result.many ? `${COUNT.format(result.many)} left for you (more matches than seats)` : null,
-    result.kept ? `${COUNT.format(result.kept)} already picked, kept` : null,
-    result.same ? `${COUNT.format(result.same)} already picked that way` : null,
-    result.none ? `${COUNT.format(result.none)} with no match` : null,
-  ].filter(Boolean);
-  if (parts.length) return `${parts.join(" · ")}.`;
-  return active ? "Nothing to change in these races." : "Choose a party or a condition above.";
+// What the rule would do: a count from plan(), its words, and its colour.
+const TALLIES = [
+  ["picked", (n) => `${n === 1 ? "race" : "races"} to pick`, "good"],
+  ["takenBack", (n) => `${n === 1 ? "pick" : "picks"} taken back`, "warn"],
+  ["many", () => "left for you, with more matches than seats", ""],
+  ["kept", () => "already picked, kept", ""],
+  ["same", () => "already picked that way", ""],
+  ["none", () => "with no match", "muted"],
+];
+
+function tallies(result, active) {
+  const items = TALLIES.filter(([id]) => result[id]).map(([id, words, tone]) =>
+    h("li", { class: ["rule-tally", tone && `tone-${tone}`] }, h("strong", {}, COUNT.format(result[id])), " ", words(result[id])));
+  if (items.length) return items;
+  return [h("li", { class: "rule-tally muted" }, active ? "Nothing to change in these races." : "Choose a party or a condition.")];
 }
 
 function raceLine(row) {
@@ -100,57 +126,71 @@ function raceLine(row) {
   }[outcome];
   const back = row.takenBack.map(({ key, reasons }) => `takes back ${names([key])} (${reasons.join(", ")})`);
   return h("li", { class: ["rule-race", `rule-${outcome || "back"}`] },
-    h("span", { class: "rule-race-name" }, race.name), " ", [what, ...back].filter(Boolean).join(" · "));
+    h("span", { class: "rule-race-name" }, race.name), h("span", {}, [what, ...back].filter(Boolean).join(" · ")));
 }
 
 // ---- the dialog -----------------------------------------------------------------------
 
+const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, with room to list the races
+
 // ``raceKey``: the race whose funnel opened it, which is then where the rule applies.
 export function openRules(raceKey = null) {
   if (!page.ballot) return;
-  const rule = loadRule();
   const options = scopes(page.ballot, raceKey);
-  let scope = options[0];
+  draw(loadRule(), options, options[0]);
+  if (!dialog.open) dialog.showModal();
+  $("#rule-scope").focus();
+}
+
+// Draws the dialog for ``rule``, which is saved only by Apply or Mark who matches. Reset draws
+// it again with the default rule, in the same scope.
+function draw(rule, options, startScope) {
+  let scope = startScope;
   const everything = allRaces(page.ballot);
   const parties = ballotParties(everything);
   rule.parties = rule.parties.filter((code) => parties.some((p) => p.code === code)); // no chip to clear the others
   const has = available(everything);
   let result = null;
 
-  const summaryLine = h("p", { class: "rule-summary", "aria-live": "polite" });
+  const noWords = h("p", { class: "rule-words muted" }, "No rule yet: choose a party or a condition.");
+  const pickWords = h("p", { class: "rule-words tone-good" });
+  const skipWords = h("p", { class: "rule-words tone-warn" });
+  const tallyList = h("ul", { class: "rule-tallies", "aria-live": "polite" });
   const raceList = h("ul", { class: "rule-races" });
-  const raceDetails = h("details", { class: "rule-details" }, h("summary", {}, "Race by race"), raceList);
+  const raceCount = h("span", { class: "rule-count" });
+  const raceDetails = h("details", { class: "rule-details" }, h("summary", {}, "Race by race ", raceCount), raceList);
   const applyButton = h("button", { type: "button", class: "btn primary", on: { click: apply } });
+  // An onChange that changes the rule, then the preview.
+  const set = (change) => (value) => {
+    change(value);
+    update();
+  };
 
-  const chips = parties.map((party) => {
-    const chip = h("button", {
-      type: "button", class: "rule-party", "data-party": party.code === WRITE_INS ? null : party.code,
-      "aria-pressed": String(rule.parties.includes(party.code)),
-      on: {
-        click: () => {
-          const on = !rule.parties.includes(party.code);
-          rule.parties = on ? [...rule.parties, party.code] : rule.parties.filter((code) => code !== party.code);
-          chip.setAttribute("aria-pressed", String(on));
-          update();
-        },
-      },
-    }, h("span", { class: "rule-swatch", "aria-hidden": "true" }), party.label, h("span", { class: "rule-count" }));
-    return { party, chip };
-  });
+  const partyChips = parties.map((party) => ({
+    party,
+    chip: chip(party.label, rule.parties.includes(party.code), set((on) => {
+      rule.parties = on ? [...rule.parties, party.code] : rule.parties.filter((code) => code !== party.code);
+    }), { party: party.code === WRITE_INS ? "" : party.code, count: true }),
+  }));
 
   function update() {
     const races = scope.races;
-    for (const { party, chip } of chips) {
+    for (const { party, chip: button } of partyChips) {
       const count = races.filter((r) => r.candidates.some((c) => (c.write_in ? WRITE_INS : c.party) === party.code)).length;
-      chip.lastChild.textContent = String(count);
-      chip.title = `${party.label}: in ${plural(count, "race")} here`;
+      button.lastChild.textContent = String(count);
+      button.title = `${party.label}: in ${plural(count, "race")} here`;
     }
+    const words = describeRule(rule, parties, has);
+    pickWords.textContent = words.pick || "";
+    skipWords.textContent = words.skip || "";
+    pickWords.hidden = !words.pick;
+    skipWords.hidden = !words.skip;
+    noWords.hidden = Boolean(words.pick || words.skip);
     result = plan(races, rule, page.picks);
-    const active = result.rows.some((row) => row.outcome);
-    summaryLine.textContent = summary(result, active);
+    tallyList.replaceChildren(...tallies(result, result.rows.some((row) => row.outcome)));
     raceList.replaceChildren(...result.rows.map(raceLine));
+    raceCount.textContent = String(result.rows.length);
     raceDetails.hidden = !result.rows.length;
-    raceDetails.open = races.length === 1;
     applyButton.disabled = !result.changed;
     applyButton.textContent = result.changed ? `Apply to ${plural(result.changed, "race")}` : "Nothing to change";
   }
@@ -180,103 +220,122 @@ export function openRules(raceKey = null) {
     showToast("Candidates who match your rule are marked on your ballot.");
   }
 
+  function reset() {
+    draw({ ...structuredClone(DEFAULT_RULE), mark: rule.mark }, options, scope);
+    $("#rule-reset").focus();
+  }
+
+  const openList = () => {
+    raceDetails.open = scope.races.length === 1 || WIDE.matches;
+  };
   const scopeSelect = h("select", { id: "rule-scope", on: { change: (event) => {
     scope = options.find((o) => o.id === event.target.value);
+    openList();
     update();
   } } }, options.map((o) => h("option", { value: o.id, selected: o === scope }, o.label)));
 
-  const moneyOff = !Object.values(has.money).some(Boolean);
-  const moneyAmount = amountBox(rule.money.amount, (amount) => { rule.money.amount = amount; update(); },
-    { label: "Amount in dollars", disabled: moneyOff });
+  const moneyOn = Object.values(has.money).some(Boolean);
+  const moneyAmount = amountBox(rule.money.amount, set((amount) => { rule.money.amount = amount; }), { label: "Amount in dollars" });
   const relative = (compare) => compare === "least" || compare === "most";
   moneyAmount.hidden = relative(rule.money.compare);
   const moneyInputs = [
     select("Which money", MONEY.map(([id, label]) => [id, label, !has.money[id]]), rule.money.metric,
-      (value) => { rule.money.metric = value; update(); }, { disabled: moneyOff }),
+      set((value) => { rule.money.metric = value; })),
     select("Compared with what", [["under", "under"], ["over", "over"], ["least", "the least in the race"], ["most", "the most in the race"]],
-      rule.money.compare, (value) => {
+      rule.money.compare, set((value) => {
         rule.money.compare = value;
         moneyAmount.hidden = relative(value);
-        update();
-      }, { disabled: moneyOff }),
+      })),
     moneyAmount,
   ];
+  const percentBox = (key, label) =>
+    amountBox(rule[key].amount, set((amount) => { rule[key].amount = amount; }), { label, prefix: "", suffix: "%" });
+  const sign = (text) => h("span", { class: "rule-sign", "aria-hidden": "true" }, text);
 
-  const pickSet = h("fieldset", { class: "rule-set" },
-    h("legend", {}, "Pick"),
-    chips.length
-      ? h("div", { class: "rule-parties", role: "group", "aria-label": "Parties" }, chips.map((c) => c.chip))
-      : h("p", { class: "muted" }, "No candidate on your ballot has a party."),
-    h("p", { class: "fine" }, "Any of the parties you choose, or anyone without one chosen. Then, only if all these hold:"),
-    h("div", { class: "rule-row" },
-      h("label", { class: "rule-label", for: "rule-incumbent" }, "Incumbent"),
-      h("div", { class: "rule-inputs" },
-        h("select", { id: "rule-incumbent", on: { change: (event) => { rule.incumbent = event.target.value; update(); } } },
-          [["any", "Incumbent or not"], ["yes", "Only incumbents"], ["no", "Only challengers"]].map(([value, text]) =>
-            h("option", { value, selected: value === rule.incumbent }, text))))),
-    checkRow("TrackAIPAC endorses them", rule.endorsed, (on) => { rule.endorsed = on; update(); }, { disabled: !has.trackaipac }),
-    checkRow("Vote for Peace rates them an ally", rule.peaceAlly, (on) => { rule.peaceAlly = on; update(); },
-      { disabled: !has.voteforpeace }),
-    has.endorsements.map(({ source, label }) => checkRow(`Endorsed by ${label}`, rule.endorsedBy.includes(source), (on) => {
-      rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
-      update();
-    })),
-    checkRow("Their money is", rule.money.on, (on) => { rule.money.on = on; update(); }, { disabled: moneyOff, extra: moneyInputs, stacked: true }),
-    checkRow("Small donations make up at least", rule.small.on, (on) => { rule.small.on = on; update(); }, {
-      disabled: !has.small,
-      extra: amountBox(rule.small.amount, (amount) => { rule.small.amount = amount; update(); },
-        { label: "Small donations' share of what they raised, in percent", prefix: "", suffix: "%", disabled: !has.small }),
-    }),
-    checkRow("They lead the polls", rule.leads, (on) => { rule.leads = on; update(); }, { disabled: !has.polls }));
+  const pickSet = h("fieldset", { class: "rule-set rule-set-pick" },
+    h("legend", {}, sign("✓"), "Pick"),
+    h("p", { class: "rule-hint" }, "Candidates who meet every condition you turn on."),
+    h("fieldset", { class: "rule-sub" }, h("legend", {}, "Party"),
+      partyChips.length
+        ? [h("div", { class: "rule-chips" }, partyChips.map((c) => c.chip)),
+          h("p", { class: "fine" }, "Any of the parties you choose. With none chosen, every party.")]
+        : h("p", { class: "muted" }, "No candidate on your ballot has a party.")),
+    h("fieldset", { class: "rule-sub" }, h("legend", {}, "Incumbent or challenger"),
+      h("div", { class: "seg" }, [["any", "Either"], ["yes", "Incumbents"], ["no", "Challengers"]].map(([value, text]) =>
+        h("label", { class: "seg-option" },
+          h("input", { type: "radio", name: "rule-incumbent", value, checked: value === rule.incumbent,
+            on: { change: set(() => { rule.incumbent = value; }) } }), text)))),
+    group("Endorsements and ratings",
+      has.trackaipac && checkRow("TrackAIPAC endorses them", rule.endorsed, set((on) => { rule.endorsed = on; })),
+      has.voteforpeace && checkRow("Vote for Peace rates them an ally", rule.peaceAlly, set((on) => { rule.peaceAlly = on; })),
+      has.endorsements.length && h("div", { class: "rule-lists" },
+        h("p", { class: "rule-lists-label" }, has.endorsements.length > 1 ? "Endorsed by every list you choose:" : "Endorsed by:"),
+        h("div", { class: "rule-chips" }, has.endorsements.map(({ source, label }) =>
+          chip(label, rule.endorsedBy.includes(source), set((on) => {
+            rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
+          })))))),
+    group("Money",
+      moneyOn && checkRow("Their money is", rule.money.on, set((on) => { rule.money.on = on; }), { extra: moneyInputs, stacked: true }),
+      has.small && checkRow("Small donations make up at least", rule.small.on, set((on) => { rule.small.on = on; }),
+        { extra: percentBox("small", "Small donations' share of what they raised, in percent") })),
+    group("Polls", has.polls && checkRow("They lead the polls", rule.leads, set((on) => { rule.leads = on; }))));
 
-  const skipSet = h("fieldset", { class: "rule-set" },
-    h("legend", {}, "Don't pick, and take back"),
-    checkRow("On TrackAIPAC's watchlist", rule.watchlist, (on) => { rule.watchlist = on; update(); }, { disabled: !has.trackaipac }),
-    checkRow("Vote for Peace opposes them", rule.peaceOpposed, (on) => { rule.peaceOpposed = on; update(); },
-      { disabled: !has.voteforpeace }),
-    checkRow("Israel lobby money over", rule.lobby.on, (on) => { rule.lobby.on = on; update(); }, {
-      disabled: !has.lobby,
-      extra: amountBox(rule.lobby.amount, (amount) => { rule.lobby.amount = amount; update(); },
-        { label: "Israel lobby money, in dollars", disabled: !has.lobby }),
-    }),
-    checkRow("Their own money makes up over", rule.selfFunded.on, (on) => { rule.selfFunded.on = on; update(); }, {
-      disabled: !has.selfFunded,
-      extra: amountBox(rule.selfFunded.amount, (amount) => { rule.selfFunded.amount = amount; update(); },
-        { label: "The candidate's own gifts and loans, in percent of what the campaign raised", prefix: "", suffix: "%", disabled: !has.selfFunded }),
-    }),
-    checkRow("Polling under", rule.polling.on, (on) => { rule.polling.on = on; update(); }, {
-      disabled: !has.polls,
-      extra: amountBox(rule.polling.amount, (amount) => { rule.polling.amount = amount; update(); },
-        { label: "Poll share, in percent", prefix: "", suffix: "%", disabled: !has.polls }),
-    }));
+  const skipRows = [
+    has.trackaipac && checkRow("On TrackAIPAC's watchlist", rule.watchlist, set((on) => { rule.watchlist = on; })),
+    has.voteforpeace && checkRow("Vote for Peace opposes them", rule.peaceOpposed, set((on) => { rule.peaceOpposed = on; })),
+    has.lobby && checkRow("Israel lobby money over", rule.lobby.on, set((on) => { rule.lobby.on = on; }),
+      { extra: amountBox(rule.lobby.amount, set((amount) => { rule.lobby.amount = amount; }), { label: "Israel lobby money, in dollars" }) }),
+    has.selfFunded && checkRow("Their own money makes up over", rule.selfFunded.on, set((on) => { rule.selfFunded.on = on; }),
+      { extra: percentBox("selfFunded", "The candidate's own gifts and loans, in percent of what the campaign raised") }),
+    has.polls && checkRow("Polling under", rule.polling.on, set((on) => { rule.polling.on = on; }),
+      { extra: percentBox("polling", "Poll share, in percent") }),
+  ].filter(Boolean);
+  const skipSet = h("fieldset", { class: "rule-set rule-set-skip" },
+    h("legend", {}, sign("✕"), "Don't pick, and take back"),
+    h("p", { class: "rule-hint" }, "Anyone who meets any one of these, even if you picked them yourself."),
+    skipRows.length ? skipRows : h("p", { class: "muted" }, "Your ballot has nothing for these to go on."));
+
+  const missing = [
+    !has.trackaipac && "TrackAIPAC", !has.voteforpeace && "Vote for Peace", !moneyOn && "money",
+    moneyOn && !has.small && "small donations", moneyOn && !has.selfFunded && "self-funding", !has.lobby && "Israel lobby money",
+    !has.polls && "polls",
+  ].filter(Boolean);
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),
-    h("p", { class: "muted" }, `Pick by party, TrackAIPAC, Vote for Peace, ${has.endorsements.length ? "endorsements, " : ""}`
-      + "money and polls. Nothing changes until you press Apply.")));
+    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press Apply.")));
   dialog.replaceChildren(
     head,
-    h("div", { class: "rule-body" },
-      h("div", { class: "rule-row" }, h("label", { class: "rule-label", for: "rule-scope" }, "Apply to"),
-        h("div", { class: "rule-inputs" }, scopeSelect)),
-      pickSet,
-      skipSet,
-      checkRow("Don't replace picks I've already made", rule.keepMine, (on) => { rule.keepMine = on; update(); }),
-      h("p", { class: "fine" },
-        "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
-        + "congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it "
-        + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
-        + "donor) and self-funding are known only in congressional races, with an FEC key. Without the Write-ins chip, a rule "
-        + "picks only the names printed on the ballot. If more candidates match than a race has seats, a tie included, "
-        + "it's left for you."),
-      h("div", { class: "rule-preview" }, summaryLine, raceDetails)),
+    h("div", { class: "rule-bar" },
+      h("label", { class: "rule-label", for: "rule-scope" }, "Apply to"), scopeSelect,
+      h("button", { type: "button", id: "rule-reset", class: "link-btn rule-reset", on: { click: reset } }, icon("reset"), "Reset")),
+    h("div", { class: "rule-layout" },
+      h("div", { class: "rule-form" },
+        pickSet,
+        skipSet,
+        missing.length ? h("p", { class: "fine" }, `Not offered, since nothing on your ballot has them: ${listed(missing)}.`) : null,
+        h("details", { class: "rule-how" }, h("summary", {}, "How rules work"),
+          h("p", {}, "Pick takes the candidates who meet every condition you turn on, from any party you choose. Don't pick "
+            + "takes back anyone who meets any one of its conditions, even a pick you made yourself."),
+          h("p", {}, "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
+            + "congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it "
+            + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. So “Democrats who spent under $1M” "
+            + "still picks a county race's Democrat. Small donations ($200 or less from a donor) and self-funding are known only "
+            + "in congressional races, with an FEC key."),
+          h("p", {}, "Without the Write-ins chip, a rule picks only the names printed on the ballot. If more candidates match than "
+            + "a race has seats, a tie included, it's left for you."))),
+      h("aside", { class: "rule-preview", "aria-label": "What your rule would do" },
+        h("h3", {}, "Your rule"),
+        noWords, pickWords, skipWords,
+        h("h3", {}, "What it would do"),
+        tallyList,
+        checkRow("Don't replace picks I've already made", rule.keepMine, set((on) => { rule.keepMine = on; })),
+        raceDetails)),
     h("div", { class: "details-foot" },
+      h("button", { type: "button", class: "btn with-icon rule-mark-btn", on: { click: mark } }, icon("filter"), "Mark who matches"),
       h("button", { type: "button", class: "btn ghost", on: { click: () => dialog.close() } }, "Cancel"),
-      h("button", { type: "button", class: "btn with-icon", on: { click: mark } }, icon("filter"), "Mark who matches"),
       applyButton),
   );
+  openList();
   update();
-  if (!dialog.open) dialog.showModal();
-  dialog.scrollTop = 0;
-  scopeSelect.focus();
 }

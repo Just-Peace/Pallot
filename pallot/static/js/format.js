@@ -5,6 +5,7 @@ export const DOLLARS = new Intl.NumberFormat("en-US", { style: "currency", curre
 export const DOLLARS_SHORT = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 });
 export const COUNT = new Intl.NumberFormat("en-US");
 const LIST = new Intl.ListFormat("en-GB", { type: "conjunction" }); // "A, B and C", with no comma before "and"
+const EITHER = new Intl.ListFormat("en-GB", { type: "disjunction" }); // "A, B or C"
 
 export function formatDate(iso, options = { month: "long", day: "numeric", year: "numeric" }) {
   if (!iso) return "";
@@ -44,3 +45,6 @@ export const plural = (count, word) => `${COUNT.format(count)} ${word}${count ==
 
 // "U.S. House, State House and SBOE"
 export const listed = (names) => LIST.format(names);
+
+// "Democratic, Green or write-in"
+export const either = (names) => EITHER.format(names);

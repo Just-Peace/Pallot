@@ -8,7 +8,7 @@
 // money in a one-seat race is left too.
 
 import { ballotSections } from "./ballot-shared.js";
-import { DOLLARS_SHORT } from "./format.js";
+import { COUNT, DOLLARS_SHORT, either, listed as andList } from "./format.js";
 import { partyName } from "./labels.js";
 import { PICK_RULE, readJson, writeJson } from "./storage.js";
 
@@ -121,7 +121,7 @@ function endorsementLists(candidates) {
   return [...found.values()].sort((a, b) => a.label.localeCompare(b.label));
 }
 
-// Which conditions have anything to go on in these races; the dialog greys out the rest, and
+// Which conditions have anything to go on in these races; the dialog hides the rest, and
 // lists only the endorsement lists that endorse someone here.
 export function available(races) {
   const candidates = races.flatMap((race) => race.candidates);
@@ -136,6 +136,59 @@ export function available(races) {
     selfFunded: has("self_share"),
     polls: has("poll"),
   };
+}
+
+// How each money measure reads in describeRule: against an amount, then the least or the most.
+const MONEY_WORDS = {
+  raised: ["raised {cmp} {amount}", "raised the {cmp} in the race"],
+  spent: ["spent {cmp} {amount}", "spent the {cmp} in the race"],
+  cash: ["have {cmp} {amount} cash on hand", "have the {cmp} cash on hand in the race"],
+  outside_for: ["had {cmp} {amount} spent for them from outside", "had the {cmp} spent for them from outside in the race"],
+};
+
+const share = (amount) => `${COUNT.format(amount)}%`;
+
+// The rule in words, as { pick, skip } (null for a half with nothing on): "Pick Democratic
+// incumbents who are endorsed by JVP Action and spent under $1M." Only the conditions with
+// something to go on (``has``, from available()) count, as only they show in the dialog.
+// ``parties``: ballotParties(), for the chips' names.
+export function describeRule(rule, parties, has) {
+  const on = (condition, amount) => condition && known(amount);
+  const adjectives = parties.filter((p) => rule.parties.includes(p.code))
+    .map((p) => (p.code === WRITE_INS ? "write-in" : p.label));
+  const noun = { yes: "incumbents", no: "challengers" }[rule.incumbent] || "candidates";
+  const endorsers = [
+    rule.endorsed && has.trackaipac ? "TrackAIPAC" : null,
+    ...has.endorsements.filter((list) => rule.endorsedBy.includes(list.source)).map((list) => list.label),
+  ].filter(Boolean);
+  const { money } = rule;
+  const relative = money.compare === "least" || money.compare === "most";
+  const [vsAmount, vsRace] = MONEY_WORDS[money.metric] || MONEY_WORDS.spent;
+  const moneyWords = money.on && has.money[money.metric] && (relative || known(money.amount))
+    ? (relative ? vsRace : vsAmount).replace("{cmp}", money.compare).replace("{amount}", DOLLARS_SHORT.format(money.amount))
+    : null;
+  const clauses = [
+    endorsers.length ? `are endorsed by ${andList(endorsers)}` : null,
+    rule.peaceAlly && has.voteforpeace ? "are rated an ally by Vote for Peace" : null,
+    moneyWords,
+    on(rule.small.on && has.small, rule.small.amount) ? `get at least ${share(rule.small.amount)} of their money in small donations` : null,
+    rule.leads && has.polls ? "lead the polls" : null,
+  ].filter(Boolean);
+  const pick = adjectives.length || noun !== "candidates" || clauses.length
+    ? `Pick ${[either(adjectives), noun].filter(Boolean).join(" ")}${clauses.length ? ` who ${andList(clauses)}` : ""}.`
+    : null;
+
+  const lobby = rule.lobby.amount > 0 ? `with over ${DOLLARS_SHORT.format(rule.lobby.amount)} of Israel lobby money` : "with any Israel lobby money";
+  const avoid = [
+    rule.watchlist && has.trackaipac ? "on TrackAIPAC's watchlist" : null,
+    rule.peaceOpposed && has.voteforpeace ? "opposed by Vote for Peace" : null,
+    on(rule.lobby.on && has.lobby, rule.lobby.amount) ? lobby : null,
+    on(rule.selfFunded.on && has.selfFunded, rule.selfFunded.amount)
+      ? `whose own money is over ${share(rule.selfFunded.amount)} of what they raised` : null,
+    on(rule.polling.on && has.polls, rule.polling.amount) ? `polling under ${share(rule.polling.amount)}` : null,
+  ].filter(Boolean);
+  const skip = avoid.length ? `Don't pick anyone ${either(avoid)}, and take back their picks.` : null;
+  return { pick, skip };
 }
 
 // The rule in one race: whether its Pick half applies there, who it picks (``matches``, never
