@@ -11,13 +11,17 @@ from fastapi.testclient import TestClient
 
 from pallot.admin import SOURCES
 from pallot.models import Candidate, Race
-from pallot.sources.endorsement_feeds import FEEDS, muslims_united
+from pallot.sources.endorsement_feeds import FEEDS, cair_action, muslims_united
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, EndorsementList, read_entry
 
 from .conftest import get_ballot, last_use, load
 
 MUPAC = "mupac"
 FEED_HOST = "muslimsunitedpac.com"
+CAIR = "cair"
+CAIR_HOST = "cairactionguide.org"
+CAIR_TX = "https://cairactionguide.org/explore#state-tx"
+ENDORSED = "Endorsed: strong alignment, integrity, and clear community benefit."
 
 
 def row(client: TestClient, source: str = MUPAC) -> dict:
@@ -57,6 +61,101 @@ def test_muslims_united_leaves_out_what_it_cant_read():
     ], "total": 2}
     assert muslims_united(answer) == [{"name": "Al Green", "state": "TX", "office": "U.S. House", "district": "18",
                                        "party": None, "note": None, "url": None}]
+
+
+def test_cair_action_entries():
+    entries = cair_action(load(f"endorsement_feeds/{CAIR}.json"))
+    assert len(entries) == 591  # 594 endorsements: three candidates are there for a primary and its runoff
+    assert [read_entry(raw, n, CAIR)["name"] for n, raw in enumerate(entries)] == [e["name"] for e in entries]
+    texas = {e["name"]: (e["office"], e["district"], e["jurisdiction"]) for e in entries if e["state"] == "TX"}
+    assert texas == {
+        "Al Green": ("U.S. Representative", "18", None),  # congressional "TX-18"
+        "Zeeshan Hafeez": ("U.S. Representative", "33", None),
+        "Greg Casar": ("U.S. Representative", "37", None),
+        "Staci Childs": ("State Representative", "131", None),  # state_lower "State House District 131"
+        "Ron Reynolds": ("State Representative", "27", None),
+        "Montserrat Garibay": ("State Representative", "49", None),
+        "Jeremy Hendricks": ("State Representative", "50", None),  # lost the primary: kept, as CAIR keeps it
+        "Brittany Black": ("State Representative", "61", None),
+        "Stephanie Limon Bazan": ("State Board of Education", "5", None),  # special_district
+        "Allison Bush": ("State Board of Education", "5", None),
+        "Tiffany Perkinz": ("State Board of Education", "7", None),
+        "Brittanye Morris": ("Fort Bend County Commissioner", "4", "Fort Bend"),  # "… Commissioner Pct 4"
+        "Susanna Ledesma Woody": ("Travis County Commissioner", "4", "Travis"),  # "…, Precinct 4"
+        "Dexter McCoy": ("Fort Bend County Judge", None, "Fort Bend"),
+        "Letitia Plummer": ("Harris County Judge", None, "Harris"),
+        "Audrie Lawton-Evans": ("Harris County Attorney", None, "Harris"),
+        "Joe Panzarella": ("Houston City Council District C", None, None),  # municipal: its name, no county
+    }
+    casar = next(e for e in entries if e["name"] == "Greg Casar")
+    assert (casar["party"], casar["note"], casar["url"]) == ("Democrat", ENDORSED, CAIR_TX)
+    others = {(e["state"], e["name"]): e for e in entries}
+    haney = others[("CA", "Matt Haney")]  # a "State Assembly Member" names no seat; its kind's office does
+    assert (haney["office"], haney["district"], haney["url"]) == (
+        "State Representative", "17", "https://cairactionguide.org/explore#state-ca")
+    gee = others[("CA", "Natalie Gee")]  # a county office whose name starts with no county: its name
+    assert (gee["office"], gee["district"], gee["jurisdiction"]) == (
+        "San Francisco Board of Supervisors, District 4", None, None)
+    preferred = next(e for e in entries if e["note"].startswith("Preferred"))
+    assert preferred["note"] == "Preferred: supportive overall and open to stronger partnership."
+
+
+def test_cair_action_keeps_one_entry_a_candidate_and_only_endorsements():
+    with pytest.raises(ValueError):
+        cair_action({"endorsements": []})
+
+    def endorsement(level="Endorsed", date="2026-03-03", kind="primary", **extra):
+        return {"candidateId": 7, "candidateName": "Greg Casar", "party": None, "status": "published",
+                "endorsementLevel": level, "notes": None, "electionResult": None,
+                "jurisdiction": {"kind": "congressional", "name": "TX-37", "state": "TX"},
+                "office": {"level": "federal", "title": "U.S. Representative"},
+                "election": {"type": kind, "electionDate": date}, **extra}
+
+    found = cair_action([
+        endorsement("Preferred"),
+        endorsement("Endorsed", "2026-05-26", "runoff", notes="Runoff pick.", electionResult="Lost"),
+        endorsement("Endorsed", "2026-11-03", "general", candidateId=8,
+                    jurisdiction={"kind": "state_lower", "name": "State House District 49", "state": "TX"},
+                    office={"title": "State Representative"}),
+        endorsement("Oppose", candidateId=9), endorsement("No Recommendation", candidateId=10),
+        endorsement(status="pending", candidateId=11), endorsement(candidateName=" ", candidateId=12),
+        "not an endorsement",
+    ])
+    assert found == [
+        {"name": "Greg Casar", "state": "TX", "office": "U.S. Representative", "district": "37", "jurisdiction": None,
+         "party": None, "note": f"{ENDORSED} Runoff pick.", "url": CAIR_TX},  # the runoff's, the latest; lost, still kept
+        {"name": "Greg Casar", "state": "TX", "office": "State Representative", "district": "49", "jurisdiction": None,
+         "party": None, "note": ENDORSED, "url": CAIR_TX},  # another candidate id: another entry
+    ]
+
+
+def test_cair_action_reads_every_kind_of_seat():
+    def seat(kind, name, title, state="TX"):
+        entry = cair_action([{"candidateName": "A B", "endorsementLevel": "Endorsed",
+                              "jurisdiction": {"kind": kind, "name": name, "state": state}, "office": {"title": title}}])[0]
+        return entry["office"], entry["district"], entry["jurisdiction"]
+
+    assert seat("congressional", "TX-18", "U.S. Representative") == ("U.S. Representative", "18", None)
+    assert seat("state_lower", "State House District 131", "State Representative") == ("State Representative", "131", None)
+    assert seat("state_upper", "State Senate District 14", "State Senator") == ("State Senator", "14", None)
+    assert seat("state", "Texas", "U.S. Senator") == ("U.S. Senator", None, None)
+    assert seat("state", "Texas", "Attorney General") == ("Attorney General", None, None)
+    assert seat("special_district", "State Board of Education District 5", "State Board of Education") == (
+        "State Board of Education", "5", None)
+    assert seat("county", "Fort Bend County Commissioner Pct 4", "County Commissioner") == (
+        "Fort Bend County Commissioner", "4", "Fort Bend")
+    assert seat("county", "Harris County Attorney", "County Attorney") == ("Harris County Attorney", None, "Harris")
+    assert seat("county", "Fort Bend County Judge", "County Judge") == ("Fort Bend County Judge", None, "Fort Bend")
+    assert seat("county", "Travis County Sheriff", "Travis County Sheriff") == ("Travis County Sheriff", None, "Travis")
+    assert seat("municipal", "Houston City Council District C", "City Council Member") == (
+        "Houston City Council District C", None, None)
+    assert seat("school_district", "Austin ISD Board, District 2", "School Board Member") == (
+        "Austin ISD Board, District 2", None, None)
+    assert seat("judicial_district", "Alameda County Superior Court Judge, Seat 19", "Superior Court Judge", "CA") == (
+        "Alameda County Superior Court Judge", None, "Alameda")
+    assert seat("state_lower", "Washington House LD 10, Pos. 1", "Washington House LD 10, Pos. 1", "WA") == (
+        "State Representative", "10", None)
+    assert seat("a kind it doesn't know", "Somewhere", "Dogcatcher") == ("Dogcatcher", None, None)
 
 
 def race(name, *candidates, key, seat):
@@ -104,6 +203,24 @@ def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
         "source": MUPAC, "label": "Muslims United PAC", "organization": "Muslims United PAC",
         "url": "https://muslimsunitedpac.com/endorsements", "captured": today.isoformat(),
         "description": FEEDS[0].description, "live": True, "enabled": True}
+
+
+def test_cair_matches_texas_candidates(client, upstream):
+    ballot = get_ballot(client, "ut")
+    casar = cards_from(ballot, CAIR)["Greg Casar"]
+    assert (casar["label"], casar["match"]["confidence"], casar["flags"], casar["quotes"]) == (
+        "CAIR Action", "exact", [FLAG], [ENDORSED])
+    assert [(b["text"], b["url"]) for b in casar["badges"]] == [("Endorsed by CAIR Action", CAIR_TX)]
+    assert {f["label"]: f["value"] for f in casar["facts"]}["Office on the list"] == "U.S. Representative, District 37"
+    assert cards_from(ballot, CAIR)["Montserrat Garibay"]["match"]["confidence"] == "exact"  # State House District 49
+    assert upstream.count(CAIR_HOST) == 1
+
+    plummer = cards_from(get_ballot(client, "harris"), CAIR)["Letitia Plummer"]  # a county office, by its county
+    assert plummer["match"]["confidence"] == "exact"
+    assert {f["label"]: f["value"] for f in plummer["facts"]}["Office on the list"] == "Harris County Judge"
+    assert get_ballot(client, "ut")["meta"]["external_calls"] == 0 and upstream.count(CAIR_HOST) == 1
+    assert [(f["label"], f["value"]) for f in row(client, CAIR)["details"]] == [
+        ("Texas candidates", "17"), ("All candidates", "591 in 27 states")]
 
 
 def test_its_settings_row_refreshes_and_clears(client, upstream):

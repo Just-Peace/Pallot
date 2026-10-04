@@ -247,6 +247,79 @@ def muslims_united(answer: Any) -> list[dict[str, Any]]:
     return found
 
 
+CAIR_SITE = "https://cairactionguide.org"
+_CAIR_LEVELS = {  # its levels that endorse, and the site's own words on each
+    "endorsed": "Endorsed: strong alignment, integrity, and clear community benefit.",
+    "preferred": "Preferred: supportive overall and open to stronger partnership.",
+    "joint endorsement": "Joint Endorsement: both are viable; choose one candidate.",
+    "joint": "Joint Endorsement: both are viable; choose one candidate.",
+}
+_CAIR_OFFICES = {"congressional": "U.S. Representative", "state_lower": "State Representative",
+                 "state_upper": "State Senator"}
+_CAIR_LOCAL = ("county", "municipal", "judicial_district", "school_district", "special_district")
+_CAIR_DISTRICT = re.compile(r"^[A-Z]{2}-(\d+)$|\b(?:District|LD|Precinct|Pct\.?)\s*(\d+)\b", re.IGNORECASE)
+_CAIR_COUNTY = re.compile(r"^(.+?)\s+County\b")
+
+
+def _cair_seat(raw: dict[str, Any]) -> dict[str, Any]:
+    """An entry's state, office, district and county, from its jurisdiction (kind, name) and
+    office (title). The district is its districtHint, or the number in the name ("TX-18", "State
+    House District 131", "Fort Bend County Commissioner Pct 4"). The office is the title, or the
+    kind's ("State Representative" for a "State Assembly Member"), the first that names a seat;
+    else, for a local office, "<county> County <title>" when the name starts with a county
+    ("Fort Bend County Judge"), which is then its jurisdiction, or else the name itself ("Houston
+    City Council District C", without a district); else the title."""
+    place = raw.get("jurisdiction") if isinstance(raw.get("jurisdiction"), dict) else {}
+    office = raw.get("office") if isinstance(raw.get("office"), dict) else {}
+    state, kind, title = _text(place.get("state")), _text(place.get("kind")), _text(office.get("title"))
+    name = _text(place.get("name")) or ""
+    number = _CAIR_DISTRICT.search(_text(raw.get("districtHint")) or name)
+    district = str(int(number.group(1) or number.group(2))) if number else None
+    county = _CAIR_COUNTY.match(name) if kind in _CAIR_LOCAL else None
+    county = county.group(1) if county else None
+    found = next((t for t in (title, _CAIR_OFFICES.get(kind or "")) if t and entry_seats(
+        {"state": state, "office_title": t, "district": district})), None)
+    if found is None and county and title:
+        bare = re.sub(r"^County\s+", "", title)
+        found = title if title.lower().startswith(f"{county} county".lower()) else f"{county} County {bare}"
+    elif found is None and kind in _CAIR_LOCAL and name:
+        found, district = name, None
+    return {"state": state, "office": found or title or name, "district": district, "jurisdiction": county}
+
+
+def cair_action(answer: Any) -> list[dict[str, Any]]:
+    """CAIR Action Guide's /api/endorsements: a list of endorsements, one per candidate and
+    election, so a candidate endorsed for a primary and its runoff is there twice; they're one
+    entry, the latest election's (_cair_seat reads the seat). Only its endorsing levels count
+    (not "Oppose" or "No Recommendation"), whatever the candidate's result in a primary. The note
+    is the level, in the site's words, and its notes. The site has no page per candidate, so the
+    link is the list's section for the state (its own permalink)."""
+    if not isinstance(answer, list):
+        raise ValueError("expected a list of endorsements")
+    latest: dict[tuple[Any, ...], tuple[str, dict[str, Any]]] = {}
+    for raw in answer:
+        if not isinstance(raw, dict) or raw.get("status", "published") != "published":
+            continue
+        level = _CAIR_LEVELS.get((_text(raw.get("endorsementLevel")) or "").lower())
+        name = _text(raw.get("candidateName"))
+        if not level or not name:
+            continue
+        seat = _cair_seat(raw)
+        state = seat["state"]
+        election = raw.get("election") if isinstance(raw.get("election"), dict) else {}
+        key = (raw.get("candidateId") or name.lower(), state, seat["office"], seat["district"], seat["jurisdiction"])
+        when = str(election.get("electionDate") or "")
+        notes = _text(raw.get("notes"))
+        entry = {
+            "name": name, **seat, "party": _text(raw.get("party")),
+            "note": f"{level} {notes}" if notes else level,
+            "url": f"{CAIR_SITE}/explore#state-{state.lower()}" if state and re.match(r"^[A-Z]{2}$", state) else None,
+        }
+        if key not in latest or when >= latest[key][0]:
+            latest[key] = (when, entry)
+    return [entry for _, entry in latest.values()]
+
+
 FEEDS = (
     Feed(
         source="mupac",
@@ -257,6 +330,17 @@ FEEDS = (
         description="The candidates Muslims United PAC endorses, from the public list on its website. Pallot "
         "downloads the whole list, so nothing about you is sent.",
         read=muslims_united,
+    ),
+    Feed(
+        source="cair",
+        label="CAIR Action",
+        organization="CAIR Action",
+        url=f"{CAIR_SITE}/explore",
+        api=f"{CAIR_SITE}/api/endorsements",
+        description="The candidates CAIR Action endorses or prefers, from the public list in its Action Guide. "
+        "Pallot downloads the whole list, so nothing about you is sent.",
+        read=cair_action,
+        headers={"accept": "*/*"},
     ),
 )
 
