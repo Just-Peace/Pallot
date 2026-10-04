@@ -11,7 +11,7 @@ import re
 from collections import defaultdict
 from typing import Any, Hashable
 
-from ..matching import FIRST_LAST, FULL, INITIAL, NameIndex, match_person
+from ..matching import FIRST_LAST, FULL, INITIAL, TITLES, NameIndex, match_person
 from ..models import Match, Race
 from ..offices import OfficeScope
 from .ballotpedia import BpBallot
@@ -21,7 +21,7 @@ _PARTIES = {
     "DEMOCRAT": "D", "DEMOCRATIC": "D", "REPUBLICAN": "R", "LIBERTARIAN": "L", "GREEN": "G", "INDEPENDENT": "I",
     "D": "D", "R": "R", "L": "L", "G": "G", "I": "I",
 }
-_TITLE = re.compile(r"^(?:DR|MR|MRS|MS|HON)\.?\s+", re.IGNORECASE)
+_TITLE = re.compile(rf"^(?:(?:{'|'.join(sorted(TITLES))})\.?\s+)+", re.IGNORECASE)
 _US = r"^U\.?\s?S\.?\s+"
 _STATEWIDE = (
     (r"^(?:LT\.?|LIEUTENANT) GOVERNOR\b", "LTGOVERNOR"),
@@ -40,7 +40,8 @@ def _num(text: str | int | None) -> int | None:
 
 
 def without_title(name: str) -> str:
-    """ "Dr. Eliz Markowitz" -> "Eliz Markowitz", for indexing."""
+    """ "Dr. Eliz Markowitz" -> "Eliz Markowitz", "Rev. Dr. Frederick Haynes" -> "Frederick Haynes",
+    for indexing. The titles are the ones last_first drops (matching.TITLES)."""
     return _TITLE.sub("", name)
 
 

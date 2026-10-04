@@ -18,7 +18,7 @@ from typing import Any, Callable
 from .models import Match
 
 _SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}
-_TITLES = {"MR", "MRS", "MS", "MISS", "DR", "HON", "HONORABLE", "SEN", "SENATOR", "REP", "GOV", "JUDGE", "REV"}
+TITLES = {"MR", "MRS", "MS", "MISS", "DR", "HON", "HONORABLE", "SEN", "SENATOR", "REP", "GOV", "JUDGE", "REV"}
 _NICKNAME = re.compile(r"[\"“”(][^\"“”()]*[\"“”)]")  # KENNETH "KEN" SMITH, JOHN (JACK) DOE
 _SEAT = re.compile(r"\b([A-Z]{2})-(\d{1,2}|SEN|AL)\b")
 
@@ -52,7 +52,7 @@ def last_first(name: str) -> str:
     last, comma, rest = _NICKNAME.sub(" ", name).partition(",")
     if not comma:
         return " ".join(name.split())
-    words = [word for word in rest.split() if word.strip(".").upper() not in _TITLES]
+    words = [word for word in rest.split() if word.strip(".").upper() not in TITLES]
     suffixes = [word for word in words if word.strip(".").upper() in _SUFFIXES]
     return " ".join([*(w for w in words if w not in suffixes), *last.split(), *suffixes])
 

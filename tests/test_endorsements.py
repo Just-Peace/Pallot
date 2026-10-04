@@ -125,6 +125,16 @@ def test_another_seat_is_only_likely():
     assert (match.confidence, match.note) == ("likely", "Example PAC lists them for State House, District 49")
 
 
+@pytest.mark.parametrize("listed", ["Rev. Frederick D. Haynes III", "Rev. Dr. Frederick D. Haynes III",
+                                    "Honorable Frederick D. Haynes III", "Judge Frederick D. Haynes III"])
+def test_a_title_before_the_name_still_matches_exactly(tmp_path, listed):
+    entry = {"name": listed, "state": "TX", "office": "U.S. House", "district": "30"}
+    found = parse(write(tmp_path, lambda d: d["candidates"].append(entry))).cards(
+        [race("U.S. Representative District 30", ("FREDERICK HAYNES", "D"), key="sos:1:30", group="federal", seat="TX-30")],
+        {}, None).candidates
+    assert found["sos:1:30:0"].match.confidence == "exact"
+
+
 def test_the_ballot_settings_and_the_pages_list(client, upstream):
     ballot = get_ballot(client)
     senate = next(r for r in ballot["races"] if r["name"] == "U.S. Senator")
