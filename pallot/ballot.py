@@ -31,6 +31,7 @@ from .settings import Sources
 from .sources import ballotpedia as ballotpedia_source
 from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
+from .sources import google as google_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot, BpRace
@@ -39,6 +40,7 @@ from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
 from .sources.endorsement_feeds import EndorsementSource
 from .sources.fec import Fec
+from .sources.google import Google
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
@@ -71,6 +73,9 @@ MAYBE_SECTIONS = {
 }
 
 
+GEOCODED_BY = {"census": "US Census", "nominatim": "OpenStreetMap + US Census", "google": "Google + US Census"}
+
+
 class BallotError(Exception):
     def __init__(self, status: int, message: str):
         super().__init__(message)
@@ -85,6 +90,7 @@ class Services:
     cache: HttpCache
     census: Census
     nominatim: Nominatim
+    google: Google
     suggestions: Suggestions
     sboe: SboeMap
     election_precincts: ElectionPrecincts
@@ -149,18 +155,24 @@ async def election_dates(sos: Sos) -> list[ElectionDate]:
     ]
 
 
-async def locate(svc: Services, address: str) -> tuple[Place, Location]:
+async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, Location]:
+    """The address's place: the Census geocoder's, else (a point to ask the Census about) Nominatim's,
+    else Google's when it has a key and the voter has it on."""
     try:
         place = await svc.census.geocode(address)
         geocoder, approximate, label = "census", False, place.matched_address if place else None
         if place is None:
+            geocoder = "nominatim"
             point = await svc.nominatim.locate(address)
+            if point is None and svc.google.keyed and sources.enabled(google_source.SOURCE):
+                geocoder = "google"
+                point = await svc.google.locate(address)
             if point is None:
                 raise BallotError(422, "Pallot couldn't find that address. Include the street, city and ZIP code.")
             place = await svc.census.at(point.lat, point.lon)
             if place is None:
                 raise BallotError(422, "That address doesn't seem to be in the United States.")
-            geocoder, approximate, label = "nominatim", point.approximate, point.label
+            approximate, label = point.approximate, point.label
     except UpstreamError as exc:
         if exc.until:
             raise BallotError(502, f"The address lookup is paused until {display_time(exc.until)} after refusing a "
@@ -272,6 +284,7 @@ class _Builder:
         self.svc = svc
         self.request = request
         self.calls = calls
+        self.sources = sources
         self.started = time.monotonic()
         self.use_sos = sources.enabled("sos")
         self.use_bp = sources.enabled("ballotpedia")
@@ -297,7 +310,7 @@ class _Builder:
     async def run(self) -> Ballot:
         if not (self.use_sos or self.use_bp):
             raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
-        place, location = await locate(self.svc, self.request.address)
+        place, location = await locate(self.svc, self.request.address, self.sources)
         if location.approximate:
             self.warnings.append(
                 f"Pallot could only place this address approximately ({location.matched_address}), "
@@ -757,9 +770,11 @@ class _Builder:
             )
 
         geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim", "sboe"))
-        geocoding.message = "OpenStreetMap + US Census" if location.geocoder == "nominatim" else "US Census"
+        geocoding.message = GEOCODED_BY[location.geocoder]
         return [
             geocoding,
+            status(google_source.SOURCE, "Google geocoding", self.sources.enabled(google_source.SOURCE),
+                   (google_source.SOURCE,)),
             status("sos", "Texas SOS", self.use_sos, ("sos",)),
             status(key_dates_source.SOURCE, key_dates_source.LABEL, self.use_key_dates, (key_dates_source.SOURCE,)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),

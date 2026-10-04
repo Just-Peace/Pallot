@@ -1,5 +1,5 @@
 """Settings that come from the environment (or the project's .env file): where data lives,
-timeouts, cache lifetimes, the FEC key."""
+timeouts, cache lifetimes, the FEC and Google keys."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ class Ttls:
     past_election: int = 365 * DAY  # anything about an election that already happened
     geocode: int = 30 * DAY
     geocode_miss: int = DAY
-    geocode_backoff: int = HOUR  # after the Census geocoder or Nominatim refuses us, stop asking that one for this long
+    geocode_backoff: int = HOUR  # after the Census geocoder, Nominatim or Google refuses us, stop asking that one for this long
     suggest: int = 30 * DAY  # address suggestions as you type
     suggest_backoff: int = HOUR  # after Ballotpedia refuses an address search, stop asking for this long
     ballotpedia: int = DAY
@@ -65,6 +65,9 @@ class Config:
     # A free key from https://api.open.fec.gov/developers/ (issued by api.data.gov); without
     # one, the shared DEMO_KEY. Only ever sent to the FEC, never written to disk.
     fec_api_key: str = field(default=DEMO_KEY, repr=False)
+    # A Google Geocoding API key, for addresses neither the Census nor Nominatim can place. Empty:
+    # Google isn't used. Only ever sent to Google, never written to disk.
+    google_api_key: str = field(default="", repr=False)
     # Names Pallot answers to besides localhost and IP addresses, such as a LAN name or a
     # reverse proxy's domain ("*": any). Other names are refused, against DNS rebinding.
     allowed_hosts: tuple[str, ...] = ()
@@ -145,6 +148,7 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         http_timeout=float(env.get("PALLOT_HTTP_TIMEOUT") or Config.http_timeout),
         ttl=Ttls(**overrides),
         fec_api_key=(env.get("PALLOT_FEC_API_KEY") or "").strip() or DEMO_KEY,
+        google_api_key=(env.get("PALLOT_GOOGLE_API_KEY") or "").strip(),
         allowed_hosts=tuple(
             name.strip().lower() for name in (env.get("PALLOT_ALLOWED_HOSTS") or "").split(",") if name.strip()
         ),

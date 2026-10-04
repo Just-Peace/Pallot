@@ -16,7 +16,7 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import census, key_dates, nominatim, osm_tiles, suggestions
+from .sources import census, google, key_dates, nominatim, osm_tiles, suggestions
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
@@ -24,6 +24,7 @@ from .sources.election_precincts import ElectionPrecincts
 from .sources.endorsement_feeds import FEEDS, make_feeds
 from .sources.endorsements import ENDORSEMENTS_DIR, load_all
 from .sources.fec import Fec
+from .sources.google import Google
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
 from .sources.polls import Polls
@@ -40,7 +41,7 @@ MIN_INTERVAL = {
     "sboe": 1.0, "county_precincts": 0.25, **{feed.source: 1.0 for feed in FEEDS},
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
-MISSES = frozenset({census.SOURCE, nominatim.SOURCE})  # whose "not found" answers are pruned once expired
+MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
 
 
 def prune(cache: HttpCache, config: Config, *, vacuum: bool = True) -> int:
@@ -81,7 +82,10 @@ async def open_services(
             config.cache_path,
             client,
             min_interval=dict(min_interval),
-            source_headers={"fec": {"X-Api-Key": config.fec_api_key}},
+            source_headers={
+                "fec": {"X-Api-Key": config.fec_api_key},
+                **({google.SOURCE: {google.KEY_HEADER: config.google_api_key}} if config.google_api_key else {}),
+            },
             retry_after=config.ttl.retry_after,
         )
         election_precincts = ElectionPrecincts(cache, config.ttl, config.election_precincts_dir, tidy=tidy)
@@ -97,6 +101,7 @@ async def open_services(
                 cache=cache,
                 census=Census(cache, config.ttl),
                 nominatim=Nominatim(cache, config.ttl),
+                google=Google(cache, config.ttl, config.google_api_key),
                 suggestions=Suggestions(cache, config.ttl),
                 sboe=SboeMap(cache, config.ttl, config.sboe_path),
                 election_precincts=election_precincts,

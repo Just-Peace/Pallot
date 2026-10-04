@@ -193,7 +193,7 @@ class Location(BaseModel):
     county: str | None
     city: str | None
     school_district: str | None
-    geocoder: Literal["census", "nominatim"]
+    geocoder: Literal["census", "nominatim", "google"]
     approximate: bool = False
 
 

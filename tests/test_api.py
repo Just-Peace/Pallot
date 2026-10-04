@@ -32,11 +32,12 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts", "tigerweb",
-                                                       "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "google", "election_precincts", "county_precincts",
+                                                       "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
                                                        "trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac", "fec", "tec", "polls"]
-    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, _, _, example, _, fec, tec, polls = (
+    geocoding, google, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, _, _, example, _, fec, tec, polls = (
         overview["sources"])
+    assert (google["toggleable"], google["enabled"]) == (True, True) and "PALLOT_GOOGLE_API_KEY" in google["notice"]
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
     assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
@@ -125,7 +126,7 @@ def test_sources_are_grouped(client):
         ("scorecards", "Third-party endorsements & scorecards", True)]
     grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
     assert grouped == {
-        "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
+        "address": ["geocoding", "google", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
         "official": ["sos", "key_dates", "fec", "tec"],
         "ballot": ["ballotpedia"],
         "polls": ["polls"],
