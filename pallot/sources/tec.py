@@ -281,12 +281,12 @@ class Tec(BundledSnapshot):
         if not document.get("snapshot"):
             return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
         since = display_date((document.get("window") or {}).get("start"))
-        return f"Snapshot of {display_date(document['snapshot'])}: money raised since {since}.", "info"
+        return f"Snapshot of {display_date(self.snapshot_date())}: money raised since {since}.", "info"
 
     def details(self) -> list[Fact]:
         document, meta = self.document(), self.meta()
         return [
-            Fact(label="Snapshot", value=display_date(document.get("snapshot")) or "none"),
+            Fact(label="Snapshot", value=display_date(self.snapshot_date()) or "none"),
             Fact(label="Money raised since", value=display_date((document.get("window") or {}).get("start")) or "unknown"),
             Fact(label="TEC data from", value=display_time(document.get("tec_updated")) or "unknown"),
             Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),

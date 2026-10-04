@@ -3,12 +3,15 @@ endorsement lists share)."""
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from pallot.models import Candidate, Match, Race
 from pallot.offices import classify
 from pallot.sources.seats import entry_seats, party_code
 from pallot.sources.voteforpeace import VoteForPeace, card, cards
+from pallot.text import snapshot_day
 
 from .conftest import FIXTURES
 
@@ -149,3 +152,32 @@ def test_a_city_as_the_jurisdiction_is_the_voters_city(snapshot, city, confidenc
     council = race("City Council Member, District 9", ("Zohaib Qadri", None), key="bp:9", group="local")
     match = cards(snapshot, [council], {}, "Travis", city=city).candidates["bp:9:0"].match  # "Austin" on the site
     assert match.confidence == confidence
+
+
+@pytest.fixture
+def in_texas(monkeypatch):
+    monkeypatch.setenv("TZ", "America/Chicago")
+    time.tzset()
+    yield
+    monkeypatch.undo()
+    time.tzset()
+
+
+def test_the_snapshots_day_is_the_local_day_it_was_taken(in_texas, snapshot):
+    # The bundled copy is named 2026-10-04 after the UTC day; it was taken at 9:31 PM on Oct 3 in Texas.
+    facts = {f.label: f.value for f in snapshot.details()}
+    assert (facts["Snapshot"], facts["Last changed"]) == ("Oct 3, 2026", "Oct 3, 2026, 9:31 PM")
+    senate = race("U.S. Senator", ("James Talarico", "D"), key="sos:1:2", group="federal", seat="TX-SEN")
+    assert cards(snapshot, [senate], {}, None).candidates["sos:1:2:0"].as_of == "2026-10-03"
+    assert snapshot.clear() == "Back to the snapshot that came with Pallot (Oct 3, 2026)."
+
+
+@pytest.mark.parametrize("name, taken, day", [
+    ("2026-10-04", "2026-10-04T02:31:02+00:00", "2026-10-03"),
+    ("2026-10-04", "2026-10-04T18:00:00+00:00", "2026-10-04"),
+    ("2026-10-04", "2026-09-30T02:31:02+00:00", "2026-10-04"),  # taken another day: its own name stands
+    ("2026-10-04", None, "2026-10-04"),
+    (None, "2026-10-04T02:31:02+00:00", None),
+])
+def test_snapshot_day(in_texas, name, taken, day):
+    assert snapshot_day(name, taken) == day

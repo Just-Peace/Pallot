@@ -81,13 +81,10 @@ class TrackAipac(BundledSnapshot):
 
         return self._index(state, build)
 
-    def snapshot_date(self) -> str | None:
-        return self.meta().get("latest_snapshot")
-
     def details(self) -> list[Fact]:
         meta = self.meta()
         return [
-            Fact(label="Snapshot", value=display_date(meta.get("latest_snapshot")) or "none"),
+            Fact(label="Snapshot", value=display_date(self.snapshot_date()) or "none"),
             Fact(label="Last changed", value=display_time(meta.get("last_refresh")) or "never"),
             Fact(label="Last checked", value=display_time(meta.get("last_checked")) or "never"),
             Fact(label="Texas entries", value=f"{len(self.people('TX')):,}"),
@@ -166,7 +163,7 @@ def cards(tracker: TrackAipac, races: list[Race]) -> dict[str, SourceCard]:
     if not congressional:
         return {}
     index = tracker.name_index("TX")
-    snapshot = tracker.document().get("snapshot")
+    snapshot = tracker.snapshot_date()
     out = {}
     for race in congressional:
         for candidate in race.candidates:

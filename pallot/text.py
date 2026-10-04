@@ -129,10 +129,10 @@ def display_date(value: str | dt.date | None) -> str | None:
     return f"{value:%b} {value.day}, {value.year}" if value else None
 
 
-def display_time(value: float | str | None) -> str | None:
+def local_moment(value: float | str | None) -> dt.datetime | None:
     """A moment in the server's local time, which is the voter's when Pallot runs on their
-    computer: a timestamp, or "2026-09-28T18:25:03+00:00" (no zone means UTC), or an HTTP
-    date ("Mon, 28 Sep 2026 18:18:01 GMT") -> "Sep 28, 2026, 1:25 PM"."""
+    computer: from a timestamp, or "2026-09-28T18:25:03+00:00" (no zone means UTC), or an HTTP
+    date ("Mon, 28 Sep 2026 18:18:01 GMT"); None for anything else."""
     if value is None or value == "":
         return None
     if isinstance(value, str):
@@ -143,7 +143,23 @@ def display_time(value: float | str | None) -> str | None:
                 moment = email.utils.parsedate_to_datetime(value)
             except (TypeError, ValueError):
                 return None
-        moment = (moment if moment.tzinfo else moment.replace(tzinfo=dt.timezone.utc)).astimezone()
-    else:
-        moment = dt.datetime.fromtimestamp(value)
+        return (moment if moment.tzinfo else moment.replace(tzinfo=dt.timezone.utc)).astimezone()
+    return dt.datetime.fromtimestamp(value).astimezone()
+
+
+def snapshot_day(snapshot: str | None, taken: str | None) -> str | None:
+    """A snapshot's day in local time. The refreshes name a snapshot after the UTC day ("2026-10-04"),
+    so one taken at "2026-10-04T02:31:02+00:00" is "2026-10-03" in Texas, the day "Last changed"
+    shows beside it. A snapshot not taken at ``taken`` keeps its own day."""
+    day, moment = parse_date(snapshot), local_moment(taken)
+    if day and moment and moment.astimezone(dt.timezone.utc).date() == day:
+        return moment.date().isoformat()
+    return snapshot
+
+
+def display_time(value: float | str | None) -> str | None:
+    """local_moment's -> "Sep 28, 2026, 1:25 PM"."""
+    moment = local_moment(value)
+    if moment is None:
+        return None
     return f"{moment:%b} {moment.day}, {moment.year}, {moment.hour % 12 or 12}:{moment:%M} {'AM' if moment.hour < 12 else 'PM'}"

@@ -18,7 +18,7 @@ from typing import Any, Callable, ContextManager
 
 from ..matching import NameIndex
 from ..models import Fact, Tone
-from ..text import display_date
+from ..text import display_date, snapshot_day
 from . import RefreshFailed
 
 
@@ -142,7 +142,8 @@ class BundledSnapshot:
             return self._indexes[key]
 
     def snapshot_date(self) -> str | None:
-        return self.document().get("snapshot")
+        """The snapshot's day in local time (text.snapshot_day): what Settings and the cards show."""
+        return snapshot_day(self.document().get("snapshot"), self.meta().get("last_refresh"))
 
     # -- Settings (KeptSource) ----------------------------------------------------------------
 
