@@ -908,41 +908,97 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 
 /* ---- Pick by rule (pick-rule-dialog.js) ---- */
-.rules { width: min(620px, calc(100vw - 32px)); }
-.rule-body { padding: 4px 20px 8px; }
-.rule-set { border: 1px solid var(--line); border-radius: var(--radius-sm); margin: 12px 0; padding: 4px 14px 6px; min-width: 0; }
-.rule-set legend { font-weight: 700; padding: 0 6px; }
-.rule-set > .fine { margin: 8px 0 2px; }
+/* The rule on the left, what it would do on the right, each scrolling on its own; the heading,
+   Apply to and the buttons stay put. Under 800px, one column that scrolls whole. */
+.rules { width: min(860px, calc(100vw - 32px)); }
+.rules[open] { display: flex; flex-direction: column; overflow: hidden; }
+.rule-bar { display: flex; align-items: center; gap: 8px 12px; padding: 10px 20px; border-bottom: 1px solid var(--line);
+  background: var(--panel-2); }
+.rule-bar select { width: auto; min-width: 0; max-width: 24rem; flex: 0 1 auto; padding: 6px 9px; }
+.rule-label { flex: none; font-weight: 600; }
+.rule-reset { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; }
+.rule-reset .icon { width: 14px; height: 14px; }
+.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 300px; }
+.rule-form { overflow-y: auto; padding: 2px 20px 18px; }
+.rule-preview { overflow-y: auto; padding: 16px 18px; border-left: 1px solid var(--line); background: var(--panel-2); }
+.rule-preview h3 { margin: 0 0 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.rule-preview h3:not(:first-child) { margin-top: 16px; }
+.rule-words { margin: 0 0 8px; padding-left: 10px; border-left: 3px solid var(--line-strong); font-size: 0.92rem; line-height: 1.45; }
+.rule-words.tone-good { border-left-color: var(--good); }
+.rule-words.tone-warn { border-left-color: var(--warn); }
+.rule-tallies { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.9rem; }
+.rule-tally strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.rule-tally.tone-good strong { color: var(--good); }
+.rule-tally.tone-warn strong { color: var(--warn); }
+.rule-preview .rule-row { margin: 10px 0 0; padding-top: 4px; border-top: 1px solid var(--line); font-size: 0.9rem; }
+.rule-details > summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; font-weight: 600; margin-top: 4px; }
+.rule-details .rule-count { margin-left: 2px; }
+.rule-races { list-style: none; margin: 6px 0 0; padding: 0; font-size: 0.85rem; }
+.rule-race { display: grid; gap: 1px; padding: 6px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.rule-race:last-child { border-bottom: 0; }
+.rule-race-name { font-weight: 650; color: var(--text); }
+.rule-pick, .rule-same { color: var(--good); }
+.rule-back { color: var(--warn); }
+.rule-none { color: var(--muted); }
+
+.rule-set { --tone: var(--good); border: 1px solid var(--line); border-top: 3px solid var(--tone); border-radius: var(--radius-sm);
+  margin: 16px 0 0; padding: 0 14px 10px; min-width: 0; }
+.rule-set-skip { --tone: var(--warn); }
+.rule-set > legend { display: inline-flex; align-items: center; gap: 8px; padding: 0 6px; font-weight: 700; }
+.rule-sign { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--tone);
+  color: var(--panel); font-size: 0.75rem; line-height: 1; }
+.rule-hint { margin: 2px 0 6px; font-size: 0.85rem; color: var(--muted); }
+.rule-sub { border: 0; border-top: 1px solid var(--line); margin: 0; padding: 10px 0 6px; min-width: 0; }
+.rule-hint + .rule-sub { border-top: 0; padding-top: 4px; }
+.rule-sub > legend { float: left; width: 100%; margin: 0 0 6px; padding: 0; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted); }
+.rule-sub > legend + * { clear: left; }
+.rule-sub .fine { margin: 6px 0 0; }
 .rule-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
-.rule-row .check { margin: 8px 0; flex: 0 1 auto; }
-.rule-row.disabled .check { color: var(--muted); }
-.rule-label { min-width: 5.5em; }
-.rule-row.stacked .rule-inputs { flex-basis: 100%; margin: -4px 0 6px 26px; }
+.rule-row .check { margin: 6px 0; flex: 0 1 auto; }
+.rule-row.stacked .rule-inputs { flex-basis: 100%; margin: -2px 0 6px 26px; }
 .rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .rule-inputs select { width: auto; padding: 6px 9px; }
-.rule-body > .rule-row:first-child { margin: 10px 0 0; }
 .rule-amount-wrap { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
-input.rule-amount { width: 8.5em; padding: 6px 9px; }
+input.rule-amount { width: 7.5em; padding: 6px 9px; }
 input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
-.rule-parties { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
-.rule-party { --swatch: var(--party, var(--line-strong)); display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
+.rule-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rule-chip { --swatch: var(--party, var(--line-strong)); display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
   font-size: 0.88rem; font-weight: 600; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
   border-radius: 999px; cursor: pointer; }
-.rule-party:hover { background: var(--neutral-soft); }
-.rule-party[aria-pressed="true"] { color: var(--text); background: var(--party-soft, var(--accent-soft)); border-color: var(--party, var(--accent));
+.rule-chip:hover { background: var(--neutral-soft); }
+.rule-chip[aria-pressed="true"] { color: var(--text); background: var(--party-soft, var(--accent-soft)); border-color: var(--party, var(--accent));
   box-shadow: inset 0 0 0 1px var(--party, var(--accent)); }
-.rule-party[aria-pressed="true"]::before { content: "✓"; }
+.rule-chip[aria-pressed="true"]::before { content: "✓"; }
 .rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
 .rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
-.rule-preview { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; }
-.rule-summary { font-weight: 650; margin: 4px 0 6px; }
-.rule-details > summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
-.rule-races { list-style: none; margin: 6px 0 0; padding: 0; font-size: 0.88rem; max-height: 14em; overflow-y: auto; }
-.rule-race { padding: 4px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
-.rule-race-name { font-weight: 650; }
-.rule-pick, .rule-same { color: var(--good); }
-.rule-pick .rule-race-name, .rule-same .rule-race-name, .rule-none .rule-race-name { color: var(--text); }
-.rule-none { color: var(--muted); }
+.rule-lists { margin: 4px 0 2px; }
+.rule-lists-label { margin: 4px 0 6px; font-weight: 500; }
+.rule-form > .fine { margin: 12px 0 0; }
+.rule-how { margin: 12px 0 0; font-size: 0.85rem; color: var(--muted); }
+.rule-how > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.rule-how p { margin: 6px 0 0; }
+.rule-mark-btn { margin-right: auto; }
+@media (max-width: 799px) {
+  .rule-layout { display: block; overflow-y: auto; }
+  .rule-form, .rule-preview { overflow: visible; }
+  .rule-preview { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  .rules { max-height: calc(100dvh - 24px); margin-top: 12px; }
+  .rules .details-title p { display: none; }
+  .rule-bar { padding: 8px 16px; }
+  .rule-bar select { flex: 1 1 auto; }
+  .rule-form { padding: 2px 16px 16px; }
+  .rule-preview { padding: 14px 16px; }
+  .rule-set { padding: 0 12px 8px; }
+  .rule-sub .seg { display: flex; }
+  .rule-sub .seg-option { flex: 1 1 auto; padding-inline: 8px; text-align: center; }
+  .rules .details-foot { padding: 10px 16px 14px; }
+  .rules .details-foot .btn { flex: 1 1 auto; justify-content: center; padding-inline: 12px; font-size: 0.9rem; }
+  .rules .details-foot .btn.primary { order: -1; flex-basis: 100%; }
+  .rule-mark-btn { margin-right: 0; }
+}
 .rule-btn { flex: none; display: inline-flex; align-items: center; margin-top: -2px; padding: 5px 8px; }
 .rule-btn .icon { width: 14px; height: 14px; }
 .pill.rule-mark.tone-good { background: var(--good-soft); color: var(--good); }
