@@ -45,6 +45,7 @@ from .sources.suggestions import Suggestions
 from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
+from .sources.voteforpeace import VoteForPeace
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
@@ -88,7 +89,7 @@ def from_another_site(request: Request) -> bool:
 
 async def warm_up(svc: Services) -> None:
     """Read, in the background at startup, what the first lookup would otherwise read: the
-    precinct map's index, the SBOE map, and the TEC's and TrackAIPAC's name indexes. Only files
+    precinct map's index, the SBOE map, and the TEC's, TrackAIPAC's and Vote for Peace's name indexes. Only files
     already kept, for sources that are on; nothing is fetched. A lookup meanwhile waits on the
     same locks, and a failure is left for the lookup to report."""
     jobs = [svc.sboe.warm()]
@@ -98,6 +99,8 @@ async def warm_up(svc: Services) -> None:
         jobs += [asyncio.to_thread(svc.tec.name_index), asyncio.to_thread(svc.tec.outside_index)]
     if svc.settings.enabled("trackaipac"):
         jobs.append(asyncio.to_thread(svc.trackaipac.name_index, "TX"))
+    if svc.settings.enabled("voteforpeace"):
+        jobs.append(asyncio.to_thread(svc.voteforpeace.name_index, "TX"))
     await asyncio.gather(*jobs, return_exceptions=True)
 
 
@@ -117,6 +120,8 @@ def create_app(
     today: Callable[[], dt.date] = dt.date.today,
     trackaipac_refresh: Callable[..., Any] | None = None,
     trackaipac_bundled: Path | None = None,
+    voteforpeace_refresh: Callable[..., Any] | None = None,
+    voteforpeace_bundled: Path | None = None,
     tec_refresh: Callable[..., Any] | None = None,
     tec_bundled: Path | None = None,
     min_interval: Mapping[str, float] = MIN_INTERVAL,
@@ -157,6 +162,9 @@ def create_app(
                     trackaipac=TrackAipac(
                         config.trackaipac_dir, refresh_fn=trackaipac_refresh, bundled_dir=trackaipac_bundled
                     ),
+                    voteforpeace=VoteForPeace(
+                        config.voteforpeace_dir, refresh_fn=voteforpeace_refresh, bundled_dir=voteforpeace_bundled
+                    ),
                     fec=Fec(cache, config.ttl, config.fec_api_key, today),
                     tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                     polls=Polls(cache, config.ttl, today),
@@ -166,6 +174,7 @@ def create_app(
                     today=today,
                 )
                 await asyncio.to_thread(svc.trackaipac.ensure_seeded)
+                await asyncio.to_thread(svc.voteforpeace.ensure_seeded)
                 await asyncio.to_thread(svc.tec.ensure_seeded)
                 app.state.svc = svc
                 app.state.admin = Admin(svc)

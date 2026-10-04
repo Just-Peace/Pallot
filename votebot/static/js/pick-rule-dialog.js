@@ -215,6 +215,8 @@ export function openRules(raceKey = null) {
           [["any", "Incumbent or not"], ["yes", "Only incumbents"], ["no", "Only challengers"]].map(([value, text]) =>
             h("option", { value, selected: value === rule.incumbent }, text))))),
     checkRow("TrackAIPAC endorses them", rule.endorsed, (on) => { rule.endorsed = on; update(); }, { disabled: !has.trackaipac }),
+    checkRow("Vote for Peace rates them an ally", rule.peaceAlly, (on) => { rule.peaceAlly = on; update(); },
+      { disabled: !has.voteforpeace }),
     checkRow("Their money is", rule.money.on, (on) => { rule.money.on = on; update(); }, { disabled: moneyOff, extra: moneyInputs, stacked: true }),
     checkRow("Small donations make up at least", rule.small.on, (on) => { rule.small.on = on; update(); }, {
       disabled: !has.small,
@@ -226,6 +228,8 @@ export function openRules(raceKey = null) {
   const skipSet = h("fieldset", { class: "rule-set" },
     h("legend", {}, "Don't pick, and take back"),
     checkRow("On TrackAIPAC's watchlist", rule.watchlist, (on) => { rule.watchlist = on; update(); }, { disabled: !has.trackaipac }),
+    checkRow("Vote for Peace opposes them", rule.peaceOpposed, (on) => { rule.peaceOpposed = on; update(); },
+      { disabled: !has.voteforpeace }),
     checkRow("Israel lobby money over", rule.lobby.on, (on) => { rule.lobby.on = on; update(); }, {
       disabled: !has.lobby,
       extra: amountBox(rule.lobby.amount, (amount) => { rule.lobby.amount = amount; update(); },
@@ -244,7 +248,7 @@ export function openRules(raceKey = null) {
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),
-    h("p", { class: "muted" }, "Pick by party, TrackAIPAC, money and polls. Nothing changes until you press Apply.")));
+    h("p", { class: "muted" }, "Pick by party, TrackAIPAC, Vote for Peace, money and polls. Nothing changes until you press Apply.")));
   dialog.replaceChildren(
     head,
     h("div", { class: "rule-body" },
@@ -255,7 +259,7 @@ export function openRules(raceKey = null) {
       checkRow("Don't replace picks I've already made", rule.keepMine, (on) => { rule.keepMine = on; update(); }),
       h("p", { class: "fine" },
         "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
-        + "congressional races, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
+        + "congressional races, Vote for Peace in the races where it rates someone, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
         + "donor) and self-funding are known only in congressional races, with an FEC key. Without the Write-ins chip, a rule "
         + "picks only the names printed on the ballot. If more candidates match than a race has seats, a tie included, "
         + "it's left for you."),

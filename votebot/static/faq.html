@@ -176,7 +176,7 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
+            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place.</p>
             <p>Sources write names differently, so VoteBot matches them by name, with the seat and party to confirm. A <strong>?</strong> means a source only likely matched the candidate, for example when only the first initial agrees ("Tom" and "Thomas"), so check it. "Incumbent" comes from the state's filing, or from Ballotpedia when it matches the candidate exactly in the same race.</p>
           </div>
         </details>
@@ -204,10 +204,19 @@
         </details>
 
         <details class="faq">
+          <summary>What is Vote for Peace, and what do Ally, Neutral and Opposed mean?</summary>
+          <div class="faq-body">
+            <p>Vote for Peace (voteforpeace.info), from Organize for Peace, rates candidates on their stance on war and human rights and on where their money comes from, such as AIPAC and other lobbies. Ally means it recommends them, Opposed that it recommends against them, and Neutral neither. Its tab in Details shows the groups it cites for the rating (endorsements, its own questionnaire, TrackAIPAC) and its notes, with a link to the candidate's page there.</p>
+            <p>It rates candidates at every level, from Congress to county courts and city councils, and names offices its own way ("TX State Representative" and a district number). VoteBot matches them by name, with the office and district, or the county, to confirm. A court it names without the place ("TX Supreme Court Justice") counts for any place on that court. Elsewhere, a candidate it lists for another seat or county shows as a likely match, so check it.</p>
+            <p>VoteBot uses its ratings with Organize for Peace's permission.</p>
+          </div>
+        </details>
+
+        <details class="faq">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
             <p>VoteBot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. Address suggestions, and addresses that weren't found, are no use as an old copy, so VoteBot deletes them the first time it starts once they've been expired for 30 days.</p>
-            <p>TrackAIPAC's and the Texas Ethics Commission's data come with VoteBot and are only fetched again when you press Refresh; Settings shows how old each one is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
+            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with VoteBot and are only fetched again when you press Refresh; Settings shows how old each one is. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>To fetch something again right away, use Refresh on that source in <a href="settings.html">Settings</a>.</p>
           </div>
         </details>
@@ -400,8 +409,8 @@
         <details class="faq">
           <summary>Can VoteBot pick for me?</summary>
           <div class="faq-body">
-            <p>Only by a rule you set. "Pick by rule", at the top of your ballot or in a race's heading, picks the candidates of the parties you choose, and only if they're the incumbent (or not), TrackAIPAC endorses them, their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, or they lead the polls. It can also skip, and take back the picks of, anyone on TrackAIPAC's watchlist, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
-            <p>A TrackAIPAC, money or polls condition counts only in races where VoteBot has that information: money in congressional and state races, TrackAIPAC in congressional races, polls in U.S. Senate, U.S. House and Governor races. So "Democrats who spent under $1 million" still picks the Democrat for county judge. Where more candidates match than a race has seats, the rule leaves the race for you rather than guessing; two candidates tied for the least money is one of those. It picks only the names printed on the ballot, unless you choose the Write-ins chip.</p>
+            <p>Only by a rule you set. "Pick by rule", at the top of your ballot or in a race's heading, picks the candidates of the parties you choose, and only if they're the incumbent (or not), TrackAIPAC endorses them, Vote for Peace rates them an ally, their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, or they lead the polls. It can also skip, and take back the picks of, anyone on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
+            <p>A TrackAIPAC, Vote for Peace, money or polls condition counts only in races where VoteBot has that information: money in congressional and state races, TrackAIPAC in congressional races, Vote for Peace in the races where it rates someone, polls in U.S. Senate, U.S. House and Governor races. So "Democrats who spent under $1 million" still picks the Democrat for county judge. Where more candidates match than a race has seats, the rule leaves the race for you rather than guessing; two candidates tied for the least money is one of those. It picks only the names printed on the ballot, unless you choose the Write-ins chip.</p>
             <p>Small donations are donations of $200 or less from a donor, which campaigns report to the FEC without listing them one by one. A candidate's own money is what they gave and lent their own campaign. Both are a share of everything the campaign raised, and both come from the FEC, so they count only in congressional races, and only when VoteBot has an FEC key. Most Texas campaigns list every donation, however small, so the Texas Ethics Commission's reports can't tell small donations apart.</p>
             <p>The dialog shows what it would change, race by race, before anything does, and Apply offers Undo. "Mark who matches" marks the candidates on your ballot instead of picking them. Your rule stays in this browser, like your picks.</p>
           </div>

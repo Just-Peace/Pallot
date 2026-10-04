@@ -1,5 +1,5 @@
 """External data sources. Each module talks to one service through HttpCache (or, for
-TrackAIPAC and the Texas Ethics Commission, a package that keeps a bundled snapshot) and
+TrackAIPAC, Vote for Peace and the Texas Ethics Commission, a package that keeps a bundled snapshot) and
 can build SourceCards for candidates."""
 
 from __future__ import annotations

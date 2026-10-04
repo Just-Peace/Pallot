@@ -1,8 +1,8 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
 served through respx, made-up SBOE and precinct maps and counties' lists of their precincts, and a
 VoteBot app on a temp data dir
-with "today" pinned, no waits between calls to a source, an FEC API key, and the TrackAIPAC
-and Texas Ethics Commission fixture snapshots."""
+with "today" pinned, no waits between calls to a source, an FEC API key, and the TrackAIPAC,
+Vote for Peace and Texas Ethics Commission fixture snapshots."""
 
 from __future__ import annotations
 
@@ -442,7 +442,7 @@ class FakeTecResult:
 
 @pytest.fixture
 def make_app(tmp_path, upstream):
-    """make_app(data_dir=None, refresh=None, tec_refresh=None, fec_key=FEC_KEY) -> a new app;
+    """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY) -> a new app;
     call again on the same dir to 'restart'. It answers to TestClient's host name, testserver."""
     refreshed: list[Path] = []
     tec_refreshed: list[dict[str, Any]] = []
@@ -451,16 +451,22 @@ def make_app(tmp_path, upstream):
         refreshed.append(Path(data_dir))
         return FakeRefreshResult()
 
+    def fake_voteforpeace_refresh(*, data_dir):
+        return "updated 2026-10-04.json: 1 added, 0 removed, 0 modified"
+
     def fake_tec_refresh(**kwargs):
         tec_refreshed.append(kwargs)
         return FakeTecResult()
 
-    def build(data_dir: Path | None = None, refresh=None, tec_refresh=None, fec_key: str = FEC_KEY):
+    def build(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
+              fec_key: str = FEC_KEY):
         return create_app(
             Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, allowed_hosts=("testserver",)),
             today=lambda: TODAY,
             trackaipac_bundled=FIXTURES / "trackaipac",
             trackaipac_refresh=refresh or fake_refresh,
+            voteforpeace_bundled=FIXTURES / "voteforpeace",
+            voteforpeace_refresh=voteforpeace_refresh or fake_voteforpeace_refresh,
             tec_bundled=FIXTURES / "tec",
             tec_refresh=tec_refresh or fake_tec_refresh,
             min_interval={},

@@ -211,6 +211,7 @@ export function renderTabs(container, cards, idPrefix, panelFor = cardPanel) {
       tab.tabIndex = i === index ? 0 : -1;
       panels[i].hidden = i !== index;
     });
+    tabs[index].scrollIntoView({ block: "nearest", inline: "nearest" }); // the row scrolls sideways on a phone
     if (focus) tabs[index].focus();
   }
 

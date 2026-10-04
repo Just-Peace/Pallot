@@ -48,6 +48,7 @@ from .sources.suggestions import Suggestions
 from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
+from .sources.voteforpeace import VoteForPeace
 from .text import display_office, display_person, display_time, iso_utc
 
 MAYBE_SECTIONS = {
@@ -90,6 +91,7 @@ class Services:
     sos: Sos
     ballotpedia: Ballotpedia
     trackaipac: TrackAipac
+    voteforpeace: VoteForPeace
     fec: Fec
     tec: Tec
     polls: Polls
@@ -271,6 +273,7 @@ class _Builder:
         self.use_sos = svc.settings.enabled("sos")
         self.use_bp = svc.settings.enabled("ballotpedia")
         self.use_tap = svc.settings.enabled("trackaipac")
+        self.use_vfp = svc.settings.enabled("voteforpeace")
         self.use_fec = svc.settings.enabled("fec")
         self.use_tec = svc.settings.enabled("tec")
         self.use_polls = svc.settings.enabled("polls")
@@ -363,6 +366,7 @@ class _Builder:
             bp_ballot=bp_ballot,
             sos_lookups=sos_data.lookups if sos_data else None,
             use_trackaipac=self.use_tap,
+            use_voteforpeace=self.use_vfp,
             use_fec=self.use_fec,
             use_tec=self.use_tec,
             use_polls=self.use_polls,
@@ -742,6 +746,7 @@ class _Builder:
             status(key_dates_source.SOURCE, key_dates_source.LABEL, self.use_key_dates, (key_dates_source.SOURCE,)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
+            snapshot("voteforpeace", "Vote for Peace", self.use_vfp, self.svc.voteforpeace.document),
             status("fec", "FEC", self.use_fec, ("fec",)),
             snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
             status("polls", "Polls", self.use_polls, ("polls",)),

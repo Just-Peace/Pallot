@@ -69,13 +69,21 @@ def test_capitol_ballot(client):
     assert watchlist["text"] == "TrackAIPAC watchlist $0" and watchlist["url"].endswith("/candidates")
     profile = next(b for b in card_of(paxton, "ballotpedia")["badges"] if b["text"] == "Ballotpedia profile")
     assert profile["url"].startswith("https://ballotpedia.org/")
+    talarico = senate["candidates"][1]
+    assert sources_of(talarico)[-2:] == ["trackaipac", "voteforpeace"]
+    vfp = card_of(talarico, "voteforpeace")
+    assert (vfp["match"]["confidence"], vfp["flags"]) == ("exact", ["ally"])
+    assert vfp["badges"][0]["text"] == "Vote for Peace: Ally" and vfp["url"].endswith("/texas/james-talarico")
+    hawkins = {c["name"]: c for c in find_race(ballot, "Justice, Supreme Court, Place 7")["candidates"]}
+    assert "voteforpeace" in sources_of(hawkins["Kristen Hawkins"])  # the site names no place: any place counts
+    assert "voteforpeace" not in sources_of(hawkins["Kyle Hawkins"])  # "K Hawkins" too, but Kristen's is the full name
     sos_card = card_of(paxton, "sos")
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
-                        "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "fec": "used",
+                        "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "fec": "used",
                         "tec": statuses["tec"], "polls": "used", "election_precincts": "used",
                         "county_precincts": "used"}
     # (suggestions are asked for while typing, the map after)

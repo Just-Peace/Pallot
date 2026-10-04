@@ -8,7 +8,7 @@ from .ballot import Services
 from .models import ActionResult, CacheStatus, SourcesOverview, SourceStatus, Tone
 from .sources import (
     KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls,
-    sos, suggestions, tec, tigerweb, trackaipac,
+    sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
 )
 from .text import display_size, display_time, iso_utc
 
@@ -112,6 +112,17 @@ SOURCES = (
         kept="trackaipac",
     ),
     SourceInfo(
+        voteforpeace.SOURCE,
+        voteforpeace.LABEL,
+        voteforpeace.DESCRIPTION,
+        True,
+        (),
+        refresh_label="Refresh from voteforpeace.info",
+        clear_label="Reset to the snapshot that came with VoteBot",
+        resettable=True,
+        kept="voteforpeace",
+    ),
+    SourceInfo(
         fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
         pause=Pause("reaching the FEC's rate limit", "what it already sent still shows"),
     ),
@@ -170,7 +181,8 @@ class Admin:
 
     @staticmethod
     def _clear_all_confirm() -> str:
-        snapshots = " and ".join(info.label for info in SOURCES if info.resettable)
+        *rest, last = [info.label for info in SOURCES if info.resettable]
+        snapshots = f"{', '.join(rest)} and {last}" if rest else last
         return (f"Clear everything the server saved from every source? The {snapshots} data go back to the snapshots "
                 "that came with VoteBot, and the next lookups fetch everything again.")
 
@@ -313,6 +325,6 @@ class Admin:
         for source in kept:
             source.clear()
         return ActionResult(
-            message=f"Cleared {removed} cached responses, the SBOE map and the precinct map, and reset TrackAIPAC and "
-            "the Texas Ethics Commission data to the snapshots that came with VoteBot."
+            message=f"Cleared {removed} cached responses, the SBOE map and the precinct map, and reset TrackAIPAC, "
+            "Vote for Peace and the Texas Ethics Commission data to the snapshots that came with VoteBot."
         )
