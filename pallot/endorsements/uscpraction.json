@@ -1,0 +1,27 @@
+{
+  "source": "uscpraction",
+  "label": "USCPR Action",
+  "organization": "US Campaign for Palestinian Rights Action",
+  "url": "https://www.uscpraction.org/endorsements",
+  "captured": "2026-10-04",
+  "description": "The political arm of the US Campaign for Palestinian Rights; these candidates pledged to block U.S. weapons and military funding to Israel, support BDS, and refuse AIPAC money.",
+  "candidates": [
+    {"name": "Saikat Chakrabarti", "state": "CA", "office": "U.S. House of Representatives", "district": "11"},
+    {"name": "Oliver Larkin", "state": "FL", "office": "U.S. House of Representatives", "district": "25"},
+    {"name": "Angie Nixon", "state": "FL", "office": "U.S. Senate"},
+    {"name": "Ruwa Romman", "state": "GA", "office": "Georgia State Senate", "district": "7"},
+    {"name": "Delia Ramirez", "state": "IL", "office": "U.S. House of Representatives", "district": "3"},
+    {"name": "Abbas Alawieh", "state": "MI", "office": "Michigan State Senate", "district": "2"},
+    {"name": "Donavan McKinney", "state": "MI", "office": "U.S. House of Representatives", "district": "13"},
+    {"name": "Rashida Tlaib", "state": "MI", "office": "U.S. House of Representatives", "district": "12"},
+    {"name": "Abdul El-Sayed", "state": "MI", "office": "U.S. Senate"},
+    {"name": "Cori Bush", "state": "MO", "office": "U.S. House of Representatives", "district": "1"},
+    {"name": "Adam Hamawy", "state": "NJ", "office": "U.S. House of Representatives", "district": "12"},
+    {"name": "Aber Kawas", "state": "NY", "office": "New York State Senate", "district": "12"},
+    {"name": "Claire Valdez", "state": "NY", "office": "U.S. House of Representatives", "district": "7"},
+    {"name": "Darializa Avila Chevalier", "state": "NY", "office": "U.S. House of Representatives", "district": "13"},
+    {"name": "Chris Rabb", "state": "PA", "office": "U.S. House of Representatives", "district": "3"},
+    {"name": "Justin Pearson", "state": "TN", "office": "U.S. House of Representatives", "district": "9"},
+    {"name": "Nila Devanath", "state": "VA", "office": "U.S. House of Representatives", "district": "2"}
+  ]
+}
