@@ -22,7 +22,7 @@ from starlette.types import Scope
 from . import __version__, ics
 from .admin import Admin
 from .ballot import BallotError, Services, build_ballot, election_dates
-from .config import HOUR, Config, load_config
+from .config import Config, load_config
 from .http_cache import UpstreamError
 from .models import Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, SourcesOverview, SuggestResult
 from .outlines import district_outlines
@@ -34,7 +34,6 @@ from .version import short_commit
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
-PRUNE_EVERY = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
 
 
 def _hostname(host: str) -> str:
@@ -86,11 +85,12 @@ async def warm_up(svc: Services) -> None:
     await asyncio.gather(*jobs, return_exceptions=True)
 
 
-async def keep_pruning(svc: Services, every: float = PRUNE_EVERY) -> None:
-    """Prune the transient caches every ``every`` seconds while the server runs, so the street
+async def keep_pruning(svc: Services, every: float | None = None) -> None:
+    """Prune the transient caches every ``every`` seconds (``Config.prune_every``) while the server runs, so the street
     map's tiles and the address suggestions stay under their caps between restarts. Without
     VACUUM, which would hold up lookups: the freed pages are reused. A round that meets the
     database locked (pallot-cache vacuuming it) waits for the next."""
+    every = every or svc.config.prune_every
     while True:
         await asyncio.sleep(every)
         with contextlib.suppress(sqlite3.Error):
