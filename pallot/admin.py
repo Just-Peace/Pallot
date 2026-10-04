@@ -10,8 +10,8 @@ from .ballot import Services
 from .models import CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
-    KeptSource, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls, sos, suggestions,
-    tec, tigerweb, trackaipac, voteforpeace,
+    KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, osm_tiles, polls, sos,
+    suggestions, tec, tigerweb, trackaipac, voteforpeace,
 )
 from .sources.endorsement_feeds import EndorsementSource
 from .text import display_time, iso_utc
@@ -76,6 +76,12 @@ SOURCES = (
         group=ADDRESS,
         pause=Pause("the address lookup refused a request", "addresses already looked up still work"),
         kept="sboe",
+    ),
+    SourceInfo(
+        google.SOURCE, "Address lookup fallback (Google)", google.DESCRIPTION, True, (google.SOURCE,),
+        group=ADDRESS,
+        pause=Pause("Google refused an address lookup", "addresses it already found still work"),
+        refreshable=False,
     ),
     SourceInfo(
         election_precincts.SOURCE,
@@ -260,6 +266,8 @@ class Admin:
             if not self.svc.fec.keyed:
                 return " ".join(filter(None, (paused, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
             return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
+        if info.id == google.SOURCE:
+            return (paused, "warn") if paused else ((None, "info") if self.svc.google.keyed else (google.KEY_NOTE, "warn"))
         if paused:
             return paused, "warn"
         kept = self.kept(info)

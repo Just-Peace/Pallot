@@ -26,7 +26,7 @@
         <h2 id="summary">In short</h2>
         <ul>
           <li>Your picks, notes, write-ins and pick rule stay in your browser. They're never sent anywhere.</li>
-          <li>To find your ballot, Pallot sends your address to the US Census geocoder, and its location to Ballotpedia if Ballotpedia is on.</li>
+          <li>To find your ballot, Pallot sends your address to the US Census geocoder (and to OpenStreetMap, then Google if it has a key, for an address the Census can't match), and its location to Ballotpedia if Ballotpedia is on.</li>
           <li>While you type your address, Pallot sends what you've typed so far to Ballotpedia's address search for suggestions, unless you turn them off in <a href="settings.html">Settings</a>.</li>
           <li>For the map of your districts, Pallot sends the US Census your district numbers, never your address, and asks OpenStreetMap for the street map of the area you look at, unless you turn the street map off in <a href="settings.html">Settings</a>.</li>
           <li>The Pallot server keeps a copy of those lookups and suggestions, so the same text doesn't have to be sent again, until they're cleared in <a href="settings.html">Settings</a>. Suggestions, and addresses that weren't found, are deleted by themselves the first time Pallot starts after they're two months old (one month, if nothing was found).</li>
@@ -104,6 +104,11 @@
                 <td data-label="When">Only when the Census can't match it. The Census is then asked about the location Nominatim found.</td>
               </tr>
               <tr>
+                <th scope="row">Google Geocoding API</th>
+                <td data-label="What it's sent">Your address, with the key of whoever runs Pallot, which identifies their Google account</td>
+                <td data-label="When">Only when both the Census and Nominatim couldn't match it, and Pallot has a Google key, and Google is on in Settings. The Census is then asked about the location Google found.</td>
+              </tr>
+              <tr>
                 <th scope="row">Ballotpedia's address search, for address suggestions</th>
                 <td data-label="What it's sent">What you've typed in the address box, once it's a house number and at least three letters of the street, each time you pause typing, with "tx" added unless you typed it</td>
                 <td data-label="When">Text the server hasn't asked about in the last 30 days, if address suggestions are on</td>
@@ -152,7 +157,7 @@
             <thead><tr><th scope="col">What</th><th scope="col">Where</th><th scope="col">Kept until</th></tr></thead>
             <tbody>
               <tr>
-                <th scope="row">Address lookups: each address as sent to the Census or Nominatim, with the answer (map coordinates, county and districts)</th>
+                <th scope="row">Address lookups: each address as sent to the Census, Nominatim or Google, with the answer (map coordinates, county and districts)</th>
                 <td data-label="Where"><code>data/cache.sqlite3</code></td>
                 <td data-label="Kept until">Cleared. After 30 days (1 day if the address wasn't found), the next lookup of that address asks again and replaces the copy. An address that wasn't found is deleted 31 days or more after the lookup, when Pallot next tidies its copies (as it starts, and every 6 hours).</td>
               </tr>

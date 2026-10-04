@@ -14,6 +14,7 @@ county_precincts = true     # seven counties' records: your commissioner and JP 
 tigerweb = true             # US Census TIGERweb: the outlines of your districts on the map
 osm_tiles = true            # OpenStreetMap: the street map under the outlines
 suggestions = true          # Ballotpedia's address search: suggestions as you type
+google = true               # Google: finds an address the Census and OpenStreetMap can't (needs PALLOT_GOOGLE_API_KEY)
 
 # Official ballot data
 sos = true                  # Texas Secretary of State: the ballot and candidate filings

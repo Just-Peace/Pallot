@@ -20,6 +20,7 @@ import struct
 import zipfile
 from pathlib import Path
 from typing import Any, Callable
+from urllib.parse import unquote
 
 import httpx
 import pytest
@@ -47,6 +48,8 @@ ADDRESSES = {
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
 }
+NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
+GOOGLE_KEY = "test-google-key"
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}  # as in scripts/record_fixtures.py
 PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only its bytes matter
 FEED_URLS = {feed.api: feed.source for feed in FEEDS}
@@ -265,6 +268,8 @@ class Upstream:
         self.ballotpedia_edit: Callable[[dict[str, Any]], None] | None = None  # changes the Capitol's ballot before it's sent
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
+        self.google_keys: list[str | None] = []  # the X-Goog-Api-Key each request to Google carried
+        self.google_answer: dict[str, Any] | None = None  # Google's answer for NEW_STREET (default: the MoPac point, a rooftop)
         self.suggestions_status: int | None = None  # e.g. 429 when Ballotpedia's address search throttles us
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
@@ -320,6 +325,20 @@ class Upstream:
             return _file("census_coords_mopac.json")
         if url.host == "nominatim.openstreetmap.org":
             return _file("nominatim_mopac.json") if self._addresses.get(params["q"]) == "mopac" else httpx.Response(200, json=[])
+        if url.host == "geocode.googleapis.com":
+            self.google_keys.append(request.headers.get("x-goog-api-key"))
+            if request.headers.get("x-goog-api-key") != GOOGLE_KEY:
+                return httpx.Response(403, json={"error": {"status": "PERMISSION_DENIED"}})
+            if normalize_address(unquote(url.path.rsplit("/", 1)[1])) != normalize_address(NEW_STREET):
+                return httpx.Response(200, json={})
+            if self.google_answer is not None:
+                return httpx.Response(200, json=self.google_answer)
+            mopac = _file("nominatim_mopac.json")
+            hit = json.loads(mopac.content)[0]
+            return httpx.Response(200, json={"results": [{
+                "formattedAddress": NEW_STREET, "granularity": "ROOFTOP",
+                "location": {"latitude": float(hit["lat"]), "longitude": float(hit["lon"])},
+            }]})
         if url.host == "goelect.txelections.civixapps.com":
             path = url.path
             if "/getElectionsByYear/" in path:
@@ -485,7 +504,7 @@ def sources_on(request, monkeypatch):
 @pytest.fixture
 def make_app(tmp_path, upstream):
     """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY,
-    endorsements_dir=FIXTURES / "endorsements") -> a new app; call again on the same dir to 'restart'. It answers to
+    endorsements_dir=FIXTURES / "endorsements", google_key="") -> a new app; call again on the same dir to 'restart'. It answers to
     TestClient's host name, testserver."""
     refreshed: list[Path] = []
     tec_refreshed: list[dict[str, Any]] = []
@@ -502,9 +521,11 @@ def make_app(tmp_path, upstream):
         return FakeTecResult()
 
     def options(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
-                fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements") -> dict[str, Any]:
+                fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements",
+                google_key: str = "") -> dict[str, Any]:
         return dict(
-            config=Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, allowed_hosts=("testserver",)),
+            config=Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, google_api_key=google_key,
+                          allowed_hosts=("testserver",)),
             today=lambda: TODAY,
             trackaipac_bundled=FIXTURES / "trackaipac",
             trackaipac_refresh=refresh or fake_refresh,

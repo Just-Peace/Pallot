@@ -12,7 +12,7 @@ from pallot.sources.sos import still_running
 
 from .conftest import (
     switch,
-    ADDRESSES, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
+    ADDRESSES, GOOGLE_KEY, NEW_STREET, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
 )
 
 
@@ -83,7 +83,7 @@ def test_capitol_ballot(client):
     assert paxton["photo_url"]  # from Ballotpedia
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
-    assert statuses == {"geocoding": "used", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
+    assert statuses == {"geocoding": "used", "google": "unused", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
                         "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "mupac": "used", "cair": "used", "emgage": "used", "fec": "used",
                         "tec": statuses["tec"], "polls": "used", "election_precincts": "used",
                         "county_precincts": "used"}
@@ -443,6 +443,83 @@ def test_nominatim_fallback_is_marked_approximate(client):
     assert ballot["location"]["geocoder"] == "nominatim" and ballot["location"]["approximate"]
     assert any("approximately" in w for w in ballot["warnings"])
     assert ballot["location"]["county"] == "Travis"
+
+
+@pytest.fixture
+def google_client(make_app):
+    with TestClient(make_app(google_key=GOOGLE_KEY)) as test_client:
+        switch(test_client, "ballotpedia", False)
+        yield test_client
+
+
+def test_google_places_an_address_the_census_and_nominatim_miss(google_client, upstream):
+    ballot = get_ballot(google_client, NEW_STREET)
+    assert ballot["location"]["geocoder"] == "google" and not ballot["location"]["approximate"]
+    assert ballot["location"]["county"] == "Travis"
+    geocoding = [c for c in upstream.calls if "onelineaddress" in c or "nominatim" in c or "googleapis" in c]
+    assert len(geocoding) == 3 and geocoding[0].startswith("GET geocoding.geo.census.gov/")
+    assert geocoding[1] == "GET nominatim.openstreetmap.org/search"
+    assert geocoding[2].startswith("GET geocode.googleapis.com/v4beta/geocode/address/19527 JUNIPER")
+    assert upstream.google_keys == [GOOGLE_KEY]
+    asked = len(upstream.calls)
+    get_ballot(google_client, NEW_STREET)
+    assert not [c for c in upstream.calls[asked:] if "googleapis" in c or "nominatim" in c or "onelineaddress" in c]
+
+
+def test_google_is_not_asked_when_nominatim_finds_the_address(google_client, upstream):
+    assert get_ballot(google_client, "mopac")["location"]["geocoder"] == "nominatim"
+    assert upstream.count("googleapis") == 0
+
+
+def test_google_is_not_asked_without_a_key(client, upstream):
+    response = client.post("/api/ballot", json={"address": NEW_STREET})
+    assert response.status_code == 422 and "couldn't find that address" in response.json()["detail"]
+    assert upstream.count("googleapis") == 0
+
+
+def test_google_is_not_asked_when_the_voter_turns_it_off(google_client, upstream):
+    switch(google_client, "google", False)
+    response = google_client.post("/api/ballot", json={"address": NEW_STREET})
+    assert response.status_code == 422 and "couldn't find that address" in response.json()["detail"]
+    assert upstream.count("googleapis") == 0
+
+
+def test_a_rough_google_match_is_marked_approximate(google_client, upstream):
+    upstream.google_answer = {"results": [{
+        "formattedAddress": "Juniper Breeze Ln, Spring, TX 77379, USA", "granularity": "ROUTE",
+        "location": {"latitude": 30.4, "longitude": -97.7},
+    }]}
+    ballot = get_ballot(google_client, NEW_STREET)
+    assert ballot["location"]["geocoder"] == "google" and ballot["location"]["approximate"]
+    assert any("approximately" in w for w in ballot["warnings"])
+
+
+def test_google_finding_nothing_is_the_usual_not_found(google_client, upstream):
+    upstream.google_answer = {}
+    response = google_client.post("/api/ballot", json={"address": NEW_STREET})
+    assert response.status_code == 422 and "couldn't find that address" in response.json()["detail"]
+
+
+def test_a_google_refusal_pauses_it_and_the_key_is_never_kept(google_client, upstream, tmp_path):
+    upstream.refusing["geocode.googleapis.com"] = 403
+    assert google_client.post("/api/ballot", json={"address": NEW_STREET}).status_code == 502
+    again = google_client.post("/api/ballot", json={"address": "2 Newer Ln, Spring, TX 77379"})
+    assert again.status_code == 502 and "is paused until" in again.json()["detail"]
+    assert upstream.count("googleapis") == 1
+    row = source_row(google_client, "google")
+    assert row["notice_tone"] == "warn" and row["notice"].startswith("Paused until ")
+    import sqlite3
+
+    with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
+        assert not [r for r in db.execute("SELECT * FROM responses") if GOOGLE_KEY in repr(r)]
+
+
+def test_settings_says_google_needs_a_key(client):
+    assert "PALLOT_GOOGLE_API_KEY" in source_row(client, "google")["notice"]
+
+
+def test_settings_has_no_google_notice_with_a_key(google_client):
+    assert source_row(google_client, "google")["notice"] is None
 
 
 def source_row(client: TestClient, source_id: str) -> dict:
