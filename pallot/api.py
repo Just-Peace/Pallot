@@ -20,12 +20,13 @@ from fastapi.staticfiles import StaticFiles
 from starlette.types import Scope
 
 from . import __version__, ics
-from .admin import Admin, AdminError
+from .admin import SOURCES, Admin, AdminError
 from .ballot import BallotError, Services, build_ballot, election_dates
 from .config import Config, load_config
 from .http_cache import HttpCache, UpstreamError
 from .models import (
-    ActionResult, Ballot, BallotRequest, DistrictOutlines, ElectionDate, SourcesOverview, SourceToggle, SuggestResult,
+    ActionResult, Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, SourcesOverview,
+    SourceToggle, SuggestResult,
 )
 from .outlines import district_outlines
 from .settings import Settings
@@ -35,6 +36,7 @@ from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts
+from .sources.endorsements import ENDORSEMENTS_DIR, load_all
 from .sources.fec import Fec
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
@@ -124,6 +126,7 @@ def create_app(
     voteforpeace_bundled: Path | None = None,
     tec_refresh: Callable[..., Any] | None = None,
     tec_bundled: Path | None = None,
+    endorsements_dir: Path = ENDORSEMENTS_DIR,
     min_interval: Mapping[str, float] = MIN_INTERVAL,
 ) -> FastAPI:
     config = config or load_config()
@@ -147,9 +150,10 @@ def create_app(
                     cache.prune, {suggestions.SOURCE, osm_tiles.SOURCE}, {census.SOURCE, nominatim.SOURCE},
                     config.ttl.prune_after,
                 )
+                lists = load_all(endorsements_dir, reserved={info.id for info in SOURCES})
                 svc = Services(
                     config=config,
-                    settings=Settings(config.settings_path),
+                    settings=Settings(config.settings_path, (found.source for found in lists)),
                     cache=cache,
                     census=Census(cache, config.ttl),
                     nominatim=Nominatim(cache, config.ttl),
@@ -165,6 +169,7 @@ def create_app(
                     voteforpeace=VoteForPeace(
                         config.voteforpeace_dir, refresh_fn=voteforpeace_refresh, bundled_dir=voteforpeace_bundled
                     ),
+                    endorsements=lists,
                     fec=Fec(cache, config.ttl, config.fec_api_key, today),
                     tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                     polls=Polls(cache, config.ttl, today),
@@ -298,6 +303,20 @@ def create_app(
     @app.get("/api/sources", response_model=SourcesOverview)
     def sources(request: Request) -> SourcesOverview:
         return admin(request).overview()
+
+    @app.get("/api/endorsements", response_model=list[EndorsementListInfo])
+    def endorsements(request: Request) -> list[EndorsementListInfo]:
+        """The endorsement lists that came with Pallot, for About, the FAQ and the welcome steps,
+        which list them without naming any in their HTML."""
+        svc = services(request)
+        return [
+            EndorsementListInfo(
+                source=found.source, label=found.label, organization=found.organization, url=found.url,
+                captured=found.captured, description=found.description,
+                enabled=svc.settings.enabled(found.source),
+            )
+            for found in svc.endorsements
+        ]
 
     @app.put("/api/sources/{source_id}", response_model=SourcesOverview)
     def toggle(source_id: str, body: SourceToggle, request: Request) -> SourcesOverview:

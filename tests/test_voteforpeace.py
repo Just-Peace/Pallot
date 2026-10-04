@@ -1,4 +1,5 @@
-"""Vote for Peace's cards: what they show, and how its entries meet the ballot's races."""
+"""Vote for Peace's cards: what they show, and how its entries meet the ballot's races (seats.py, which the
+endorsement lists share)."""
 
 from __future__ import annotations
 
@@ -6,8 +7,8 @@ import pytest
 
 from pallot.models import Candidate, Match, Race
 from pallot.offices import classify
-from pallot.sources import voteforpeace
-from pallot.sources.voteforpeace import VoteForPeace, card, cards, entry_seats
+from pallot.sources.seats import entry_seats, party_code
+from pallot.sources.voteforpeace import VoteForPeace, card, cards
 
 from .conftest import FIXTURES
 
@@ -79,6 +80,10 @@ def test_notes_articles_and_the_sources_it_cites():
      {"COUNTY:MISSOURI CITY", "COUNTY:FORT BEND"}),
     ("TX Board of Education", None, "statewide", None, {"STATEEDU:*"}),
     ("Harris County Treasurer", None, "statewide", None, {"COUNTY:HARRIS"}),  # filed as statewide on the site
+    ("U.S. House", "10", "federal", None, {"TX-10"}),  # as an endorsement list may word them
+    ("US Senate", None, "federal", None, {"TX-SEN"}),
+    ("State House", "49", None, None, {"STATEREP:49"}),
+    ("State Senate", "14", None, None, {"STATESEN:14"}),
 ])
 def test_an_entry_names_its_seat_as_the_ballot_does(office, district, level, jurisdiction, seats):
     assert entry_seats(entry(office=office, district=district, level=level, jurisdiction=jurisdiction)) == seats
@@ -135,4 +140,5 @@ def test_a_party_that_disagrees_makes_it_likely(snapshot):
 def test_a_title_before_the_name_is_left_out(snapshot):
     house = race("State Representative District 26", ("Eliz Markowitz", "D"), key="sos:1:26")
     assert "sos:1:26:0" in cards(snapshot, [house], {}, None).candidates  # "Dr. Eliz Markowitz" on the site
-    assert voteforpeace.party_code({"party": "Democrat"}) == "D" and voteforpeace.party_code({"party": "Nonpartisan"}) is None
+    assert party_code({"party": "Democrat"}) == "D" and party_code({"party": "Nonpartisan"}) is None
+    assert party_code({"party": "r"}) == "R"

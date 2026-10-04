@@ -37,6 +37,7 @@ from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot, 
 from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
+from .sources.endorsements import EndorsementList
 from .sources.fec import Fec
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
@@ -92,6 +93,7 @@ class Services:
     ballotpedia: Ballotpedia
     trackaipac: TrackAipac
     voteforpeace: VoteForPeace
+    endorsements: list[EndorsementList]  # the frozen lists found at startup, by label
     fec: Fec
     tec: Tec
     polls: Polls
@@ -274,6 +276,7 @@ class _Builder:
         self.use_bp = svc.settings.enabled("ballotpedia")
         self.use_tap = svc.settings.enabled("trackaipac")
         self.use_vfp = svc.settings.enabled("voteforpeace")
+        self.lists = [found for found in svc.endorsements if svc.settings.enabled(found.source)]
         self.use_fec = svc.settings.enabled("fec")
         self.use_tec = svc.settings.enabled("tec")
         self.use_polls = svc.settings.enabled("polls")
@@ -367,12 +370,14 @@ class _Builder:
             sos_lookups=sos_data.lookups if sos_data else None,
             use_trackaipac=self.use_tap,
             use_voteforpeace=self.use_vfp,
+            endorsements=self.lists,
             use_fec=self.use_fec,
             use_tec=self.use_tec,
             use_polls=self.use_polls,
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,
+            state=place.state,
             bp_counterparts=bp_counterparts,
         )
         self.warnings += outcome.warnings
@@ -726,6 +731,11 @@ class _Builder:
                 id=source_id, label=label, status="stale" if stale else "used", as_of=iso_utc(min(used)), calls=calls
             )
 
+        def frozen(found: EndorsementList) -> SourceUse:
+            if not any(found.source == on.source for on in self.lists):
+                return SourceUse(id=found.source, label=found.label, status="off")
+            return SourceUse(id=found.source, label=found.label, status="used", as_of=found.captured)
+
         def snapshot(source_id: str, label: str, on: bool, document: Callable[[], dict[str, Any]]) -> SourceUse:
             if not on:
                 return SourceUse(id=source_id, label=label, status="off")
@@ -747,6 +757,7 @@ class _Builder:
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             snapshot("voteforpeace", "Vote for Peace", self.use_vfp, self.svc.voteforpeace.document),
+            *(frozen(found) for found in self.svc.endorsements),
             status("fec", "FEC", self.use_fec, ("fec",)),
             snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
             status("polls", "Polls", self.use_polls, ("polls",)),

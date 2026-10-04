@@ -23,9 +23,10 @@ const rows = new Map(); // source id → { row, update }
 let clearAllQuestion = null; // the server words "Clear all caches"'s prompt
 
 // What the source has saved on the server: "12 saved responses · 3.1 MB · 2 expired · fetched
-// 4 days ago to an hour ago". Snapshot sources describe theirs in their details instead.
+// 4 days ago to an hour ago". Snapshot sources describe theirs in their details instead, and a
+// frozen list saves nothing.
 function cacheLine(source) {
-  if (source.resettable) return null;
+  if (source.resettable || source.frozen) return null;
   const { entries, bytes, expired, oldest, newest } = source.cache;
   if (!entries) return h("p", { class: "source-cache" }, "Nothing saved yet.");
   const [from, to] = [relativeTime(oldest), relativeTime(newest)];
@@ -39,10 +40,11 @@ function cacheLine(source) {
 function lastUseLine(source) {
   const use = source.last_use;
   if (!use || use.status === "off") return null;
-  const age = use.as_of ? (source.resettable ? formatDate(use.as_of, SHORT_DATE) : relativeTime(use.as_of)) : null;
+  const dated = source.resettable || source.frozen;
+  const age = use.as_of ? (dated ? formatDate(use.as_of, SHORT_DATE) : relativeTime(use.as_of)) : null;
   const text = {
-    used: source.resettable
-      ? `used the snapshot of ${age}`
+    used: dated
+      ? `used the ${source.frozen ? "list captured on" : "snapshot of"} ${age}`
       : [use.message, use.calls ? plural(use.calls, "request") : "no requests", age ? `data from ${age}` : null]
         .filter(Boolean).join(" · "),
     stale: `no answer, so it used the copy saved ${age}`,
@@ -125,7 +127,7 @@ function sourceRow(initial) {
         : h("span", { class: "source-name-wrap" }, name, h("span", { class: "pill" }, "Always on"))),
     h("p", { class: "source-desc" }, source.description),
     state,
-    h("div", { class: "source-actions" }, source.refreshable ? refreshButton : null, clearButton),
+    source.frozen ? null : h("div", { class: "source-actions" }, source.refreshable ? refreshButton : null, clearButton),
   );
 
   function update(next) {

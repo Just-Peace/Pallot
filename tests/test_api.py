@@ -34,8 +34,9 @@ def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts", "tigerweb",
                                                        "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
-                                                       "trackaipac", "voteforpeace", "fec", "tec", "polls"]
-    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, fec, tec, polls = overview["sources"]
+                                                       "trackaipac", "voteforpeace", "examplepac", "fec", "tec", "polls"]
+    geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, example, fec, tec, polls = (
+        overview["sources"])
     assert (county["label"], county["toggleable"], county["enabled"], county["refresh_confirm"]) == (
         "Commissioner & JP precincts (counties)", True, True, None)
     assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
@@ -44,7 +45,9 @@ def test_sources_overview(client):
     assert "(a large file)" in precincts["refresh_confirm"]  # its size once Pallot has seen the portal's list
     assert [(f["label"], f["value"]) for f in precincts["details"]] == [
         ("Map kept", "downloaded on the first lookup"), ("Newest on the portal", "not asked yet")]
-    assert tiles["refreshable"] is False and all(s["refreshable"] for s in overview["sources"] if s is not tiles)
+    assert tiles["refreshable"] is False and example["refreshable"] is False
+    assert all(s["refreshable"] for s in overview["sources"] if s not in (tiles, example))
+    assert [s["id"] for s in overview["sources"] if s["frozen"]] == ["examplepac"]
     assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
     assert (outlines["label"], outlines["enabled"], outlines["refresh_confirm"]) == ("District map (US Census TIGERweb)", True, None)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True

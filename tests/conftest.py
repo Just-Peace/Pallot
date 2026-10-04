@@ -1,8 +1,9 @@
 """Shared setup: recorded API responses (tests/fixtures, see scripts/record_fixtures.py)
 served through respx, made-up SBOE and precinct maps and counties' lists of their precincts, and a
 Pallot app on a temp data dir
-with "today" pinned, no waits between calls to a source, an FEC API key, and the TrackAIPAC,
-Vote for Peace and Texas Ethics Commission fixture snapshots."""
+with "today" pinned, no waits between calls to a source, an FEC API key, the TrackAIPAC,
+Vote for Peace and Texas Ethics Commission fixture snapshots, and a made-up endorsement list
+(tests/fixtures/endorsements) in place of the ones that come with Pallot."""
 
 from __future__ import annotations
 
@@ -442,8 +443,9 @@ class FakeTecResult:
 
 @pytest.fixture
 def make_app(tmp_path, upstream):
-    """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY) -> a new app;
-    call again on the same dir to 'restart'. It answers to TestClient's host name, testserver."""
+    """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY,
+    endorsements_dir=FIXTURES / "endorsements") -> a new app; call again on the same dir to 'restart'. It answers to
+    TestClient's host name, testserver."""
     refreshed: list[Path] = []
     tec_refreshed: list[dict[str, Any]] = []
 
@@ -459,7 +461,7 @@ def make_app(tmp_path, upstream):
         return FakeTecResult()
 
     def build(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
-              fec_key: str = FEC_KEY):
+              fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements"):
         return create_app(
             Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, allowed_hosts=("testserver",)),
             today=lambda: TODAY,
@@ -469,6 +471,7 @@ def make_app(tmp_path, upstream):
             voteforpeace_refresh=voteforpeace_refresh or fake_voteforpeace_refresh,
             tec_bundled=FIXTURES / "tec",
             tec_refresh=tec_refresh or fake_tec_refresh,
+            endorsements_dir=endorsements_dir,
             min_interval={},
         )
 

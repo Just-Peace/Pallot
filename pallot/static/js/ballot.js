@@ -16,6 +16,7 @@ import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openPrecincts, renderDistricts } from "./districts-card.js";
 import { $, closeOnBackdrop, extLink, h, linkedText, onReturn, setStatus as showStatus } from "./dom.js";
+import { showEndorsementLists } from "./endorsement-lists.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
@@ -30,6 +31,7 @@ import { showToast } from "./toast.js";
 import { openPanel } from "./topbar.js";
 
 initChrome();
+showEndorsementLists(); // in the welcome steps
 
 const form = $("#lookup-form");
 const addressInput = $("#address");

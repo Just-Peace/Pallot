@@ -1,0 +1,17 @@
+{
+  "source": "examplepac",
+  "label": "Example PAC",
+  "organization": "Example Peace Action Committee",
+  "url": "https://example.org/endorsements",
+  "captured": "2026-09-20",
+  "description": "A made-up organization's endorsements, for the tests.",
+  "candidates": [
+    {"name": "James Talarico", "state": "TX", "office": "U.S. Senate", "district": null, "party": "Democrat", "note": "Endorsed for the general election.", "url": "https://example.org/endorsements/talarico"},
+    {"name": "Montserrat Garibay", "state": "TX", "office": "State House", "district": "49", "party": "D"},
+    {"name": "Gisela Triana", "state": "TX", "office": "Texas Supreme Court Justice"},
+    {"name": "Brigid Shea", "state": "TX", "office": "County Commissioner", "district": 2, "jurisdiction": "Travis"},
+    {"name": "K. Hawkins", "state": "TX", "office": "Texas Supreme Court Justice"},
+    {"name": "Chris Gober", "state": "CA", "office": "U.S. House", "district": "10"},
+    {"name": "Jake Auchincloss", "state": "MA", "office": "U.S. House", "district": "4", "party": "Democrat"}
+  ]
+}
