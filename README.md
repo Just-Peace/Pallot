@@ -105,7 +105,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
   - While you scroll through a race, its heading stays at the top, under the progress bar, until the next race comes.
   - Once you've picked, the heading shows your pick, collapsed or not, with **✕ Clear** next to it to take it back. A message at the foot of the window offers **Undo**. Propositions have it too.
-  - Races the state's ballot doesn't have, such as city council, school board and appraisal district races, say "Listed by Ballotpedia" under their name.
+  - With Ballotpedia on (it starts off), races the state's ballot doesn't have, such as city council, school board and appraisal district races, say "Listed by Ballotpedia" under their name.
   - Ballotpedia's notes on a race (a replacement nominee, a redrawn district) show at the top of it, with Ballotpedia's link.
   - **Incumbent** comes from the state's filing, or from Ballotpedia when it matches the candidate exactly in the same race.
 - **Picks follow the party:** a picked candidate's row takes their party's color (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid color so they stand apart from the sources' badges.
@@ -162,9 +162,9 @@ Picks, notes, collapsed races and your pick rule are kept in the browser's `loca
 | OpenStreetMap tiles (tile.openstreetmap.org) | the street map under the outlines | through the Pallot server, only the tiles of the area you look at, following OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); drawn with [Leaflet](https://leafletjs.com), which comes with Pallot |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
-| Ballotpedia | city council, school board and special-district races, and others the state doesn't list (appraisal district boards); notes on races; JP/constable/commissioner precinct (when it has a race on this ballot) and city council district; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so keep it personal or turn it off in Settings |
+| Ballotpedia | city council, school board and special-district races, and others the state doesn't list (appraisal district boards); notes on races; JP/constable/commissioner precinct (when it has a race on this ballot) and city council district; candidate profiles | an **unofficial** endpoint. Its terms forbid commercial scraping, so it starts off: turn it on in Settings for personal use |
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with Pallot (see [Bundled snapshots](#bundled-snapshots)) |
-| Vote for Peace (voteforpeace.info, from Organize for Peace) | whether it rates a candidate an Ally, Neutral or Opposed, on war, human rights and lobby money, with the groups it cites and its notes; every level, from Congress to county courts and city councils | bundled with Pallot, used with Organize for Peace's permission (see [Bundled snapshots](#bundled-snapshots)) |
+| Vote for Peace (voteforpeace.info, from Organize for Peace) | whether it rates a candidate an Ally, Neutral or Opposed, on war, human rights and lobby money, with the groups it cites and its notes; every level, from Congress to county courts and city councils | bundled with Pallot, used with Organize for Peace's permission (see [Bundled snapshots](#bundled-snapshots)); starts off, turn it on in Settings |
 | Endorsement lists (one file per organization, in `pallot/endorsements/`) | the candidates an organization endorses, with its note and the office as it lists it | each a copy made once, frozen, part of Pallot and never fetched. About and the FAQ name the lists in your version |
 | Live endorsement lists: Muslims United PAC (muslimsunitedpac.com) | the candidates it endorses, with its take on each and a link to their page on its site | the site's public JSON list of its endorsements, the whole list in one request, the same for everyone |
 | Live endorsement lists: CAIR Action (cairactionguide.org) | the candidates its Action Guide endorses or prefers, with that level in its words and a link to its list for the state | the site's public JSON list of its endorsements, the whole list in one request, the same for everyone |
@@ -249,7 +249,7 @@ The **Settings** page, linked from the left pane, has four sections: **Appearanc
 
 Settings has no login, but its buttons only work from Pallot's own pages: a request that another website makes from your browser is refused.
 
-When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
+Ballotpedia and Vote for Peace start off. Turn Ballotpedia on to add city council, school board and special district races (the ballot says so while it's off), and Vote for Peace to add its ratings. When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
 ## Bundled snapshots
 
