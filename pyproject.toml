@@ -32,7 +32,7 @@ packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "votefo
 version = { attr = "pallot.__version__" }
 
 [tool.setuptools.package-data]
-pallot = ["static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*"]
+pallot = ["static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*", "endorsements/*.json"]
 trackaipac_cache = ["data/*.json", "data/history/*.json"]
 tec_cache = ["data/*.json"]
 voteforpeace_cache = ["data/*.json", "data/history/*.json"]

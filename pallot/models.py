@@ -369,6 +369,7 @@ class SourceStatus(BaseModel):
     refresh_confirm: str | None = None  # asked before refreshing, when a refresh sends or downloads a lot
     clear_confirm: str  # asked before clearing
     refreshable: bool = True  # False: no Refresh (OpenStreetMap's tiles may only be fetched as they're viewed)
+    frozen: bool = False  # comes with Pallot as captured, never fetched: no Refresh or Clear, nothing saved (an endorsement list)
     notice: str | None = None  # one line shown under the description, e.g. what the source is missing
     notice_tone: Tone = "info"
     last_use: SourceUse | None = None  # in the last lookup
@@ -379,6 +380,18 @@ class SourcesOverview(BaseModel):
     total_bytes: int
     last_lookup: LastLookup | None = None
     clear_all_confirm: str  # asked before "Clear all caches"
+
+
+class EndorsementListInfo(BaseModel):
+    """An organization's endorsement list that came with Pallot."""
+
+    source: str
+    label: str  # "JVP Action"
+    organization: str  # "Jewish Voice for Peace Action"
+    url: str
+    captured: str  # ISO date
+    description: str
+    enabled: bool
 
 
 class SourceToggle(BaseModel):

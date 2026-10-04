@@ -25,7 +25,7 @@
         <h2 id="what">What it does</h2>
         <ul>
           <li>Enter your home address and Pallot shows every race on your ballot, with the candidates in ballot order.</li>
-          <li>Each candidate shows what the Texas Secretary of State's filings, Ballotpedia, TrackAIPAC and Vote for Peace say, and which source said what, with a link to search the web for more.</li>
+          <li>Each candidate shows what the Texas Secretary of State's filings, Ballotpedia, TrackAIPAC and Vote for Peace say<span data-endorsements="clause"></span>, and which source said what, with a link to search the web for more.</li>
           <li>Congressional and state races show how much money each candidate has raised, from their reports to the FEC or the Texas Ethics Commission. Each candidate's details break it down: where the money came from, the largest donors and outside spending.</li>
           <li>U.S. Senate, U.S. House and Governor races show where the candidates stand in public polls, when there are any.</li>
           <li>The top of the ballot shows when to vote: the last day to register, early voting and Election Day, each of which you can add to your calendar. Beside it are your districts, as on your voter registration certificate, with a map of them.</li>
@@ -59,6 +59,7 @@
               <tr><th scope="row">Ballotpedia</th><td>City council, school board and special district races, and others the state doesn't list; notes on races; your commissioner and JP precincts and city council district; candidate profiles and photos</td></tr>
               <tr><th scope="row">TrackAIPAC</th><td>Money and endorsements from pro-Israel lobby groups for congressional candidates</td></tr>
               <tr><th scope="row">Vote for Peace</th><td>Whether it rates a candidate an ally, neutral or opposed, on war, human rights and lobby money, for races at every level</td></tr>
+              <template data-endorsements="rows"></template>
               <tr><th scope="row">FEC (Federal Election Commission)</th><td>Money raised and spent by congressional campaigns, where it came from, and outside spending for or against them</td></tr>
               <tr><th scope="row">Texas Ethics Commission (TEC)</th><td>The same for candidates for state offices, with their largest donors</td></tr>
               <tr><th scope="row">FiftyPlusOne</th><td>Public polls of the U.S. Senate, U.S. House and Governor races</td></tr>
@@ -97,6 +98,7 @@
           <li><strong>Ballotpedia</strong>: local races and others the state doesn't list, notes on races, precincts, and candidate profiles and photos, from <a href="https://ballotpedia.org/" target="_blank" rel="noopener noreferrer">ballotpedia.org</a>, and address suggestions from its address search, with Esri's address data.</li>
           <li><strong>TrackAIPAC</strong>: lobby money and endorsements for congressional candidates, from <a href="https://www.trackaipac.com" target="_blank" rel="noopener noreferrer">trackaipac.com</a>.</li>
           <li><strong>Vote for Peace</strong>: candidates rated ally, neutral or opposed by Organize for Peace, from <a href="https://voteforpeace.info/candidates" target="_blank" rel="noopener noreferrer">voteforpeace.info</a>, used with their permission.</li>
+          <template data-endorsements="credits"></template>
           <li><strong>Federal Election Commission</strong>: campaign finance for congressional candidates, from the <a href="https://api.open.fec.gov/developers/" target="_blank" rel="noopener noreferrer">OpenFEC API</a>. More at <a href="https://www.fec.gov/data/" target="_blank" rel="noopener noreferrer">fec.gov</a>.</li>
           <li><strong>Texas Ethics Commission</strong>: campaign finance for state candidates and officeholders, from its <a href="https://www.ethics.texas.gov/data-reports/campaign-finance/" target="_blank" rel="noopener noreferrer">campaign finance data</a>.</li>
           <li><strong>FiftyPlusOne</strong>: public polls of U.S. Senate, U.S. House and Governor races, from <a href="https://fiftyplusone.news" target="_blank" rel="noopener noreferrer">fiftyplusone.news</a>.</li>

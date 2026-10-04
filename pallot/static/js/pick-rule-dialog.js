@@ -217,6 +217,10 @@ export function openRules(raceKey = null) {
     checkRow("TrackAIPAC endorses them", rule.endorsed, (on) => { rule.endorsed = on; update(); }, { disabled: !has.trackaipac }),
     checkRow("Vote for Peace rates them an ally", rule.peaceAlly, (on) => { rule.peaceAlly = on; update(); },
       { disabled: !has.voteforpeace }),
+    has.endorsements.map(({ source, label }) => checkRow(`Endorsed by ${label}`, rule.endorsedBy.includes(source), (on) => {
+      rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
+      update();
+    })),
     checkRow("Their money is", rule.money.on, (on) => { rule.money.on = on; update(); }, { disabled: moneyOff, extra: moneyInputs, stacked: true }),
     checkRow("Small donations make up at least", rule.small.on, (on) => { rule.small.on = on; update(); }, {
       disabled: !has.small,
@@ -248,7 +252,8 @@ export function openRules(raceKey = null) {
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),
-    h("p", { class: "muted" }, "Pick by party, TrackAIPAC, Vote for Peace, money and polls. Nothing changes until you press Apply.")));
+    h("p", { class: "muted" }, `Pick by party, TrackAIPAC, Vote for Peace, ${has.endorsements.length ? "endorsements, " : ""}`
+      + "money and polls. Nothing changes until you press Apply.")));
   dialog.replaceChildren(
     head,
     h("div", { class: "rule-body" },
@@ -259,7 +264,8 @@ export function openRules(raceKey = null) {
       checkRow("Don't replace picks I've already made", rule.keepMine, (on) => { rule.keepMine = on; update(); }),
       h("p", { class: "fine" },
         "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
-        + "congressional races, Vote for Peace in the races where it rates someone, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
+        + "congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it "
+        + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. Small donations ($200 or less from a "
         + "donor) and self-funding are known only in congressional races, with an FEC key. Without the Write-ins chip, a rule "
         + "picks only the names printed on the ballot. If more candidates match than a race has seats, a tie included, "
         + "it's left for you."),

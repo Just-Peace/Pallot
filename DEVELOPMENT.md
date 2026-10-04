@@ -48,9 +48,11 @@ pallot/
   ics.py            calendar files of key dates    outlines.py the district map's outlines
   version.py        the commit the footer shows
   sources/          census, nominatim, suggestions, sboe, election_precincts, county_precincts, tigerweb, osm_tiles, sos,
-                    key_dates, ballotpedia, trackaipac, voteforpeace, fec, tec, polls
+                    key_dates, ballotpedia, trackaipac, voteforpeace, endorsements, fec, tec, polls
                     (snapshot.py: the bundled-snapshot handling TrackAIPAC, Vote for Peace and TEC share;
-                    compare.py: the Compare dialog's sections, shared by the FEC and TEC)
+                    seats.py: matching entries that word their own office, shared by Vote for Peace and the
+                    endorsement lists; compare.py: the Compare dialog's sections, shared by the FEC and TEC)
+  endorsements/     the frozen endorsement lists, one <source>.json per organization
   static/           index.html (the ballot), settings.html, faq.html, about.html, privacy.html, favicon.svg,
                     vendor/leaflet/ (Leaflet 1.9.4, copied in), css/app.css,
                     js/ (ballot.js, districts-card.js, race-cards.js, details.js, ballot-nav.js, ballot-shared.js,
@@ -82,7 +84,7 @@ Every outbound call goes through `pallot/http_cache.py`, a SQLite cache in `data
 - Deleted text doesn't linger in the files. The connection turns on `PRAGMA secure_delete`, so SQLite zeroes a row's bytes when it's deleted or replaced, and `clear()` (and `prune()` when it deleted anything) ends with `PRAGMA wal_checkpoint(TRUNCATE)`, so the WAL's old copies of those pages go too. In WAL mode a `VACUUM` alone isn't enough: the old pages stay readable in `cache.sqlite3-wal` until a checkpoint.
 
 Other work that would hold up the server runs in threads too:
-- `enrich.run` asks every card source at once (`asyncio.gather`); the ones with no I/O (Ballotpedia, TrackAIPAC, Vote for Peace, the TEC) build their cards in threads. The cards are then attached in `CARD_ORDER`, which is the order of the tabs in Details and of the badges on a candidate's row: the money (FEC or TEC), Texas SOS, polls, Ballotpedia, TrackAIPAC, Vote for Peace.
+- `enrich.run` asks every card source at once (`asyncio.gather`); the ones with no I/O (Ballotpedia, TrackAIPAC, Vote for Peace, the endorsement lists, the TEC) build their cards in threads. The cards are then attached in `CARD_ORDER`, which is the order of the tabs in Details and of the badges on a candidate's row: the money (FEC or TEC), Texas SOS, polls, Ballotpedia, TrackAIPAC, Vote for Peace, then the endorsement lists by label.
 - The SBOE point-in-polygon test (`SboeMap.district_at`), and simplifying an SBOE district for the map (`SboeMap.outline`).
 - The election precinct's lookup and outline, and unpacking and checking a new precinct map (`ElectionPrecincts`).
 - `BundledSnapshot` (TrackAIPAC, Vote for Peace, TEC) is read from threads, so a lock makes each version of `current.json` parse once, and keeps a Reset's copy from being read half-written.
@@ -133,7 +135,8 @@ Notes on how each source is called, beyond the README's table:
   - With Texas SOS on, `_bp_races` adds Ballotpedia's local and special-district races, and any other race none of whose printed candidates is in `state_names`: everyone in the day's ballot orders and their declared write-ins, other districts' races included, or the whole statewide list when that stood in. So an appraisal district's board appears, and nothing the state places elsewhere comes back.
   - Office summaries are left out: for every judge they describe election judges.
 - **TEC seats:** a Texas SOS race's seat comes from its office (`tec_seat`); on a ballot from Ballotpedia alone, from Ballotpedia's district type and office name (`bp_seat`: "State Legislative (Lower)" and "District 49" is `STATEREP:49`, "Texas Third District Court of Appeals Chief Justice" is `CHIEFJUSTICE_COA:3`). Without a seat, a match by name is only ever "likely". Ballotpedia lists county courts at law and probate courts as judicial districts, but their judges file with the county, so those races get no TEC card (`_BP_COUNTY_COURT`), as the Texas SOS's county courts don't.
-- **Vote for Peace** (`sources/voteforpeace.py`): every level of office, so a race's seat is spelled as the TEC's are (`race_seat`: `tec_seat` or `bp_seat`), Congress as `TX-37`, and a county, precinct, city or judicial race with no such seat as `COUNTY:TRAVIS`. `entry_seats` reads the site's office and district the same way: "TX State Senator" and `sd-9` is `STATESEN:9`, "Harris District County Court Judge" and `228` is `JUDGEDIST:228`, a county or local office its `jurisdiction` and any "X County" in its title. The site names the Supreme Court, the Court of Criminal Appeals and the courts of appeals without the place, so those are `JUSTICE_SC:*` and the like, which `_fit` turns into the race's own seat on that court. In one race, an entry goes to one candidate: the strongest name match (full name, then first and last, then initial, then last name in the seat), and a tie gets no card, since "K Hawkins" is both Kristen and Kyle. A county seat is every office in the county, so there a last name alone isn't a match (Ebony Williams isn't LaShawn Williams), and "X County" in any office's title counts, since the site files "Harris County Treasurer" as statewide. A title before the name ("Dr.") is dropped when indexing. The rating is the card's badge (`vote` is Ally, `reject` Opposed, as the site words them on a candidate's page) and its flag for Pick by rule (`ally`, `opposed`, `neutral`).
+- **Vote for Peace** (`sources/voteforpeace.py`, matched by `sources/seats.py`): every level of office, so a race's seat is spelled as the TEC's are (`race_seat`: `tec_seat` or `bp_seat`), Congress as `TX-37`, and a county, precinct, city or judicial race with no such seat as `COUNTY:TRAVIS`. `entry_seats` reads the site's office and district the same way: "TX State Senator" (or "State Senate") and `sd-9` is `STATESEN:9`, "U.S. Representative" or "U.S. House" and `37` is `TX-37`, "Harris District County Court Judge" and `228` is `JUDGEDIST:228`, a county or local office its `jurisdiction` and any "X County" in its title. The site names the Supreme Court, the Court of Criminal Appeals and the courts of appeals without the place, so those are `JUSTICE_SC:*` and the like, which `fit` turns into the race's own seat on that court. In one race (`match_entries`), an entry goes to one candidate: the strongest name match (full name, then first and last, then initial, then last name in the seat), and a tie gets no card, since "K Hawkins" is both Kristen and Kyle. A county seat is every office in the county, so there a last name alone isn't a match (Ebony Williams isn't LaShawn Williams), and "X County" in any office's title counts, since the site files "Harris County Treasurer" as statewide. A title before the name ("Dr.") is dropped when indexing. The rating is the card's badge (`vote` is Ally, `reject` Opposed, as the site words them on a candidate's page) and its flag for Pick by rule (`ally`, `opposed`, `neutral`).
+- **Endorsement lists** (`sources/endorsements.py`): see [Endorsement lists](#endorsement-lists).
 - **FiftyPlusOne:** the site's own JSON API: nationwide lists, 500 polls to a page, filtered to Texas on the server. It answers 403 unless the request looks like a browser's.
 - **State-specific text** (the official elections site, the registration check, who can vote by mail, the polls' hours, the print sheet's voting rules, the highest district numbers) comes from `STATES` in `pallot/static/js/labels.js`, keyed by the address's state, so adding a state doesn't mean rewriting pages.
 
@@ -179,7 +182,7 @@ Pick by rule is two modules. `pick-rules.js` is the logic, with no DOM:
 - `plan(races, rule, picks)`, what it would do race by race;
 - `verdicts(ballot, rule)`, for the marks.
 
-It reads candidates' `party`, `incumbent` and `write_in`, and the `figures` and `flags` on their cards (see [Adding a source](#adding-a-source)). The rule decides like this:
+It reads candidates' `party`, `incumbent` and `write_in`, and the `figures` and `flags` on their cards (see [Adding a source](#adding-a-source)). An endorsement list's cards carry the flag `endorsement`, and the rule's `endorsedBy` lists the sources (the lists' ids) that must each have the candidate; the dialog offers a box for each list with a card on the ballot, so it holds no list's name. The rule decides like this:
 - **Pick:** the party chips are OR, the conditions under them AND.
 - **Don't pick:** OR, and it takes back any pick it catches.
 - **Coverage:** a condition from a source (TrackAIPAC, Vote for Peace, money, polls) counts in a race only when a candidate in that race has its card or figure. So "Democrats who spent under $1M" still picks a county race's Democrat. "The least" or "the most" money is the min or max among the race's printed names (and its write-ins, with their chip on) that have the figure, so a tie is two matches.
@@ -225,6 +228,41 @@ The modules share their small helpers rather than writing them out again:
 - TEC's download server blocks bursts of requests, so never fetch the zip in many small ranges.
 - To update the bundled copy itself, run `uv run tec-cache refresh` (or `--zip PATH`) and see `tec_cache/README.md`.
 
+## Endorsement lists
+
+An organization's endorsement list is a frozen, one-time copy: no scraper, no package, no Refresh. Each is one JSON file in `pallot/endorsements/`, and `load_all()` finds them at startup (`create_app(endorsements_dir=…)` points elsewhere; the tests use `tests/fixtures/endorsements/`, a made-up list, so they never depend on the real ones). Each file becomes its own source, with no code naming it:
+- a switch in Settings, on at first (`Settings(…, extra)`), and a row (`admin.list_info`, after Vote for Peace) whose notice says when it was captured, with no Refresh or Clear (`frozen`): it saves nothing in `data/`;
+- a card on each candidate it endorses, with the badge "Endorsed by <label>", the office as listed, the note, and a link to its page;
+- a box in Pick by rule, "Endorsed by <label>", off at first;
+- a row on About (its table and credits), a line in the FAQ's "What are the endorsement lists?", and a clause in About's and the welcome steps' "Each candidate shows…": `endorsement-lists.js` fills the spots marked `data-endorsements` from `GET /api/endorsements`.
+
+Lookups read the file in memory and make no outbound call. Entries are matched like Vote for Peace's (`seats.py`): the name with `matching.py`, the seat from the entry's office and district (or jurisdiction), exact or likely, one entry to one candidate per race, a tie left unmatched. Every state is kept and indexed by `state`; `cards` matches only the ballot's state (`place.state`, passed through `enrich.run`), so a national list's other states never match a Texas ballot, and another state needs no change to the files.
+
+The file, `pallot/endorsements/<source>.json` (`parse()` checks it, and refuses unknown fields):
+
+| Field | Required | What |
+|---|---|---|
+| `source` | yes | the file's name without `.json`: lowercase letters, digits and `_`, starting with a letter, and not another source's id (`jvpaction`) |
+| `label` | yes | the short name on badges, tabs and Settings (`JVP Action`) |
+| `organization` | yes | its full name (`Jewish Voice for Peace Action`) |
+| `url` | yes | the http(s) page the list was copied from |
+| `captured` | yes | the day it was copied, `YYYY-MM-DD` |
+| `description` | yes | one sentence for Settings and the Details tab |
+| `candidates` | yes | at least one entry: |
+| `candidates[].name` | yes | as the list writes it |
+| `candidates[].state` | yes | two-letter postal code (`TX`); keep every state the list has; a lookup matches only its own state's |
+| `candidates[].office` | yes | as the list words it; the seat is read from it: `U.S. Senate`/`U.S. Senator`, `U.S. House`/`U.S. Representative`, `State House`/`State Representative`, `State Senate`/`State Senator`, `State Board of Education`, `Supreme Court`, `Court of Criminal Appeals`, `Court of Appeals`, `District Judge`, the statewide offices (`Governor`, `Attorney General`, …), or `X County …` |
+| `candidates[].district` | no | the district or place number, text or a number (`"35"`, `35`, `"sd-9"`), or `null` |
+| `candidates[].jurisdiction` | no | the county a county, precinct or city office is in (`Travis`), or `null` |
+| `candidates[].party` | no | `Democrat`, `Republican`, `Libertarian`, `Green`, `Independent` (or `D`, `R`, …): a different party makes a match only likely |
+| `candidates[].note` | no | the list's words on the candidate, shown in Details |
+| `candidates[].url` | no | the candidate's own page on the list, the badge's link |
+
+To add an organization:
+1. Write `pallot/endorsements/<source>.json` from the list, by hand or with a one-off script you don't commit.
+2. `uv run pytest tests/test_endorsements.py`: `test_every_list_that_comes_with_pallot_is_valid` fails on a malformed file and says where.
+3. Run `uv run pallot`, look an address up, and check the cards, Settings, About and the FAQ. Nothing else changes: no code, HTML or other doc names a list.
+
 ## Docker image
 
 - The `Dockerfile` installs Pallot as a regular (not editable) package into `/app/.venv`, from `uv.lock` with `--locked` and without the dev tools. After changing dependencies in `pyproject.toml`, run `uv lock`, or the build fails.
@@ -254,5 +292,5 @@ Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, 
 2. A field on `Services` in `ballot.py`, created in `api.py`'s startup.
 3. A job in `enrich.py`, and its place in `CARD_ORDER` (where its tab goes in Details). A `cards()` without I/O runs through `asyncio.to_thread`.
 4. An entry in `admin.py` so it appears in Settings, and one in `DEFAULT_SOURCES` in `settings.py` if it can be turned off. A source kept in files rather than `HttpCache` rows (a map, a bundled snapshot) names its `Services` field in `SourceInfo.kept` and implements `KeptSource` (`sources/__init__.py`): `busy`, `notice()`, `details()`, `size()`, `refresh_size()`, `refresh()` and `clear()`. Settings asks it for its row instead of special-casing it. A `refresh()` that changes nothing raises `RefreshFailed`, which is a 502 when the row has no cached responses, and a sentence in the message otherwise.
-5. To let Pick by rule test it, `figures` (an id to a number: `raised`, `spent`, `cash`, `outside_for`, `small_share`, `self_share`, `israel_lobby`, `poll`; the shares are percents of `raised`) and `flags` (the source's lists the candidate is on, as TrackAIPAC's `endorsed` and `watchlist`, or Vote for Peace's rating, `ally` or `opposed`) on its candidate cards. Sources that mean the same thing share an id, so one condition covers both, as the FEC's and the TEC's `raised` do. `pick-rules.js` names the ids it knows, and its dialog wording.
+5. To let Pick by rule test it, `figures` (an id to a number: `raised`, `spent`, `cash`, `outside_for`, `small_share`, `self_share`, `israel_lobby`, `poll`; the shares are percents of `raised`) and `flags` (the source's lists the candidate is on, as TrackAIPAC's `endorsed` and `watchlist`, Vote for Peace's rating, `ally` or `opposed`, or an endorsement list's `endorsement`) on its candidate cards. Sources that mean the same thing share an id, so one condition covers both, as the FEC's and the TEC's `raised` do. `pick-rules.js` names the ids it knows, and its dialog wording.
 6. A row in the tables on `static/privacy.html` (what the source is sent and kept) and `static/about.html`, and an answer in `static/faq.html` if it raises a question.

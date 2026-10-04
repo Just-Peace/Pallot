@@ -3,7 +3,7 @@
 Each source builds SourceCards keyed by candidate (the money sources and polls also build
 one per race, comparing its candidates); a new source only needs its own cards() added here. The
 frontend renders any card the same way, in the order they're attached: CARD_ORDER is the order
-of the tabs in Details and of the badges on a candidate's row.
+of the tabs in Details and of the badges on a candidate's row, with the endorsement lists last.
 """
 
 from __future__ import annotations
@@ -11,12 +11,13 @@ from __future__ import annotations
 import asyncio
 import datetime as dt
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Awaitable
+from typing import TYPE_CHECKING, Any, Awaitable, Sequence
 
 from .models import Race, SourceCard
 from .offices import OfficeScope
 from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac, voteforpeace
 from .sources.ballotpedia import BpBallot, BpRace
+from .sources.endorsements import EndorsementList
 from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
@@ -54,12 +55,14 @@ async def run(
     sos_lookups: Lookups | None,
     use_trackaipac: bool,
     use_voteforpeace: bool = False,
+    endorsements: Sequence[EndorsementList] = (),
     use_fec: bool = False,
     use_tec: bool = False,
     use_polls: bool = False,
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
+    state: str | None = None,
     bp_counterparts: dict[str, BpRace] | None = None,
 ) -> Outcome:
     """Add cards in place; say what failed. ``sos_lookups`` is None when the ballot didn't
@@ -78,6 +81,8 @@ async def run(
         jobs[voteforpeace.SOURCE] = asyncio.to_thread(
             voteforpeace.cards, svc.voteforpeace, races, scopes or {}, county, bp_ballot
         )
+    for found in endorsements:
+        jobs[found.source] = asyncio.to_thread(found.cards, races, scopes or {}, county, bp_ballot, state or "TX")
     if use_fec:
         jobs[fec.SOURCE] = fec.cards(svc.fec, races, day)
     if use_tec:
@@ -87,7 +92,7 @@ async def run(
     answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 
     outcome = Outcome()
-    for source in CARD_ORDER:
+    for source in (*CARD_ORDER, *(found.source for found in endorsements)):
         if source not in answers:
             continue
         cards = answers[source]

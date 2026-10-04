@@ -10,6 +10,7 @@ from .sources import (
     KeptSource, RefreshFailed, ballotpedia, county_precincts, election_precincts, fec, key_dates, osm_tiles, polls,
     sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
 )
+from .sources.endorsements import EndorsementList
 from .text import display_size, display_time, iso_utc
 
 
@@ -35,6 +36,7 @@ class SourceInfo:
     pause: Pause | None = None  # the source can be paused after refusing a request (HttpCache.pause_on)
     refreshable: bool = True  # False: no Refresh, since a bulk re-download isn't allowed (OpenStreetMap's tiles)
     kept: str | None = None  # the Services field of a source kept in files (KeptSource), asked for its row
+    frozen: bool = False  # comes with Pallot as captured and is never fetched: no Refresh, nothing to clear
 
 
 SOURCES = (
@@ -144,7 +146,20 @@ SOURCES = (
         pause=Pause("FiftyPlusOne refused a request", "polls it already sent still show"),
     ),
 )
-BY_ID = {info.id: info for info in SOURCES}
+
+
+def list_info(found: EndorsementList) -> SourceInfo:
+    """An endorsement list's row: its own switch, and nothing to refresh or clear."""
+    return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (), refreshable=False,
+                      frozen=True)
+
+
+def all_sources(lists: list[EndorsementList]) -> tuple[SourceInfo, ...]:
+    """SOURCES, with the endorsement lists found at startup after Vote for Peace."""
+    at = next(i for i, info in enumerate(SOURCES) if info.id == voteforpeace.SOURCE) + 1
+    return (*SOURCES[:at], *(list_info(found) for found in lists), *SOURCES[at:])
+
+
 _SLOW = {"ballotpedia", "nominatim", "polls", "suggestions"}  # one request at a time when refreshing
 
 
@@ -159,21 +174,27 @@ class Admin:
     def __init__(self, svc: Services):
         self.svc = svc
         self._busy: set[str] = set()
+        self.sources = all_sources(svc.endorsements)
+        self._by_id = {info.id: info for info in self.sources}
+        self._kept_sources: dict[str, KeptSource] = {
+            **{info.id: getattr(svc, info.kept) for info in SOURCES if info.kept},
+            **{found.source: found for found in svc.endorsements},
+        }
 
     def _info(self, source_id: str) -> SourceInfo:
-        if source_id not in BY_ID:
+        if source_id not in self._by_id:
             raise AdminError(404, f"Unknown source: {source_id}")
-        return BY_ID[source_id]
+        return self._by_id[source_id]
 
     def _kept(self, info: SourceInfo) -> KeptSource | None:
-        return getattr(self.svc, info.kept) if info.kept else None
+        return self._kept_sources.get(info.id)
 
     def _all_kept(self) -> list[KeptSource]:
-        return [kept for info in SOURCES if (kept := self._kept(info))]
+        return list(self._kept_sources.values())
 
     def overview(self) -> SourcesOverview:
         return SourcesOverview(
-            sources=[self._status(info) for info in SOURCES],
+            sources=[self._status(info) for info in self.sources],
             total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._all_kept()),
             last_lookup=self.svc.last_lookup,
             clear_all_confirm=self._clear_all_confirm(),
@@ -188,6 +209,8 @@ class Admin:
 
     @staticmethod
     def _clear_confirm(info: SourceInfo) -> str:
+        if info.frozen:
+            return f"{info.label} came with Pallot; there's nothing saved to clear."
         if info.resettable:
             return f"Throw away the refreshed {info.label} data and go back to the snapshot that came with Pallot?"
         return f"Clear everything cached from {info.label}? The next lookup will fetch it again."
@@ -232,6 +255,7 @@ class Admin:
             refresh_confirm=self._refresh_confirm(info),
             clear_confirm=self._clear_confirm(info),
             refreshable=info.refreshable,
+            frozen=info.frozen,
             notice=notice,
             notice_tone=tone,
             last_use=self.svc.last_uses.get(info.id),
@@ -265,6 +289,8 @@ class Admin:
 
     async def refresh(self, source_id: str) -> ActionResult:
         info = self._info(source_id)
+        if info.frozen:
+            raise AdminError(400, f"{info.label} is a frozen list that came with Pallot; there's nothing to refresh.")
         if not info.refreshable:
             raise AdminError(400, f"{info.label} is only fetched as you look at it, never all at once.")
         if self._running(info):
@@ -307,6 +333,8 @@ class Admin:
 
     def clear(self, source_id: str) -> ActionResult:
         info = self._info(source_id)
+        if info.frozen:
+            raise AdminError(400, f"{info.label} came with Pallot and saves nothing, so there's nothing to clear.")
         if self._running(info):
             raise AdminError(409, f"{info.label} is refreshing; try again when it's done.")
         parts: list[str] = []

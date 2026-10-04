@@ -1,10 +1,12 @@
 // Shared by every page except the ballot: draws the left pane and the icons, lists the page's
-// sections in it, shows the remembered address under "Your ballot", and opens the FAQ answer a
-// link points to. The Settings page's settings.js imports it first.
+// sections in it, shows the remembered address under "Your ballot", names the endorsement lists
+// where the page marks them, and opens the FAQ answer a link points to. The Settings page's
+// settings.js imports it first.
 
 import { showRememberedAddress } from "./address.js";
 import { initChrome } from "./chrome.js";
 import { h, onFrame, onReturn } from "./dom.js";
+import { showEndorsementLists } from "./endorsement-lists.js";
 import { hydrateIcons, icon } from "./icons.js";
 import { openPanel } from "./topbar.js";
 
@@ -55,6 +57,7 @@ listSections();
 initChrome();
 showRememberedAddress();
 hydrateIcons();
+showEndorsementLists();
 
 // A link to one FAQ answer (faq.html#tec-money) opens it: not every browser opens a closed
 // <details> for its #id.
