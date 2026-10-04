@@ -321,6 +321,9 @@ class _Builder:
             raise BallotError(404, " ".join(self.warnings) or "No ballot data found for this address.")
         if self.use_sos and sos_data is None:
             self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
+        if not self.use_bp:
+            self.notes.append("Ballotpedia is off, so city council, school board and special district races aren't "
+                              "listed. Turn it on under Sources in Settings to add them.")
 
         precincts, precinct_sources = self._precincts(bp_ballot, county)
         entered = self.request.districts.model_dump(exclude_unset=True) if self.request.districts else {}

@@ -41,5 +41,8 @@ voteforpeace_cache = ["data/*.json", "data/history/*.json"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = '-m "not live" -n auto --dist loadgroup'
-markers = ["live: calls the real external APIs (run with: uv run pytest -m live)"]
+markers = [
+    "live: calls the real external APIs (run with: uv run pytest -m live)",
+    "shipped_defaults: sees the sources on and off as Pallot ships them, not as the tests turn them on",
+]
 filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]

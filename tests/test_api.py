@@ -101,6 +101,18 @@ def test_toggles_persist_across_restarts(make_app, tmp_path):
         assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "ballotpedia")["enabled"] is False
 
 
+@pytest.mark.shipped_defaults
+def test_ballotpedia_and_vote_for_peace_start_off(client):
+    enabled = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
+    assert enabled["ballotpedia"] is False and enabled["voteforpeace"] is False
+    assert all(on for source, on in enabled.items() if source not in {"ballotpedia", "voteforpeace"})
+    ballot = get_ballot(client)
+    assert last_use(client, "ballotpedia")["status"] == "off"
+    assert any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
+    assert not any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
+                   for card in c["cards"])
+
+
 def test_sources_are_grouped(client):
     overview = client.get("/api/sources").json()
     assert [(g["id"], g["title"], g["toggle_all"]) for g in overview["groups"]] == [
