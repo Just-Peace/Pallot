@@ -32,17 +32,18 @@ class SourceGroup:
     toggle_all: bool = False  # Settings offers "Turn all on" and "Turn all off" for it
 
 
-OFFICIAL, SCORECARDS, ADDRESS, OTHER = "official", "scorecards", "address", "other"
+ADDRESS, OFFICIAL, BALLOT, POLLS, SCORECARDS = "address", "official", "ballot", "polls", "scorecards"
 GROUPS = (
-    SourceGroup(OFFICIAL, "Official sources", "Government sources: the state's ballot and election dates, and the "
-                "campaign money reported to the FEC and the Texas Ethics Commission."),
-    SourceGroup(SCORECARDS, "Endorsements & scorecards", "Organizations that track, rate or endorse candidates, most "
-                "of them on Palestinian rights, U.S. military aid to Israel and pro-Israel lobby money. Each adds "
-                "badges to the candidates it covers.", toggle_all=True),
     SourceGroup(ADDRESS, "Address lookup & maps", "Find your districts and precincts from your address, draw them on "
                 "a map, and suggest addresses as you type."),
-    SourceGroup(OTHER, "Other ballot data", "Not official, but they fill in what the state doesn't publish: local "
-                "races, candidate profiles and polls."),
+    SourceGroup(OFFICIAL, "Official ballot data", "Government sources: the state's ballot and election dates, and the "
+                "campaign money reported to the FEC and the Texas Ethics Commission."),
+    SourceGroup(BALLOT, "Third-party ballot data", "Not official, but it fills in what the state doesn't publish: local "
+                "races, notes on a race and candidate profiles."),
+    SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them, gathered by an independent site."),
+    SourceGroup(SCORECARDS, "Third-party endorsements & scorecards", "Organizations that track, rate or endorse "
+                "candidates, most of them on Palestinian rights, U.S. military aid to Israel and pro-Israel lobby money. "
+                "Each adds badges to the candidates it covers.", toggle_all=True),
 )
 
 
@@ -133,7 +134,7 @@ SOURCES = (
     ),
     SourceInfo(
         ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,),
-        group=OTHER,
+        group=BALLOT,
         pause=Pause("Ballotpedia refused a request", "ballots it already sent still show"),
     ),
     SourceInfo(
@@ -181,7 +182,7 @@ SOURCES = (
     ),
     SourceInfo(
         polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,),
-        group=OTHER,
+        group=POLLS,
         pause=Pause("FiftyPlusOne refused a request", "polls it already sent still show"),
     ),
 )

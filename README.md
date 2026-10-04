@@ -230,11 +230,12 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 The **Settings** page, linked from the left pane, has four sections: **Appearance**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. The page:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
 - picks the web search engine;
-- lists the sources in four groups, each with how many of its sources are on, and folds a group away when you click its heading (it stays folded in this browser):
-  - **Official sources**: Texas SOS, the key election dates, the FEC and the Texas Ethics Commission;
-  - **Endorsements & scorecards**: TrackAIPAC, Vote for Peace and each endorsement list, with **Turn all on** and **Turn all off** for the whole group;
+- lists the sources in five groups, each with how many of its sources are on, and folds a group away when you click its heading (it stays folded in this browser):
   - **Address lookup & maps**: the address lookup (always on), election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map and address suggestions;
-  - **Other ballot data**: Ballotpedia and polls;
+  - **Official ballot data**: Texas SOS, the key election dates, the FEC and the Texas Ethics Commission;
+  - **Third-party ballot data**: Ballotpedia;
+  - **Third-party polls**: FiftyPlusOne's polls;
+  - **Third-party endorsements & scorecards**: TrackAIPAC, Vote for Peace and each endorsement list, with **Turn all on** and **Turn all off** for the whole group;
 - turns each of those sources on or off, except the address lookup;
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, how old the Texas Ethics Commission snapshot is, when each endorsement list was captured or fetched, and how many candidates it has in Texas and in all;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;

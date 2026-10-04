@@ -104,14 +104,16 @@ def test_toggles_persist_across_restarts(make_app, tmp_path):
 def test_sources_are_grouped(client):
     overview = client.get("/api/sources").json()
     assert [(g["id"], g["title"], g["toggle_all"]) for g in overview["groups"]] == [
-        ("official", "Official sources", False), ("scorecards", "Endorsements & scorecards", True),
-        ("address", "Address lookup & maps", False), ("other", "Other ballot data", False)]
+        ("address", "Address lookup & maps", False), ("official", "Official ballot data", False),
+        ("ballot", "Third-party ballot data", False), ("polls", "Third-party polls", False),
+        ("scorecards", "Third-party endorsements & scorecards", True)]
     grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
     assert grouped == {
-        "official": ["sos", "key_dates", "fec", "tec"],
-        "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
         "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
-        "other": ["ballotpedia", "polls"],
+        "official": ["sos", "key_dates", "fec", "tec"],
+        "ballot": ["ballotpedia"],
+        "polls": ["polls"],
+        "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
     }
     assert "can't be undone" in overview["clear_everything_confirm"]
     assert overview["clear_everything_confirm"].endswith(overview["clear_all_confirm"].split("? ", 1)[1])
