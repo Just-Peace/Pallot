@@ -358,6 +358,7 @@ class SourceStatus(BaseModel):
     id: str
     label: str
     description: str
+    group: str  # the id of the SourceGroupInfo it's drawn under
     toggleable: bool
     resettable: bool  # comes with a bundled snapshot: "clear" resets to it
     enabled: bool
@@ -375,11 +376,22 @@ class SourceStatus(BaseModel):
     last_use: SourceUse | None = None  # in the last lookup
 
 
+class SourceGroupInfo(BaseModel):
+    """A heading in Settings' Sources, with the sources whose ``group`` is its id under it."""
+
+    id: str
+    title: str
+    description: str
+    toggle_all: bool  # offers "Turn all on" and "Turn all off" (PUT /api/source-groups/{id})
+
+
 class SourcesOverview(BaseModel):
+    groups: list[SourceGroupInfo]  # in the order Settings draws them
     sources: list[SourceStatus]
     total_bytes: int
     last_lookup: LastLookup | None = None
-    clear_all_confirm: str  # asked before "Clear all caches"
+    clear_all_confirm: str  # asked before "Clear all source caches"
+    clear_everything_confirm: str  # asked before "Clear all my data": the source caches and the browser's data
 
 
 class EndorsementListInfo(BaseModel):

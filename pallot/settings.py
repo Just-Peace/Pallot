@@ -30,7 +30,11 @@ class Settings:
         return self._sources.get(source_id, True)
 
     def set_enabled(self, source_id: str, enabled: bool) -> None:
-        if source_id not in self._sources:
-            raise KeyError(source_id)
-        self._sources[source_id] = enabled
+        self.set_many({source_id: enabled})
+
+    def set_many(self, changes: dict[str, bool]) -> None:
+        """Several switches at once (a group of sources in Settings), saved in one write."""
+        if unknown := changes.keys() - self._sources.keys():
+            raise KeyError(", ".join(sorted(unknown)))
+        self._sources.update(changes)
         write_text_atomic(self.path, json.dumps({"sources": self._sources}, indent=2) + "\n")

@@ -225,14 +225,25 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 
 ## Settings
 
-The **Settings** page, linked from the left pane:
+The **Settings** page, linked from the left pane, has four sections: **Appearance**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. The page:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
 - picks the web search engine;
-- turns election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map, address suggestions, Texas SOS, the key election dates, Ballotpedia, TrackAIPAC, Vote for Peace, each endorsement list, the FEC, the Texas Ethics Commission and polls on or off;
+- lists the sources in four groups, each with how many of its sources are on, and folds a group away when you click its heading (it stays folded in this browser):
+  - **Official sources**: Texas SOS, the key election dates, the FEC and the Texas Ethics Commission;
+  - **Endorsements & scorecards**: TrackAIPAC, Vote for Peace and each endorsement list, with **Turn all on** and **Turn all off** for the whole group;
+  - **Address lookup & maps**: the address lookup (always on), election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map and address suggestions;
+  - **Other ballot data**: Ballotpedia and polls;
+- turns each of those sources on or off, except the address lookup;
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, how old the Texas Ethics Commission snapshot is, when each endorsement list was captured or fetched, and how many candidates it has in Texas and in all;
 - shows what the server has saved for each source (responses, size, when they were fetched) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk; an endorsement list that comes with Pallot has neither, since it's frozen and saves nothing; a fetched one has both), plus "Clear all caches", which also resets TrackAIPAC, Vote for Peace and the Texas Ethics Commission to the snapshots that came with Pallot. Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
-- has "Clear my picks & notes" (your pick rule too), and "Clear all browser data", which also forgets your address, appearance, search engine and view choices. Both clear at once and offer **Undo** for 10 seconds.
+- has a refresh or clear button per source (the street map has Clear only: OpenStreetMap doesn't allow re-downloading its tiles in bulk; an endorsement list that comes with Pallot has neither, since it's frozen and saves nothing; a fetched one has both). Refreshes that send or download a lot (every saved address, every saved suggestion, a new precinct map, TEC's 1 GB zip) ask first. The election precincts row shows the map kept and the newest the portal lists, with their sizes;
+- under **Data**, clears what Pallot keeps, from the least to the most:
+  - **Clear my picks & notes**: your picks, notes, write-ins and pick rule. Your address stays;
+  - **Clear browser data**: everything Pallot keeps in this browser, your address, appearance, search engine and view choices included;
+  - **Clear all source caches**: everything the server saved from every source (it shows how much), and TrackAIPAC, Vote for Peace and the Texas Ethics Commission go back to the snapshots that came with Pallot. It asks first, and can't be undone;
+  - **Clear all my data**: both of the last two. It asks first; the server's part can't be undone.
+
+  The first two clear at once and offer **Undo** for 10 seconds; after "Clear all my data", Undo puts back only what this browser kept. The server's Clears wait while a source is refreshing.
 
 Settings has no login, but its buttons only work from Pallot's own pages: a request that another website makes from your browser is refused.
 
