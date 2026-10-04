@@ -1,20 +1,23 @@
 """The live endorsement feeds: each organization's adapter, the cards they give like a frozen
 list's, the copy kept a week (a second lookup asks no one), a refusal's pause, and the row in
-Settings with Refresh and Clear (tests/fixtures/endorsement_feeds holds each recorded list)."""
+Settings with Refresh and Clear (tests/fixtures/endorsement_feeds holds each recorded list), and
+a token read from the list's page, sent and never kept."""
 
 from __future__ import annotations
 
 import datetime as dt
+import sqlite3
 
 import pytest
 from fastapi.testclient import TestClient
 
 from pallot.admin import SOURCES
+from pallot.http_cache import Unreadable
 from pallot.models import Candidate, Race
-from pallot.sources.endorsement_feeds import FEEDS, cair_action, muslims_united
+from pallot.sources.endorsement_feeds import FEEDS, cair_action, emgage, meta_token, muslims_united
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, EndorsementList, read_entry
 
-from .conftest import get_ballot, last_use, load
+from .conftest import FEED_TOKEN, fixture_bytes, get_ballot, last_use, load
 
 MUPAC = "mupac"
 FEED_HOST = "muslimsunitedpac.com"
@@ -285,3 +288,114 @@ def test_turned_off_it_isnt_asked(make_app, upstream):
         assert row(client)["enabled"] is False and last_use(client, MUPAC)["status"] == "off"
     with TestClient(make_app()) as client:  # the switch is kept
         assert next(f for f in client.get("/api/endorsements").json() if f["source"] == MUPAC)["enabled"] is False
+
+
+# -- Emgage PAC: its list wants a token its page hands out ---------------------------------------
+
+EMGAGE = "emgage"
+EMGAGE_PAGE = "candidates.emgagepac.org/page/SupportOurCandidates"
+EMGAGE_API = "candidates.emgagepac.org/api/v2/donation-page/SupportOurCandidates"
+
+
+def test_emgage_entries():
+    found = {entry["name"]: entry for entry in emgage(load(f"endorsement_feeds/{EMGAGE}.json"))}
+    assert len(found) == 39
+    assert found["Greg Casar"] == {"name": "Greg Casar", "state": "TX", "office": "U.S. House", "district": "35",
+                                   "party": "Democratic", "note": None}
+    assert (found["Marquette Greene-Scott"]["district"], found["Debbie Dingell"]["district"]) == ("22", "6")  # "D-MI-06"
+    assert found["James Talarico"] == {"name": "James Talarico", "state": "TX", "office": "U.S. Senate", "district": None,
+                                       "party": None, "note": None}  # its district is empty
+    assert (found["Bernie Sanders"]["district"], found["Bernie Sanders"]["party"]) == (None, "Independent")  # "I-VT"
+    assert "Dr. Adam Hamawy" in found
+    assert [read_entry(raw, n, EMGAGE)["name"] for n, raw in enumerate(found.values())] == list(found)
+
+
+def test_emgage_leaves_out_what_isnt_a_candidate():
+    with pytest.raises(ValueError):
+        emgage({"recipients": None})
+    answer = {"recipients": [
+        {"recipientType": "Organization", "displayName": "Emgage PAC", "office": None, "district": "", "state": "MI"},
+        {"recipientType": "FederalCandidate", "displayName": "Greg Casar", "office": "U.S. House", "district": "d-tx-35",
+         "state": "TX", "politicalParty": None, "profileTeaser": "<span><img src='x'></span>",
+         "description": "<p>Chair&nbsp;of the <b>CPC</b>.</p><p>Since 2023.</p>"},
+        "not a candidate",
+    ]}
+    assert emgage(answer) == [{"name": "Greg Casar", "state": "TX", "office": "U.S. House", "district": "35",
+                               "party": "Democratic", "note": "Chair of the CPC. Since 2023."}]
+
+
+def test_meta_token_reads_the_page():
+    read = meta_token("RequestVerificationToken", "RequestVerificationToken")
+    assert read(fixture_bytes(f"endorsement_feeds/{EMGAGE}.html").decode()) == {"RequestVerificationToken": FEED_TOKEN}
+    assert read('<META content="abc" NAME="requestverificationtoken">') == {"RequestVerificationToken": "abc"}
+    with pytest.raises(Unreadable, match="^its page has no RequestVerificationToken to send$"):
+        read('<meta name="RequestVerificationToken" content=""><meta name="other" content="abc">')
+
+
+def test_emgage_matches_texas_seats():
+    entries = [read_entry(raw, n, EMGAGE) for n, raw in enumerate(emgage(load(f"endorsement_feeds/{EMGAGE}.json")))]
+    found = EndorsementList(source=EMGAGE, label="Emgage PAC", organization="Emgage PAC", url=FEEDS[1].url,
+                            captured="2026-10-04", description="", entries=entries, live=True)
+    races = [race("U.S. Representative District 22", ("Marquette Greene-Scott", "D"), ("Troy Nehls", "R"),
+                  key="sos:1:22", seat="TX-22"),
+             race("U.S. Representative District 37", ("Greg Casar", "D"), key="sos:1:37", seat="TX-37"),
+             race("U.S. Senator", ("James Talarico", "D"), ("Ken Paxton", "R"), key="sos:1:sen", seat="TX-SEN")]
+    cards = found.cards(races, {}, "Fort Bend").candidates
+    assert {key: card.match.confidence for key, card in cards.items()} == {
+        "sos:1:22:0": "exact", "sos:1:37:0": "likely", "sos:1:sen:0": "exact"}
+    # Emgage still lists Greg Casar for the 35th, his seat before Texas redrew its districts.
+    assert cards["sos:1:37:0"].match.note == "Emgage PAC lists them for U.S. House, District 35"
+    assert cards["sos:1:22:0"].url == FEEDS[1].url  # no page of its own: the list's
+
+
+def test_emgage_sends_the_token_and_keeps_it_nowhere(client, upstream, tmp_path):
+    ballot = get_ballot(client, "ut")
+    casar = cards_from(ballot, EMGAGE)["Greg Casar"]
+    assert (casar["label"], casar["match"]["confidence"], [b["text"] for b in casar["badges"]]) == (
+        "Emgage PAC", "likely", ["Endorsed by Emgage PAC"])
+    assert cards_from(ballot, EMGAGE)["James Talarico"]["match"]["confidence"] == "exact"
+    assert (upstream.count(EMGAGE_PAGE), upstream.count(EMGAGE_API), upstream.feed_tokens) == (1, 1, [FEED_TOKEN])
+    assert last_use(client, EMGAGE)["calls"] == 2
+
+    again = get_ballot(client, "ut")
+    assert again["meta"]["external_calls"] == 0 and upstream.count(EMGAGE_PAGE) == 1  # no page for a token either
+
+    with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
+        rows = db.execute("SELECT key, request, value FROM responses WHERE source = ?", (EMGAGE,)).fetchall()
+        flags = db.execute("SELECT name FROM flags").fetchall()
+    assert len(rows) == 1 and "/api/v2/donation-page/" in rows[0][1]  # the list; its page isn't kept
+    assert FEED_TOKEN not in repr((rows, flags))
+    assert not [p for p in (tmp_path / "data").glob("cache.sqlite3*") if FEED_TOKEN.encode() in p.read_bytes()]
+
+
+def test_emgage_refresh_asks_for_a_new_token(client, upstream):
+    get_ballot(client, "ut")
+    message = client.post(f"/api/sources/{EMGAGE}/refresh").json()["message"]
+    assert message == "Refreshed 1 cached response. 3 of its 39 candidates are in Texas."
+    assert (upstream.count(EMGAGE_PAGE), upstream.count(EMGAGE_API), upstream.feed_tokens) == (2, 2, [FEED_TOKEN] * 2)
+
+
+def test_emgage_page_without_a_token(client, upstream):
+    upstream.feed_pages[EMGAGE] = "<html><head><title>Maintenance</title></head></html>"
+    ballot = get_ballot(client, "ut")
+    assert not cards_from(ballot, EMGAGE)
+    assert "Couldn't load Emgage PAC's endorsements (its page has no RequestVerificationToken to send)." in ballot["warnings"]
+    assert upstream.count(EMGAGE_API) == 0 and last_use(client, EMGAGE)["status"] == "error"
+
+
+@pytest.mark.parametrize("step", ["page", "list"])
+def test_emgage_a_refusal_on_either_step_pauses_it(client, upstream, step):
+    if step == "page":
+        upstream.feed_page_status = 403
+    else:
+        upstream.feed_status = 429
+    ballot = get_ballot(client, "ut")
+    assert not cards_from(ballot, EMGAGE)
+    assert [w for w in ballot["warnings"] if w.startswith("Couldn't load Emgage PAC's endorsements (HTTP 4")]
+    asked = upstream.count("candidates.emgagepac.org")
+    assert asked == (1 if step == "page" else 2)
+
+    again = get_ballot(client, "ut")
+    assert upstream.count("candidates.emgagepac.org") == asked  # paused: neither step is asked again
+    assert any("paused until" in w and "Emgage PAC's website refused a request" in w for w in again["warnings"])
+    assert row(client, EMGAGE)["notice"].startswith("Paused until ")

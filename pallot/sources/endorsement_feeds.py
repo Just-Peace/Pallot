@@ -4,20 +4,23 @@ an adapter that turns its answer into an endorsement file's candidates (endorsem
 checks each, and leaves out one it refuses). Once fetched, a feed is an EndorsementList, so its
 cards, matching and Pick by rule flag are the frozen lists'. What differs: the fetch, its pause
 after a refusal, Refresh and Clear in Settings, and an answer the adapter can't read is refused
-(HttpCache.check_answers), so it never replaces a good copy.
+(HttpCache.check_answers), so it never replaces a good copy. A site that wants a token it rotates
+has its list page fetched first, only when the list itself is (HttpCache.headers_from_page).
 """
 
 from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import html
 import re
 import threading
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from typing import Any, Callable, Union
 
 from ..config import DAY, HOUR, Ttls
-from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
+from ..http_cache import Cached, HttpCache, RequestSpec, Unreadable, UpstreamError
 from ..models import Fact, Race, Tone
 from ..offices import OfficeScope
 from ..text import display_time
@@ -44,6 +47,7 @@ class Feed:
     description: str  # one sentence for Settings and the Details tab
     read: Callable[[Any], list[dict[str, Any]]]
     headers: dict[str, str] | None = None  # any the endpoint needs; never a key
+    token: Callable[[str], dict[str, str]] | None = None  # headers read from ``url``'s page, fetched just before ``api``
 
 
 class FeedUnavailable(Exception):
@@ -79,6 +83,8 @@ class EndorsementFeed:
         self._lock = threading.Lock()
         cache.pause_on(feed.source, REFUSALS, ttl.endorsement_feeds_backoff)
         cache.check_answers(feed.source, self._check)
+        if feed.token:
+            cache.headers_from_page(feed.source, RequestSpec("GET", feed.url), feed.token)
 
     source = property(lambda self: self.feed.source)
     label = property(lambda self: self.feed.label)
@@ -320,6 +326,70 @@ def cair_action(answer: Any) -> list[dict[str, Any]]:
     return [entry for _, entry in latest.values()]
 
 
+class _Meta(HTMLParser):
+    def __init__(self, name: str):
+        super().__init__()
+        self.name = name.lower()
+        self.content: str | None = None
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        found = dict(attrs)
+        if tag == "meta" and (found.get("name") or "").lower() == self.name and self.content is None:
+            self.content = (found.get("content") or "").strip() or None
+
+
+def meta_token(meta: str, header: str) -> Callable[[str], dict[str, str]]:
+    """A Feed's ``token``: the page's ``<meta name=meta content=...>``, sent as ``header``."""
+
+    def read(page: str) -> dict[str, str]:
+        parser = _Meta(meta)
+        parser.feed(page)
+        if parser.content is None:
+            raise Unreadable(f"its page has no {meta} to send")
+        return {header: parser.content}
+
+    return read
+
+
+EMGAGE_SITE = "https://candidates.emgagepac.org"
+EMGAGE_PAGE = f"{EMGAGE_SITE}/page/SupportOurCandidates"
+_EMGAGE_PARTIES = {"D": "Democratic", "R": "Republican", "I": "Independent", "L": "Libertarian", "G": "Green"}
+_EMGAGE_DISTRICT = re.compile(r"^([A-Z])-([A-Z]{2})(?:-0*(\d+))?$")
+
+
+def _plain(value: Any) -> str | None:
+    """HTML as its text: "<p>Chair&nbsp;of</p>" -> "Chair of"."""
+    if not isinstance(value, str):
+        return None
+    text = re.sub(r"<[^>]*>", "", re.sub(r"<(?:br|/p|/div|/li|/h\d)\b[^>]*>", " ", value, flags=re.IGNORECASE))
+    return " ".join(html.unescape(text).split()) or None
+
+
+def emgage(answer: Any) -> list[dict[str, Any]]:
+    """Emgage PAC's donation page: ``recipients``, each a candidate ("FederalCandidate"; other
+    kinds are skipped) with its office ("U.S. House", "U.S. Senate") and ``district`` its party's
+    letter, state and number: "D-TX-35", or "D-MI" for a senator (empty for some). The note is
+    its teaser or description as plain text (most are only an image, so none). The page lists
+    every candidate together, so none has a link of its own."""
+    if not isinstance(answer, dict) or not isinstance(answer.get("recipients"), list):
+        raise ValueError("expected an object with recipients")
+    found: list[dict[str, Any]] = []
+    for raw in answer["recipients"]:
+        if not isinstance(raw, dict) or not str(raw.get("recipientType") or "").endswith("Candidate"):
+            continue
+        seat = _EMGAGE_DISTRICT.match((_text(raw.get("district")) or "").upper())
+        party = seat.group(1) if seat else None
+        found.append({
+            "name": _text(raw.get("displayName")),
+            "state": _text(raw.get("state")) or (seat.group(2) if seat else None),
+            "office": _text(raw.get("office")),
+            "district": seat.group(3) if seat else None,
+            "party": _EMGAGE_PARTIES.get(party, party) if party else _text(raw.get("politicalParty")),
+            "note": _plain(raw.get("profileTeaser")) or _plain(raw.get("description")),
+        })
+    return found
+
+
 FEEDS = (
     Feed(
         source="mupac",
@@ -341,6 +411,18 @@ FEEDS = (
         "Pallot downloads the whole list, so nothing about you is sent.",
         read=cair_action,
         headers={"accept": "*/*"},
+    ),
+    Feed(
+        source="emgage",
+        label="Emgage PAC",
+        organization="Emgage PAC",
+        url=EMGAGE_PAGE,
+        api=f"{EMGAGE_SITE}/api/v2/donation-page/SupportOurCandidates",
+        description="The candidates Emgage PAC endorses, from the list on its donation page. Pallot downloads that "
+        "page, for the token the list asks for, and then the whole list, so nothing about you is sent.",
+        read=emgage,
+        headers={"Accept": "application/json", "Content-Type": "application/json; charset=UTF-8", "Referer": EMGAGE_PAGE},
+        token=meta_token("RequestVerificationToken", "RequestVerificationToken"),
     ),
 )
 

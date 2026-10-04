@@ -11,7 +11,8 @@ election precincts one (the Texas Legislative Council portal's list of precinct 
 tests make up the map itself), and the county precincts four (Travis's and Harris's lists of their
 map services, and the service each county's list of election precincts is in; the tests make up
 the lists themselves, from the made-up map), and the endorsement feeds one each (an organization's
-whole public list, as served).
+whole public list, as served), two for a feed with a token (its page first, kept as only its meta
+tags, the token's value replaced by TOKEN).
 The 2.6 MB statewide candidate list is cut down to the candidates on the recorded ballots.
 The FEC responses cover the Capitol ballot's federal races, plus the full breakdown for
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
@@ -55,6 +56,7 @@ ADDRESSES = {
 }
 ELECTIONS = {53815: 2026, 66734: 2026, 66618: 2026}  # Nov 3, 2026: general + two specials
 COUNTIES = {227: "travis", 101: "harris"}
+TOKEN = "recorded-token"  # in place of the token an endorsement feed's page hands out
 BALLOTPEDIA_AT = ("capitol",)
 TRACKAIPAC_PEOPLE = (
     "tx-ken-paxton", "tx-james-talarico", "tx-august-pfluger", "tx-greg-casar", "tx-lloyd-doggett",
@@ -255,7 +257,19 @@ def record_county_precincts(client: httpx.Client) -> None:
 def record_endorsement_feeds(client: httpx.Client) -> None:
     """Each live endorsement feed's whole list, as Pallot asks for it, into endorsement_feeds/<source>.json."""
     for feed in FEEDS:
-        response = client.get(feed.api, headers=feed.headers)
+        headers = dict(feed.headers or {})
+        if feed.token:
+            page = client.get(feed.url)
+            page.raise_for_status()
+            token = feed.token(page.text)
+            headers.update(token)
+            kept = "".join(re.findall(r"<meta\b[^>]*>", page.text, re.IGNORECASE))
+            for value in token.values():
+                kept = kept.replace(value, TOKEN)
+            path = FIXTURES / f"endorsement_feeds/{feed.source}.html"
+            path.write_text(f"<!DOCTYPE html>\n<html><head>{kept}</head><body></body></html>\n", encoding="utf-8", newline="\n")
+            print(f"endorsement_feeds/{feed.source}.html: {path.stat().st_size:,} bytes")
+        response = client.get(feed.api, headers=headers)
         response.raise_for_status()
         save(f"endorsement_feeds/{feed.source}.json", response.json())
 
