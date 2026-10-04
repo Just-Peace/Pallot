@@ -1,1 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><clipPath id="pallot-logo"><rect width="32" height="32" rx="7"/></clipPath><g clip-path="url(#pallot-logo)"><rect width="32" height="11" fill="#000"/><rect y="11" width="32" height="10" fill="#fff"/><rect y="21" width="32" height="11" fill="#007a3d"/><path d="M0 0L15 16L0 32Z" fill="#ce1126"/></g><rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#7f7f7f" stroke-opacity="0.45"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip">
+      <rect width="32" height="32" rx="7"/>
+    </clipPath>
+
+    <path id="star"
+      d="M0-1.55L.36-.5L1.47-.48L.58.18L.9 1.25L0 .63L-.9 1.25L-.58.18L-1.47-.48L-.36-.5Z"/>
+  </defs>
+
+  <g clip-path="url(#clip)">
+
+    <!-- Palestine flag, shifted right -->
+    <g transform="translate(3 0)">
+      <rect width="32" height="32" fill="#fff"/>
+      <rect width="32" height="10.67" fill="#000"/>
+      <rect y="21.33" width="32" height="10.67" fill="#007a3d"/>
+      <path d="M0 0L19 16L0 32Z" fill="#ce1126"/>
+    </g>
+
+    <!-- United States flag -->
+    <path d="M0 0H32L0 32Z" fill="#b22234"/>
+
+    <!-- US stripes -->
+    <g fill="#fff">
+      <path d="M0 2.46H29.54L27.08 4.92H0Z"/>
+      <path d="M0 7.38H24.62L22.16 9.84H0Z"/>
+      <path d="M0 12.30H19.70L17.24 14.76H0Z"/>
+      <path d="M0 17.22H14.78L12.32 19.68H0Z"/>
+      <path d="M0 22.14H9.86L7.40 24.60H0Z"/>
+      <path d="M0 27.06H4.94L2.48 29.52H0Z"/>
+    </g>
+
+    <!-- US canton -->
+    <path d="M0 0H15.2L0 15.2Z" fill="#3c3b6e"/>
+
+    <!-- US stars -->
+    <g fill="#fff">
+      <use href="#star" transform="translate(2.1 2.1)"/>
+      <use href="#star" transform="translate(6.1 2.1)"/>
+      <use href="#star" transform="translate(10.1 2.1)"/>
+
+      <use href="#star" transform="translate(4.1 5.3)"/>
+      <use href="#star" transform="translate(8.1 5.3)"/>
+      <use href="#star" transform="translate(12.1 5.3)"/>
+
+      <use href="#star" transform="translate(2.1 8.5)"/>
+      <use href="#star" transform="translate(6.1 8.5)"/>
+      <use href="#star" transform="translate(10.1 8.5)"/>
+
+      <use href="#star" transform="translate(4.1 11.7)"/>
+      <use href="#star" transform="translate(8.1 11.7)"/>
+    </g>
+
+    <!-- Diagonal separation -->
+    <path d="M32 0L0 32" stroke="#fff" stroke-width="1.1"/>
+
+  </g>
+
+  <!-- Border -->
+  <rect
+    x=".5" y=".5"
+    width="31" height="31"
+    rx="6.5"
+    fill="none"
+    stroke="#7f7f7f"
+    stroke-opacity=".45"/>
+</svg>
