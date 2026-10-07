@@ -361,6 +361,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .data-table.stack tbody th { width: 40%; }
 .data-table tbody tr:last-child > * { border-bottom: 0; }
 
+.faq-tools { margin-top: 12px; }
 .faq-group { margin-bottom: 24px; }
 .faq { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 8px; }
 .faq > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 16px; font-weight: 650; }
