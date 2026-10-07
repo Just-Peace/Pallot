@@ -1,4 +1,4 @@
-// The Settings page: the appearance; the web search engine; the sources, under the groups the
+// The Settings page: the appearance; how much of the ballot shows (view.js); the web search engine; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
 // what the server has saved from each and how the last lookup used it; and Data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
@@ -15,6 +15,7 @@ import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./pick
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
 import { showToast } from "./toast.js";
+import { bindViewControls, onViewChange, showViewControls } from "./view.js";
 
 const groupList = $("#source-groups");
 const summary = $("#sources-summary");
@@ -223,6 +224,22 @@ themeChoice.addEventListener("change", (event) => {
   showTheme();
 });
 
+// Ballot view: Simple, Detailed (neither when the switches are mixed) and the switches. An open
+// ballot applies a change at once (onViewChange there), so it's not marked as a settings change.
+const viewSection = $("#view-title").closest("section");
+
+function showView() {
+  const mode = showViewControls(viewSection);
+  $("#view-mode-note").textContent = {
+    simple: "Simple folds the map and each race's money. Detailed opens everything.",
+    detailed: "Detailed opens everything. Simple folds the map and each race's money.",
+    custom: "Your own mix, below.",
+  }[mode];
+}
+
+bindViewControls(viewSection);
+onViewChange(showView);
+
 // What's kept in this browser is cleared at once, with Undo to put it back.
 function clearInBrowser(clear, message, nothing) {
   const removed = clear();
@@ -244,11 +261,12 @@ function clearInBrowser(clear, message, nothing) {
   });
 }
 
-// The parts of this page that show what the browser keeps: the address, the appearance and the
-// search engine (load() redraws the switches).
+// The parts of this page that show what the browser keeps: the address, the appearance, the
+// ballot view and the search engine (load() redraws the sources' switches).
 function showBrowserData() {
   showRememberedAddress();
   showTheme();
+  showView();
   searchSelect.value = currentEngine().id;
 }
 
@@ -265,9 +283,11 @@ $("#clear-browser-data").addEventListener("click", () => {
 // the switches.
 onReturn(() => {
   showTheme();
+  showView();
   load();
 });
 
 showTheme();
+showView();
 initSearchEngine();
 load();

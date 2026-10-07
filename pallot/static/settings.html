@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pallot · Settings</title>
-  <meta name="description" content="Choose how Pallot looks, its web search engine and sources, see what it has saved, and clear what this browser keeps.">
+  <meta name="description" content="Choose how Pallot looks, how much of the ballot shows, its web search engine and sources, see what it has saved, and clear what this browser keeps.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
@@ -18,7 +18,7 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>Settings</h1>
-        <p class="lede">Choose how Pallot looks, your web search engine and which sources Pallot uses, see what it has saved, and clear what this browser keeps.</p>
+        <p class="lede">Choose how Pallot looks, how much of the ballot shows, your web search engine and which sources Pallot uses, see what it has saved, and clear what this browser keeps.</p>
       </header>
 
       <nav class="section-chips" aria-label="Settings sections"></nav>
@@ -34,6 +34,45 @@
           </fieldset>
           <p class="fine">System follows your device's light or dark setting. Saved in this browser.</p>
         </div>
+      </section>
+
+      <section class="panel" aria-labelledby="view-title">
+        <h2 id="view-title">Ballot view</h2>
+        <div class="setting-row" id="ballot-view">
+          <fieldset class="seg">
+            <legend class="sr-only">How much of the ballot shows</legend>
+            <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
+            <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
+          </fieldset>
+          <p class="fine" id="view-mode-note"></p>
+        </div>
+        <div class="source-list view-switches" id="view-switches">
+          <div class="source-row">
+            <label class="switch" for="view-show-map"><input type="checkbox" role="switch" id="view-show-map" data-view="showMap"><span class="source-name">Map of your districts</span></label>
+            <p class="source-desc">A street map of your districts, under Your districts. Nothing is fetched for it while it's folded.</p>
+          </div>
+          <div class="source-row">
+            <label class="switch" for="view-show-money"><input type="checkbox" role="switch" id="view-show-money" data-view="showMoney"><span class="source-name">Money raised</span></label>
+            <p class="source-desc">Each race's money box: what each candidate raised, their cash on hand and outside spending. Folded, it's one line, with Compare candidates.</p>
+          </div>
+          <div class="source-row">
+            <label class="switch" for="view-show-polls"><input type="checkbox" role="switch" id="view-show-polls" data-view="showPolls"><span class="source-name">Polls</span></label>
+            <p class="source-desc">The poll bar in U.S. Senate, U.S. House and Governor races. Folded, it's one line.</p>
+          </div>
+          <div class="source-row">
+            <label class="switch" for="view-show-endorsements"><input type="checkbox" role="switch" id="view-show-endorsements" data-view="showEndorsements"><span class="source-name">Endorsements &amp; scorecards</span></label>
+            <p class="source-desc">The Endorsed by and Scorecards lines under each candidate's name. Hidden, a button counts them and opens them.</p>
+          </div>
+          <div class="source-row">
+            <label class="switch" for="view-collapse-on-pick"><input type="checkbox" role="switch" id="view-collapse-on-pick" data-view="collapseOnPick"><span class="source-name">Collapse a race when I pick</span></label>
+            <p class="source-desc">A race folds to one line, with your pick, once you've picked.</p>
+          </div>
+          <div class="source-row">
+            <label class="switch" for="view-hide-picked"><input type="checkbox" role="switch" id="view-hide-picked" data-view="hidePicked"><span class="source-name">Only races I haven't picked</span></label>
+            <p class="source-desc">Hides the races you've picked, so the ones left stand out.</p>
+          </div>
+        </div>
+        <p class="fine">Saved in this browser. The ballot's View menu has the same choices.</p>
       </section>
 
       <section class="panel" aria-labelledby="search-title">

@@ -7,6 +7,7 @@
 // zooms once the map has been clicked, and on a touch screen the map moves with two fingers, so
 // it never traps the page's scrolling. Its heading folds it away like a race's, remembered in
 // the browser (view.js, showMap: folded at first); nothing is fetched for it while it's folded.
+// A change of the switch elsewhere (View, Settings, another tab) applies with syncMapShown().
 
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";
@@ -82,9 +83,13 @@ export function syncMap(next) {
   }
 }
 
+// After the showMap switch changes: opens or folds the map to match.
+export function syncMapShown() {
+  if (parts && shown !== viewPref("showMap")) setShown(viewPref("showMap"));
+}
+
 function setShown(open) {
   shown = open;
-  setViewPref("showMap", open);
   parts.body.hidden = !open;
   section.classList.toggle("collapsed", !open);
   parts.toggle.setAttribute("aria-expanded", String(open));
@@ -109,7 +114,10 @@ function makePanel() {
   parts = {
     toggle: h("button", {
       type: "button", class: "map-toggle", "aria-expanded": String(shown), "aria-controls": "district-map-body",
-      on: { click: () => setShown(!shown) },
+      on: { click: () => {
+        setShown(!shown);
+        setViewPref("showMap", shown);
+      } },
     }, h("span", { class: "chevron", "aria-hidden": "true" }), "Map of your districts"),
     body: h("div", { id: "district-map-body", hidden: !shown }),
     picks: h("div", { class: "map-picks", role: "group", "aria-label": "Highlight a district on the map" }),

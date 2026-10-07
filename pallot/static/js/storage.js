@@ -8,7 +8,7 @@ export const ADDRESS_CARD = "pallot.addressCard.v1";
 export const SETTINGS_CHANGED = "pallot.settingsChanged.v1";
 export const PICK_RULE = "pallot.pickRule.v1"; // Pick by rule's last rule, for every election
 export const SOURCES = "pallot.sources.v1"; // the sources the voter turned on or off: id → true or false
-const UI = "pallot.ui.v1";
+export const UI = "pallot.ui.v1"; // the view settings (uiPref), several at once with setUiPrefs
 
 // The Settings page stamps every change that affects the ballot, so a ballot page that was
 // open meanwhile (in another tab, or kept for the Back button) can tell it's out of date.
@@ -44,7 +44,11 @@ export function setSourceChoices(changes) {
 export const uiPref = (name) => readJson(UI, {})[name];
 
 export function setUiPref(name, value) {
-  writeJson(UI, { ...readJson(UI, {}), [name]: value });
+  setUiPrefs({ [name]: value });
+}
+
+export function setUiPrefs(changes) {
+  writeJson(UI, { ...readJson(UI, {}), ...changes });
 }
 
 // Every key Pallot uses starts with "pallot.".

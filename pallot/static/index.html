@@ -81,17 +81,27 @@
           </div>
           <div class="button-row ballot-tools" id="ballot-tools">
             <details class="menu" id="view-menu">
-              <summary class="btn ghost small">View</summary>
+              <summary class="btn ghost small">View: <span id="view-mode">Simple</span></summary>
               <div class="menu-panel">
+                <fieldset class="seg">
+                  <legend class="sr-only">How much of the ballot shows</legend>
+                  <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
+                  <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
+                </fieldset>
+                <fieldset class="menu-group">
+                  <legend class="menu-label">Show</legend>
+                  <label class="check"><input type="checkbox" id="show-map" data-view="showMap"> Map of your districts</label>
+                  <label class="check"><input type="checkbox" id="show-money" data-view="showMoney"> Money raised</label>
+                  <label class="check"><input type="checkbox" id="show-polls" data-view="showPolls"> Polls</label>
+                  <label class="check"><input type="checkbox" id="show-endorsements" data-view="showEndorsements"> Endorsements &amp; scorecards</label>
+                </fieldset>
                 <div class="button-row">
                   <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
                   <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
                 </div>
-                <label class="check"><input type="checkbox" id="show-money"> Show money raised</label>
-                <label class="check"><input type="checkbox" id="show-polls"> Show polls</label>
-                <label class="check"><input type="checkbox" id="show-endorsements"> Show endorsements &amp; scorecards</label>
-                <label class="check"><input type="checkbox" id="collapse-on-pick"> Collapse a race when I pick</label>
-                <label class="check"><input type="checkbox" id="hide-picked"> Only races I haven't picked</label>
+                <label class="check"><input type="checkbox" id="collapse-on-pick" data-view="collapseOnPick"> Collapse a race when I pick</label>
+                <label class="check"><input type="checkbox" id="hide-picked" data-view="hidePicked"> Only races I haven't picked</label>
+                <p class="menu-more"><a href="settings.html#view-title">More in Settings</a></p>
               </div>
             </details>
             <button class="btn ghost small with-icon" id="rule-btn" type="button" title="Pick by party, TrackAIPAC, Vote for Peace, money and polls"><span data-icon="filter"></span>Pick by rule</button>
