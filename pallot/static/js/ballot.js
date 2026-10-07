@@ -21,7 +21,7 @@ import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
 import { STATES } from "./labels.js";
-import { initRules, markingNote, openRules, syncMarks } from "./pick-rule-dialog.js";
+import { initRules, openRules } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { initRaceCards, redrawCards, renderCards } from "./race-cards.js";
@@ -49,9 +49,9 @@ const jump = $("#jump");
 const printDialog = $("#print-dialog");
 
 // What the page's parts share: the ballot on screen and its picks, the request behind it (not
-// one that failed since), and Pick by rule's marks on the candidates.
+// one that failed since).
 const page = {
-  ballot: null, picks: null, request: null, marks: null,
+  ballot: null, picks: null, request: null,
   lookup, showDetails, openPrecincts, updateProgress, renderRaces, openRules,
 };
 let pendingLookup = null; // the AbortController of the lookup still running
@@ -193,12 +193,11 @@ function render() {
   renderRaces();
 }
 
-// Redraws the races and propositions in place, from the saved picks and pick rule, with the
+// Redraws the races and propositions in place, from the saved picks, with the
 // progress and the filter: after the picks change as a whole (Clear picks, Pick by rule, their
 // Undo, another tab). The rest of the page, an open edit of the districts and a note being typed
 // included, stays as it is.
 function renderRaces() {
-  syncMarks();
   redrawCards();
   applyHidePicked();
   updateProgress();
@@ -237,7 +236,6 @@ function renderMessages() {
   const { warnings, notes } = page.ballot;
   $("#messages").replaceChildren(
     hidingNote,
-    markingNote,
     ...warnings.map((w) => h("p", { class: "notice notice-warn" }, w)),
     ...notes.map((n) => h("p", { class: "notice" }, linkedText(n))),
   );

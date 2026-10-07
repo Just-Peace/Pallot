@@ -1033,7 +1033,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 .rule-how { margin: 12px 0 0; font-size: 0.85rem; color: var(--muted); }
 .rule-how > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
 .rule-how p { margin: 6px 0 0; }
-.rule-mark-btn { margin-right: auto; }
 @media (max-width: 799px) {
   .rule-layout { display: block; overflow-y: auto; }
   .rule-form, .rule-preview { overflow: visible; }
@@ -1053,12 +1052,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .rules .details-foot { padding: 10px 16px 14px; }
   .rules .details-foot .btn { flex: 1 1 auto; justify-content: center; padding-inline: 12px; font-size: 0.9rem; }
   .rules .details-foot .btn.primary { order: -1; flex-basis: 100%; }
-  .rule-mark-btn { margin-right: 0; }
 }
 .rule-btn { flex: none; display: inline-flex; align-items: center; margin-top: -2px; padding: 5px 8px; }
 .rule-btn .icon { width: 14px; height: 14px; }
-.pill.rule-mark.tone-good { background: var(--good-soft); color: var(--good); }
-.pill.rule-mark.tone-warn { background: var(--warn-soft); color: var(--warn); }
 
 /* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
    its two buttons (topbar.js); on the ballot the section chips join the sticky strip ---- */

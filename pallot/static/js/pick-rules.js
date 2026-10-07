@@ -40,7 +40,6 @@ export const DEFAULT_RULE = {
   selfFunded: { on: false, amount: 50 }, // they gave or lent their campaign over this % of what it raised
   polling: { on: false, amount: 5 },
   keepMine: true,
-  mark: false, // "Preview on my ballot" is on
 };
 
 // The saved rule over the defaults, so a rule saved before a condition existed still loads.
@@ -276,17 +275,6 @@ function judge(race, rule) {
   const base = parties.size ? () => true : (c) => !c.write_in;
   const picks = tests.length ? candidates.filter((c) => base(c) && tests.every((test) => test(c))) : [];
   return { active: tests.length > 0, picks, matches: picks.filter((c) => !avoid.has(c.key)), avoid };
-}
-
-// For "Preview on my ballot": candidate key -> { avoid: [reasons] }, empty for one the rule picks.
-export function verdicts(ballot, rule) {
-  const out = new Map();
-  for (const race of allRaces(ballot)) {
-    const { picks, avoid } = judge(race, rule);
-    for (const candidate of picks) out.set(candidate.key, { avoid: [] });
-    for (const [key, reasons] of avoid) out.set(key, { avoid: reasons });
-  }
-  return out;
 }
 
 const sameKeys = (a, b) => a.length === b.length && a.every((key) => b.includes(key));

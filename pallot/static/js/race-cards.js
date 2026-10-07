@@ -14,7 +14,7 @@ import { fundingLine, likelyFlag, likelyUnflagged, profileLinks, raceMoney, sour
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, marks, showDetails, openPrecincts, updateProgress, openRules }
+let page = null; // { ballot, picks, showDetails, openPrecincts, updateProgress, openRules }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 
 export function initRaceCards(context) {
@@ -198,8 +198,7 @@ export function searchLink(race, candidate, className, label) {
   });
 }
 
-// A candidate's row, and ``sync``, which puts its saved note in the note box and its Pick by rule
-// mark ("Preview on my ballot") under the name.
+// A candidate's row, and ``sync``, which puts its saved note in the note box.
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
   const id = slug(candidate.key);
@@ -222,19 +221,8 @@ function candidateRow(race, candidate) {
   const noteButton = h("button", {
     type: "button", class: "icon-btn note-btn", "aria-expanded": "false", "aria-controls": `note-${id}`, on: { click: openNote },
   }, "✎ Note");
-  const mark = h("span", { class: "pill rule-mark", hidden: true });
-  const syncMark = () => {
-    const verdict = page.marks?.get(candidate.key);
-    mark.hidden = !verdict;
-    if (!verdict) return;
-    const skipped = verdict.avoid.length > 0;
-    mark.classList.toggle("tone-warn", skipped);
-    mark.classList.toggle("tone-good", !skipped);
-    mark.textContent = skipped ? `✕ Your rule skips: ${verdict.avoid.join(", ")}` : "✓ Matches your rule";
-  };
   // A box opened for a new note stays open until its note changes elsewhere.
   const sync = () => {
-    syncMark();
     const text = page.picks.note(candidate.key);
     if (!syncBox(textarea, text)) return;
     noteButton.classList.toggle("has-note", Boolean(text));
@@ -274,7 +262,7 @@ function candidateRow(race, candidate) {
         avatar(candidate),
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
-          h("span", { class: "cand-sub" }, candidatePills(candidate, race), mark))),
+          h("span", { class: "cand-sub" }, candidatePills(candidate, race)))),
       h("div", { class: "cand-actions" },
         noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"), profileLinks(candidate))),
     lines,

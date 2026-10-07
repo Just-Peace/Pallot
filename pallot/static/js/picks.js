@@ -17,10 +17,10 @@ function saveBucket(electionKey, data) {
   else unsaved[electionKey] = data;
 }
 
-// Runs ``redraw`` when another tab changes the picks or the pick rule (a pick, Clear in Settings).
+// Runs ``redraw`` when another tab changes the picks (a pick, Clear in Settings).
 export function onPicksChanged(redraw) {
   window.addEventListener("storage", (event) => {
-    if (event.key === PICKS || event.key === PICK_RULE || event.key === null) redraw();
+    if (event.key === PICKS || event.key === null) redraw();
   });
 }
 
