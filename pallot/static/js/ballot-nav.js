@@ -6,6 +6,7 @@ import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
+import { syncBoxes } from "./source-cards.js";
 import { setViewPref, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks }
@@ -186,6 +187,11 @@ export function initNav(context) {
   $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
   $("#collapse-on-pick").checked = viewPref("collapseOnPick");
   $("#collapse-on-pick").addEventListener("change", (event) => setViewPref("collapseOnPick", event.target.checked));
+  $("#show-money").checked = viewPref("showMoney");
+  $("#show-money").addEventListener("change", (event) => {
+    setViewPref("showMoney", event.target.checked);
+    syncBoxes("showMoney");
+  });
   $("#expand-all").addEventListener("click", () => {
     setAllCollapsed(false);
     viewMenu.open = false;

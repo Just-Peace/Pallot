@@ -699,7 +699,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .chevron::before, .faq > summary::before, .source-group > summary::before, .menu > summary::after { content: ""; flex: none; width: 7px; height: 7px;
   border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
   transition: transform 0.15s; }
-.race.collapsed .chevron::before, .district-map.collapsed .chevron::before, .faq:not([open]) > summary::before,
+.race.collapsed .chevron::before, .district-map.collapsed .chevron::before, .race-money.collapsed .chevron::before,
+.faq:not([open]) > summary::before,
 .source-group:not([open]) > summary::before {
   transform: translateX(-2px) rotate(-45deg); }
 .race-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
@@ -848,6 +849,13 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .race-money { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); padding: 10px 12px;
   margin: 0 0 10px; }
 .race-money .breakdown { margin: 0; }
+/* a money box's title folds it to one line, with a race's chevron (foldBox in source-cards.js) */
+.box-toggle { display: inline-flex; align-items: center; gap: 4px; margin: -3px 0 -3px -4px; padding: 0; border: 0;
+  background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; text-align: left;
+  cursor: pointer; }
+.box-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
+.race-money.collapsed { padding-block: 6px; }
+.race-money.collapsed .breakdown-head { margin: 0; }
 .breakdown-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin: 0 0 6px; }
 .breakdown-head .breakdown-title { margin: 0; }
 .compare-btn { color: var(--accent); border-color: var(--accent); }

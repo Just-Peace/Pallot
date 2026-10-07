@@ -70,7 +70,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
-  - **View**: Collapse all, Expand all, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**. Both options are remembered in the browser.
+  - **View**: **Show money raised** (off at first), Collapse all, Expand all, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**. The options are remembered in the browser.
   - **Pick by rule** picks by party, TrackAIPAC, Vote for Peace, endorsement lists, money and polls (below).
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
@@ -109,23 +109,23 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - Ballotpedia's notes on a race (a replacement nominee, a redrawn district) show at the top of it, with Ballotpedia's link.
   - **Incumbent** comes from the state's filing, or from Ballotpedia when it matches the candidate exactly in the same race.
 - **Picks follow the party:** a picked candidate's row takes their party's color (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid color so they stand apart from the sources' badges.
-- **Money:** congressional and state races show what each candidate has raised, above the candidates. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source breaks it down:
+- **Money:** congressional and state races have a money box above the candidates, folded at first to one line: "Money raised for the 2026 election (2021–26) · FEC". Click it to open it, or tick **Show money raised** under View to open every race's box. Open, it shows what each candidate has raised, with a bar, their cash on hand and the outside spending for and against them. A **?** after a name means the source only likely matched that candidate. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source in Details breaks it down:
   - where the money came from;
   - donation sizes;
   - where donors live;
   - the largest donors (the FEC groups them by employer);
   - outside spending.
 
-  **Compare candidates** on a race's money box puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together. Outside spending is marked with a blue "for" or an amber "against" the candidate; none of it went to the campaign.
+  **Compare candidates**, on the money box's line even while it's folded, puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together. Outside spending is marked with a blue "for" or an amber "against" the candidate; none of it went to the campaign.
 - **Polls:** U.S. Senate, U.S. House and Governor races with public polls show one bar under the money box: each candidate's median share, in their party's color, with the rest (undecided and others) in gray. The median is over each pollster's latest poll of the matchup actually on the ballot, likely voters where a poll asked them. Each candidate's **Polls** tab lists the polls. Most House districts have no polls, so they show no bar.
 - **Write-ins:** the candidates who filed as write-ins with the Texas Secretary of State are listed in their race after the printed names, marked **Write-in**. Pick one and it shows on the collapsed line and the printed sheet as "Name (write-in)", since you write the name in yourself. Every race also ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button
   - a note
-  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC, Vote for Peace, then each endorsement list that has them. It opens on the first. The badges on the candidate's row come in the same order. **‹** and **›** step through the race's other candidates without closing it.
+  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC, Vote for Peace, then each endorsement list that has them. It opens on the first. The badges on the candidate's row come in the same order; the money isn't a badge on the row, since it's in the race's money box. **‹** and **›** step through the race's other candidates without closing it.
   - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
 
-  A **?** on a source's badge, its tab in Details, or the Details button means that source only likely matched the candidate, so check it.
+  A **?** on a source's badge, its tab in Details, a name in the money box, or the Details button means that source only likely matched the candidate, so check it.
 - **Endorsement lists:** some organizations' lists of the candidates they endorse come with Pallot, and others (Muslims United PAC's, CAIR Action's and Emgage PAC's) are fetched from the organization's website; About and the FAQ name the ones in your version. A list that comes with Pallot is a copy made once, on the date Settings shows, and never fetched again; a fetched one is kept a week, and Settings shows when it was fetched. A candidate on a list has an **Endorsed by …** badge, and a tab in Details with the office as the organization lists it, its note, and a link to its list. A list keeps every state it covers; a lookup uses only the candidates in the address's state (Texas, for now). Settings shows how many candidates a list has in Texas and in all.
 - **Pick by rule:** picks across your ballot at once, since Texas has no straight-ticket voting. Open it from the top of the ballot for every race, or from the funnel in a race's heading for that race; **Apply to** can also be one section.
   - **Pick:** any of the parties you choose (a chip for each party on your ballot, with how many races it's in, and one for the declared write-ins), and then only if all of these hold:

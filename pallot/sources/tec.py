@@ -524,7 +524,9 @@ def race_card(
     race: Race, filers: dict[str, dict[str, Any]], window: str | None, outside: dict[str, dict[str, Any]] | None = None
 ) -> SourceCard:
     """The race comparison: what each candidate on the ballot has raised since the window
-    start, and (for Compare) everything else side by side."""
+    start, their cash on hand and outside spending naming them, and (for Compare) everything
+    else side by side."""
+    outside = outside or {}
     through = max(((f.get("totals") or {}).get("as_of") or "") for f in filers.values()) or None
     parts = []
     for candidate in race.candidates:
@@ -534,12 +536,12 @@ def race_card(
             continue
         totals = filer.get("totals") or {}
         cash = totals.get("cash")
-        parts.append(Share(
-            label=candidate.name,
-            amount=totals.get("raised"),
-            note=f"{money_short(cash)} on hand" if cash is not None else None,
-            candidate_key=candidate.key,
-        ))
+        spent = (outside.get(candidate.key) or {}).get("total")
+        note = " · ".join(filter(None, (
+            f"{money_short(cash)} on hand" if cash is not None else None,
+            f"{money_short(spent)} spent by outside groups" if spent else None,
+        )))
+        parts.append(Share(label=candidate.name, amount=totals.get("raised"), note=note or None, candidate_key=candidate.key))
     return SourceCard(
         source=SOURCE,
         kind="money",
@@ -548,7 +550,7 @@ def race_card(
         url=SEARCH,
         as_of=through,
         breakdowns=[Breakdown(title=f"Money raised since {_since(window)}", parts=parts)],
-        comparison=comparison(race, filers, outside or {}, window),
+        comparison=comparison(race, filers, outside, window),
     )
 
 

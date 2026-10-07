@@ -297,6 +297,12 @@ def _for_against(rows: list[dict[str, Any]] | None) -> tuple[float, float]:
     return total("S"), total("O")
 
 
+def _outside_note(rows: list[dict[str, Any]] | None) -> str | None:
+    """The race box's line on outside spending: "outside groups spent $1.4M for, $26.9M against"."""
+    sides = [f"{money_short(amount)} {side}" for side, amount in zip(("for", "against"), _for_against(rows)) if amount]
+    return f"outside groups spent {', '.join(sides)}" if sides else None
+
+
 def _outside_badges(rows: list[dict[str, Any]] | None, url: str) -> list[Badge]:
     """One badge for outside spending for the candidate (blue), one for against (amber)."""
     support, oppose = _for_against(rows)
@@ -456,8 +462,10 @@ def comparison(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details:
 
 
 def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: dict[str, Details] | None = None) -> SourceCard:
-    """The race comparison: what each candidate on the ballot has raised, and (for Compare)
-    everything else side by side."""
+    """The race comparison: what each candidate on the ballot has raised, their cash on hand
+    and, with ``details``, outside spending for and against them, and (for Compare) everything
+    else side by side."""
+    details = details or {}
     through = max((row.get("coverage_end_date") or "")[:10] for row in rows.values()) or None
     parts = []
     for candidate in race.candidates:
@@ -470,6 +478,8 @@ def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: 
         date = (row.get("coverage_end_date") or "")[:10]
         if note and date and date != through:
             note += f" on {display_date(date)}"
+        outside = details.get(row["candidate_id"])
+        note = " · ".join(filter(None, (note, _outside_note(outside.outside if outside else None)))) or None
         parts.append(Share(label=candidate.name, amount=_number(row.get("total_receipts")), note=note, candidate_key=candidate.key))
     return SourceCard(
         source=SOURCE,
@@ -479,7 +489,7 @@ def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: 
         url=race_page(race.seat or "", cycle),
         as_of=through,
         breakdowns=[Breakdown(title=f"Money raised for the {cycle} election ({period(race.seat or '', cycle)})", parts=parts)],
-        comparison=comparison(race, rows, cycle, details or {}),
+        comparison=comparison(race, rows, cycle, details),
     )
 
 
