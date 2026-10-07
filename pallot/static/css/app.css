@@ -144,7 +144,7 @@ button, input, select, textarea { font: inherit; }
 .muted { color: var(--muted); }
 .small { font-size: 0.85rem; }
 .fine { color: var(--muted); font-size: 0.82rem; margin: 0.6em 0 0; }
-.lede { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+.lede { color: var(--muted); font-size: 1.05rem; }
 
 .icon { width: 1.1em; height: 1.1em; flex: none; }
 .with-icon { display: inline-flex; align-items: center; gap: 6px; }
@@ -259,6 +259,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 .btn.primary.ghost { background: transparent; color: var(--accent); }
 .btn.small { padding: 6px 12px; font-size: 0.85rem; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
 
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .button-row.end { justify-content: flex-end; }
@@ -345,7 +347,6 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 .updated { color: var(--muted); font-size: 0.85rem; margin: 8px 0 0; }
 
 .panel > h2 { font-size: 1.15rem; margin-bottom: 10px; }
-.panel.prose { max-width: 52rem; }
 .prose ul { padding-left: 20px; margin: 0 0 0.75em; }
 .prose li + li { margin-top: 6px; }
 .prose > :last-child { margin-bottom: 0; }
@@ -368,12 +369,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .faq > summary::before { margin: 0 4px; color: var(--muted); } /* a chevron, drawn with the race's */
 .faq > summary:hover { color: var(--accent); }
 .faq-body { padding: 0 16px 14px 42px; }
-.faq-body p { max-width: 72ch; }
 .faq-body h3 { font-size: 0.75rem; margin: 1.4em 0 0.5em; }
-.faq-body ul { max-width: 72ch; padding-left: 20px; margin: 0 0 0.75em; }
+.faq-body ul { padding-left: 20px; margin: 0 0 0.75em; }
 .faq-body li + li { margin-top: 5px; }
 /* "What each figure is": the figure's name, then what it counts */
-.faq-body dl { max-width: 72ch; margin: 0 0 0.75em; }
+.faq-body dl { margin: 0 0 0.75em; }
 .faq-body dt { font-weight: 650; }
 .faq-body dd { margin: 2px 0 10px; }
 .faq-body > :last-child { margin-bottom: 0; }
@@ -381,13 +381,15 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 /* ---- settings page ---- */
 
-.setting-row { display: grid; gap: 4px; max-width: 360px; margin: 4px 0 0; }
+.panel-intro { color: var(--muted); margin: 0 0 12px; }
+.setting-row { display: grid; gap: 4px; margin: 4px 0 0; }
+.setting-row select { max-width: 360px; }
 .setting-row .fine { margin: 0; }
 .setting-row .seg { justify-self: start; }
 .setting-row .seg-option { padding: 6px 16px; font-size: 0.9rem; }
-.view-switches { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.view-switches { grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); }
 
-.source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 14px 0; }
+.source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 12px; margin: 14px 0; }
 .source-row { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
   padding: 10px 12px; }
 .source-row.is-off { opacity: 0.75; }
@@ -411,7 +413,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .source-group > summary h3 { margin: 0; font-size: 1rem; }
 .source-group > summary:hover h3 { color: var(--accent); }
 .source-group-count { margin-left: auto; white-space: nowrap; }
-.source-group-desc { margin: -4px 0 10px; color: var(--muted); font-size: 0.88rem; max-width: 72ch; }
+.source-group-desc { margin: -4px 0 10px; color: var(--muted); font-size: 0.88rem; }
 .source-group .status { margin: 8px 0 0; }
 .source-group .source-list { margin: 12px 0 16px; }
 
@@ -430,7 +432,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .data-actions { list-style: none; margin: 14px 0 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); }
 .data-action { display: flex; align-items: center; justify-content: space-between; gap: 10px 24px; padding: 14px 16px; }
 .data-action + .data-action { border-top: 1px solid var(--line); }
-.data-action-text { min-width: 0; max-width: 72ch; }
+.data-action-text { min-width: 0; }
 .data-action h3 { margin: 0 0 3px; font-size: 0.95rem; }
 .data-action p { margin: 0; font-size: 0.85rem; color: var(--muted); }
 .data-action .btn { flex: none; }
