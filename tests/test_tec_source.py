@@ -168,7 +168,7 @@ def test_cards_for_a_state_race(tmp_path):
     [money] = comparison.breakdowns
     assert money.title == "Money raised since Nov 6, 2024"
     assert [(p.label, p.amount, p.note) for p in money.parts] == [
-        ("Janie Doe", 4000.0, "$7K on hand"), ("Juan Perez", None, "not found in TEC data")]
+        ("Janie Doe", 4000.0, "$7K on hand · $2.3K spent by outside groups"), ("Juan Perez", None, "not found in TEC data")]
     assert rep.key in cards.races and jp.key not in cards.races
 
 

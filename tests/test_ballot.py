@@ -112,6 +112,9 @@ def test_federal_races_get_fec_money(client):
     assert raised == {"Ken Paxton": 9248698.53, "James Talarico": 68560930.42, "Ted Brown": 7459.52}
     assert [p["candidate_key"] for p in comparison["breakdowns"][0]["parts"]] == [c["key"] for c in senate["candidates"]]
     assert [p["label"] for p in house["cards"][0]["breakdowns"][0]["parts"]] == ["Chris Gober", "Caitlin Rourk"]
+    notes = {p["label"]: p["note"] for p in comparison["breakdowns"][0]["parts"]}
+    assert notes["James Talarico"].endswith(" on hand · outside groups spent $4.1M for, $705K against")  # the badges' figures
+    assert "outside" not in notes["Ken Paxton"]  # only Talarico's outside spending was recorded
 
     talarico = next(c for c in senate["candidates"] if c["name"] == "James Talarico")
     fec = next(card for card in talarico["cards"] if card["source"] == "fec")
