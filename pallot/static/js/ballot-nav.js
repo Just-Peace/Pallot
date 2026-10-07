@@ -6,7 +6,7 @@ import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
-import { setUiPref, uiPref } from "./storage.js";
+import { setViewPref, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks }
 const result = $("#result");
@@ -73,7 +73,7 @@ export function updateProgress() {
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
 // until this runs again (switching it on, a new ballot), so it doesn't vanish mid-pick.
 export function applyHidePicked() {
-  const on = Boolean(uiPref("hidePicked"));
+  const on = viewPref("hidePicked");
   for (const card of result.querySelectorAll(".race")) {
     card.classList.toggle("hidden-picked", on && page.picks.has(card.dataset.race));
   }
@@ -83,7 +83,7 @@ export function applyHidePicked() {
 }
 
 function setHidePicked(on) {
-  setUiPref("hidePicked", on);
+  setViewPref("hidePicked", on);
   if (!page.ballot) return;
   applyHidePicked();
   markCurrentSection(); // the marked section may have gone
@@ -184,8 +184,8 @@ export function markCurrentSection() {
 export function initNav(context) {
   page = context;
   $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
-  $("#collapse-on-pick").checked = Boolean(uiPref("collapseOnPick"));
-  $("#collapse-on-pick").addEventListener("change", (event) => setUiPref("collapseOnPick", event.target.checked));
+  $("#collapse-on-pick").checked = viewPref("collapseOnPick");
+  $("#collapse-on-pick").addEventListener("change", (event) => setViewPref("collapseOnPick", event.target.checked));
   $("#expand-all").addEventListener("click", () => {
     setAllCollapsed(false);
     viewMenu.open = false;

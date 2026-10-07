@@ -70,7 +70,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
-  - **View**: Collapse all, Expand all, **Collapse a race when I pick**, and **Only races I haven't picked**. Both options are remembered in the browser.
+  - **View**: Collapse all, Expand all, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**. Both options are remembered in the browser.
   - **Pick by rule** picks by party, TrackAIPAC, Vote for Peace, endorsement lists, money and polls (below).
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
@@ -100,7 +100,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - Drag the map to move it, and zoom with **+** and **−**, or with the scroll wheel once you've clicked the map (so scrolling the page never zooms it by accident). On a phone, move and zoom it with two fingers; one finger scrolls the page. With the map selected, the arrow keys move it.
   - The outlines are simplified to about 160 feet (your election precinct to about 16 feet), so near a boundary, go by the district numbers.
   - The street map's tiles come from OpenStreetMap through the Pallot server, which keeps them. Turn the street map off in Settings to see the outlines alone.
-  - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's shown at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
+  - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's folded at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
 - **Precincts:** until your commissioner and JP precincts are known, the races that depend on them are listed under "Depends on your commissioner or JP precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
   - While you scroll through a race, its heading stays at the top, under the progress bar, until the next race comes.
