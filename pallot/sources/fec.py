@@ -22,6 +22,7 @@ from ..matching import NameIndex, last_first, match_person
 from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard
 from ..text import display_date, display_office, display_org, display_person, display_time, money, money_short
 from . import CardSet, compare
+from .highlights import highlights
 
 SOURCE = "fec"
 LABEL = "FEC"
@@ -376,10 +377,12 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
         Link(label=f"Personal financial disclosures ({'Senate' if senate else 'House Clerk'})",
              url=SENATE_DISCLOSURES if senate else HOUSE_DISCLOSURES),
     ]
+    home = seat.partition("-")[0]
+    figures = _figures(campaign, totals, details.outside, details.states, home)
     breakdowns = [
         _where_from(totals, raised, span),
         _sizes(details.sizes),
-        _states(details.states, seat.partition("-")[0]),
+        _states(details.states, home),
         _employers(details.employers, cycle),
         _outside(details.outside),
     ]
@@ -392,10 +395,11 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
         as_of=through,
         match=match,
         badges=badges,
+        highlights=highlights(figures, state=_state_name(details.states, home), credit=f"FEC, {span}"),
         facts=[f for f in facts if f.value],
         breakdowns=[b for b in breakdowns if b],
         links=links,
-        figures=_figures(campaign, totals, details.outside),
+        figures=figures,
     )
 
 
@@ -403,13 +407,26 @@ def _share(part: float | None, whole: float | None) -> float | None:
     return round(100 * part / whole, 1) if part is not None and whole else None
 
 
-def _figures(campaign: Money, totals: dict[str, Any], outside: list[dict[str, Any]] | None) -> dict[str, float]:
-    """Pick by rule's figures. The shares of what was raised (small donations, the candidate's
-    own gifts and loans) and outside spending only from the calls a key makes, so a campaign
-    nobody spent for is 0, not missing."""
+def _state_name(rows: list[dict[str, Any]] | None, home: str) -> str:
+    return next((r["state_full"] for r in rows or [] if r.get("state") == home and r.get("state_full")), home)
+
+
+def _in_state(rows: list[dict[str, Any]] | None, home: str) -> float | None:
+    """The share of itemized donations from individuals with an address that came from ``home``."""
+    placed = [r for r in rows or [] if r.get("state") and _number(r.get("total"))]
+    whole = sum(_number(r["total"]) or 0 for r in placed)
+    return _share(sum(_number(r["total"]) or 0 for r in placed if r["state"] == home), whole)
+
+
+def _figures(campaign: Money, totals: dict[str, Any], outside: list[dict[str, Any]] | None,
+             states: list[dict[str, Any]] | None, home: str) -> dict[str, float]:
+    """Pick by rule's figures. The shares (small donations and the candidate's own gifts and
+    loans, of what was raised; donors in the state, of itemized donations) and outside spending
+    only from the calls a key makes, so a campaign nobody spent for is 0, not missing."""
     figures = {"raised": campaign.raised, "spent": campaign.spent, "cash": campaign.cash}
     figures["small_share"] = _share(_number(totals.get("individual_unitemized_contributions")), campaign.raised)
     figures["self_share"] = _share(_own(totals), campaign.raised)
+    figures["in_state_share"] = _in_state(states, home)
     if outside is not None:
         figures["outside_for"] = _for_against(outside)[0]
     return {key: value for key, value in figures.items() if value is not None}
