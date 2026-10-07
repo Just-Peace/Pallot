@@ -138,6 +138,7 @@ class EndorsementList:
                           value=display_date(self.captured) or self.captured))
         return SourceCard(
             source=self.source,
+            kind="endorsement",
             label=self.label,
             description=self.description,
             url=page,

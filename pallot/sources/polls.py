@@ -224,6 +224,7 @@ def race_card(race: Race, kept: list[Reading], middle: dict[str, float]) -> Sour
     ]
     return SourceCard(
         source=SOURCE,
+        kind="polls",
         label=SITE_LABEL,
         description="Each candidate's median share in recent public polls, from FiftyPlusOne.",
         url=SITE,
@@ -245,6 +246,7 @@ def candidate_card(candidate: Candidate, race: Race, kept: list[Reading], median
         facts.append(Fact(label=r.pollster, value=value, url=r.url))
     return SourceCard(
         source=SOURCE,
+        kind="polls",
         label=LABEL,
         description=f"Public polls of this race, from FiftyPlusOne. {_method(kept)}",
         url=SITE,

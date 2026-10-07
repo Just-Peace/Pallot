@@ -21,7 +21,8 @@ def senate() -> Race:
 
 
 def cards_from(source: str, races: list[Race]) -> CardSet:
-    return CardSet(candidates={c.key: SourceCard(source=source, label=source) for r in races for c in r.candidates})
+    kind = "money" if source == fec.SOURCE else "polls"
+    return CardSet(candidates={c.key: SourceCard(source=source, kind=kind, label=source) for r in races for c in r.candidates})
 
 
 async def run(races: list[Race]) -> enrich.Outcome:

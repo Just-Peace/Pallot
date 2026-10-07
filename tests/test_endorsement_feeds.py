@@ -187,8 +187,8 @@ def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
     ballot = get_ballot(client, "ut")
     casar = cards_from(ballot)["Greg Casar"]
     today = dt.date.today()
-    assert (casar["label"], casar["as_of"], casar["match"]["confidence"], casar["flags"]) == (
-        "Muslims United PAC", today.isoformat(), "exact", [FLAG])
+    assert (casar["label"], casar["kind"], casar["as_of"], casar["match"]["confidence"], casar["flags"]) == (
+        "Muslims United PAC", "endorsement", today.isoformat(), "exact", [FLAG])
     assert [(b["text"], b["url"]) for b in casar["badges"]] == [
         ("Endorsed by Muslims United PAC", "https://muslimsunitedpac.com/endorsements/greg-casar-tx")]
     assert {f["label"]: f["value"] for f in casar["facts"]}["Office on the list"] == "U.S. House, District 37"

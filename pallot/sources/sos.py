@@ -186,6 +186,7 @@ def card(row: dict[str, Any], lookups: Lookups, fetched_at: float | None) -> Sou
         links.insert(0, Link(label="Campaign website", url=website))
     return SourceCard(
         source=SOURCE,
+        kind="filing",
         label=LABEL,
         description=DESCRIPTION,
         url=CANDIDATE_PAGE,
