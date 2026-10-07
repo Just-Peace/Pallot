@@ -379,6 +379,7 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
     ]
     return SourceCard(
         source=SOURCE,
+        kind="money",
         label=LABEL,
         description=DESCRIPTION,
         url=page,
@@ -472,6 +473,7 @@ def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: 
         parts.append(Share(label=candidate.name, amount=_number(row.get("total_receipts")), note=note, candidate_key=candidate.key))
     return SourceCard(
         source=SOURCE,
+        kind="money",
         label=LABEL,
         description="Money raised by each candidate's campaign, from reports filed with the FEC.",
         url=race_page(race.seat or "", cycle),

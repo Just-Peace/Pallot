@@ -148,6 +148,7 @@ def test_the_ballot_settings_and_the_pages_list(client, upstream):
     senate = next(r for r in ballot["races"] if r["name"] == "U.S. Senator")
     card = next(c for c in senate["candidates"][1]["cards"] if c["source"] == "examplepac")
     assert card["badges"][0]["text"] == "Endorsed by Example PAC" and card["flags"] == [FLAG]
+    assert card["kind"] == "endorsement"
     calls = len(upstream.calls)
     assert get_ballot(client)["meta"]["external_calls"] == 0 and len(upstream.calls) == calls
 

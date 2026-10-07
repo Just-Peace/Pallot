@@ -338,7 +338,7 @@ gh release create vX.Y.Z --verify-tag --title "Pallot X.Y.Z" --notes-file NOTES.
 
 ## Adding a source
 
-Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, links and match confidence. A source can also add a card to a race, such as the money comparison. The page renders them all generically, as badges on the candidate row, a tab in Details, and a block at the top of the race. So a new source only needs:
+Each source contributes `SourceCard`s: badges, facts, quotes, money breakdowns, links and match confidence. A source can also add a card to a race, such as the money comparison. The page renders them all generically, as badges on the candidate row, a tab in Details, and a block at the top of the race. Each card declares its `kind` (`money`, `polls`, `filing`, `profile`, `scorecard` or `endorsement`), which decides where the page puts its badges (the candidate row's lines) and its race card (folded or not). So a new source only needs:
 
 1. A module in `pallot/sources/` that fetches through `HttpCache` and builds cards.
 2. A field on `Services` in `ballot.py`, created in `open_services()` (`services.py`), which the server and `pallot-cache` share.

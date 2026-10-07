@@ -116,6 +116,7 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
 
     return SourceCard(
         source=SOURCE,
+        kind="scorecard",
         label=LABEL,
         description=DESCRIPTION,
         url=page,

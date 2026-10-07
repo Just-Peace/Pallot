@@ -455,6 +455,7 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
     breakdowns = [_where_from(filer, raised), _largest(filer), _sizes(filer), _states(filer), _outside(outside)]
     return SourceCard(
         source=SOURCE,
+        kind="money",
         label=LABEL,
         description=DESCRIPTION,
         url=SEARCH,
@@ -541,6 +542,7 @@ def race_card(
         ))
     return SourceCard(
         source=SOURCE,
+        kind="money",
         label=LABEL,
         description="Money raised by each candidate, from reports filed with the Texas Ethics Commission.",
         url=SEARCH,

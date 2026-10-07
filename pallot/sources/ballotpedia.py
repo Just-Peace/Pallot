@@ -313,6 +313,7 @@ def card(candidate: BpCandidate, race: BpRace, fetched_at: float, match: Match |
         links.append(Link(label="This race on Ballotpedia", url=race.url))
     return SourceCard(
         source=SOURCE,
+        kind="profile",
         label=LABEL,
         description=DESCRIPTION,
         url=candidate.url or race.url,

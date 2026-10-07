@@ -91,6 +91,17 @@ def test_capitol_ballot(client):
     assert ballot["warnings"] == [] and not [note for note in ballot["notes"] if "precinct" in note]
 
 
+def test_every_card_says_its_kind(client):
+    ballot = get_ballot(client)
+    cards = [card for race in ballot["races"] for card in race["cards"]]
+    cards += [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]]
+    assert {(card["source"], card["kind"]) for card in cards} == {
+        ("fec", "money"), ("tec", "money"), ("polls", "polls"), ("sos", "filing"), ("ballotpedia", "profile"),
+        ("trackaipac", "scorecard"), ("voteforpeace", "scorecard"),
+        ("emgage", "endorsement"), ("examplepac", "endorsement"), ("cair", "endorsement"),
+    }
+
+
 def test_federal_races_get_fec_money(client):
     ballot = get_ballot(client)
     senate, house = find_race(ballot, "U.S. Senator"), find_race(ballot, "U.S. Representative District 10")

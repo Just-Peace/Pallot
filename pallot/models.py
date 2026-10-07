@@ -8,6 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 Tone = Literal["neutral", "info", "good", "warn"]
+CardKind = Literal["money", "polls", "filing", "profile", "scorecard", "endorsement"]
 
 # Display order of race groups on the ballot (labels live in the frontend).
 GROUPS = ("federal", "state", "legislature", "judicial", "county", "precinct", "local")
@@ -113,6 +114,7 @@ class SourceCard(BaseModel):
     frontend renders every card the same way, so a new source only has to produce these."""
 
     source: str
+    kind: CardKind  # the page places the card's badges and its race card by this
     label: str
     description: str | None = None
     url: str | None = None
