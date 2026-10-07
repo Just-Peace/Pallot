@@ -253,10 +253,17 @@ for (const radio of printDialog.querySelectorAll('input[name="print-layout"]')) 
 }
 $("#print-btn").addEventListener("click", () => printDialog.showModal());
 printDialog.addEventListener("close", () => {
-  if (printDialog.returnValue !== "print" || !page.ballot) return;
+  if (printDialog.returnValue === "print" && page.ballot) setTimeout(() => window.print(), 50);
+});
+// Every print, Print my picks or the browser's own (Ctrl+P), gets a sheet of the current
+// picks, laid out by the print dialog's current choices.
+window.addEventListener("beforeprint", () => {
+  if (!page.ballot) {
+    $("#print-sheet").replaceChildren();
+    return;
+  }
   const wallet = walletChoice.checked;
   buildPrintSheet(page.ballot, page.picks, { includeNotes: $("#print-notes").checked && !wallet, includeBlank: $("#print-blank").checked, wallet });
-  setTimeout(() => window.print(), 50);
 });
 
 // Clears at once, and offers to put everything back.
