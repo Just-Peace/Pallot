@@ -44,6 +44,7 @@ from .sources.google import Google
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
+from .sources.officeholders import Officeholders
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
@@ -103,6 +104,7 @@ class Services:
     fec: Fec
     tec: Tec
     polls: Polls
+    officeholders: Officeholders
     key_dates: KeyDatesPage
     tigerweb: Tigerweb
     tiles: Tiles
@@ -294,6 +296,7 @@ class _Builder:
         self.use_fec = sources.enabled("fec")
         self.use_tec = sources.enabled("tec")
         self.use_polls = sources.enabled("polls")
+        self.use_officeholders = sources.enabled("officeholders")
         self.use_key_dates = sources.enabled(key_dates_source.SOURCE)
         self.use_election_precincts = sources.enabled(election_precincts_source.SOURCE)
         self.use_county_precincts = self.use_election_precincts and sources.enabled(county_precincts_source.SOURCE)
@@ -391,6 +394,7 @@ class _Builder:
             use_fec=self.use_fec,
             use_tec=self.use_tec,
             use_polls=self.use_polls,
+            use_officeholders=self.use_officeholders,
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,
@@ -784,6 +788,7 @@ class _Builder:
             status("fec", "FEC", self.use_fec, ("fec",)),
             snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
             status("polls", "Polls", self.use_polls, ("polls",)),
+            status("officeholders", "Seat holders", self.use_officeholders, ("officeholders",)),
             status(election_precincts_source.SOURCE, election_precincts_source.LABEL, self.use_election_precincts,
                    (election_precincts_source.SOURCE,)),
             status(county_precincts_source.SOURCE, county_precincts_source.LABEL, self.use_county_precincts,

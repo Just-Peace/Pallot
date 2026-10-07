@@ -118,6 +118,7 @@ function raceCard(race) {
   const multi = race.seats > 1;
   const meta = [
     multi ? `Vote for up to ${race.seats}` : null,
+    race.open_seat ? "Open seat" : null,
     race.unexpired ? "Unexpired term" : null,
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
@@ -273,7 +274,7 @@ function candidateRow(race, candidate) {
         avatar(candidate),
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
-          h("span", { class: "cand-sub" }, candidatePills(candidate), mark))),
+          h("span", { class: "cand-sub" }, candidatePills(candidate, race), mark))),
       h("div", { class: "cand-actions" },
         noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"), profileLinks(candidate))),
     lines,

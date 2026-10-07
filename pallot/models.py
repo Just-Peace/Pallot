@@ -141,6 +141,7 @@ class Candidate(BaseModel):
     party: str | None = None  # D, R, L, G, I …
     party_name: str | None = None
     incumbent: bool = False
+    party_holds_seat: bool = False  # of the seat holder's party, but not the holder (Race.holder)
     write_in: bool = False
     photo_url: str | None = None
     cards: list[SourceCard] = Field(default_factory=list)
@@ -154,6 +155,15 @@ class RaceNote(BaseModel):
     source: str  # the source's label, "Ballotpedia"
 
 
+class SeatHolder(BaseModel):
+    """Who holds a race's seat now (officeholders.py)."""
+
+    name: str
+    party: str | None = None
+    party_name: str | None = None
+    hint: str  # "Held by John Cornyn, a Republican", with any caveat
+
+
 class Race(BaseModel):
     key: str  # "sos:<election>:<office>" or "bp:<race>"
     name: str
@@ -161,6 +171,8 @@ class Race(BaseModel):
     seats: int = 1
     unexpired: bool = False
     seat: str | None = None  # "TX-10" / "TX-SEN" for congressional races
+    holder: SeatHolder | None = None  # who holds the seat now, where the seat holders source covers it
+    open_seat: bool = False  # the holder isn't running here, or the seat is vacant
     election_id: int | None = None
     election_name: str | None = None
     source: str

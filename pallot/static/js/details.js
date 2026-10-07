@@ -53,7 +53,7 @@ export function showDetails(race, index, focus = null) {
     h("div", { class: "details-title" },
       h("h2", { id: "details-name" }, candidate.name),
       h("p", { class: "muted" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
-      h("p", { class: "cand-sub" }, candidatePills(candidate))),
+      h("p", { class: "cand-sub" }, candidatePills(candidate, race))),
   ], steps.previous, steps.next);
   details.replaceChildren(
     head,

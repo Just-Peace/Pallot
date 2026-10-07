@@ -138,7 +138,7 @@ def test_rebuild_can_delete_the_saved_addresses_without_sending_them_again(clien
     assert rows(client)["geocoding"]["cache"]["entries"] == 0
     assert not (tmp_path / "data" / "plane2106_kml.zip").exists()
     with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
-        assert not db.execute("SELECT 1 FROM responses WHERE request LIKE '%Congress%'").fetchall()
+        assert not db.execute("SELECT 1 FROM responses WHERE request LIKE '%1100%Congress%'").fetchall()
 
 
 def test_the_rebuild_command_asks_first(monkeypatch, capsys):

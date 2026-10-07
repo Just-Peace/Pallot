@@ -16,7 +16,7 @@ from pallot.api import create_app
 from pallot.services import MIN_INTERVAL
 from pallot.config import DEMO_KEY, Config, Ttls, load_config
 from pallot.http_cache import HttpCache, track_calls
-from pallot.sources import fec, key_dates, polls
+from pallot.sources import fec, key_dates, officeholders, polls
 from pallot.sources.county_precincts import COUNTIES, CountyPrecincts
 from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
 from pallot.sources.endorsement_feeds import make_feeds
@@ -90,6 +90,21 @@ def test_polls_live():
     assert texas and texas[0]["pollster_id"] and texas[0]["end_date"]
     answers = [a for row in texas for q in row["questions"] for a in q["answers"]]
     assert any(a["candidate"]["name"] and isinstance(a["pct"], (int, float)) for a in answers)
+
+
+def test_officeholders_live():
+    """Both lists of seat holders still come in the shape officeholders.py reads: every Texas seat, near enough."""
+    response = httpx.get(officeholders.CONGRESS, timeout=60, follow_redirects=True)
+    response.raise_for_status()
+    congress = officeholders.congress_holders(response.json())
+    assert len([h for h in congress if h.seat == "TX-SEN"]) == 2 and len(congress) >= 36
+    assert all(h.party and h.started and h.ends for h in congress)
+    response = httpx.get(officeholders.LEGISLATURE, timeout=60, follow_redirects=True)
+    response.raise_for_status()
+    legislature = officeholders.legislature_holders(response.text)
+    assert len([h for h in legislature if h.seat.startswith("STATESEN:")]) >= 28
+    assert len([h for h in legislature if h.seat.startswith("STATEREP:")]) >= 140
+    assert all(h.party for h in legislature)
 
 
 def test_key_dates_live():

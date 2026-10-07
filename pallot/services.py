@@ -27,6 +27,7 @@ from .sources.fec import Fec
 from .sources.google import Google
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
+from .sources.officeholders import Officeholders
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Sos
@@ -38,7 +39,7 @@ from .sources.voteforpeace import VoteForPeace
 
 MIN_INTERVAL = {
     "nominatim": 1.0, "suggestions": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
-    "sboe": 1.0, "county_precincts": 0.25, **{feed.source: 1.0 for feed in FEEDS},
+    "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, **{feed.source: 1.0 for feed in FEEDS},
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
@@ -118,6 +119,7 @@ async def open_services(
                 fec=Fec(cache, config.ttl, config.fec_api_key, today),
                 tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                 polls=Polls(cache, config.ttl, today),
+                officeholders=Officeholders(cache, config.ttl),
                 key_dates=key_dates.KeyDatesPage(cache, config.ttl),
                 tigerweb=Tigerweb(cache, config.ttl),
                 tiles=Tiles(cache, config.ttl),

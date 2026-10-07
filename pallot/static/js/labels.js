@@ -68,11 +68,14 @@ export function partyName(candidate) {
   return candidate.party_name || PARTY_NAMES[candidate.party] || "";
 }
 
-// The pills under a candidate's name: their party, Incumbent, Write-in.
-export function candidatePills(candidate) {
+// The pills under a candidate's name: their party, Party holds seat (its tooltip, and a screen
+// reader, name the race's holder), Incumbent, Write-in.
+export function candidatePills(candidate, race = null) {
   const party = partyName(candidate);
+  const holder = candidate.party_holds_seat ? race?.holder : null;
   return [
     party ? h("span", { class: ["party", `party-${candidate.party || "none"}`] }, party) : null,
+    holder ? h("span", { class: "pill", title: holder.hint }, "Party holds seat", h("span", { class: "sr-only" }, ` (${holder.hint})`)) : null,
     candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,
     candidate.write_in ? h("span", { class: "pill" }, "Write-in") : null,
   ];

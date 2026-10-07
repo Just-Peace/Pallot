@@ -24,6 +24,7 @@ tec = true                  # Texas Ethics Commission: money in state races
 
 # Third-party ballot data. Ballotpedia's terms forbid commercial scraping, so it starts off.
 ballotpedia = false
+officeholders = true        # congress-legislators and Open States: who holds each congressional and legislative seat
 
 # Third-party polls
 polls = true                # FiftyPlusOne
