@@ -51,6 +51,8 @@ class Ttls:
     county_precincts_backoff: int = HOUR  # after a county's map server refuses us, stop asking them for this long
     endorsement_feeds: int = 7 * DAY  # organizations' live endorsement lists (endorsement_feeds.py)
     endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
+    officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat
+    officeholders_backoff: int = HOUR  # after either list is refused us, stop asking for this long
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # delete expired suggestions, tiles and addresses not found once expired this long
 

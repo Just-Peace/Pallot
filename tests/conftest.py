@@ -274,6 +274,8 @@ class Upstream:
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
+        self.officeholders_status: int | None = None  # e.g. 403 when the seat holders' lists are refused us
+        self.congress_members: list[dict[str, Any]] | None = None  # Congress's members (default: the recorded ones)
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
@@ -390,6 +392,14 @@ class Upstream:
             return httpx.Response(200, content=sboe_zip())
         if url.host == "api.open.fec.gov":
             return self._fec(request)
+        if url.host in ("unitedstates.github.io", "data.openstates.org"):
+            if self.officeholders_status:
+                return httpx.Response(self.officeholders_status)
+            if url.host == "data.openstates.org":
+                return httpx.Response(200, content=fixture_bytes("officeholders_tx.csv"), headers={"content-type": "text/csv"})
+            if self.congress_members is not None:
+                return httpx.Response(200, json=self.congress_members)
+            return _file("officeholders_congress.json")
         if url.host == "fiftyplusone.news":
             self.polls_agents.add(request.headers.get("user-agent"))
             if self.polls_status:

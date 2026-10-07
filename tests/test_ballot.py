@@ -85,7 +85,7 @@ def test_capitol_ballot(client):
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "google": "unused", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
                         "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "mupac": "used", "cair": "used", "emgage": "used", "fec": "used",
-                        "tec": statuses["tec"], "polls": "used", "election_precincts": "used",
+                        "tec": statuses["tec"], "polls": "used", "officeholders": "used", "election_precincts": "used",
                         "county_precincts": "used"}
     # (suggestions are asked for while typing, the map after)
     assert ballot["warnings"] == [] and not [note for note in ballot["notes"] if "precinct" in note]

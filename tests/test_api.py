@@ -34,8 +34,8 @@ def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "google", "election_precincts", "county_precincts",
                                                        "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
-                                                       "trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac", "fec", "tec", "polls"]
-    geocoding, google, precincts, county, outlines, tiles, suggestions, sos, dates, _, tracker, peace, _, _, example, _, fec, tec, polls = (
+                                                       "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac", "fec", "tec", "polls"]
+    geocoding, google, precincts, county, outlines, tiles, suggestions, sos, dates, _, holders, tracker, peace, _, _, example, _, fec, tec, polls = (
         overview["sources"])
     assert (google["toggleable"], google["enabled"]) == (True, True) and "PALLOT_GOOGLE_API_KEY" in google["notice"]
     assert (county["label"], county["toggleable"], county["enabled"]) == (
@@ -60,6 +60,8 @@ def test_sources_overview(client):
     assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
     assert tec["notice"] and {"Snapshot", "Money raised since"} <= {f["label"] for f in tec["details"]}
     assert (polls["label"], polls["toggleable"], polls["notice"]) == ("Polls (FiftyPlusOne)", True, None)
+    assert (holders["label"], holders["toggleable"], holders["enabled"], holders["group"]) == (
+        "Seat holders (congress-legislators, Open States)", True, True, "ballot")
     shown = [s["notice"] or "" for s in overview["sources"]] + [f["value"] for s in overview["sources"] for f in s["details"]]
     assert not [text for text in shown if ISO_TIME.search(text)]
 
@@ -128,7 +130,7 @@ def test_sources_are_grouped(client):
     assert grouped == {
         "address": ["geocoding", "google", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
         "official": ["sos", "key_dates", "fec", "tec"],
-        "ballot": ["ballotpedia"],
+        "ballot": ["ballotpedia", "officeholders"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
     }

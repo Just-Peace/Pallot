@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Sequence
 
 from .models import Race, SourceCard
 from .offices import OfficeScope
-from .sources import CardSet, ballotpedia, fec, polls, sos, tec, trackaipac, voteforpeace
+from .sources import CardSet, SeatInfo, ballotpedia, fec, officeholders, polls, sos, tec, trackaipac, voteforpeace
 from .sources.ballotpedia import BpBallot, BpRace
 from .sources.endorsement_feeds import EndorsementSource, FeedUnavailable
 from .sources.sos import Election, Lookups
@@ -25,10 +25,12 @@ if TYPE_CHECKING:
 
 CARD_ORDER = (
     fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE, voteforpeace.SOURCE,
+    officeholders.SOURCE,
 )
 UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
     fec.SOURCE: (fec.FecUnavailable, "Couldn't load FEC campaign finance ({})."),
     polls.SOURCE: (polls.PollsUnavailable, "Couldn't load polls from FiftyPlusOne ({})."),
+    officeholders.SOURCE: (officeholders.OfficeholdersUnavailable, "Couldn't load who holds each seat ({})."),
 }
 
 
@@ -59,6 +61,7 @@ async def run(
     use_fec: bool = False,
     use_tec: bool = False,
     use_polls: bool = False,
+    use_officeholders: bool = False,
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
@@ -90,9 +93,12 @@ async def run(
         jobs[tec.SOURCE] = asyncio.to_thread(tec.cards, svc.tec, races, scopes or {}, county, bp_ballot)
     if use_polls:
         jobs[polls.SOURCE] = polls.cards(svc.polls, races, day)
+    if use_officeholders:
+        jobs[officeholders.SOURCE] = officeholders.cards(svc.officeholders, races, scopes or {}, county, bp_ballot, day)
     answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 
     outcome = Outcome()
+    seats: dict[str, SeatInfo] = {}
     for source in (*CARD_ORDER, *(found.source for found in endorsements)):
         if source not in answers:
             continue
@@ -120,4 +126,17 @@ async def run(
         for race in races:
             if race_card := cards.races.get(race.key):
                 race.cards.append(race_card)
+        seats.update(cards.seats)
+    for race in races:
+        if info := seats.get(race.key):
+            _set_seat(race, info)
     return outcome
+
+
+def _set_seat(race: Race, info: SeatInfo) -> None:
+    """The race's holder, once every source has said who's the incumbent: a seat isn't open
+    while any candidate is, and the incumbent doesn't also "hold it for their party"."""
+    race.holder = info.holder
+    race.open_seat = info.open and not any(c.incumbent for c in race.candidates)
+    for candidate in race.candidates:
+        candidate.party_holds_seat = candidate.key in info.party_holds and not candidate.incumbent

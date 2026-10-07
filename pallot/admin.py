@@ -10,8 +10,8 @@ from .ballot import Services
 from .models import CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
-    KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, osm_tiles, polls, sos,
-    suggestions, tec, tigerweb, trackaipac, voteforpeace,
+    KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
+    polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
 )
 from .sources.endorsement_feeds import EndorsementSource
 from .text import display_time, iso_utc
@@ -42,7 +42,7 @@ GROUPS = (
     SourceGroup(OFFICIAL, "Official ballot data", "Government sources: the state's ballot and election dates, and the "
                 "campaign money reported to the FEC and the Texas Ethics Commission."),
     SourceGroup(BALLOT, "Third-party ballot data", "Not official, but it fills in what the state doesn't publish: local "
-                "races, notes on a race and candidate profiles."),
+                "races, notes on a race, candidate profiles and who holds each seat."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them, gathered by an independent site."),
     SourceGroup(SCORECARDS, "Third-party endorsements & scorecards", "Organizations that track, rate or endorse "
                 "candidates, most of them on Palestinian rights, U.S. military aid to Israel and pro-Israel lobby money. "
@@ -137,6 +137,12 @@ SOURCES = (
         ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,),
         group=BALLOT,
         pause=Pause("Ballotpedia refused a request", "ballots it already sent still show"),
+    ),
+    SourceInfo(
+        officeholders.SOURCE, "Seat holders (congress-legislators, Open States)", officeholders.DESCRIPTION, True,
+        (officeholders.SOURCE,),
+        group=BALLOT,
+        pause=Pause("a list of seat holders was refused", "the lists already fetched still show"),
     ),
     SourceInfo(
         trackaipac.SOURCE,

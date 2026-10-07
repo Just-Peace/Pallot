@@ -126,7 +126,7 @@ How to write them:
   - Run the whole suite once, just before the feature's commit, and only when code changed. A change to Markdown files only (README, DEVELOPMENT, AGENTS) needs no test run.
   - While working, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. The whole suite runs in parallel, one worker per CPU, and takes about 30 seconds.
   - Add tests for new behaviour, mocking HTTP with `respx`.
-  - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|tigerweb|election_precincts|tec|trackaipac|voteforpeace`.
+  - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|officeholders|tigerweb|election_precincts|tec|trackaipac|voteforpeace`.
 - `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address.
 - For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
 - For a UI change, run `uv run pallot` and look at what changed:

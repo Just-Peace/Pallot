@@ -7,18 +7,29 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from ..models import Fact, SourceCard, Tone
+from ..models import Fact, SeatHolder, SourceCard, Tone
+
+
+@dataclass
+class SeatInfo:
+    """What a source says about a race's seat: who holds it (None when it's vacant), whether
+    it's open, and which candidates are of the holder's party but aren't the holder."""
+
+    holder: SeatHolder | None
+    open: bool
+    party_holds: set[str] = field(default_factory=set)
 
 
 @dataclass
 class CardSet:
     """What a source adds to a ballot: cards keyed by candidate key and by race key (a race
     card compares the candidates), the candidates it says hold the seat (on an exact match),
-    plus lines for the ballot's notes and warnings."""
+    what it knows of each race's seat, plus lines for the ballot's notes and warnings."""
 
     candidates: dict[str, SourceCard] = field(default_factory=dict)
     races: dict[str, SourceCard] = field(default_factory=dict)
     incumbents: set[str] = field(default_factory=set)
+    seats: dict[str, SeatInfo] = field(default_factory=dict)  # race key -> its seat
     notes: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
