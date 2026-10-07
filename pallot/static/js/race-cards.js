@@ -326,7 +326,7 @@ function refresh(key) {
   page.updateProgress();
 }
 
-// After a pick that fills the race: with "Collapse a race when I pick" (View, on at first), fold the race to
+// After a pick that fills the race: with "Collapse a race when I pick" (Options, on at first), fold the race to
 // one line, and bring its heading back into view if that left it above the strip.
 function settle(key, filled) {
   const fold = filled && viewPref("collapseOnPick");

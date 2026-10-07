@@ -1,5 +1,5 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
-// which one is on screen), the View menu, j and k, and where the strip's parts go on a phone.
+// which one is on screen), Simple | Detailed and Options, j and k, and where the strip's parts go on a phone.
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
@@ -8,12 +8,13 @@ import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
 import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
 import { syncBoxes, syncFunding, syncLines } from "./source-cards.js";
-import { MODE_NAMES, bindViewControls, onViewChange, setViewPref, showViewControls, syncSourceNotes, viewPref } from "./view.js";
+import { bindViewControls, onViewChange, setViewPref, showViewControls, syncSourceNotes, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks }
 const result = $("#result");
 const strip = $("#progress-strip");
 const tools = $("#ballot-tools");
+const viewControls = $("#view-controls");
 const viewMenu = $("#view-menu");
 const nextButton = $("#next-race");
 const jump = $("#jump");
@@ -87,11 +88,11 @@ export function updateProgress() {
 
 // ---- view: Simple or Detailed, collapse, only unpicked races, next race, j/k ----------
 
-// After any change of the view settings, here or in another tab: the View menu shows them
-// ("View: Simple"), and each switch that changed applies to the ballot in place, putting back
+// After any change of the view settings, here or in another tab: the toolbar's Simple | Detailed
+// and Options show them, and each switch that changed applies to the ballot in place, putting back
 // what the voter opened or folded by hand.
 function applyView() {
-  $("#view-mode").textContent = MODE_NAMES[showViewControls(viewMenu)];
+  showViewControls(viewControls);
   for (const [name, apply] of Object.entries(APPLY)) {
     const value = viewPref(name);
     if (name in applied && applied[name] !== value) apply();
@@ -162,8 +163,8 @@ function stepRace(event) {
 
 // ---- phones ---------------------------------------------------------------------------
 
-// On a phone (or a narrow window) the section chips join the sticky strip, and View, Clear
-// picks and Print move under the heading, where they scroll away. So what stays in view is
+// On a phone (or a narrow window) the section chips join the sticky strip, and the toolbar
+// (Simple | Detailed, Options, Pick by rule, Clear picks, Print) moves under the heading, where it scrolls away. So what stays in view is
 // the progress, Next and the sections. With the left pane folded, the chips join the strip too.
 function placeForWidth() {
   if (narrow.matches) $(".ballot-head").after(tools);
@@ -201,10 +202,10 @@ export function markCurrentSection() {
   }
 }
 
-// Wires the strip, the View menu and the keys; the left pane must be drawn (initChrome).
+// Wires the strip, the view controls and the keys; the left pane must be drawn (initChrome).
 export function initNav(context) {
   page = context;
-  bindViewControls(viewMenu);
+  bindViewControls(viewControls);
   onViewChange(applyView);
   onReturn(applyView); // back from Settings, a page kept for Back missed its changes
   applyView();
@@ -217,7 +218,7 @@ export function initNav(context) {
     viewMenu.open = false;
   });
 
-  // The View menu closes like a menu: a click elsewhere, or Esc.
+  // Options closes like a menu: a click elsewhere, or Esc.
   document.addEventListener("click", (event) => {
     if (viewMenu.open && !viewMenu.contains(event.target)) viewMenu.open = false;
   });

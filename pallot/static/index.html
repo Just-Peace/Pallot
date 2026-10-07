@@ -80,14 +80,19 @@
             <button class="btn small" id="next-race" type="button" title="Or press j and k to move from race to race">Next race to pick</button>
           </div>
           <div class="button-row ballot-tools" id="ballot-tools">
+            <div class="tool-group" id="view-controls">
+            <fieldset class="seg" title="How much of the ballot shows at first">
+              <legend class="sr-only">How much of the ballot shows</legend>
+              <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
+              <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
+            </fieldset>
             <details class="menu" id="view-menu">
-              <summary class="btn ghost small">View: <span id="view-mode">Simple</span></summary>
+              <summary class="btn ghost small with-icon" title="What the ballot shows"><span data-icon="settings"></span>Options</summary>
               <div class="menu-panel">
-                <fieldset class="seg">
-                  <legend class="sr-only">How much of the ballot shows</legend>
-                  <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
-                  <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
-                </fieldset>
+                <div class="button-row menu-actions">
+                  <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
+                  <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
+                </div>
                 <fieldset class="menu-group">
                   <legend class="menu-label">Show</legend>
                   <label class="check"><input type="checkbox" id="show-map" data-view="showMap"> Map of your districts</label>
@@ -97,18 +102,18 @@
                   <label class="check"><input type="checkbox" id="show-funding" data-view="showFunding"> Funding</label>
                   <label class="check"><input type="checkbox" id="show-sources" data-view="showSources"> Where dates &amp; districts come from</label>
                 </fieldset>
-                <div class="button-row">
-                  <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
-                  <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
-                </div>
                 <label class="check"><input type="checkbox" id="collapse-on-pick" data-view="collapseOnPick"> Collapse a race when I pick</label>
                 <label class="check"><input type="checkbox" id="hide-picked" data-view="hidePicked"> Only races I haven't picked</label>
-                <p class="menu-more"><a href="settings.html#view-title">More in Settings</a></p>
+                <p class="menu-more"><a href="settings.html#view-title">Open Settings</a></p>
               </div>
             </details>
+            </div>
+            <span class="tool-divider" aria-hidden="true"></span>
+            <div class="tool-group">
             <button class="btn ghost small with-icon" id="rule-btn" type="button" title="Pick by party, endorsements, money and polls"><span data-icon="filter"></span>Pick by rule</button>
-            <button class="btn ghost small" id="clear-picks" type="button">Clear picks</button>
+            <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
+            </div>
           </div>
         </div>
         <div class="ballot-top">
