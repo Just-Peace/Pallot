@@ -57,7 +57,8 @@ def test_first_refresh_builds_the_snapshot(server, tmp_path):
     assert jane["by_kind"] == {"INDIVIDUAL": {"amount": 3100.0, "count": 3}, "ENTITY": {"amount": 500.0, "count": 1}}
     assert jane["by_state"] == {"TX": 2900.0, "other": 700.0}
     assert jane["by_state_count"] == {"TX": 3, "other": 1}
-    assert [s["amount"] for s in jane["sizes"]] == [400.0, 3200.0, 0.0, 0.0, 0.0]
+    assert [s["amount"] for s in jane["sizes"]] == [0.0, 400.0, 3200.0, 0.0, 0.0, 0.0]
+    assert [s["amount"] for s in by_id(doc, "00000002")["sizes"]][:2] == [200.0, 0.0]  # $200 is a small donation
     smith, *others = jane["top_donors"]
     assert smith == {"name": "Pat Smith", "kind": "INDIVIDUAL", "city": "AUSTIN", "state": "TX", "employer": "ACME",
                      "occupation": "CEO", "amount": 2400.0, "count": 2}
@@ -87,6 +88,15 @@ def test_unchanged_zip_costs_one_request(server, tmp_path):
     assert result.status == "no_changes" and result.requests == 1
     assert (tmp_path / "current.json").read_bytes() == before
     assert json.loads((tmp_path / "meta.json").read_text())["last_checked"].startswith("2026-09-27")
+
+
+def test_a_snapshot_from_older_code_is_rebuilt_from_the_same_zip(server, tmp_path):
+    run(tmp_path)
+    meta = json.loads((tmp_path / "meta.json").read_text())
+    (tmp_path / "meta.json").write_text(json.dumps({**meta, "schema_version": 1, "content_hash": "old"}))
+    result = run(tmp_path)
+    assert result.status == "updated" and result.requests == 2
+    assert json.loads((tmp_path / "meta.json").read_text())["schema_version"] == 2
 
 
 def test_rebuilt_zip_with_the_same_numbers_keeps_the_snapshot(server, tmp_path):

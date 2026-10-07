@@ -35,9 +35,11 @@ REPORT_NAMES = {
 # Direct campaign expenditures reported on daily pre-election reports show up again later.
 DAILY_FORMS = frozenset({"DIRE", "DAILYCPAC", "DAILYEPAC", "DAILYCCOH"})
 
-# Itemized donations by size. Texas has no contribution limits for most state offices.
+# Itemized donations by size, each from its floor. Texas has no contribution limits for most
+# state offices. "$200 and under" matches the FEC's small donations, for Pick by rule.
 SIZE_BUCKETS: tuple[tuple[float, str], ...] = (
-    (0, "Under $500"),
+    (0, "$200 and under"),
+    (200.01, "Over $200, under $500"),
     (500, "$500 to $4,999"),
     (5_000, "$5,000 to $24,999"),
     (25_000, "$25,000 to $99,999"),

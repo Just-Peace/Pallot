@@ -24,7 +24,7 @@ uv run tec-cache refresh --zip ~/Downloads/TEC_CF_CSV.zip   # use a zip download
 Without `--data-dir`, this updates `tec_cache/data/` in this repo; commit it to keep it.
 
 A refresh makes at most two requests:
-1. **The end of the file**, which holds the zip's directory. If TEC's zip hasn't changed since the last refresh, this is the only request.
+1. **The end of the file**, which holds the zip's directory. If TEC's zip hasn't changed since the last refresh, and the snapshot was built by this version's layout (`SCHEMA_VERSION` in `store.py`), this is the only request.
 2. **One streaming download** of the zip, about 1 GB. As it arrives, the refresh reads only the files it needs and skips the rest:
    - `filers.csv`;
    - `cover.csv` (one row per report, with its totals);
@@ -48,7 +48,7 @@ If a file is missing a column the snapshot needs, or the counts are implausibly 
     - `totals`: raised, unitemized, spent, cash on hand and loans from the latest report, the report count, and the latest report;
     - `by_kind`: itemized donations from individuals vs. entities (PACs, businesses and other groups);
     - `by_state`: Texas vs. elsewhere;
-    - `sizes`: donation sizes;
+    - `sizes`: itemized donations by size (`SIZE_BUCKETS` in `models.py`: $200 and under, then up to $500, $5,000, $25,000, $100,000 and over);
     - `top_donors`: the 10 largest donors, by donor name and state, with city, employer and occupation as TEC publishes them.
   - `outside`: direct campaign expenditures naming a candidate, with the top spenders. TEC doesn't record whether they were for or against.
 - `meta.json`: when the snapshot was checked and changed, which zip it came from, each contribution file's CRC and date range (so later refreshes skip files from before the window), and counts.

@@ -4,6 +4,7 @@
 // in PRESETS; the mode is never stored, it's read from the switches (Custom when they're mixed).
 // Every change fires "pallot:view" on document, and another tab's comes as a storage event.
 
+import { h } from "./dom.js";
 import { UI, setUiPrefs, uiPref } from "./storage.js";
 
 export const VIEW_DEFAULTS = {
@@ -12,14 +13,15 @@ export const VIEW_DEFAULTS = {
   showPolls: true, // each race's poll box, open at first
   showEndorsements: true, // the candidates' Endorsements and Scorecards lines
   showFunding: true, // the candidates' Funding line
+  showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
 };
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.
 export const PRESETS = {
-  simple: { showMap: false, showMoney: false, showPolls: true, showEndorsements: true, showFunding: true },
-  detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true },
+  simple: { showMap: false, showMoney: false, showPolls: true, showEndorsements: true, showFunding: true, showSources: false },
+  detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: true },
 };
 export const MODE_NAMES = { simple: "Simple", detailed: "Detailed", custom: "Custom" };
 
@@ -45,6 +47,29 @@ export function viewMode() {
 export function setViewMode(mode) {
   setUiPrefs(PRESETS[mode]);
   changed();
+}
+
+// The fine print under When to vote and Your districts, saying where they come from. With
+// showSources off it's a link that opens it, so only the dates and the districts show at first.
+export function sourceNote(...children) {
+  const note = h("p", { class: "fine", tabindex: "-1" }, ...children);
+  const more = h("button", { type: "button", class: "link-btn source-more", on: { click: () => {
+    setSourceNoteOpen(box, true);
+    note.focus();
+  } } }, "Where these come from");
+  const box = h("div", { class: "source-note" }, more, note);
+  setSourceNoteOpen(box, viewPref("showSources"));
+  return box;
+}
+
+function setSourceNoteOpen(box, open) {
+  box.querySelector(".fine").hidden = !open;
+  box.querySelector(".source-more").hidden = open;
+}
+
+// After showSources changes: every note on the page follows it.
+export function syncSourceNotes() {
+  for (const box of document.querySelectorAll(".source-note")) setSourceNoteOpen(box, viewPref("showSources"));
 }
 
 // ``callback`` runs after the view settings change, on this page or in another tab.

@@ -55,7 +55,8 @@ def refresh(
         if missing:
             raise FetchError(f"TEC's zip has no {', '.join(missing)}")
         same_zip = bool(directory.etag) and (meta.get("zip") or {}).get("etag") == directory.etag
-        if same_zip and not force and paths.current.exists() and meta.get("window_start") == window.isoformat():
+        same_shape = meta.get("schema_version") == store.SCHEMA_VERSION and meta.get("window_start") == window.isoformat()
+        if same_zip and same_shape and not force and paths.current.exists():
             if not dry_run:
                 store.write_json(paths.meta, {**meta, "last_checked": _iso(now)})
             return RefreshResult(

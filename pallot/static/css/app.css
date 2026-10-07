@@ -458,7 +458,10 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
   border-radius: var(--radius); padding: 14px 18px; }
 .key-dates, .districts-card { display: flex; flex-direction: column; flex: 1 1 340px; }
 .key-dates h2, .districts-card h2, .district-map h2 { font-size: 0.78rem; margin: 0 0 8px; }
-.key-dates .fine, .districts-card .fine { margin-top: auto; padding-top: 10px; }
+.key-dates .source-note, .districts-card .source-note { margin-top: auto; padding-top: 10px; }
+.source-note .fine { margin: 0; }
+.source-note .fine:focus { outline: none; }
+.link-btn.source-more { font-size: 0.82rem; }
 
 /* When to vote (key-dates.js): a date per line, the next one in bold, past ones in grey; the
    mail-ballot deadline apart, under a closed "Voting by mail?". */
@@ -964,7 +967,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 /* ---- Pick by rule (pick-rule-dialog.js) ---- */
 /* The rule on the left, what it would do on the right, each scrolling on its own; the heading,
    Apply to and the buttons stay put. Under 800px, one column that scrolls whole. */
-.rules { width: min(860px, calc(100vw - 32px)); }
+.rules { width: min(1000px, calc(100vw - 32px)); }
 .rules[open] { display: flex; flex-direction: column; overflow: hidden; }
 .rule-bar { display: flex; align-items: center; gap: 8px 12px; padding: 10px 20px; border-bottom: 1px solid var(--line);
   background: var(--panel-2); }
@@ -972,7 +975,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .rule-label { flex: none; font-weight: 600; }
 .rule-reset { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; }
 .rule-reset .icon { width: 14px; height: 14px; }
-.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 300px; }
+.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
 .rule-form { overflow-y: auto; padding: 2px 20px 18px; }
 .rule-preview { overflow-y: auto; padding: 16px 18px; border-left: 1px solid var(--line); background: var(--panel-2); }
 .rule-preview h3 { margin: 0 0 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
@@ -1026,8 +1029,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 .rule-chip[aria-pressed="true"]::before { content: "✓"; }
 .rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
 .rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
-.rule-lists { margin: 4px 0 2px; }
-.rule-lists-label { margin: 4px 0 6px; font-weight: 500; }
 .rule-form > .fine { margin: 12px 0 0; }
 .rule-how { margin: 12px 0 0; font-size: 0.85rem; color: var(--muted); }
 .rule-how > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
@@ -1046,6 +1047,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .rule-form { padding: 2px 16px 16px; }
   .rule-preview { padding: 14px 16px; }
   .rule-set { padding: 0 12px 8px; }
+  .rule-row .rule-inputs { margin: -2px 0 6px 26px; }
   .rule-sub .seg { display: flex; }
   .rule-sub .seg-option { flex: 1 1 auto; padding-inline: 8px; text-align: center; }
   .rules .details-foot { padding: 10px 16px 14px; }

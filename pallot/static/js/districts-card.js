@@ -8,6 +8,7 @@ import { listed } from "./format.js";
 import { icon } from "./icons.js";
 import { DISTRICTS, PRECINCT_KINDS, STATES } from "./labels.js";
 import { showToast } from "./toast.js";
+import { sourceNote } from "./view.js";
 
 let page = null; // { ballot, request, lookup }
 let editing = false; // the numbers are boxes, after the pencil
@@ -139,7 +140,7 @@ export function renderDistricts() {
   $("#districts-card").replaceChildren(
     h("div", { class: "districts-head" }, h("h2", { id: "districts-card-title" }, "Your districts"), districtActions(d)),
     ...(editing ? [districtsForm(rows, shown)] : rows),
-    h("p", { class: "fine" }, "Districts from the US Census and the Texas Legislative Council.",
+    sourceNote("Districts from the US Census and the Texas Legislative Council.",
       enteredDistricts(d), precinct ? electionPrecinctSource(precinct) : "", precinctSources(d)),
   );
   $("#districts-card").hidden = false;

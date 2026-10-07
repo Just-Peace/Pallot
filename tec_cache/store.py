@@ -11,7 +11,7 @@ from typing import Any
 
 DATA_DIR_ENV = "TEC_CACHE_DIR"
 PACKAGE_DATA_DIR = Path(__file__).resolve().parent / "data"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2  # 2: a "$200 and under" size bucket
 
 
 def resolve_data_dir(data_dir: str | Path | None = None) -> Path:
