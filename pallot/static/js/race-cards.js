@@ -11,8 +11,8 @@ import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 import { currentEngine, searchHref } from "./search.js";
 import { badgeList, likelyFlag, likelyUnflagged, raceMoney } from "./source-cards.js";
-import { uiPref } from "./storage.js";
 import { hideToast, showToast } from "./toast.js";
+import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, marks, showDetails, openPrecincts, updateProgress, openRules }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
@@ -325,10 +325,10 @@ function refresh(key) {
   page.updateProgress();
 }
 
-// After a pick that fills the race: with "Collapse a race when I pick" (View), fold the race to
+// After a pick that fills the race: with "Collapse a race when I pick" (View, on at first), fold the race to
 // one line, and bring its heading back into view if that left it above the strip.
 function settle(key, filled) {
-  const fold = filled && uiPref("collapseOnPick");
+  const fold = filled && viewPref("collapseOnPick");
   if (fold) page.picks.setCollapsed(key, true);
   refresh(key);
   const card = fold ? cardFor(key) : null;

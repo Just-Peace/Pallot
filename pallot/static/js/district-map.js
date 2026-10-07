@@ -6,13 +6,13 @@
 // picking it again, or the map's pin button, goes back to the address. The scroll wheel only
 // zooms once the map has been clicked, and on a touch screen the map moves with two fingers, so
 // it never traps the page's scrolling. Its heading folds it away like a race's, remembered in
-// the browser (storage.js, showMap); nothing is fetched for it while it's folded.
+// the browser (view.js, showMap: folded at first); nothing is fetched for it while it's folded.
 
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";
 import { icon } from "./icons.js";
 import { DISTRICTS } from "./labels.js";
-import { setUiPref, uiPref } from "./storage.js";
+import { setViewPref, viewPref } from "./view.js";
 
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
 const TEXAS = [[23.5, -109], [38.5, -91]]; // as far as the server serves tiles (sources/osm_tiles.py)
@@ -32,7 +32,7 @@ let tiles = null;
 let pin = null;
 let lines = new Map(); // kind -> { halo, line } on the map
 let parts = null; // the panel's toggle, body, picks, canvas, notes and foot, made once
-let shown = true; // the map is open (the voter can hide it)
+let shown = false; // the map is open (folded at first)
 let drawn = ""; // the query whose outlines are on the map
 let ballot = null;
 let query = ""; // "cd=10&sd=14&hd=49&sboe=5&election_precinct=0300&county=453": the ballot's districts
@@ -84,7 +84,7 @@ export function syncMap(next) {
 
 function setShown(open) {
   shown = open;
-  setUiPref("showMap", open);
+  setViewPref("showMap", open);
   parts.body.hidden = !open;
   section.classList.toggle("collapsed", !open);
   parts.toggle.setAttribute("aria-expanded", String(open));
@@ -105,7 +105,7 @@ function pickDistrict(kind) {
 
 function makePanel() {
   if (parts) return;
-  shown = uiPref("showMap") !== false;
+  shown = viewPref("showMap");
   parts = {
     toggle: h("button", {
       type: "button", class: "map-toggle", "aria-expanded": String(shown), "aria-controls": "district-map-body",
