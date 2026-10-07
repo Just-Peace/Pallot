@@ -385,6 +385,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .setting-row .fine { margin: 0; }
 .setting-row .seg { justify-self: start; }
 .setting-row .seg-option { padding: 6px 16px; font-size: 0.9rem; }
+.view-switches { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 
 .source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 14px 0; }
 .source-row { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
@@ -607,6 +608,11 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
   padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pop); }
 .menu-panel .check { font-size: 0.9rem; }
+.menu-panel .seg { margin: 0 0 10px; }
+.menu-group { margin: 0 0 10px; padding: 0 0 6px; border: 0; border-bottom: 1px solid var(--line); }
+.menu-label { padding: 0; margin: 0 0 2px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); }
+.menu-more { margin: 6px 0 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.85rem; }
 
 /* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
    section stays, for its explanation and its link to the precinct form). */
@@ -747,6 +753,13 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 30px; }
 .card-panel .badges { margin: 8px 0; }
+/* a candidate's Endorsed by and Scorecards lines (sourceLines in source-cards.js), each under its heading */
+.cand-lines { margin: 6px 0 0 30px; }
+.cand-lines-body { display: grid; gap: 6px; }
+.badge-line { display: flex; align-items: baseline; gap: 4px 10px; }
+.line-title { flex: none; min-width: 6.5rem; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.badge-line .badges { margin: 0; }
+.lines-toggle:not([hidden]) + .cand-lines-body { margin-top: 6px; }
 .badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 6px; padding: 2px 8px; font-size: 0.78rem;
   font-weight: 600; background: var(--neutral-soft); color: var(--text); }
 a.badge-link { text-decoration: none; }
@@ -849,7 +862,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .race-money { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); padding: 10px 12px;
   margin: 0 0 10px; }
 .race-money .breakdown { margin: 0; }
-/* a money box's title folds it to one line, with a race's chevron (foldBox in source-cards.js) */
+/* a money or poll box's title folds it to one line, with a race's chevron (foldBox in source-cards.js) */
 .box-toggle { display: inline-flex; align-items: center; gap: 4px; margin: -3px 0 -3px -4px; padding: 0; border: 0;
   background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; text-align: left;
   cursor: pointer; }
@@ -875,6 +888,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend strong { font-variant-numeric: tabular-nums; }
 .stack-legend .rest { color: var(--muted); }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.stack-missing { margin: 6px 0 0; }
 
 /* ---- compare dialog ---- */
 
@@ -1096,7 +1110,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
   .race-status { max-width: none; }
   .cand-actions { margin-left: 30px; }
-  .badges, .note { margin-left: 0; }
+  .badges, .note, .cand-lines { margin-left: 0; }
+  .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
   .breakdown-rows { grid-template-columns: minmax(0, 1fr) max-content; }
