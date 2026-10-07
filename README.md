@@ -153,7 +153,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - Beside the rule (under it, on a phone), the dialog says it in words ("Pick Democratic candidates who spent under $1M. Don't pick anyone on TrackAIPAC's watchlist, and take back their picks."), then what it would do ("43 races to pick", "1 pick taken back", "5 with no match"), race by race, as you change it. Nothing changes until **Apply**, which offers **Undo** for 10 seconds. With **Collapse a race when I pick** on, Apply folds the races it fills, and Undo opens them again.
   - **Reset** clears the rule in the dialog, and **How rules work** at the bottom explains the above.
   - The last rule you applied is remembered in the browser.
-- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with Election Day and the early-voting dates. The full page lists your districts, with your election precinct as "Pct 300". Your address isn't printed, so the sheet doesn't give away where you live.
+- **Print my picks:** a **full page** (with your notes and blank lines for races you haven't picked, if you want them), or a **wallet card** to cut out and fold. Both start with Election Day and the early-voting dates. The full page lists your districts, with your election precinct as "Pct 300". Your address isn't printed, so the sheet doesn't give away where you live. Your browser's own print (Ctrl+P) prints the same sheet with your current picks, laid out as you last chose in Print my picks (at first, a full page with your notes).
 
 Picks, notes, collapsed races and your pick rule are kept in the browser's `localStorage`, never on the server.
 
