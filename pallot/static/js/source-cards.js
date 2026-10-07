@@ -1,6 +1,6 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and a tab in Details) without any code change; its
-// ``kind`` decides where: a money card's badges stay in Details, and its race box folds.
+// ``kind`` decides where: a money card's badges stay in Details, and a money or poll box folds.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, SHORT_DATE, formatDate, percent, plural } from "./format.js";
@@ -41,7 +41,7 @@ const OFF_ROW = new Set(["money"]);
 const rowBadges = (card) => (OFF_ROW.has(card.kind) ? [] : card.badges);
 
 // The view switch (view.js) that opens or folds a race box of each kind; other boxes always show.
-const FOLDS = { money: "showMoney" };
+const FOLDS = { money: "showMoney", polls: "showPolls" };
 
 // The "?" on a tab, badge or button whose source only likely matched the candidate.
 export function likelyFlag(title = "Likely match") {
@@ -113,8 +113,8 @@ function shareRow(part, scale, showPercent, people) {
 const pct = (value) => `${Math.round(value)}%`;
 
 // A "percent" Breakdown (a poll): one bar with a segment per part and the rest left grey,
-// then a legend. Medians taken one candidate at a time can add up to a little over 100;
-// then the segments share the whole bar.
+// then a legend of the parts with a figure, and one muted line naming the rest. Medians taken
+// one candidate at a time can add up to a little over 100; then the segments share the whole bar.
 function stackedBar(item, people) {
   const shown = item.parts.filter((p) => p.amount != null && p.amount > 0);
   const sum = shown.reduce((total, p) => total + p.amount, 0);
@@ -122,6 +122,7 @@ function stackedBar(item, people) {
   const rest = 100 - sum;
   const described = [...shown.map((p) => `${p.label} ${pct(p.amount)}`), rest >= 0.5 ? `undecided or other ${pct(rest)}` : null];
   const partyAttr = (part) => (part.candidate_key && people ? people.party(part.candidate_key) : null);
+  const missing = item.parts.filter((p) => p.amount == null).map((p) => p.label);
   return [
     h("div", { class: "stack-bar", role: "img", "aria-label": described.filter(Boolean).join(", ") },
       shown.map((part) => h("span", {
@@ -129,14 +130,15 @@ function stackedBar(item, people) {
       })),
       rest >= 0.5 ? h("span", { class: "rest", style: `width: ${width(rest / 100)}`, title: `Undecided / other ${pct(rest)}` }) : null),
     h("ul", { class: "stack-legend" },
-      item.parts.map((part) => h("li", { "data-party": partyAttr(part) },
+      item.parts.filter((part) => part.amount != null).map((part) => h("li", { "data-party": partyAttr(part) },
         h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
         h("span", {}, part.label),
-        part.amount != null ? h("strong", {}, pct(part.amount)) : h("span", { class: "muted" }, part.note || "no figure"))),
+        h("strong", {}, pct(part.amount)))),
       rest >= 0.5
         ? h("li", { class: "rest" }, h("span", { class: "cmp-swatch", "aria-hidden": "true" }), h("span", {}, "Undecided / other"),
             h("strong", {}, pct(rest)))
         : null),
+    missing.length ? h("p", { class: "fine muted stack-missing" }, `Not in these polls: ${missing.join(", ")}`) : null,
   ];
 }
 
@@ -172,15 +174,17 @@ function setBoxOpen(box, open) {
   box.querySelector(".box-body").hidden = !open;
 }
 
-// A race box that folds: its first breakdown's title and the source, as a button that folds
-// it to that one line, with ``action`` (Compare) beside it; folded, it names nobody. It opens
-// as the view switch ``setting`` says; a click opens or folds just this one, until syncBoxes().
+// A race box that folds: its first breakdown's title and the source (with a poll's date), as a
+// button that folds it to that one line, with ``action`` (Compare) beside it; folded, it names
+// nobody. It opens as the view switch ``setting`` says; a click opens or folds just this one,
+// until syncBoxes().
 function foldBox(race, card, setting, action, body) {
   const id = `box-${slug(race.key)}-${card.source}`;
+  const dated = card.kind === "polls" && card.as_of ? `, ${AS_OF_WORDS.polls} ${formatDate(card.as_of, SHORT_DATE)}` : "";
   const toggle = h("button", {
     type: "button", class: "box-toggle", "aria-controls": id,
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
-  }, h("span", { class: "chevron", "aria-hidden": "true" }), `${card.breakdowns[0]?.title || card.description} · ${card.label}`);
+  }, h("span", { class: "chevron", "aria-hidden": "true" }), `${card.breakdowns[0]?.title || card.description} · ${card.label}${dated}`);
   const box = h("div", { class: "race-money", "data-fold": setting },
     h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle), action),
     h("div", { class: "box-body", id }, body));
