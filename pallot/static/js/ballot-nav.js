@@ -7,7 +7,7 @@ import { $, h, onFrame, onReturn, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
 import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
-import { syncBoxes, syncLines } from "./source-cards.js";
+import { syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import { MODE_NAMES, bindViewControls, onViewChange, setViewPref, showViewControls, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks }
@@ -24,6 +24,7 @@ const APPLY = {
   showMoney: () => syncBoxes("showMoney"),
   showPolls: () => syncBoxes("showPolls"),
   showEndorsements: syncLines,
+  showFunding: syncFunding,
   hidePicked: () => {
     if (!page.ballot) return;
     applyHidePicked();

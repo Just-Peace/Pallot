@@ -162,7 +162,8 @@ def test_cards_for_a_state_race(tmp_path):
     assert [p.label for p in states.parts] == ["Texas", "Other states"]
     assert [p.label for p in outside.parts] == ["Texans for Jane", "Other Group"] and "doesn't record" in outside.note
     assert card.as_of == "2025-06-30"
-    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0}
+    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0, "in_state_share": 80.6}
+    assert card.highlights == []  # under $10,000 raised
 
     comparison = cards.races[rep.key]
     [money] = comparison.breakdowns
@@ -170,6 +171,17 @@ def test_cards_for_a_state_race(tmp_path):
     assert [(p.label, p.amount, p.note) for p in money.parts] == [
         ("Janie Doe", 4000.0, "$7K on hand · $2.3K spent by outside groups"), ("Juan Perez", None, "not found in TEC data")]
     assert rep.key in cards.races and jp.key not in cards.races
+
+
+def test_funding_chips_from_the_tec(tmp_path):
+    filer = jane(totals={**jane()["totals"], "raised": 40000.0},
+                 by_state={"TX": 2000.0, "other": 1000.0, "unknown": 9000.0})  # an unknown address is left out
+    card = tec.card(filer, None, None, window="2024-11-06")
+    assert card.figures["in_state_share"] == 66.7
+    [chip] = card.highlights
+    assert chip.text == "Mostly Texas donors" and chip.tone == "neutral"
+    assert chip.hint == "67% of itemized donations from individuals with an address came from Texas (TEC, since Nov 6, 2024)"
+    assert tec.card(jane(by_state={"unknown": 50.0}), None, None, window=None).figures.get("in_state_share") is None
 
 
 def juan():

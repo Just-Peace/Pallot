@@ -1,7 +1,8 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and a tab in Details) without any code change; its
 // ``kind`` decides where: endorsements and scorecards each get a line on the row, a profile a
-// link beside Web search, a money card's badges stay in Details, and a money or poll box folds.
+// link beside Web search, a money card's badges stay in Details (its highlights make the row's
+// Funding line), and a money or poll box folds.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, SHORT_DATE, formatDate, percent, plural } from "./format.js";
@@ -38,12 +39,13 @@ export function bar(fraction) {
 const isLikely = (card) => card?.match?.confidence === "likely";
 
 // The candidate row's lines, one per kind, each under its heading. An endorsement's chip shows
-// just the list's name, since the heading says "Endorsed by".
+// just the list's name, since the heading says "Endorsements".
 const LINES = [
-  { kind: "endorsement", title: "Endorsed by", noun: "endorsement", short: true },
+  { kind: "endorsement", title: "Endorsements", noun: "endorsement", short: true },
   { kind: "scorecard", title: "Scorecards", noun: "scorecard" },
 ];
 const onLine = (card) => LINES.some((line) => line.kind === card.kind) && card.badges.length > 0;
+const funded = (card) => card.kind === "money" && card.highlights?.length > 0;
 // A profile's page (Ballotpedia's), a link in the row's actions.
 const profileUrl = (card) => (card.kind === "profile" ? safeUrl(card.badges[0]?.url) : null);
 
@@ -110,6 +112,29 @@ export function syncLines() {
   for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
 }
 
+// The candidate's Funding line, after their other lines: the money cards' highlights ("Mostly
+// small donors"), with a "?" on the first of a card that only likely matched. The showFunding
+// view switch hides it, until syncFunding(); ``onSync`` hears each time it's put back.
+export function fundingLine(candidate, onSync) {
+  const cards = candidate.cards.filter(funded);
+  if (!cards.length) return null;
+  const id = `funding-${++lineIds}`;
+  const element = h("div", { class: "cand-lines funding-line", on: { "pallot:sync": () => {
+    element.hidden = !viewPref("showFunding");
+    onSync();
+  } } }, h("div", { class: "badge-line" },
+    h("span", { class: "line-title", id }, "Funding"),
+    h("ul", { class: "badges", "aria-labelledby": id },
+      cards.flatMap((card) => card.highlights.map((b, j) => badge(b, card, j === 0))))));
+  element.hidden = !viewPref("showFunding");
+  return element;
+}
+
+// Every candidate's Funding line goes back to the showFunding switch.
+export function syncFunding() {
+  for (const element of document.querySelectorAll(".funding-line")) element.dispatchEvent(new Event("pallot:sync"));
+}
+
 // A profile card (Ballotpedia's) is a link in the row's actions, with its "?" for a likely match.
 export function profileLinks(candidate) {
   return candidate.cards.filter(profileUrl).map((card) => extLink(profileUrl(card),
@@ -118,9 +143,10 @@ export function profileLinks(candidate) {
 }
 
 // The sources that only likely matched the candidate and have nothing on the row to flag it on
-// (``hidden``: counting their lines, while those are folded away).
+// (``hidden``: counting their lines, while those are folded away; a Funding line hidden by its switch).
 export function likelyUnflagged(candidate, hidden = false) {
-  return candidate.cards.filter((card) => isLikely(card) && !profileUrl(card) && (hidden || !onLine(card)))
+  const shown = (card) => (onLine(card) && !hidden) || (funded(card) && viewPref("showFunding"));
+  return candidate.cards.filter((card) => isLikely(card) && !profileUrl(card) && !shown(card))
     .map((card) => card.label);
 }
 
@@ -283,6 +309,10 @@ function cardPanel(card) {
     { class: "card-panel" },
     card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
+    card.highlights?.length
+      ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
+          h("ul", { class: "badges", "aria-label": "Funding" }, card.highlights.map((b) => badge(b))))
+      : null,
     card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
     card.facts.length
       ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))

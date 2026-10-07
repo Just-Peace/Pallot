@@ -10,15 +10,16 @@ export const VIEW_DEFAULTS = {
   showMap: false, // the map of your districts, folded at first
   showMoney: false, // each race's money box, folded at first
   showPolls: true, // each race's poll box, open at first
-  showEndorsements: true, // the candidates' Endorsed by and Scorecards lines
+  showEndorsements: true, // the candidates' Endorsements and Scorecards lines
+  showFunding: true, // the candidates' Funding line
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
 };
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.
 export const PRESETS = {
-  simple: { showMap: false, showMoney: false, showPolls: true, showEndorsements: true },
-  detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true },
+  simple: { showMap: false, showMoney: false, showPolls: true, showEndorsements: true, showFunding: true },
+  detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true },
 };
 export const MODE_NAMES = { simple: "Simple", detailed: "Detailed", custom: "Custom" };
 

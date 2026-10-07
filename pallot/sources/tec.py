@@ -28,6 +28,7 @@ from ..offices import OfficeScope
 from ..text import display_date, display_office, display_org, display_time, money, money_short
 from . import CardSet, compare
 from .ballotpedia import BpBallot, BpRace
+from .highlights import highlights
 from .snapshot import BundledSnapshot, summary_of
 
 SOURCE = "tec"
@@ -398,6 +399,13 @@ def _states(filer: dict[str, Any]) -> Breakdown | None:
                      note="Itemized donations, by the donor's address.")
 
 
+def _in_state(filer: dict[str, Any]) -> float | None:
+    """The share of itemized donations with an address that came from Texas, in percent."""
+    places = filer.get("by_state") or {}
+    home, away = places.get("TX") or 0, places.get("other") or 0
+    return round(100 * home / (home + away), 1) if home + away else None
+
+
 def _spender(spender: dict[str, Any]) -> Share:
     name = spender["name"]
     return Share(label=display_org(name) if name.isupper() else name, amount=spender.get("amount"), count=spender.get("count"))
@@ -453,6 +461,8 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
         Fact(label="TEC filer ID", value=filer["id"], url=SEARCH),
     ]
     breakdowns = [_where_from(filer, raised), _largest(filer), _sizes(filer), _states(filer), _outside(outside)]
+    figures = {key: value for key, value in (("raised", raised), ("spent", totals.get("spent")), ("cash", totals.get("cash")),
+                                             ("in_state_share", _in_state(filer))) if value is not None}
     return SourceCard(
         source=SOURCE,
         kind="money",
@@ -462,14 +472,14 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
         as_of=totals.get("as_of"),
         match=match,
         badges=badges,
+        highlights=highlights(figures, state="Texas", credit=f"TEC, since {since}"),
         facts=[f for f in facts if f.value],
         breakdowns=[b for b in breakdowns if b],
         links=[
             Link(label="Texas Ethics Commission campaign finance search", url=SEARCH),
             Link(label="Personal financial statements (not online; the TEC explains how to request one)", url=PFS_INFO),
         ],
-        figures={key: value for key, value in (("raised", raised), ("spent", totals.get("spent")), ("cash", totals.get("cash")))
-                 if value is not None},
+        figures=figures,
     )
 
 

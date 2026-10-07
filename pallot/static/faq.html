@@ -234,7 +234,7 @@
         <details class="faq" id="endorsements">
           <summary>What are the endorsement lists?</summary>
           <div class="faq-body">
-            <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. Others it fetches from the organization's own website, at most once a week, so they follow the organization's changes; Settings shows when each was last fetched. A candidate on a list has the list's name under "Endorsed by" on their row, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
+            <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. Others it fetches from the organization's own website, at most once a week, so they follow the organization's changes; Settings shows when each was last fetched. A candidate on a list has the list's name under "Endorsements" on their row, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
             <p>The lists can cover the whole country. Pallot keeps every state, and uses only the candidates in your address's state (Texas, for now), matched by name with the office and district, or the county, to confirm, like Vote for Peace's. A list can still name a district from before Texas redrew its maps: the candidate is then only a likely match, and the card says which district the list names. Each list has its own switch in <a href="settings.html">Settings</a>, and Pick by rule can pick the candidates a list endorses.</p>
             <ul><template data-endorsements="list"></template></ul>
             <p data-endorsements="none" hidden>This copy of Pallot comes with no endorsement lists yet.</p>
@@ -268,6 +268,19 @@
             <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission). Candidates for statewide office, the Legislature, the State Board of Education, the appeals and district courts, and district attorney report to the Texas Ethics Commission (TEC).</p>
             <p>"Raised" is what the candidate's campaign reported receiving. For Congress it covers the whole election period: two years for the House, six for the Senate. For state offices it counts the reports since the last even-year November general election, and the date is shown next to the figures. "Cash on hand" is from the candidate's latest report, and the date shown is when that report ends, not when Pallot fetched it.</p>
             <p>A candidate's details break the money down: small and large donations, individuals and political action committees (PACs), where donors live, and the largest donors. The next two answers say exactly how Pallot puts the figures together, for <a href="#fec-money">the FEC</a> and for <a href="#tec-money">the Texas Ethics Commission</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="funding">
+          <summary>What do the Funding chips mean?</summary>
+          <div class="faq-body">
+            <p>The Funding line under a candidate's name sums up, in a word, where their campaign's money comes from. They're facts worked out from the campaign's reports, not endorsements. Hover over a chip, or open the FEC or TEC tab in Details, for the figure behind it.</p>
+            <ul>
+              <li><strong>Mostly small donors:</strong> donations of $200 or less are more than half of everything the campaign raised. For now only candidates for Congress can have it: the Texas Ethics Commission's data doesn't yet give state candidates' small donations in the same way.</li>
+              <li><strong>Mostly Texas donors:</strong> more than half of the itemized donations from individuals with an address came from Texas. It counts only itemized donations: for Congress, those from donors who gave more than $200 in all; for state offices, every donation the campaign itemized. Donations with no address are left out.</li>
+              <li><strong>Mostly self-funded:</strong> the candidate's own gifts and loans to their campaign are more than half of what it raised. Only for Congress: state reports don't separate them.</li>
+            </ul>
+            <p>A campaign that raised less than $10,000 gets none, since a few donations would decide it. The federal chips need Pallot's FEC key: with the shared demonstration key the FEC gives totals only (see <a href="#fec-key">why the FEC tab shows only totals</a>). Turn the line off with Funding under View, or in <a href="settings.html#view-title">Settings</a>.</p>
           </div>
         </details>
 

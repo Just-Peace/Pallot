@@ -10,7 +10,7 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 import { currentEngine, searchHref } from "./search.js";
-import { likelyFlag, likelyUnflagged, profileLinks, raceMoney, sourceLines } from "./source-cards.js";
+import { fundingLine, likelyFlag, likelyUnflagged, profileLinks, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -250,13 +250,16 @@ function candidateRow(race, candidate) {
   const sources = candidate.cards.length;
   const flag = likelyFlag();
   // The "?" for likely matches with no badge on the row to show it, their lines' too while those are hidden.
-  const flagUnshown = (linesShown) => {
+  let linesShown = false;
+  const flagUnshown = (shown = linesShown) => {
+    linesShown = shown;
     const unflagged = likelyUnflagged(candidate, !linesShown);
     flag.hidden = !unflagged.length;
     flag.title = `Likely match: ${unflagged.join(", ")}`;
   };
   flagUnshown(false);
   const lines = sourceLines(candidate, flagUnshown);
+  const funding = fundingLine(candidate, () => flagUnshown());
   const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources,
     on: { click: () => page.showDetails(race, race.candidates.indexOf(candidate)) } },
     sources ? `Details · ${plural(sources, "source")}` : "No details", flag);
@@ -274,6 +277,7 @@ function candidateRow(race, candidate) {
       h("div", { class: "cand-actions" },
         noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"), profileLinks(candidate))),
     lines,
+    funding,
     noteBox,
   );
   return { row, sync };
