@@ -11,6 +11,7 @@ import {
   verdicts,
 } from "./pick-rules.js";
 import { showToast } from "./toast.js";
+import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, marks, renderRaces }
 const dialog = $("#rules");
@@ -31,7 +32,7 @@ export const markingNote = h("p", { class: "notice", hidden: true },
   "Candidates your rule would pick are marked ✓, and those it skips ✕. ",
   h("button", { type: "button", class: "link-btn", on: { click: () => openRules() } }, "Change the rule"),
   " · ",
-  h("button", { type: "button", class: "link-btn", on: { click: () => setMarking(false) } }, "Stop marking"));
+  h("button", { type: "button", class: "link-btn", on: { click: () => setMarking(false) } }, "Stop previewing"));
 
 // The marks on the candidates (``page.marks``) from the saved rule, and the note above the races.
 export function syncMarks() {
@@ -142,7 +143,7 @@ export function openRules(raceKey = null) {
   $("#rule-scope").focus();
 }
 
-// Draws the dialog for ``rule``, which is saved only by Apply or Mark who matches. Reset draws
+// Draws the dialog for ``rule``, which is saved only by Apply or Preview on my ballot. Reset draws
 // it again with the default rule, in the same scope.
 function draw(rule, options, startScope) {
   let scope = startScope;
@@ -195,11 +196,18 @@ function draw(rule, options, startScope) {
     applyButton.textContent = result.changed ? `Apply to ${plural(result.changed, "race")}` : "Nothing to change";
   }
 
+  // With "Collapse a race when I pick" on, the races it fills fold, as a pick by hand does; Undo opens them again.
   function apply() {
-    const changes = Object.fromEntries(result.rows.filter((row) => row.changed).map((row) => [row.race.key, row.after]));
+    const changed = result.rows.filter((row) => row.changed);
+    const changes = Object.fromEntries(changed.map((row) => [row.race.key, row.after]));
+    const folded = viewPref("collapseOnPick")
+      ? changed.filter((row) => row.outcome === "pick" && row.after.length >= row.race.seats && !page.picks.isCollapsed(row.race.key))
+        .map((row) => row.race.key)
+      : [];
     const { picked, takenBack } = result;
     saveRule(rule);
     const before = page.picks.setMany(changes);
+    if (folded.length) page.picks.setCollapsed(folded, true);
     dialog.close();
     page.renderRaces();
     const did = [picked ? `picked ${plural(picked, "race")}` : null, takenBack ? `took back ${plural(takenBack, "pick")}` : null];
@@ -207,6 +215,7 @@ function draw(rule, options, startScope) {
       label: "Undo",
       run: () => {
         page.picks.setMany(before);
+        if (folded.length) page.picks.setCollapsed(folded, false);
         page.renderRaces();
       },
     });
@@ -241,7 +250,7 @@ function draw(rule, options, startScope) {
   const moneyInputs = [
     select("Which money", MONEY.map(([id, label]) => [id, label, !has.money[id]]), rule.money.metric,
       set((value) => { rule.money.metric = value; })),
-    select("Compared with what", [["under", "under"], ["over", "over"], ["least", "the least in the race"], ["most", "the most in the race"]],
+    select("Compared with what", [["under", "under"], ["over", "over"], ["least", "the least"], ["most", "the most"]],
       rule.money.compare, set((value) => {
         rule.money.compare = value;
         moneyAmount.hidden = relative(value);
@@ -265,19 +274,21 @@ function draw(rule, options, startScope) {
         h("label", { class: "seg-option" },
           h("input", { type: "radio", name: "rule-incumbent", value, checked: value === rule.incumbent,
             on: { change: set(() => { rule.incumbent = value; }) } }), text)))),
-    group("Endorsements and ratings",
-      has.trackaipac && checkRow("TrackAIPAC endorses them", rule.endorsed, set((on) => { rule.endorsed = on; })),
-      has.voteforpeace && checkRow("Vote for Peace rates them an ally", rule.peaceAlly, set((on) => { rule.peaceAlly = on; })),
-      has.endorsements.length && h("div", { class: "rule-lists" },
-        h("p", { class: "rule-lists-label" }, has.endorsements.length > 1 ? "Endorsed by every list you choose:" : "Endorsed by:"),
-        h("div", { class: "rule-chips" }, has.endorsements.map(({ source, label }) =>
+    group("Endorsements",
+      has.endorsers.length && [
+        h("div", { class: "rule-chips" }, has.endorsers.map(({ source, label }) =>
           chip(label, rule.endorsedBy.includes(source), set((on) => {
             rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
-          })))))),
+          })))),
+        h("p", { class: "fine" }, "Endorsements from any of the ones you choose.",
+          has.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it rates an ally." : ""),
+      ]),
     group("Money",
       moneyOn && checkRow("Their money is", rule.money.on, set((on) => { rule.money.on = on; }), { extra: moneyInputs, stacked: true }),
       has.small && checkRow("Small donations make up at least", rule.small.on, set((on) => { rule.small.on = on; }),
-        { extra: percentBox("small", "Small donations' share of what they raised, in percent") })),
+        { extra: percentBox("small", "Small donations' share of what they raised, in percent") }),
+      has.texas && checkRow("Texas donors make up at least", rule.texas.on, set((on) => { rule.texas.on = on; }),
+        { extra: percentBox("texas", "Texas donors' share of itemized donations, in percent") })),
     group("Polls", has.polls && checkRow("They lead the polls", rule.leads, set((on) => { rule.leads = on; }))));
 
   const skipRows = [
@@ -297,7 +308,7 @@ function draw(rule, options, startScope) {
 
   const missing = [
     !has.trackaipac && "TrackAIPAC", !has.voteforpeace && "Vote for Peace", !moneyOn && "money",
-    moneyOn && !has.small && "small donations", moneyOn && !has.selfFunded && "self-funding", !has.lobby && "Israel lobby money",
+    moneyOn && !has.small && "small donations", moneyOn && !has.texas && "Texas donors", moneyOn && !has.selfFunded && "self-funding", !has.lobby && "Israel lobby money",
     !has.polls && "polls",
   ].filter(Boolean);
 
@@ -315,13 +326,16 @@ function draw(rule, options, startScope) {
         skipSet,
         missing.length ? h("p", { class: "fine" }, `Not offered, since nothing on your ballot has them: ${listed(missing)}.`) : null,
         h("details", { class: "rule-how" }, h("summary", {}, "How rules work"),
-          h("p", {}, "Pick takes the candidates who meet every condition you turn on, from any party you choose. Don't pick "
+          h("p", {}, "Pick takes the candidates who meet every condition you turn on, from any party you choose, with endorsements "
+            + "from any of the endorsers you choose. Don't pick "
             + "takes back anyone who meets any one of its conditions, even a pick you made yourself."),
           h("p", {}, "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
             + "congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it "
             + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. So “Democrats who spent under $1M” "
-            + "still picks a county race's Democrat. Small donations ($200 or less from a donor) and self-funding are known only "
-            + "in congressional races, with an FEC key."),
+            + "still picks a county race's Democrat. “The least” and “the most” compare the candidates in each race. Small "
+            + "donations ($200 or less) and Texas donors (their share of itemized donations with an address) are known in "
+            + "congressional races with an FEC key, and in state races from the Texas Ethics Commission. Self-funding is known "
+            + "only in congressional races, with an FEC key."),
           h("p", {}, "Without the Write-ins chip, a rule picks only the names printed on the ballot. If more candidates match than "
             + "a race has seats, a tie included, it's left for you."))),
       h("aside", { class: "rule-preview", "aria-label": "What your rule would do" },
@@ -332,7 +346,9 @@ function draw(rule, options, startScope) {
         checkRow("Don't replace picks I've already made", rule.keepMine, set((on) => { rule.keepMine = on; })),
         raceDetails)),
     h("div", { class: "details-foot" },
-      h("button", { type: "button", class: "btn with-icon rule-mark-btn", on: { click: mark } }, icon("filter"), "Mark who matches"),
+      h("button", { type: "button", class: "btn with-icon rule-mark-btn", on: { click: mark },
+        title: "Marks who your rule would pick (✓) and skip (✕) on your ballot, without picking anyone" },
+      icon("ballot"), "Preview on my ballot"),
       h("button", { type: "button", class: "btn ghost", on: { click: () => dialog.close() } }, "Cancel"),
       applyButton),
   );

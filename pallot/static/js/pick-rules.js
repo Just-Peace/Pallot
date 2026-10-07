@@ -1,8 +1,8 @@
 // Pick by rule: the voter's rule, what it would do to the picks, and which candidates it
 // matches. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks.
 //
-// The Pick half is AND across its conditions, OR across the party chips; Don't pick is OR. A
-// condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
+// The Pick half is AND across its conditions, OR across the party chips and across the endorsers;
+// Don't pick is OR. A condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
 // something, so "Democrats who spent under $1M" still picks a county race's Democrat. A race with
 // more matches than seats is left for the voter: the rule never guesses, so a tie for "the least"
 // money in a one-seat race is left too.
@@ -23,17 +23,16 @@ export const MONEY = [
   ["raised", "Raised"],
   ["spent", "Spent"],
   ["cash", "Cash on hand"],
-  ["outside_for", "Outside spending for them"],
+  ["outside_for", "Outside money for them"],
 ];
 
 export const DEFAULT_RULE = {
   parties: [],
   incumbent: "any", // "yes": only incumbents, "no": only challengers
-  endorsed: false,
-  peaceAlly: false, // Vote for Peace rates them an ally
-  endorsedBy: [], // the endorsement lists (their source ids) that must each list them
+  endorsedBy: [], // any of these endorse them: TrackAIPAC, Vote for Peace (an ally) or an endorsement list (its source id)
   money: { on: false, metric: "spent", compare: "under", amount: 1_000_000 }, // compare: "under", "over", "least", "most"
   small: { on: false, amount: 50 }, // small donations are at least this % of what they raised
+  texas: { on: false, amount: 50 }, // donors in Texas gave at least this % of their itemized donations
   leads: false,
   watchlist: false,
   peaceOpposed: false, // Vote for Peace rates them opposed
@@ -41,7 +40,7 @@ export const DEFAULT_RULE = {
   selfFunded: { on: false, amount: 50 }, // they gave or lent their campaign over this % of what it raised
   polling: { on: false, amount: 5 },
   keepMine: true,
-  mark: false, // "Mark who matches" is on
+  mark: false, // "Preview on my ballot" is on
 };
 
 // The saved rule over the defaults, so a rule saved before a condition existed still loads.
@@ -53,6 +52,9 @@ export function loadRule() {
     const nested = typeof rule[key] === "object" && !Array.isArray(rule[key]);
     rule[key] = nested ? { ...rule[key], ...value } : value;
   }
+  // A rule saved when TrackAIPAC and Vote for Peace had boxes of their own.
+  if (saved?.endorsed) rule.endorsedBy = [...new Set([TRACKAIPAC, ...rule.endorsedBy])];
+  if (saved?.peaceAlly) rule.endorsedBy = [...new Set([VOTEFORPEACE, ...rule.endorsedBy])];
   return rule;
 }
 
@@ -69,6 +71,21 @@ const listed = (candidate, list, source = TRACKAIPAC) =>
   candidate.cards.some((c) => c.source === source && c.flags?.includes(list));
 const rated = (candidate) => tracked(candidate, VOTEFORPEACE);
 const endorses = (candidate, source) => listed(candidate, ENDORSEMENT, source);
+
+// Whether ``source`` (an endorser chip) endorses the candidate: TrackAIPAC's endorsement, Vote for
+// Peace's ally rating, or an endorsement list's card.
+function endorsedBy(candidate, source) {
+  if (source === TRACKAIPAC) return listed(candidate, "endorsed");
+  if (source === VOTEFORPEACE) return listed(candidate, "ally", VOTEFORPEACE);
+  return endorses(candidate, source);
+}
+
+// Whether an endorser has anything in a race: TrackAIPAC or Vote for Peace rates a candidate, or the list endorses one.
+function covers(candidates, source) {
+  if (source === TRACKAIPAC) return candidates.some((c) => tracked(c));
+  if (source === VOTEFORPEACE) return candidates.some(rated);
+  return candidates.some((c) => endorses(c, source));
+}
 const known = (amount) => typeof amount === "number" && Number.isFinite(amount);
 
 // "1,000,000", "$1M", "250k" -> a number; null when it isn't one.
@@ -112,27 +129,33 @@ export function ballotParties(races) {
     .sort((a, b) => rank(a.code) - rank(b.code) || a.label.localeCompare(b.label));
 }
 
-// The endorsement lists with a card on these candidates, as { source, label }, by label.
-function endorsementLists(candidates) {
+// Who endorses someone among these candidates, as { source, label }: TrackAIPAC, Vote for Peace
+// (an ally), then the endorsement lists by label.
+function endorsers(candidates) {
   const found = new Map();
   for (const card of candidates.flatMap((c) => c.cards)) {
     if (card.flags?.includes(ENDORSEMENT)) found.set(card.source, { source: card.source, label: card.label });
   }
-  return [...found.values()].sort((a, b) => a.label.localeCompare(b.label));
+  return [
+    candidates.some((c) => endorsedBy(c, TRACKAIPAC)) ? { source: TRACKAIPAC, label: "TrackAIPAC" } : null,
+    candidates.some((c) => endorsedBy(c, VOTEFORPEACE)) ? { source: VOTEFORPEACE, label: "Vote for Peace" } : null,
+    ...[...found.values()].sort((a, b) => a.label.localeCompare(b.label)),
+  ].filter(Boolean);
 }
 
 // Which conditions have anything to go on in these races; the dialog hides the rest, and
-// lists only the endorsement lists that endorse someone here.
+// lists only the endorsers that endorse someone here.
 export function available(races) {
   const candidates = races.flatMap((race) => race.candidates);
   const has = (id) => candidates.some((c) => figure(c, id) !== undefined);
   return {
-    endorsements: endorsementLists(candidates),
+    endorsers: endorsers(candidates),
     trackaipac: candidates.some((c) => tracked(c)),
     voteforpeace: candidates.some(rated),
     lobby: has("israel_lobby"),
     money: Object.fromEntries(MONEY.map(([id]) => [id, has(id)])),
     small: has("small_share"),
+    texas: has("in_state_share"),
     selfFunded: has("self_share"),
     polls: has("poll"),
   };
@@ -149,7 +172,7 @@ const MONEY_WORDS = {
 const share = (amount) => `${COUNT.format(amount)}%`;
 
 // The rule in words, as { pick, skip } (null for a half with nothing on): "Pick Democratic
-// incumbents who are endorsed by JVP Action and spent under $1M." Only the conditions with
+// incumbents who have endorsements from JVP Action and spent under $1M." Only the conditions with
 // something to go on (``has``, from available()) count, as only they show in the dialog.
 // ``parties``: ballotParties(), for the chips' names.
 export function describeRule(rule, parties, has) {
@@ -157,10 +180,7 @@ export function describeRule(rule, parties, has) {
   const adjectives = parties.filter((p) => rule.parties.includes(p.code))
     .map((p) => (p.code === WRITE_INS ? "write-in" : p.label));
   const noun = { yes: "incumbents", no: "challengers" }[rule.incumbent] || "candidates";
-  const endorsers = [
-    rule.endorsed && has.trackaipac ? "TrackAIPAC" : null,
-    ...has.endorsements.filter((list) => rule.endorsedBy.includes(list.source)).map((list) => list.label),
-  ].filter(Boolean);
+  const chosen = has.endorsers.filter((e) => rule.endorsedBy.includes(e.source)).map((e) => e.label);
   const { money } = rule;
   const relative = money.compare === "least" || money.compare === "most";
   const [vsAmount, vsRace] = MONEY_WORDS[money.metric] || MONEY_WORDS.spent;
@@ -168,10 +188,11 @@ export function describeRule(rule, parties, has) {
     ? (relative ? vsRace : vsAmount).replace("{cmp}", money.compare).replace("{amount}", DOLLARS_SHORT.format(money.amount))
     : null;
   const clauses = [
-    endorsers.length ? `are endorsed by ${andList(endorsers)}` : null,
-    rule.peaceAlly && has.voteforpeace ? "are rated an ally by Vote for Peace" : null,
+    chosen.length ? `have endorsements from ${either(chosen)}` : null,
     moneyWords,
     on(rule.small.on && has.small, rule.small.amount) ? `get at least ${share(rule.small.amount)} of their money in small donations` : null,
+    on(rule.texas.on && has.texas, rule.texas.amount)
+      ? `get at least ${share(rule.texas.amount)} of their itemized donations from Texas` : null,
     rule.leads && has.polls ? "lead the polls" : null,
   ].filter(Boolean);
   const pick = adjectives.length || noun !== "candidates" || clauses.length
@@ -200,11 +221,8 @@ function judge(race, rule) {
   if (parties.size) tests.push((c) => parties.has(c.write_in ? WRITE_INS : c.party));
   if (rule.incumbent === "yes") tests.push((c) => c.incumbent);
   if (rule.incumbent === "no") tests.push((c) => !c.incumbent);
-  if (rule.endorsed && candidates.some((c) => tracked(c))) tests.push((c) => listed(c, "endorsed"));
-  if (rule.peaceAlly && candidates.some(rated)) tests.push((c) => listed(c, "ally", VOTEFORPEACE));
-  for (const source of rule.endorsedBy) {
-    if (candidates.some((c) => endorses(c, source))) tests.push((c) => endorses(c, source));
-  }
+  const endorsing = rule.endorsedBy.filter((source) => covers(candidates, source));
+  if (endorsing.length) tests.push((c) => endorsing.some((source) => endorsedBy(c, source)));
   const { money } = rule;
   const relative = money.compare === "least" || money.compare === "most";
   if (money.on && (relative || known(money.amount)) && candidates.some((c) => figure(c, money.metric) !== undefined)) {
@@ -223,6 +241,12 @@ function judge(race, rule) {
     tests.push((c) => {
       const share = figure(c, "small_share");
       return share !== undefined && share >= rule.small.amount;
+    });
+  }
+  if (rule.texas.on && known(rule.texas.amount) && candidates.some((c) => figure(c, "in_state_share") !== undefined)) {
+    tests.push((c) => {
+      const share = figure(c, "in_state_share");
+      return share !== undefined && share >= rule.texas.amount;
     });
   }
   const polled = candidates.map((c) => figure(c, "poll")).filter((share) => share !== undefined);
@@ -254,7 +278,7 @@ function judge(race, rule) {
   return { active: tests.length > 0, picks, matches: picks.filter((c) => !avoid.has(c.key)), avoid };
 }
 
-// For "Mark who matches": candidate key -> { avoid: [reasons] }, empty for one the rule picks.
+// For "Preview on my ballot": candidate key -> { avoid: [reasons] }, empty for one the rule picks.
 export function verdicts(ballot, rule) {
   const out = new Map();
   for (const race of allRaces(ballot)) {

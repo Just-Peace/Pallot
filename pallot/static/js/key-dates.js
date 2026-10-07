@@ -7,6 +7,7 @@ import { extLink, h } from "./dom.js";
 import { formatDate } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES } from "./labels.js";
+import { sourceNote } from "./view.js";
 
 const DAY = { weekday: "short", month: "short", day: "numeric" };
 const SHORT_DAY = { month: "short", day: "numeric" };
@@ -106,7 +107,7 @@ export function keyDatesCard(ballot) {
     dates ? h("dl", { class: "key-date-list" }, dateRows(dates, state)) : null,
     h("div", { class: "button-row key-actions" }, actions),
     mailVoting(dates, state),
-    h("p", { class: "fine" },
+    sourceNote(
       dates ? ["Dates from the ", extLink(dates.source_url, "Texas Secretary of State"), ". "] : null,
       "Your county elections office sets where and when you vote.", more),
   ];

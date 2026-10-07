@@ -199,7 +199,7 @@ export function searchLink(race, candidate, className, label) {
 }
 
 // A candidate's row, and ``sync``, which puts its saved note in the note box and its Pick by rule
-// mark ("Mark who matches") under the name.
+// mark ("Preview on my ballot") under the name.
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
   const id = slug(candidate.key);

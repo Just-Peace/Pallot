@@ -28,8 +28,8 @@ def jane(**extra):
                               "filed": "2025-07-15"}},
         "by_kind": {"INDIVIDUAL": {"amount": 3100.0, "count": 3}, "ENTITY": {"amount": 500.0, "count": 1}},
         "by_state": {"TX": 2900.0, "other": 700.0},
-        "sizes": [{"amount": 400.0, "count": 1}, {"amount": 3200.0, "count": 3}, {"amount": 0.0, "count": 0},
-                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
+        "sizes": [{"amount": 0.0, "count": 0}, {"amount": 400.0, "count": 1}, {"amount": 3200.0, "count": 3},
+                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
         "top_donors": [{"name": "PAT SMITH", "kind": "INDIVIDUAL", "city": "AUSTIN", "state": "TX", "employer": "ACME",
                         "occupation": "CEO", "amount": 2400.0, "count": 2},
                        {"name": "Teachers PAC", "kind": "ENTITY", "city": "Austin", "state": "TX", "amount": 500.0, "count": 1},
@@ -158,11 +158,12 @@ def test_cards_for_a_state_race(tmp_path):
     assert where.total == 4000.0
     assert [(p.label, p.note) for p in largest.parts] == [
         ("Pat Smith", "Austin, TX · Acme (CEO)"), ("Teachers PAC", "Austin, TX"), ("Lee Far", "Oakland, CA · Retired")]
-    assert [p.label for p in sizes.parts] == ["Under $500", "$500 to $4,999"] and "$400" in sizes.note
+    assert [p.label for p in sizes.parts] == ["Over $200, under $500", "$500 to $4,999"] and "$400" in sizes.note
     assert [p.label for p in states.parts] == ["Texas", "Other states"]
     assert [p.label for p in outside.parts] == ["Texans for Jane", "Other Group"] and "doesn't record" in outside.note
     assert card.as_of == "2025-06-30"
-    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0, "in_state_share": 80.6}
+    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0, "small_share": 10.0,
+                            "in_state_share": 80.6}  # small: the $400 unitemized
     assert card.highlights == []  # under $10,000 raised
 
     comparison = cards.races[rep.key]
@@ -184,6 +185,18 @@ def test_funding_chips_from_the_tec(tmp_path):
     assert tec.card(jane(by_state={"unknown": 50.0}), None, None, window=None).figures.get("in_state_share") is None
 
 
+def test_small_donor_share_from_the_tec():
+    sizes = [{"amount": 25000.0, "count": 300}] + [{"amount": 5000.0, "count": 5}] * 5
+    filer = jane(totals={**jane()["totals"], "raised": 50000.0, "unitemized": 5000.0}, sizes=sizes)
+    card = tec.card(filer, None, None, window="2024-11-06")
+    assert card.figures["small_share"] == 60.0  # $5K unitemized and $25K itemized at $200 or less, of $50K
+    assert "Mostly small donors" in [chip.text for chip in card.highlights]
+    older = jane(sizes=[{"amount": 400.0, "count": 1}] + [{"amount": 0.0, "count": 0}] * 4)  # "Under $500" came first
+    card = tec.card(older, None, None, window=None)
+    assert "small_share" not in card.figures
+    assert "Itemized donations by size" not in [b.title for b in card.breakdowns]
+
+
 def juan():
     return {
         "id": "00000009", "type": "COH", "name": "Juan Perez", "first": "Juan", "last": "Perez",
@@ -191,8 +204,8 @@ def juan():
         "totals": {"raised": 1000.0, "unitemized": 0.0, "spent": 100.0, "cash": 900.0, "reports": 1, "as_of": "2025-01-15"},
         "by_kind": {"INDIVIDUAL": {"amount": 750.0, "count": 2}, "ENTITY": {"amount": 250.0, "count": 1}},
         "by_state": {"TX": 1000.0}, "by_state_count": {"TX": 3},
-        "sizes": [{"amount": 1000.0, "count": 3}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0},
-                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
+        "sizes": [{"amount": 0.0, "count": 0}, {"amount": 1000.0, "count": 3}, {"amount": 0.0, "count": 0},
+                  {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}, {"amount": 0.0, "count": 0}],
         "top_donors": [{"name": "Pat Smith", "kind": "INDIVIDUAL", "city": "Fresno", "state": "CA", "amount": 750.0, "count": 2},
                        {"name": "TEACHERS PAC", "kind": "ENTITY", "city": "Austin", "state": "TX", "amount": 250.0, "count": 1}],
     }

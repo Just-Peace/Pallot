@@ -374,8 +374,14 @@ def _largest(filer: dict[str, Any]) -> Breakdown | None:
     )
 
 
-def _sizes(filer: dict[str, Any]) -> Breakdown | None:
+def _bucketed(filer: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """The filer's itemized donations by SIZE_BUCKETS; None from a snapshot with other buckets."""
     sizes = filer.get("sizes") or []
+    return None if sizes and len(sizes) != len(SIZE_BUCKETS) else sizes
+
+
+def _sizes(filer: dict[str, Any]) -> Breakdown | None:
+    sizes = _bucketed(filer) or []
     parts = [Share(label=label, amount=size.get("amount"), count=size.get("count"))
              for (_, label), size in zip(SIZE_BUCKETS, sizes) if size.get("amount")]
     if not parts:
@@ -404,6 +410,16 @@ def _in_state(filer: dict[str, Any]) -> float | None:
     places = filer.get("by_state") or {}
     home, away = places.get("TX") or 0, places.get("other") or 0
     return round(100 * home / (home + away), 1) if home + away else None
+
+
+def _small(filer: dict[str, Any], raised: float) -> float | None:
+    """The share of what was raised in donations of $200 or less, in percent: the unitemized ones
+    and the itemized ones in the smallest size bucket, as the FEC's small donations are."""
+    sizes = _bucketed(filer)
+    if sizes is None or not raised:
+        return None
+    small = ((filer.get("totals") or {}).get("unitemized") or 0) + ((sizes[0].get("amount") or 0) if sizes else 0)
+    return round(100 * small / raised, 1)
 
 
 def _spender(spender: dict[str, Any]) -> Share:
@@ -462,7 +478,8 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
     ]
     breakdowns = [_where_from(filer, raised), _largest(filer), _sizes(filer), _states(filer), _outside(outside)]
     figures = {key: value for key, value in (("raised", raised), ("spent", totals.get("spent")), ("cash", totals.get("cash")),
-                                             ("in_state_share", _in_state(filer))) if value is not None}
+                                             ("small_share", _small(filer, raised)), ("in_state_share", _in_state(filer)))
+               if value is not None}
     return SourceCard(
         source=SOURCE,
         kind="money",
