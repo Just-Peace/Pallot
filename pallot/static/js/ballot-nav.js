@@ -3,11 +3,12 @@
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
-import { $, h, onFrame, trackHeight } from "./dom.js";
+import { $, h, onFrame, onReturn, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
+import { syncMapShown } from "./district-map.js";
 import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
-import { syncBoxes } from "./source-cards.js";
-import { setViewPref, viewPref } from "./view.js";
+import { syncBoxes, syncLines } from "./source-cards.js";
+import { MODE_NAMES, bindViewControls, onViewChange, setViewPref, showViewControls, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks }
 const result = $("#result");
@@ -17,14 +18,26 @@ const viewMenu = $("#view-menu");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
-const BOX_SWITCHES = { "show-money": "showMoney", "show-polls": "showPolls" }; // View's checkboxes for the race boxes
+// What puts the ballot back to each view switch when it changes, without a reload.
+const APPLY = {
+  showMap: syncMapShown,
+  showMoney: () => syncBoxes("showMoney"),
+  showPolls: () => syncBoxes("showPolls"),
+  showEndorsements: syncLines,
+  hidePicked: () => {
+    if (!page.ballot) return;
+    applyHidePicked();
+    markCurrentSection(); // the marked section may have gone
+  },
+};
+let applied = {}; // the view switches as the page last applied them
 
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
 let currentSection = null; // the id of the section marked as the one on screen
 let lastJumped = null; // the race "Next race to pick" went to last
 
-const showPickedButton = h("button", { type: "button", class: "link-btn", on: { click: () => setHidePicked(false) } }, "Show them");
+const showPickedButton = h("button", { type: "button", class: "link-btn", on: { click: () => setViewPref("hidePicked", false) } }, "Show them");
 export const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
 
 // The left pane's list of sections, each with how many of its races are picked.
@@ -70,7 +83,19 @@ export function updateProgress() {
   }
 }
 
-// ---- view: collapse, only unpicked races, next race, j/k -----------------------------
+// ---- view: Simple or Detailed, collapse, only unpicked races, next race, j/k ----------
+
+// After any change of the view settings, here or in another tab: the View menu shows them
+// ("View: Simple"), and each switch that changed applies to the ballot in place, putting back
+// what the voter opened or folded by hand.
+function applyView() {
+  $("#view-mode").textContent = MODE_NAMES[showViewControls(viewMenu)];
+  for (const [name, apply] of Object.entries(APPLY)) {
+    const value = viewPref(name);
+    if (name in applied && applied[name] !== value) apply();
+    applied[name] = value;
+  }
+}
 
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
 // until this runs again (switching it on, a new ballot), so it doesn't vanish mid-pick.
@@ -79,16 +104,8 @@ export function applyHidePicked() {
   for (const card of result.querySelectorAll(".race")) {
     card.classList.toggle("hidden-picked", on && page.picks.has(card.dataset.race));
   }
-  $("#hide-picked").checked = on;
   hidingNote.hidden = !on;
   viewMenu.classList.toggle("filtered", on);
-}
-
-function setHidePicked(on) {
-  setViewPref("hidePicked", on);
-  if (!page.ballot) return;
-  applyHidePicked();
-  markCurrentSection(); // the marked section may have gone
 }
 
 // Scrolls a race's card to just below the strip and focuses its heading. ``open`` expands
@@ -185,16 +202,10 @@ export function markCurrentSection() {
 // Wires the strip, the View menu and the keys; the left pane must be drawn (initChrome).
 export function initNav(context) {
   page = context;
-  $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
-  $("#collapse-on-pick").checked = viewPref("collapseOnPick");
-  $("#collapse-on-pick").addEventListener("change", (event) => setViewPref("collapseOnPick", event.target.checked));
-  for (const [id, setting] of Object.entries(BOX_SWITCHES)) {
-    $(`#${id}`).checked = viewPref(setting);
-    $(`#${id}`).addEventListener("change", (event) => {
-      setViewPref(setting, event.target.checked);
-      syncBoxes(setting);
-    });
-  }
+  bindViewControls(viewMenu);
+  onViewChange(applyView);
+  onReturn(applyView); // back from Settings, a page kept for Back missed its changes
+  applyView();
   $("#expand-all").addEventListener("click", () => {
     setAllCollapsed(false);
     viewMenu.open = false;

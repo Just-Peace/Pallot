@@ -10,7 +10,7 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 import { currentEngine, searchHref } from "./search.js";
-import { badgeList, likelyFlag, likelyUnflagged, raceMoney } from "./source-cards.js";
+import { likelyFlag, likelyUnflagged, profileLinks, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -248,11 +248,18 @@ function candidateRow(race, candidate) {
   }, 400);
 
   const sources = candidate.cards.length;
-  const unflagged = likelyUnflagged(candidate); // likely matches with no badge to show the "?"
+  const flag = likelyFlag();
+  // The "?" for likely matches with no badge on the row to show it, their lines' too while those are hidden.
+  const flagUnshown = (linesShown) => {
+    const unflagged = likelyUnflagged(candidate, !linesShown);
+    flag.hidden = !unflagged.length;
+    flag.title = `Likely match: ${unflagged.join(", ")}`;
+  };
+  flagUnshown(false);
+  const lines = sourceLines(candidate, flagUnshown);
   const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources,
     on: { click: () => page.showDetails(race, race.candidates.indexOf(candidate)) } },
-    sources ? `Details · ${plural(sources, "source")}` : "No details",
-    unflagged.length ? likelyFlag(`Likely match: ${unflagged.join(", ")}`) : null);
+    sources ? `Details · ${plural(sources, "source")}` : "No details", flag);
 
   const row = h(
     "li",
@@ -264,8 +271,9 @@ function candidateRow(race, candidate) {
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
           h("span", { class: "cand-sub" }, candidatePills(candidate), mark))),
-      h("div", { class: "cand-actions" }, noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"))),
-    badgeList(candidate),
+      h("div", { class: "cand-actions" },
+        noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"), profileLinks(candidate))),
+    lines,
     noteBox,
   );
   return { row, sync };

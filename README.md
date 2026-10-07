@@ -70,7 +70,13 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
-  - **View**: **Show money raised** (off at first), **Show polls** (on at first), Collapse all, Expand all, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**. The options are remembered in the browser.
+  - **View** says how much of the ballot shows: "View: Simple" at first.
+    - **Simple** | **Detailed**: Simple folds the map of your districts and each race's money box, and shows the polls, endorsements and scorecards. Detailed opens everything.
+    - **Show**: a switch each for the **Map of your districts**, **Money raised**, **Polls**, and **Endorsements & scorecards**. Flip one and the button says "View: Custom"; choosing Simple or Detailed sets them all again.
+    - **Collapse all**, **Expand all**, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**.
+    - **More in Settings**, where Ballot view has the same choices.
+
+    A change shows at once, in every open Pallot tab, and is remembered in the browser. A box you opened or folded by hand goes back to the switch when it changes.
   - **Pick by rule** picks by party, TrackAIPAC, Vote for Peace, endorsement lists, money and polls (below).
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
@@ -100,7 +106,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - Drag the map to move it, and zoom with **+** and **−**, or with the scroll wheel once you've clicked the map (so scrolling the page never zooms it by accident). On a phone, move and zoom it with two fingers; one finger scrolls the page. With the map selected, the arrow keys move it.
   - The outlines are simplified to about 160 feet (your election precinct to about 16 feet), so near a boundary, go by the district numbers.
   - The street map's tiles come from OpenStreetMap through the Pallot server, which keeps them. Turn the street map off in Settings to see the outlines alone.
-  - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's folded at first, and your choice is remembered in the browser. While it's folded, nothing is fetched for it.
+  - Click the map's heading to fold it away, as you would a race, and again to bring it back. It's folded at first (open in the Detailed view), and your choice is remembered in the browser: it's View's **Map of your districts** switch. While it's folded, nothing is fetched for it.
 - **Precincts:** until your commissioner and JP precincts are known, the races that depend on them are listed under "Depends on your commissioner or JP precinct", with a link up to Your districts.
 - **Races:** click a race's heading to collapse it to one line, with the race on the left and your pick ("✓ James Talarico") on the right. Collapsed races stay collapsed when you come back.
   - While you scroll through a race, its heading stays at the top, under the progress bar, until the next race comes.
@@ -109,7 +115,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - Ballotpedia's notes on a race (a replacement nominee, a redrawn district) show at the top of it, with Ballotpedia's link.
   - **Incumbent** comes from the state's filing, or from Ballotpedia when it matches the candidate exactly in the same race.
 - **Picks follow the party:** a picked candidate's row takes their party's color (Republican red, Democratic blue, Libertarian yellow, Green green, gray otherwise). Party badges are solid color so they stand apart from the sources' badges.
-- **Money:** congressional and state races have a money box above the candidates, folded at first to one line: "Money raised for the 2026 election (2021–26) · FEC". Click it to open it, or tick **Show money raised** under View to open every race's box. Open, it shows what each candidate has raised, with a bar, their cash on hand and the outside spending for and against them. A **?** after a name means the source only likely matched that candidate. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source in Details breaks it down:
+- **Money:** congressional and state races have a money box above the candidates, folded at first to one line: "Money raised for the 2026 election (2021–26) · FEC". Click it to open it, or choose **Detailed** (or **Money raised**) under View to open every race's box. Open, it shows what each candidate has raised, with a bar, their cash on hand and the outside spending for and against them. A **?** after a name means the source only likely matched that candidate. The figures come from the FEC for Congress and the Texas Ethics Commission for state offices. Each candidate's tab from that source in Details breaks it down:
   - where the money came from;
   - donation sizes;
   - where donors live;
@@ -117,16 +123,17 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - outside spending.
 
   **Compare candidates**, on the money box's line even while it's folded, puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together. Outside spending is marked with a blue "for" or an amber "against" the candidate; none of it went to the campaign.
-- **Polls:** U.S. Senate, U.S. House and Governor races with public polls show a poll box under the money box, "Polls · FiftyPlusOne, latest poll Oct 5, 2026", with one bar: each candidate's median share, in their party's color, with the rest (undecided and others) in gray. Its legend lists the candidates with a figure and Undecided / other, then one line names the candidates not in these polls. The median is over each pollster's latest poll of the matchup actually on the ballot, likely voters where a poll asked them. Click the box's title to fold it, or untick **Show polls** under View to fold every poll box. Each candidate's **Polls** tab lists the polls. Most House districts have no polls, so they show no bar.
+- **Polls:** U.S. Senate, U.S. House and Governor races with public polls show a poll box under the money box, "Polls · FiftyPlusOne, latest poll Oct 5, 2026", with one bar: each candidate's median share, in their party's color, with the rest (undecided and others) in gray. Its legend lists the candidates with a figure and Undecided / other, then one line names the candidates not in these polls. The median is over each pollster's latest poll of the matchup actually on the ballot, likely voters where a poll asked them. Click the box's title to fold it, or turn off **Polls** under View to fold every poll box. Each candidate's **Polls** tab lists the polls. Most House districts have no polls, so they show no bar.
 - **Write-ins:** the candidates who filed as write-ins with the Texas Secretary of State are listed in their race after the printed names, marked **Write-in**. Pick one and it shows on the collapsed line and the printed sheet as "Name (write-in)", since you write the name in yourself. Every race also ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button
   - a note
-  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC, Vote for Peace, then each endorsement list that has them. It opens on the first. The badges on the candidate's row come in the same order; the money isn't a badge on the row, since it's in the race's money box. **‹** and **›** step through the race's other candidates without closing it.
-  - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings
+  - **Details**, with one tab per source that has something on them, in this order: the money (FEC for Congress, Texas Ethics Commission for state offices), Texas SOS, Polls, Ballotpedia, TrackAIPAC, Vote for Peace, then each endorsement list that has them. It opens on the first. **‹** and **›** step through the race's other candidates without closing it.
+  - a **Web search ↗** link that searches for their name, office and place, using Google unless you pick another engine (Bing, DuckDuckGo, Brave, Yahoo, Startpage, Ecosia, Kagi or Perplexity) in Settings, and a **Ballotpedia ↗** link to their Ballotpedia profile, with Ballotpedia on
+  - under their name, up to two lines, each only when it has something: **Endorsed by**, one chip per endorsement list with the list's name, and **Scorecards**, TrackAIPAC's and Vote for Peace's ratings. They come in the order of the Details tabs, the lists by name. Turn off **Endorsements & scorecards** under View to hide them: a candidate who has any then shows one small button, "3 endorsements · 1 scorecard", that opens their lines. The money isn't on the row, since it's in the race's money box.
 
-  A **?** on a source's badge, its tab in Details, a name in the money box, or the Details button means that source only likely matched the candidate, so check it.
-- **Endorsement lists:** some organizations' lists of the candidates they endorse come with Pallot, and others (Muslims United PAC's, CAIR Action's and Emgage PAC's) are fetched from the organization's website; About and the FAQ name the ones in your version. A list that comes with Pallot is a copy made once, on the date Settings shows, and never fetched again; a fetched one is kept a week, and Settings shows when it was fetched. A candidate on a list has an **Endorsed by …** badge, and a tab in Details with the office as the organization lists it, its note, and a link to its list. A list keeps every state it covers; a lookup uses only the candidates in the address's state (Texas, for now). Settings shows how many candidates a list has in Texas and in all.
+  A **?** on a source's chip or link, its tab in Details, a name in the money box, or the Details button means that source only likely matched the candidate, so check it.
+- **Endorsement lists:** some organizations' lists of the candidates they endorse come with Pallot, and others (Muslims United PAC's, CAIR Action's and Emgage PAC's) are fetched from the organization's website; About and the FAQ name the ones in your version. A list that comes with Pallot is a copy made once, on the date Settings shows, and never fetched again; a fetched one is kept a week, and Settings shows when it was fetched. A candidate on a list has the list's name under **Endorsed by** on their row, and a tab in Details with the office as the organization lists it, its note, and a link to its list. A list keeps every state it covers; a lookup uses only the candidates in the address's state (Texas, for now). Settings shows how many candidates a list has in Texas and in all.
 - **Pick by rule:** picks across your ballot at once, since Texas has no straight-ticket voting. Open it from the top of the ballot for every race, or from the funnel in a race's heading for that race; **Apply to** can also be one section.
   - **Pick:** any of the parties you choose (a chip for each party on your ballot, with how many races it's in, and one for the declared write-ins), and then only if all of these hold:
     - incumbents only, or challengers only;
@@ -228,8 +235,9 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 
 ## Settings
 
-The **Settings** page, linked from the left pane, has four sections: **Appearance**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot. The page:
+The **Settings** page, linked from the left pane, has five sections: **Appearance**, **Ballot view**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot. The page:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
+- under **Ballot view**, chooses **Simple** or **Detailed** (neither, with "Your own mix, below", when the switches are mixed), and has a switch each for the map of your districts, money raised, polls, and endorsements & scorecards, with a line on what each does, then **Collapse a race when I pick** and **Only races I haven't picked**: the same choices as the ballot's View menu. An open ballot follows a change at once, in any tab;
 - picks the web search engine;
 - lists the sources in five groups, each with how many of its sources are on, and folds a group away when you click its heading (it stays folded in this browser):
   - **Address lookup & maps**: the address lookup (always on), election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map and address suggestions;
@@ -242,7 +250,7 @@ The **Settings** page, linked from the left pane, has four sections: **Appearanc
 - shows what the server has saved for each source (responses, size, when they were fetched, how many are past their lifetime) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
 - under **Data**, clears what this browser keeps:
   - **Clear my picks & notes**: your picks, notes, write-ins and pick rule. Your address stays;
-  - **Clear browser data**: everything Pallot keeps in this browser, your address, sources, appearance, search engine and view choices included.
+  - **Clear browser data**: everything Pallot keeps in this browser, your address, sources, appearance, search engine and view choices included, so the ballot goes back to Simple.
 
   Both clear at once and offer **Undo** for 10 seconds.
 
