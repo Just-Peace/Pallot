@@ -202,7 +202,12 @@ async function load() {
 
 function initSearchEngine() {
   const selected = currentEngine().id;
-  searchSelect.replaceChildren(...ENGINES.map((e) => h("option", { value: e.id, selected: e.id === selected }, e.label)));
+  const options = (ai) => ENGINES.filter((e) => !e.ai === !ai)
+    .map((e) => h("option", { value: e.id, selected: e.id === selected }, e.label));
+  searchSelect.replaceChildren(
+    h("optgroup", { label: "Search engines" }, ...options(false)),
+    h("optgroup", { label: "AI assistants" }, ...options(true)),
+  );
   searchSelect.addEventListener("change", () => {
     setEngine(searchSelect.value);
     markSettingsChanged();

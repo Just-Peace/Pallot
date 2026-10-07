@@ -4,6 +4,7 @@
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
 import { candidatePills } from "./labels.js";
 import { avatar, choose, searchLink } from "./race-cards.js";
+import { searchTitle } from "./search.js";
 import { renderTabs } from "./source-cards.js";
 
 let page = null; // { picks }
@@ -58,7 +59,7 @@ export function showDetails(race, index, focus = null) {
   details.replaceChildren(
     head,
     tabs,
-    h("div", { class: "details-foot" }, searchLink(race, candidate, "btn ghost", `Search the web for ${candidate.name} ↗`), pickButton),
+    h("div", { class: "details-foot" }, searchLink(race, candidate, "btn ghost", `${searchTitle(candidate.name)} ↗`), pickButton),
   );
   if (!details.open) details.showModal();
   details.scrollTop = 0;
