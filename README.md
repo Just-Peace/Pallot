@@ -70,7 +70,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
-  - **View**: **Show money raised** (off at first), Collapse all, Expand all, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**. The options are remembered in the browser.
+  - **View**: **Show money raised** (off at first), **Show polls** (on at first), Collapse all, Expand all, **Collapse a race when I pick** (on at first), and **Only races I haven't picked**. The options are remembered in the browser.
   - **Pick by rule** picks by party, TrackAIPAC, Vote for Peace, endorsement lists, money and polls (below).
   - **Clear picks** clears your picks, notes and write-ins at once, and offers **Undo** for 10 seconds.
   - **Print my picks** (below).
@@ -117,7 +117,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
   - outside spending.
 
   **Compare candidates**, on the money box's line even while it's folded, puts everyone in the race side by side: totals, then each breakdown with one bar per candidate, and the largest donors and outside spenders in columns, with names that appear in more than one candidate's list marked. The FAQ's "Campaign money" section explains how each figure is put together. Outside spending is marked with a blue "for" or an amber "against" the candidate; none of it went to the campaign.
-- **Polls:** U.S. Senate, U.S. House and Governor races with public polls show one bar under the money box: each candidate's median share, in their party's color, with the rest (undecided and others) in gray. The median is over each pollster's latest poll of the matchup actually on the ballot, likely voters where a poll asked them. Each candidate's **Polls** tab lists the polls. Most House districts have no polls, so they show no bar.
+- **Polls:** U.S. Senate, U.S. House and Governor races with public polls show a poll box under the money box, "Polls · FiftyPlusOne, latest poll Oct 5, 2026", with one bar: each candidate's median share, in their party's color, with the rest (undecided and others) in gray. Its legend lists the candidates with a figure and Undecided / other, then one line names the candidates not in these polls. The median is over each pollster's latest poll of the matchup actually on the ballot, likely voters where a poll asked them. Click the box's title to fold it, or untick **Show polls** under View to fold every poll box. Each candidate's **Polls** tab lists the polls. Most House districts have no polls, so they show no bar.
 - **Write-ins:** the candidates who filed as write-ins with the Texas Secretary of State are listed in their race after the printed names, marked **Write-in**. Pick one and it shows on the collapsed line and the printed sheet as "Name (write-in)", since you write the name in yourself. Every race also ends with a write-in line. Type someone else's name and it becomes your pick; it shows on the collapsed line and the printed sheet as "Name (write-in)". In Texas a write-in only counts for someone who filed as a write-in candidate, and the page says so when you pick one.
 - **Each candidate has:**
   - a pick button

@@ -17,6 +17,7 @@ const viewMenu = $("#view-menu");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
+const BOX_SWITCHES = { "show-money": "showMoney", "show-polls": "showPolls" }; // View's checkboxes for the race boxes
 
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
@@ -187,11 +188,13 @@ export function initNav(context) {
   $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
   $("#collapse-on-pick").checked = viewPref("collapseOnPick");
   $("#collapse-on-pick").addEventListener("change", (event) => setViewPref("collapseOnPick", event.target.checked));
-  $("#show-money").checked = viewPref("showMoney");
-  $("#show-money").addEventListener("change", (event) => {
-    setViewPref("showMoney", event.target.checked);
-    syncBoxes("showMoney");
-  });
+  for (const [id, setting] of Object.entries(BOX_SWITCHES)) {
+    $(`#${id}`).checked = viewPref(setting);
+    $(`#${id}`).addEventListener("change", (event) => {
+      setViewPref(setting, event.target.checked);
+      syncBoxes(setting);
+    });
+  }
   $("#expand-all").addEventListener("click", () => {
     setAllCollapsed(false);
     viewMenu.open = false;

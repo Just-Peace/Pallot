@@ -7,6 +7,7 @@ import { setUiPref, uiPref } from "./storage.js";
 export const VIEW_DEFAULTS = {
   showMap: false, // the map of your districts, folded at first
   showMoney: false, // each race's money box, folded at first
+  showPolls: true, // each race's poll box, open at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
 };
