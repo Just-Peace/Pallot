@@ -9,7 +9,7 @@ import { plural } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
-import { currentEngine, searchHref } from "./search.js";
+import { searchHref, searchTitle } from "./search.js";
 import { fundingLine, likelyFlag, likelyUnflagged, profileLinks, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
@@ -193,8 +193,8 @@ function searchQuery(race, candidate) {
 export function searchLink(race, candidate, className, label) {
   return extLink(searchHref(searchQuery(race, candidate)), label, {
     class: className,
-    title: `Search ${currentEngine().label} for ${candidate.name}`,
-    "aria-label": `Search the web for ${candidate.name} (opens in a new tab)`,
+    title: searchTitle(candidate.name),
+    "aria-label": `${searchTitle(candidate.name)} (opens in a new tab)`,
   });
 }
 
