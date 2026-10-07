@@ -4,7 +4,7 @@ A voter's personal ballot, currently for Texas addresses. Enter a home address a
 
 You run it yourself, in Docker or with uv, and use it in your browser.
 
-The name joins Palestine and ballot, and the logo is the Palestinian flag. Pallot is made by [Just-Peace](https://github.com/Just-Peace), which stands for justice and peace.
+Pallot is made by [Just-Peace](https://github.com/Just-Peace) for American voters who'd rather see the whole ballot for themselves. We don't back any candidate or party. Your vote is yours.
 
 ## Quick start
 
@@ -239,7 +239,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 
 ## Settings
 
-The **Settings** page, linked from the left pane, has five sections: **Appearance**, **Ballot view**, **Web search**, **Sources** and **Data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot. The page:
+The **Settings** page, linked from the left pane, has five sections: **Appearance**, **Ballot view**, **Web search**, **Sources** and **Clear data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot. The page:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
 - under **Ballot view**, chooses **Simple** or **Detailed** (neither, with "Your own mix, below", when the switches are mixed), and has a switch each for the map of your districts, money raised, polls, endorsements & scorecards, funding, and where dates & districts come from, with a line on what each does, then **Collapse a race when I pick** and **Only races I haven't picked**: the same choices as the ballot's View menu. An open ballot follows a change at once, in any tab;
 - picks the web search engine or AI assistant;
@@ -252,7 +252,7 @@ The **Settings** page, linked from the left pane, has five sections: **Appearanc
 - turns each of those sources on or off for you, except the address lookup. Your switches are kept in this browser and sent with each request, so the server builds your ballot with them; a source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on));
 - says whether the FEC is using your key, whether a source is paused (the address lookup and Texas SOS included), whether a map's last download failed, how old the Texas Ethics Commission snapshot is, when each endorsement list was captured or fetched, and how many candidates it has in Texas and in all;
 - shows what the server has saved for each source (responses, size, when they were fetched, how many are past their lifetime) and how the last lookup used it (requests made, how old the data was), plus the total on disk;
-- under **Data**, clears what this browser keeps:
+- under **Clear data**, clears what this browser keeps:
   - **Clear my picks & notes**: your picks, notes, write-ins and pick rule. Your address stays;
   - **Clear browser data**: everything Pallot keeps in this browser, your address, sources, appearance, search engine and view choices included, so the ballot goes back to Simple.
 

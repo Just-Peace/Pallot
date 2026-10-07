@@ -18,205 +18,86 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>Privacy</h1>
-        <p class="lede">Pallot has no accounts, cookies, ads or analytics. This page lists what it sends, what it keeps, where, and for how long.</p>
-        <p class="updated">Last updated October 3, 2026</p>
+        <p class="lede">No accounts, cookies, ads or analytics, no tracking, and nothing sold. Here's exactly what Pallot sends and keeps.</p>
+        <p class="updated">Last updated October 7, 2026</p>
       </header>
 
       <section class="panel prose" aria-labelledby="summary">
         <h2 id="summary">In short</h2>
         <ul>
-          <li>Your picks, notes, write-ins and pick rule stay in your browser. They're never sent anywhere.</li>
-          <li>To find your ballot, Pallot sends your address to the US Census geocoder (and to OpenStreetMap, then Google if it has a key, for an address the Census can't match), and its location to Ballotpedia if Ballotpedia is on.</li>
-          <li>While you type your address, Pallot sends what you've typed so far to Ballotpedia's address search for suggestions, unless you turn them off in <a href="settings.html">Settings</a>.</li>
-          <li>For the map of your districts, Pallot sends the US Census your district numbers, never your address, and asks OpenStreetMap for the street map of the area you look at, unless you turn the street map off in <a href="settings.html">Settings</a>.</li>
-          <li>The Pallot server keeps a copy of those lookups and suggestions, so the same text doesn't have to be sent again, until they're cleared in <a href="settings.html">Settings</a>. Suggestions, and addresses that weren't found, are deleted by themselves the first time Pallot starts after they're two months old (one month, if nothing was found).</li>
+          <li>Your picks, notes and pick rule never leave your browser. We never see how you plan to vote.</li>
+          <li>We don't track you, build a profile of you, or sell anything.</li>
+          <li>To find your ballot, your address goes to the US Census (and to a backup only if it can't match it), and what you type goes to Ballotpedia for suggestions.</li>
+          <li>Our server keeps a copy of each lookup, with nothing that says who asked, so it doesn't ask twice.</li>
         </ul>
-      </section>
-
-      <section class="panel prose" aria-labelledby="who">
-        <h2 id="who">Who holds your data</h2>
-        <p>Pallot is a program that runs on a computer, which this page calls the Pallot server. If you started Pallot on your own computer, as it's meant to be used, the server is your computer: what it keeps is visible only to people who use that computer. If someone else runs Pallot for you, the server is theirs, and they can see what it keeps.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="browser">
         <h2 id="browser">In your browser</h2>
-        <p>Pallot saves these in your browser's storage for this site. Picks, notes and write-ins are never sent to the server.</p>
-        <div class="table-wrap">
-          <table class="data-table stack">
-            <thead><tr><th scope="col">What</th><th scope="col">Why</th><th scope="col">Kept until</th></tr></thead>
-            <tbody>
-              <tr>
-                <th scope="row">Your picks, notes and write-ins, and which races you collapsed, for each election</th>
-                <td data-label="Why">So they're there when you come back</td>
-                <td data-label="Kept until">You clear them</td>
-              </tr>
-              <tr>
-                <th scope="row">Your pick rule: the parties and conditions you last applied or marked with "Pick by rule", for every election</th>
-                <td data-label="Why">So it's ready the next time you open it</td>
-                <td data-label="Kept until">Your next rule replaces it; kept until you clear it</td>
-              </tr>
-              <tr>
-                <th scope="row">Your last lookup: the address, election, primary ballot and any district or precinct numbers you entered, with the city and county found for it and the election's name</th>
-                <td data-label="Why">To show your address on every page, and your ballot again when you come back</td>
-                <td data-label="Kept until">Your next lookup replaces it; kept until you clear it</td>
-              </tr>
-              <tr>
-                <th scope="row">Which sources you turned on or off in Settings. Each request your browser makes to the Pallot server carries them, so it builds your ballot with them; they aren't saved there, nor sent anywhere else</th>
-                <td data-label="Why">So your choice of sources changes only your ballot, not anyone else's using the same Pallot</td>
-                <td data-label="Kept until">You clear them with "Clear browser data" in Settings, or clear this site's data in your browser</td>
-              </tr>
-              <tr>
-                <th scope="row">Your appearance (System, Light or Dark), web search engine, and view choices: "Dollars" or "Share of their money" in Compare, the ballot view (Simple, Detailed, or your own mix of showing the map of your districts, the money boxes, the polls, endorsements and scorecards, and showing the Funding line), collapsing a race when you pick, hiding the races you've picked, folding the left pane away, and the groups of sources you folded in Settings</th>
-                <td data-label="Why">Your choices in Settings and on the ballot</td>
-                <td data-label="Kept until">You clear them with "Clear browser data" in Settings, or clear this site's data in your browser</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p>Under Data in <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins, collapsed races and pick rule, "Clear browser data" deletes everything above, your last lookup, sources, appearance, search engine and view choices included. Private windows forget everything when they close.</p>
+        <ul>
+          <li>Your picks, notes, write-ins, collapsed races and pick rule. Never sent to our server.</li>
+          <li>Your last lookup: the address, election, ballot and any numbers you entered.</li>
+          <li>Which sources you turned on or off. Sent with each request so the server builds your ballot with them, but never saved there.</li>
+          <li>Your appearance, search and view choices.</li>
+        </ul>
+        <p>All of it stays until you clear it in <a href="settings.html#data-title">Settings → Clear data</a>. Private windows forget it when they close.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="lookups">
-        <h2 id="lookups">When you look up a ballot</h2>
-        <p>Your browser sends the Pallot server your address, the election, the primary ballot you chose and any district or precinct numbers you entered, and, while you type the address, what you've typed so far. The server then asks these services for you. They see the server's internet address rather than your browser's, which is the same thing if Pallot runs on your computer.</p>
+        <h2 id="lookups">What our server sends</h2>
+        <p>When you look up a ballot, our server asks these services for you. They see our server's internet address, never yours.</p>
         <div class="table-wrap">
           <table class="data-table stack">
-            <thead><tr><th scope="col">Service</th><th scope="col">What it's sent</th><th scope="col">When</th></tr></thead>
+            <thead><tr><th scope="col">Service</th><th scope="col">Sent</th><th scope="col">Asked again after</th></tr></thead>
             <tbody>
-              <tr>
-                <th scope="row">US Census Bureau geocoder</th>
-                <td data-label="What it's sent">Your address</td>
-                <td data-label="When">An address the server hasn't looked up in the last 30 days</td>
-              </tr>
-              <tr>
-                <th scope="row">US Census Bureau TIGERweb, for the map of your districts</th>
-                <td data-label="What it's sent">Your U.S. House, State Senate and State House district numbers, never your address</td>
-                <td data-label="When">When your ballot is shown, for a district the server hasn't asked about in the last 30 days, if the district map is on</td>
-              </tr>
-              <tr>
-                <th scope="row">OpenStreetMap's tile server, for the street map</th>
-                <td data-label="What it's sent">Which map tiles to send: squares of the map around the area you look at, which show roughly where your address is. It sees the server's internet address, and Pallot's name.</td>
-                <td data-label="When">When the map shows a tile the server hasn't fetched in the last 7 days, if the street map is on</td>
-              </tr>
-              <tr>
-                <th scope="row">OpenStreetMap Nominatim</th>
-                <td data-label="What it's sent">Your address</td>
-                <td data-label="When">Only when the Census can't match it. The Census is then asked about the location Nominatim found.</td>
-              </tr>
-              <tr>
-                <th scope="row">Google Geocoding API</th>
-                <td data-label="What it's sent">Your address, with the key of whoever runs Pallot, which identifies their Google account</td>
-                <td data-label="When">Only when both the Census and Nominatim couldn't match it, and Pallot has a Google key, and Google is on in Settings. The Census is then asked about the location Google found.</td>
-              </tr>
-              <tr>
-                <th scope="row">Ballotpedia's address search, for address suggestions</th>
-                <td data-label="What it's sent">What you've typed in the address box, once it's a house number and at least three letters of the street, each time you pause typing, with "tx" added unless you typed it</td>
-                <td data-label="When">Text the server hasn't asked about in the last 30 days, if address suggestions are on</td>
-              </tr>
-              <tr>
-                <th scope="row">Ballotpedia</th>
-                <td data-label="What it's sent">The location of your address, as map coordinates precise to about 3 feet</td>
-                <td data-label="When">A location the server hasn't asked about in the last 24 hours, if Ballotpedia is on</td>
-              </tr>
-              <tr>
-                <th scope="row">Texas Secretary of State</th>
-                <td data-label="What it's sent">Your county and the election, never your address</td>
-                <td data-label="When">At most once a day for each county and election</td>
-              </tr>
-              <tr>
-                <th scope="row">Your county's map server, in Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton counties</th>
-                <td data-label="What it's sent">Nothing about you: a request for the county's whole list of its election precincts, or its maps of its commissioner and JP precincts, which only shows that someone looked up an address in that county</td>
-                <td data-label="When">At most once a week for each county, when you look up an address there, if commissioner and JP precincts from the counties are on</td>
-              </tr>
-              <tr>
-                <th scope="row">FEC (Federal Election Commission)</th>
-                <td data-label="What it's sent">Your congressional races (state, district and election year) and the FEC's ID for each candidate in them, never your address. Also the FEC key Pallot is set up with, which identifies whoever signed up for it at api.data.gov.</td>
-                <td data-label="When">A race or candidate the server hasn't asked about in the last 7 days, if the FEC is on</td>
-              </tr>
+              <tr><th scope="row">US Census geocoder</th><td data-label="Sent">Your address</td><td data-label="Asked again after">30 days</td></tr>
+              <tr><th scope="row">OpenStreetMap Nominatim</th><td data-label="Sent">Your address, only if the Census can't match it</td><td data-label="Asked again after">30 days</td></tr>
+              <tr><th scope="row">Google Geocoding</th><td data-label="Sent">Your address, only if neither can match it, with the server's key</td><td data-label="Asked again after">30 days</td></tr>
+              <tr><th scope="row">Ballotpedia's address search</th><td data-label="Sent">What you type in the address box, once it has a house number and a street</td><td data-label="Asked again after">30 days</td></tr>
+              <tr><th scope="row">Ballotpedia</th><td data-label="Sent">Your address's map location</td><td data-label="Asked again after">24 hours</td></tr>
+              <tr><th scope="row">US Census TIGERweb</th><td data-label="Sent">Your district numbers</td><td data-label="Asked again after">30 days</td></tr>
+              <tr><th scope="row">OpenStreetMap tiles</th><td data-label="Sent">Which squares of the map you look at</td><td data-label="Asked again after">7 days</td></tr>
+              <tr><th scope="row">Texas Secretary of State</th><td data-label="Sent">Your county and election</td><td data-label="Asked again after">1 day</td></tr>
+              <tr><th scope="row">FEC</th><td data-label="Sent">Your congressional races and candidates, with the server's key</td><td data-label="Asked again after">7 days</td></tr>
+              <tr><th scope="row">County map servers</th><td data-label="Sent">Nothing about you; only that someone looked up an address in that county</td><td data-label="Asked again after">7 days</td></tr>
             </tbody>
           </table>
         </div>
-        <p>Whoever runs Pallot can refresh the server's saved copies from the computer it runs on (<code>pallot-cache</code>), which sends the saved requests again: refreshing "Address lookup &amp; districts" re-sends the addresses in the server's copy, refreshing "District map" re-sends the saved district numbers, and refreshing Ballotpedia re-sends the saved locations. What was typed in the address box and the street map's tiles are never sent again this way: OpenStreetMap asks that its tiles only be fetched as they're viewed. Settings can't refresh or clear anything on the server.</p>
-        <p>Seven sources never receive anything about you. The Texas Legislative Council's maps are downloaded whole, and the server finds your State Board of Education district and your election precinct in them and draws their outlines from them: its district map once, and its precinct map on the first lookup and again only when the Council publishes a newer one (the server asks its portal at most once a week, sending nothing about you, if election precincts are on). TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot, and are only fetched again from trackaipac.com, voteforpeace.info or the Texas Ethics Commission when whoever runs Pallot refreshes them. FiftyPlusOne's poll lists cover the whole country and are the same for everyone, so the server downloads them (at most once a day, if Polls is on) and picks out your races itself. The key election dates come from one page on the Texas Secretary of State's website, the same for everyone, which the server downloads at most once a day if the key dates are on. Who holds each seat comes from two public lists, the congress-legislators project's and Open States', each downloaded whole, the same for everyone, at most once a week if Seat holders is on. Nor do the organizations whose endorsement lists come with Pallot: each list is a copy made once, part of Pallot itself, and never fetched. The organizations whose lists Pallot fetches from their websites<span data-endorsements="live"></span> get only a request for the whole public list (for some, after one for the page that hands out the token the list asks for), the same for everyone, which the server sends at most once a week for each list that's on.</p>
-        <p>Each service decides what it keeps of the requests it receives, under its own privacy policy.</p>
+        <p>Each is asked only while it's on in Settings. Everything else is the same for everyone and is downloaded whole: precinct maps, polls, key dates, seat holders, and endorsement lists<span data-endorsements="live"></span>. TrackAIPAC, Vote for Peace and Texas Ethics Commission data come with Pallot.</p>
+        <p>When we refresh saved copies, saved addresses, district numbers and locations are sent again, but never typed text or map tiles.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="direct">
         <h2 id="direct">Straight from your browser</h2>
         <ul>
-          <li><strong>Candidate photos</strong> come from Ballotpedia's image server when Ballotpedia is on. Like any site you load an image from, it sees your internet address. Pallot tells your browser not to say which page the photo is on.</li>
-          <li><strong>Links you open</strong>, such as a candidate's web search, a source's page or a campaign website, go straight from your browser to that site. A web search sends the search engine you chose the candidate's name, office, place and election year. An AI assistant gets the same words as a question, and may keep it in your chat history if you're signed in to it.</li>
-          <li>Everything else, including the pages, scripts and icons, comes from the Pallot server. So do the calendar files of the key dates, which hold the election's dates and links, not your address. The street map's tiles come through the server too, so OpenStreetMap never sees your browser. Leaflet, the program that draws the map, comes with Pallot.</li>
+          <li><strong>Candidate photos</strong> load from Ballotpedia, which sees your internet address.</li>
+          <li><strong>Links you open</strong> go straight to that site. A web search sends the candidate's name, office, place and year; an AI assistant may keep it in your chat history.</li>
         </ul>
+        <p>Everything else, including the map, comes through our server.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="server">
-        <h2 id="server">On the Pallot server</h2>
+        <h2 id="server">On our server</h2>
+        <p>None of this is linked to you: there are no accounts, and lookups are saved without who asked.</p>
         <div class="table-wrap">
           <table class="data-table stack">
-            <thead><tr><th scope="col">What</th><th scope="col">Where</th><th scope="col">Kept until</th></tr></thead>
+            <thead><tr><th scope="col">What</th><th scope="col">Kept</th></tr></thead>
             <tbody>
-              <tr>
-                <th scope="row">Address lookups: each address as sent to the Census, Nominatim or Google, with the answer (map coordinates, county and districts)</th>
-                <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared. After 30 days (1 day if the address wasn't found), the next lookup of that address asks again and replaces the copy. An address that wasn't found is deleted 31 days or more after the lookup, when Pallot next tidies its copies (as it starts, and every 6 hours).</td>
-              </tr>
-              <tr>
-                <th scope="row">Address suggestions: each text sent to Ballotpedia's address search, with the addresses it suggested</th>
-                <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared, or deleted 60 days or more after it was sent (31 if nothing was found), when Pallot next tidies its copies (as it starts, and every 6 hours); sooner, oldest first, once they take more than 64 MB. Before then, typing the same text again after 30 days (1 day if nothing was found) asks again and replaces the copy.</td>
-              </tr>
-              <tr>
-                <th scope="row">Ballotpedia lookups: the location asked about, with its races and candidates</th>
-                <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared. After 24 hours, the next lookup there asks again and replaces the copy.</td>
-              </tr>
-              <tr>
-                <th scope="row">District outlines: each district asked about, with its outline</th>
-                <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared. After 30 days, showing that district's map asks again and replaces the copy.</td>
-              </tr>
-              <tr>
-                <th scope="row">Street map tiles: the squares of the map that were looked at</th>
-                <td data-label="Where"><code>data/cache.sqlite3</code></td>
-                <td data-label="Kept until">Cleared, or deleted 37 days or more after it was fetched, when Pallot next tidies its copies (as it starts, and every 6 hours); sooner, oldest first, once they take more than 512 MB. Before then, looking at the same place after 7 days asks again and replaces the copy.</td>
-              </tr>
-              <tr>
-                <th scope="row">Elections, key election dates, candidates, campaign finance (the FEC's answers and the Texas Ethics Commission's data), polls, the State Board of Education and precinct maps, the counties' precinct lists and maps, the endorsement lists fetched from organizations' websites, and TrackAIPAC's and Vote for Peace's data; nothing about you</th>
-                <td data-label="Where"><code>data/</code></td>
-                <td data-label="Kept until">Refreshed or cleared by whoever runs Pallot</td>
-              </tr>
-              <tr>
-                <th scope="row">The FEC key, if one is set</th>
-                <td data-label="Where">The <code>PALLOT_FEC_API_KEY</code> environment variable, or the <code>.env</code> file in Pallot's folder if whoever runs Pallot put it there. Pallot only reads it and never writes it anywhere.</td>
-                <td data-label="Kept until">Whoever runs Pallot removes it</td>
-              </tr>
-              <tr>
-                <th scope="row">How the last ballot lookup went, for Settings: when, how many requests it sent each source and how old their data was; not the address</th>
-                <td data-label="Where">Memory only</td>
-                <td data-label="Kept until">The next lookup replaces it, or Pallot stops</td>
-              </tr>
-              <tr>
-                <th scope="row">Which sources are on for everyone who hasn't changed them, if whoever runs Pallot changed Pallot's own</th>
-                <td data-label="Where"><code>data/sources.toml</code></td>
-                <td data-label="Kept until">Whoever runs Pallot changes it</td>
-              </tr>
-              <tr>
-                <th scope="row">A log line for each request: the internet address that asked, and the page or API path</th>
-                <td data-label="Where">The window Pallot runs in</td>
-                <td data-label="Kept until">That window is closed; Pallot doesn't save it to a file</td>
-              </tr>
+              <tr><th scope="row">Address lookups</th><td data-label="Kept">Until cleared; not-found ones about a month</td></tr>
+              <tr><th scope="row">Address box text and its suggestions</th><td data-label="Kept">Up to 2 months</td></tr>
+              <tr><th scope="row">Ballotpedia lookups and district outlines</th><td data-label="Kept">Until cleared</td></tr>
+              <tr><th scope="row">Map tiles</th><td data-label="Kept">Up to about 5 weeks</td></tr>
+              <tr><th scope="row">Source data, with nothing about you</th><td data-label="Kept">Until refreshed</td></tr>
+              <tr><th scope="row">Server log: each request's internet address and page, as on any website</th><td data-label="Kept">Only for fixing problems, never to track anyone</td></tr>
             </tbody>
           </table>
         </div>
-        <p><strong>Apart from suggestions and addresses that weren't found, the times above only decide when Pallot asks a source again. They don't delete anything:</strong> an address that was found stays in the server's copy until it's cleared, as the copy to use when the Census doesn't answer.</p>
-        <p>Only whoever runs Pallot can clear it, on the computer Pallot runs on, since anyone who opens Pallot can open Settings. <code>pallot-cache rebuild --delete-only --only geocoding suggestions ballotpedia</code> deletes every saved address lookup, everything saved from the address box and Ballotpedia's saved lookups, without sending anything again; without <code>--only</code>, it deletes everything saved from every source. Deleting overwrites what it deletes, so it can't be read back from the files. They can also stop Pallot and delete its data folder (<code>data/</code>, unless <code>PALLOT_DATA_DIR</code> points elsewhere). The README's "Keeping the cache" explains it.</p>
-        <p>Addresses travel in the body of requests, which isn't logged. If something goes wrong, though, an error report in the log can include the request Pallot was making, address included.</p>
+        <p>Addresses aren't written to the log, though an error report can include one.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="changes">
-        <h2 id="changes">Changes to this page</h2>
-        <p>If Pallot starts sending or keeping something new, this page will say so, and the date at the top will change.</p>
+        <h2 id="changes">Changes</h2>
+        <p>If Pallot starts sending or keeping something new, this page and its date will change.</p>
       </section>
     </main>
   </div>

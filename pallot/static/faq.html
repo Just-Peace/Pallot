@@ -42,7 +42,7 @@
         <details class="faq" id="local-races">
           <summary>Why don't I see my city council or school board races?</summary>
           <div class="faq-body">
-            <p>Those races come from Ballotpedia, which is off until you turn it on under Sources in <a href="settings.html">Settings</a>. Its ballot is an unofficial endpoint meant for personal use, so Pallot doesn't ask it unless you choose to. While it's off, your ballot says so above the races, and the Texas Secretary of State's ballot still has every federal, state, district and county race. Your switches in Settings are kept in this browser, so turning a source on or off changes only your ballot, not anyone else's using the same Pallot.</p>
+            <p>Those races come from Ballotpedia, which is off until you turn it on under Sources in <a href="settings.html">Settings</a>. Its ballot is an unofficial endpoint meant for personal use, so Pallot doesn't ask it unless you choose to. While it's off, your ballot says so above the races, and the Texas Secretary of State's ballot still has every federal, state, district and county race.</p>
           </div>
         </details>
 
@@ -50,14 +50,14 @@
           <summary>Why does Pallot suggest addresses as I type?</summary>
           <div class="faq-body">
             <p>To save typing and catch misspellings. Once you've typed a house number and a few letters of the street, Pallot asks Ballotpedia's address search for matching Texas addresses. Picking one only fills in the box: press "Show my ballot" as usual.</p>
-            <p>What you type is sent to Ballotpedia through the Pallot server, with "tx" added so the search looks in Texas. The server keeps a copy so the same text isn't sent twice. To stop that, turn off "Address suggestions" in <a href="settings.html">Settings</a>; your browser's own address autofill then works as before. <a href="privacy.html#lookups">Privacy</a> has the details.</p>
+            <p>What you type is sent to Ballotpedia through the Pallot server; <a href="privacy.html#lookups">Privacy</a> says exactly what and how long it's kept. To stop that, turn off "Address suggestions" in <a href="settings.html">Settings</a>; your browser's own address autofill then works as before.</p>
           </div>
         </details>
 
         <details class="faq">
           <summary>Is this my official ballot?</summary>
           <div class="faq-body">
-            <p>No. Pallot is an unofficial helper, and it can be wrong or miss something, for example when a source hasn't caught up with a late change. Check the official sample ballot from your county elections office before you vote.</p>
+            <p>No. Pallot is an unofficial helper (see <a href="about.html#isnt">what it isn't</a>), and it can miss something, for example when a source hasn't caught up with a late change. Check the official sample ballot from your county elections office before you vote.</p>
           </div>
         </details>
 
@@ -126,8 +126,8 @@
           <div class="faq-body">
             <p>The map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts and of your election precinct, and a pin at your address, which the map opens centered on, close enough to see your precinct's streets. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own color and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
             <p>Drag the map to move it, and zoom with + and −, or with the scroll wheel once you've clicked the map, so scrolling the page never zooms it by accident. On a phone, use two fingers to move or zoom it; one finger scrolls the page.</p>
-            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. Pallot sends it only each district's number, never your address. The State Board of Education outline comes from the Texas Legislative Council's map, which Pallot already keeps. Your election precinct's outline comes from the Council's precinct map, also already kept. The outlines are simplified to about 160 feet, your precinct's to about 16, so if you live near a boundary, go by the numbers, which come from the full maps.</p>
-            <p>The street map comes from OpenStreetMap. The Pallot server asks for the map tiles of the area you look at, which shows OpenStreetMap roughly where your address is, and keeps them for a week, so looking again asks nothing. Turn "Street map" off in <a href="settings.html">Settings</a> to see the outlines alone, or "District map" off to leave out the Census's outlines.</p>
+            <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. The State Board of Education outline comes from the Texas Legislative Council's map, which Pallot already keeps. Your election precinct's outline comes from the Council's precinct map, also already kept. The outlines are simplified to about 160 feet, your precinct's to about 16, so if you live near a boundary, go by the numbers, which come from the full maps.</p>
+            <p>The street map comes from OpenStreetMap. Neither it nor TIGERweb is sent your address; <a href="privacy.html#lookups">Privacy</a> says what each is sent. Turn "Street map" off in <a href="settings.html">Settings</a> to see the outlines alone, or "District map" off to leave out the Census's outlines.</p>
             <p>The map starts folded (open in the Detailed view): click its heading to open it, as with a race, and again to fold it; this browser remembers which you chose. While the map is folded, nothing is fetched for it.</p>
           </div>
         </details>
@@ -196,14 +196,14 @@
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
             <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place, with the search engine or AI assistant you pick in <a href="settings.html">Settings</a>.</p>
-            <p>Sources write names differently, so Pallot matches them by name, with the seat and party to confirm. A <strong>?</strong> means a source only likely matched the candidate, for example when only the first initial agrees ("Tom" and "Thomas"), so check it. "Incumbent" comes from the state's filing, from Ballotpedia when it matches the candidate exactly in the same race, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
+            <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Matched" and "Likely match"</a>). "Incumbent" comes from the state's filing, from Ballotpedia when it matches the candidate exactly in the same race, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
           </div>
         </details>
 
         <details class="faq">
           <summary>Does Pallot recommend candidates?</summary>
           <div class="faq-body">
-            <p>No. It puts what its sources say side by side. Your picks and notes are yours alone, and they stay in your browser.</p>
+            <p>No. It puts what its sources say side by side (see <a href="about.html#isnt">what it isn't</a>). Pick by rule only picks by <a href="#pick-by-rule">a rule you set</a>.</p>
           </div>
         </details>
 
@@ -219,7 +219,7 @@
         <details class="faq" id="matches">
           <summary>What's the difference between "Matched" and "Likely match"?</summary>
           <div class="faq-body">
-            <p>Sources spell names differently, so Pallot matches a candidate across sources by name and uses the seat and party to confirm it. "Matched" means the source's entry is this candidate. "Likely match" means it's probably the same person but not certain, so check it. A "?" marks it: on the source's tab in Details, and on the candidate's row, on that source's first chip or its link (or on the Details button, if the source has nothing on the row, or its line is hidden). When a match is ambiguous, Pallot leaves it out rather than guess.</p>
+            <p>Sources spell names differently, so Pallot matches a candidate across sources by name and uses the seat and party to confirm it. "Matched" means the source's entry is this candidate. "Likely match" means it's probably the same person but not certain, for example when only the first initial agrees ("Tom" and "Thomas"), so check it. A "?" marks it: on the source's tab in Details, and on the candidate's row, on that source's first chip or its link (or on the Details button, if the source has nothing on the row, or its line is hidden). When a match is ambiguous, Pallot leaves it out rather than guess.</p>
           </div>
         </details>
 
@@ -250,12 +250,12 @@
           </div>
         </details>
 
-        <details class="faq">
+        <details class="faq" id="fresh">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. Address suggestions, and addresses that weren't found, are no use as an old copy, so Pallot deletes them the first time it starts once they've been expired for 30 days.</p>
-            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when whoever runs Pallot refreshes them; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
-            <p>Settings shows how old each source's copy is, but can't fetch it again: anyone who opens Pallot can open Settings, so only whoever runs Pallot can, on the computer it runs on (the README's "Keeping the cache").</p>
+            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
+            <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when we refresh them; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
+            <p>Settings shows how old each source's copy is. Only we can fetch a copy again early, on the server.</p>
           </div>
         </details>
 
@@ -328,7 +328,7 @@
 
             <h3>How fresh it is</h3>
             <ul>
-              <li>Pallot keeps the FEC's answers for 7 days, then asks again. Whoever runs Pallot can have it ask right away.</li>
+              <li>Pallot keeps the FEC's answers for 7 days, then asks again. We can have it ask right away.</li>
               <li>A report shows up in the FEC's API once the FEC has processed it, so the newest one may not be counted yet. The "reports through" date says which report the figures reach.</li>
             </ul>
 
@@ -344,7 +344,7 @@
         <details class="faq" id="tec-money">
           <summary>How are the Texas Ethics Commission figures put together?</summary>
           <div class="faq-body">
-            <p>The Texas Ethics Commission publishes every campaign finance report filed with it as one download (about 1 GB), updated nightly. Pallot boils it down to a much smaller summary, which comes with Pallot and is rebuilt only when whoever runs Pallot refreshes it. Settings shows the date of the summary and the date its money starts from.</p>
+            <p>The Texas Ethics Commission publishes every campaign finance report filed with it as one download (about 1 GB), updated nightly. Pallot boils it down to a much smaller summary, which comes with Pallot and is rebuilt only when we refresh it. Settings shows the date of the summary and the date its money starts from.</p>
 
             <h3>Which candidates</h3>
             <ul>
@@ -384,7 +384,7 @@
               <li>Texas has no contribution limits for most state offices, so one donor can give a lot; judicial races do have limits.</li>
               <li>Donors are added up by name as written: "Bob Smith" and "Robert Smith" in the same state are two donors, and two different people with the same name in the same state are one.</li>
               <li>The Texas Ethics Commission doesn't record whether outside spending supported or opposed the candidate.</li>
-              <li>The summary is only as new as its date in Settings. Reports filed since then appear once whoever runs Pallot refreshes it.</li>
+              <li>The summary is only as new as its date in Settings. Reports filed since then appear once we refresh it.</li>
               <li>Officeholders' personal financial statements aren't online. Each candidate's TEC tab links to how to request one.</li>
             </ul>
           </div>
@@ -412,7 +412,7 @@
             <ul>
               <li>they haven't filed a report yet, or haven't raised or spent enough to have to (a congressional campaign starts reporting to the FEC after $5,000);</li>
               <li>their name is written differently in the reports than on the ballot, and Pallot leaves out a match it isn't sure of;</li>
-              <li>for state races, the Texas Ethics Commission summary is older than their first report, until whoever runs Pallot refreshes it.</li>
+              <li>for state races, the Texas Ethics Commission summary is older than their first report, until we refresh it.</li>
             </ul>
             <p>The "Open FEC" or "Open TEC" link under the money box goes to the source's own search, where you can try other spellings.</p>
           </div>
@@ -428,7 +428,7 @@
         <details class="faq" id="fec-key">
           <summary>Why does the FEC tab show only totals?</summary>
           <div class="faq-body">
-            <p>Pallot is using the FEC's shared demonstration key, which allows only a few requests an hour. Whoever runs Pallot can get a free key from the <a href="https://api.open.fec.gov/developers/" target="_blank" rel="noopener noreferrer">OpenFEC developers page</a>, set it as <code>PALLOT_FEC_API_KEY</code> (in the environment or Pallot's <code>.env</code> file), and restart Pallot. Settings says which key is in use.</p>
+            <p>Pallot is using the FEC's shared demonstration key, which allows only a few requests an hour, so the breakdowns are left out until we set our own. Settings says which key is in use.</p>
           </div>
         </details>
 
@@ -450,19 +450,20 @@
       <section class="faq-group" aria-labelledby="picks">
         <h2 class="group-title" id="picks">Your picks and notes</h2>
 
-        <details class="faq">
-          <summary>Where are my picks and notes saved?</summary>
+        <details class="faq" id="tracking">
+          <summary>Do you track me or keep my picks?</summary>
           <div class="faq-body">
-            <p>Only in this browser. They aren't sent to the Pallot server or anyone else, and they don't follow you to another browser or device. <a href="privacy.html">Privacy</a> has the details.</p>
+            <p>No. There are no accounts, cookies, ads or analytics, and we don't sell anything. Your picks and notes stay in this browser and never reach our server, so we never see how you plan to vote. They don't follow you to another browser or device. <a href="privacy.html">Privacy</a> lists exactly what Pallot sends and keeps.</p>
           </div>
         </details>
 
-        <details class="faq">
+
+        <details class="faq" id="pick-by-rule">
           <summary>Can Pallot pick for me?</summary>
           <div class="faq-body">
             <p>Only by a rule you set. "Pick by rule", at the top of your ballot or in a race's heading, picks the candidates of the parties you choose, and only if they're the incumbent (or not), any endorser you choose endorses them (TrackAIPAC, Vote for Peace's allies or an endorsement list), their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, donors in Texas gave at least a share of their itemized donations, or they lead the polls. It can also skip, and take back the picks of, anyone on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
             <p>A TrackAIPAC, Vote for Peace, endorsement list, money or polls condition counts only in races where Pallot has that information: money in congressional and state races, TrackAIPAC in congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it endorses someone, polls in U.S. Senate, U.S. House and Governor races. So "Democrats who spent under $1 million" still picks the Democrat for county judge. Where more candidates match than a race has seats, the rule leaves the race for you rather than guessing; two candidates tied for the least money is one of those. It picks only the names printed on the ballot, unless you choose the Write-ins chip.</p>
-            <p>Small donations are donations of $200 or less, as a share of everything the campaign raised. For Congress, they're the ones campaigns report to the FEC without listing them one by one. For state offices, they're the donations a campaign didn't list plus the listed ones of $200 or less, since most Texas campaigns list every donation, however small. Texas donors are the share of itemized donations with an address that came from Texas. A candidate's own money is what they gave and lent their own campaign, of everything it raised; it comes from the FEC, so it counts only in congressional races. For Congress, all three need Pallot's FEC key.</p>
+            <p>Small donations, Texas donors and a candidate's own money are counted as for the <a href="#funding">Funding chips</a>, with the share you choose in place of half. A candidate's own money counts only in congressional races.</p>
             <p>The dialog shows only the conditions your ballot has something for. Beside them, it says your rule in words and what it would change, race by race, before anything does, and Apply offers Undo. Reset clears the rule. Your rule stays in this browser, like your picks.</p>
           </div>
         </details>
@@ -486,19 +487,19 @@
         <details class="faq">
           <summary>How do I delete my picks and my address?</summary>
           <div class="faq-body">
-            <p>Under Data in <a href="settings.html">Settings</a>, "Clear my picks &amp; notes" deletes your picks, notes, write-ins and pick rule from this browser, and "Clear browser data" also deletes your remembered address, sources, appearance, search engine and view choices. "Clear picks" at the top of your ballot clears just that election's picks and notes, and "Clear" in a race's heading takes back that race's pick. All of them offer Undo for a few seconds, in case you didn't mean it.</p>
-            <p>The Pallot server also keeps a copy of address lookups and suggestions, which only whoever runs Pallot can clear. <a href="privacy.html#server">Privacy</a> explains how.</p>
+            <p>In <a href="settings.html#data-title">Settings → Clear data</a>, use "Clear my picks &amp; notes", or "Clear browser data" to delete your address too; each says what it removes. "Clear picks" at the top of your ballot clears just that election's picks and notes, and "Clear" in a race's heading takes back that race's pick. All of them offer Undo for a few seconds, in case you didn't mean it.</p>
+            <p>Our server keeps a copy of address lookups and suggestions, with nothing that says who asked. <a href="privacy.html#server">Privacy</a> says for how long.</p>
           </div>
         </details>
       </section>
 
       <section class="faq-group" aria-labelledby="running">
-        <h2 class="group-title" id="running">Running Pallot</h2>
+        <h2 class="group-title" id="running">About Pallot</h2>
 
-        <details class="faq">
-          <summary>Can I share my Pallot with other people?</summary>
+        <details class="faq" id="sharing">
+          <summary>Can I run my own Pallot?</summary>
           <div class="faq-body">
-            <p>Pallot is made to run on your own computer, for you. Settings has no login, so keep it on its default address (127.0.0.1), which only your computer can reach. Its buttons only work from Pallot's own pages, so another website open in your browser can't use them. Ballotpedia's ballot and address search are unofficial endpoints meant for personal use: turn off "Ballotpedia" and "Address suggestions" before you share Pallot with anyone.</p>
+            <p>Yes, it's open source: the <a href="https://github.com/Just-Peace/Pallot" target="_blank" rel="noopener noreferrer">README</a> explains how. Ballotpedia's ballot and address search are unofficial and meant for personal use, so they start off.</p>
           </div>
         </details>
 
