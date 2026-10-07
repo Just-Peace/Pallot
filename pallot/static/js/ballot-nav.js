@@ -6,7 +6,7 @@ import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
-import { syncBoxes } from "./source-cards.js";
+import { syncBoxes, syncLines } from "./source-cards.js";
 import { setViewPref, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks }
@@ -17,7 +17,12 @@ const viewMenu = $("#view-menu");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
-const BOX_SWITCHES = { "show-money": "showMoney", "show-polls": "showPolls" }; // View's checkboxes for the race boxes
+// View's checkboxes for what the races show: checkbox id -> the view switch, and what puts the ballot back to it.
+const SHOW_SWITCHES = {
+  "show-money": ["showMoney", () => syncBoxes("showMoney")],
+  "show-polls": ["showPolls", () => syncBoxes("showPolls")],
+  "show-endorsements": ["showEndorsements", syncLines],
+};
 
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
@@ -188,11 +193,11 @@ export function initNav(context) {
   $("#hide-picked").addEventListener("change", (event) => setHidePicked(event.target.checked));
   $("#collapse-on-pick").checked = viewPref("collapseOnPick");
   $("#collapse-on-pick").addEventListener("change", (event) => setViewPref("collapseOnPick", event.target.checked));
-  for (const [id, setting] of Object.entries(BOX_SWITCHES)) {
+  for (const [id, [setting, apply]] of Object.entries(SHOW_SWITCHES)) {
     $(`#${id}`).checked = viewPref(setting);
     $(`#${id}`).addEventListener("change", (event) => {
       setViewPref(setting, event.target.checked);
-      syncBoxes(setting);
+      apply();
     });
   }
   $("#expand-all").addEventListener("click", () => {

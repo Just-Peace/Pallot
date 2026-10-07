@@ -8,6 +8,7 @@ export const VIEW_DEFAULTS = {
   showMap: false, // the map of your districts, folded at first
   showMoney: false, // each race's money box, folded at first
   showPolls: true, // each race's poll box, open at first
+  showEndorsements: true, // the candidates' Endorsed by and Scorecards lines
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
 };

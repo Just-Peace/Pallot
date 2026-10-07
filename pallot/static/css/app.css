@@ -747,6 +747,13 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 30px; }
 .card-panel .badges { margin: 8px 0; }
+/* a candidate's Endorsed by and Scorecards lines (sourceLines in source-cards.js), each under its heading */
+.cand-lines { margin: 6px 0 0 30px; }
+.cand-lines-body { display: grid; gap: 6px; }
+.badge-line { display: flex; align-items: baseline; gap: 4px 10px; }
+.line-title { flex: none; min-width: 6.5rem; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.badge-line .badges { margin: 0; }
+.lines-toggle:not([hidden]) + .cand-lines-body { margin-top: 6px; }
 .badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 6px; padding: 2px 8px; font-size: 0.78rem;
   font-weight: 600; background: var(--neutral-soft); color: var(--text); }
 a.badge-link { text-decoration: none; }
@@ -1097,7 +1104,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
   .race-status { max-width: none; }
   .cand-actions { margin-left: 30px; }
-  .badges, .note { margin-left: 0; }
+  .badges, .note, .cand-lines { margin-left: 0; }
+  .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
   .breakdown-rows { grid-template-columns: minmax(0, 1fr) max-content; }

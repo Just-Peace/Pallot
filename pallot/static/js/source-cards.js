@@ -1,6 +1,7 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and a tab in Details) without any code change; its
-// ``kind`` decides where: a money card's badges stay in Details, and a money or poll box folds.
+// ``kind`` decides where: endorsements and scorecards each get a line on the row, a profile a
+// link beside Web search, a money card's badges stay in Details, and a money or poll box folds.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, SHORT_DATE, formatDate, percent, plural } from "./format.js";
@@ -36,9 +37,15 @@ export function bar(fraction) {
 
 const isLikely = (card) => card?.match?.confidence === "likely";
 
-// The kinds whose badges stay off the candidate row: a money card's figures are in its race's box.
-const OFF_ROW = new Set(["money"]);
-const rowBadges = (card) => (OFF_ROW.has(card.kind) ? [] : card.badges);
+// The candidate row's lines, one per kind, each under its heading. An endorsement's chip shows
+// just the list's name, since the heading says "Endorsed by".
+const LINES = [
+  { kind: "endorsement", title: "Endorsed by", noun: "endorsement", short: true },
+  { kind: "scorecard", title: "Scorecards", noun: "scorecard" },
+];
+const onLine = (card) => LINES.some((line) => line.kind === card.kind) && card.badges.length > 0;
+// A profile's page (Ballotpedia's), a link in the row's actions.
+const profileUrl = (card) => (card.kind === "profile" ? safeUrl(card.badges[0]?.url) : null);
 
 // The view switch (view.js) that opens or folds a race box of each kind; other boxes always show.
 const FOLDS = { money: "showMoney", polls: "showPolls" };
@@ -50,27 +57,71 @@ export function likelyFlag(title = "Likely match") {
 
 // A badge with a url links to that source's page for the candidate (opens a new tab). On
 // the candidate row it carries its ``card``: the source's name, and for a likely match a
-// note, plus a "?" on the ``first`` of that source's badges.
-function badge(item, card = null, first = false) {
+// note, plus a "?" on the ``first`` of that source's badges. ``label`` shows instead of the
+// badge's text, which then names it and is its tooltip.
+function badge(item, card = null, first = false, label = item.text) {
   const likely = card && isLikely(card);
-  const title = [item.hint, card ? `From ${card.label}` : null, likely ? "Likely match: see Details" : null]
-    .filter(Boolean).join(" · ") || null;
+  const short = label !== item.text;
+  const title = [short ? item.text : null, item.hint, card && !short ? `From ${card.label}` : null,
+    likely ? "Likely match: see Details" : null].filter(Boolean).join(" · ") || null;
   const flag = likely && first ? likelyFlag("Likely match: see Details") : null;
+  const name = short ? `${item.text}${flag ? " (likely match)" : ""}` : null;
   return h("li", {}, safeUrl(item.url)
-    ? extLink(item.url, [item.text, flag, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")],
-        { class: ["badge badge-link", `tone-${item.tone}`], title })
-    : h("span", { class: ["badge", `tone-${item.tone}`], title }, item.text, flag));
+    ? extLink(item.url, [label, flag, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")],
+        { class: ["badge badge-link", `tone-${item.tone}`], title, "aria-label": name && `${name} (opens in a new tab)` })
+    : h("span", { class: ["badge", `tone-${item.tone}`], title, "aria-label": name }, label, flag));
 }
 
-// Highlights from the sources, shown under the candidate's name.
-export function badgeList(candidate) {
-  const items = candidate.cards.flatMap((card) => rowBadges(card).map((b, i) => badge(b, card, i === 0)));
-  return items.length ? h("ul", { class: "badges", "aria-label": "Highlights from sources" }, items) : null;
+let lineIds = 0;
+
+// The candidate's endorsements and scorecards: a line for each kind that has any, a ul labelled
+// by its heading. With the showEndorsements view switch off, one button counts them ("3
+// endorsements · 1 scorecard") and opens them in place, until syncLines(). ``onShow(shown)``
+// hears whether they show, so the Details button can carry their "?" while they're hidden.
+export function sourceLines(candidate, onShow) {
+  const lines = LINES.map((line) => ({ ...line, cards: candidate.cards.filter((card) => card.kind === line.kind && onLine(card)) }))
+    .filter((line) => line.cards.length);
+  if (!lines.length) return null;
+  const id = `lines-${++lineIds}`;
+  const body = h("div", { class: "cand-lines-body", id }, lines.map((line, n) => h("div", { class: "badge-line" },
+    h("span", { class: "line-title", id: `${id}-${n}` }, line.title),
+    h("ul", { class: "badges", "aria-labelledby": `${id}-${n}` },
+      line.cards.flatMap((card) => card.badges.map((b, j) => badge(b, card, j === 0, line.short ? card.label : b.text)))))));
+  const show = (open) => {
+    body.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    onShow(open);
+  };
+  const toggle = h("button", {
+    type: "button", class: "link-btn lines-toggle", "aria-controls": id,
+    on: { click: () => show(body.hidden) },
+  }, lines.map((line) => plural(line.cards.length, line.noun)).join(" · "));
+  const sync = () => {
+    toggle.hidden = viewPref("showEndorsements");
+    show(viewPref("showEndorsements"));
+  };
+  const element = h("div", { class: "cand-lines", on: { "pallot:sync": sync } }, toggle, body);
+  sync();
+  return element;
 }
 
-// The sources that only likely matched the candidate and have no badge on the row to flag it on.
-export function likelyUnflagged(candidate) {
-  return candidate.cards.filter((card) => isLikely(card) && !rowBadges(card).length).map((card) => card.label);
+// Every candidate's lines go back to the showEndorsements switch, opened by hand or not.
+export function syncLines() {
+  for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
+}
+
+// A profile card (Ballotpedia's) is a link in the row's actions, with its "?" for a likely match.
+export function profileLinks(candidate) {
+  return candidate.cards.filter(profileUrl).map((card) => extLink(profileUrl(card),
+    [card.label, isLikely(card) ? likelyFlag("Likely match: see Details") : null, " ↗"],
+    { class: "icon-btn", title: card.badges[0].text }));
+}
+
+// The sources that only likely matched the candidate and have nothing on the row to flag it on
+// (``hidden``: counting their lines, while those are folded away).
+export function likelyUnflagged(candidate, hidden = false) {
+  return candidate.cards.filter((card) => isLikely(card) && !profileUrl(card) && (hidden || !onLine(card)))
+    .map((card) => card.label);
 }
 
 function matchNote(card) {
