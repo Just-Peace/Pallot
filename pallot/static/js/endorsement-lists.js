@@ -3,8 +3,8 @@
 // A page marks the spots with data-endorsements:
 //   "clause", a <span> in a sentence: ", whether A endorses them" or ", which of A and B endorse them";
 //   "live", a <span> in a sentence: " (A and B)", the lists fetched live;
-//   "rows", "credits" or "list", a <template> in a table body or a list, replaced by a row or an
-//     item per list;
+//   "rows", a <template> in a table body, replaced by a row per list;
+//   "list", a <template> in a list, replaced by an item per list;
 //   "none", shown only when there's no list.
 
 import { api } from "./api.js";
@@ -22,14 +22,11 @@ function clause(lists) {
 
 const when = (list) => (list.live ? FETCHED : `as captured on ${captured(list)}`);
 
-const FILL = {
-  rows: (list) => h("tr", {}, h("th", { scope: "row" }, list.label),
-    h("td", {}, `The candidates ${list.organization} endorses, from its list, ${when(list)}`)),
-  credits: (list) => h("li", {}, h("strong", {}, list.label), `: the candidates ${list.organization} endorses, from its `,
-    extLink(list.url, "endorsement list"), `, ${when(list)}.`),
-  list: (list) => h("li", {}, h("strong", {}, list.label), `: ${list.description} `,
-    extLink(list.url, "Its list"), `, ${when(list)}.`),
-};
+const row = (list) => h("tr", {}, h("th", { scope: "row" }, extLink(list.url, list.label)),
+  h("td", {}, list.live ? "Its endorsements, fetched weekly" : `Its endorsements, as of ${captured(list)}`));
+
+const item = (list) => h("li", {}, h("strong", {}, list.label), `: ${list.description} `,
+  extLink(list.url, "Its list"), `, ${when(list)}.`);
 
 function live(lists) {
   const fetched = lists.filter((list) => list.live).map((list) => list.label);
@@ -50,6 +47,7 @@ export async function showEndorsementLists() {
     if (kind === "none") spot.hidden = lists.length > 0;
     else if (kind === "clause") spot.textContent = clause(lists);
     else if (kind === "live") spot.textContent = live(lists);
-    else if (FILL[kind]) spot.replaceWith(...lists.map(FILL[kind]));
+    else if (kind === "rows") spot.replaceWith(...lists.map(row));
+    else if (kind === "list") spot.replaceWith(...lists.map(item));
   }
 }

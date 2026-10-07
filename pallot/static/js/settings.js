@@ -1,6 +1,6 @@
 // The Settings page: the appearance; how much of the ballot shows (view.js); the web search engine; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
-// what the server has saved from each and how the last lookup used it; and Data, which clears what
+// what the server has saved from each and how the last lookup used it; and Clear data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
 // from here. Changes that affect the ballot are marked with markSettingsChanged(), so an open
 // ballot page reloads when the voter goes back to it. It imports page.js first, which draws the
@@ -295,4 +295,6 @@ onReturn(() => {
 showTheme();
 showView();
 initSearchEngine();
-load();
+// The sources render above Clear data once they arrive, so a link to a section below them
+// (settings.html#data-title) lands there only if it's scrolled to again.
+load().then(() => document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView());
