@@ -1,5 +1,5 @@
 // The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees in words and race by race
-// what it would change, then applies it (with Undo) or marks who matches on the ballot. Opened
+// what it would change, then applies it (with Undo). Opened
 // from the strip for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
 
 import { pickLabels } from "./ballot-shared.js";
@@ -8,37 +8,16 @@ import { COUNT, listed, plural } from "./format.js";
 import { icon } from "./icons.js";
 import {
   DEFAULT_RULE, MONEY, WRITE_INS, allRaces, available, ballotParties, describeRule, loadRule, parseAmount, plan, saveRule, scopes,
-  verdicts,
 } from "./pick-rules.js";
 import { showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, marks, renderRaces }
+let page = null; // { ballot, picks, renderRaces }
 const dialog = $("#rules");
 
 export function initRules(context) {
   page = context;
   closeOnBackdrop(dialog);
-}
-
-function setMarking(on) {
-  const rule = loadRule();
-  rule.mark = on;
-  saveRule(rule);
-  page.renderRaces();
-}
-
-export const markingNote = h("p", { class: "notice", hidden: true },
-  "Candidates your rule would pick are marked ✓, and those it skips ✕. ",
-  h("button", { type: "button", class: "link-btn", on: { click: () => openRules() } }, "Change the rule"),
-  " · ",
-  h("button", { type: "button", class: "link-btn", on: { click: () => setMarking(false) } }, "Stop previewing"));
-
-// The marks on the candidates (``page.marks``) from the saved rule, and the note above the races.
-export function syncMarks() {
-  const rule = loadRule();
-  page.marks = rule.mark && page.ballot ? verdicts(page.ballot, rule) : null;
-  markingNote.hidden = !page.marks;
 }
 
 // ---- the controls ---------------------------------------------------------------------
@@ -143,7 +122,7 @@ export function openRules(raceKey = null) {
   $("#rule-scope").focus();
 }
 
-// Draws the dialog for ``rule``, which is saved only by Apply or Preview on my ballot. Reset draws
+// Draws the dialog for ``rule``, which is saved only by Apply. Reset draws
 // it again with the default rule, in the same scope.
 function draw(rule, options, startScope) {
   let scope = startScope;
@@ -221,16 +200,8 @@ function draw(rule, options, startScope) {
     });
   }
 
-  function mark() {
-    rule.mark = true;
-    saveRule(rule);
-    dialog.close();
-    page.renderRaces();
-    showToast("Candidates who match your rule are marked on your ballot.");
-  }
-
   function reset() {
-    draw({ ...structuredClone(DEFAULT_RULE), mark: rule.mark }, options, scope);
+    draw(structuredClone(DEFAULT_RULE), options, scope);
     $("#rule-reset").focus();
   }
 
@@ -346,9 +317,6 @@ function draw(rule, options, startScope) {
         checkRow("Don't replace picks I've already made", rule.keepMine, set((on) => { rule.keepMine = on; })),
         raceDetails)),
     h("div", { class: "details-foot" },
-      h("button", { type: "button", class: "btn with-icon rule-mark-btn", on: { click: mark },
-        title: "Marks who your rule would pick (✓) and skip (✕) on your ballot, without picking anyone" },
-      icon("ballot"), "Preview on my ballot"),
       h("button", { type: "button", class: "btn ghost", on: { click: () => dialog.close() } }, "Cancel"),
       applyButton),
   );
