@@ -385,6 +385,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .setting-row .fine { margin: 0; }
 .setting-row .seg { justify-self: start; }
 .setting-row .seg-option { padding: 6px 16px; font-size: 0.9rem; }
+.view-switches { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 
 .source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 14px 0; }
 .source-row { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
@@ -607,6 +608,11 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
   padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pop); }
 .menu-panel .check { font-size: 0.9rem; }
+.menu-panel .seg { margin: 0 0 10px; }
+.menu-group { margin: 0 0 10px; padding: 0 0 6px; border: 0; border-bottom: 1px solid var(--line); }
+.menu-label { padding: 0; margin: 0 0 2px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); }
+.menu-more { margin: 6px 0 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.85rem; }
 
 /* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
    section stays, for its explanation and its link to the precinct form). */
