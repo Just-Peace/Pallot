@@ -162,8 +162,8 @@ def test_cards_for_a_state_race(tmp_path):
     assert [p.label for p in states.parts] == ["Texas", "Other states"]
     assert [p.label for p in outside.parts] == ["Texans for Jane", "Other Group"] and "doesn't record" in outside.note
     assert card.as_of == "2025-06-30"
-    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0, "small_share": 10.0,
-                            "in_state_share": 80.6}  # small: the $400 unitemized
+    assert card.figures == {"raised": 4000.0, "spent": jane()["totals"]["spent"], "cash": 7000.0, "small_share": 20.0,
+                            "in_state_share": 80.6}  # small: the $400 unitemized and the $400 itemized under $500
     assert card.highlights == []  # under $10,000 raised
 
     comparison = cards.races[rep.key]
