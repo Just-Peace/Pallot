@@ -6,7 +6,7 @@ import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
-import { cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
+import { STILL_LOADING, cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
 import { syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import { bindViewControls, onViewChange, setViewPref, showViewControls, syncSourceNotes, viewPref } from "./view.js";
 
@@ -83,6 +83,18 @@ export function updateProgress() {
     const picked = picks.countPicked(keys);
     element.textContent = maybe ? (picked ? `${picked} picked` : String(keys.length)) : `${picked}/${keys.length}`;
     element.classList.toggle("complete", !maybe && picked === keys.length);
+  }
+}
+
+// While the cards are coming, the strip's bar says so, and Pick by rule and Print, which need
+// them, wait. ``failed``: they won't come, so the bar goes but the two stay off.
+const needCards = [$("#rule-btn"), $("#print-btn")].map((button) => ({ button, title: button.title }));
+
+export function setCardsLoading(waiting, { failed = false } = {}) {
+  $("#cards-loading").hidden = !waiting || failed;
+  for (const { button, title } of needCards) {
+    button.disabled = waiting;
+    button.title = waiting ? STILL_LOADING : title;
   }
 }
 

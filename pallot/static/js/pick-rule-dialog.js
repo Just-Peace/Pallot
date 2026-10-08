@@ -115,7 +115,7 @@ const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, w
 
 // ``raceKey``: the race whose funnel opened it, which is then where the rule applies.
 export function openRules(raceKey = null) {
-  if (!page.ballot) return;
+  if (!page.ballot || page.loadingCards) return; // its conditions are about the cards
   const options = scopes(page.ballot, raceKey);
   draw(loadRule(), options, options[0]);
   if (!dialog.open) dialog.showModal();

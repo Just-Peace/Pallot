@@ -8,20 +8,21 @@ import datetime as dt
 import ipaddress
 import json
 import sqlite3
+import traceback
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Callable, Collection, Mapping
+from typing import Any, AsyncIterator, Callable, Collection, Mapping
 from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.types import Scope
 
 from . import __version__, ics
 from .admin import Admin
-from .ballot import BallotError, Services, build_ballot, election_dates
+from .ballot import BallotError, Services, election_dates, start_ballot
 from .config import Config, load_config
 from .http_cache import UpstreamError
 from .models import Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, SourcesOverview, SuggestResult
@@ -34,6 +35,12 @@ from .version import short_commit
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+NDJSON = "application/x-ndjson"
+
+
+def _line(ballot: Ballot, *, done: bool) -> bytes:
+    """One line of the streamed ballot."""
+    return b'{"done":' + (b"true" if done else b"false") + b',"ballot":' + ballot.model_dump_json().encode() + b"}\n"
 
 
 def _hostname(host: str) -> str:
@@ -141,10 +148,11 @@ def create_app(
             app.state.admin = Admin(svc)
             app.state.warm_up = warming = asyncio.create_task(warm_up(svc))
             pruning = asyncio.create_task(keep_pruning(svc))
+            app.state.finishing = finishing = set()  # streamed ballots still adding their cards
             try:
                 yield
             finally:
-                for task in (warming, pruning):
+                for task in (warming, pruning, *finishing):
                     task.cancel()
                     with contextlib.suppress(asyncio.CancelledError):
                         await task
@@ -251,11 +259,32 @@ def create_app(
         return SuggestResult(enabled=True, suggestions=found)
 
     @app.post("/api/ballot", response_model=Ballot)
-    async def ballot(body: BallotRequest, request: Request) -> Ballot:
+    async def ballot(body: BallotRequest, request: Request) -> Any:
+        """The ballot. A page that accepts NDJSON gets it in two lines: without cards as soon as the
+        races are known (``done: false``), then whole (``done: true``), or ``{"error"}`` instead."""
         try:
-            return await build_ballot(services(request), body, chosen(request))
+            builder = await start_ballot(services(request), body, chosen(request))
         except BallotError as exc:
             raise HTTPException(exc.status, exc.message) from exc
+        if NDJSON not in request.headers.get("accept", ""):
+            return await builder.finish()
+        first = _line(builder.ballot, done=False)  # before finish() adds the cards to the same races
+        # Started here, so its calls count in this lookup's CallStats; it runs on if the voter leaves.
+        finishing = asyncio.create_task(builder.finish())
+        request.app.state.finishing.add(finishing)
+        finishing.add_done_callback(request.app.state.finishing.discard)
+
+        async def lines() -> AsyncIterator[bytes]:
+            yield first
+            try:
+                done = await asyncio.shield(finishing)
+            except Exception:
+                traceback.print_exc()
+                yield json.dumps({"error": "Couldn't load money, polls and endorsements."}).encode() + b"\n"
+                return
+            yield _line(done, done=True)
+
+        return StreamingResponse(lines(), media_type=NDJSON, headers={"X-Accel-Buffering": "no"})
 
     @app.get("/api/sources", response_model=SourcesOverview)
     def sources(request: Request) -> SourcesOverview:

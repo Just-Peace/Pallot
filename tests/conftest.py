@@ -584,6 +584,15 @@ def get_ballot(client: TestClient, address: str = "capitol", **extra: Any) -> di
     return response.json()
 
 
+def stream_ballot(client: TestClient, address: str = "capitol", **extra: Any) -> list[dict[str, Any]]:
+    """The lines of the ballot as the page asks for it (NDJSON)."""
+    response = client.post("/api/ballot", json={"address": ADDRESSES.get(address, address), **extra},
+                           headers={"Accept": "application/x-ndjson"})
+    assert response.status_code == 200, response.text
+    assert response.headers["content-type"].startswith("application/x-ndjson")
+    return [json.loads(line) for line in response.text.splitlines()]
+
+
 def last_use(client: TestClient, source_id: str) -> dict[str, Any] | None:
     """How the last lookup used a source, as the Settings page shows it."""
     return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == source_id)["last_use"]
