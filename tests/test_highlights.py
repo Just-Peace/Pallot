@@ -42,11 +42,11 @@ def test_a_small_campaign_gets_none(raised, shown):
 def test_the_hints_give_the_figure():
     small, home, own = highlights({"raised": 1_200_000.0, "small_share": 50.4, "in_state_share": 62.0, "self_share": 75.2},
                                   state="Texas", credit="FEC, 2025–26")
-    assert small.hint == "50.4% of the $1.2M raised came from donations of $200 or less (FEC, 2025–26)"
+    assert small.hint == "50.4% of the $1.2M raised came from donations under $500 (FEC, 2025–26)"
     assert home.hint == "62% of itemized donations from individuals with an address came from Texas (FEC, 2025–26)"
     assert own.hint == "75% of the $1.2M raised was the candidate's own gifts and loans (FEC, 2025–26)"
     [large] = highlights({"raised": 1_200_000.0, "small_share": 20.0}, state="Texas", credit="FEC, 2025–26")
-    assert large.hint == "20% of the $1.2M raised came from donations of $200 or less (FEC, 2025–26)"
+    assert large.hint == "20% of the $1.2M raised came from donations under $500 (FEC, 2025–26)"
 
 
 def test_fec_in_state_share_leaves_out_donors_without_a_state():

@@ -45,7 +45,7 @@ def highlights(figures: dict[str, float], *, state: str, credit: str) -> list[Ba
     chips: list[Badge | None] = []
     if (small := figures.get("small_share")) is not None:
         chips.append(_sides(small, "small donors", "large donations",
-                            f"{{}} of the {money_short(raised)} raised came from donations of $200 or less", credit))
+                            f"{{}} of the {money_short(raised)} raised came from donations under $500", credit))
     if (home := figures.get("in_state_share")) is not None:
         chips.append(_sides(home, f"{state} donors", "out-of-state donors",
                             f"{{}} of itemized donations from individuals with an address came from {state}", credit))

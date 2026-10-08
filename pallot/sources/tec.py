@@ -413,12 +413,12 @@ def _in_state(filer: dict[str, Any]) -> float | None:
 
 
 def _small(filer: dict[str, Any], raised: float) -> float | None:
-    """The share of what was raised in donations of $200 or less, in percent: the unitemized ones
-    and the itemized ones in the smallest size bucket, as the FEC's small donations are."""
+    """The share of what was raised in donations under $500, in percent: the unitemized ones and
+    the itemized ones in the two smallest size buckets, as the FEC's small donations are."""
     sizes = _bucketed(filer)
     if sizes is None or not raised:
         return None
-    small = ((filer.get("totals") or {}).get("unitemized") or 0) + ((sizes[0].get("amount") or 0) if sizes else 0)
+    small = ((filer.get("totals") or {}).get("unitemized") or 0) + sum(size.get("amount") or 0 for size in sizes[:2])
     return round(100 * small / raised, 1)
 
 
