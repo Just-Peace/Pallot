@@ -51,7 +51,8 @@ export function extLink(url, label, props = {}) {
 }
 
 // Text that may contain markdown-style [label](url) links (TrackAIPAC notes do). Only full
-// URLs become links: a bare path would resolve against Pallot itself.
+// URLs and Pallot's own settings.html#switch links become links: any other bare path would
+// resolve against Pallot itself.
 export function linkedText(text) {
   const parts = [];
   const pattern = /\[([^\]]+)\]\(([^)\s]+)\)/g;
@@ -59,7 +60,9 @@ export function linkedText(text) {
   let match;
   while ((match = pattern.exec(text))) {
     const [, label, url] = match;
-    parts.push(text.slice(last, match.index), /^(https?:\/\/|mailto:)/i.test(url) ? extLink(url, label) : label);
+    const own = /^settings\.html#[a-z0-9-]+$/.test(url);
+    parts.push(text.slice(last, match.index),
+      own ? h("a", { href: url }, label) : /^(https?:\/\/|mailto:)/i.test(url) ? extLink(url, label) : label);
     last = pattern.lastIndex;
   }
   parts.push(text.slice(last));

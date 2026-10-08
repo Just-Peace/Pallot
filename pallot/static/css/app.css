@@ -779,7 +779,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .cand-grid .cand-sub { margin: 0; }
 .cand-grid > .cand-profile { grid-area: profile; justify-self: start; }
 .cand-grid > .cand-actions { grid-area: actions; margin-left: 0; }
-.icon-btn.profile-btn { padding: 2px 10px; font-size: 0.8rem; color: var(--accent); border-color: var(--line-strong); }
+.icon-btn.profile-btn { padding: 1px 9px; font-size: 0.76rem; line-height: 1.3; background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.icon-btn.profile-btn:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-contrast); }
 
 .avatar { width: 38px; height: 38px; border-radius: 50%; flex: none; object-fit: cover; background: var(--neutral-soft);
   color: var(--muted); display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
