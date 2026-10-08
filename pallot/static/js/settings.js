@@ -347,4 +347,9 @@ showBanList();
 initSearchEngine();
 // The sources render above Clear data once they arrive, so a link to a section below them
 // (settings.html#data-title) lands there only if it's scrolled to again.
-load().then(() => document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView());
+load().then(() => {
+  const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  target?.closest("details")?.setAttribute("open", "");
+  target?.scrollIntoView({ block: "center" });
+  if (target?.matches("input")) target.focus();
+});

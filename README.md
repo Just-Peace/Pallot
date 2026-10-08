@@ -263,7 +263,7 @@ The **Settings** page, linked from the left pane, has six sections: **Ballot vie
 
 Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).
 
-Ballotpedia and Vote for Peace start off. Turn Ballotpedia on to add city council, school board and special district races (the ballot says so while it's off), and Vote for Peace to add its Allies and Opposed. When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
+Ballotpedia and Vote for Peace start off. Turn Ballotpedia on to add city council, school board and special district races (the ballot says so while it's off, with a link straight to its switch in Settings), and Vote for Peace to add its Allies and Opposed. When you go back to your ballot after changing a setting, it reloads with the new one. That includes a ballot kept by the Back button or left open in another tab. With Texas SOS off, the ballot comes entirely from Ballotpedia.
 
 ### Which sources start on
 
