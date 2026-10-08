@@ -333,27 +333,66 @@ export function raceMoney(race, onCompare = null) {
   });
 }
 
+// A card's Funding chips, badges and facts, as cardPanel() and moneyPanel() show them.
+const cardSummary = (card) => [
+  card.highlights?.length
+    ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
+        h("ul", { class: "badges", "aria-label": "Funding" }, card.highlights.map((b) => badge(b))))
+    : null,
+  card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
+  card.facts.length
+    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
+    : null,
+];
+const cardQuotes = (card) => card.quotes.length
+  ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
+  : null;
+const cardLinks = (card) => card.links.length
+  ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label))))
+  : null;
+
 export function cardPanel(card) {
   return h(
     "div",
     { class: "card-panel" },
     card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
-    card.highlights?.length
-      ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
-          h("ul", { class: "badges", "aria-label": "Funding" }, card.highlights.map((b) => badge(b))))
-      : null,
-    card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
-    card.facts.length
-      ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
-      : null,
-    card.quotes.length
-      ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
-      : null,
+    cardSummary(card),
+    cardQuotes(card),
     (card.breakdowns || []).map((b) => breakdownBlock(b)),
-    card.links.length ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label)))) : null,
+    cardLinks(card),
     sourceLine(card),
   );
+}
+
+// A box on a Details tab that folds to its summary (its name, then ``extra``, such as a "?" or
+// chips) when the voter clicks it, open at first: the Profile, Issues, Endorsements and money tabs
+// are made of them.
+export function foldSection(name, extra, body) {
+  return h("details", { class: "source-section", open: true },
+    h("summary", {}, h("span", { class: "source-section-name" }, name), extra),
+    h("div", { class: "section-body" }, body));
+}
+
+// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Ballotpedia's
+// profile, a section each with its whole card.
+export function profilePanel(cards) {
+  return h("div", { class: "card-panel profile" },
+    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card))));
+}
+
+// A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
+// in a section of its own, then its links and where it comes from.
+export function moneyPanel(card) {
+  const summary = cardSummary(card).filter(Boolean);
+  return h("div", { class: "card-panel money" },
+    card.description ? h("p", { class: "muted" }, card.description) : null,
+    matchNote(card),
+    summary.length ? foldSection("Totals", null, summary) : null,
+    cardQuotes(card),
+    (card.breakdowns || []).map((b) => foldSection(b.title, null, breakdownRows(b))),
+    cardLinks(card),
+    sourceLine(card));
 }
 
 // A chip's words beside its source's name: "Endorsed by CAIR Action" is "Endorsed", "TrackAIPAC
@@ -371,12 +410,10 @@ const side = (card) => Math.min(2, ...card.badges.map((b) => SIDE_ORDER[b.tone] 
 
 export function endorsementsPanel(cards) {
   const sorted = [...cards].sort((a, b) => side(a) - side(b));
-  const section = (card) => h("details", { class: "source-section", open: true },
-    h("summary", {},
-      h("span", { class: "source-section-name" }, card.label),
-      isLikely(card) ? likelyFlag() : null,
-      card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card)))),
-    cardPanel(card));
+  const section = (card) => foldSection(card.label, [
+    isLikely(card) ? likelyFlag() : null,
+    card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
+  ], cardPanel(card));
   return h("div", { class: "card-panel endorsements" },
     h("p", { class: "muted" }, plural(cards.length, "endorsement")),
     sorted.map(section));
