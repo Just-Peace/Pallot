@@ -13,11 +13,13 @@ import pytest
 from fastapi.testclient import TestClient
 
 from bundles import registry, store
+from bundles import sos as sos_bundle
 from bundles.__main__ import main
 from bundles.entry import Bundle, BundleError
-from bundles.refresh import refresh
+from bundles.refresh import BUILD_INTERVAL, refresh
 from pallot.config import DAY, PROJECT_DIR, Config, Ttls
 from pallot.http_cache import RequestSpec
+from pallot.services import MIN_INTERVAL
 
 from .conftest import FEC_KEY, TODAY, get_ballot
 
@@ -140,6 +142,77 @@ def test_old_sos_answers_are_asked_again_by_their_own_lifetimes(tmp_path, upstre
     assert not goelect_calls(upstream, "getAllRegions") and not goelect_calls(upstream, "getPoliticalParties")
 
 
+def build_ballot_orders(tmp_path):
+    [outcome] = refresh(["sos_ballot_order"], data_dir=tmp_path / "bundles", config=Config(data_dir=tmp_path / "data"),
+                        today=lambda: TODAY, now=NOW, min_interval={})
+    return outcome
+
+
+def ballot_order_key(answer) -> tuple[int, int]:
+    return answer["request"]["json"]["electionId"], answer["request"]["json"]["countyId"]
+
+
+def test_every_published_ballot_order_is_bundled_apart_from_the_statewide_data(tmp_path, upstream):
+    outcome = build_ballot_orders(tmp_path)
+    regions = len(json.loads((PROJECT_DIR / "tests" / "fixtures" / "sos_regions.json").read_text()))
+    assert outcome.status == "updated" and outcome.counts["ballot_orders"] == 2  # the general's, in Harris and Travis
+    assert len(goelect_calls(upstream, "getCandidateBallotOrder")) == outcome.counts["elections"] * regions
+    answers = store.load("sos_ballot_order", tmp_path / "bundles").answers
+    assert sorted(map(ballot_order_key, answers)) == [(53815, 101), (53815, 227)]  # empty ones are asked live
+    entry = next(e for e in registry.BUNDLES if e.name == "sos_ballot_order")
+    assert {entry.ttl(Ttls(), RequestSpec(**answer["request"])) for answer in answers} == {2 * DAY}
+    assert build_sos(tmp_path).status == "updated"
+    assert not any("getCandidateBallotOrder" in answer["request"]["url"]
+                   for answer in store.load("sos", tmp_path / "bundles").answers)
+    assert set(store.read_meta(tmp_path / "bundles")) == {"sos", "sos_ballot_order"}
+
+
+def test_ballot_orders_stop_at_the_first_refusal_and_write_nothing(tmp_path, upstream):
+    upstream.ballot_order_status = 403
+    outcome = build_ballot_orders(tmp_path)
+    assert outcome.status == "failed" and "ballot orders" in outcome.detail
+    assert len(goelect_calls(upstream, "getCandidateBallotOrder")) == 1
+    assert not (tmp_path / "bundles").exists()
+
+
+def test_a_county_texas_sos_errs_on_is_left_out_up_to_a_limit(tmp_path, upstream):
+    upstream.ballot_orders_down = {(53815, 227)}
+    outcome = build_ballot_orders(tmp_path)
+    assert outcome.status == "updated" and outcome.counts["server_errors"] == 1
+    assert [ballot_order_key(a) for a in store.load("sos_ballot_order", tmp_path / "bundles").answers] == [(53815, 101)]
+    upstream.ballot_orders_down = {(66618, county) for county in range(1, sos_bundle.MAX_SERVER_ERRORS + 2)}
+    failed = build_ballot_orders(tmp_path)
+    assert failed.status == "failed" and "HTTP 500" in failed.detail
+
+
+def test_a_build_asks_texas_sos_a_request_a_second_and_a_lookup_unthrottled():
+    assert BUILD_INTERVAL["sos"] == 1.0 and "sos" not in MIN_INTERVAL
+
+
+def test_a_lookup_with_both_sos_bundles_asks_texas_sos_nothing(tmp_path, upstream, make_app):
+    general = json.loads((PROJECT_DIR / "tests" / "fixtures" / "sos_ballot_53815_227.json").read_text())
+    upstream.ballot_orders = {(66618, 227): general, (66734, 227): general}  # every election's published
+    build_sos(tmp_path)
+    build_ballot_orders(tmp_path)
+    upstream.calls.clear()
+    with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
+        ballot = get_ballot(client)
+        notice = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["notice"]
+    assert ballot["races"] and not goelect_calls(upstream)
+    answers = sum(len(store.load(name, tmp_path / "bundles").answers) for name in ("sos", "sos_ballot_order"))
+    assert notice.startswith(f"Came with {answers:,} answers, checked ")
+
+
+def test_an_unpublished_ballot_order_is_still_asked_live(tmp_path, upstream, make_app):
+    outcome = build_ballot_orders(tmp_path)
+    build_sos(tmp_path)
+    upstream.calls.clear()
+    with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
+        get_ballot(client)
+    asked = goelect_calls(upstream)
+    assert asked == goelect_calls(upstream, "getCandidateBallotOrder") and len(asked) == outcome.counts["elections"] - 1
+
+
 def fake(source: str, cadence: str, built: list[str], fail: bool = False) -> Bundle:
     """A source whose builder stores one answer in the throwaway cache, as a request would."""
     async def build_it(ctx):
@@ -197,13 +270,16 @@ def test_every_bundle_ships_with_pallot_and_has_a_lifetime():
     ignored = [line.strip() for line in (PROJECT_DIR / ".dockerignore").read_text().splitlines()]
     assert "/data" in ignored and not any(line.startswith(("bundles", "data", "**/data")) for line in ignored)
     files = {path.stem for path in store.PACKAGE_DATA_DIR.glob("*.json")} - {"meta"}
-    sources = {entry.source for entry in registry.BUNDLES}
-    assert files <= sources and set(store.read_meta(store.PACKAGE_DATA_DIR)) <= sources
+    names = [entry.name for entry in registry.BUNDLES]
+    assert len(set(names)) == len(names)
+    assert files <= set(names) and set(store.read_meta(store.PACKAGE_DATA_DIR)) <= set(names)
     for entry in registry.BUNDLES:
         if entry.lifetime is None:
-            assert isinstance(getattr(Ttls(), f"{entry.source}_bundle"), int)
-        if (store.PACKAGE_DATA_DIR / f"{entry.source}.json").exists():
-            loaded = store.load(entry.source)
+            assert isinstance(getattr(Ttls(), f"{entry.name}_bundle"), int)
+        if (store.PACKAGE_DATA_DIR / f"{entry.name}.json").exists():
+            loaded = store.load(entry.name)
             assert loaded.answers and loaded.checked_at
-            assert all(entry.ttl(Ttls(), RequestSpec(**answer["request"])) >= DAY for answer in loaded.answers)
-            assert store.answers_hash(loaded.answers) == store.read_meta(store.PACKAGE_DATA_DIR)[entry.source]["answers_hash"]
+            for answer in loaded.answers:
+                spec = RequestSpec(**answer["request"])
+                assert entry.ttl(Ttls(), spec) >= DAY and entry.wants(spec, answer["value"])
+            assert store.answers_hash(loaded.answers) == store.read_meta(store.PACKAGE_DATA_DIR)[entry.name]["answers_hash"]

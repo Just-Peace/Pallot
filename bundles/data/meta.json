@@ -16,6 +16,15 @@
    "elections": 3,
    "last_checked": "2026-10-08T19:47:19+00:00",
    "last_refresh": "2026-10-08T19:47:19+00:00"
+  },
+  "sos_ballot_order": {
+   "answers": 254,
+   "answers_hash": "2d7ec4b29217c18ab3874acf5bbc3cefc8e3dafc7ac127fd06c013e3f4aee45f",
+   "ballot_orders": 254,
+   "elections": 3,
+   "last_checked": "2026-10-08T20:03:40+00:00",
+   "last_refresh": "2026-10-08T20:03:40+00:00",
+   "server_errors": 0
   }
  }
 }

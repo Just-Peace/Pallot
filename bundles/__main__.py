@@ -1,4 +1,4 @@
-"""CLI: pallot-bundle refresh [--only SOURCE …] [--due] [--force] [--dry-run] [--data-dir DIR]"""
+"""CLI: pallot-bundle refresh [--only BUNDLE …] [--due] [--force] [--dry-run] [--data-dir DIR]"""
 
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="pallot-bundle")
     sub = parser.add_subparsers(dest="command", required=True)
     cmd = sub.add_parser("refresh", help="ask each source what a lookup would, and update its bundle if it changed")
-    cmd.add_argument("--only", nargs="+", metavar="SOURCE", choices=[entry.source for entry in BUNDLES],
-                     help="just these sources: " + ", ".join(entry.source for entry in BUNDLES))
+    cmd.add_argument("--only", nargs="+", metavar="BUNDLE", choices=[entry.name for entry in BUNDLES],
+                     help="just these bundles: " + ", ".join(entry.name for entry in BUNDLES))
     cmd.add_argument("--due", action="store_true", help="skip a source checked more recently than its cadence (daily, weekly)")
     cmd.add_argument("--force", action="store_true", help="write the answers even if nothing changed")
     cmd.add_argument("--dry-run", action="store_true", help="report what would change, write nothing")

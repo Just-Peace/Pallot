@@ -1,5 +1,5 @@
-"""On-disk layout: data/<source>.json ({"answers": [{"request", "value"}]}, one answer per line) and
-data/meta.json ({"schema_version", "sources": {<source>: {"last_refresh", "last_checked", "answers_hash", counts}}})."""
+"""On-disk layout: data/<name>.json ({"answers": [{"request", "value"}]}, one answer per line) and
+data/meta.json ({"schema_version", "sources": {<name>: {"last_refresh", "last_checked", "answers_hash", counts}}})."""
 
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ SCHEMA_VERSION = 1
 
 @dataclass(frozen=True)
 class Loaded:
-    """One source's bundled answers, and when they were last checked (epoch seconds)."""
+    """One bundle's answers, and when they were last checked (epoch seconds)."""
 
-    source: str
+    source: str  # the bundle's name, as loaded; its HttpCache source once seeded (registry.seed)
     checked_at: float | None
     answers: list[dict[str, Any]]  # {"request": RequestSpec's fields, "value": the source's answer}
 
@@ -79,8 +79,8 @@ def request_order(answer: dict[str, Any]) -> tuple[Any, ...]:
             json.dumps(request.get("json"), sort_keys=True))
 
 
-def load(source: str, data_dir: Path = PACKAGE_DATA_DIR) -> Loaded:
-    """``source``'s bundle in ``data_dir``; no answers when there's none."""
-    checked = read_meta(data_dir).get(source, {}).get("last_checked")
-    answers = (read_json(data_dir / f"{source}.json", default={}) or {}).get("answers") or []
-    return Loaded(source, datetime.fromisoformat(checked).timestamp() if checked else None, list(answers))
+def load(name: str, data_dir: Path = PACKAGE_DATA_DIR) -> Loaded:
+    """The bundle ``name`` in ``data_dir``; no answers when there's none."""
+    checked = read_meta(data_dir).get(name, {}).get("last_checked")
+    answers = (read_json(data_dir / f"{name}.json", default={}) or {}).get("answers") or []
+    return Loaded(name, datetime.fromisoformat(checked).timestamp() if checked else None, list(answers))
