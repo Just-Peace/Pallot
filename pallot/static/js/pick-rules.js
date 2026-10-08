@@ -8,6 +8,7 @@
 // money in a one-seat race is left too.
 
 import { ballotSections } from "./ballot-shared.js";
+import { isBanned } from "./ban-list.js";
 import { COUNT, DOLLARS_SHORT, either, listed as andList } from "./format.js";
 import { partyName } from "./labels.js";
 import { PICK_RULE, readJson, writeJson } from "./storage.js";
@@ -34,6 +35,7 @@ export const DEFAULT_RULE = {
   small: { on: false, amount: 50 }, // small donations are at least this % of what they raised
   texas: { on: false, amount: 50 }, // donors in Texas gave at least this % of their itemized donations
   leads: false,
+  banned: true, // on the voter's ban list (ban-list.js)
   watchlist: false,
   peaceOpposed: false, // Vote for Peace marks them Opposed
   lobby: { on: false, amount: 0 },
@@ -157,6 +159,7 @@ export function available(races) {
     texas: has("in_state_share"),
     selfFunded: has("self_share"),
     polls: has("poll"),
+    banned: candidates.some(isBanned),
   };
 }
 
@@ -200,6 +203,7 @@ export function describeRule(rule, parties, has) {
 
   const lobby = rule.lobby.amount > 0 ? `with over ${DOLLARS_SHORT.format(rule.lobby.amount)} of Israel lobby money` : "with any Israel lobby money";
   const avoid = [
+    rule.banned && has.banned ? "on your ban list" : null,
     rule.watchlist && has.trackaipac ? "on TrackAIPAC's watchlist" : null,
     rule.peaceOpposed && has.voteforpeace ? "opposed by Vote for Peace" : null,
     on(rule.lobby.on && has.lobby, rule.lobby.amount) ? lobby : null,
@@ -254,6 +258,7 @@ function judge(race, rule) {
   const avoid = new Map();
   for (const c of candidates) {
     const reasons = [];
+    if (rule.banned && isBanned(c)) reasons.push("on your ban list");
     if (rule.watchlist && listed(c, "watchlist")) reasons.push("on TrackAIPAC's watchlist");
     if (rule.peaceOpposed && listed(c, "opposed", VOTEFORPEACE)) reasons.push("opposed by Vote for Peace");
     const lobby = figure(c, "israel_lobby");

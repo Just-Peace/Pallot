@@ -1,4 +1,6 @@
+import { banMatches } from "./ban-list.js";
 import { h } from "./dom.js";
+import { icon } from "./icons.js";
 
 export const GROUP_ORDER = ["federal", "state", "legislature", "judicial", "county", "precinct", "local"];
 
@@ -68,12 +70,21 @@ export function partyName(candidate) {
   return candidate.party_name || PARTY_NAMES[candidate.party] || "";
 }
 
-// The pills under a candidate's name: their party, Party holds seat (its tooltip, and a screen
-// reader, name the race's holder), Incumbent, Write-in.
+// The red pill of a candidate on the voter's ban list; its tooltip, and a screen reader, say what matched.
+function bannedPill(candidate) {
+  const matched = banMatches(candidate.name);
+  if (!matched.length) return null;
+  const why = `On your ban list: matches ${matched.map((entry) => `“${entry.text}”`).join(", ")}`;
+  return h("span", { class: "pill pill-banned", title: why }, icon("ban"), "Banned", h("span", { class: "sr-only" }, ` (${why})`));
+}
+
+// The pills under a candidate's name: Banned (bannedPill), their party, Party holds seat (its
+// tooltip, and a screen reader, name the race's holder), Incumbent, Write-in.
 export function candidatePills(candidate, race = null) {
   const party = partyName(candidate);
   const holder = candidate.party_holds_seat ? race?.holder : null;
   return [
+    bannedPill(candidate),
     party ? h("span", { class: ["party", `party-${candidate.party || "none"}`] }, party) : null,
     holder ? h("span", { class: "pill", title: holder.hint }, "Party holds seat", h("span", { class: "sr-only" }, ` (${holder.hint})`)) : null,
     candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,

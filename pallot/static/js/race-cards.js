@@ -3,6 +3,7 @@
 // Picking here saves to ``page.picks``; ballot.js hands over the context (initRaceCards).
 
 import { ballotSections, measureKey, pickLabels } from "./ballot-shared.js";
+import { banName, isBanned, restoreBans, unbanName } from "./ban-list.js";
 import { openCompare } from "./compare.js";
 import { $, autosave, extLink, h, initials, safeUrl, slug } from "./dom.js";
 import { plural } from "./format.js";
@@ -223,6 +224,43 @@ export function searchLink(race, candidate, className, label) {
   });
 }
 
+// Ban adds the candidate's name to the ban list (ban-list.js) as plain text; Unban takes off every
+// entry that matches them, a pattern typed in Settings included. Either offers Undo, then refills
+// the ballot's rows and runs ``after`` (Details' head).
+export function toggleBan(candidate, after = null) {
+  const changed = () => {
+    refillCards();
+    after?.();
+  };
+  if (!isBanned(candidate)) {
+    if (banName(candidate.name)) {
+      showToast(`${candidate.name} is on your ban list.`, { label: "Undo", run: () => { unbanName(candidate.name); changed(); } });
+    } else {
+      showToast("This browser didn't let Pallot save your ban list.");
+    }
+    changed();
+    return;
+  }
+  const removed = unbanName(candidate.name);
+  const patterns = removed.filter((entry) => entry.text.toLowerCase() !== candidate.name.toLowerCase());
+  showToast(patterns.length
+    ? `Removed ${patterns.map((entry) => `“${entry.text}”`).join(", ")} from your ban list, which may unban others too.`
+    : `${candidate.name} is off your ban list.`,
+  { label: "Undo", run: () => { restoreBans(removed); changed(); } });
+  changed();
+}
+
+// The row's Ban (Unban once banned), beside Note and Search.
+function banButton(candidate) {
+  const on = isBanned(candidate);
+  const name = on ? `Take ${candidate.name} off your ban list` : `Add ${candidate.name} to your ban list`;
+  return h("button", { type: "button", class: ["icon-btn ban-btn with-icon", on && "is-banned"], title: name, "aria-label": name,
+    on: { click: () => {
+      toggleBan(candidate);
+      $(`#result .cand[data-cand="${CSS.escape(candidate.key)}"] .ban-btn`)?.focus(); // the refill drew a new one
+    } } }, icon("ban"), on ? "Unban" : "Ban");
+}
+
 // A candidate's row, and ``sync``, which puts its saved note in the note box.
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
@@ -277,7 +315,11 @@ function candidateRow(race, candidate) {
   const pills = part(() => candidatePills(candidate, race));
   const lines = part(() => sourceLines(candidate));
   const funding = part(() => fundingLine(candidate, openAt));
-  const fill = () => [profile, photo, pills, lines, funding].forEach((p) => p.refill());
+  const ban = part(() => banButton(candidate));
+  const fill = () => {
+    [profile, photo, pills, lines, funding, ban].forEach((p) => p.refill());
+    row.classList.toggle("banned", isBanned(candidate));
+  };
 
   const row = h(
     "li",
@@ -293,11 +335,12 @@ function candidateRow(race, candidate) {
           h("span", { class: "cand-sub" }, pills.nodes))),
       h("div", { class: "cand-profile" }, profile.nodes),
       h("div", { class: "cand-actions" },
-        noteButton, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
+        noteButton, ban.nodes, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
     lines.nodes,
     funding.nodes,
     noteBox,
   );
+  row.classList.toggle("banned", isBanned(candidate));
   return { row, sync, fill };
 }
 

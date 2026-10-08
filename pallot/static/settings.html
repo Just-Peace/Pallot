@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pallot · Settings</title>
-  <meta name="description" content="Choose how Pallot looks, how much of the ballot shows, its web search engine and sources, see what it has saved, and clear what this browser keeps.">
+  <meta name="description" content="Choose how Pallot looks, how much of the ballot shows, its web search engine and sources, keep your ban list, see what it has saved, and clear what this browser keeps.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
@@ -22,19 +22,6 @@
       </header>
 
       <nav class="section-chips" aria-label="Settings sections"></nav>
-
-      <section class="panel" aria-labelledby="appearance-title">
-        <h2 id="appearance-title">Appearance</h2>
-        <p class="panel-intro">System follows your device's light or dark setting.</p>
-        <div class="setting-row">
-          <fieldset class="seg" id="theme">
-            <legend class="sr-only">Color theme</legend>
-            <label class="seg-option"><input type="radio" name="theme" value="system">System</label>
-            <label class="seg-option"><input type="radio" name="theme" value="light">Light</label>
-            <label class="seg-option"><input type="radio" name="theme" value="dark">Dark</label>
-          </fieldset>
-        </div>
-      </section>
 
       <section class="panel" aria-labelledby="view-title">
         <h2 id="view-title">Ballot view</h2>
@@ -90,12 +77,38 @@
         <p id="search-status" class="status" role="status" aria-live="polite"></p>
       </section>
 
+      <section class="panel" aria-labelledby="ban-title">
+        <h2 id="ban-title">Ban list</h2>
+        <p class="panel-intro">Candidates you don't want to vote for are marked <strong>Banned</strong> on your ballot. Add someone with <strong>Ban</strong> on the ballot, or type a name here. Kept only in this browser. <a href="faq.html#ban-list">How it works</a></p>
+        <form id="ban-form" class="ban-form">
+          <label for="ban-entry" class="sr-only">Name to ban</label>
+          <input type="text" id="ban-entry" autocomplete="off" spellcheck="false" placeholder="A name, or part of one">
+          <button class="btn small" type="submit">Add</button>
+        </form>
+        <p id="ban-status" class="status" role="status" aria-live="polite"></p>
+        <p id="ban-empty" class="fine">Your ban list is empty.</p>
+        <ul id="ban-entries" class="ban-entries" aria-label="Your ban list"></ul>
+      </section>
+
       <section class="panel" aria-labelledby="sources-title">
         <h2 id="sources-title">Sources</h2>
         <p class="panel-intro">Turn a source off to build your ballot without it. Pallot keeps a copy of what each source sends back, so the same lookup doesn't ask it twice. Ballotpedia's ballot and address search are unofficial and meant for personal use, so they start off.</p>
         <p id="sources-summary" class="fine"></p>
         <p id="sources-status" class="status" role="status" aria-live="polite"></p>
         <div id="source-groups" class="source-groups"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="appearance-title">
+        <h2 id="appearance-title">Appearance</h2>
+        <p class="panel-intro">System follows your device's light or dark setting.</p>
+        <div class="setting-row">
+          <fieldset class="seg" id="theme">
+            <legend class="sr-only">Color theme</legend>
+            <label class="seg-option"><input type="radio" name="theme" value="system">System</label>
+            <label class="seg-option"><input type="radio" name="theme" value="light">Light</label>
+            <label class="seg-option"><input type="radio" name="theme" value="dark">Dark</label>
+          </fieldset>
+        </div>
       </section>
 
       <section class="panel" aria-labelledby="data-title">
@@ -112,7 +125,7 @@
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear browser data</h3>
-              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources and view choices. Your sources go back to Pallot's defaults. Undo puts it back for a few seconds.</p>
+              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources, view choices and ban list. Your sources go back to Pallot's defaults. Undo puts it back for a few seconds.</p>
             </div>
             <button class="btn small danger" id="clear-browser-data" type="button">Clear browser data</button>
           </li>
