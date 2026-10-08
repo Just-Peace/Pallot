@@ -1,4 +1,4 @@
-"""Lists of candidates that name each one's office in their own words (Vote for Peace's ratings,
+"""Lists of candidates that name each one's office in their own words (Vote for Peace,
 the endorsement lists), matched to the ballot's races. An entry's office and district are read as
 a seat spelled the way the ballot's races are (entry_seats, race_seat): the TEC's spelling for a
 state office, Congress as "TX-37", and a county, precinct or city office as its county (a city

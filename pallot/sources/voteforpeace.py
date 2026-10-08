@@ -1,9 +1,9 @@
-"""Vote for Peace (voteforpeace.info) ratings, through the voteforpeace_cache package in this repo.
+"""Vote for Peace (voteforpeace.info) endorsements (Ally or Opposed), through the voteforpeace_cache package in this repo.
 
 The package ships a snapshot of the site's All Candidates page. We copy it into
 data/voteforpeace on first use, so lookups never call voteforpeace.info, and only fetch the
 site when pallot-cache asks (the package's refresh() validates before writing and
-writes only when the site changed). The site rates candidates at every level, from Congress to
+writes only when the site changed). The site marks candidates at every level, from Congress to
 a county's courts, so its entries are matched to races by seat and name (seats.py).
 """
 
@@ -29,7 +29,7 @@ from .snapshot import BundledSnapshot, summary_of
 SOURCE = "voteforpeace"
 LABEL = "Vote for Peace"
 DESCRIPTION = (
-    "Candidates rated Ally, Neutral or Opposed by Vote for Peace (voteforpeace.info, from Organize for Peace), "
+    "Candidates marked Ally, Neutral or Opposed by Vote for Peace (voteforpeace.info, from Organize for Peace), "
     "on their stance on war, human rights and lobby money such as AIPAC's."
 )
 CANDIDATES_PAGE = SOURCE_URL
@@ -90,9 +90,9 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
     label = RATINGS.get(rating or "", "Not rated")
     page = web_url(person.get("url")) or CANDIDATES_PAGE
     badges = [Badge(text=f"Vote for Peace: {label}", tone=_TONES.get(rating or "", "neutral"), url=page,
-                    hint="How Vote for Peace rates them")]
+                    hint="Ally, Neutral or Opposed, as Vote for Peace marks them")]
 
-    facts = [Fact(label="Rating", value=label), Fact(label="Office on Vote for Peace", value=office_text(person))]
+    facts = [Fact(label="Vote for Peace says", value=label), Fact(label="Office on Vote for Peace", value=office_text(person))]
     if person.get("party"):
         facts.append(Fact(label="Party on Vote for Peace", value=person["party"]))
     if person.get("election_label"):
@@ -116,7 +116,7 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
 
     return SourceCard(
         source=SOURCE,
-        kind="scorecard",
+        kind="endorsement",
         label=LABEL,
         description=DESCRIPTION,
         url=page,
@@ -138,7 +138,7 @@ def cards(
     bp_ballot: BpBallot | None = None,
     city: str | None = None,
 ) -> CardSet:
-    """Cards for the candidates Vote for Peace rates in Texas, in any race (seats.match_entries)."""
+    """Cards for the candidates Vote for Peace marks in Texas, in any race (seats.match_entries)."""
     snapshot = vfp.snapshot_date()
     found = match_entries(vfp.name_index("TX"), races, scopes, county, bp_ballot, source=LABEL,
                           entry_id="candidate_id", city=city)

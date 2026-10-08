@@ -1,5 +1,6 @@
-// Details: a candidate's Issues (stances.js), a tab per source, and one Endorsements tab for the
-// ratings and endorsement lists, in a dialog whose head has Search and Pick beside ‹ › ✕. ‹ and ›
+// Details: a candidate's Profile (Texas SOS, then Ballotpedia), their Issues (stances.js), a tab per
+// other source, and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
+// each tab made of folding sections, in a dialog whose head has Search and Pick beside ‹ › ✕. ‹ and ›
 // step through the race's other candidates, staying on the tab that's shown.
 
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
@@ -7,13 +8,13 @@ import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
 import { avatar, candidateQuery, choose, searchLink } from "./race-cards.js";
 import { searchWord } from "./search.js";
-import { cardPanel, endorsementsPanel, isLikely, renderTabs } from "./source-cards.js";
+import { cardPanel, endorsementsPanel, isLikely, moneyPanel, profilePanel, renderTabs } from "./source-cards.js";
 import { stancesPanel } from "./stances.js";
 
 let page = null; // { picks }
 const details = $("#details");
-const GROUPED = new Set(["scorecard", "endorsement"]); // the kinds on the Endorsements tab
-let shown = "issues"; // the tab shown, which ‹ and › keep
+const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Ballotpedia
+let shown = "profile"; // the tab shown, which ‹ and › keep
 
 export function initDetails(context) {
   page = context;
@@ -23,9 +24,9 @@ export function initDetails(context) {
 
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
-// ``at`` is the tab to show: "issues", "endorsements" or a source's (a Funding chip's money
-// source); a tab the candidate hasn't got shows Issues.
-export function showDetails(race, index, focus = null, at = "issues") {
+// ``at`` is the tab to show: "profile", "issues", "endorsements" or a source's (a Funding chip's
+// money source); a tab the candidate hasn't got shows the first one, Profile or else Issues.
+export function showDetails(race, index, focus = null, at = "profile") {
   const { picks } = page;
   const candidate = race.candidates[index];
   const pickOrUndo = () => {
@@ -45,22 +46,27 @@ export function showDetails(race, index, focus = null, at = "issues") {
   const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
   pickButton.disabled = multiFull;
 
-  const grouped = candidate.cards.filter((card) => GROUPED.has(card.kind));
+  const grouped = candidate.cards.filter((card) => card.kind === "endorsement");
+  const profiled = candidate.cards.filter((card) => PROFILE.has(card.kind));
+  const profile = profiled.length ? { key: "profile", label: "Profile", likely: profiled.some(isLikely) } : null;
   const issues = { key: "issues", label: "Issues", likely: false };
   const endorsements = grouped.length
     ? { key: "endorsements", label: `Endorsements · ${grouped.length}`, likely: grouped.some(isLikely) }
     : null;
   const tabs = [
+    profile,
     issues,
-    ...candidate.cards.filter((card) => !GROUPED.has(card.kind)).map((card) => ({ key: card.source, label: card.label, likely: isLikely(card), card })),
+    ...candidate.cards.filter((card) => card.kind !== "endorsement" && !PROFILE.has(card.kind))
+      .map((card) => ({ key: card.source, label: card.label, likely: isLikely(card), card })),
     endorsements,
   ].filter(Boolean);
   const initial = Math.max(0, tabs.findIndex((tab) => tab.key === at));
   shown = tabs[initial].key;
   const panelFor = (tab) => {
     if (tab === issues) return stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length);
+    if (tab === profile) return profilePanel(profiled);
     if (tab === endorsements) return endorsementsPanel(grouped);
-    return cardPanel(tab.card);
+    return tab.card.kind === "money" ? moneyPanel(tab.card) : cardPanel(tab.card);
   };
   const tabBox = h("div", { class: "details-tabs" });
   renderTabs(tabBox, tabs, `d-${slug(candidate.key)}`, panelFor, { initial, onSelect: (i) => { shown = tabs[i].key; } });

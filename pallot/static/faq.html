@@ -118,8 +118,8 @@
           <div class="faq-body">
             <p>They're how much of your ballot shows at first, chosen with Minimal | Simple | Detailed at the top of the ballot or under Ballot view in <a href="settings.html#view-title">Settings</a>. Nothing is left out of either: anything folded opens with a click.</p>
             <ul>
-              <li><strong>Minimal</strong>: only the races and their candidates. The map, money boxes, polls, endorsements, ratings and funding are folded or hidden.</li>
-              <li><strong>Simple</strong>, where Pallot starts: the map of your districts is folded to one line. The money, polls, endorsements and ratings show.</li>
+              <li><strong>Minimal</strong>: only the races and their candidates. The map, funding (the money boxes and Funding chips), polls and endorsements are folded or hidden.</li>
+              <li><strong>Simple</strong>, where Pallot starts: the map of your districts is folded to one line. Funding, polls and endorsements show.</li>
               <li><strong>Detailed</strong>: everything is open, the map and the money boxes included.</li>
             </ul>
             <p>Each part also has its own switch, under "Show" in the ballot's Options and in Settings. Flip one and the view is "Custom", your own mix; choosing Minimal, Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
@@ -200,7 +200,7 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source (the endorsement lists and ratings share the Endorsements tab, a section each), so you can see which source said what. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
+            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS and Ballotpedia share the Profile tab, where Details opens, and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
             <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Matched" and "Likely match"</a>). "Incumbent" comes from the state's filing, from Ballotpedia when it matches the candidate exactly in the same race, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
           </div>
         </details>
@@ -239,7 +239,7 @@
         <details class="faq">
           <summary>What is TrackAIPAC, and why does it show members of Congress as "likely"?</summary>
           <div class="faq-body">
-            <p>TrackAIPAC tracks money and endorsements from pro-Israel lobby groups for congressional candidates.</p>
+            <p>TrackAIPAC tracks money and endorsements from pro-Israel lobby groups for congressional candidates. A candidate it endorses has a green TrackAIPAC chip under Endorsements; one on its watchlist has an amber "TrackAIPAC watchlist" chip.</p>
             <p>It lists members of Congress by the seat they hold now. Texas redrew its congressional districts in 2025, so someone running for a different seat in 2026 shows as a likely match unless TrackAIPAC's entry mentions the new seat.</p>
           </div>
         </details>
@@ -247,9 +247,9 @@
         <details class="faq">
           <summary>What is Vote for Peace, and what do Ally, Neutral and Opposed mean?</summary>
           <div class="faq-body">
-            <p>Vote for Peace (voteforpeace.info), from Organize for Peace, rates candidates on their stance on war and human rights and on where their money comes from, such as AIPAC and other lobbies. Ally means it recommends them, Opposed that it recommends against them, and Neutral neither. Its section on the Endorsements tab in Details shows the groups it cites for the rating (endorsements, its own questionnaire, TrackAIPAC) and its notes, with a link to the candidate's page there.</p>
+            <p>Vote for Peace (voteforpeace.info), from Organize for Peace, rates candidates on their stance on war and human rights and on where their money comes from, such as AIPAC and other lobbies. Ally means it recommends them, Opposed that it recommends against them, and Neutral neither. Pallot counts Ally as an endorsement, a green Vote for Peace chip under Endorsements, and Opposed as one against, an amber "Vote for Peace: Opposed" chip; Neutral shows only in Details. Its section on the Endorsements tab in Details shows the groups it cites (endorsements, its own questionnaire, TrackAIPAC) and its notes, with a link to the candidate's page there.</p>
             <p>It rates candidates at every level, from Congress to county courts and city councils, and names offices its own way ("TX State Representative" and a district number). Pallot matches them by name, with the office and district, or the county, to confirm. A court it names without the place ("TX Supreme Court Justice") counts for any place on that court. Elsewhere, a candidate it lists for another seat or county shows as a likely match, so check it.</p>
-            <p>Pallot uses its ratings with Organize for Peace's permission.</p>
+            <p>Pallot uses its list with Organize for Peace's permission.</p>
           </div>
         </details>
 
@@ -304,7 +304,8 @@
               <li><strong>Self-funded</strong> (amber): the candidate's own gifts and loans to their campaign are more than half of what it raised. Only for Congress: state reports don't separate them.</li>
             </ul>
             <p>At exactly half, there's no chip.</p>
-            <p>A campaign that raised less than $10,000 gets none, since a few donations would decide it. The federal chips need Pallot's FEC key: with the shared demonstration key the FEC gives totals only (see <a href="#fec-key">why the FEC tab shows only totals</a>). Turn the line off with Funding under the ballot's Options, or in <a href="settings.html#view-title">Settings</a>.</p>
+            <p>The line starts with what the campaign raised ("Raised $9.2M"), then the chips above, green before amber, and ends with outside spending, money groups the campaign doesn't control spent on the race (see <a href="#outside-spending">what outside spending is</a>). For Congress it's split into <strong>Outside spending for</strong> (blue) and <strong>Outside spending against</strong> (amber); for state offices it's one <strong>Outside spending</strong> chip, since the Texas Ethics Commission doesn't record which side it took. Click any chip to open that tab in Details.</p>
+            <p>A campaign that raised less than $10,000 gets no Mostly or Overwhelmingly chip, since a few donations would decide it. The federal chips need Pallot's FEC key: with the shared demonstration key the FEC gives totals only (see <a href="#fec-key">why the FEC tab shows only totals</a>). Turn the line off with Funding under the ballot's Options, or in <a href="settings.html#view-title">Settings</a>.</p>
           </div>
         </details>
 
@@ -413,7 +414,7 @@
           </div>
         </details>
 
-        <details class="faq">
+        <details class="faq" id="outside-spending">
           <summary>What is "outside spending"?</summary>
           <div class="faq-body">
             <p>Money spent on a race by groups the campaign doesn't control, such as super PACs buying ads. It isn't given to the campaign: the groups spend it themselves. For Congress, the FEC records whether each group spent for or against the candidate, and Pallot marks it with a blue "for" or an amber "against". The Texas Ethics Commission records which candidate the spending was about, but not whether it was for or against them. A race's money box shows each candidate's total under their cash on hand, and their tab in Details lists the groups.</p>

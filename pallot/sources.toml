@@ -29,6 +29,6 @@ officeholders = true        # congress-legislators and Open States: who holds ea
 # Third-party polls
 polls = true                # FiftyPlusOne
 
-# Third-party endorsements & scorecards
+# Third-party endorsements
 trackaipac = true
 voteforpeace = false        # used with Organize for Peace's permission; turned on per voter

@@ -1,10 +1,10 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and in Details) without any code change; its ``kind``
-// decides where: endorsements and scorecards (ratings) each get a line on the row and share
-// Details' Endorsements tab, a money card's badges stay in Details (its highlights make the row's
-// Funding line), every other card gets its own tab, and a money or poll box folds, with its
-// source in its corner. The row's endorsement and rating chips link to their source; its Funding
-// chips open Details' money tab.
+// decides where: endorsements (TrackAIPAC, Vote for Peace and the endorsement lists) make the
+// row's Endorsements line and share Details' Endorsements tab, a money card's highlights and badges
+// make the row's Funding line, the filing and profile cards share Details' Profile tab, every other
+// card gets its own tab, and a money or poll box folds, with its source in its corner. The row's endorsement chips link to their
+// source; its Funding chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
@@ -40,17 +40,32 @@ export function bar(fraction) {
 
 export const isLikely = (card) => card?.match?.confidence === "likely";
 
-// The candidate row's lines, one per kind, each under its heading. An endorsement's chip shows
-// just the list's name, since the heading says "Endorsements".
-const LINES = [
-  { kind: "endorsement", title: "Endorsements", noun: "endorsement", short: true },
-  { kind: "scorecard", title: "Ratings", noun: "rating" },
+// An endorsement chip reads one way or the other: green for one (TrackAIPAC endorsed, Vote for
+// Peace's Ally, a list), amber against (TrackAIPAC's watchlist, Vote for Peace's Opposed). A
+// neutral one stays in Details.
+const SIDED = new Set(["good", "warn"]);
+const sided = (card) => card.kind === "endorsement" ? card.badges.filter((b) => SIDED.has(b.tone)) : [];
+// Green chips before amber ones, each kept in its order.
+const greenFirst = (items, tone = (item) => item.tone) => [...items].sort((a, b) => (tone(a) === "good" ? 0 : 1) - (tone(b) === "good" ? 0 : 1));
+// A money card's chips, on the row and its tab: what it raised (its neutral badge) first, then its
+// highlights, green before amber, then outside spending (its other badges), for before against.
+const fundingChips = (card) => card.kind !== "money" ? [] : [
+  ...card.badges.filter((b) => b.tone === "neutral"),
+  ...greenFirst(card.highlights || []),
+  ...card.badges.filter((b) => b.tone !== "neutral"),
 ];
-const onLine = (card) => LINES.some((line) => line.kind === card.kind) && card.badges.length > 0;
-const funded = (card) => card.kind === "money" && card.highlights?.length > 0;
+// Each item's chip, with the "?" of a likely match on the first of its card's.
+const chipsOf = (items, chip) => {
+  const seen = new Set();
+  return items.map(({ b, card }) => {
+    const first = !seen.has(card);
+    seen.add(card);
+    return chip(b, card, first);
+  });
+};
 
 // The view switch (view.js) that opens or folds a race box of each kind; other boxes always show.
-const FOLDS = { money: "showMoney", polls: "showPolls" };
+const FOLDS = { money: "showFunding", polls: "showPolls" };
 
 // The "?" on a tab, badge or button whose source only likely matched the candidate.
 function likelyFlag(title = "Likely match") {
@@ -81,19 +96,19 @@ function badge(item, card = null, first = false, label = item.text, onOpen = nul
 
 let lineIds = 0;
 
-// The candidate's endorsements and ratings: a line for each kind that has any, a ul labelled
-// by its heading. With the showEndorsements view switch off, one button counts them ("3
-// endorsements · 1 rating") and opens them in place, until syncLines(). A chip links to its
-// source's page for the candidate.
+// The candidate's Endorsements line, a ul labelled by its heading. A green chip shows just the
+// source's name, since the heading says "Endorsements"; an amber one says what it is ("TrackAIPAC
+// watchlist"), so it doesn't rest on the colour. With the showEndorsements view switch off, one
+// button counts them ("3 endorsements") and opens them in place, until syncLines(). A chip links
+// to its source's page for the candidate.
 export function sourceLines(candidate) {
-  const lines = LINES.map((line) => ({ ...line, cards: candidate.cards.filter((card) => card.kind === line.kind && onLine(card)) }))
-    .filter((line) => line.cards.length);
-  if (!lines.length) return null;
+  const items = greenFirst(candidate.cards.flatMap((card) => sided(card).map((b) => ({ b, card }))), (item) => item.b.tone);
+  const chips = chipsOf(items, (b, card, first) => badge(b, card, first, b.tone === "good" ? card.label : b.text));
+  if (!chips.length) return null;
   const id = `lines-${++lineIds}`;
-  const body = h("div", { class: "cand-lines-body", id }, lines.map((line, n) => h("div", { class: "badge-line" },
-    h("span", { class: "line-title", id: `${id}-${n}` }, line.title),
-    h("ul", { class: "badges", "aria-labelledby": `${id}-${n}` },
-      line.cards.flatMap((card) => card.badges.map((b, j) => badge(b, card, j === 0, line.short ? card.label : b.text)))))));
+  const body = h("div", { class: "cand-lines-body", id }, h("div", { class: "badge-line" },
+    h("span", { class: "line-title", id: `${id}-title` }, "Endorsements"),
+    h("ul", { class: "badges", "aria-labelledby": `${id}-title` }, chips)));
   const show = (open) => {
     body.hidden = !open;
     toggle.setAttribute("aria-expanded", String(open));
@@ -101,7 +116,7 @@ export function sourceLines(candidate) {
   const toggle = h("button", {
     type: "button", class: "link-btn lines-toggle", "aria-controls": id,
     on: { click: () => show(body.hidden) },
-  }, lines.map((line) => plural(line.cards.length, line.noun)).join(" · "));
+  }, plural(chips.length, "endorsement"));
   const sync = () => {
     toggle.hidden = viewPref("showEndorsements");
     show(viewPref("showEndorsements"));
@@ -116,12 +131,12 @@ export function syncLines() {
   for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
 }
 
-// The candidate's Funding line, after their other lines: the money cards' highlights ("Mostly
-// small donors"), with a "?" on the first of a card that only likely matched. The showFunding
-// view switch hides it, until syncFunding(). A chip opens Details at its money source,
+// The candidate's Funding line, after their other lines: each money card's chips (fundingChips),
+// as its tab in Details shows them, with a "?" on the first of a card that only likely matched. The showFunding
+// view switch hides it, with the money boxes, until syncFunding(). A chip opens Details at its money source,
 // ``onOpen(card)``.
 export function fundingLine(candidate, onOpen) {
-  const cards = candidate.cards.filter(funded);
+  const cards = candidate.cards.filter((card) => fundingChips(card).length);
   if (!cards.length) return null;
   const id = `funding-${++lineIds}`;
   const element = h("div", { class: "cand-lines funding-line", on: { "pallot:sync": () => {
@@ -129,7 +144,7 @@ export function fundingLine(candidate, onOpen) {
   } } }, h("div", { class: "badge-line" },
     h("span", { class: "line-title", id }, "Funding"),
     h("ul", { class: "badges", "aria-labelledby": id },
-      cards.flatMap((card) => card.highlights.map((b, j) => badge(b, card, j === 0, b.text, onOpen))))));
+      chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))), (b, card, first) => badge(b, card, first, b.text, onOpen)))));
   element.hidden = !viewPref("showFunding");
   return element;
 }
@@ -336,50 +351,90 @@ export function raceMoney(race, onCompare = null) {
   });
 }
 
+// A card's badges and facts, as cardPanel() and moneyPanel() show them: a money card's chips on one
+// Funding line, in the row's order (fundingChips).
+const cardSummary = (card) => [
+  fundingChips(card).length
+    ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
+        h("ul", { class: "badges", "aria-label": "Funding" }, fundingChips(card).map((b) => badge(b))))
+    : card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
+  card.facts.length
+    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
+    : null,
+];
+const cardQuotes = (card) => card.quotes.length
+  ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
+  : null;
+const cardLinks = (card) => card.links.length
+  ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label))))
+  : null;
+
 export function cardPanel(card) {
   return h(
     "div",
     { class: "card-panel" },
     card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
-    card.highlights?.length
-      ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
-          h("ul", { class: "badges", "aria-label": "Funding" }, card.highlights.map((b) => badge(b))))
-      : null,
-    card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
-    card.facts.length
-      ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
-      : null,
-    card.quotes.length
-      ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
-      : null,
+    cardSummary(card),
+    cardQuotes(card),
     (card.breakdowns || []).map((b) => breakdownBlock(b)),
-    card.links.length ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label)))) : null,
+    cardLinks(card),
     sourceLine(card),
   );
 }
 
-// Details' Endorsements tab: the ratings (scorecards), then the endorsement lists, a section per
-// source with its whole card, all open. Folded, a section is its name, its "?" and a rating's chips.
-const GROUPS = [
-  { kind: "scorecard", title: "Ratings", noun: "rating" },
-  { kind: "endorsement", title: "Endorsements", noun: "endorsement" },
-];
+// A box on a Details tab that folds to its summary (its name, then ``extra``, such as a "?" or
+// chips) when the voter clicks it, open at first: the Profile, Issues, Endorsements and money tabs
+// are made of them.
+export function foldSection(name, extra, body) {
+  return h("details", { class: "source-section", open: true },
+    h("summary", {}, h("span", { class: "source-section-name" }, name), extra),
+    h("div", { class: "section-body" }, body));
+}
+
+// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Ballotpedia's
+// profile, a section each with its whole card.
+export function profilePanel(cards) {
+  return h("div", { class: "card-panel profile" },
+    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card))));
+}
+
+// A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
+// in a section of its own, then its links and where it comes from.
+export function moneyPanel(card) {
+  const summary = cardSummary(card).filter(Boolean);
+  return h("div", { class: "card-panel money" },
+    card.description ? h("p", { class: "muted" }, card.description) : null,
+    matchNote(card),
+    summary.length ? foldSection("Totals", null, summary) : null,
+    cardQuotes(card),
+    (card.breakdowns || []).map((b) => foldSection(b.title, null, breakdownRows(b))),
+    cardLinks(card),
+    sourceLine(card));
+}
+
+// A chip's words beside its source's name: "Endorsed by CAIR Action" is "Endorsed", "TrackAIPAC
+// watchlist" "Watchlist", "Vote for Peace: Ally" "Ally".
+function chipWords(item, card) {
+  const words = item.text.replace(card.label, "").replace(/^[\s:]+|\s+by\s*$/g, "").trim();
+  return words ? words[0].toUpperCase() + words.slice(1) : item.text;
+}
+
+// Details' Endorsements tab: a section per source with its whole card, all open, green ones (for
+// the candidate) first, then amber (against), then the rest. Folded, a section is its name, its
+// "?" and its chips.
+const SIDE_ORDER = { good: 0, warn: 1 };
+const side = (card) => Math.min(2, ...card.badges.map((b) => SIDE_ORDER[b.tone] ?? 2));
 
 export function endorsementsPanel(cards) {
-  const groups = GROUPS.map((group) => ({ ...group, cards: cards.filter((card) => card.kind === group.kind) }))
-    .filter((group) => group.cards.length);
-  const section = (card) => h("details", { class: "source-section", open: true },
-    h("summary", {},
-      h("span", { class: "source-section-name" }, card.label),
-      isLikely(card) ? likelyFlag() : null,
-      card.kind === "scorecard" ? card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`] }, b.text)) : null),
-    cardPanel(card));
+  const sorted = [...cards].sort((a, b) => side(a) - side(b));
+  const section = (card) => foldSection(card.label, [
+    isLikely(card) ? likelyFlag() : null,
+    card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
+  ], cardPanel(card));
   return h("div", { class: "card-panel endorsements" },
-    h("p", { class: "muted" }, groups.map((group) => plural(group.cards.length, group.noun)).join(" · ")),
-    groups.map((group) => h("section", { class: "panel-group" },
-      h("h3", { class: "panel-group-title" }, group.title),
-      group.cards.map(section))));
+    h("p", { class: "muted" }, plural(cards.length, "endorsement")),
+    sorted.map(section));
 }
 
 // WAI-ARIA tabs: one per card, arrow keys move between them. ``panelFor`` draws a card's panel.

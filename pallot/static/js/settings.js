@@ -236,7 +236,7 @@ const viewSection = $("#view-title").closest("section");
 function showView() {
   const mode = showViewControls(viewSection);
   $("#view-mode-note").textContent = {
-    minimal: "Minimal shows only the ballot and its candidates. Simple adds money, polls, endorsements, ratings and funding. Detailed opens everything.",
+    minimal: "Minimal shows only the ballot and its candidates. Simple adds funding, polls and endorsements. Detailed opens everything.",
     simple: "Simple folds the map and where the dates and districts come from. Minimal folds everything; Detailed opens everything.",
     detailed: "Detailed opens everything. Simple folds the map and where the dates and districts come from; Minimal folds everything.",
     custom: "Your own mix, below.",

@@ -35,7 +35,7 @@ export const DEFAULT_RULE = {
   texas: { on: false, amount: 50 }, // donors in Texas gave at least this % of their itemized donations
   leads: false,
   watchlist: false,
-  peaceOpposed: false, // Vote for Peace rates them opposed
+  peaceOpposed: false, // Vote for Peace marks them Opposed
   lobby: { on: false, amount: 0 },
   selfFunded: { on: false, amount: 50 }, // they gave or lent their campaign over this % of what it raised
   polling: { on: false, amount: 5 },
@@ -68,21 +68,21 @@ export function figure(candidate, id) {
 const tracked = (candidate, source = TRACKAIPAC) => candidate.cards.some((c) => c.source === source);
 const listed = (candidate, list, source = TRACKAIPAC) =>
   candidate.cards.some((c) => c.source === source && c.flags?.includes(list));
-const rated = (candidate) => tracked(candidate, VOTEFORPEACE);
+const marked = (candidate) => tracked(candidate, VOTEFORPEACE);
 const endorses = (candidate, source) => listed(candidate, ENDORSEMENT, source);
 
 // Whether ``source`` (an endorser chip) endorses the candidate: TrackAIPAC's endorsement, Vote for
-// Peace's ally rating, or an endorsement list's card.
+// Peace's Ally, or an endorsement list's card.
 function endorsedBy(candidate, source) {
   if (source === TRACKAIPAC) return listed(candidate, "endorsed");
   if (source === VOTEFORPEACE) return listed(candidate, "ally", VOTEFORPEACE);
   return endorses(candidate, source);
 }
 
-// Whether an endorser has anything in a race: TrackAIPAC or Vote for Peace rates a candidate, or the list endorses one.
+// Whether an endorser has anything in a race: TrackAIPAC or Vote for Peace has a candidate, or the list endorses one.
 function covers(candidates, source) {
   if (source === TRACKAIPAC) return candidates.some((c) => tracked(c));
-  if (source === VOTEFORPEACE) return candidates.some(rated);
+  if (source === VOTEFORPEACE) return candidates.some(marked);
   return candidates.some((c) => endorses(c, source));
 }
 const known = (amount) => typeof amount === "number" && Number.isFinite(amount);
@@ -150,7 +150,7 @@ export function available(races) {
   return {
     endorsers: endorsers(candidates),
     trackaipac: candidates.some((c) => tracked(c)),
-    voteforpeace: candidates.some(rated),
+    voteforpeace: candidates.some(marked),
     lobby: has("israel_lobby"),
     money: Object.fromEntries(MONEY.map(([id]) => [id, has(id)])),
     small: has("small_share"),

@@ -1,8 +1,10 @@
 // The Issues tab in Details: hot-button issues, each a web search for where the candidate stands,
-// with the engine chosen in Settings. The terms are neutral: where an issue has two sides, they name both.
+// with the engine chosen in Settings, a folding section per group. The terms are neutral: where an
+// issue has two sides, they name both.
 
 import { extLink, h } from "./dom.js";
 import { currentEngine, searchHref, stanceTitle } from "./search.js";
+import { foldSection } from "./source-cards.js";
 
 const STANCES = [
   { group: "Rights & society", topics: [
@@ -64,7 +66,6 @@ export function stancesPanel(candidate, base, empty) {
   return h("div", { class: "card-panel stances" },
     empty ? h("p", { class: "muted" }, "No source has details on this candidate yet.") : null,
     h("p", { class: "muted" }, `Web searches for where ${candidate.name} stands. Pallot doesn't rate or check what they find.`),
-    STANCES.map(({ group, topics }) => h("section", { class: "panel-group" },
-      h("h3", { class: "panel-group-title" }, group),
+    STANCES.map(({ group, topics }) => foldSection(group, null,
       h("ul", { class: "badges", "aria-label": group }, topics.map(link)))));
 }

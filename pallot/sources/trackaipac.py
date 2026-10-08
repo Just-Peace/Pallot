@@ -143,7 +143,7 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
 
     return SourceCard(
         source=SOURCE,
-        kind="scorecard",
+        kind="endorsement",
         label=LABEL,
         description=DESCRIPTION,
         url=CATEGORY_PAGES.get(categories[0]) if categories else SITE,
