@@ -65,7 +65,7 @@ export function stancesPanel(candidate, base, empty) {
   };
   return h("div", { class: "card-panel stances" },
     empty ? h("p", { class: "muted" }, "No source has details on this candidate yet.") : null,
-    h("p", { class: "muted" }, `Pick an issue to search for ${candidate.name}'s stance. These are live search results, not Pallot's own, and we haven't checked them.`),
+    h("p", { class: "notice notice-warn" }, `Pick an issue to search for ${candidate.name}'s stance. These are live search results, not Pallot's own, and we haven't checked them.`),
     STANCES.map(({ group, topics }) => foldSection(group, null,
       h("ul", { class: "badges", "aria-label": group }, topics.map(link)))));
 }
