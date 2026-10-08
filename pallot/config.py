@@ -46,6 +46,7 @@ class Ttls:
     fec_bundle: int = 7 * DAY  # the FEC's answers bundled with Pallot, from when they were last checked (bundles/)
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
+    polls_bundle: int = 2 * DAY  # FiftyPlusOne's poll lists bundled with Pallot (bundles/), refreshed daily: a day of grace
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
     key_dates_backoff: int = HOUR  # after that page is refused us, stop asking for this long
     outlines: int = 30 * DAY  # TIGERweb's district outlines for the map, as long as the geocoder's districts
