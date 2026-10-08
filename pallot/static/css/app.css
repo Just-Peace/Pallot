@@ -87,6 +87,9 @@
   --party-l-soft: #332b0c;
   --party-g: #3f9a45;
   --party-g-soft: #16301f;
+  --party-r-name: #ee7470;      /* a candidate's name in Details, lighter to read on the dark panel */
+  --party-d-name: #6f9df0;
+  --party-g-name: #5fb865;
   --party-other: #ffffff;
   --party-other-ink: #0e1319;
   --party-other-pick: #ffffff;
@@ -755,6 +758,19 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .cand-name { font-weight: 650; font-size: 1rem; }
 .cand-sub { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.8rem; margin: 3px 0 0; }
 .cand-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+/* a candidate's row (candidateRow): the photo, then the name with its pills beside it and Profile
+   under them, and Note and Search at the side. The label's children join the grid, so the photo
+   and name still pick while Profile, outside the label, doesn't. */
+.cand-grid { display: grid; grid-template-columns: 20px auto minmax(0, 1fr) auto; column-gap: 10px; row-gap: 4px;
+  grid-template-areas: "pick photo name actions" "pick photo profile actions"; align-items: center; }
+.cand-grid > .pick-input { grid-area: pick; }
+.cand-grid > .cand-label { display: contents; }
+.cand-grid .avatar { grid-area: photo; cursor: pointer; }
+.cand-grid .cand-text { grid-area: name; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 8px; cursor: pointer; }
+.cand-grid .cand-sub { margin: 0; }
+.cand-grid > .cand-profile { grid-area: profile; justify-self: start; }
+.cand-grid > .cand-actions { grid-area: actions; margin-left: 0; }
+.icon-btn.profile-btn { padding: 2px 10px; font-size: 0.8rem; color: var(--accent); border-color: var(--line-strong); }
 
 .avatar { width: 38px; height: 38px; border-radius: 50%; flex: none; object-fit: cover; background: var(--neutral-soft);
   color: var(--muted); display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
@@ -773,7 +789,7 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 30px; }
 .card-panel .badges { margin: 8px 0; }
-/* a candidate's Endorsements, Scorecards and Funding lines (sourceLines, fundingLine in source-cards.js), each under its heading */
+/* a candidate's Endorsements, Ratings and Funding lines (sourceLines, fundingLine in source-cards.js), each under its heading */
 .cand-lines { margin: 6px 0 0 30px; }
 .cand-lines-body { display: grid; gap: 6px; }
 .badge-line { display: flex; align-items: baseline; gap: 4px 10px; }
@@ -785,6 +801,9 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
   font-weight: 600; background: var(--neutral-soft); color: var(--text); }
 a.badge-link { text-decoration: none; }
 a.badge-link:hover { text-decoration: underline; filter: brightness(0.96); }
+/* a row's chip opens Details at its source */
+button.badge-btn { border: 0; font-family: inherit; line-height: inherit; cursor: pointer; }
+button.badge-btn:hover { text-decoration: underline; filter: brightness(0.96); }
 .badge-arrow { font-size: 0.7rem; opacity: 0.7; }
 .badge.tone-info { background: var(--info-soft); color: var(--info); }
 .badge.tone-good { background: var(--good-soft); color: var(--good); }
@@ -821,6 +840,9 @@ dialog {
   box-shadow: var(--shadow-pop);
 }
 dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
+/* the page stays put behind a modal: scrolling past a dialog's end doesn't scroll the ballot, and
+   the gutter keeps the page from shifting when its scrollbar goes */
+html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .details { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 10vh); margin: 5vh auto auto; }
 .details-head { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
 .details-title { flex: 1; min-width: 0; }
@@ -830,18 +852,47 @@ dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
 /* ‹ and › step through the race's candidates */
 .details-nav { display: flex; align-items: center; gap: 6px; flex: none; }
 .icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
-.stance-group { margin: 12px 0 0; }
-.stance-title { margin: 0 0 6px; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+/* a tab's groups: the Issues tab's, and the Endorsements tab's Ratings and Endorsements */
+.panel-group { margin: 12px 0 0; }
+.panel-group-title { margin: 0 0 6px; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
 .stances .badges { margin: 0; }
+/* a source on the Endorsements tab (endorsementsPanel): folded, its name, "?" and a rating's chips */
+.source-section { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); margin: 0 0 8px; }
+.source-section > summary { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 10px 12px;
+  cursor: pointer; font-weight: 650; }
+.source-section > summary::-webkit-details-marker { display: none; }
+.source-section > summary:hover .source-section-name { color: var(--accent); }
+.source-section .likely-flag { margin-left: 0; }
+.source-section[open] > summary .badge { display: none; }
+.source-section > .card-panel { padding: 0 12px 10px; }
 .stances .badge-link { font-size: 0.85rem; padding: 4px 10px; }
 .details-tabs { padding: 0 20px; }
 .details-foot { padding: 12px 20px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+/* the tabs (under Details' head, --head-h) and the foot stay in view while the dialog scrolls */
+.details-tabs > .tabs { position: sticky; top: var(--head-h, 0px); z-index: 2; background: var(--panel); }
+.details-foot { position: sticky; bottom: 0; z-index: 2; background: var(--panel); }
+/* Details' head (details.js) stays at the top, with Search and Pick beside ‹ › ✕ and the name in its
+   party's colour. Scrolled down (.compact), it shrinks to a small photo, the name and the buttons' icons. */
+.cand-details .details-head { position: sticky; top: 0; z-index: 3; background: var(--panel); transition: padding 0.15s; }
+.cand-details .details-head .avatar { transition: width 0.15s, height 0.15s, font-size 0.15s; }
+.details-actions { display: flex; gap: 6px; flex: none; }
+#details-name[data-party] { color: var(--party-text, var(--party, var(--text))); }
+#details-name[data-party="R"] { color: var(--party-r-name, var(--party-r)); }
+#details-name[data-party="D"] { color: var(--party-d-name, var(--party-d)); }
+#details-name[data-party="G"] { color: var(--party-g-name, var(--party-g)); }
+.compact .details-head { align-items: center; gap: 10px; padding: 8px 20px; }
+.compact .details-head .avatar.large { width: 32px; height: 32px; font-size: 0.8rem; }
+.compact .details-title h2 { margin: 0; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.compact .details-title p, .compact .btn-word { display: none; }
+.compact .details-actions .btn { padding: 6px 8px; }
+.compact .icon-btn.step { padding: 2px 11px 6px; }
+@media (prefers-reduced-motion: reduce) { .cand-details .details-head, .cand-details .details-head .avatar { transition: none; } }
 
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 0 -20px; padding: 0 20px; overflow-x: auto; }
 .tab { font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
   padding: 10px 12px 8px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
-/* "?": a source only likely matched this candidate (on its tab, badges and Details button) */
+/* "?": a source only likely matched this candidate (on its tab, section and badges) */
 .likely-flag { display: inline-block; margin-left: 6px; width: 16px; height: 16px; line-height: 16px; border-radius: 50%;
   font-size: 0.7rem; font-weight: 700; background: var(--warn-soft); color: var(--warn); text-align: center; }
 .badge .likely-flag { margin-left: 2px; width: 14px; height: 14px; line-height: 14px; box-shadow: 0 0 0 1px var(--warn); }
@@ -903,7 +954,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 /* A poll: one bar with a segment per candidate in their party colour and the rest
    (undecided or other) left grey, then a legend. */
 .stack-bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--neutral-soft); }
-.stack-bar > span, .stack-legend li { --bar: var(--party, var(--accent)); }
+.stack-bar > span, .stack-legend li { --bar: var(--party, var(--party-other-pick)); }
 .stack-bar > span { flex: none; background: var(--bar); }
 .stack-bar > span + span { border-left: 2px solid var(--panel-2); }
 .stack-bar > .rest { background: transparent; }
@@ -912,7 +963,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend strong { font-variant-numeric: tabular-nums; }
 .stack-legend .rest { color: var(--muted); }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
-.stack-missing { margin: 6px 0 0; }
+.box-links { display: flex; flex: none; gap: 6px; }
 
 /* ---- compare dialog ---- */
 
@@ -922,7 +973,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
    that candidate's own money. The groups share their section's columns (nested subgrids),
    so every bar starts on the same line. */
 .compare { width: min(960px, calc(100vw - 32px)); }
-.compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--party, var(--accent)); } /* no party, or one without a colour: the accent */
+.compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--party, var(--party-other-pick)); } /* no party, or one without a colour: white (dark ink on the light theme) */
 .cmp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 20px; border-bottom: 1px solid var(--line);
   background: var(--panel-2); }
 .cmp-controls .fine { flex: 1 1 260px; margin: 0; }
@@ -1129,6 +1180,10 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
   .race-status { max-width: none; }
   .cand-actions { margin-left: 30px; }
+  /* Profile, Note and Search share the line under the name */
+  .cand-grid { grid-template-columns: 20px auto auto minmax(0, 1fr);
+    grid-template-areas: "pick photo name name" "pick photo profile actions"; }
+  .cand-grid > .cand-actions { justify-self: end; }
   .badges, .note, .cand-lines { margin-left: 0; }
   .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
@@ -1140,6 +1195,20 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .share .bar { grid-column: 1 / -1; grid-row: 2; }
   .details-head { padding: 14px 16px 10px; }
   .details-tabs { padding: 0 16px; }
+  /* Details' Search and Pick get a line of their own under the name, until the head shrinks */
+  .cand-details .details-head { flex-wrap: wrap; }
+  .cand-details .details-title { flex-basis: 0; }
+  .cand-details:not(.compact) .details-actions { order: 3; flex-basis: 100%; }
+  .cand-details:not(.compact) .details-actions .btn { flex: 1 1 0; justify-content: center; }
+  .compact .details-head { gap: 6px; padding: 8px 16px; flex-wrap: nowrap; }
+  .compact .details-actions, .compact .details-nav { gap: 3px; }
+  /* the name gets what the five buttons leave, on up to two lines */
+  .compact .details-head .avatar.large { width: 24px; height: 24px; font-size: 0.6rem; }
+  .compact .details-title h2 { font-size: 0.95rem; line-height: 1.15; white-space: normal; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .compact .details-actions .btn { padding: 6px 7px; }
+  .compact .icon-btn.step { padding: 2px 8px 6px; }
+  .compact .icon-btn.close { padding: 4px 8px; }
   .cmp-controls { padding: 10px 16px; }
   /* each bar: the name, amount and count on one line, the bar under them */
   .cmp-grid { grid-template-columns: minmax(0, 1fr) max-content max-content; }

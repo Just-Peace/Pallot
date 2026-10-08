@@ -11,7 +11,7 @@ export const VIEW_DEFAULTS = {
   showMap: false, // the map of your districts, folded at first
   showMoney: false, // each race's money box, folded at first
   showPolls: true, // each race's poll box, open at first
-  showEndorsements: true, // the candidates' Endorsements and Scorecards lines
+  showEndorsements: true, // the candidates' Endorsements and Ratings lines
   showFunding: true, // the candidates' Funding line
   showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
@@ -48,22 +48,25 @@ export function setViewMode(mode) {
   changed();
 }
 
-// The fine print under When to vote and Your districts, saying where they come from. With
-// showSources off it's a link that opens it, so only the dates and the districts show at first.
+// The fine print under When to vote and Your districts, saying where they come from, behind a link
+// that opens and closes it; it starts open or closed as showSources says.
 export function sourceNote(...children) {
   const note = h("p", { class: "fine", tabindex: "-1" }, ...children);
-  const more = h("button", { type: "button", class: "link-btn source-more", on: { click: () => {
-    setSourceNoteOpen(box, true);
-    note.focus();
-  } } }, "Where these come from");
+  const more = h("button", { type: "button", class: "link-btn source-more", "aria-expanded": "false", on: { click: () => {
+    const open = note.hidden;
+    setSourceNoteOpen(box, open);
+    if (open) note.focus();
+  } } });
   const box = h("div", { class: "source-note" }, more, note);
   setSourceNoteOpen(box, viewPref("showSources"));
   return box;
 }
 
 function setSourceNoteOpen(box, open) {
+  const more = box.querySelector(".source-more");
   box.querySelector(".fine").hidden = !open;
-  box.querySelector(".source-more").hidden = open;
+  more.setAttribute("aria-expanded", String(open));
+  more.textContent = open ? "Hide where these come from" : "Where these come from";
 }
 
 // After showSources changes: every note on the page follows it.

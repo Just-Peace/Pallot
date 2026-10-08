@@ -159,7 +159,7 @@ export function openCompare(dialog, race) {
   else body.append(h("div", { class: "tab-panel" }, panel(cards[0])));
 
   const { head, close } = dialogHead(dialog,
-    h("div", { class: "details-title" }, h("h2", { id: "compare-title" }, "Compare candidates"), h("p", { class: "muted" }, race.name)));
+    h("div", { class: "details-title" }, h("h2", { id: "compare-title" }, "Compare funding"), h("p", { class: "muted" }, race.name)));
   dialog.replaceChildren(
     head,
     h("div", { class: "cmp-controls" },

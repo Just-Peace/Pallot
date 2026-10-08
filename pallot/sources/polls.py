@@ -216,12 +216,9 @@ def _method(kept: list[Reading]) -> str:
 
 
 def race_card(race: Race, kept: list[Reading], middle: dict[str, float]) -> SourceCard:
-    """The race's poll bar: each candidate's median, in ballot order."""
-    parts = [
-        Share(label=c.name, amount=round(middle[c.key], 1), candidate_key=c.key) if c.key in middle
-        else Share(label=c.name, note="not in these polls", candidate_key=c.key)
-        for c in race.candidates
-    ]
+    """The race's poll bar: the median of each candidate the polls asked about, in ballot order."""
+    parts = [Share(label=c.name, amount=round(middle[c.key], 1), candidate_key=c.key)
+             for c in race.candidates if c.key in middle]
     return SourceCard(
         source=SOURCE,
         kind="polls",
@@ -229,7 +226,7 @@ def race_card(race: Race, kept: list[Reading], middle: dict[str, float]) -> Sour
         description="Each candidate's median share in recent public polls, from FiftyPlusOne.",
         url=SITE,
         as_of=kept[0].end or None,
-        breakdowns=[Breakdown(title="Polls", unit="percent", parts=parts, note=_method(kept))],
+        breakdowns=[Breakdown(title="Polls", unit="percent", parts=parts, note=_method(kept), count=len(kept))],
     )
 
 
