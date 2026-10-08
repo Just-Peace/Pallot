@@ -33,6 +33,16 @@
    "last_checked": "2026-10-08T20:03:40+00:00",
    "last_refresh": "2026-10-08T20:03:40+00:00",
    "server_errors": 0
+  },
+  "tigerweb": {
+   "answers": 220,
+   "answers_hash": "e8536e58304eb293560c796738020436093f82bd63cb56db4dfad15e7230b493",
+   "cd": 38,
+   "hd": 150,
+   "last_checked": "2026-10-08T20:30:48+00:00",
+   "last_refresh": "2026-10-08T20:30:48+00:00",
+   "missing": 0,
+   "sd": 31
   }
  }
 }
