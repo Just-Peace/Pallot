@@ -28,6 +28,10 @@ class Ttls:
     sos_candidates: int = DAY  # the statewide candidate list, one per election
     sos_empty: int = 6 * HOUR  # an empty ballot order may fill in later
     sos_backoff: int = HOUR  # after Texas SOS refuses us, stop asking for this long
+    sos_elections_bundle: int = 3 * DAY  # Texas SOS's bundled answers (bundles/), from when they were last checked
+    sos_reference_bundle: int = 30 * DAY
+    sos_candidates_bundle: int = 2 * DAY  # the live day and a day of grace
+    sos_ballot_order_bundle: int = 2 * DAY  # every county's ballot order, bundled apart: the live day and a day of grace
     past_election: int = 365 * DAY  # anything about an election that already happened
     geocode: int = 30 * DAY
     geocode_miss: int = DAY
@@ -42,20 +46,25 @@ class Ttls:
     fec_bundle: int = 7 * DAY  # the FEC's answers bundled with Pallot, from when they were last checked (bundles/)
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
+    polls_bundle: int = 2 * DAY  # FiftyPlusOne's poll lists bundled with Pallot (bundles/), refreshed daily: a day of grace
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
     key_dates_backoff: int = HOUR  # after that page is refused us, stop asking for this long
     outlines: int = 30 * DAY  # TIGERweb's district outlines for the map, as long as the geocoder's districts
     outlines_backoff: int = HOUR  # after TIGERweb refuses us, stop asking for this long
+    tigerweb_bundle: int = 37 * DAY  # TIGERweb's outlines bundled with Pallot (bundles/), refreshed weekly: a week of grace
     tiles: int = 7 * DAY  # OpenStreetMap's map tiles: its tile usage policy asks for at least 7 days
     tiles_backoff: int = HOUR  # after OpenStreetMap's tile server refuses us, stop asking for this long
     election_precincts: int = 7 * DAY  # the TLC portal's list of precinct maps: a new one comes after each statewide election
     election_precincts_backoff: int = HOUR  # after the TLC portal refuses us, stop asking for this long
     county_precincts: int = 7 * DAY  # counties' lists of their election precincts and maps of commissioner and JP precincts
     county_precincts_backoff: int = HOUR  # after a county's map server refuses us, stop asking them for this long
+    county_precincts_bundle: int = 14 * DAY  # the seven counties' records bundled with Pallot (bundles/), refreshed weekly: a week of grace
     endorsement_feeds: int = 7 * DAY  # organizations' live endorsement lists (endorsement_feeds.py)
     endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
+    endorsement_feeds_bundle: int = 2 * DAY  # the lists bundled with Pallot (bundles/), refreshed daily: a day of grace
     officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat
     officeholders_backoff: int = HOUR  # after either list is refused us, stop asking for this long
+    officeholders_bundle: int = 14 * DAY  # both lists bundled with Pallot (bundles/), refreshed weekly: a week of grace
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # delete expired suggestions, tiles and addresses not found once expired this long
 

@@ -113,7 +113,7 @@ class Services:
     today: Callable[[], dt.date] = dt.date.today
     last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
     last_uses: dict[str, SourceUse] = field(default_factory=dict)
-    bundles: dict[str, Loaded] = field(default_factory=dict)  # the answers that came with Pallot, by source (Settings)
+    bundles: dict[str, Loaded] = field(default_factory=dict)  # the answers that came with Pallot, by bundle (Settings)
 
 
 @dataclass

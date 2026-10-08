@@ -1,6 +1,30 @@
 {
  "schema_version": 1,
  "sources": {
+  "cair": {
+   "answers": 1,
+   "answers_hash": "bcfe12ae1ef393168ba99e1b524cddb5c9fc6380ffda0c61f82e3a9532d54fa8",
+   "candidates": 819,
+   "last_checked": "2026-10-08T20:47:28+00:00",
+   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "texas": 17
+  },
+  "county_precincts": {
+   "answers": 25,
+   "answers_hash": "98027f7c104c37daa19988d9557a6a8e60ecd4633067af425b96cb49cacbe527",
+   "counties": 7,
+   "last_checked": "2026-10-08T20:37:52+00:00",
+   "last_refresh": "2026-10-08T20:37:52+00:00",
+   "missing": 0
+  },
+  "emgage": {
+   "answers": 1,
+   "answers_hash": "d2e3fc500aafeb8fa556966918705e346d4aae5a96cd33e920f51488061e8394",
+   "candidates": 39,
+   "last_checked": "2026-10-08T20:47:28+00:00",
+   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "texas": 3
+  },
   "fec": {
    "answers": 469,
    "answers_hash": "d5bec2755efda47009dbc3a93c564a757edf8c056ae170228402abd5074ce220",
@@ -8,6 +32,58 @@
    "last_checked": "2026-10-08T18:54:13+00:00",
    "last_refresh": "2026-10-08T18:54:13+00:00",
    "races": 39
+  },
+  "mupac": {
+   "answers": 1,
+   "answers_hash": "068dfea88b2198fd0f62fc44bfaa55c1738d918823bd0048f1efe97dea54ca82",
+   "candidates": 26,
+   "last_checked": "2026-10-08T20:47:28+00:00",
+   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "texas": 3
+  },
+  "officeholders": {
+   "answers": 2,
+   "answers_hash": "e0fecb760b6d3a8752f1fd322aa71d3340b02d13e95a6f4666c97facf647deb1",
+   "congress": 39,
+   "last_checked": "2026-10-08T20:26:01+00:00",
+   "last_refresh": "2026-10-08T20:26:01+00:00",
+   "legislature": 178
+  },
+  "polls": {
+   "answers": 3,
+   "answers_hash": "c8c6c0ae473aed2e7700a6ad4b7d4be59bc60b97b25b892b38a14d8facad1a4b",
+   "governor": 40,
+   "house": 15,
+   "last_checked": "2026-10-08T20:41:28+00:00",
+   "last_refresh": "2026-10-08T20:41:28+00:00",
+   "senate": 52
+  },
+  "sos": {
+   "answers": 9,
+   "answers_hash": "27470e241117589aafa633487bdb566ffe8e1f2b365f3390aa8c765ee90ab3d1",
+   "candidates": 3971,
+   "elections": 3,
+   "last_checked": "2026-10-08T19:47:19+00:00",
+   "last_refresh": "2026-10-08T19:47:19+00:00"
+  },
+  "sos_ballot_order": {
+   "answers": 254,
+   "answers_hash": "2d7ec4b29217c18ab3874acf5bbc3cefc8e3dafc7ac127fd06c013e3f4aee45f",
+   "ballot_orders": 254,
+   "elections": 3,
+   "last_checked": "2026-10-08T20:03:40+00:00",
+   "last_refresh": "2026-10-08T20:03:40+00:00",
+   "server_errors": 0
+  },
+  "tigerweb": {
+   "answers": 220,
+   "answers_hash": "e8536e58304eb293560c796738020436093f82bd63cb56db4dfad15e7230b493",
+   "cd": 38,
+   "hd": 150,
+   "last_checked": "2026-10-08T20:30:48+00:00",
+   "last_refresh": "2026-10-08T20:30:48+00:00",
+   "missing": 0,
+   "sd": 31
   }
  }
 }

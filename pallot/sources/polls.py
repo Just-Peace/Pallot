@@ -32,7 +32,8 @@ LABEL = "Polls"
 SITE_LABEL = "FiftyPlusOne"
 DESCRIPTION = (
     "Public polls of Texas's races for U.S. Senate, U.S. House and Governor, from FiftyPlusOne (fiftyplusone.news). "
-    "Pallot downloads its nationwide poll lists, so nothing about you is sent."
+    "Its nationwide poll lists come with Pallot, with its permission; once that copy is two days old, "
+    "Pallot downloads them again, so nothing about you is sent."
 )
 API = "https://fiftyplusone.news/api/polls"
 SITE = "https://fiftyplusone.news"
