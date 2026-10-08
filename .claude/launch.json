@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pallot",
+      "runtimeExecutable": "wsl",
+      "runtimeArgs": ["bash", "-lc", "PALLOT_PORT=8765 uv run pallot"],
+      "port": 8765
+    },
+    {
+      "name": "pallot-alt",
+      "runtimeExecutable": "wsl",
+      "runtimeArgs": ["bash", "-lc", "PALLOT_PORT=8766 uv run pallot"],
+      "port": 8766
+    }
+  ]
+}
