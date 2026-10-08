@@ -207,9 +207,9 @@ function stackedBar(item, people) {
   ];
 }
 
-// A money box's head, like a poll's: one bar with a segment per candidate, each their share of
-// what the race's candidates raised, in their party's colour, then a legend with each one's
-// amount and note (cash on hand, outside spending) as its tooltip.
+// A money box's head, like a poll's: one bar for the total the race's candidates raised, a
+// segment per candidate in their party's colour, then a legend with each one's amount and note
+// (cash on hand, outside spending), and the total.
 function moneyStack(item, people) {
   const shown = item.parts.filter((p) => p.amount != null && p.amount > 0);
   const sum = shown.reduce((total, p) => total + p.amount, 0);
@@ -220,7 +220,7 @@ function moneyStack(item, people) {
       ? h("div", { class: "stack-bar", role: "img", "aria-label": shown.map((p) => `${p.label} ${DOLLARS.format(p.amount)}`).join(", ") },
           shown.map((part) => h("span", {
             "data-party": partyAttr(part), style: `width: ${width(part.amount / sum)}`,
-            title: `${part.label} ${DOLLARS.format(part.amount)} (${percent(part.amount / sum)})`,
+            title: `${part.label} ${DOLLARS.format(part.amount)}`,
           })))
       : null,
     h("ul", { class: "stack-legend" }, item.parts.map((part) => h("li", {
@@ -229,7 +229,8 @@ function moneyStack(item, people) {
       h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
       h("span", {}, part.label, likely(part)),
       h("strong", {}, part.amount == null ? "—" : DOLLARS_SHORT.format(part.amount)),
-      part.note ? h("span", { class: "share-note" }, part.note) : null))),
+      part.note ? h("span", { class: "share-note" }, part.note) : null)),
+      sum > 0 ? h("li", { class: "stack-total" }, h("span", {}, "Total"), h("strong", {}, DOLLARS_SHORT.format(sum))) : null),
   ];
 }
 
