@@ -962,6 +962,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend li { display: inline-flex; align-items: center; gap: 6px; }
 .stack-legend strong { font-variant-numeric: tabular-nums; }
 .stack-legend .rest { color: var(--muted); }
+.stack-legend .share-note { display: inline; }
+.stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .box-links { display: flex; flex-wrap: wrap; gap: 6px; }
 
