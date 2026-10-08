@@ -1,9 +1,9 @@
 // Renders SourceCards. Every source's card has the same shape, so a new source shows up
 // here (as badges on the candidate row and in Details) without any code change; its ``kind``
 // decides where: endorsements (TrackAIPAC, Vote for Peace and the endorsement lists) make the
-// row's Endorsements line and share Details' Endorsements tab, a money card's badges stay in
-// Details (its highlights make the row's Funding line), every other card gets its own tab, and a
-// money or poll box folds, with its source in its corner. The row's endorsement chips link to their
+// row's Endorsements line and share Details' Endorsements tab, a money card's highlights and badges
+// make the row's Funding line, the filing and profile cards share Details' Profile tab, every other
+// card gets its own tab, and a money or poll box folds, with its source in its corner. The row's endorsement chips link to their
 // source; its Funding chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
@@ -45,7 +45,7 @@ export const isLikely = (card) => card?.match?.confidence === "likely";
 // neutral one stays in Details.
 const SIDED = new Set(["good", "warn"]);
 const sided = (card) => card.kind === "endorsement" ? card.badges.filter((b) => SIDED.has(b.tone)) : [];
-const funded = (card) => card.kind === "money" && card.highlights?.length > 0;
+const fundingChips = (card) => (card.kind === "money" ? [...(card.highlights || []), ...card.badges] : []);
 
 // The view switch (view.js) that opens or folds a race box of each kind; other boxes always show.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
@@ -113,12 +113,13 @@ export function syncLines() {
   for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
 }
 
-// The candidate's Funding line, after their other lines: the money cards' highlights ("Mostly
-// small donors"), with a "?" on the first of a card that only likely matched. The showFunding
+// The candidate's Funding line, after their other lines: each money card's chips, as its tab in
+// Details shows them: its highlights ("Mostly small donors"), then its badges ("FEC: raised $9.2M",
+// outside spending for and against), with a "?" on the first of a card that only likely matched. The showFunding
 // view switch hides it, with the money boxes, until syncFunding(). A chip opens Details at its money source,
 // ``onOpen(card)``.
 export function fundingLine(candidate, onOpen) {
-  const cards = candidate.cards.filter(funded);
+  const cards = candidate.cards.filter((card) => fundingChips(card).length);
   if (!cards.length) return null;
   const id = `funding-${++lineIds}`;
   const element = h("div", { class: "cand-lines funding-line", on: { "pallot:sync": () => {
@@ -126,7 +127,7 @@ export function fundingLine(candidate, onOpen) {
   } } }, h("div", { class: "badge-line" },
     h("span", { class: "line-title", id }, "Funding"),
     h("ul", { class: "badges", "aria-labelledby": id },
-      cards.flatMap((card) => card.highlights.map((b, j) => badge(b, card, j === 0, b.text, onOpen))))));
+      cards.flatMap((card) => fundingChips(card).map((b, j) => badge(b, card, j === 0, b.text, onOpen))))));
   element.hidden = !viewPref("showFunding");
   return element;
 }
