@@ -305,7 +305,7 @@ def _outside_note(rows: list[dict[str, Any]] | None) -> str | None:
 
 
 def _outside_badges(rows: list[dict[str, Any]] | None, url: str) -> list[Badge]:
-    """One badge for outside spending for the candidate (blue), one for against (amber)."""
+    """One Funding chip for outside spending for the candidate (blue), one for against (amber)."""
     support, oppose = _for_against(rows)
     return [
         Badge(text=f"Outside spending {side}: {money_short(amount)}", tone=tone, url=url, hint=_OUTSIDE_HINT)
@@ -355,7 +355,6 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
             hint=f"Raised by the campaign for the {cycle} election ({span})"
             + (f", from reports through {display_date(through)}" if through else ""),
         ))
-    badges += _outside_badges(details.outside, page)
 
     facts = [
         Fact(label="Raised", value=money(raised) or ""),
@@ -395,7 +394,8 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
         as_of=through,
         match=match,
         badges=badges,
-        highlights=highlights(figures, state=_state_name(details.states, home), credit=f"FEC, {span}"),
+        highlights=[*highlights(figures, state=_state_name(details.states, home), credit=f"FEC, {span}"),
+                    *_outside_badges(details.outside, page)],
         facts=[f for f in facts if f.value],
         breakdowns=[b for b in breakdowns if b],
         links=links,

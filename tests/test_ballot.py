@@ -119,10 +119,7 @@ def test_federal_races_get_fec_money(client):
     talarico = next(c for c in senate["candidates"] if c["name"] == "James Talarico")
     fec = next(card for card in talarico["cards"] if card["source"] == "fec")
     assert fec["match"]["confidence"] == "exact" and fec["as_of"] == "2026-06-30"
-    assert [(b["text"], b["tone"]) for b in fec["badges"]] == [
-        ("FEC: raised $68.6M", "neutral"), ("Outside spending for: $4.1M", "info"), ("Outside spending against: $705K", "warn"),
-    ]
-    assert all("none of it went to the campaign" in b["hint"] for b in fec["badges"][1:])
+    assert [(b["text"], b["tone"]) for b in fec["badges"]] == [("FEC: raised $68.6M", "neutral")]
     assert fec["badges"][0]["url"] == "https://www.fec.gov/data/candidate/S6TX00479/?cycle=2026&election_full=true"
     assert [b["title"] for b in fec["breakdowns"]] == [
         "Where the money came from", "Donations by size", "Where donors live", "Top donors' employers", "Outside spending",
@@ -132,10 +129,13 @@ def test_federal_races_get_fec_money(client):
     assert any("Senate" in link["label"] for link in fec["links"])  # personal financial disclosures
     assert set(fec["figures"]) == {"raised", "spent", "cash", "outside_for", "small_share", "self_share", "in_state_share"}  # what Pick by rule tests
     assert fec["figures"]["in_state_share"] == 77.6  # Texas, of the states the donors gave from
-    assert [(b["text"], b["tone"], b["hint"]) for b in fec["highlights"]] == [
+    assert [(b["text"], b["tone"], b["hint"]) for b in fec["highlights"][:2]] == [
         ("Mostly small donors", "good", "70% of the $68.6M raised came from donations under $500 (FEC, 2021–26)"),
         ("Overwhelmingly Texas donors", "good", "78% of itemized donations from individuals with an address came from Texas (FEC, 2021–26)"),
+    ] and [(b["text"], b["tone"]) for b in fec["highlights"][2:]] == [
+        ("Outside spending for: $4.1M", "info"), ("Outside spending against: $705K", "warn"),
     ]
+    assert all("none of it went to the campaign" in b["hint"] for b in fec["highlights"][2:])
     assert (fec["figures"]["small_share"], fec["figures"]["self_share"]) == (70.4, 0.0)  # percents of raised
     assert fec["figures"]["raised"] == 68560930.42 and fec["figures"]["outside_for"] == pytest.approx(4.1e6, rel=0.05)
 

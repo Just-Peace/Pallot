@@ -123,7 +123,7 @@ class SourceCard(BaseModel):
     as_of: str | None = None
     match: Match | None = None
     badges: list[Badge] = Field(default_factory=list)
-    highlights: list[Badge] = Field(default_factory=list)  # a money card's Funding chips (sources/highlights.py)
+    highlights: list[Badge] = Field(default_factory=list)  # a money card's Funding chips (sources/highlights.py, and the FEC's outside spending)
     facts: list[Fact] = Field(default_factory=list)
     quotes: list[str] = Field(default_factory=list)
     breakdowns: list[Breakdown] = Field(default_factory=list)
