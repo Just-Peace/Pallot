@@ -10,13 +10,14 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from pallot import enrich
 from pallot.api import host_allowed
 from pallot.config import DAY
 from pallot.http_cache import HttpCache, RequestSpec
 from pallot.settings import HEADER
 from pallot.text import display_time
 
-from .conftest import ADDRESSES, get_ballot, last_use, load, switch
+from .conftest import ADDRESSES, get_ballot, last_use, load, stream_ballot, switch
 
 ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't have to read
 
@@ -218,6 +219,49 @@ def test_responses_are_gzipped_when_the_browser_asks(client):
     assert zipped.headers["content-encoding"] == "gzip" and int(zipped.headers["content-length"]) < len(plain.content) / 4
     assert zipped.json().keys() == plain.json().keys()
     assert client.get("/css/app.css", headers={"Accept-Encoding": "gzip"}).headers["content-encoding"] == "gzip"
+
+
+def cards(ballot):
+    races = ballot["races"] + [race for section in ballot["maybe"] for race in section["races"]]
+    return [card for race in races for card in race["cards"] + [c for cand in race["candidates"] for c in cand["cards"]]]
+
+
+def test_the_page_gets_the_races_first_then_the_cards(client):
+    first, last = stream_ballot(client)
+    assert first["done"] is False and last["done"] is True
+    assert first["ballot"]["races"] and not cards(first["ballot"])
+    assert [r["key"] for r in first["ballot"]["races"]] == [r["key"] for r in last["ballot"]["races"]]
+    assert cards(last["ballot"]) and first["ballot"]["districts"] == last["ballot"]["districts"]
+    assert client.get("/api/sources").json()["last_lookup"]["external_calls"] == last["ballot"]["meta"]["external_calls"] > 0
+    plain = get_ballot(client)
+    assert plain["meta"]["external_calls"] == 0
+    assert {**plain, "meta": None} == {**last["ballot"], "meta": None}
+    again = stream_ballot(client)
+    assert again[-1]["ballot"]["meta"]["external_calls"] == 0
+
+
+def test_a_streamed_lookup_that_fails_is_still_an_error_status(client):
+    switch(client, "sos", False)
+    switch(client, "ballotpedia", False)
+    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers={"Accept": "application/x-ndjson"})
+    assert response.status_code == 400 and "No ballot source" in response.json()["detail"]
+
+
+def test_cards_that_fail_after_the_races_are_an_error_line(client, monkeypatch):
+    async def broken(*args, **kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(enrich, "run", broken)
+    first, last = stream_ballot(client)
+    assert first["done"] is False and first["ballot"]["races"]
+    assert last == {"error": "Couldn't load money, polls and endorsements."}
+
+
+def test_the_streamed_ballot_is_gzipped_line_by_line(client):
+    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]},
+                           headers={"Accept": "application/x-ndjson", "Accept-Encoding": "gzip"})
+    assert response.headers["content-encoding"] == "gzip" and response.headers["x-accel-buffering"] == "no"
+    assert [json.loads(line)["done"] for line in response.text.splitlines()] == [False, True]
 
 
 @pytest.mark.parametrize("page", PAGES)

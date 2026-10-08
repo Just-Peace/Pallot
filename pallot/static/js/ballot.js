@@ -9,7 +9,9 @@
 
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
-import { applyHidePicked, hidingNote, initNav, markCurrentSection, renderSections, updateProgress } from "./ballot-nav.js";
+import {
+  applyHidePicked, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, updateProgress,
+} from "./ballot-nav.js";
 import { electionLine } from "./ballot-shared.js";
 import { initChrome, setPaneCollapsed } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
@@ -24,7 +26,7 @@ import { STATES } from "./labels.js";
 import { initRules, openRules } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
-import { initRaceCards, redrawCards, renderCards } from "./race-cards.js";
+import { initRaceCards, redrawCards, refillCards, renderCards } from "./race-cards.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { showToast } from "./toast.js";
@@ -52,9 +54,10 @@ const printDialog = $("#print-dialog");
 // one that failed since).
 const page = {
   ballot: null, picks: null, request: null,
+  loadingCards: false, // the ballot's cards haven't arrived (or failed to)
   lookup, showDetails, openPrecincts, updateProgress, renderRaces, openRules,
 };
-let pendingLookup = null; // the AbortController of the lookup still running
+let pendingLookup = null; // the AbortController of the latest lookup, cancelled by the next one
 
 // ---- status line (only while working, or when something went wrong) -------------------
 
@@ -126,9 +129,15 @@ function readForm() {
   return request;
 }
 
+// The server sends the ballot as soon as its races are known, then again with every card. When
+// the cards follow this quickly (a saved lookup), the ballot is drawn once, with them.
+const QUICK_CARDS_MS = 250;
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // keepForm: leave the address form open afterwards ("Change" on another page opened it).
-// keepBallot: leave the ballot showing meanwhile (new precincts), rather than a skeleton.
-// A new lookup cancels one still running, so an older answer can't replace a newer ballot.
+// keepBallot: leave the ballot showing meanwhile (new precincts), rather than "Finding your ballot".
+// A new lookup cancels one still running, its cards included, so an older answer can't replace a
+// newer ballot. Resolves once the ballot is drawn; its cards may still be coming.
 async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
   pendingLookup?.abort();
   const controller = new AbortController();
@@ -136,33 +145,89 @@ async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
   setStatus("Looking up your ballot…", "busy");
   submitButton.disabled = true;
   // Only a lookup that isn't cached takes long enough to see this.
-  const skeleton = keepBallot ? null : setTimeout(() => showLoading(true), 300);
+  const loadingShown = keepBallot ? null : setTimeout(() => showLoading(true), 300);
   try {
-    const found = await api.post("/api/ballot", request, { signal: controller.signal });
+    const answers = api.lines("/api/ballot", request, { signal: controller.signal });
+    const first = (await answers.next()).value;
     if (controller.signal.aborted) return; // cancelled as its answer arrived
+    if (!first?.ballot) throw new Error(first?.error || "The lookup stopped before it finished. Try again.");
+    let found = first.ballot;
+    let rest = first.done ? null : answers.next(); // the line with the cards
+    if (rest) {
+      const quick = await Promise.race([rest, wait(QUICK_CARDS_MS)]);
+      if (controller.signal.aborted) return;
+      if (quick?.value?.done) {
+        found = quick.value.ballot;
+        rest = null;
+      } else if (quick) {
+        rest = Promise.resolve(quick);
+      }
+    }
     page.ballot = found;
     page.request = request;
+    page.loadingCards = Boolean(rest);
     writeJson(LAST_LOOKUP, request);
     page.picks = new Picks(found.election_date);
     render();
     setStatus("");
     if (keepForm) cancelButton.hidden = false;
     else showForm(false);
+    if (rest) addCards(rest, controller);
   } catch (error) {
     if (controller.signal.aborted) return;
     showLoading(false);
     setStatus(error.message, "error");
     if (!page.ballot) showForm(true);
   } finally {
-    clearTimeout(skeleton);
-    if (pendingLookup === controller) {
-      pendingLookup = null;
-      submitButton.disabled = false;
-    }
+    clearTimeout(loadingShown);
+    if (pendingLookup === controller) submitButton.disabled = false;
   }
 }
 
-// A skeleton ballot, saying a first lookup takes a while, in place of the ballot or the welcome.
+// Puts the cards from the ballot's second line on the ballot drawn from its first, in place.
+async function addCards(rest, controller) {
+  let line = null;
+  let failure = null;
+  try {
+    line = (await rest).value;
+  } catch (error) {
+    failure = error.message;
+  }
+  if (controller.signal.aborted) return;
+  if (line?.done) {
+    mergeCards(page.ballot, line.ballot);
+    page.loadingCards = false;
+  } else {
+    page.ballot.warnings.push(`${line?.error || failure || "Couldn't load money, polls and endorsements."} `
+      + "Look the address up again to try again.");
+  }
+  refillCards();
+  renderMessages();
+  setCardsLoading(page.loadingCards, { failed: page.loadingCards });
+}
+
+// Only the cards and what they decide change once the races are known (enrich.py), so they're
+// copied onto the races already drawn, whose handlers keep the same objects.
+function mergeCards(ballot, complete) {
+  const allRaces = (b) => [...b.races, ...b.maybe.flatMap((section) => section.races)];
+  const done = new Map(allRaces(complete).map((race) => [race.key, race]));
+  for (const race of allRaces(ballot)) {
+    const full = done.get(race.key);
+    if (!full) continue;
+    Object.assign(race, { cards: full.cards, holder: full.holder, open_seat: full.open_seat });
+    const people = new Map(full.candidates.map((c) => [c.key, c]));
+    for (const candidate of race.candidates) {
+      const person = people.get(candidate.key);
+      if (person) {
+        Object.assign(candidate, { cards: person.cards, incumbent: person.incumbent, photo_url: person.photo_url,
+          party_holds_seat: person.party_holds_seat });
+      }
+    }
+  }
+  Object.assign(ballot, { warnings: complete.warnings, notes: complete.notes, meta: complete.meta });
+}
+
+// "Finding your ballot", in place of the ballot or the welcome.
 function showLoading(show) {
   loading.hidden = !show;
   jump.hidden = show || !page.ballot; // the sections are the old ballot's
@@ -191,6 +256,7 @@ function render() {
   result.hidden = false;
   renderCards();
   renderRaces();
+  setCardsLoading(page.loadingCards);
 }
 
 // Redraws the races and propositions in place, from the saved picks, with the
@@ -251,7 +317,9 @@ const walletChoice = $("#print-wallet");
 for (const radio of printDialog.querySelectorAll('input[name="print-layout"]')) {
   radio.addEventListener("change", () => { $("#print-notes").disabled = walletChoice.checked; }); // notes don't fit
 }
-$("#print-btn").addEventListener("click", () => printDialog.showModal());
+$("#print-btn").addEventListener("click", () => {
+  if (!page.loadingCards) printDialog.showModal();
+});
 printDialog.addEventListener("close", () => {
   if (printDialog.returnValue === "print" && page.ballot) setTimeout(() => window.print(), 50);
 });

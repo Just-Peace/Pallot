@@ -274,7 +274,15 @@ def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
 
 async def build_ballot(svc: Services, request: BallotRequest, sources: Sources | None = None) -> Ballot:
     """The ballot for ``request``, with the sources the voter has on (by default, Pallot's defaults)."""
-    return await _Builder(svc, request, track_calls(), sources or svc.sources).run()
+    return await (await start_ballot(svc, request, sources)).finish()
+
+
+async def start_ballot(svc: Services, request: BallotRequest, sources: Sources | None = None) -> _Builder:
+    """A builder whose ``ballot`` has its races but no cards yet; ``finish()`` adds them. Every
+    BallotError is raised here, before any card is asked for."""
+    builder = _Builder(svc, request, track_calls(), sources or svc.sources)
+    await builder.races()
+    return builder
 
 
 async def _nothing() -> None:
@@ -309,8 +317,13 @@ class _Builder:
         self.unlisted: set[str] = set()  # SOS race keys with only write-ins, so not on the county's ballot order
         self.state_names = NameIndex()  # everyone the state lists for the day, kept or not
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
+        self.ballot: Ballot  # set by races(), for finish()
+        self.every_race: list[Race] = []
+        self.location: Location
+        self.enrich_args: dict[str, Any] = {}
 
-    async def run(self) -> Ballot:
+    async def races(self) -> Ballot:
+        """The ballot without cards, kept in ``self.ballot`` for ``finish()``."""
         if not (self.use_sos or self.use_bp):
             raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
         place, location = await locate(self.svc, self.request.address, self.sources)
@@ -381,9 +394,7 @@ class _Builder:
                 race.notes = _notes(own)
         ballot_day = day or (bp_ballot.day if bp_ballot else None)
         found = next((d for d in deadlines or () if d.day == ballot_day), None)
-        outcome = await enrich.run(
-            self.svc,
-            every_race,
+        self.enrich_args = dict(
             elections={e.id: e for e, _ in sos_data.orders} if sos_data else {},
             ballot_rows=self.ballot_rows,
             bp_ballot=bp_ballot,
@@ -402,23 +413,15 @@ class _Builder:
             state=place.state,
             bp_counterparts=bp_counterparts,
         )
-        self.warnings += outcome.warnings
-        self.notes += outcome.notes
-        self.errors.update(outcome.errors)
+        self.every_race = every_race
+        self.location = location
 
         if sos_data:
             used = {race.election_id for race in every_race}
             refs = [election_ref(e) for e, _ in sos_data.orders if e.id in used]
         else:
             refs = [ElectionRef(name="Ballotpedia sample ballot", date=ballot_day.isoformat() if ballot_day else None)]
-        meta = Meta(
-            external_calls=self.calls.external_calls,
-            cache_hits=self.calls.cache_hits,
-            elapsed_ms=int((time.monotonic() - self.started) * 1000),
-        )
-        self.svc.last_lookup = LastLookup(at=iso_utc(time.time()), **meta.model_dump())
-        self.svc.last_uses = {use.id: use for use in self._sources(location)}
-        return Ballot(
+        self.ballot = Ballot(
             election_date=ballot_day.isoformat() if ballot_day else None,
             elections=refs,
             key_dates=key_dates_of(found) if found else None,
@@ -430,9 +433,31 @@ class _Builder:
                 Measure(key=f"bp:{m.id}", title=m.title, summary=m.summary, url=m.url, district=m.district)
                 for m in (bp_ballot.measures if bp_ballot else ())
             ],
-            notes=self.notes,
-            warnings=self.warnings,
-            meta=meta,
+            notes=list(self.notes),
+            warnings=list(self.warnings),
+            meta=self._meta(),
+        )
+        return self.ballot
+
+    async def finish(self) -> Ballot:
+        """Adds every source's cards to ``self.ballot`` (in place) and records the lookup for Settings."""
+        outcome = await enrich.run(self.svc, self.every_race, **self.enrich_args)
+        self.warnings += outcome.warnings
+        self.notes += outcome.notes
+        self.errors.update(outcome.errors)
+        meta = self._meta()
+        self.ballot.notes = self.notes
+        self.ballot.warnings = self.warnings
+        self.ballot.meta = meta
+        self.svc.last_lookup = LastLookup(at=iso_utc(time.time()), **meta.model_dump())
+        self.svc.last_uses = {use.id: use for use in self._sources(self.location)}
+        return self.ballot
+
+    def _meta(self) -> Meta:
+        return Meta(
+            external_calls=self.calls.external_calls,
+            cache_hits=self.calls.cache_hits,
+            elapsed_ms=int((time.monotonic() - self.started) * 1000),
         )
 
     # -- gathering -----------------------------------------------------------------

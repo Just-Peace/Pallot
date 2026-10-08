@@ -14,8 +14,11 @@ import { fundingLine, likelyFlag, likelyUnflagged, profileLinks, raceMoney, sour
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, showDetails, openPrecincts, updateProgress, openRules }
+let page = null; // { ballot, picks, loadingCards, showDetails, openPrecincts, updateProgress, openRules }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
+const fills = new Map(); // race key -> builds what its cards make again, in place
+
+export const STILL_LOADING = "Available once everything has loaded";
 
 export function initRaceCards(context) {
   page = context;
@@ -24,6 +27,7 @@ export function initRaceCards(context) {
 // Builds every card again, blank: redrawCards() then fills them in.
 export function renderCards() {
   redraw.clear();
+  fills.clear();
   const sections = ballotSections(page.ballot);
   $("#groups").replaceChildren(...sections.filter((s) => !s.maybe).map((section) =>
     h("section", { class: "group", id: section.id, "aria-labelledby": `${section.id}-title` },
@@ -52,6 +56,16 @@ export function redrawCards() {
   for (const draw of redraw.values()) draw();
 }
 
+// Every race's money and poll boxes, open seat and candidates' card parts, from the cards now in
+// ``page.ballot``; the picks, notes and folding stay as they are.
+export function refillCards() {
+  for (const fill of fills.values()) fill();
+  for (const button of document.querySelectorAll("#result .rule-btn")) {
+    button.disabled = page.loadingCards;
+    button.title = page.loadingCards ? STILL_LOADING : "Pick by rule";
+  }
+}
+
 export function setAllCollapsed(collapsed) {
   page.picks.setCollapsed([...redraw.keys()], collapsed);
   redrawCards();
@@ -70,6 +84,7 @@ export function cardFor(key) {
 function collapsibleCard(key, { title, meta, body, tools = null }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
+  const metaLine = h("span", { class: "race-meta", hidden: !meta }, meta);
   const fold = () => {
     page.picks.setCollapsed(key, !page.picks.isCollapsed(key));
     redrawRace(key);
@@ -78,7 +93,7 @@ function collapsibleCard(key, { title, meta, body, tools = null }) {
     h("span", { class: "chevron", "aria-hidden": "true" }),
     h("span", { class: "race-name" }, title),
     status,
-    meta ? h("span", { class: "race-meta" }, meta) : null);
+    metaLine);
   const clearPick = () => {
     const before = page.picks.picked(key);
     page.picks.set(key, []);
@@ -100,6 +115,10 @@ function collapsibleCard(key, { title, meta, body, tools = null }) {
     bodyElement);
   return {
     article,
+    setMeta(text) {
+      metaLine.textContent = text;
+      metaLine.hidden = !text;
+    },
     show(statusText, done) {
       const collapsed = page.picks.isCollapsed(key);
       article.classList.toggle("collapsed", collapsed);
@@ -116,28 +135,34 @@ function collapsibleCard(key, { title, meta, body, tools = null }) {
 
 function raceCard(race) {
   const multi = race.seats > 1;
-  const meta = [
+  const meta = () => [
     multi ? `Vote for up to ${race.seats}` : null,
     race.open_seat ? "Open seat" : null,
     race.unexpired ? "Unexpired term" : null,
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
-  ].filter(Boolean);
+  ].filter(Boolean).join(" · ");
   const rows = [...race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)];
   const body = h("fieldset", { class: "race-options" },
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, rows.map((r) => r.row)));
-  const money = raceMoney(race, () => openCompare($("#compare"), race));
+  const money = part(() => raceMoney(race, () => openCompare($("#compare"), race)));
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
-  // Pick by rule for this race, when there's a choice to make.
+  // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in).
   const ruleButton = race.candidates.length > 1
-    ? h("button", { type: "button", class: "icon-btn rule-btn", title: "Pick by rule", "aria-label": `Pick by rule in ${race.name}`,
+    ? h("button", { type: "button", class: "icon-btn rule-btn", title: page.loadingCards ? STILL_LOADING : "Pick by rule",
+      "aria-label": `Pick by rule in ${race.name}`, disabled: page.loadingCards,
       on: { click: () => page.openRules(race.key) } }, icon("filter"))
     : null;
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta.join(" · "), body: [...notes, money, body], tools: ruleButton,
+    title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: ruleButton,
+  });
+  fills.set(race.key, () => {
+    card.setMeta(meta());
+    money.refill();
+    for (const row of rows) row.fill?.();
   });
 
   redraw.set(race.key, () => {
@@ -236,9 +261,8 @@ function candidateRow(race, candidate) {
     setTimeout(() => { saved.textContent = ""; }, 1500);
   }, 400);
 
-  const sources = candidate.cards.length;
-  const flag = likelyFlag();
   // The "?" for likely matches with no badge on the row to show it, their lines' too while those are hidden.
+  let flag = null;
   let linesShown = false;
   const flagUnshown = (shown = linesShown) => {
     linesShown = shown;
@@ -246,12 +270,23 @@ function candidateRow(race, candidate) {
     flag.hidden = !unflagged.length;
     flag.title = `Likely match: ${unflagged.join(", ")}`;
   };
-  flagUnshown(false);
-  const lines = sourceLines(candidate, flagUnshown);
-  const funding = fundingLine(candidate, () => flagUnshown());
-  const detailsButton = h("button", { type: "button", class: "icon-btn", disabled: !sources,
-    on: { click: () => page.showDetails(race, race.candidates.indexOf(candidate)) } },
-    sources ? `Details · ${plural(sources, "source")}` : "No details", flag);
+  const detailsButton = () => {
+    const sources = candidate.cards.length;
+    const waiting = page.loadingCards;
+    flag = likelyFlag();
+    flagUnshown(false);
+    return h("button", { type: "button", class: "icon-btn", disabled: waiting || !sources, title: waiting ? STILL_LOADING : null,
+      on: { click: () => page.showDetails(race, race.candidates.indexOf(candidate)) } },
+      waiting ? "Details" : sources ? `Details · ${plural(sources, "source")}` : "No details", flag);
+  };
+  // What the cards make, in the order fill() builds it again (the Details button's flag first).
+  const details = part(detailsButton);
+  const photo = part(() => avatar(candidate));
+  const pills = part(() => candidatePills(candidate, race));
+  const profiles = part(() => profileLinks(candidate));
+  const lines = part(() => sourceLines(candidate, (shown) => flagUnshown(shown)));
+  const funding = part(() => fundingLine(candidate, () => flagUnshown()));
+  const fill = () => [details, photo, pills, profiles, lines, funding].forEach((p) => p.refill());
 
   const row = h(
     "li",
@@ -259,17 +294,33 @@ function candidateRow(race, candidate) {
     h("div", { class: "cand-main" },
       input,
       h("label", { for: `pick-${id}`, class: "cand-label" },
-        avatar(candidate),
+        photo.nodes,
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
-          h("span", { class: "cand-sub" }, candidatePills(candidate, race)))),
+          h("span", { class: "cand-sub" }, pills.nodes))),
       h("div", { class: "cand-actions" },
-        noteButton, detailsButton, searchLink(race, candidate, "icon-btn", "Web search ↗"), profileLinks(candidate))),
-    lines,
-    funding,
+        noteButton, details.nodes, searchLink(race, candidate, "icon-btn", "Web search ↗"), profiles.nodes)),
+    lines.nodes,
+    funding.nodes,
     noteBox,
   );
-  return { row, sync };
+  return { row, sync, fill };
+}
+
+// What ``build()`` makes (a node, a list of them or nothing), behind a marker so ``refill()`` can
+// build it again in the same place, leaving the rest of the card (a note being typed) alone.
+function part(build) {
+  const marker = document.createComment("");
+  const make = () => [build()].flat(Infinity).filter(Boolean);
+  let nodes = make();
+  return {
+    nodes: [marker, ...nodes],
+    refill() {
+      for (const node of nodes) node.remove();
+      nodes = make();
+      marker.after(...nodes);
+    },
+  };
 }
 
 // The last row of every race: a blank for someone who isn't listed. Typing a name picks

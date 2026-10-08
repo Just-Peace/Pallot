@@ -58,14 +58,10 @@
         </ol>
       </section>
 
-      <section id="loading" class="loading" hidden>
-        <p class="loading-line"><strong>Looking up your ballot…</strong> The first lookup of an address can take several seconds while Pallot asks its sources. After that it's saved, so looking it up again is instant.</p>
-        <div aria-hidden="true">
-          <div class="race skeleton"></div>
-          <div class="race skeleton"></div>
-          <div class="race skeleton"></div>
-          <div class="race skeleton"></div>
-        </div>
+      <section id="loading" class="loading" role="status" hidden>
+        <p class="loading-title">Finding your ballot…</p>
+        <div class="loading-bar" aria-hidden="true"></div>
+        <p class="muted">A first lookup takes a little longer.</p>
       </section>
 
       <section id="result" hidden>
@@ -114,6 +110,10 @@
             <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
             </div>
+          </div>
+          <div class="cards-loading" id="cards-loading" role="status" hidden>
+            <span>Loading money, polls and endorsements…</span>
+            <div class="loading-bar" aria-hidden="true"></div>
           </div>
         </div>
         <div class="ballot-top">
