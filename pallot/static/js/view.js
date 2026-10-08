@@ -1,4 +1,4 @@
-// The View settings that shape the ballot, kept with the other view settings (storage.js,
+// The view settings that shape the ballot, kept with the other view settings (storage.js,
 // pallot.ui.v1). A switch the voter hasn't set follows VIEW_DEFAULTS, so a new default only
 // changes the ballot of a voter who hasn't chosen. Simple and Detailed each set the switches
 // in PRESETS; the mode is never stored, it's read from the switches (Custom when they're mixed).
@@ -23,7 +23,6 @@ export const PRESETS = {
   simple: { showMap: false, showMoney: false, showPolls: true, showEndorsements: true, showFunding: true, showSources: false },
   detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: true },
 };
-export const MODE_NAMES = { simple: "Simple", detailed: "Detailed", custom: "Custom" };
 
 export function viewPref(name) {
   const value = uiPref(name);

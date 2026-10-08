@@ -7,7 +7,7 @@
 // zooms once the map has been clicked, and on a touch screen the map moves with two fingers, so
 // it never traps the page's scrolling. Its heading folds it away like a race's, remembered in
 // the browser (view.js, showMap: folded at first); nothing is fetched for it while it's folded.
-// A change of the switch elsewhere (View, Settings, another tab) applies with syncMapShown().
+// A change of the switch elsewhere (Options, Settings, another tab) applies with syncMapShown().
 
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";

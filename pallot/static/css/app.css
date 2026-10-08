@@ -604,8 +604,12 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .progress { margin: 0; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
 #next-race { flex: none; }
 
-/* The View menu: a <details> whose panel drops down over the ballot. A dot on it while picked
+/* Options: a <details> whose panel drops down over the ballot. A dot on it while picked
    races are hidden. */
+.ballot-tools { align-items: center; }
+.tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tool-divider { width: 1px; align-self: stretch; min-height: 24px; background: var(--line-strong); }
+.menu-actions { margin: 0 0 10px; }
 .menu { position: relative; }
 .menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
 .menu > summary::-webkit-details-marker { display: none; }
@@ -707,7 +711,7 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 }
 .chevron { grid-area: chevron; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
   border-radius: 6px; color: var(--muted); }
-/* A chevron: down while open, right while folded (a race, the map, a FAQ answer; the View menu only points down) */
+/* A chevron: down while open, right while folded (a race, the map, a FAQ answer; Options only points down) */
 .chevron::before, .faq > summary::before, .source-group > summary::before, .menu > summary::after { content: ""; flex: none; width: 7px; height: 7px;
   border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
   transition: transform 0.15s; }

@@ -5,7 +5,7 @@
 //
 // This module looks the ballot up, draws it and starts the page. Its parts are their own
 // modules, each handed ``page``: the districts card (districts-card.js), the race cards
-// (race-cards.js), Details (details.js), and the strip, sections and View (ballot-nav.js).
+// (race-cards.js), Details (details.js), and the strip, sections and the view controls (ballot-nav.js).
 
 import { rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
