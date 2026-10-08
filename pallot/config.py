@@ -61,6 +61,7 @@ class Ttls:
     county_precincts_bundle: int = 14 * DAY  # the seven counties' records bundled with Pallot (bundles/), refreshed weekly: a week of grace
     endorsement_feeds: int = 7 * DAY  # organizations' live endorsement lists (endorsement_feeds.py)
     endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
+    endorsement_feeds_bundle: int = 2 * DAY  # the lists bundled with Pallot (bundles/), refreshed daily: a day of grace
     officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat
     officeholders_backoff: int = HOUR  # after either list is refused us, stop asking for this long
     officeholders_bundle: int = 14 * DAY  # both lists bundled with Pallot (bundles/), refreshed weekly: a week of grace
