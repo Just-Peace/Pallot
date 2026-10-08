@@ -8,15 +8,17 @@ from pathlib import Path
 import httpx
 import pytest
 import respx
+from fastapi.testclient import TestClient
 
 from pallot.config import Ttls
 from pallot.http_cache import HttpCache, UpstreamError
 from pallot.sources import RefreshFailed
 from pallot.sources.sboe import (
-    FAILED_FLAG, KML_URL, SOURCE, District, Polygon, SboeMap, locate, outline, parse_zip, simplify,
+    BUNDLED, FAILED_FLAG, KML_URL, SOURCE, District, Polygon, SboeMap, locate, outline, parse_zip, read_download,
+    simplify,
 )
 
-from .conftest import sboe_zip
+from .conftest import get_ballot, sboe_zip, switch
 
 SQUARE = [(-98.0, 30.0), (-97.0, 30.0), (-97.0, 31.0), (-98.0, 31.0), (-98.0, 30.0)]
 HOLE = [(-97.6, 30.4), (-97.4, 30.4), (-97.4, 30.6), (-97.6, 30.6), (-97.6, 30.4)]
@@ -51,14 +53,47 @@ CAPITOL = (30.2747, -97.7403)
 
 
 @contextlib.asynccontextmanager
-async def service(tmp_path: Path):
-    """An SboeMap on its own cache, as a restart would find it."""
+async def service(tmp_path: Path, bundled: Path | None = None):
+    """An SboeMap on its own cache, as a restart would find it; with no map bundled unless ``bundled`` names one."""
     async with httpx.AsyncClient() as client:
         cache = HttpCache(tmp_path / "cache.sqlite3", client)
         try:
-            yield SboeMap(cache, Ttls(), tmp_path / "map.zip")
+            yield SboeMap(cache, Ttls(), tmp_path / "map.zip", bundled or tmp_path / "no-bundled-map.zip")
         finally:
             cache.close()
+
+
+def test_the_map_that_comes_with_pallot_is_plan_e2106():
+    parsed = read_download(BUNDLED)
+    assert locate(parsed, *CAPITOL) == 5 and locate(parsed, 29.7589, -95.3632) == 4
+
+
+@pytest.mark.anyio
+async def test_the_bundled_map_is_used_without_a_download_and_a_clear_goes_back_to_it(tmp_path):
+    bundled = tmp_path / "bundled.zip"
+    bundled.write_bytes(sboe_zip())
+    with respx.mock() as router:
+        route = router.get(KML_URL).mock(return_value=httpx.Response(200, content=sboe_zip()))
+        async with service(tmp_path, bundled) as sboe:
+            assert await sboe.district_at(*CAPITOL) == 5 and route.call_count == 0
+            assert sboe.stale() is None and sboe.details()[0].value.startswith("plan E2106, came with Pallot · ")
+            assert await sboe.refresh() == "Re-downloaded the State Board of Education map."  # a hard refresh still asks
+            assert route.call_count == 1  # the same map: Settings still says it came with Pallot
+            (tmp_path / "map.zip").write_bytes(zip_of(b"<kml/>"))
+            assert sboe.details()[0].value.startswith("downloaded ")
+            assert sboe.clear() == "Back to the State Board of Education map that came with Pallot."
+            assert (tmp_path / "map.zip").read_bytes() == sboe_zip() and await sboe.district_at(*CAPITOL) == 5
+    assert sorted(p.name for p in tmp_path.glob("*map.zip*")) == ["map.zip"]
+
+
+def test_a_lookup_on_an_empty_data_folder_places_the_sboe_district_without_a_download(make_app, upstream, tmp_path):
+    bundled = tmp_path / "bundled.zip"
+    bundled.write_bytes(sboe_zip())
+    with TestClient(make_app(sboe_bundled=bundled)) as client:
+        assert (tmp_path / "data" / "plane2106_kml.zip").read_bytes() == sboe_zip()  # copied in at startup
+        switch(client, "election_precincts", False)  # the precinct map's portal is the same host
+        ballot = get_ballot(client)
+    assert ballot["districts"]["sboe"] == 5 and upstream.count("data.capitol.texas.gov") == 0
 
 
 def zip_of(kml: bytes) -> bytes:
