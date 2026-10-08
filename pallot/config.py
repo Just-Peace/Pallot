@@ -37,7 +37,8 @@ class Ttls:
     ballotpedia: int = DAY
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
-    fec_backoff: int = HOUR  # how long a key the FEC rate limits or refuses rests
+    fec_backoff: int = 2 * 60  # how long a key the FEC rate limits rests (its limit counts the last minute)
+    fec_refused_backoff: int = HOUR  # how long a key the FEC refuses rests
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines

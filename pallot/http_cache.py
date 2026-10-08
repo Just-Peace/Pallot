@@ -43,7 +43,7 @@ import json
 import sqlite3
 import threading
 import time
-from collections import OrderedDict
+from collections import OrderedDict, deque
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Callable, Collection, Mapping, Sequence
@@ -143,7 +143,10 @@ class _Keys:
     header: str
     keys: tuple[str, ...]
     rest_on: dict[int, float]  # status -> how long a key answered with it rests
+    limit: tuple[int, float] | None  # at most this many requests per key in any window of these seconds
+    refresh_limit: tuple[int, float] | None  # the same, while refresh() runs
     turn: int = 0  # where the next request starts looking for an open key
+    sent: dict[int, deque[float]] = field(default_factory=dict)  # key's position -> when its last requests went
 
 
 class UpstreamError(Exception):
@@ -176,6 +179,11 @@ class CallStats:
 
 
 _call_stats: contextvars.ContextVar[CallStats | None] = contextvars.ContextVar("pallot_call_stats", default=None)
+
+
+_refreshing: contextvars.ContextVar[bool] = contextvars.ContextVar("pallot_refreshing", default=False)
+REFRESH_WAITS = 10 * 60  # refresh() waits out a pause of a source's keys that ends within this
+REFRESH_TRIES = 3  # how many times refresh() asks a request whose keys were all resting
 
 
 def track_calls() -> CallStats:
@@ -403,12 +411,18 @@ class HttpCache:
         """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
         self._pause_on[source] = (frozenset(statuses), seconds)
 
-    def share_keys(self, source: str, header: str, keys: Sequence[str], rest_on: Mapping[int, float]) -> None:
+    def share_keys(
+        self, source: str, header: str, keys: Sequence[str], rest_on: Mapping[int, float],
+        limit: tuple[int, float] | None = None, refresh_limit: tuple[int, float] | None = None,
+    ) -> None:
         """Send ``source``'s requests (get_json's and refresh's) with ``keys`` in ``header``, each
-        key in turn. A key answered with a status in ``rest_on`` rests for its seconds and the
+        key in turn. With ``limit`` (count, seconds), a key sends at most that many requests in any
+        window that long: a request takes the open key with room soonest, and waits only when
+        every key's window is full. ``refresh_limit`` replaces it while refresh() runs, which
+        nobody waits on. A key answered with a status in ``rest_on`` rests for its seconds and the
         request goes again with the next open key; the source is paused only while every key
         rests. Like ``source_headers``, the keys are never stored."""
-        self._keys[source] = _Keys(header, tuple(keys), dict(rest_on))
+        self._keys[source] = _Keys(header, tuple(keys), dict(rest_on), limit, refresh_limit)
 
     def key_rests(self, source: str) -> list[KeyRest | None]:
         """For each of ``source``'s keys, in order: why and until when it rests, or None while it's open."""
@@ -424,16 +438,46 @@ class HttpCache:
                 rests[hashed] = KeyRest(int(status), until)
         return [rests.get(_key_hash(key)) for key in self._keys[source].keys]
 
-    def _next_key(self, source: str) -> str | None:
-        """The next open key in turn, or None while every key rests."""
+    async def _wait_out(self, source: str) -> bool:
+        """For refresh: whether ``source`` may be asked, at once or after waiting out a pause of
+        its keys that ends within REFRESH_WAITS. Any other pause isn't waited for."""
+        until = self.paused_until(source)
+        while until and source in self._keys and until - self._clock() <= REFRESH_WAITS:
+            await asyncio.sleep(until - self._clock() + 1)
+            until = self.paused_until(source)
+        return until is None
+
+    def _next_key(self, source: str) -> tuple[str, float] | None:
+        """The open key with room soonest (the next in turn among those with room now), and how
+        long to wait before sending with it; None while every key rests. The send is counted at
+        once, so requests waiting meanwhile take the room that's left."""
         keys = self._keys[source]
         rests = self.key_rests(source)
-        for step in range(len(keys.keys)):
-            index = (keys.turn + step) % len(keys.keys)
-            if rests[index] is None:
-                keys.turn = index + 1
-                return keys.keys[index]
-        return None
+        size = len(keys.keys)
+        now = self._clock()
+        limit = keys.refresh_limit if _refreshing.get() and keys.refresh_limit else keys.limit
+        best: tuple[float, int] | None = None
+        for step in range(size):
+            index = (keys.turn + step) % size
+            if rests[index] is not None:
+                continue
+            ready = now
+            if limit:
+                count, window = limit
+                sent = keys.sent.setdefault(index, deque())
+                while sent and sent[0] <= now - window:
+                    sent.popleft()
+                if len(sent) >= count:
+                    ready = sent[-count] + window
+            if best is None or ready < best[0]:
+                best = (ready, index)
+        if best is None:
+            return None
+        ready, index = best
+        keys.turn = index + 1
+        if limit:
+            keys.sent[index].append(ready)
+        return keys.keys[index], ready - now
 
     def paused_until(self, source: str) -> float | None:
         if source in self._keys:
@@ -526,9 +570,12 @@ class HttpCache:
             await self._throttle(source)
             sent = headers
             if keys:
-                key = self._next_key(source)
-                if key is None:
+                chosen = self._next_key(source)
+                if chosen is None:
                     raise KeysResting(f"every {source} key is resting")
+                key, wait = chosen
+                if wait > 0:
+                    await asyncio.sleep(wait)
                 sent = {**(headers or {}), keys.header: key}
             stats = current_calls()
             if stats:
@@ -733,7 +780,9 @@ class HttpCache:
         """Re-fetch every stored request for ``source`` (only the expired ones, with ``expired_only``;
         ``saved`` instead, from before a clear); failures, and answers its check refuses, keep their
         old copy. While the source is paused (also when a refusal pauses it partway through), the
-        rest are skipped rather than asked."""
+        rest are skipped rather than asked. A source with keys is paced by its ``refresh_limit``,
+        and a pause of its keys that ends within REFRESH_WAITS is waited out, the request asked
+        again (REFRESH_TRIES in all): a refresh runs offline, so it can take its time."""
         rows = self.saved(source, expired_only=expired_only) if saved is None else saved
         gate = asyncio.Semaphore(max(1, concurrency))
         skipped = 0
@@ -741,15 +790,24 @@ class HttpCache:
         async def one(row: SavedRequest) -> str | None:
             nonlocal skipped
             spec = RequestSpec.loads(row.request)
+            failure = ""
             async with gate:
-                if self.paused_until(source):
-                    skipped += 1
-                    return None
-                try:
-                    value = await self._request(source, spec)
-                except (httpx.HTTPError, ValueError) as exc:
-                    self._refused(source, exc)
-                    return f"{spec.url}: {describe_error(exc)}"
+                for attempt in range(REFRESH_TRIES):
+                    if not await self._wait_out(source):
+                        if failure:
+                            return failure
+                        skipped += 1
+                        return None
+                    try:
+                        value = await self._request(source, spec)
+                        break
+                    except (httpx.HTTPError, ValueError) as exc:
+                        self._refused(source, exc)
+                        failure = f"{spec.url}: {describe_error(exc)}"
+                        keys = self._keys.get(source)
+                        rested = keys and (isinstance(exc, KeysResting) or _status(exc) in keys.rest_on)
+                        if not rested or attempt == REFRESH_TRIES - 1:
+                            return failure
             why = self._refusal(source, value)
             if why:
                 return f"{spec.url}: {why}"
@@ -758,7 +816,11 @@ class HttpCache:
             )
             return None
 
-        errors = [e for e in await asyncio.gather(*(one(row) for row in rows)) if e]
+        offline = _refreshing.set(True)
+        try:
+            errors = [e for e in await asyncio.gather(*(one(row) for row in rows)) if e]
+        finally:
+            _refreshing.reset(offline)
         return RefreshReport(
             refreshed=len(rows) - len(errors) - skipped,
             failed=len(errors),

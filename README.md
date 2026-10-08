@@ -50,7 +50,7 @@ Open http://127.0.0.1:8000. It only listens on this machine, because Pallot has 
 
 Pallot needs no keys to run. To break down congressional candidates' money (where it came from, donation sizes, largest donors, outside spending), it needs a free FEC key:
 1. Get one from the [OpenFEC developers page](https://api.open.fec.gov/developers/); api.data.gov emails it to you.
-2. Put it in `.env` as `PALLOT_FEC_API_KEY=...`. Each key allows 1,000 calls an hour. For more, add up to four more keys as `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5`: Pallot uses them in turn.
+2. Put it in `.env` as `PALLOT_FEC_API_KEY=...`. The FEC lets each key make 60 calls a minute, and Pallot paces itself to stay under that. For more, add up to four more keys as `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5`: Pallot uses them in turn.
 3. Restart Pallot: `docker compose up -d`, or Ctrl+C and `uv run pallot` again.
 
 Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals and runs out after a few requests. The other settings are under [Configuration](#configuration).
@@ -236,8 +236,8 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 - If the Census geocoder, Nominatim or Google (each on its own), Texas SOS, Ballotpedia (its ballot or its address search, each on its own), FiftyPlusOne, the seat holders' lists, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, Pallot stops asking it for an hour; if a county's map server does, it stops asking all seven counties for an hour. What it already sent still shows.
 - If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. `pallot-cache refresh` always tries.
 - If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. `pallot-cache refresh` always tries.
-- If the FEC answers that a key reached its rate limit, or refuses a key, Pallot stops using that key for an hour and asks with your other keys (`PALLOT_FEC_API_KEY2` to `5`). Settings names the key and why. When every key is resting, Pallot stops asking the FEC and shows what it already has meanwhile. A key you change in `.env` is used as soon as Pallot restarts. With `DEMO_KEY`, the limit is shared by everything on your IP address.
-- `pallot-cache` doesn't ask a paused source either, and stops asking one that pauses partway through. Its refresh of TrackAIPAC and Vote for Peace stops at once if their site refuses it.
+- Pallot sends at most 55 calls a minute with each FEC key, and waits only when every key has used its minute. If the FEC still answers that a key reached its rate limit, Pallot stops using that key for 2 minutes; if it refuses a key, for an hour. Meanwhile it asks with your other keys (`PALLOT_FEC_API_KEY2` to `5`). Settings names the key and why. When every key is resting, Pallot stops asking the FEC and shows what it already has meanwhile. A key you change in `.env` is used as soon as Pallot restarts. With `DEMO_KEY`, the limit is shared by everything on your IP address.
+- `pallot-cache` doesn't ask a paused source either, and stops asking one that pauses partway through. The FEC is the exception, since nobody waits on a refresh: `pallot-cache` asks it more slowly (one call every 2 seconds per key, leaving half of each key's minute to a Pallot running meanwhile), and when every key is resting for a few minutes, it waits and carries on. Its refresh of TrackAIPAC and Vote for Peace stops at once if their site refuses it.
 
 ## Settings
 

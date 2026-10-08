@@ -32,7 +32,7 @@ from pallot.api import create_app
 from pallot import settings
 from pallot.settings import HEADER
 from pallot.config import Config
-from pallot.sources import ballotpedia, suggestions
+from pallot.sources import ballotpedia, fec, suggestions
 from pallot.sources.census import normalize_address
 from pallot.sources.endorsement_feeds import FEEDS
 from pallot.sources.election_precincts import read_prj
@@ -518,6 +518,13 @@ def sources_on(request, monkeypatch):
     if "shipped_defaults" not in request.keywords:
         monkeypatch.setitem(settings.DEFAULT_SOURCES, "ballotpedia", True)
         monkeypatch.setitem(settings.DEFAULT_SOURCES, "voteforpeace", True)
+
+
+@pytest.fixture(autouse=True)
+def fec_unpaced(monkeypatch):
+    """The FEC's keys aren't paced in tests, which would wait in real time; test_http_cache paces its own."""
+    monkeypatch.setattr(fec, "KEY_LIMIT", None)
+    monkeypatch.setattr(fec, "REFRESH_LIMIT", None)
 
 
 @pytest.fixture

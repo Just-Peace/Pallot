@@ -8,7 +8,7 @@ import httpx
 import pytest
 import respx
 
-from pallot.http_cache import HttpCache, KeyRest, RequestSpec, UpstreamError, track_calls, value_is_empty
+from pallot.http_cache import HttpCache, KeyRest, RefreshReport, RequestSpec, UpstreamError, track_calls, value_is_empty
 
 pytestmark = pytest.mark.anyio
 
@@ -223,6 +223,73 @@ async def test_shared_keys_take_turns_and_rest_when_refused(tmp_path):
     with sqlite3.connect(tmp_path / "c.sqlite3") as db:
         names = [name for (name,) in db.execute("SELECT name FROM flags")]
     assert sorted(name.split(":")[3] for name in names if name.startswith("rest:demo:")) == ["403", "429", "429", "429"]
+
+
+@pytest.fixture
+def waits(monkeypatch):
+    """asyncio.sleep moves the test's Clock on instead of waiting; returns (clock, the waits asked for)."""
+    clock, asked = Clock(), []
+    real_sleep = asyncio.sleep
+
+    async def sleep(seconds: float) -> None:
+        if seconds > 0:
+            asked.append(seconds)
+            clock.now += seconds
+        await real_sleep(0)
+
+    monkeypatch.setattr(asyncio, "sleep", sleep)
+    return clock, asked
+
+
+async def test_each_key_keeps_under_its_limit_and_a_burst_goes_at_once(tmp_path, waits):
+    clock, asked = waits
+    sent: list[str] = []
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        sent.append(request.headers["x-key"])
+        return httpx.Response(200, json={"v": 1})
+
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=answer)
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            cache.share_keys("demo", "X-Key", ["a", "b"], {429: 120}, limit=(2, 60))
+            for n in range(6):
+                await cache.get_json("demo", RequestSpec("GET", URL, params={"q": str(n)}), ttl=60)
+    assert sent == ["a", "b", "a", "b", "a", "b"]
+    assert asked == [60]  # the fifth waits out a's minute, which b's ends with
+
+
+async def test_refresh_goes_at_its_own_pace_and_waits_out_a_rate_limit(tmp_path, waits):
+    clock, asked = waits
+    answers = iter([200, 200, 200, 429, 200, 200, 200])
+
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=lambda request: httpx.Response(next(answers), json={"v": 1}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            for n in range(3):
+                await cache.get_json("demo", RequestSpec("GET", URL, params={"q": str(n)}), ttl=60)
+            cache.share_keys("demo", "X-Key", ["a"], {429: 120, 403: 3600}, limit=(55, 60), refresh_limit=(1, 2))
+            report = await cache.refresh("demo", concurrency=1)
+    # the refresh's first request is rate limited: a's rest (120 s) is waited out, then each request goes 2 s apart
+    assert report == RefreshReport(refreshed=3, failed=0)
+    assert asked[0] == 121 and all(wait == pytest.approx(2) for wait in asked[1:])
+
+
+async def test_refresh_doesnt_wait_out_a_long_rest(tmp_path, waits):
+    clock, asked = waits
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=[httpx.Response(200, json={"v": 1}), httpx.Response(200, json={"v": 2}),
+                                          httpx.Response(403)])
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            for n in range(2):
+                await cache.get_json("demo", RequestSpec("GET", URL, params={"q": str(n)}), ttl=60)
+            cache.share_keys("demo", "X-Key", ["a"], {429: 120, 403: 3600})
+            report = await cache.refresh("demo", concurrency=1)
+    assert (report.refreshed, report.failed, report.skipped) == (0, 1, 1) and asked == []
+    assert report.paused_until == clock.now + 3600
 
 
 async def test_refresh_stops_when_the_source_pauses(tmp_path):
