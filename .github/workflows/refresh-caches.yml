@@ -1,0 +1,130 @@
+name: Refresh bundled caches
+
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-caches
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  LAST_DAY: "2026-11-15"
+  BRANCH: chore/refresh-caches
+  BASE: develop
+
+jobs:
+  season:
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      active: ${{ steps.date.outputs.active }}
+    steps:
+      - id: date
+        run: |
+          today=$(TZ=America/Chicago date +%F)
+          if [[ "$today" > "$LAST_DAY" ]]; then
+            echo "Past $LAST_DAY: the daily refresh has stopped. Disable this workflow."
+            echo "active=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "active=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  refresh:
+    needs: season
+    if: needs.season.outputs.active == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ secrets.PALLOT_REFRESH_TOKEN || github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BASE }}
+          token: ${{ secrets.PALLOT_REFRESH_TOKEN || github.token }}
+
+      - uses: astral-sh/setup-uv@v6
+
+      - run: uv sync
+
+      - id: bundles
+        continue-on-error: true
+        env:
+          PALLOT_FEC_API_KEY: ${{ secrets.PALLOT_FEC_API_KEY }}
+          PALLOT_FEC_API_KEY2: ${{ secrets.PALLOT_FEC_API_KEY2 }}
+          PALLOT_FEC_API_KEY3: ${{ secrets.PALLOT_FEC_API_KEY3 }}
+        run: uv run pallot-bundle refresh --due --data-dir bundles/data
+
+      - id: trackaipac
+        continue-on-error: true
+        run: uv run trackaipac-cache refresh --data-dir trackaipac_cache/data
+
+      - id: voteforpeace
+        continue-on-error: true
+        run: uv run voteforpeace-cache refresh --data-dir voteforpeace_cache/data
+
+      - id: tec
+        continue-on-error: true
+        run: uv run tec-cache refresh --data-dir tec_cache/data
+
+      - id: changes
+        run: |
+          git add -A bundles/data trackaipac_cache/data voteforpeace_cache/data tec_cache/data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No snapshot changed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --cached --stat
+          fi
+
+      - id: tests
+        if: steps.changes.outputs.changed == 'true'
+        continue-on-error: true
+        run: uv run pytest
+
+      - id: pr
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          OUTCOMES: |
+            - `pallot-bundle refresh --due`: ${{ steps.bundles.outcome }}
+            - `trackaipac-cache refresh`: ${{ steps.trackaipac.outcome }}
+            - `voteforpeace-cache refresh`: ${{ steps.voteforpeace.outcome }}
+            - `tec-cache refresh`: ${{ steps.tec.outcome }}
+            - `pytest`: ${{ steps.tests.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git commit -q -m "chore: refresh bundled caches" -m "Daily run of .github/workflows/refresh-caches.yml." -m "$OUTCOMES"
+          git push --force origin "$BRANCH"
+          body=$(printf 'The daily refresh of the bundled snapshots ([run](%s)).\n\n%s\n\nA step that failed wrote nothing; its snapshot is unchanged here.\n' "$RUN_URL" "$OUTCOMES")
+          number=$(gh pr list --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')
+          if [ -z "$number" ]; then
+            gh pr create --head "$BRANCH" --base "$BASE" --title "chore: refresh bundled caches" --body "$body"
+          else
+            gh pr edit "$number" --body "$body"
+          fi
+
+      - if: steps.pr.outcome == 'success' && steps.tests.outcome == 'success'
+        run: gh pr merge "$BRANCH" --squash --auto || gh pr merge "$BRANCH" --squash --delete-branch
+
+      - if: always()
+        env:
+          FAILED: >-
+            ${{ steps.bundles.outcome == 'failure' && 'pallot-bundle ' || '' }}${{
+            steps.trackaipac.outcome == 'failure' && 'trackaipac-cache ' || '' }}${{
+            steps.voteforpeace.outcome == 'failure' && 'voteforpeace-cache ' || '' }}${{
+            steps.tec.outcome == 'failure' && 'tec-cache ' || '' }}${{
+            steps.tests.outcome == 'failure' && 'pytest ' || '' }}
+        run: |
+          if [ -n "$FAILED" ]; then
+            echo "::error::Failed: $FAILED(see each step's log)."
+            exit 1
+          fi

@@ -275,6 +275,20 @@ The modules share their small helpers rather than writing them out again:
 - **Adding a source:** write its builder (an `async def build(ctx: Context) -> dict[str, int]` that makes a lookup's requests through `ctx.cache` with the source's own class, and raises `BundleError` if any failed), add a `Bundle("<source>", build, "daily" or "weekly")` to `registry.BUNDLES`, a `<source>_bundle` field to `Ttls` (or a `lifetime` and its fields, as Texas SOS's) (with `.env.example` and README's "Configuration"), then run `uv run pallot-bundle refresh --only <source>` once and commit `data/`. Settings, the startup seed and `--due` need nothing more.
 - `store.py` imports nothing from Pallot. `registry.py` and the builders import Pallot's sources, and Pallot imports `registry` at startup, so a builder never imports `pallot.services`; `refresh.py` does, and only the command imports it.
 
+## The daily refresh
+
+`.github/workflows/refresh-caches.yml` refreshes the bundled snapshots every day (09:17 UTC) until 2026-11-15, and can be started by hand from the Actions tab (Run workflow). After that date its first job skips the rest, and the bundles age out on their own (see [bundles](#bundles)); disable the workflow then.
+- **One run at a time.** Its `concurrency` group queues a run behind a slow one (TEC's 1 GB download, the FEC's 5 minutes) instead of cancelling either.
+- **What it runs**, on `develop`, after a plain `uv sync`, each with the repo's folder as `--data-dir` so nothing is written into the virtualenv:
+  - `uv run pallot-bundle refresh --due --data-dir bundles/data`, with the FEC keys as env for that step only;
+  - `uv run trackaipac-cache refresh --data-dir trackaipac_cache/data`, and likewise `voteforpeace-cache` and `tec-cache`.
+- **Failures.** Each step goes on after an error (a failed refresh writes nothing), so the others still run. If anything changed, it runs `uv run pytest`, then commits the changes to `chore/refresh-caches` (rebuilt from `develop` and force-pushed each run, so there's never more than one open pull request) and opens or updates its pull request into `develop`, listing each step's outcome. When the tests passed it merges it: with auto-merge if the repo allows it (it then waits for required checks), otherwise squash-merged at once, since the in-job `pytest` is the check. The last step fails the job if any step failed, so the failure shows in Actions.
+- **Secrets** (Settings, Secrets and variables, Actions): `PALLOT_FEC_API_KEY`, `PALLOT_FEC_API_KEY2` and `PALLOT_FEC_API_KEY3` (without one, the FEC's refresh fails). Optional: `PALLOT_REFRESH_TOKEN`, a fine-grained token with Contents and Pull requests read/write on this repo. Pushes and pull requests made with the default `GITHUB_TOKEN` don't start other workflows, so if the repo gets a CI workflow that should check the refresh's pull request, set this token; without it the workflow uses `GITHUB_TOKEN`.
+- **Repo settings:** Actions, General, Workflow permissions: tick "Allow GitHub Actions to create and approve pull requests" (needed with `GITHUB_TOKEN`). "Allow auto-merge" (General) is optional, used only with required checks on `develop`.
+- **The first time,** run it by hand and read the log: the FEC's builder starts with Texas SOS's candidate lists, and some government sites refuse cloud runners' addresses.
+- **By hand, locally:** the same commands, from the repo's root, then commit the changed `data/` folders.
+- If its push is refused because a workflow file changed on `develop` since the branch was last pushed (`GITHUB_TOKEN` may not update workflows), delete the `chore/refresh-caches` branch and run it again.
+
 ## Endorsement lists
 
 An organization's endorsement list is a frozen, one-time copy: no scraper, no package, nothing to refresh. Each is one JSON file in `pallot/endorsements/`, and `load_all()` finds them at startup (`create_app(endorsements_dir=…)` points elsewhere; the tests use `tests/fixtures/endorsements/`, a made-up list, so they never depend on the real ones). Each file becomes its own source, with no code naming it:
