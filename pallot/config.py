@@ -28,6 +28,10 @@ class Ttls:
     sos_candidates: int = DAY  # the statewide candidate list, one per election
     sos_empty: int = 6 * HOUR  # an empty ballot order may fill in later
     sos_backoff: int = HOUR  # after Texas SOS refuses us, stop asking for this long
+    sos_elections_bundle: int = 3 * DAY  # Texas SOS's bundled answers (bundles/), from when they were last checked
+    sos_reference_bundle: int = 30 * DAY
+    sos_candidates_bundle: int = 2 * DAY  # the live day and a day of grace
+    sos_ballot_order_bundle: int = 2 * DAY  # every county's ballot order, bundled apart: the live day and a day of grace
     past_election: int = 365 * DAY  # anything about an election that already happened
     geocode: int = 30 * DAY
     geocode_miss: int = DAY

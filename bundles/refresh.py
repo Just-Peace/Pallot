@@ -1,7 +1,8 @@
-"""refresh(): run each asked-for source's builder on a throwaway cache -> write its answers if they changed.
+"""refresh(): run each asked-for bundle's builder on a throwaway cache -> write its answers if they changed.
 
-The throwaway cache's rows under the source are the bundle: exactly the requests a lookup makes,
-asked with the configured keys at their offline pace (http_cache.offline).
+The throwaway cache's rows under the source, those the bundle wants (Bundle.wants), are the bundle:
+exactly the requests a lookup makes, asked with the configured keys at their offline pace
+(http_cache.offline).
 """
 
 from __future__ import annotations
@@ -18,16 +19,18 @@ import httpx
 from pallot.config import HOUR, Config, load_config
 from pallot.http_cache import HttpCache, RequestSpec, offline
 from pallot.services import MIN_INTERVAL
+from pallot.sources import sos
 
 from . import registry, store
 from .entry import CADENCES, Bundle, BundleError, Context
 
 DUE_SLACK = 2 * HOUR  # a daily run that starts a little earlier than yesterday's still counts as due
+BUILD_INTERVAL = {**MIN_INTERVAL, sos.SOURCE: 1.0}  # a lookup asks Texas SOS for one county; a build, for all 254
 
 
 @dataclass(frozen=True)
 class Outcome:
-    source: str
+    source: str  # the bundle's name
     status: str  # "updated", "no_changes", "would_update", "skipped" or "failed"
     answers: int = 0
     counts: Mapping[str, int] = field(default_factory=dict)
@@ -75,12 +78,12 @@ async def build(entry: Bundle, config: Config, today: Callable[[], dt.date],
                 for saved in cache.saved(entry.source):
                     spec = RequestSpec.loads(saved.request)
                     kept = cache.peek(spec)
-                    if kept is not None:
+                    if kept is not None and entry.wants(spec, kept.value):
                         answers.append({"request": json_request(spec), "value": kept.value})
             finally:
                 cache.close()
     if not answers:
-        raise BundleError("the builder made no requests")
+        raise BundleError("the builder got no answers to bundle")
     answers.sort(key=store.request_order)
     return answers, counts
 
@@ -91,18 +94,18 @@ def refresh_one(entry: Bundle, root: Path, *, force: bool, dry_run: bool, config
     its last_checked is updated either way, unless ``dry_run``. Raises BundleError without writing."""
     answers, counts = asyncio.run(build(entry, config, today, min_interval))
     digest = store.answers_hash(answers)
-    meta = store.read_meta(root).get(entry.source, {})
+    meta = store.read_meta(root).get(entry.name, {})
     stamp = now.isoformat(timespec="seconds")
-    if meta.get("answers_hash") == digest and (root / f"{entry.source}.json").exists() and not force:
+    if meta.get("answers_hash") == digest and (root / f"{entry.name}.json").exists() and not force:
         if not dry_run:
-            store.write_meta(root, entry.source, {**meta, "last_checked": stamp})
-        return Outcome(entry.source, "no_changes", len(answers), counts)
+            store.write_meta(root, entry.name, {**meta, "last_checked": stamp})
+        return Outcome(entry.name, "no_changes", len(answers), counts)
     if dry_run:
-        return Outcome(entry.source, "would_update", len(answers), counts)
-    store.write_answers(root / f"{entry.source}.json", answers)
-    store.write_meta(root, entry.source, {"last_refresh": stamp, "last_checked": stamp, "answers_hash": digest,
-                                          "answers": len(answers), **counts})
-    return Outcome(entry.source, "updated", len(answers), counts)
+        return Outcome(entry.name, "would_update", len(answers), counts)
+    store.write_answers(root / f"{entry.name}.json", answers)
+    store.write_meta(root, entry.name, {"last_refresh": stamp, "last_checked": stamp, "answers_hash": digest,
+                                        "answers": len(answers), **counts})
+    return Outcome(entry.name, "updated", len(answers), counts)
 
 
 def refresh(
@@ -115,7 +118,7 @@ def refresh(
     config: Config | None = None,
     today: Callable[[], dt.date] = dt.date.today,
     now: dt.datetime | None = None,
-    min_interval: Mapping[str, float] = MIN_INTERVAL,
+    min_interval: Mapping[str, float] = BUILD_INTERVAL,
     bundles: tuple[Bundle, ...] | None = None,
 ) -> list[Outcome]:
     """Refresh the bundles named in ``only`` (all by default) in ``data_dir`` (the package's by
@@ -127,15 +130,15 @@ def refresh(
     meta = store.read_meta(root)
     outcomes = []
     for entry in registry.BUNDLES if bundles is None else bundles:
-        if only and entry.source not in only:
+        if only and entry.name not in only:
             continue
-        if due and not is_due(entry, meta.get(entry.source, {}), now):
-            checked = meta[entry.source]["last_checked"]
-            outcomes.append(Outcome(entry.source, "skipped", detail=f"checked {checked}, within its {entry.cadence} cadence"))
+        if due and not is_due(entry, meta.get(entry.name, {}), now):
+            checked = meta[entry.name]["last_checked"]
+            outcomes.append(Outcome(entry.name, "skipped", detail=f"checked {checked}, within its {entry.cadence} cadence"))
             continue
         try:
             outcomes.append(refresh_one(entry, root, force=force, dry_run=dry_run, config=config, today=today,
                                         now=now, min_interval=min_interval))
         except BundleError as exc:
-            outcomes.append(Outcome(entry.source, "failed", detail=str(exc)))
+            outcomes.append(Outcome(entry.name, "failed", detail=str(exc)))
     return outcomes

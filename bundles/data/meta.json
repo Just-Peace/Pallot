@@ -8,6 +8,23 @@
    "last_checked": "2026-10-08T18:54:13+00:00",
    "last_refresh": "2026-10-08T18:54:13+00:00",
    "races": 39
+  },
+  "sos": {
+   "answers": 9,
+   "answers_hash": "27470e241117589aafa633487bdb566ffe8e1f2b365f3390aa8c765ee90ab3d1",
+   "candidates": 3971,
+   "elections": 3,
+   "last_checked": "2026-10-08T19:47:19+00:00",
+   "last_refresh": "2026-10-08T19:47:19+00:00"
+  },
+  "sos_ballot_order": {
+   "answers": 254,
+   "answers_hash": "2d7ec4b29217c18ab3874acf5bbc3cefc8e3dafc7ac127fd06c013e3f4aee45f",
+   "ballot_orders": 254,
+   "elections": 3,
+   "last_checked": "2026-10-08T20:03:40+00:00",
+   "last_refresh": "2026-10-08T20:03:40+00:00",
+   "server_errors": 0
   }
  }
 }
