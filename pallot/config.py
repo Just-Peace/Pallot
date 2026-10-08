@@ -57,6 +57,7 @@ class Ttls:
     election_precincts_backoff: int = HOUR  # after the TLC portal refuses us, stop asking for this long
     county_precincts: int = 7 * DAY  # counties' lists of their election precincts and maps of commissioner and JP precincts
     county_precincts_backoff: int = HOUR  # after a county's map server refuses us, stop asking them for this long
+    county_precincts_bundle: int = 14 * DAY  # the seven counties' records bundled with Pallot (bundles/), refreshed weekly: a week of grace
     endorsement_feeds: int = 7 * DAY  # organizations' live endorsement lists (endorsement_feeds.py)
     endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
     officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat

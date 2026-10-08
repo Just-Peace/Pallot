@@ -1,6 +1,14 @@
 {
  "schema_version": 1,
  "sources": {
+  "county_precincts": {
+   "answers": 25,
+   "answers_hash": "98027f7c104c37daa19988d9557a6a8e60ecd4633067af425b96cb49cacbe527",
+   "counties": 7,
+   "last_checked": "2026-10-08T20:37:52+00:00",
+   "last_refresh": "2026-10-08T20:37:52+00:00",
+   "missing": 0
+  },
   "fec": {
    "answers": 469,
    "answers_hash": "d5bec2755efda47009dbc3a93c564a757edf8c056ae170228402abd5074ce220",
