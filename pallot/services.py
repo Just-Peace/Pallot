@@ -68,12 +68,13 @@ async def open_services(
     voteforpeace_bundled: Path | None = None,
     tec_refresh: Callable[..., Any] | None = None,
     tec_bundled: Path | None = None,
+    fec_bundled: Path | None = None,
     endorsements_dir: Path = ENDORSEMENTS_DIR,
     min_interval: Mapping[str, float] = MIN_INTERVAL,
     tidy: bool = True,
 ) -> AsyncIterator[Services]:
     """Every service, on one HTTP client and the cache in ``config.data_dir``, with the bundled
-    snapshots seeded. ``tidy``: remove what an interrupted precinct map download left (the
+    snapshots seeded and the FEC's bundled answers in the cache. ``tidy``: remove what an interrupted precinct map download left (the
     server, at startup; never pallot-cache, which may run beside a server's download)."""
     config.data_dir.mkdir(parents=True, exist_ok=True)
     async with httpx.AsyncClient(
@@ -127,6 +128,7 @@ async def open_services(
             await asyncio.to_thread(svc.trackaipac.ensure_seeded)
             await asyncio.to_thread(svc.voteforpeace.ensure_seeded)
             await asyncio.to_thread(svc.tec.ensure_seeded)
+            await asyncio.to_thread(svc.fec.load_snapshot, fec_bundled)
             yield svc
         finally:
             await election_precincts.aclose()  # before the client closes under a download

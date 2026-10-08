@@ -124,6 +124,7 @@ def create_app(
     voteforpeace_bundled: Path | None = None,
     tec_refresh: Callable[..., Any] | None = None,
     tec_bundled: Path | None = None,
+    fec_bundled: Path | None = None,
     endorsements_dir: Path = ENDORSEMENTS_DIR,
     min_interval: Mapping[str, float] = MIN_INTERVAL,
 ) -> FastAPI:
@@ -140,6 +141,7 @@ def create_app(
             voteforpeace_bundled=voteforpeace_bundled,
             tec_refresh=tec_refresh,
             tec_bundled=tec_bundled,
+            fec_bundled=fec_bundled,
             endorsements_dir=endorsements_dir,
             min_interval=min_interval,
         ) as svc:

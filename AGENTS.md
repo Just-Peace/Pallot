@@ -116,7 +116,7 @@ How to write them:
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
 - **Pallot has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
 - **Don't reinstall** `trackaipac_cache` **from its own repo.** It's a copy of the maintainer's library, and edits here aren't synced back.
-- **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`). Never edit them by hand.
+- **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`, `fec_cache/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`, `uv run fec-cache refresh`). Never edit them by hand.
 
 
 

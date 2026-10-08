@@ -290,9 +290,10 @@ class Admin:
                      f"{trouble}.")
         else:
             state = None
+        snapshot = svc.snapshot_note()
         if not svc.keyed:
-            return " ".join(filter(None, (state, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
+            return " ".join(filter(None, (state, snapshot, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
         if state:
-            return state, "warn"
-        return ("Using your api.data.gov key." if len(rests) == 1
-                else f"Using your {len(rests)} api.data.gov keys in turn."), "info"
+            return " ".join(filter(None, (state, snapshot))), "warn"
+        keys = "Using your api.data.gov key." if len(rests) == 1 else f"Using your {len(rests)} api.data.gov keys in turn."
+        return " ".join(filter(None, (snapshot, keys))), "info"
