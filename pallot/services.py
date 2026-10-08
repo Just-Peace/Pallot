@@ -84,7 +84,6 @@ async def open_services(
             client,
             min_interval=dict(min_interval),
             source_headers={
-                "fec": {"X-Api-Key": config.fec_api_key},
                 **({google.SOURCE: {google.KEY_HEADER: config.google_api_key}} if config.google_api_key else {}),
             },
             retry_after=config.ttl.retry_after,
@@ -116,7 +115,7 @@ async def open_services(
                     config.voteforpeace_dir, refresh_fn=voteforpeace_refresh, bundled_dir=voteforpeace_bundled
                 ),
                 endorsements=lists,
-                fec=Fec(cache, config.ttl, config.fec_api_key, today),
+                fec=Fec(cache, config.ttl, config.fec_api_keys, today),
                 tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                 polls=Polls(cache, config.ttl, today),
                 officeholders=Officeholders(cache, config.ttl),

@@ -7,6 +7,7 @@ import sqlite3
 
 from fastapi.testclient import TestClient
 
+from pallot.http_cache import _key_flag
 from pallot.matching import NameIndex, last_first, match_person
 from pallot.sources import fec
 from pallot.text import display_org, money, money_short
@@ -134,18 +135,73 @@ def test_paused_fec_still_serves_what_it_has(make_app, upstream, tmp_path):
     with TestClient(make_app()) as client:
         get_ballot(client)
     with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
-        db.execute("INSERT INTO flags (name, source, expires_at) VALUES ('paused:fec', 'fec', 9e12)")
+        db.execute("INSERT INTO flags (name, source, expires_at) VALUES (?, 'fec', 9e12)", (_key_flag("fec", FEC_KEY, 429),))
     with TestClient(make_app()) as client:
         ballot = get_ballot(client)
     senate = find_race(ballot, "U.S. Senator")
     assert senate["cards"] and not any("FEC" in w for w in ballot["warnings"])
 
 
+def fec_notice(client) -> str:
+    return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "fec")["notice"]
+
+
+def test_requests_take_each_key_in_turn(make_app, upstream):
+    with TestClient(make_app(fec_extra_keys=("", "third-key", FEC_KEY))) as client:  # a blank and a repeat are skipped
+        get_ballot(client)
+        assert fec_notice(client) == "Using your 2 api.data.gov keys in turn."
+    sent = upstream.fec_sent
+    assert set(sent) == {FEC_KEY, "third-key"} and abs(sent.count(FEC_KEY) - sent.count("third-key")) <= 1
+
+
+def test_a_rate_limited_key_rests_while_the_others_carry_on(make_app, upstream):
+    upstream.fec_limited = {FEC_KEY}
+    with TestClient(make_app(fec_extra_keys=("second-key", "third-key"))) as client:
+        ballot = get_ballot(client)
+        assert find_race(ballot, "U.S. Senator")["cards"] and not any("FEC" in w for w in ballot["warnings"])
+        assert upstream.fec_sent.count(FEC_KEY) == 1  # it rests after its 429
+        notice = fec_notice(client)
+    assert notice.startswith("Using 2 of your 3 api.data.gov keys until ")
+    assert notice.endswith(": PALLOT_FEC_API_KEY reached the FEC's rate limit.")
+
+
+def test_a_refused_key_is_skipped_and_named(make_app, upstream):
+    upstream.fec_refused = {"second-key"}
+    with TestClient(make_app(fec_extra_keys=("second-key", "third-key"))) as client:
+        ballot = get_ballot(client)
+        assert not any("FEC" in w for w in ballot["warnings"])
+        assert upstream.fec_sent.count("second-key") == 1
+        assert "the FEC refused PALLOT_FEC_API_KEY2; check it in .env and restart Pallot" in fec_notice(client)
+
+
+def test_the_fec_pauses_once_every_key_rests(make_app, upstream):
+    upstream.fec_limited, upstream.fec_refused = {FEC_KEY}, {"second-key"}
+    with TestClient(make_app(fec_extra_keys=("second-key",))) as client:
+        ballot = get_ballot(client)
+        assert any("PALLOT_FEC_API_KEY reached the FEC's rate limit; the FEC refused PALLOT_FEC_API_KEY2" in w
+                   for w in ballot["warnings"])
+        asked = upstream.count("open.fec.gov")
+        get_ballot(client)
+        assert upstream.count("open.fec.gov") == asked
+        assert fec_notice(client).startswith("Paused until ")
+
+
+def test_a_changed_key_is_asked_at_once(make_app, upstream, tmp_path):
+    upstream.fec_refused = {"typo"}
+    with TestClient(make_app(fec_key="typo")) as client:
+        assert any("check it in .env" in w for w in get_ballot(client)["warnings"])
+    with TestClient(make_app()) as client:  # fixed in .env, and restarted
+        assert not any("FEC" in w for w in get_ballot(client)["warnings"])
+    with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
+        flags = [name for (name,) in db.execute("SELECT name FROM flags")]
+    assert flags and not any("typo" in name or FEC_KEY in name for name in flags)
+
+
 def test_a_refused_key_is_explained(make_app, upstream):
     upstream.fec_status = 403
     with TestClient(make_app()) as client:
         ballot = get_ballot(client)
-    assert any("PALLOT_FEC_API_KEY" in w for w in ballot["warnings"])
+    assert any("the FEC refused PALLOT_FEC_API_KEY" in w for w in ballot["warnings"])
 
 
 def test_the_key_is_sent_but_never_stored(make_app, upstream, tmp_path):

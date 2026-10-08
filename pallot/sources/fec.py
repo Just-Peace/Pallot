@@ -5,8 +5,10 @@ That is enough for the race's money comparison and works with the shared DEMO_KE
 a free key (PALLOT_FEC_API_KEY, from https://api.open.fec.gov/developers/), each candidate
 on the ballot gets five more calls: where the money came from, donation sizes, donors'
 states, donors' employers, and outside spending for and against. Everything goes through
-HttpCache for a week; the key travels in a header that HttpCache never stores. A 429 (the
-rate limit) pauses the FEC for an hour, serving only what's cached meanwhile.
+HttpCache for a week; the key travels in a header that HttpCache never stores. With more
+keys (PALLOT_FEC_API_KEY2 to 5), requests take each key in turn, so each key's hourly limit
+lasts longer. A key that hits the rate limit (429) or is refused (403) rests for an hour while
+the others carry on; when every key rests, the FEC is paused, serving only what's cached.
 """
 
 from __future__ import annotations
@@ -14,7 +16,7 @@ from __future__ import annotations
 import asyncio
 import datetime as dt
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any, Callable, Mapping
 
 from ..config import DEMO_KEY, Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
@@ -89,6 +91,11 @@ def _campaigns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
+def _names(names: list[str]) -> str:
+    """ "A", "A and B", "A, B and C"."""
+    return " and ".join(filter(None, (", ".join(names[:-1]), names[-1])))
+
+
 def _number(*values: Any) -> float | None:
     """The first value that is a number (the API sends null for "not reported")."""
     return next((float(v) for v in values if isinstance(v, (int, float))), None)
@@ -106,16 +113,31 @@ class Details:
 
 
 class Fec:
-    def __init__(self, cache: HttpCache, ttl: Ttls, api_key: str, today: Callable[[], dt.date] = dt.date.today):
+    def __init__(self, cache: HttpCache, ttl: Ttls, api_keys: Mapping[str, str], today: Callable[[], dt.date] = dt.date.today):
+        """``api_keys``: each key by the variable it's in (Config.fec_api_keys)."""
         self.cache = cache
         self.ttl = ttl
-        self.keyed = bool(api_key) and api_key != DEMO_KEY
+        self.keyed = DEMO_KEY not in api_keys.values()
+        self.key_names = tuple(api_keys) if self.keyed else ("the shared DEMO_KEY",)
         self.today = today
         self._gate = asyncio.Semaphore(4)
-        cache.pause_on(SOURCE, (429,), ttl.fec_backoff)
+        cache.share_keys(SOURCE, "X-Api-Key", tuple(api_keys.values()), {429: ttl.fec_backoff, 403: ttl.fec_backoff})
 
     def lifetime(self, day: dt.date | None) -> float:
         return self.ttl.past_election if day and day < self.today() else self.ttl.fec
+
+    def key_trouble(self) -> str | None:
+        """Which keys rest and why, naming their variables; None while every key is open."""
+        rests = list(zip(self.key_names, self.cache.key_rests(SOURCE)))
+        limited = [name for name, rest in rests if rest and rest.status == 429]
+        refused = [name for name, rest in rests if rest and rest.status == 403]
+        parts = []
+        if limited:
+            parts.append(f"{_names(limited)} reached the FEC's rate limit")
+        if refused:
+            parts.append(f"the FEC refused {_names(refused)}; check {'it' if len(refused) == 1 else 'them'} "
+                         "in .env and restart Pallot")
+        return "; ".join(parts) or None
 
     async def _get(self, path: str, params: dict[str, str], ttl: float) -> Cached:
         spec = RequestSpec("GET", f"{API}{path}", params=params)
@@ -123,12 +145,9 @@ class Fec:
             try:
                 return await self.cache.get_json(SOURCE, spec, ttl=ttl)
             except UpstreamError as exc:
-                if exc.until:  # paused: nothing cached for this request
-                    raise FecUnavailable(f"paused until {display_time(exc.until)} after reaching the FEC's rate limit") from exc
-                if exc.status == 429:
-                    raise FecUnavailable("reached the FEC's rate limit") from exc
-                if exc.status == 403:
-                    raise FecUnavailable("the FEC refused the API key; check PALLOT_FEC_API_KEY") from exc
+                if exc.until:  # every key rests, and nothing is cached for this request
+                    why = self.key_trouble() or "every key rests"
+                    raise FecUnavailable(f"paused until {display_time(exc.until)}: {why}") from exc
                 raise FecUnavailable(str(exc)) from exc
 
     async def race(self, seat: str, cycle: int, ttl: float) -> list[dict[str, Any]]:

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+import sqlite3
 import time
 
 import httpx
 import pytest
 import respx
 
-from pallot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls, value_is_empty
+from pallot.http_cache import HttpCache, KeyRest, RequestSpec, UpstreamError, track_calls, value_is_empty
 
 pytestmark = pytest.mark.anyio
 
@@ -174,6 +175,54 @@ async def test_a_refusal_pauses_the_source_even_with_a_copy(tmp_path):
                 await cache.get_json("demo", other, ttl=60)  # paused, and nothing stored for it
             assert caught.value.until == clock.now + 3600
     assert route.call_count == 2
+
+
+async def test_shared_keys_take_turns_and_rest_when_refused(tmp_path):
+    clock = Clock()
+    sent: list[str] = []
+    answers = {"a": 200, "b": 200, "c": 200}
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        sent.append(request.headers["x-key"])
+        return httpx.Response(answers[request.headers["x-key"]], json={"v": 1})
+
+    def spec(n: int) -> RequestSpec:
+        return RequestSpec("GET", URL, params={"q": str(n)})
+
+    with respx.mock() as router:
+        router.get(URL).mock(side_effect=answer)
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            cache.share_keys("demo", "X-Key", ["a", "b", "c"], {429: 3600, 403: 60})
+            for n in range(4):
+                await cache.get_json("demo", spec(n), ttl=60)
+            assert sent == ["a", "b", "c", "a"]
+            answers.update(b=429, c=403)
+            sent.clear()
+            assert (await cache.get_json("demo", spec(4), ttl=60)).value == {"v": 1}
+            assert sent == ["b", "c", "a"] and cache.paused_until("demo") is None
+            assert cache.key_rests("demo") == [None, KeyRest(429, clock.now + 3600), KeyRest(403, clock.now + 60)]
+            sent.clear()
+            await cache.get_json("demo", spec(5), ttl=60)
+            assert sent == ["a"]  # b and c rest
+            clock.now += 61
+            answers.update(a=429, c=429)
+            sent.clear()
+            with pytest.raises(UpstreamError) as caught:
+                await cache.get_json("demo", spec(6), ttl=60)
+            assert sent == ["c", "a"] and caught.value.status == 429  # c's turn came after a's, and its rest is over
+            assert caught.value.until == cache.paused_until("demo") == clock.now - 61 + 3600  # b's rest ends first
+            with pytest.raises(UpstreamError):
+                await cache.get_json("demo", spec(7), ttl=60)
+            assert sent == ["c", "a"]  # paused: nothing sent
+            cache.share_keys("demo", "X-Key", ["d"], {429: 3600})  # a new key isn't resting
+            answers["d"] = 200
+            assert cache.paused_until("demo") is None
+            await cache.get_json("demo", spec(7), ttl=60)
+            assert sent[-1] == "d"
+    with sqlite3.connect(tmp_path / "c.sqlite3") as db:
+        names = [name for (name,) in db.execute("SELECT name FROM flags")]
+    assert sorted(name.split(":")[3] for name in names if name.startswith("rest:demo:")) == ["403", "429", "429", "429"]
 
 
 async def test_refresh_stops_when_the_source_pauses(tmp_path):

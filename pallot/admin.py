@@ -167,7 +167,7 @@ SOURCES = (
     SourceInfo(
         fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
         group=OFFICIAL,
-        pause=Pause("reaching the FEC's rate limit", "what it already sent still shows"),
+        pause=Pause("every key reached the FEC's rate limit or was refused", "what it already sent still shows"),
     ),
     SourceInfo(
         tec.SOURCE,
@@ -269,12 +269,30 @@ class Admin:
         """One line under the source's description: what it's missing, or where its data stands."""
         paused = self.paused(info)
         if info.id == fec.SOURCE:
-            if not self.svc.fec.keyed:
-                return " ".join(filter(None, (paused, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
-            return (paused, "warn") if paused else ("Using your api.data.gov key.", "info")
+            return self._fec_notice(info)
         if info.id == google.SOURCE:
             return (paused, "warn") if paused else ((None, "info") if self.svc.google.keyed else (google.KEY_NOTE, "warn"))
         if paused:
             return paused, "warn"
         kept = self.kept(info)
         return (kept.notice() if kept else None) or (None, "info")
+
+    def _fec_notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
+        """Which keys the FEC is asked with, and why any rest: paused once every key does."""
+        svc = self.svc.fec
+        trouble = svc.key_trouble()
+        rests = self.svc.cache.key_rests(fec.SOURCE)
+        if until := self.svc.cache.paused_until(fec.SOURCE):
+            state = f"Paused until {display_time(until)}: {trouble}; {info.pause.kept}."
+        elif trouble:
+            soonest = min(rest.until for rest in rests if rest)
+            state = (f"Using {rests.count(None)} of your {len(rests)} api.data.gov keys until {display_time(soonest)}: "
+                     f"{trouble}.")
+        else:
+            state = None
+        if not svc.keyed:
+            return " ".join(filter(None, (state, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
+        if state:
+            return state, "warn"
+        return ("Using your api.data.gov key." if len(rests) == 1
+                else f"Using your {len(rests)} api.data.gov keys in turn."), "info"
