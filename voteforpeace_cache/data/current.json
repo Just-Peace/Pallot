@@ -1239,35 +1239,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "a7406b59-3e87-4ff9-8d15-55f36b4f6103",
-      "district": null,
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": null,
-          "notes": null,
-          "organization": "DSA",
-          "type": "endorsed"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": "Scottsdale",
-      "level": "local",
-      "name": "Raoul Zubia",
-      "notes": null,
-      "office_title": "City Council Member, Scottsdale",
-      "party": null,
-      "rating": "vote",
-      "section": "Arizona",
-      "slug": "raoul-zurbia",
-      "state": "AZ",
-      "url": "https://voteforpeace.info/arizona/raoul-zurbia"
-    },
-    {
-      "articles": [],
       "candidate_id": "dc365053-517c-40f9-a64b-cb76e41a0e06",
       "district": "3",
       "election_date": "Nov 3, 2026",
@@ -1294,35 +1265,6 @@
       "slug": "robb-ryerse",
       "state": "AR",
       "url": "https://voteforpeace.info/arkansas/robb-ryerse"
-    },
-    {
-      "articles": [],
-      "candidate_id": "1b8bac08-29ea-4616-b492-e6372bdfe9f4",
-      "district": null,
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": null,
-          "notes": null,
-          "organization": "Vote for Peace Questionnaire",
-          "type": "endorsed"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": "Ontario",
-      "level": "local",
-      "name": "Nicolo Lalama",
-      "notes": "UCR Student, Activist, Social Worker fighting to stop warehouse expansion and opposing corporate and foreign interest in politics",
-      "office_title": "Mayor, Ontario",
-      "party": null,
-      "rating": "vote",
-      "section": "Ca",
-      "slug": "nicolo-lalama",
-      "state": "CA",
-      "url": "https://voteforpeace.info/ca/nicolo-lalama"
     },
     {
       "articles": [],
@@ -1392,7 +1334,7 @@
         }
       ],
       "candidate_id": "b5561503-8d59-41fc-82f6-7278a6788e93",
-      "district": "At-Large",
+      "district": null,
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -1623,6 +1565,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -1813,6 +1761,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "007258d8-e9bf-400a-a9b8-37d2567e654e",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "East Palo Alto",
+      "level": "local",
+      "name": "Ofelia Bello",
+      "notes": null,
+      "office_title": "City Council Member, East Palo Alto",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "ofelia-bello",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/ofelia-bello"
+    },
+    {
+      "articles": [],
       "candidate_id": "883d5cfc-f43a-4af9-9bd1-a131c6e7ce46",
       "district": "3",
       "election_date": "Nov 3, 2026",
@@ -1897,6 +1874,41 @@
       "slug": "hector-bustos",
       "state": "CA",
       "url": "https://voteforpeace.info/california/hector-bustos"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ad14472e-fabd-4db8-badb-42783240668a",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DeFlock Network",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "West Hollywood",
+      "level": "local",
+      "name": "Chelsea Byers",
+      "notes": "This candidate has a track record of supporting ceasefire resolution at the city of West Hollywood and opposes the expansion of Flock ALPRs in the city.",
+      "office_title": "City Council Member, West Hollywood",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "chelsea-byers",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/chelsea-byers"
     },
     {
       "articles": [],
@@ -1990,6 +2002,35 @@
       "slug": "estefany-casta-eda",
       "state": "CA",
       "url": "https://voteforpeace.info/california/estefany-casta-eda"
+    },
+    {
+      "articles": [],
+      "candidate_id": "d6593a43-0a17-46a1-82ed-4652dda625cd",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Jurupa Valley",
+      "level": "local",
+      "name": "Edgar Castelan",
+      "notes": null,
+      "office_title": "City Council Member, Jurupa Valley",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "edgar-castelan",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/edgar-castelan"
     },
     {
       "articles": [],
@@ -2536,7 +2577,7 @@
     {
       "articles": [],
       "candidate_id": "6aaef21a-c55e-4e91-8c54-894fa90a44a2",
-      "district": null,
+      "district": "5",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -2547,7 +2588,7 @@
       "level": "county",
       "name": "Katrina Foley",
       "notes": null,
-      "office_title": "County Supervisor, District 5, Orange",
+      "office_title": "County Supervisor, Orange",
       "party": null,
       "rating": "reject",
       "section": "California",
@@ -2752,6 +2793,28 @@
       "slug": "robert-garcia",
       "state": "CA",
       "url": "https://voteforpeace.info/california/robert-garcia"
+    },
+    {
+      "articles": [],
+      "candidate_id": "7b16547f-4d53-4ac7-8289-108b90b9d660",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Palo Alto",
+      "level": "local",
+      "name": "Raymond Goins",
+      "notes": null,
+      "office_title": "City Council, Palo Alto",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "raymond-goins",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/raymond-goins"
     },
     {
       "articles": [],
@@ -3162,7 +3225,14 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": "Irvine",
       "level": "local",
@@ -3170,7 +3240,7 @@
       "notes": null,
       "office_title": "City Council Member, Irvine",
       "party": null,
-      "rating": null,
+      "rating": "vote",
       "section": "California",
       "slug": "scotty-hong",
       "state": "CA",
@@ -3604,6 +3674,57 @@
       "slug": "alexander-kraft",
       "state": "CA",
       "url": "https://voteforpeace.info/california/alexander-kraft"
+    },
+    {
+      "articles": [],
+      "candidate_id": "1b8bac08-29ea-4616-b492-e6372bdfe9f4",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Ontario",
+      "level": "local",
+      "name": "Nicolo Lalama",
+      "notes": "UCR Student, Activist, Social Worker fighting to stop warehouse expansion and opposing corporate and foreign interest in politics",
+      "office_title": "Mayor, Ontario",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "nicolo-lalama",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/nicolo-lalama"
+    },
+    {
+      "articles": [],
+      "candidate_id": "64de3d03-4620-4a4f-92db-0aefba444ffe",
+      "district": "E",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "South San Francisco",
+      "level": "local",
+      "name": "Frank Lara",
+      "notes": null,
+      "office_title": "Board of Trustees, South San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "frank-lara-fadb",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/frank-lara-fadb"
     },
     {
       "articles": [],
@@ -4178,9 +4299,9 @@
       "articles": [],
       "candidate_id": "af79fa7b-2f25-4ae9-82de-3b1ac042a2b7",
       "district": "3",
-      "election_date": null,
-      "election_label": "Won General",
-      "election_result": "won",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
       "election_stage": "general",
       "endorsements": [],
       "featured_text": null,
@@ -4259,6 +4380,41 @@
       "slug": "jay-obernolte",
       "state": "CA",
       "url": "https://voteforpeace.info/california/jay-obernolte"
+    },
+    {
+      "articles": [],
+      "candidate_id": "9e8669e7-c222-49c3-98e9-ec65cc9b2688",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "South San Francisco",
+      "level": "local",
+      "name": "Melanie Olson",
+      "notes": null,
+      "office_title": "City Council Member, South San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "melanie-olson",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/melanie-olson"
     },
     {
       "articles": [],
@@ -4346,6 +4502,35 @@
       "slug": "maria-pacheco",
       "state": "CA",
       "url": "https://voteforpeace.info/california/maria-pacheco"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b8711d01-903e-47aa-8ed8-589f672d8734",
+      "district": "19",
+      "election_date": "Jun 2, 2026",
+      "election_label": "Primary: Jun 2, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Track AIPAC",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Jimmy Panetta",
+      "notes": "This candidate takes money from AIPAC and affiliated lobbies and has yet to sign the block the bombs act.",
+      "office_title": "U.S. Representative",
+      "party": "Democrat",
+      "rating": "reject",
+      "section": "California",
+      "slug": "jimmy-panetta",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jimmy-panetta"
     },
     {
       "articles": [],
@@ -4509,6 +4694,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "48235cb3-5534-4c4c-9eb5-fb7bffe4c625",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Los Angeles",
+      "level": "local",
+      "name": "Nithya Raman",
+      "notes": "We are recommending this candidate since she has returned weapons manufacturer money, acknowledges the genocide, and supports the BDS movement.",
+      "office_title": "Mayor, Los Angeles",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "nithya-raman",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/nithya-raman"
+    },
+    {
+      "articles": [],
       "candidate_id": "c712d50c-8229-498d-ba5c-91ca867524ae",
       "district": "26",
       "election_date": "Nov 3, 2026",
@@ -4570,6 +4790,28 @@
       "slug": "anna-reitano",
       "state": "CA",
       "url": "https://voteforpeace.info/california/anna-reitano"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ff7dfdaf-025f-400c-86dd-64f8253b7813",
+      "district": "14",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Mark Rendon",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Green",
+      "rating": "vote",
+      "section": "California",
+      "slug": "mark-rendon",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/mark-rendon"
     },
     {
       "articles": [],
@@ -4874,7 +5116,7 @@
     {
       "articles": [],
       "candidate_id": "49e689b7-e765-4b88-ae6c-15f293390503",
-      "district": null,
+      "district": "2",
       "election_date": null,
       "election_label": "Won General",
       "election_result": "won",
@@ -4900,11 +5142,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": "orange",
+      "jurisdiction": "Orange",
       "level": "county",
       "name": "Vicente Sarmiento",
       "notes": null,
-      "office_title": "County Supervisor, District 2, orange",
+      "office_title": "County Supervisor, Orange",
       "party": null,
       "rating": "vote",
       "section": "California",
@@ -5004,6 +5246,35 @@
       "slug": "brad-sherman",
       "state": "CA",
       "url": "https://voteforpeace.info/california/brad-sherman"
+    },
+    {
+      "articles": [],
+      "candidate_id": "a049b358-bb79-4af8-847c-9626b2b62853",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Foster City",
+      "level": "local",
+      "name": "Phoebe Shin Venkat",
+      "notes": null,
+      "office_title": "City Council Member, Foster City",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "phoebe-shin-venkat",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/phoebe-shin-venkat"
     },
     {
       "articles": [],
@@ -11828,6 +12099,12 @@
           "notes": null,
           "organization": "DSA",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -13587,7 +13864,7 @@
     {
       "articles": [],
       "candidate_id": "69c30527-d3eb-4301-a877-138bd2056aac",
-      "district": "University of Michigan",
+      "district": null,
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -13605,7 +13882,7 @@
       "level": "statewide",
       "name": "Amir Makled",
       "notes": null,
-      "office_title": "Regent",
+      "office_title": "Regent, State of Michigan",
       "party": null,
       "rating": "vote",
       "section": "Michigan",
@@ -15723,6 +16000,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "8232ba95-b3ed-4e69-bcb9-dbafcaab4ad3",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Brian A. Shaver",
+      "notes": null,
+      "office_title": "U.S. Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "brian-a-shaver",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/brian-a-shaver"
+    },
+    {
+      "articles": [],
       "candidate_id": "239f217c-7e57-4b16-89c2-a5178849b361",
       "district": "9",
       "election_date": "Nov 3, 2026",
@@ -15752,6 +16058,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "ae8cf2d1-47cb-44b5-9293-f6b2d3c3a1aa",
+      "district": "56",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Laalitya Acharya",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "laalitya-acharya",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/laalitya-acharya"
+    },
+    {
+      "articles": [],
       "candidate_id": "c77461bb-3675-4a85-845f-c8d9733122e8",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -15778,6 +16113,70 @@
       "slug": "amy-acton",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/amy-acton"
+    },
+    {
+      "articles": [],
+      "candidate_id": "3d5c2ccf-873c-487d-84db-51c4c24678ff",
+      "district": "52",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Mike Baker",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "mike-baker",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/mike-baker"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0c02df1e-1e6e-4def-bfe8-e2509c2d9fbd",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Stacie Baker",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "stacie-baker",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/stacie-baker"
     },
     {
       "articles": [],
@@ -15842,6 +16241,64 @@
       "slug": "joyce-beatty",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/joyce-beatty"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f3bfd06e-04bf-4491-a207-f87ff540e0a5",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Annette Blackwell",
+      "notes": null,
+      "office_title": "Statewide",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "annette-blackwell",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/annette-blackwell"
+    },
+    {
+      "articles": [],
+      "candidate_id": "5b2e2526-0810-447b-80aa-c9ba052a2308",
+      "district": "29",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Jonathan Bradner",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "jonathan-bradner",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/jonathan-bradner"
     },
     {
       "articles": [],
@@ -15927,6 +16384,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -15941,6 +16404,35 @@
       "slug": "jerrad-christian",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/jerrad-christian"
+    },
+    {
+      "articles": [],
+      "candidate_id": "28bae7a6-6b9f-4d59-86ba-3e59f2fbd633",
+      "district": "6",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Christine Cockley",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "christine-cockley",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/christine-cockley"
     },
     {
       "articles": [],
@@ -15970,6 +16462,93 @@
       "slug": "warren-davidson",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/warren-davidson"
+    },
+    {
+      "articles": [],
+      "candidate_id": "65fb6bfd-82f5-4aee-b6d6-8c922442472e",
+      "district": "16",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Scott DiMauro",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "scott-dimauro",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/scott-dimauro"
+    },
+    {
+      "articles": [],
+      "candidate_id": "d57299ce-8bd2-42ce-b975-41da0f5c16b9",
+      "district": "8",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Vanessa Enoch",
+      "notes": null,
+      "office_title": "U.S. Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "vanessa-enoch",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/vanessa-enoch"
+    },
+    {
+      "articles": [],
+      "candidate_id": "efb20197-302e-4328-838a-61b0c19197c8",
+      "district": "44",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "David J. Fournier",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "david-j-fournier",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/david-j-fournier"
     },
     {
       "articles": [],
@@ -16012,14 +16591,14 @@
         {
           "link": null,
           "notes": null,
-          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
         }
       ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "state_legislature",
-      "name": "Paula Hicks Hudson",
+      "name": "Paula Hicks-Hudson",
       "notes": null,
       "office_title": "State Senator",
       "party": "Democrat",
@@ -16028,6 +16607,35 @@
       "slug": "paula-hicks-hudson",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/paula-hicks-hudson"
+    },
+    {
+      "articles": [],
+      "candidate_id": "5e31a127-3c3d-49f9-a915-f2c97b576050",
+      "district": "15",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Latyna Humphrey",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "latyna-humphrey",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/latyna-humphrey"
     },
     {
       "articles": [],
@@ -16057,6 +16665,64 @@
       "slug": "cara-jacob",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/cara-jacob"
+    },
+    {
+      "articles": [],
+      "candidate_id": "e9121e24-0d4e-44e3-9eb0-9761df686e40",
+      "district": "7",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Ukeme Awakessien Jeter",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "ukeme-awakessien-jeter",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/ukeme-awakessien-jeter"
+    },
+    {
+      "articles": [],
+      "candidate_id": "d1e07518-26c6-4cf8-b852-71e3bdeabbdf",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Lucas",
+      "level": "county",
+      "name": "Brenden Johnson",
+      "notes": null,
+      "office_title": "County Commissioner, Lucas",
+      "party": null,
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "brenden-johnson",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/brenden-johnson"
     },
     {
       "articles": [],
@@ -16163,7 +16829,7 @@
         {
           "link": null,
           "notes": null,
-          "organization": "Vote for Peace Questionnaire",
+          "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
         }
       ],
@@ -16208,6 +16874,35 @@
       "slug": "joshua-kolasinski",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/joshua-kolasinski"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ca53281d-cf32-4bdc-8292-954ab3c996a3",
+      "district": "33",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Michael Kripchak",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "michael-kripchak",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/michael-kripchak"
     },
     {
       "articles": [],
@@ -16310,7 +17005,14 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "federal",
@@ -16323,6 +17025,35 @@
       "slug": "don-leonard",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/don-leonard"
+    },
+    {
+      "articles": [],
+      "candidate_id": "fb77e02e-3651-436f-a2ad-17d7efe1b86e",
+      "district": "11",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Crystal Lett",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "crystal-lett",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/crystal-lett"
     },
     {
       "articles": [],
@@ -16352,6 +17083,35 @@
       "slug": "greg-levy",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/greg-levy"
+    },
+    {
+      "articles": [],
+      "candidate_id": "988c57c0-ecab-4106-b3d0-88e1ed83d263",
+      "district": "36",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Rose Lounsbury",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "rose-lounsbury",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/rose-lounsbury"
     },
     {
       "articles": [],
@@ -16419,6 +17179,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "7d76a530-6352-41f0-ad04-16427005b90b",
+      "district": "39",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Daquan Neal",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "daquan-neal",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/daquan-neal"
+    },
+    {
+      "articles": [],
       "candidate_id": "6f4a42a9-a3b1-404a-8abb-df72b416aafa",
       "district": "7",
       "election_date": "Nov 3, 2026",
@@ -16431,13 +17220,19 @@
           "notes": null,
           "organization": "Working Families Party",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "federal",
       "name": "Brian Poindexter",
-      "notes": "While the Working Families Party questionnaire does not explicitly ask about AIPAC, it does screen candidates who have pledged not to take any corporate or special interest dollars. We have not been able to independently verify this candidate's position on militarism or war lobbies.",
+      "notes": null,
       "office_title": "U.S. Representative",
       "party": "Democrat",
       "rating": "vote",
@@ -16459,6 +17254,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
         }
       ],
@@ -16483,7 +17284,14 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "state_legislature",
@@ -16496,6 +17304,64 @@
       "slug": "tristan-rader",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/tristan-rader"
+    },
+    {
+      "articles": [],
+      "candidate_id": "99af720b-a67a-43bc-bafb-91ba09faa1c2",
+      "district": "45",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Jayson Ameer Rasheed",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "jayson-ameer-rasheed",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/jayson-ameer-rasheed"
+    },
+    {
+      "articles": [],
+      "candidate_id": "5ed56f8f-a60b-4fc4-a362-6ef0339c870d",
+      "district": "42",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Elgin Rogers Jr.",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "elgin-rogers-jr",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/elgin-rogers-jr"
     },
     {
       "articles": [],
@@ -16554,6 +17420,151 @@
       "slug": "davida-russell",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/davida-russell"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0b74b939-aa1b-49d6-91b3-7be0933d9b59",
+      "district": "35",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Samantha Salamon",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "samantha-salamon",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/samantha-salamon"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ce69d6e8-9d7a-4109-9e1a-1fd0a78029d7",
+      "district": "10",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Mark Sigrist",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "mark-sigrist",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/mark-sigrist"
+    },
+    {
+      "articles": [],
+      "candidate_id": "3a6c0837-0fdb-4d7a-b0e2-f01d004706b8",
+      "district": "31",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Laura Sirot",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "laura-sirot",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/laura-sirot"
+    },
+    {
+      "articles": [],
+      "candidate_id": "2e59a507-fa25-48b0-aecb-3763db035d73",
+      "district": "8",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Anita Somani",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "anita-somani",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/anita-somani"
+    },
+    {
+      "articles": [],
+      "candidate_id": "00e23355-112a-4c52-b899-57a557954b93",
+      "district": "31",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "J. Noah Spinner",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "j-spinner",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/j-spinner"
     },
     {
       "articles": [],
@@ -16644,13 +17655,78 @@
     },
     {
       "articles": [],
+      "candidate_id": "ed25dc04-c40d-4d85-b33a-d6ac3c535251",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Seth Walsh",
+      "notes": null,
+      "office_title": "State Treasurer",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "seth-walsh",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/seth-walsh"
+    },
+    {
+      "articles": [],
+      "candidate_id": "3ae7649b-843d-4cbc-9fe7-ae3869a41443",
+      "district": "41",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Erika White",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Ohio",
+      "slug": "erika-white",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/erika-white"
+    },
+    {
+      "articles": [],
       "candidate_id": "da0f4fae-756c-494b-affb-a473222a6446",
       "district": null,
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "federal",
@@ -18623,7 +19699,7 @@
     {
       "articles": [],
       "candidate_id": "9d9fdf44-19b8-4074-812e-6584e21bbd6f",
-      "district": null,
+      "district": "10",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -18634,7 +19710,7 @@
       "level": "county",
       "name": "Juanita A. Jackson",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 10, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -18645,7 +19721,7 @@
     {
       "articles": [],
       "candidate_id": "5451d820-2122-4f1e-bccb-d70e5ae3ca4c",
-      "district": null,
+      "district": "3",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -18656,7 +19732,7 @@
       "level": "county",
       "name": "Carlos Alberto Aguayo",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 3, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -18689,7 +19765,7 @@
     {
       "articles": [],
       "candidate_id": "bee30185-b32b-4a31-b7d5-7e284667cf7a",
-      "district": null,
+      "district": "1",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -18703,11 +19779,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Houston Appeals Region",
+      "level": "judicial",
       "name": "Amparo Amy Guerra",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 1 — Justice, Place 5",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -18718,7 +19794,7 @@
     {
       "articles": [],
       "candidate_id": "9fa07e0c-f7f8-477e-baf6-a1a04d2d6fdf",
-      "district": null,
+      "district": "6",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -18729,7 +19805,7 @@
       "level": "county",
       "name": "Kelley Andrews",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 6, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -18769,7 +19845,7 @@
     {
       "articles": [],
       "candidate_id": "e19b7bc3-fbde-4556-a28e-1cb62354e959",
-      "district": null,
+      "district": "4",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -18780,7 +19856,7 @@
       "level": "county",
       "name": "Shannon B. Baldwin",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 4, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -18791,18 +19867,18 @@
     {
       "articles": [],
       "candidate_id": "8b3364eb-c9ce-435c-a03b-c8fcfbcc6c82",
-      "district": null,
+      "district": "15",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Texas",
+      "level": "judicial",
       "name": "Thomas Baker",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 15 — Justice, Place 2",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -18842,7 +19918,7 @@
     {
       "articles": [],
       "candidate_id": "b261cbb6-65dd-40df-aeff-693abeed46d7",
-      "district": null,
+      "district": "3",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -18850,7 +19926,7 @@
       "endorsements": [],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Lucia Bates",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
       "office_title": "Justice of the Peace Precinct 3, Harris",
@@ -18908,18 +19984,18 @@
     {
       "articles": [],
       "candidate_id": "64e9b510-a894-4dca-8591-f9eafd6365bc",
-      "district": null,
+      "district": "14",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Houston Appeals Region",
+      "level": "judicial",
       "name": "Sarah Beth Landon",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 14 — Chief Justice",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19002,11 +20078,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": "Missouri City",
-      "level": "county",
+      "jurisdiction": "Fort Bend",
+      "level": "statewide",
       "name": "Jeffrey Boney",
       "notes": null,
-      "office_title": "Fort Bend County Treasurer, Missouri City",
+      "office_title": "Fort Bend County Treasurer",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19387,7 +20463,7 @@
     {
       "articles": [],
       "candidate_id": "79b6763c-360b-4959-a1a0-93320ba9b567",
-      "district": null,
+      "district": "13",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -19401,11 +20477,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": null,
+      "jurisdiction": "Texas",
       "level": "statewide",
       "name": "Tiffany Clerk",
       "notes": null,
-      "office_title": "TX Board of Education",
+      "office_title": "Texas State Board of Education",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19480,18 +20556,18 @@
     {
       "articles": [],
       "candidate_id": "2a7eb1a3-2d76-4283-a4db-03c2b912f65c",
-      "district": null,
+      "district": "1",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Houston Appeals Region",
+      "level": "judicial",
       "name": "Julie Countiss",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 1 — Justice, Place 4",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19502,7 +20578,7 @@
     {
       "articles": [],
       "candidate_id": "9e45ff1b-eb05-4c64-a3c2-95cb412c80b7",
-      "district": null,
+      "district": "3",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -19513,7 +20589,7 @@
       "level": "county",
       "name": "Jason Cox",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Probate Court, Harris",
+      "office_title": "Harris County Probate Court No. 3, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19637,7 +20713,7 @@
     {
       "articles": [],
       "candidate_id": "c622f840-c2b4-4356-b2b7-166c478c49cd",
-      "district": null,
+      "district": "At-Large",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -19645,10 +20721,10 @@
       "endorsements": [],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Erica Davis",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris Trustee, Harris",
+      "office_title": "Harris County School Trustee, Position 5, At-Large, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19659,7 +20735,7 @@
     {
       "articles": [],
       "candidate_id": "d7dc0e5b-1b6e-4c99-ae15-852ba8774cef",
-      "district": null,
+      "district": "14",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -19673,11 +20749,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Houston Appeals Region",
+      "level": "judicial",
       "name": "William Demond",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 14 — Justice, Place 7",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -19732,7 +20808,7 @@
     {
       "articles": [],
       "candidate_id": "508fbccd-e7d9-4a6c-becb-fa9a5509ce67",
-      "district": null,
+      "district": "1",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -19740,7 +20816,7 @@
       "endorsements": [],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Steve Duble",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
       "office_title": "Justice of the Peace Precinct 1, Harris",
@@ -20075,7 +21151,7 @@
     {
       "articles": [],
       "candidate_id": "2e6b7ffc-4d60-4689-8249-01fbff2cd14e",
-      "district": null,
+      "district": "2",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -20083,10 +21159,10 @@
       "endorsements": [],
       "featured_text": null,
       "jurisdiction": "Fort Bend",
-      "level": "local",
+      "level": "county",
       "name": "Roderick Garner",
       "notes": "No official endorsement found. This candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Justice of the Peace, Fort Bend",
+      "office_title": "Fort Bend Justice of the Peace, Precinct 2, Place 1, Fort Bend",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -20295,7 +21371,7 @@
       ],
       "featured_text": null,
       "jurisdiction": null,
-      "level": "state_legislature",
+      "level": "judicial",
       "name": "Roland Gutierrez",
       "notes": null,
       "office_title": "TX State Senator",
@@ -20620,7 +21696,7 @@
     {
       "articles": [],
       "candidate_id": "61d0b9fc-9e45-45af-9e19-17f503cbca83",
-      "district": null,
+      "district": "9",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -20631,7 +21707,7 @@
       "level": "county",
       "name": "Toria J. Finch",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 9, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -20728,7 +21804,7 @@
     {
       "articles": [],
       "candidate_id": "1dff14af-5bc2-4a39-b860-341861a0b10b",
-      "district": null,
+      "district": "15",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -20739,7 +21815,7 @@
       "level": "county",
       "name": "Tonya Jones",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 15, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -20765,7 +21841,7 @@
       ],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Darrell Jordan Jr.",
       "notes": null,
       "office_title": "Harris District Clerk, Harris",
@@ -20779,7 +21855,7 @@
     {
       "articles": [],
       "candidate_id": "4adeaefe-90d8-41ee-b58e-7bcadbbfe52f",
-      "district": null,
+      "district": "At-Large",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -20800,10 +21876,10 @@
       ],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Silky Joshi Malik",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris Trustee, Harris",
+      "office_title": "Harris County School Trustee, Position 7, At-Large, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -20814,7 +21890,7 @@
     {
       "articles": [],
       "candidate_id": "6f0623a5-8466-4e0a-9392-7742a6569b26",
-      "district": null,
+      "district": "8",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -20829,7 +21905,7 @@
       ],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Nicolas Juan",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
       "office_title": "Justice of the Peace Precinct 8, Harris",
@@ -21040,7 +22116,7 @@
     {
       "articles": [],
       "candidate_id": "cb3e62bc-5766-447d-939a-e948883887ca",
-      "district": null,
+      "district": "1",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21048,10 +22124,10 @@
       "endorsements": [],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Sonia Lopez",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris Civil Court at Law, Harris",
+      "office_title": "Harris County Civil Court at Law No. 1, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -21091,7 +22167,7 @@
     {
       "articles": [],
       "candidate_id": "28cad901-ffe3-4439-9a38-6ab31c429a1f",
-      "district": null,
+      "district": "2",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21106,7 +22182,7 @@
       ],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Dolores Lozano",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
       "office_title": "Justice of the Peace Precinct 2, Harris",
@@ -21120,7 +22196,7 @@
     {
       "articles": [],
       "candidate_id": "b8be062e-9aa9-48b0-b5e6-d4da581df9ac",
-      "district": null,
+      "district": "5",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21131,7 +22207,7 @@
       "level": "county",
       "name": "David M. Fleischer",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 5, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -21164,7 +22240,7 @@
     {
       "articles": [],
       "candidate_id": "34a3fad7-48fe-4f5b-b3bf-a17bf9dfaab5",
-      "district": null,
+      "district": "1",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21178,11 +22254,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Houston Appeals Region",
+      "level": "judicial",
       "name": "Veronica Malloy",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 1 — Justice, Place 3",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -21278,7 +22354,7 @@
     {
       "articles": [],
       "candidate_id": "691ebaa4-d0af-4a39-8126-4ecb0b9d5dda",
-      "district": null,
+      "district": "12",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21289,7 +22365,7 @@
       "level": "county",
       "name": "Ashley Mayes Guice",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 12, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -21422,18 +22498,18 @@
     {
       "articles": [],
       "candidate_id": "ecb936bc-5083-442d-b728-65af556c2ddf",
-      "district": null,
+      "district": "15",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Texas",
+      "level": "judicial",
       "name": "Marc Meyer",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 15 — Justice, Place 3",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -21578,7 +22654,7 @@
     {
       "articles": [],
       "candidate_id": "db63b981-597b-41f9-9059-6dc20ab560b5",
-      "district": null,
+      "district": "4",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21599,10 +22675,10 @@
       ],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "Manpreet Monica Singh",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris Civil Court at Law, Harris",
+      "office_title": "Harris County Civil Court at Law No. 4, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -21788,7 +22864,7 @@
     {
       "articles": [],
       "candidate_id": "f1afe1a0-259b-4759-9108-70db35984e8f",
-      "district": null,
+      "district": "6",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -21808,11 +22884,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": null,
+      "jurisdiction": "Texas",
       "level": "statewide",
       "name": "Michelle Palmer",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX Board of Education",
+      "office_title": "Texas State Board of Education",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -22001,7 +23077,7 @@
     {
       "articles": [],
       "candidate_id": "632f71fe-12ad-4612-8ae3-fe1ee89756b0",
-      "district": null,
+      "district": "14",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22012,7 +23088,7 @@
       "level": "county",
       "name": "Yahaira Quezada",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 14, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -22081,7 +23157,7 @@
     {
       "articles": [],
       "candidate_id": "d9fd4f8e-7792-4225-8d15-714956fe6492",
-      "district": null,
+      "district": "8",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22092,7 +23168,7 @@
       "level": "county",
       "name": "Erika Ramirez",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 8, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -22138,7 +23214,7 @@
     {
       "articles": [],
       "candidate_id": "53bb867f-bbe0-472a-8262-30cd2b278e75",
-      "district": null,
+      "district": "3",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22153,10 +23229,10 @@
       ],
       "featured_text": null,
       "jurisdiction": "Fort Bend",
-      "level": "local",
+      "level": "county",
       "name": "Sonia Rash",
       "notes": null,
-      "office_title": "Justice of the Peace, Fort Bend",
+      "office_title": "Fort Bend Justice of the Peace, Precinct 3, Place 1, Fort Bend",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -22444,7 +23520,7 @@
     {
       "articles": [],
       "candidate_id": "ae3f5b02-ca97-4d22-ab86-b56ca3ed9c2e",
-      "district": null,
+      "district": "2",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22455,7 +23531,7 @@
       "level": "county",
       "name": "Matthew Ruben Perez",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 2, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -22466,7 +23542,7 @@
     {
       "articles": [],
       "candidate_id": "97c2b5ea-069c-4c9a-8dda-ed8046e361c2",
-      "district": null,
+      "district": "1",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22477,7 +23553,7 @@
       "level": "county",
       "name": "Alex Salgado",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 1, Harris",
       "party": "Democrat",
       "rating": "vote",
       "section": "Texas",
@@ -22571,6 +23647,12 @@
           "link": null,
           "notes": null,
           "organization": "Track AIPAC",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         }
       ],
@@ -22718,7 +23800,7 @@
     {
       "articles": [],
       "candidate_id": "2e180994-28de-42cd-971a-1a023c38beb8",
-      "district": null,
+      "district": "11",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22729,7 +23811,7 @@
       "level": "county",
       "name": "Sedrick T. Walker II",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 11, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -22971,7 +24053,7 @@
     {
       "articles": [],
       "candidate_id": "2b21543d-9aaa-4658-85bd-0aa520e088a7",
-      "district": null,
+      "district": "8",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22985,11 +24067,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": null,
+      "jurisdiction": "Texas",
       "level": "statewide",
       "name": "Dana Van De Walker",
       "notes": null,
-      "office_title": "TX Board of Education",
+      "office_title": "Texas State Board of Education",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -23160,7 +24242,7 @@
     {
       "articles": [],
       "candidate_id": "61be0959-e574-46e1-ba07-d5371aad10b4",
-      "district": null,
+      "district": "3",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -23168,10 +24250,10 @@
       "endorsements": [],
       "featured_text": null,
       "jurisdiction": "Harris",
-      "level": "local",
+      "level": "county",
       "name": "LaShawn Williams",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris Civil Court at Law, Harris",
+      "office_title": "Harris County Civil Court at Law No. 3, Harris",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -23182,7 +24264,7 @@
     {
       "articles": [],
       "candidate_id": "9cdb8b3d-2964-443d-a7d7-0b4c70a71d89",
-      "district": null,
+      "district": "7",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -23193,7 +24275,7 @@
       "level": "county",
       "name": "Andrew Wright",
       "notes": "No official endorsement found this candidate was described by local Texas activists as holding pro-peace views",
-      "office_title": "Harris County Criminal Court at Law, Harris",
+      "office_title": "Harris County Criminal Court at Law No. 7, Harris",
       "party": "Democrat",
       "rating": "vote",
       "section": "Texas",
@@ -23267,18 +24349,18 @@
     {
       "articles": [],
       "candidate_id": "ba9deb22-351d-46d0-bbf1-1b949655ed3a",
-      "district": null,
+      "district": "15",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [],
       "featured_text": null,
-      "jurisdiction": null,
-      "level": "county",
+      "jurisdiction": "Texas",
+      "level": "judicial",
       "name": "Jerry Zimmerer",
       "notes": "The candidate is described by local Texas activists as holding pro-peace views",
-      "office_title": "TX State District Appellate Court Judge",
+      "office_title": "Texas Court of Appeals 15 — Chief Justice",
       "party": null,
       "rating": "vote",
       "section": "Texas",
@@ -23772,6 +24854,12 @@
           "notes": null,
           "organization": "Track AIPAC",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -24022,7 +25110,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Ryan Clancy",
-      "notes": "$37",
+      "notes": "$36",
       "office_title": "State Assembly Member",
       "party": null,
       "rating": "vote",
@@ -24417,5 +25505,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-04"
+  "snapshot": "2026-10-08"
 }

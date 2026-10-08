@@ -1,14 +1,14 @@
 {
-  "content_hash": "8bcf4a69528090e03ce7fca5939ef8b9db708cb18a1631b4ba74e2d5a213d47a",
+  "content_hash": "d5a3e72b0fcbe652b532e372b57663e1016547ef4d8ad57f731e6ef1549c646f",
   "counts": {
-    "contribs": 802752,
+    "contribs": 802814,
     "dce": 9670,
     "filers": 10624,
-    "reports": 8273,
+    "reports": 8278,
     "snapshot_filers": 2153
   },
-  "last_checked": "2026-10-07T21:23:22+00:00",
-  "last_refresh": "2026-10-07T21:23:22+00:00",
+  "last_checked": "2026-10-08T13:50:20+00:00",
+  "last_refresh": "2026-10-08T13:50:20+00:00",
   "members": {
     "contribs_100.csv": {
       "crc": 1788829322,
@@ -21,12 +21,12 @@
       "last": "20261005"
     },
     "contribs_102.csv": {
-      "crc": 24148670,
+      "crc": 3292647896,
       "first": "20260715",
       "last": "20261005"
     },
     "contribs_103.csv": {
-      "crc": 375013685,
+      "crc": 4156679745,
       "first": "20260805",
       "last": "20261006"
     },
@@ -41,12 +41,12 @@
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 3900602326,
+      "crc": 3594340234,
       "first": "20260929",
       "last": "20261006"
     },
     "contribs_107.csv": {
-      "crc": 3687233146,
+      "crc": 3944866862,
       "first": "20261001",
       "last": "20261006"
     },
@@ -61,14 +61,14 @@
       "last": "20261005"
     },
     "contribs_110.csv": {
-      "crc": 1939064347,
+      "crc": 1159527135,
       "first": "20261005",
       "last": "20261006"
     },
     "contribs_111.csv": {
-      "crc": 1167386007,
+      "crc": 3773644551,
       "first": "20261005",
-      "last": "20261006"
+      "last": "20261007"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -202,11 +202,11 @@
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-10-07",
+  "snapshot": "2026-10-08",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"9bbba92f04dda7097a65e9fbd9392674-127\"",
-    "last_modified": "Wed, 07 Oct 2026 10:35:03 GMT",
-    "size": 1062888922
+    "etag": "\"4d016014a1934e0a193549f12fdd0180-127\"",
+    "last_modified": "Thu, 08 Oct 2026 10:35:03 GMT",
+    "size": 1062929059
   }
 }

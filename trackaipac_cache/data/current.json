@@ -2372,15 +2372,15 @@
           "chamber": "house",
           "district": "22",
           "donate_url": null,
-          "donations": 220267,
+          "donations": 271108,
           "election_date": null,
           "ie": 0,
           "incumbent": null,
-          "israel_lobby_total": 220267,
+          "israel_lobby_total": 271108,
           "lines": [
             "CA-22 [R]",
-            "Israel Lobby Total: $220,267",
-            "Donations: $220,267",
+            "Israel Lobby Total: $271,108",
+            "Donations: $271,108",
             "IE: $0",
             "AIPAC, AMP, PIA, RJC, USI"
           ],
@@ -5614,52 +5614,6 @@
       "state": "CO"
     },
     {
-      "candidate_id": "ct-andrew-rice",
-      "categories": [
-        "endorsed"
-      ],
-      "chamber": "house",
-      "district": "03",
-      "listings": [
-        {
-          "campaign_url": "https://www.riceforct.com/",
-          "candidate_id": "ct-andrew-rice",
-          "category": "endorsed",
-          "chamber": "house",
-          "district": "03",
-          "donate_url": "https://www.riceforct.com/",
-          "donations": null,
-          "election_date": "2026-11-03",
-          "ie": null,
-          "incumbent": false,
-          "israel_lobby_total": null,
-          "lines": [
-            "[Candidate for U.S. House](https://www.riceforct.com/)",
-            "CT-03 [I]",
-            "General Election",
-            "November 3, 2026",
-            "[Support Andrew](https://www.riceforct.com/)"
-          ],
-          "name": "Andrew Rice",
-          "notes": [
-            "General Election"
-          ],
-          "pacs": [],
-          "party": "I",
-          "seat": "CT-03",
-          "seat_text": "CT-03 [I]",
-          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
-          "source": "endorsements",
-          "state": "CT",
-          "title": "Candidate for U.S. House"
-        }
-      ],
-      "name": "Andrew Rice",
-      "party": "I",
-      "seat": "CT-03",
-      "state": "CT"
-    },
-    {
       "candidate_id": "ct-chris-murphy",
       "categories": [
         "congress"
@@ -6360,15 +6314,15 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 429585,
+          "donations": 508616,
           "election_date": null,
           "ie": 0,
           "incumbent": null,
-          "israel_lobby_total": 429585,
+          "israel_lobby_total": 508616,
           "lines": [
             "FL-SEN [R]",
-            "Israel Lobby Total: $429,585",
-            "PACs: $429,585",
+            "Israel Lobby Total: $508,616",
+            "PACs: $508,616",
             "IE: $0",
             "AIPAC, RJC",
             "2026 Special Election"
@@ -10674,6 +10628,53 @@
       "name": "Nikki Budzinski",
       "party": "D",
       "seat": "IL-13",
+      "state": "IL"
+    },
+    {
+      "candidate_id": "il-patty-garcia",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "04",
+      "listings": [
+        {
+          "campaign_url": "https://pattyforillinois.com/",
+          "candidate_id": "il-patty-garcia",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "04",
+          "donate_url": null,
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://pattyforillinois.com/)",
+            "IL-04 [D]",
+            "General Election",
+            "November 3, 2026",
+            "[Click Here](https://secure.actblue.com/donate/patty-rejects-aipac?refcode=website-endorsement)"
+          ],
+          "name": "Patty Garcia",
+          "notes": [
+            "General Election",
+            "[Click Here](https://secure.actblue.com/donate/patty-rejects-aipac?refcode=website-endorsement)"
+          ],
+          "pacs": [],
+          "party": "D",
+          "seat": "IL-04",
+          "seat_text": "IL-04 [D]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "IL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Patty Garcia",
+      "party": "D",
+      "seat": "IL-04",
       "state": "IL"
     },
     {
@@ -29477,6 +29478,53 @@
       "state": "TX"
     },
     {
+      "candidate_id": "unk-andrew-rice",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": null,
+      "listings": [
+        {
+          "campaign_url": "https://www.riceforct.com/",
+          "candidate_id": "unk-andrew-rice",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": null,
+          "donate_url": "https://www.riceforct.com/",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://www.riceforct.com/)",
+            "CT-03 [I - Write In]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Andrew](https://www.riceforct.com/)"
+          ],
+          "name": "Andrew Rice",
+          "notes": [
+            "CT-03 [I - Write In]",
+            "General Election"
+          ],
+          "pacs": [],
+          "party": null,
+          "seat": null,
+          "seat_text": null,
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": null,
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Andrew Rice",
+      "party": null,
+      "seat": null,
+      "state": null
+    },
+    {
       "candidate_id": "ut-ben-mcadams",
       "categories": [
         "watchlist"
@@ -29984,17 +30032,17 @@
           "chamber": "house",
           "district": "02",
           "donate_url": null,
-          "donations": 1092622,
+          "donations": 1098072,
           "election_date": null,
-          "ie": 134246,
+          "ie": 1236811,
           "incumbent": false,
-          "israel_lobby_total": 1226868,
+          "israel_lobby_total": 2334883,
           "lines": [
             "Candidate for U.S. House",
             "VA-02 [D]",
-            "Israel Lobby Total: $1,226,868",
-            "Donations: $1,092,622",
-            "IE: $134,246",
+            "Israel Lobby Total: $2,334,883",
+            "Donations: $1,098,072",
+            "IE: $1,236,811",
             "AIPAC, AUSD, COPAC, CITY, DMFI, GCSC, HEARTLAND, JAC, LAFAS, MDACC, NORPAC, PIA, SUNPAC, TPOH, USI",
             "Endorsed by DMFI"
           ],
@@ -30141,15 +30189,15 @@
           "chamber": "house",
           "district": "02",
           "donate_url": null,
-          "donations": 75381,
+          "donations": 110700,
           "election_date": null,
           "ie": 0,
           "incumbent": null,
-          "israel_lobby_total": 75381,
+          "israel_lobby_total": 110700,
           "lines": [
             "VA-02 [R]",
-            "Israel Lobby Total: $75,381",
-            "PACs: $75,381",
+            "Israel Lobby Total: $110,700",
+            "PACs: $110,700",
             "IE: $0",
             "AIPAC, AMP, RJC"
           ],
@@ -32457,5 +32505,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-09-27"
+  "snapshot": "2026-10-08"
 }
