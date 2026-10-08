@@ -236,8 +236,8 @@ const viewSection = $("#view-title").closest("section");
 function showView() {
   const mode = showViewControls(viewSection);
   $("#view-mode-note").textContent = {
-    simple: "Simple folds the map, each race's money and where the dates and districts come from. Detailed opens everything.",
-    detailed: "Detailed opens everything. Simple folds the map, each race's money and where the dates and districts come from.",
+    simple: "Simple folds the map and where the dates and districts come from. Detailed opens everything.",
+    detailed: "Detailed opens everything. Simple folds the map and where the dates and districts come from.",
     custom: "Your own mix, below.",
   }[mode];
 }

@@ -2,8 +2,9 @@
 // here (as badges on the candidate row and in Details) without any code change; its ``kind``
 // decides where: endorsements and scorecards (ratings) each get a line on the row and share
 // Details' Endorsements tab, a money card's badges stay in Details (its highlights make the row's
-// Funding line), every other card gets its own tab, and a money or poll box folds. The row's
-// endorsement and rating chips link to their source; its Funding chips open Details' money tab.
+// Funding line), every other card gets its own tab, and a money or poll box folds, with its
+// source in its corner. The row's endorsement and rating chips link to their source; its Funding
+// chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, SHORT_DATE, formatDate, percent, plural } from "./format.js";
@@ -238,16 +239,15 @@ function setBoxOpen(box, open) {
   box.querySelector(".box-body").hidden = !open;
 }
 
-// A race box that folds: its first breakdown's title and the source (a poll box: the latest
-// poll's date, its source being in its corner), as a button that folds it to that one line, with
-// ``action`` (Compare, or the poll box's corner) beside it; folded, it names nobody. It opens as
-// the view switch ``setting`` says; a click opens or folds just this one, until syncBoxes().
+// A race box that folds: its first breakdown's title and its date ("latest poll Oct 5", "reports
+// through Sep 30"), the source being in its corner, as a button that folds it to that one line,
+// with ``action`` (the box's corner) beside it; folded, it names nobody. It opens as the view
+// switch ``setting`` says; a click opens or folds just this one, until syncBoxes().
 function foldBox(race, card, setting, action, body) {
   const id = `box-${slug(race.key)}-${card.source}`;
   const title = card.breakdowns[0]?.title || card.description;
-  const text = card.kind === "polls"
-    ? [title, card.as_of ? `${AS_OF_WORDS.polls} ${formatDate(card.as_of, SHORT_DATE)}` : null].filter(Boolean).join(" · ")
-    : `${title} · ${card.label}`;
+  const text = [title, card.as_of ? `${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : null]
+    .filter(Boolean).join(" · ");
   const toggle = h("button", {
     type: "button", class: "box-toggle", "aria-controls": id,
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
@@ -264,6 +264,16 @@ function foldBox(race, card, setting, action, body) {
 function pollCorner(card, head) {
   return h("span", { class: "box-links" },
     head?.count ? extLink(MONEY_FAQ.polls, plural(head.count, "poll"), { class: "icon-btn", title: head.note }) : null,
+    card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
+}
+
+// A money box's corner, like a poll box's: Compare funding (``compare``), how the figures are put
+// together (the FAQ's answer) and the source.
+function moneyCorner(card, compare) {
+  const faq = MONEY_FAQ[card.source];
+  return h("span", { class: "box-links" },
+    compare,
+    faq ? extLink(faq, "How it's counted", { class: "icon-btn", title: "How these figures are put together" }) : null,
     card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
 }
 
@@ -297,10 +307,9 @@ export function raceMoney(race, onCompare = null) {
     }
     const [head, ...rest] = card.breakdowns;
     const polls = card.kind === "polls";
-    return foldBox(race, card, setting, polls ? pollCorner(card, head) : action, [
+    return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
       head ? h("section", { class: "breakdown" }, breakdownRows(head, people, !polls)) : null,
       rest.map((b) => breakdownBlock(b, people)),
-      polls ? null : sourceLine(card),
     ]);
   });
 }

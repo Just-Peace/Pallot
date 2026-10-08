@@ -7,14 +7,28 @@ from pallot.sources.highlights import FLOOR, highlights
 
 
 def chips(**figures):
-    return [b.text for b in highlights({"raised": 100_000.0, **figures}, state="Texas", credit="FEC, 2025–26")]
+    return [(b.text, b.tone) for b in highlights({"raised": 100_000.0, **figures}, state="Texas", credit="FEC, 2025–26")]
 
 
-@pytest.mark.parametrize("share, shown", [(49.9, False), (50.0, False), (50.1, True), (90.0, True)])
-def test_each_chip_needs_more_than_half(share, shown):
-    assert chips(small_share=share) == (["Mostly small donors"] if shown else [])
-    assert chips(in_state_share=share) == (["Mostly Texas donors"] if shown else [])
-    assert chips(self_share=share) == (["Mostly self-funded"] if shown else [])
+@pytest.mark.parametrize("share, small, home", [
+    (90.0, ("Overwhelmingly small donors", "good"), ("Overwhelmingly Texas donors", "good")),
+    (75.1, ("Overwhelmingly small donors", "good"), ("Overwhelmingly Texas donors", "good")),
+    (75.0, ("Mostly small donors", "good"), ("Mostly Texas donors", "good")),
+    (50.1, ("Mostly small donors", "good"), ("Mostly Texas donors", "good")),
+    (50.0, None, None),
+    (49.9, ("Mostly large donations", "warn"), ("Mostly out-of-state donors", "warn")),
+    (25.0, ("Mostly large donations", "warn"), ("Mostly out-of-state donors", "warn")),
+    (24.9, ("Overwhelmingly large donations", "warn"), ("Overwhelmingly out-of-state donors", "warn")),
+])
+def test_a_share_reads_both_ways_by_degree(share, small, home):
+    assert chips(small_share=share) == ([small] if small else [])
+    assert chips(in_state_share=share) == ([home] if home else [])
+
+
+@pytest.mark.parametrize("share, chip", [(90.0, ("Overwhelmingly self-funded", "warn")), (60.0, ("Mostly self-funded", "warn")),
+                                         (50.0, None), (10.0, None)])
+def test_self_funding_shows_only_above_half(share, chip):
+    assert chips(self_share=share) == ([chip] if chip else [])
 
 
 @pytest.mark.parametrize("raised, shown", [(FLOOR - 0.01, False), (FLOOR, True), (FLOOR + 1, True), (None, False)])
@@ -31,7 +45,8 @@ def test_the_hints_give_the_figure():
     assert small.hint == "50.4% of the $1.2M raised came from donations of $200 or less (FEC, 2025–26)"
     assert home.hint == "62% of itemized donations from individuals with an address came from Texas (FEC, 2025–26)"
     assert own.hint == "75% of the $1.2M raised was the candidate's own gifts and loans (FEC, 2025–26)"
-    assert {small.tone, home.tone, own.tone} == {"neutral"}
+    [large] = highlights({"raised": 1_200_000.0, "small_share": 20.0}, state="Texas", credit="FEC, 2025–26")
+    assert large.hint == "20% of the $1.2M raised came from donations of $200 or less (FEC, 2025–26)"
 
 
 def test_fec_in_state_share_leaves_out_donors_without_a_state():

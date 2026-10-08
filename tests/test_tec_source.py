@@ -179,8 +179,9 @@ def test_funding_chips_from_the_tec(tmp_path):
                  by_state={"TX": 2000.0, "other": 1000.0, "unknown": 9000.0})  # an unknown address is left out
     card = tec.card(filer, None, None, window="2024-11-06")
     assert card.figures["in_state_share"] == 66.7
-    [chip] = card.highlights
-    assert chip.text == "Mostly Texas donors" and chip.tone == "neutral"
+    large, chip = card.highlights
+    assert (large.text, large.tone) == ("Overwhelmingly large donations", "warn")  # $400 of $40K in donations of $200 or less
+    assert chip.text == "Mostly Texas donors" and chip.tone == "good"
     assert chip.hint == "67% of itemized donations from individuals with an address came from Texas (TEC, since Nov 6, 2024)"
     assert tec.card(jane(by_state={"unknown": 50.0}), None, None, window=None).figures.get("in_state_share") is None
 
