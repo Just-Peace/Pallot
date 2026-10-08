@@ -47,7 +47,7 @@ def race(name, *candidates, key="sos:1:1", group="legislature", seat=None):
 def test_the_rating_is_one_linked_badge_and_a_flag(rating, text, tone, flags):
     result = card(entry(rating=rating), EXACT, "2026-10-04")
     assert [(b.text, b.tone, b.url) for b in result.badges] == [(text, tone, "https://voteforpeace.info/texas/jane-doe")]
-    assert result.flags == flags and result.as_of == "2026-10-04"
+    assert result.flags == flags and result.as_of == "2026-10-04" and result.kind == "endorsement"
 
 
 def test_notes_articles_and_the_sources_it_cites():

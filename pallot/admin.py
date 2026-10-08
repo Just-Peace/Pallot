@@ -44,7 +44,7 @@ GROUPS = (
     SourceGroup(BALLOT, "Third-party ballot data", "Not official, but it fills in what the state doesn't publish: local "
                 "races, notes on a race, candidate profiles and who holds each seat."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them, gathered by an independent site."),
-    SourceGroup(SCORECARDS, "Third-party endorsements & scorecards", "Organizations that track, rate or endorse "
+    SourceGroup(SCORECARDS, "Third-party endorsements", "Organizations that endorse or warn against "
                 "candidates, most of them on Palestinian rights, U.S. military aid to Israel and pro-Israel lobby money. "
                 "Each adds badges to the candidates it covers.", toggle_all=True),
 )

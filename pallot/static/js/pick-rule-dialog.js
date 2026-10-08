@@ -252,7 +252,7 @@ function draw(rule, options, startScope) {
             rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
           })))),
         h("p", { class: "fine" }, "Endorsements from any of the ones you choose.",
-          has.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it rates an ally." : ""),
+          has.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it marks Ally." : ""),
       ]),
     group("Money",
       moneyOn && checkRow("Their money is", rule.money.on, set((on) => { rule.money.on = on; }), { extra: moneyInputs, stacked: true }),
@@ -301,7 +301,7 @@ function draw(rule, options, startScope) {
             + "from any of the endorsers you choose. Don't pick "
             + "takes back anyone who meets any one of its conditions, even a pick you made yourself."),
           h("p", {}, "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
-            + "congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it "
+            + "congressional races, Vote for Peace in the races where it marks someone, an endorsement list in the races where it "
             + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. So “Democrats who spent under $1M” "
             + "still picks a county race's Democrat. “The least” and “the most” compare the candidates in each race. Small "
             + "donations (under $500) and Texas donors (their share of itemized donations with an address) are known in "

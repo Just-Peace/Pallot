@@ -97,7 +97,7 @@ def test_every_card_says_its_kind(client):
     cards += [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]]
     assert {(card["source"], card["kind"]) for card in cards} == {
         ("fec", "money"), ("tec", "money"), ("polls", "polls"), ("sos", "filing"), ("ballotpedia", "profile"),
-        ("trackaipac", "scorecard"), ("voteforpeace", "scorecard"),
+        ("trackaipac", "endorsement"), ("voteforpeace", "endorsement"),
         ("emgage", "endorsement"), ("examplepac", "endorsement"), ("cair", "endorsement"),
     }
 

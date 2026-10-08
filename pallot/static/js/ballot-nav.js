@@ -22,10 +22,12 @@ const SCROLL_GAP = 12; // what a jump leaves between the strip and the section i
 // What puts the ballot back to each view switch when it changes, without a reload.
 const APPLY = {
   showMap: syncMapShown,
-  showMoney: () => syncBoxes("showMoney"),
   showPolls: () => syncBoxes("showPolls"),
   showEndorsements: syncLines,
-  showFunding: syncFunding,
+  showFunding: () => {
+    syncBoxes("showFunding");
+    syncFunding();
+  },
   showSources: syncSourceNotes,
   hidePicked: () => {
     if (!page.ballot) return;

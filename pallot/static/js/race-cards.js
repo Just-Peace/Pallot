@@ -267,7 +267,7 @@ function candidateRow(race, candidate) {
     const sources = candidate.cards.length;
     const waiting = page.loadingCards;
     return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
-      title: waiting ? STILL_LOADING : `${candidate.name}'s profile: issues${sources ? ` and ${plural(sources, "source")}` : ""}`,
+      title: waiting ? STILL_LOADING : `${candidate.name}'s profile: ${sources ? `${plural(sources, "source")} and issues` : "issues"}`,
       on: { click: () => page.showDetails(race, index()) } },
       "Profile");
   };

@@ -8,7 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 Tone = Literal["neutral", "info", "good", "warn"]
-CardKind = Literal["money", "polls", "filing", "profile", "scorecard", "endorsement"]
+CardKind = Literal["money", "polls", "filing", "profile", "endorsement"]
 
 # Display order of race groups on the ballot (labels live in the frontend).
 GROUPS = ("federal", "state", "legislature", "judicial", "county", "precinct", "local")

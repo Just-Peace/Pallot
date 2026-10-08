@@ -9,10 +9,9 @@ import { UI, setUiPrefs, uiPref } from "./storage.js";
 
 export const VIEW_DEFAULTS = {
   showMap: false, // the map of your districts, folded at first
-  showMoney: true, // each race's money box, open at first
   showPolls: true, // each race's poll box, open at first
-  showEndorsements: true, // the candidates' Endorsements and Ratings lines
-  showFunding: true, // the candidates' Funding line
+  showEndorsements: true, // the candidates' Endorsements line
+  showFunding: true, // each race's money box, open at first, and the candidates' Funding line
   showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
@@ -20,9 +19,9 @@ export const VIEW_DEFAULTS = {
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.
 export const PRESETS = {
-  minimal: { showMap: false, showMoney: false, showPolls: false, showEndorsements: false, showFunding: false, showSources: false },
-  simple: { showMap: false, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: false },
-  detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: true },
+  minimal: { showMap: false, showPolls: false, showEndorsements: false, showFunding: false, showSources: false },
+  simple: { showMap: false, showPolls: true, showEndorsements: true, showFunding: true, showSources: false },
+  detailed: { showMap: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: true },
 };
 
 export function viewPref(name) {

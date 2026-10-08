@@ -126,7 +126,7 @@ def test_sources_are_grouped(client):
     assert [(g["id"], g["title"], g["toggle_all"]) for g in overview["groups"]] == [
         ("address", "Address lookup & maps", False), ("official", "Official ballot data", False),
         ("ballot", "Third-party ballot data", False), ("polls", "Third-party polls", False),
-        ("scorecards", "Third-party endorsements & scorecards", True)]
+        ("scorecards", "Third-party endorsements", True)]
     grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
     assert grouped == {
         "address": ["geocoding", "google", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],

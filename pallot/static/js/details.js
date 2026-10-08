@@ -1,5 +1,5 @@
-// Details: a candidate's Issues (stances.js), a tab per source, and one Endorsements tab for the
-// ratings and endorsement lists, in a dialog whose head has Search and Pick beside ‹ › ✕. ‹ and ›
+// Details: a candidate's Texas SOS filing, their Issues (stances.js), a tab per other source, and
+// one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists, in a dialog whose head has Search and Pick beside ‹ › ✕. ‹ and ›
 // step through the race's other candidates, staying on the tab that's shown.
 
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
@@ -12,8 +12,8 @@ import { stancesPanel } from "./stances.js";
 
 let page = null; // { picks }
 const details = $("#details");
-const GROUPED = new Set(["scorecard", "endorsement"]); // the kinds on the Endorsements tab
-let shown = "issues"; // the tab shown, which ‹ and › keep
+const FIRST = "sos"; // the source whose tab comes first, where Profile opens
+let shown = FIRST; // the tab shown, which ‹ and › keep
 
 export function initDetails(context) {
   page = context;
@@ -23,9 +23,9 @@ export function initDetails(context) {
 
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
-// ``at`` is the tab to show: "issues", "endorsements" or a source's (a Funding chip's money
-// source); a tab the candidate hasn't got shows Issues.
-export function showDetails(race, index, focus = null, at = "issues") {
+// ``at`` is the tab to show: a source's (Texas SOS, or a Funding chip's money source), "issues" or
+// "endorsements"; a tab the candidate hasn't got shows the first one, Texas SOS or else Issues.
+export function showDetails(race, index, focus = null, at = FIRST) {
   const { picks } = page;
   const candidate = race.candidates[index];
   const pickOrUndo = () => {
@@ -45,14 +45,17 @@ export function showDetails(race, index, focus = null, at = "issues") {
   const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
   pickButton.disabled = multiFull;
 
-  const grouped = candidate.cards.filter((card) => GROUPED.has(card.kind));
+  const grouped = candidate.cards.filter((card) => card.kind === "endorsement");
   const issues = { key: "issues", label: "Issues", likely: false };
   const endorsements = grouped.length
     ? { key: "endorsements", label: `Endorsements · ${grouped.length}`, likely: grouped.some(isLikely) }
     : null;
+  const sources = candidate.cards.filter((card) => card.kind !== "endorsement")
+    .map((card) => ({ key: card.source, label: card.label, likely: isLikely(card), card }));
   const tabs = [
+    ...sources.filter((tab) => tab.key === FIRST),
     issues,
-    ...candidate.cards.filter((card) => !GROUPED.has(card.kind)).map((card) => ({ key: card.source, label: card.label, likely: isLikely(card), card })),
+    ...sources.filter((tab) => tab.key !== FIRST),
     endorsements,
   ].filter(Boolean);
   const initial = Math.max(0, tabs.findIndex((tab) => tab.key === at));
