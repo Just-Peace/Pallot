@@ -95,6 +95,51 @@ def test_a_stale_bundle_is_asked_again_and_a_newer_copy_is_kept(tmp_path, upstre
         assert db.execute(query).fetchone()[0] == newest  # the live answer, newer than the bundle's, stays
 
 
+def build_sos(tmp_path, now: dt.datetime = NOW):
+    [outcome] = refresh(["sos"], data_dir=tmp_path / "bundles", config=Config(data_dir=tmp_path / "data"),
+                        today=lambda: TODAY, now=now, min_interval={})
+    return outcome
+
+
+def goelect_calls(upstream, path: str = "") -> list[str]:
+    return [call for call in upstream.calls if "goelect.txelections" in call and path in call]
+
+
+def test_the_sos_bundle_holds_the_statewide_data_each_for_its_lifetime(tmp_path, upstream):
+    outcome = build_sos(tmp_path)
+    assert outcome.status == "updated" and outcome.counts["elections"] >= 1 and outcome.counts["candidates"] > 100
+    answers = store.load("sos", tmp_path / "bundles").answers
+    entry = next(e for e in registry.BUNDLES if e.source == "sos")
+    lifetimes = {answer["request"]["url"].rsplit("/", 1)[1]: entry.ttl(Ttls(), RequestSpec(**answer["request"]))
+                 for answer in answers}
+    assert lifetimes["2026"] == lifetimes["2027"] == 3 * DAY
+    assert lifetimes["getAllRegions"] == lifetimes["getDeclarationStatus"] == 30 * DAY
+    assert lifetimes["findQualifiedCandidates"] == 2 * DAY
+    assert not any("getCandidateBallotOrder" in url for url in lifetimes)
+    with pytest.raises(ValueError):
+        entry.ttl(Ttls(), RequestSpec("GET", "https://goelect.txelections.civixapps.com/elsewhere"))
+
+
+def test_a_lookup_asks_texas_sos_only_for_the_county_ballot_order(tmp_path, upstream, make_app):
+    build_sos(tmp_path)
+    upstream.calls.clear()
+    with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
+        ballot = get_ballot(client)
+        notice = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["notice"]
+    assert ballot["races"] and goelect_calls(upstream)
+    assert goelect_calls(upstream) == goelect_calls(upstream, "getCandidateBallotOrder")
+    assert notice.startswith("Came with ")
+
+
+def test_old_sos_answers_are_asked_again_by_their_own_lifetimes(tmp_path, upstream, make_app):
+    build_sos(tmp_path, now=NOW - dt.timedelta(days=4))  # past the elections' and candidates' bundle lifetimes
+    upstream.calls.clear()
+    with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
+        get_ballot(client)
+    assert goelect_calls(upstream, "getElectionsByYear") and goelect_calls(upstream, "findQualifiedCandidates")
+    assert not goelect_calls(upstream, "getAllRegions") and not goelect_calls(upstream, "getPoliticalParties")
+
+
 def fake(source: str, cadence: str, built: list[str], fail: bool = False) -> Bundle:
     """A source whose builder stores one answer in the throwaway cache, as a request would."""
     async def build_it(ctx):
@@ -160,4 +205,5 @@ def test_every_bundle_ships_with_pallot_and_has_a_lifetime():
         if (store.PACKAGE_DATA_DIR / f"{entry.source}.json").exists():
             loaded = store.load(entry.source)
             assert loaded.answers and loaded.checked_at
+            assert all(entry.ttl(Ttls(), RequestSpec(**answer["request"])) >= DAY for answer in loaded.answers)
             assert store.answers_hash(loaded.answers) == store.read_meta(store.PACKAGE_DATA_DIR)[entry.source]["answers_hash"]

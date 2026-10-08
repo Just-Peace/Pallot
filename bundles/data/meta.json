@@ -8,6 +8,14 @@
    "last_checked": "2026-10-08T18:54:13+00:00",
    "last_refresh": "2026-10-08T18:54:13+00:00",
    "races": 39
+  },
+  "sos": {
+   "answers": 9,
+   "answers_hash": "27470e241117589aafa633487bdb566ffe8e1f2b365f3390aa8c765ee90ab3d1",
+   "candidates": 3971,
+   "elections": 3,
+   "last_checked": "2026-10-08T19:47:19+00:00",
+   "last_refresh": "2026-10-08T19:47:19+00:00"
   }
  }
 }

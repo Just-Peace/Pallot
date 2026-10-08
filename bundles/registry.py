@@ -7,11 +7,12 @@ from pathlib import Path
 from pallot.config import Ttls
 from pallot.http_cache import HttpCache, RequestSpec
 
-from . import fec, store
+from . import fec, sos, store
 from .entry import Bundle
 
 BUNDLES: tuple[Bundle, ...] = (
     Bundle("fec", fec.build, "daily"),
+    Bundle("sos", sos.build, "daily", lifetime=sos.lifetime),
 )
 
 
