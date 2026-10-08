@@ -278,6 +278,34 @@ def test_a_refused_outline_writes_no_outlines(tmp_path, upstream):
     assert not (tmp_path / "bundles").exists()
 
 
+def build_polls(tmp_path):
+    [outcome] = refresh(["polls"], data_dir=tmp_path / "bundles", config=Config(data_dir=tmp_path / "data"),
+                        today=lambda: TODAY, now=NOW, min_interval={})
+    return outcome
+
+
+def test_a_lookup_with_the_polls_bundled_asks_fiftyplusone_nothing(tmp_path, upstream, make_app):
+    outcome = build_polls(tmp_path)
+    assert outcome.status == "updated" and outcome.answers == 3 and outcome.counts["senate"] and outcome.counts["governor"]
+    assert upstream.count("fiftyplusone.news") == 3 and all("Mozilla" in agent for agent in upstream.polls_agents)
+    entry = next(e for e in registry.BUNDLES if e.name == "polls")
+    answers = store.load("polls", tmp_path / "bundles").answers
+    assert entry.cadence == "daily" and {entry.ttl(Ttls(), RequestSpec(**a["request"])) for a in answers} == {2 * DAY}
+    with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
+        ballot = get_ballot(client)
+        assert last_use(client, "polls")["calls"] == 0
+    senate = next(r for r in ballot["races"] if r["name"] == "U.S. Senator")
+    assert any(c["source"] == "polls" for c in senate["cards"])
+    assert upstream.count("fiftyplusone.news") == 3
+
+
+def test_a_refused_poll_list_writes_no_polls(tmp_path, upstream):
+    upstream.polls_status = 403
+    outcome = build_polls(tmp_path)
+    assert outcome.status == "failed" and "FiftyPlusOne" in outcome.detail
+    assert upstream.count("fiftyplusone.news") == 1 and not (tmp_path / "bundles").exists()
+
+
 DALLAS = 113
 COUNTY_HOSTS = ("traviscountytx", "services.arcgis.com", "services3.arcgis.com")  # Travis's, Harris's, Dallas's
 
