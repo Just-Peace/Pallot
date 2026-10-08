@@ -7,7 +7,7 @@
 // chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
-import { DOLLARS, SHORT_DATE, formatDate, percent, plural } from "./format.js";
+import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { icon } from "./icons.js";
 import { viewPref } from "./view.js";
 
@@ -207,6 +207,32 @@ function stackedBar(item, people) {
   ];
 }
 
+// A money box's head, like a poll's: one bar with a segment per candidate, each their share of
+// what the race's candidates raised, in their party's colour, then a legend with each one's
+// amount and note (cash on hand, outside spending) as its tooltip.
+function moneyStack(item, people) {
+  const shown = item.parts.filter((p) => p.amount != null && p.amount > 0);
+  const sum = shown.reduce((total, p) => total + p.amount, 0);
+  const partyAttr = (part) => (part.candidate_key && people ? people.party(part.candidate_key) : null);
+  const likely = (part) => (part.candidate_key && people?.likely(part.candidate_key) ? likelyFlag("Likely match: see Issues") : null);
+  return [
+    sum > 0
+      ? h("div", { class: "stack-bar", role: "img", "aria-label": shown.map((p) => `${p.label} ${DOLLARS.format(p.amount)}`).join(", ") },
+          shown.map((part) => h("span", {
+            "data-party": partyAttr(part), style: `width: ${width(part.amount / sum)}`,
+            title: `${part.label} ${DOLLARS.format(part.amount)} (${percent(part.amount / sum)})`,
+          })))
+      : null,
+    h("ul", { class: "stack-legend" }, item.parts.map((part) => h("li", {
+      "data-party": partyAttr(part), class: part.amount == null ? "rest" : null, title: part.note || null,
+    },
+      h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
+      h("span", {}, part.label, likely(part)),
+      h("strong", {}, part.amount == null ? "—" : DOLLARS_SHORT.format(part.amount)),
+      part.note ? h("span", { class: "share-note" }, part.note) : null))),
+  ];
+}
+
 // A Breakdown's bars and note (``withNote``). With a total they're shares of it (and show a %);
 // without one they're scaled to the largest part.
 function breakdownRows(item, people = null, withNote = true) {
@@ -267,13 +293,10 @@ function pollCorner(card, head) {
     card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
 }
 
-// A money box's corner, like a poll box's: Compare funding (``compare``), how the figures are put
-// together (the FAQ's answer) and the source.
+// A money box's corner, like a poll box's: Compare funding (``compare``) and the source.
 function moneyCorner(card, compare) {
-  const faq = MONEY_FAQ[card.source];
   return h("span", { class: "box-links" },
     compare,
-    faq ? extLink(faq, "How it's counted", { class: "icon-btn", title: "How these figures are put together" }) : null,
     card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
 }
 
@@ -308,7 +331,7 @@ export function raceMoney(race, onCompare = null) {
     const [head, ...rest] = card.breakdowns;
     const polls = card.kind === "polls";
     return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
-      head ? h("section", { class: "breakdown" }, breakdownRows(head, people, !polls)) : null,
+      head ? h("section", { class: "breakdown" }, polls ? breakdownRows(head, people, false) : moneyStack(head, people)) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);
   });
