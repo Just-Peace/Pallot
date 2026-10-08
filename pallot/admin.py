@@ -268,7 +268,7 @@ class Admin:
 
     def bundled(self, info: SourceInfo) -> str | None:
         """ "Came with N answers, checked <date>." for a source whose answers come with Pallot (bundles/)."""
-        loaded = [self.svc.bundles[tag] for tag in info.cache_tags if tag in self.svc.bundles]
+        loaded = [bundle for bundle in self.svc.bundles.values() if bundle.source in info.cache_tags]
         if not loaded:
             return None
         checked = display_date(dt.datetime.fromtimestamp(min(b.checked_at or 0 for b in loaded)).date())
