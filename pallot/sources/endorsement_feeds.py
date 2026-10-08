@@ -1,5 +1,6 @@
 """Organizations' endorsement lists fetched from their own public JSON, through HttpCache, kept a
-week (Ttls.endorsement_feeds). Each organization is a Feed in FEEDS: its names, its endpoint, and
+week (Ttls.endorsement_feeds), and the ones whose organizations agreed bundled with Pallot
+(bundles/endorsement_feeds.py). Each organization is a Feed in FEEDS: its names, its endpoint, and
 an adapter that turns its answer into an endorsement file's candidates (endorsements.read_entry
 checks each, and leaves out one it refuses). Once fetched, a feed is an EndorsementList, so its
 cards, matching and Pick by rule flag are the frozen lists'. What differs: the fetch, its pause
@@ -168,8 +169,9 @@ class EndorsementFeed:
         if got is None:
             return (f"Not fetched yet: the first lookup with it on fetches [{self.organization}'s list]({self.url}) "
                     "from its website."), "info"
+        lifetime = next((saved.ttl for saved in self.cache.saved(self.source)), self.ttl.endorsement_feeds)
         return (f"Fetched from [{self.organization}'s website]({self.url}) on {display_time(got.fetched_at)}; "
-                f"a lookup fetches it again once it's {_lifetime(self.ttl.endorsement_feeds)} old."), "info"
+                f"a lookup fetches it again once it's {_lifetime(lifetime)} old."), "info"
 
     def details(self) -> list[Fact]:
         kept = self._kept()
@@ -398,8 +400,9 @@ FEEDS = (
         organization="Muslims United PAC",
         url=f"{MUPAC_SITE}/endorsements",
         api=f"{MUPAC_SITE}/api/public/endorsements",
-        description="The candidates Muslims United PAC endorses, from the public list on its website. Pallot "
-        "downloads the whole list, so nothing about you is sent.",
+        description="The candidates Muslims United PAC endorses, from the public list on its website. The list "
+        "comes with Pallot, with its permission; once that copy is two days old, Pallot downloads the whole list "
+        "again, so nothing about you is sent.",
         read=muslims_united,
     ),
     Feed(
@@ -409,7 +412,8 @@ FEEDS = (
         url=f"{CAIR_SITE}/explore",
         api=f"{CAIR_SITE}/api/endorsements",
         description="The candidates CAIR Action endorses or prefers, from the public list in its Action Guide. "
-        "Pallot downloads the whole list, so nothing about you is sent.",
+        "The list comes with Pallot, with its permission; once that copy is two days old, Pallot downloads the "
+        "whole list again, so nothing about you is sent.",
         read=cair_action,
         headers={"accept": "*/*"},
     ),
@@ -419,8 +423,9 @@ FEEDS = (
         organization="Emgage PAC",
         url=EMGAGE_PAGE,
         api=f"{EMGAGE_SITE}/api/v2/donation-page/SupportOurCandidates",
-        description="The candidates Emgage PAC endorses, from the list on its donation page. Pallot downloads that "
-        "page, for the token the list asks for, and then the whole list, so nothing about you is sent.",
+        description="The candidates Emgage PAC endorses, from the list on its donation page. The list comes with "
+        "Pallot, with its permission; once that copy is two days old, Pallot downloads that page, for the token the "
+        "list asks for, and then the whole list again, so nothing about you is sent.",
         read=emgage,
         headers={"Accept": "application/json", "Content-Type": "application/json; charset=UTF-8", "Referer": EMGAGE_PAGE},
         token=meta_token("RequestVerificationToken", "RequestVerificationToken"),

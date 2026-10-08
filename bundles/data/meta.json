@@ -1,6 +1,14 @@
 {
  "schema_version": 1,
  "sources": {
+  "cair": {
+   "answers": 1,
+   "answers_hash": "bcfe12ae1ef393168ba99e1b524cddb5c9fc6380ffda0c61f82e3a9532d54fa8",
+   "candidates": 819,
+   "last_checked": "2026-10-08T20:47:28+00:00",
+   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "texas": 17
+  },
   "county_precincts": {
    "answers": 25,
    "answers_hash": "98027f7c104c37daa19988d9557a6a8e60ecd4633067af425b96cb49cacbe527",
@@ -9,6 +17,14 @@
    "last_refresh": "2026-10-08T20:37:52+00:00",
    "missing": 0
   },
+  "emgage": {
+   "answers": 1,
+   "answers_hash": "d2e3fc500aafeb8fa556966918705e346d4aae5a96cd33e920f51488061e8394",
+   "candidates": 39,
+   "last_checked": "2026-10-08T20:47:28+00:00",
+   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "texas": 3
+  },
   "fec": {
    "answers": 469,
    "answers_hash": "d5bec2755efda47009dbc3a93c564a757edf8c056ae170228402abd5074ce220",
@@ -16,6 +32,14 @@
    "last_checked": "2026-10-08T18:54:13+00:00",
    "last_refresh": "2026-10-08T18:54:13+00:00",
    "races": 39
+  },
+  "mupac": {
+   "answers": 1,
+   "answers_hash": "068dfea88b2198fd0f62fc44bfaa55c1738d918823bd0048f1efe97dea54ca82",
+   "candidates": 26,
+   "last_checked": "2026-10-08T20:47:28+00:00",
+   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "texas": 3
   },
   "officeholders": {
    "answers": 2,
