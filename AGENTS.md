@@ -62,6 +62,7 @@ Update the docs in the same commit as the change.
 | A page, or a link in the left pane                                        | `PAGES` in `pallot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
 | A new source, or what's sent to or kept from one                          | the tables in `pallot/static/privacy.html` and `pallot/static/about.html`; the welcome steps in `pallot/static/index.html`            |
 | A new endorsement list                                                    | only its file, `pallot/endorsements/<source>.json` (DEVELOPMENT.md's "Endorsement lists"): the pages name the lists from it |
+| A source's answers bundled with Pallot | a `Bundle` in `bundles/registry.py`, its builder, `Ttls.<source>_bundle` (DEVELOPMENT.md's "bundles"), and README's "Bundled snapshots" |
 | A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `pallot/config.py`, and README's "Configuration"                                                  |
 | Something found along the way                                             | a GitHub issue (see [Things you notice along the way](#things-you-notice-along-the-way))                                                 |
 
@@ -116,7 +117,7 @@ How to write them:
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
 - **Pallot has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
 - **Don't reinstall** `trackaipac_cache` **from its own repo.** It's a copy of the maintainer's library, and edits here aren't synced back.
-- **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`, `fec_cache/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`, `uv run fec-cache refresh`). Never edit them by hand.
+- **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`, `bundles/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`, `uv run pallot-bundle refresh`). Never edit them by hand.
 
 
 

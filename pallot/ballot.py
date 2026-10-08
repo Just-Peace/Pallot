@@ -18,6 +18,8 @@ import zipfile
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
+from bundles.store import Loaded
+
 from . import enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
@@ -111,6 +113,7 @@ class Services:
     today: Callable[[], dt.date] = dt.date.today
     last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
     last_uses: dict[str, SourceUse] = field(default_factory=dict)
+    bundles: dict[str, Loaded] = field(default_factory=dict)  # the answers that came with Pallot, by bundle (Settings)
 
 
 @dataclass

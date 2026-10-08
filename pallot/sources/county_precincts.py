@@ -121,7 +121,8 @@ DESCRIPTION = (
     "Your commissioner and justice of the peace precincts, from your election precinct and your county's own records: "
     "the lists of their election precincts that Harris, Dallas, Tarrant, Travis and Fort Bend counties publish (Fort "
     "Bend's has commissioner precincts only), and Bexar and Denton counties' maps of their commissioner and JP "
-    "precincts. A county's list or maps are downloaded whole, at most once a week, when you look up an address there; "
+    "precincts. They come with Pallot; once that copy is two weeks old, a county's list or maps are downloaded whole, "
+    "at most once a week, when you look up an address there; "
     "your address is never sent. Needs \"Election precincts\" on."
 )
 
@@ -306,6 +307,15 @@ class CountyPrecincts:
                 found.append(await asyncio.to_thread(settle, shapes, points))
             agree(kind, found)
         return Found(county, numbers, unsettled)
+
+    async def records(self, county: County) -> int:
+        """Download and read all of ``county``'s list or maps, with the requests at() makes (the
+        bundle's builder); returns how many election precincts or areas they hold. Raises as at()."""
+        held = len(await self._table(county, county.table)) if county.table else 0
+        for kind, areas in ((COMMISSIONER, county.commissioner), (JP, county.jp)):
+            if areas is not None:
+                held += len(await self._areas(county, kind, areas))
+        return held
 
     # -- fetching ---------------------------------------------------------------------------
 

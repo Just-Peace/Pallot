@@ -6,9 +6,9 @@ a free key (PALLOT_FEC_API_KEY, from https://api.open.fec.gov/developers/), each
 on the ballot gets five more calls: where the money came from, donation sizes, donors'
 states, donors' employers, and outside spending for and against. Everything goes through
 HttpCache for a week; the key travels in a header that HttpCache never stores. Pallot comes
-with a snapshot of these answers for Texas's federal races (the fec_cache package, refreshed by
-`uv run fec-cache refresh`), loaded into the cache at startup, so a lookup asks the FEC only
-for what the snapshot lacks or has gone stale. Each key may
+with these answers for Texas's federal races (bundles/data/fec.json, refreshed by
+`uv run pallot-bundle refresh`), loaded into the cache at startup, so a lookup asks the FEC only
+for what the bundle lacks or has gone stale. Each key may
 make 60 requests a minute, so Pallot sends at most KEY_LIMIT with one, and waits only when
 every key's minute is full. With more keys (PALLOT_FEC_API_KEY2 to 5), requests take each key
 in turn. A key that hits the rate limit anyway (429) rests for two minutes, and one that's
@@ -21,10 +21,7 @@ from __future__ import annotations
 import asyncio
 import datetime as dt
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Callable, Mapping
-
-from fec_cache import store as snapshot_store
 
 from ..config import DEMO_KEY, Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
@@ -133,27 +130,9 @@ class Fec:
         self.keyed = DEMO_KEY not in api_keys.values()
         self.key_names = tuple(api_keys) if self.keyed else ("the shared DEMO_KEY",)
         self.today = today
-        self.snapshot = snapshot_store.Snapshot(day=None, checked_at=None, answers=[])
         self._gate = asyncio.Semaphore(4)
         cache.share_keys(SOURCE, "X-Api-Key", tuple(api_keys.values()), {429: ttl.fec_backoff, 403: ttl.fec_refused_backoff},
                          limit=KEY_LIMIT, refresh_limit=REFRESH_LIMIT)
-
-    def load_snapshot(self, data_dir: Path | None = None) -> int:
-        """Put the bundled answers (fec_cache, or ``data_dir`` in tests) in the cache, as fetched
-        when the snapshot was last checked, where the cache has nothing as new; returns how many.
-        Each is served while it's fresh (Ttls.fec), and asked for again once it's stale."""
-        self.snapshot = snapshot_store.load(data_dir or snapshot_store.PACKAGE_DATA_DIR)
-        if self.snapshot.checked_at is None:
-            return 0
-        answers = ((RequestSpec(**answer["request"]), answer["value"]) for answer in self.snapshot.answers)
-        return self.cache.seed(SOURCE, answers, self.snapshot.checked_at, self.ttl.fec)
-
-    def snapshot_note(self) -> str | None:
-        """Settings' line on the bundled answers: how many, and when they were last checked."""
-        if not self.snapshot.answers or self.snapshot.checked_at is None:
-            return None
-        checked = display_date(dt.datetime.fromtimestamp(self.snapshot.checked_at).date())
-        return f"Came with {len(self.snapshot.answers):,} of the FEC's answers, checked {checked}."
 
     def lifetime(self, day: dt.date | None) -> float:
         return self.ttl.past_election if day and day < self.today() else self.ttl.fec

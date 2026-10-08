@@ -23,13 +23,13 @@ pallot-cache = "pallot.maintain:main"
 trackaipac-cache = "trackaipac_cache.__main__:main"
 tec-cache = "tec_cache.__main__:main"
 voteforpeace-cache = "voteforpeace_cache.__main__:main"
-fec-cache = "fec_cache.__main__:main"
+pallot-bundle = "bundles.__main__:main"
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21"]  # installed by `uv sync`
 
 [tool.setuptools]
-packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "voteforpeace_cache", "fec_cache"]
+packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "voteforpeace_cache", "bundles"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pallot.__version__" }
@@ -39,7 +39,7 @@ pallot = ["sources.toml", "static/*.html", "static/*.svg", "static/css/*.css", "
 trackaipac_cache = ["data/*.json"]
 tec_cache = ["data/*.json"]
 voteforpeace_cache = ["data/*.json"]
-fec_cache = ["data/*.json"]
+bundles = ["data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

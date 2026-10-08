@@ -288,6 +288,9 @@ class Upstream:
         self.precinct_index: dict[str, Any] | None = None  # the portal's index (default: sized to the map)
         self.extra_candidates: dict[int, list[dict[str, Any]]] = {}  # election id -> rows added to its statewide list
         self.candidates_down: set[int] = set()  # election ids whose statewide candidate list answers HTTP 500
+        self.ballot_orders: dict[tuple[int, int], Any] = {}  # (election id, county id) -> its ballot order, in place of the recorded one
+        self.ballot_order_status: int | None = None  # e.g. 403 when Texas SOS refuses a ballot order
+        self.ballot_orders_down: set[tuple[int, int]] = set()  # (election id, county id) whose ballot order answers HTTP 500
         self.county_status: int | None = None  # e.g. 403 when a county's map server refuses us
         self.feed_status: int | None = None  # e.g. 429 when an organization's website refuses us
         self.feed_answers: dict[str, Any] = {}  # feed source id -> its answer, in place of the recorded one
@@ -355,6 +358,12 @@ class Upstream:
                     return _file(name)
             body = json.loads(request.content)
             if path.endswith("getCandidateBallotOrder"):
+                if self.ballot_order_status:
+                    return httpx.Response(self.ballot_order_status)
+                if (body["electionId"], body["countyId"]) in self.ballot_orders_down:
+                    return httpx.Response(500)
+                if (body["electionId"], body["countyId"]) in self.ballot_orders:
+                    return httpx.Response(200, json=self.ballot_orders[body["electionId"], body["countyId"]])
                 return _file(f"sos_ballot_{body['electionId']}_{body['countyId']}.json", default=[])
             if path.endswith("findQualifiedCandidates"):
                 if body["electionId"] in self.candidates_down:
@@ -530,10 +539,10 @@ def fec_unpaced(monkeypatch):
 @pytest.fixture
 def make_app(tmp_path, upstream):
     """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY,
-    endorsements_dir=FIXTURES / "endorsements", google_key="", fec_extra_keys=(), fec_bundled=None, sboe_bundled=None)
-    -> a new app; call again on the same dir to 'restart'. It answers to TestClient's host name, testserver. No FEC
-    snapshot is loaded unless ``fec_bundled`` names one, and no SBOE map comes with it unless ``sboe_bundled`` names
-    one, so the first lookup downloads the made-up one."""
+    endorsements_dir=FIXTURES / "endorsements", google_key="", fec_extra_keys=(), bundles=None, sboe_bundled=None)
+    -> a new app; call again on the same dir to 'restart'. It answers to TestClient's host name, testserver. No bundled
+    answers are loaded unless ``bundles`` names a folder of them, and no SBOE map comes with it unless ``sboe_bundled``
+    names one, so the first lookup downloads the made-up one."""
     refreshed: list[Path] = []
     tec_refreshed: list[dict[str, Any]] = []
 
@@ -551,7 +560,7 @@ def make_app(tmp_path, upstream):
     def options(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
                 fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements",
                 google_key: str = "", fec_extra_keys: tuple[str, ...] = (),
-                fec_bundled: Path | None = None, sboe_bundled: Path | None = None) -> dict[str, Any]:
+                bundles: Path | None = None, sboe_bundled: Path | None = None) -> dict[str, Any]:
         return dict(
             config=Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, fec_extra_keys=fec_extra_keys,
                           google_api_key=google_key, allowed_hosts=("testserver",)),
@@ -562,8 +571,8 @@ def make_app(tmp_path, upstream):
             voteforpeace_refresh=voteforpeace_refresh or fake_voteforpeace_refresh,
             tec_bundled=FIXTURES / "tec",
             tec_refresh=tec_refresh or fake_tec_refresh,
-            fec_bundled=fec_bundled or tmp_path / "no-fec-snapshot",
             sboe_bundled=sboe_bundled or tmp_path / "no-sboe-map",
+            bundles=bundles or tmp_path / "no-bundles",
             endorsements_dir=endorsements_dir,
             min_interval={},
         )
