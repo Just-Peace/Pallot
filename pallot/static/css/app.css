@@ -36,7 +36,6 @@
   --party-other: #ffffff;       /* independents, nonpartisan, write-ins, … */
   --party-other-ink: #17202b;
   --party-other-pick: #17202b;  /* a white pick still needs a visible edge */
-  --party-other-soft: #ffffff;
   /* the district map's outlines: no party blue or red, each also with its own dash; checked for
      colour blindness and 3:1 contrast against --panel, the map's background */
   --map-cd: #a37eed;
@@ -93,7 +92,6 @@
   --party-other: #ffffff;
   --party-other-ink: #0e1319;
   --party-other-pick: #ffffff;
-  --party-other-soft: #202a35;
   --map-cd: #8b68f3;
   --map-sd: #d2781e;
   --map-hd: #36a4ba;
@@ -441,6 +439,18 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .data-action p { margin: 0; font-size: 0.85rem; color: var(--muted); }
 .data-action .btn { flex: none; }
 
+/* Ban list (settings.js): an input with Add, then a red chip per entry with its remove button */
+.ban-form { display: flex; gap: 8px; max-width: 480px; }
+.ban-form input { flex: 1 1 auto; min-width: 0; }
+.ban-form .btn { flex: none; }
+.ban-entries { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; }
+.ban-entries:empty { display: none; }
+.ban-chip { display: inline-flex; align-items: center; gap: 2px; padding: 2px 4px 2px 10px; border-radius: 999px;
+  background: var(--danger-soft); color: var(--danger); font-size: 0.88rem; font-weight: 600; overflow-wrap: anywhere; }
+.ban-remove { flex: none; width: 24px; height: 24px; border: 0; border-radius: 999px; background: none; color: inherit;
+  font-size: 1rem; line-height: 1; cursor: pointer; }
+.ban-remove:hover, .ban-remove:focus-visible { background: var(--danger); color: var(--danger-soft); }
+
 .switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
 .switch input { appearance: none; flex: none; width: 36px; height: 20px; border-radius: 999px; background: var(--line-strong);
   position: relative; margin: 0; cursor: pointer; transition: background 0.15s; }
@@ -679,9 +689,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 [data-party="D"], [data-pick-party="D"] { --party: var(--party-d); --party-soft: var(--party-d-soft); }
 [data-party="L"], [data-pick-party="L"] { --party: var(--party-l); --party-soft: var(--party-l-soft); --party-text: var(--party-l-text); }
 [data-party="G"], [data-pick-party="G"] { --party: var(--party-g); --party-soft: var(--party-g-soft); }
-/* the picked party's colour, for the race and its candidate rows; anyone else picks in white */
-.race, .cand { --pick: var(--party, var(--party-other-pick)); --pick-soft: var(--party-soft, var(--party-other-soft));
-  --pick-text: var(--party-text, var(--pick)); }
+/* the picked party's colour, for the race's edge and its picked row's border; anyone else picks in white */
+.race, .cand { --pick: var(--party, var(--party-other-pick)); --pick-text: var(--party-text, var(--pick)); }
 
 .race {
   background: var(--panel);
@@ -750,7 +759,7 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 
 .cand { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--panel-2);
   transition: background 0.15s, border-color 0.15s; }
-.cand.picked { border-color: var(--pick); background: var(--pick-soft); box-shadow: inset 4px 0 0 var(--pick); }
+.cand.picked { border-color: var(--pick); box-shadow: inset 4px 0 0 var(--pick); }
 .cand-main { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .pick-input { width: 20px; height: 20px; margin: 0; accent-color: var(--pick); flex: none; cursor: pointer; }
 .cand-label { display: flex; align-items: center; gap: 10px; flex: 1 1 240px; cursor: pointer; font-weight: 400; min-width: 0; }
@@ -786,6 +795,15 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .party-G { background: var(--party-g); color: var(--on-solid); box-shadow: none; }
 .pill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-weight: 600; font-size: 0.75rem;
   background: var(--neutral-soft); color: var(--muted); }
+/* A candidate on the voter's ban list (ban-list.js): an outlined pill with the ban icon, unlike the
+   filled party pills, and the name struck through in red */
+.pill.pill-banned { display: inline-flex; align-items: center; gap: 3px; background: transparent; color: var(--danger);
+  box-shadow: inset 0 0 0 1.5px var(--danger); }
+.pill-banned .icon { width: 11px; height: 11px; stroke-width: 2.5; }
+.cand.banned .cand-name, .details-title h2.is-banned { text-decoration: line-through 2px var(--danger); }
+.cand.banned .cand-name { color: var(--muted); }
+.icon-btn.ban-btn .icon { width: 13px; height: 13px; }
+.ban-btn.is-banned, .details-actions .btn.is-banned { color: var(--danger); border-color: var(--danger); }
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 30px; }
 .card-panel .badges { margin: 8px 0; }
@@ -810,7 +828,7 @@ button.badge-btn:hover { text-decoration: underline; filter: brightness(0.96); }
 .badge.tone-warn { background: var(--warn-soft); color: var(--warn); }
 
 .cand.write-in { background: transparent; border-style: dashed; }
-.cand.write-in.picked { border-style: solid; background: var(--pick-soft); }
+.cand.write-in.picked { border-style: solid; }
 .write-in-label { font-weight: 650; cursor: pointer; }
 .write-in-name { flex: 1 1 220px; min-width: 0; max-width: 360px; padding: 6px 10px; }
 .write-in-note { margin: 8px 0 0 30px; }

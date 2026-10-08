@@ -263,6 +263,7 @@ function draw(rule, options, startScope) {
     group("Polls", has.polls && checkRow("They lead the polls", rule.leads, set((on) => { rule.leads = on; }))));
 
   const skipRows = [
+    has.banned && checkRow("On your ban list", rule.banned, set((on) => { rule.banned = on; })),
     has.trackaipac && checkRow("On TrackAIPAC's watchlist", rule.watchlist, set((on) => { rule.watchlist = on; })),
     has.voteforpeace && checkRow("Vote for Peace opposes them", rule.peaceOpposed, set((on) => { rule.peaceOpposed = on; })),
     has.lobby && checkRow("Israel lobby money over", rule.lobby.on, set((on) => { rule.lobby.on = on; }),
@@ -299,7 +300,8 @@ function draw(rule, options, startScope) {
         h("details", { class: "rule-how" }, h("summary", {}, "How rules work"),
           h("p", {}, "Pick takes the candidates who meet every condition you turn on, from any party you choose, with endorsements "
             + "from any of the endorsers you choose. Don't pick "
-            + "takes back anyone who meets any one of its conditions, even a pick you made yourself."),
+            + "takes back anyone who meets any one of its conditions, even a pick you made yourself. "
+            + "On your ban list, on at first, shows when someone on your ballot is marked Banned."),
           h("p", {}, "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
             + "congressional races, Vote for Peace in the races where it marks someone, an endorsement list in the races where it "
             + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. So “Democrats who spent under $1M” "

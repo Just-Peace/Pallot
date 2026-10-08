@@ -1,12 +1,13 @@
 // Details: a candidate's Profile (Texas SOS, then Ballotpedia), their Issues (stances.js), a tab per
 // other source, and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
-// each tab made of folding sections, in a dialog whose head has Search and Pick beside ‹ › ✕. ‹ and ›
+// each tab made of folding sections, in a dialog whose head has Search, Ban and Pick beside ‹ › ✕. ‹ and ›
 // step through the race's other candidates, staying on the tab that's shown.
 
+import { isBanned } from "./ban-list.js";
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
 import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
-import { avatar, candidateQuery, choose, searchLink } from "./race-cards.js";
+import { avatar, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
 import { searchWord } from "./search.js";
 import { cardPanel, endorsementsPanel, isLikely, moneyPanel, profilePanel, renderTabs } from "./source-cards.js";
 import { stancesPanel } from "./stances.js";
@@ -45,6 +46,21 @@ export function showDetails(race, index, focus = null, at = "profile") {
   syncPickButton();
   const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
   pickButton.disabled = multiFull;
+
+  const pills = h("p", { class: "cand-sub" }, candidatePills(candidate, race));
+  const nameHead = h("h2", { id: "details-name", "data-party": candidate.party || null }, candidate.name);
+  const banButton = h("button", { type: "button", class: "btn small ghost with-icon", on: { click: () => toggleBan(candidate, syncBan) } });
+  const syncBan = () => {
+    const on = isBanned(candidate);
+    const name = on ? `Take ${candidate.name} off your ban list` : `Add ${candidate.name} to your ban list`;
+    banButton.replaceChildren(icon("ban"), word(on ? "Unban" : "Ban"));
+    banButton.setAttribute("aria-label", name);
+    banButton.title = name;
+    banButton.classList.toggle("is-banned", on);
+    pills.replaceChildren(...candidatePills(candidate, race).filter(Boolean));
+    nameHead.classList.toggle("is-banned", on);
+  };
+  syncBan();
 
   const grouped = candidate.cards.filter((card) => card.kind === "endorsement");
   const profiled = candidate.cards.filter((card) => PROFILE.has(card.kind));
@@ -86,10 +102,10 @@ export function showDetails(race, index, focus = null, at = "profile") {
   const { head, close } = dialogHead(details, [
     avatar(candidate, "large"),
     h("div", { class: "details-title" },
-      h("h2", { id: "details-name", "data-party": candidate.party || null }, candidate.name),
+      nameHead,
       h("p", { class: "muted" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
-      h("p", { class: "cand-sub" }, candidatePills(candidate, race))),
-    h("div", { class: "details-actions" }, search, pickButton),
+      pills),
+    h("div", { class: "details-actions" }, search, banButton, pickButton),
   ], steps.previous, steps.next);
   details.classList.remove("compact");
   details.replaceChildren(head, tabBox);

@@ -1,6 +1,6 @@
-// The Settings page: the appearance; how much of the ballot shows (view.js); the web search engine; the sources, under the groups the
+// The Settings page: how much of the ballot shows (view.js); the web search engine; the ban list; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
-// what the server has saved from each and how the last lookup used it; and Clear data, which clears what
+// what the server has saved from each and how the last lookup used it; the appearance; and Clear data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
 // from here. Changes that affect the ballot are marked with markSettingsChanged(), so an open
 // ballot page reloads when the voter goes back to it. It imports page.js first, which draws the
@@ -9,6 +9,7 @@
 import "./page.js";
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
+import { banList, isPattern, setBanList } from "./ban-list.js";
 import { $, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
@@ -246,6 +247,51 @@ function showView() {
 bindViewControls(viewSection);
 onViewChange(showView);
 
+// Ban list (ban-list.js): the names banned from Details and the names or patterns typed here, a
+// chip each with a remove button. A change is marked, so an open ballot reloads with it.
+const banForm = $("#ban-form");
+const banEntry = $("#ban-entry");
+const banStatus = $("#ban-status");
+
+function showBanList() {
+  const entries = banList();
+  $("#ban-empty").hidden = entries.length > 0;
+  $("#ban-entries").replaceChildren(...entries.map(({ text }) => h("li", { class: "ban-chip" },
+    h("span", {}, text),
+    h("button", {
+      type: "button", class: "ban-remove", title: `Remove “${text}”`, "aria-label": `Remove ${text} from your ban list`,
+      on: { click: () => {
+        saveBanList(banList().filter((e) => e.text !== text), `Removed “${text}” from your ban list.`);
+        banEntry.focus();
+      } },
+    }, "×"))));
+}
+
+function saveBanList(entries, message) {
+  if (!setBanList(entries)) {
+    setStatus(banStatus, "This browser didn't let Pallot save your ban list.", "error");
+    return;
+  }
+  markSettingsChanged();
+  showBanList();
+  setStatus(banStatus, message, "ok");
+}
+
+banForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const entry = banEntry.value.trim();
+  if (!entry) return;
+  const entries = banList();
+  if (entries.some((e) => e.text.toLowerCase() === entry.toLowerCase())) {
+    setStatus(banStatus, `“${entry}” is already on your ban list.`, "info");
+    return;
+  }
+  const plain = !isPattern(entry);
+  saveBanList([...entries, { text: entry, plain }], `Added “${entry}” to your ban list.`);
+  banEntry.value = "";
+  banEntry.focus();
+});
+
 // What's kept in this browser is cleared at once, with Undo to put it back.
 function clearInBrowser(clear, message, nothing) {
   const removed = clear();
@@ -274,6 +320,7 @@ function showBrowserData() {
   showTheme();
   showView();
   searchSelect.value = currentEngine().id;
+  showBanList();
 }
 
 $("#clear-my-picks").addEventListener("click", () => {
@@ -290,11 +337,13 @@ $("#clear-browser-data").addEventListener("click", () => {
 onReturn(() => {
   showTheme();
   showView();
+  showBanList();
   load();
 });
 
 showTheme();
 showView();
+showBanList();
 initSearchEngine();
 // The sources render above Clear data once they arrive, so a link to a section below them
 // (settings.html#data-title) lands there only if it's scrolled to again.

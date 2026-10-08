@@ -13,6 +13,7 @@ import {
   applyHidePicked, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, updateProgress,
 } from "./ballot-nav.js";
 import { electionLine } from "./ballot-shared.js";
+import { onBanListChanged } from "./ban-list.js";
 import { initChrome, setPaneCollapsed } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
@@ -374,6 +375,11 @@ hydrateIcons();
 const settingsSeen = settingsStamp();
 onReturn(() => {
   if (settingsStamp() !== settingsSeen) location.reload();
+});
+
+// A candidate banned or unbanned in another ballot tab gets or loses their Banned pill here too.
+onBanListChanged(() => {
+  if (page.ballot) refillCards();
 });
 
 // Picks made in another tab show here too, and a pick made here doesn't undo them.
