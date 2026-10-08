@@ -208,8 +208,7 @@ function stackedBar(item, people) {
 }
 
 // A money box's head, like a poll's: one bar for the total the race's candidates raised, a
-// segment per candidate in their party's colour, then a legend with each one's amount and note
-// (cash on hand, outside spending), and the total.
+// segment per candidate in their party's colour, then a legend with what each raised and the total.
 function moneyStack(item, people) {
   const shown = item.parts.filter((p) => p.amount != null && p.amount > 0);
   const sum = shown.reduce((total, p) => total + p.amount, 0);
@@ -224,12 +223,11 @@ function moneyStack(item, people) {
           })))
       : null,
     h("ul", { class: "stack-legend" }, item.parts.map((part) => h("li", {
-      "data-party": partyAttr(part), class: part.amount == null ? "rest" : null, title: part.note || null,
+      "data-party": partyAttr(part), class: part.amount == null ? "rest" : null,
     },
       h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
       h("span", {}, part.label, likely(part)),
-      h("strong", {}, part.amount == null ? "—" : DOLLARS_SHORT.format(part.amount)),
-      part.note ? h("span", { class: "share-note" }, part.note) : null)),
+      h("strong", {}, part.amount == null ? "—" : DOLLARS_SHORT.format(part.amount)))),
       sum > 0 ? h("li", { class: "stack-total" }, h("span", {}, "Total"), h("strong", {}, DOLLARS_SHORT.format(sum))) : null),
   ];
 }
