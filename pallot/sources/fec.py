@@ -5,10 +5,12 @@ That is enough for the race's money comparison and works with the shared DEMO_KE
 a free key (PALLOT_FEC_API_KEY, from https://api.open.fec.gov/developers/), each candidate
 on the ballot gets five more calls: where the money came from, donation sizes, donors'
 states, donors' employers, and outside spending for and against. Everything goes through
-HttpCache for a week; the key travels in a header that HttpCache never stores. With more
-keys (PALLOT_FEC_API_KEY2 to 5), requests take each key in turn, so each key's hourly limit
-lasts longer. A key that hits the rate limit (429) or is refused (403) rests for an hour while
-the others carry on; when every key rests, the FEC is paused, serving only what's cached.
+HttpCache for a week; the key travels in a header that HttpCache never stores. Each key may
+make 60 requests a minute, so Pallot sends at most KEY_LIMIT with one, and waits only when
+every key's minute is full. With more keys (PALLOT_FEC_API_KEY2 to 5), requests take each key
+in turn. A key that hits the rate limit anyway (429) rests for two minutes, and one that's
+refused (403) for an hour, while the others carry on; when every key rests, the FEC is paused,
+serving only what's cached.
 """
 
 from __future__ import annotations
@@ -35,6 +37,11 @@ DESCRIPTION = (
 API = "https://api.open.fec.gov/v1"
 SITE = "https://www.fec.gov/data"
 KEY_SIGNUP = "https://api.open.fec.gov/developers/"
+# api.data.gov lets each key make 60 requests in any minute (its X-RateLimit-Limit). A lookup may
+# use 55 of them at once; pallot-cache, which nobody waits on, sends one every 2 seconds, leaving
+# half the minute to a Pallot running meanwhile.
+KEY_LIMIT = (55, 60.0)
+REFRESH_LIMIT = (1, 2.0)
 HOUSE_DISCLOSURES = "https://disclosures-clerk.house.gov/FinancialDisclosure"
 SENATE_DISCLOSURES = "https://efdsearch.senate.gov/search/"
 KEY_NOTE = (
@@ -121,7 +128,8 @@ class Fec:
         self.key_names = tuple(api_keys) if self.keyed else ("the shared DEMO_KEY",)
         self.today = today
         self._gate = asyncio.Semaphore(4)
-        cache.share_keys(SOURCE, "X-Api-Key", tuple(api_keys.values()), {429: ttl.fec_backoff, 403: ttl.fec_backoff})
+        cache.share_keys(SOURCE, "X-Api-Key", tuple(api_keys.values()), {429: ttl.fec_backoff, 403: ttl.fec_refused_backoff},
+                         limit=KEY_LIMIT, refresh_limit=REFRESH_LIMIT)
 
     def lifetime(self, day: dt.date | None) -> float:
         return self.ttl.past_election if day and day < self.today() else self.ttl.fec
