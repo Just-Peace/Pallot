@@ -187,6 +187,19 @@ function placeForWidth() {
   else $(".side-bottom").before(jump);
 }
 
+// The bar between the toolbar's two groups shows only while they share a line, so a narrow
+// window doesn't leave it dangling at a line's end or alone on a line of its own.
+function watchToolDivider() {
+  const divider = tools.querySelector(".tool-divider");
+  const [first, second] = tools.querySelectorAll(".tool-group");
+  const sync = () => {
+    divider.hidden = false;
+    divider.hidden = second.getBoundingClientRect().top >= first.getBoundingClientRect().bottom;
+  };
+  const observer = new ResizeObserver(onFrame(sync));
+  [tools, first, second].forEach((element) => observer.observe(element));
+}
+
 // ---- the section on screen ------------------------------------------------------------
 
 // Marks the section on screen in the section list: the last one whose top has reached the
@@ -249,6 +262,7 @@ export function initNav(context) {
   narrow.addEventListener("change", placeForWidth);
   onPaneToggle(placeForWidth);
   placeForWidth();
+  watchToolDivider();
 
   // Links to a section, Next and j/k scroll to just below the strip, however tall it is, and
   // each race's heading sticks right under it (--strip-h).
