@@ -118,7 +118,7 @@
           <div class="faq-body">
             <p>They're how much of your ballot shows at first, chosen with Simple | Detailed at the top of the ballot or under Ballot view in <a href="settings.html#view-title">Settings</a>. Nothing is left out of either: anything folded opens with a click.</p>
             <ul>
-              <li><strong>Simple</strong>, where Pallot starts: the map of your districts and each race's money box are folded to one line. The polls, endorsements and scorecards show.</li>
+              <li><strong>Simple</strong>, where Pallot starts: the map of your districts and each race's money box are folded to one line. The polls, endorsements and ratings show.</li>
               <li><strong>Detailed</strong>: everything is open, the map and the money boxes included.</li>
             </ul>
             <p>Each part also has its own switch, under "Show" in the ballot's Options and in Settings. Flip one and the view is "Custom", your own mix; choosing Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
@@ -199,15 +199,15 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source, so you can see which source said what. The "Web search" link searches for the candidate's name, office and place, with the search engine or AI assistant you pick in <a href="settings.html">Settings</a>.</p>
+            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, one tab per source (the endorsement lists and ratings share the Endorsements tab, a section each), so you can see which source said what. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
             <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Matched" and "Likely match"</a>). "Incumbent" comes from the state's filing, from Ballotpedia when it matches the candidate exactly in the same race, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
           </div>
         </details>
 
         <details class="faq" id="stances">
-          <summary>Where do the Stances come from?</summary>
+          <summary>Where do the Issues links come from?</summary>
           <div class="faq-body">
-            <p>The Stances tab in Details lists 30 issues, from abortion to infrastructure. Each one is a link to a web search for the candidate's name, office, place and year, plus neutral words for the issue: where an issue has two sides, the search names both, such as "gun rights gun control". It uses the search engine or AI assistant you pick in <a href="settings.html">Settings</a>; an AI assistant is asked to cite its sources and give more than one view.</p>
+            <p>The Issues tab in Details lists 30 issues, from abortion to infrastructure. Each one is a link to a web search for the candidate's name, office, place and year, plus neutral words for the issue: where an issue has two sides, the search names both, such as "gun rights gun control". It uses Google AI Mode, or the search engine or AI assistant you pick in <a href="settings.html">Settings</a>; an AI assistant is asked to cite its sources and give more than one view.</p>
             <p>Pallot doesn't rate, summarize or check what the search finds, and the results depend on the engine. A candidate's own website, debates and voting record are the best places to confirm a stance.</p>
           </div>
         </details>
@@ -231,7 +231,7 @@
         <details class="faq" id="matches">
           <summary>What's the difference between "Matched" and "Likely match"?</summary>
           <div class="faq-body">
-            <p>Sources spell names differently, so Pallot matches a candidate across sources by name and uses the seat and party to confirm it. "Matched" means the source's entry is this candidate. "Likely match" means it's probably the same person but not certain, for example when only the first initial agrees ("Tom" and "Thomas"), so check it. A "?" marks it: on the source's tab in Details, and on the candidate's row, on that source's first chip or its link (or on the Details button, if the source has nothing on the row, or its line is hidden). When a match is ambiguous, Pallot leaves it out rather than guess.</p>
+            <p>Sources spell names differently, so Pallot matches a candidate across sources by name and uses the seat and party to confirm it. "Matched" means the source's entry is this candidate. "Likely match" means it's probably the same person but not certain, for example when only the first initial agrees ("Tom" and "Thomas"), so check it. A "?" marks it: on the source's tab or section in Details, and on the candidate's row, on that source's first chip, when it has one there. When a match is ambiguous, Pallot leaves it out rather than guess.</p>
           </div>
         </details>
 
@@ -246,7 +246,7 @@
         <details class="faq">
           <summary>What is Vote for Peace, and what do Ally, Neutral and Opposed mean?</summary>
           <div class="faq-body">
-            <p>Vote for Peace (voteforpeace.info), from Organize for Peace, rates candidates on their stance on war and human rights and on where their money comes from, such as AIPAC and other lobbies. Ally means it recommends them, Opposed that it recommends against them, and Neutral neither. Its tab in Details shows the groups it cites for the rating (endorsements, its own questionnaire, TrackAIPAC) and its notes, with a link to the candidate's page there.</p>
+            <p>Vote for Peace (voteforpeace.info), from Organize for Peace, rates candidates on their stance on war and human rights and on where their money comes from, such as AIPAC and other lobbies. Ally means it recommends them, Opposed that it recommends against them, and Neutral neither. Its section on the Endorsements tab in Details shows the groups it cites for the rating (endorsements, its own questionnaire, TrackAIPAC) and its notes, with a link to the candidate's page there.</p>
             <p>It rates candidates at every level, from Congress to county courts and city councils, and names offices its own way ("TX State Representative" and a district number). Pallot matches them by name, with the office and district, or the county, to confirm. A court it names without the place ("TX Supreme Court Justice") counts for any place on that court. Elsewhere, a candidate it lists for another seat or county shows as a likely match, so check it.</p>
             <p>Pallot uses its ratings with Organize for Peace's permission.</p>
           </div>
@@ -405,7 +405,7 @@
         <details class="faq">
           <summary>How do I compare the candidates in a race?</summary>
           <div class="faq-body">
-            <p>Press "Compare candidates" on a race's money box; it's on the box's line, so you don't need to open the box first. It puts everyone in the race side by side: their totals, then each breakdown from their details with one bar per candidate under every category, and their largest donors and outside spenders in columns.</p>
+            <p>Press "Compare funding" on a race's money box; it's on the box's line, so you don't need to open the box first. It puts everyone in the race side by side: their totals, then each breakdown from their details with one bar per candidate under every category, and their largest donors and outside spenders in columns.</p>
             <p>"Dollars" draws each bar against the largest amount in its section. "Share of their money" draws it as a part of that candidate's own money, so a small campaign's mix can be compared with a big one's. A name marked ⇄ is in more than one candidate's list; point at it to see it in the other columns. Names are matched as written in the reports, so the same donor spelled two ways isn't caught, and only each candidate's largest donors are compared.</p>
           </div>
         </details>
@@ -451,7 +451,7 @@
             <ul>
               <li>Only questions that pit the candidates on your ballot against each other count. An early poll of a matchup that didn't happen (another nominee) is left out.</li>
               <li>Each pollster counts once, with its latest poll, so a firm that polls every week doesn't outweigh the rest. When a poll asked both likely and registered voters, the likely voters' answer counts.</li>
-              <li>Each candidate's number is the median of their share across those polls. The gray rest of the bar is undecided voters and others. Candidates no poll asked about are named on one line under the bar, "Not in these polls".</li>
+              <li>Each candidate's number is the median of their share across those polls. The gray rest of the bar is undecided voters and others. Candidates no poll asked about aren't on the bar. The box's corner says how many polls it's worked out from.</li>
               <li>Most U.S. House districts have no public polls at all, so their races show no poll bar.</li>
               <li>The poll lists are fetched at most once a day. A candidate's Polls tab lists every poll used, with a link to it.</li>
             </ul>

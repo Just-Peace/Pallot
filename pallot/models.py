@@ -62,6 +62,7 @@ class Breakdown(BaseModel):
     total: float | None = None
     note: str | None = None
     unit: Literal["dollars", "percent"] = "dollars"
+    count: int | None = None  # how many it's worked out from (a poll bar's polls)
 
 
 class CompareValue(BaseModel):

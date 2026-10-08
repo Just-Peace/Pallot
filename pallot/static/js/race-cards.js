@@ -9,8 +9,8 @@ import { plural } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
-import { searchHref, searchTitle } from "./search.js";
-import { fundingLine, likelyFlag, likelyUnflagged, profileLinks, raceMoney, sourceLines } from "./source-cards.js";
+import { searchHref, searchTitle, searchWord } from "./search.js";
+import { fundingLine, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -261,45 +261,39 @@ function candidateRow(race, candidate) {
     setTimeout(() => { saved.textContent = ""; }, 1500);
   }, 400);
 
-  // The "?" for likely matches with no badge on the row to show it, their lines' too while those are hidden.
-  let flag = null;
-  let linesShown = false;
-  const flagUnshown = (shown = linesShown) => {
-    linesShown = shown;
-    const unflagged = likelyUnflagged(candidate, !linesShown);
-    flag.hidden = !unflagged.length;
-    flag.title = `Likely match: ${unflagged.join(", ")}`;
-  };
-  const detailsButton = () => {
+  const index = () => race.candidates.indexOf(candidate);
+  const openAt = (card) => page.showDetails(race, index(), null, card.source);
+  const profileButton = () => {
     const sources = candidate.cards.length;
     const waiting = page.loadingCards;
-    flag = likelyFlag();
-    flagUnshown(false);
-    return h("button", { type: "button", class: "icon-btn", disabled: waiting || !sources, title: waiting ? STILL_LOADING : null,
-      on: { click: () => page.showDetails(race, race.candidates.indexOf(candidate)) } },
-      waiting ? "Details" : sources ? `Details · ${plural(sources, "source")}` : "No details", flag);
+    return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
+      title: waiting ? STILL_LOADING : `${candidate.name}'s profile: issues${sources ? ` and ${plural(sources, "source")}` : ""}`,
+      on: { click: () => page.showDetails(race, index()) } },
+      "Profile");
   };
-  // What the cards make, in the order fill() builds it again (the Details button's flag first).
-  const details = part(detailsButton);
+  // What the cards make, in the order fill() builds it again.
+  const profile = part(profileButton);
   const photo = part(() => avatar(candidate));
   const pills = part(() => candidatePills(candidate, race));
-  const profiles = part(() => profileLinks(candidate));
-  const lines = part(() => sourceLines(candidate, (shown) => flagUnshown(shown)));
-  const funding = part(() => fundingLine(candidate, () => flagUnshown()));
-  const fill = () => [details, photo, pills, profiles, lines, funding].forEach((p) => p.refill());
+  const lines = part(() => sourceLines(candidate));
+  const funding = part(() => fundingLine(candidate, openAt));
+  const fill = () => [profile, photo, pills, lines, funding].forEach((p) => p.refill());
 
   const row = h(
     "li",
     { class: "cand", "data-cand": candidate.key, "data-party": candidate.party || null },
-    h("div", { class: "cand-main" },
+    // The name with its pills beside it, Profile under them (outside the label, so it doesn't pick),
+    // and Note and Search to the side (beside Profile, on a phone).
+    h("div", { class: "cand-main cand-grid" },
       input,
       h("label", { for: `pick-${id}`, class: "cand-label" },
         photo.nodes,
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
           h("span", { class: "cand-sub" }, pills.nodes))),
+      h("div", { class: "cand-profile" }, profile.nodes),
       h("div", { class: "cand-actions" },
-        noteButton, details.nodes, searchLink(race, candidate, "icon-btn", "Web search ↗"), profiles.nodes)),
+        noteButton, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
     lines.nodes,
     funding.nodes,
     noteBox,

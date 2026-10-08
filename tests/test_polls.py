@@ -82,8 +82,8 @@ def test_bar_and_tab_for_a_race():
     assert (bar.label, bar.as_of, breakdown.unit) == ("FiftyPlusOne", "2026-09-01", "percent")
     assert [(p.label, p.amount, p.note, p.candidate_key) for p in breakdown.parts] == [
         ("Ken Paxton", 44.5, None, "paxton"), ("James Talarico", 47.0, None, "talarico"),
-        ("Ted Brown", None, "not in these polls", "brown"),
     ]
+    assert breakdown.count == 2
     assert "2 polls, Aug 1, 2026 – Sep 1, 2026" in breakdown.note
 
     tab = polls.candidate_card(SENATE.candidates[1], SENATE, readings, middle["talarico"])
