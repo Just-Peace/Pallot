@@ -1,6 +1,6 @@
 // The view settings that shape the ballot, kept with the other view settings (storage.js,
 // pallot.ui.v1). A switch the voter hasn't set follows VIEW_DEFAULTS, so a new default only
-// changes the ballot of a voter who hasn't chosen. Simple and Detailed each set the switches
+// changes the ballot of a voter who hasn't chosen. Minimal, Simple and Detailed each set the switches
 // in PRESETS; the mode is never stored, it's read from the switches (Custom when they're mixed).
 // Every change fires "pallot:view" on document, and another tab's comes as a storage event.
 
@@ -20,6 +20,7 @@ export const VIEW_DEFAULTS = {
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.
 export const PRESETS = {
+  minimal: { showMap: false, showMoney: false, showPolls: false, showEndorsements: false, showFunding: false, showSources: false },
   simple: { showMap: false, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: false },
   detailed: { showMap: true, showMoney: true, showPolls: true, showEndorsements: true, showFunding: true, showSources: true },
 };
@@ -36,7 +37,7 @@ export function setViewPref(name, value) {
   changed();
 }
 
-// "simple", "detailed", or "custom" when the switches match neither.
+// "minimal", "simple", "detailed", or "custom" when the switches match neither.
 export function viewMode() {
   const matches = (preset) => Object.entries(preset).every(([name, value]) => viewPref(name) === value);
   return Object.keys(PRESETS).find((mode) => matches(PRESETS[mode])) || "custom";
@@ -82,7 +83,7 @@ export function onViewChange(callback) {
   });
 }
 
-// A page's view controls: Simple and Detailed as radios named "view-mode" (neither checked when
+// A page's view controls: Minimal, Simple and Detailed as radios named "view-mode" (neither checked when
 // Custom), and a checkbox per switch, data-view="showMap". showViewControls() sets them from
 // the settings and returns the mode; bindViewControls() saves what the voter changes under ``root``.
 export function showViewControls(root = document) {

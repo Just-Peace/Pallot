@@ -70,10 +70,10 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 - **Top of the ballot**, staying in view as you scroll:
   - a progress bar counting races and propositions ("5 of 12 races · 1 of 2 propositions");
   - **Next race to pick** opens the next race you haven't picked and goes to it. `j` and `k` move to the next and previous race.
-  - **Simple** | **Detailed**, how much of the ballot shows (Simple at first): Simple folds the map of your districts and where the dates and districts come from (a **Where these come from** link shows it, and hides it again), and shows the money, polls, endorsements, ratings and funding. Detailed opens everything. With your own mix of switches, neither is selected.
+  - **Minimal** | **Simple** | **Detailed**, how much of the ballot shows (Simple at first): Minimal folds everything, leaving only the races and their candidates. Simple folds the map of your districts and where the dates and districts come from (a **Where these come from** link shows it, and hides it again), and shows the money, polls, endorsements, ratings and funding. Detailed opens everything. With your own mix of switches, neither is selected.
   - **Options** (the gear) opens the rest:
     - **Expand all** and **Collapse all**;
-    - **Show**: a switch each for the **Map of your districts**, **Money raised**, **Polls**, **Endorsements & ratings**, **Funding**, and **Where dates & districts come from**. Choosing Simple or Detailed sets them all again;
+    - **Show**: a switch each for the **Map of your districts**, **Money raised**, **Polls**, **Endorsements & ratings**, **Funding**, and **Where dates & districts come from**. Choosing Minimal, Simple or Detailed sets them all again;
     - **Collapse a race when I pick** (on at first), and **Only races I haven't picked**;
     - **Open Settings**, where Ballot view has the same choices.
 
@@ -242,7 +242,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 
 The **Settings** page, linked from the left pane, has five sections: **Appearance**, **Ballot view**, **Web search**, **Sources** and **Clear data**. On a phone, or with the left pane folded, a row of links to them stays at the top of the window. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot. The page:
 - sets the appearance: **System** (the default) follows your device's light or dark setting, or pick **Light** or **Dark**. It changes at once, in every open Pallot tab;
-- under **Ballot view**, chooses **Simple** or **Detailed** (neither, with "Your own mix, below", when the switches are mixed), and has a switch each for the map of your districts, money raised, polls, endorsements & ratings, funding, and where dates & districts come from, with a line on what each does, then **Collapse a race when I pick** and **Only races I haven't picked**: the same choices as the ballot's Simple | Detailed and Options. An open ballot follows a change at once, in any tab;
+- under **Ballot view**, chooses **Minimal**, **Simple** or **Detailed** (none, with "Your own mix, below", when the switches are mixed), and has a switch each for the map of your districts, money raised, polls, endorsements & ratings, funding, and where dates & districts come from, with a line on what each does, then **Collapse a race when I pick** and **Only races I haven't picked**: the same choices as the ballot's Minimal | Simple | Detailed and Options. An open ballot follows a change at once, in any tab;
 - picks the web search engine or AI assistant;
 - lists the sources in five groups, each with how many of its sources are on, and folds a group away when you click its heading (it stays folded in this browser):
   - **Address lookup & maps**: the address lookup (always on), election precincts, the counties' commissioner and JP precincts (which need election precincts on), the district outlines, the street map and address suggestions;
