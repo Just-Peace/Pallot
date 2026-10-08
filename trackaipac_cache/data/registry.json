@@ -1455,6 +1455,13 @@
     "party": "D",
     "state": "IL"
   },
+  "il-patty-garcia": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Patty Garcia",
+    "party": "D",
+    "state": "IL"
+  },
   "il-paul-nolley": {
     "chamber": "house",
     "district": "16",
@@ -3981,6 +3988,13 @@
     "name": "Wesley Hunt",
     "party": "R",
     "state": "TX"
+  },
+  "unk-andrew-rice": {
+    "chamber": "house",
+    "district": null,
+    "name": "Andrew Rice",
+    "party": null,
+    "state": null
   },
   "ut-ben-mcadams": {
     "chamber": "house",
