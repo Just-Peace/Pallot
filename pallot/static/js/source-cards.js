@@ -45,7 +45,24 @@ export const isLikely = (card) => card?.match?.confidence === "likely";
 // neutral one stays in Details.
 const SIDED = new Set(["good", "warn"]);
 const sided = (card) => card.kind === "endorsement" ? card.badges.filter((b) => SIDED.has(b.tone)) : [];
-const fundingChips = (card) => (card.kind === "money" ? [...(card.highlights || []), ...card.badges] : []);
+// Green chips before amber ones, each kept in its order.
+const greenFirst = (items, tone = (item) => item.tone) => [...items].sort((a, b) => (tone(a) === "good" ? 0 : 1) - (tone(b) === "good" ? 0 : 1));
+// A money card's chips, on the row and its tab: what it raised (its neutral badge) first, then its
+// highlights, green before amber, then outside spending (its other badges), for before against.
+const fundingChips = (card) => card.kind !== "money" ? [] : [
+  ...card.badges.filter((b) => b.tone === "neutral"),
+  ...greenFirst(card.highlights || []),
+  ...card.badges.filter((b) => b.tone !== "neutral"),
+];
+// Each item's chip, with the "?" of a likely match on the first of its card's.
+const chipsOf = (items, chip) => {
+  const seen = new Set();
+  return items.map(({ b, card }) => {
+    const first = !seen.has(card);
+    seen.add(card);
+    return chip(b, card, first);
+  });
+};
 
 // The view switch (view.js) that opens or folds a race box of each kind; other boxes always show.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
@@ -85,7 +102,8 @@ let lineIds = 0;
 // button counts them ("3 endorsements") and opens them in place, until syncLines(). A chip links
 // to its source's page for the candidate.
 export function sourceLines(candidate) {
-  const chips = candidate.cards.flatMap((card) => sided(card).map((b, j) => badge(b, card, j === 0, b.tone === "good" ? card.label : b.text)));
+  const items = greenFirst(candidate.cards.flatMap((card) => sided(card).map((b) => ({ b, card }))), (item) => item.b.tone);
+  const chips = chipsOf(items, (b, card, first) => badge(b, card, first, b.tone === "good" ? card.label : b.text));
   if (!chips.length) return null;
   const id = `lines-${++lineIds}`;
   const body = h("div", { class: "cand-lines-body", id }, h("div", { class: "badge-line" },
@@ -113,9 +131,8 @@ export function syncLines() {
   for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
 }
 
-// The candidate's Funding line, after their other lines: each money card's chips, as its tab in
-// Details shows them: its highlights ("Mostly small donors"), then its badges ("FEC: raised $9.2M",
-// outside spending for and against), with a "?" on the first of a card that only likely matched. The showFunding
+// The candidate's Funding line, after their other lines: each money card's chips (fundingChips),
+// as its tab in Details shows them, with a "?" on the first of a card that only likely matched. The showFunding
 // view switch hides it, with the money boxes, until syncFunding(). A chip opens Details at its money source,
 // ``onOpen(card)``.
 export function fundingLine(candidate, onOpen) {
@@ -127,7 +144,7 @@ export function fundingLine(candidate, onOpen) {
   } } }, h("div", { class: "badge-line" },
     h("span", { class: "line-title", id }, "Funding"),
     h("ul", { class: "badges", "aria-labelledby": id },
-      cards.flatMap((card) => fundingChips(card).map((b, j) => badge(b, card, j === 0, b.text, onOpen))))));
+      chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))), (b, card, first) => badge(b, card, first, b.text, onOpen)))));
   element.hidden = !viewPref("showFunding");
   return element;
 }
@@ -334,13 +351,13 @@ export function raceMoney(race, onCompare = null) {
   });
 }
 
-// A card's Funding chips, badges and facts, as cardPanel() and moneyPanel() show them.
+// A card's badges and facts, as cardPanel() and moneyPanel() show them: a money card's chips on one
+// Funding line, in the row's order (fundingChips).
 const cardSummary = (card) => [
-  card.highlights?.length
+  fundingChips(card).length
     ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
-        h("ul", { class: "badges", "aria-label": "Funding" }, card.highlights.map((b) => badge(b))))
-    : null,
-  card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
+        h("ul", { class: "badges", "aria-label": "Funding" }, fundingChips(card).map((b) => badge(b))))
+    : card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
   card.facts.length
     ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
     : null,

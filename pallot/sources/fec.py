@@ -350,7 +350,7 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
     badges = []
     if raised is not None:
         badges.append(Badge(
-            text=f"FEC: raised {money_short(raised)}",
+            text=f"Raised {money_short(raised)}",
             url=page,
             hint=f"Raised by the campaign for the {cycle} election ({span})"
             + (f", from reports through {display_date(through)}" if through else ""),

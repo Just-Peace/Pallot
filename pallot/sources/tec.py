@@ -445,7 +445,7 @@ def card(filer: dict[str, Any], match: Match | None, outside: dict[str, Any] | N
     since = _since(window)
     latest = totals.get("latest") or {}
     badges = [Badge(
-        text=f"TEC: raised {money_short(raised)}",
+        text=f"Raised {money_short(raised)}",
         url=SEARCH,
         hint=f"Raised since {since}, from reports to the Texas Ethics Commission (filer ID {filer['id']})",
     )]

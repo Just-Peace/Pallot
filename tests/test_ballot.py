@@ -120,7 +120,7 @@ def test_federal_races_get_fec_money(client):
     fec = next(card for card in talarico["cards"] if card["source"] == "fec")
     assert fec["match"]["confidence"] == "exact" and fec["as_of"] == "2026-06-30"
     assert [(b["text"], b["tone"]) for b in fec["badges"]] == [
-        ("FEC: raised $68.6M", "neutral"), ("Outside spending for: $4.1M", "info"), ("Outside spending against: $705K", "warn"),
+        ("Raised $68.6M", "neutral"), ("Outside spending for: $4.1M", "info"), ("Outside spending against: $705K", "warn"),
     ]
     assert all("none of it went to the campaign" in b["hint"] for b in fec["badges"][1:])
     assert fec["badges"][0]["url"] == "https://www.fec.gov/data/candidate/S6TX00479/?cycle=2026&election_full=true"

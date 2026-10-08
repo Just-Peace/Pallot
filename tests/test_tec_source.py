@@ -146,7 +146,7 @@ def test_cards_for_a_state_race(tmp_path):
     assert set(cards.candidates) == {"sos:1:1:0"}  # not Juan Perez (not filed), not the JP race (files locally)
     card = cards.candidates["sos:1:1:0"]
     assert (card.match.confidence, card.match.method) == ("exact", "full name, in the same seat")  # via her nickname
-    assert [b.text for b in card.badges] == ["TEC: raised $4K", "Outside spending: $2.3K"]
+    assert [b.text for b in card.badges] == ["Raised $4K", "Outside spending: $2.3K"]
     assert "Nov 6, 2024" in card.badges[0].hint and "00000001" in card.badges[0].hint
     facts = {f.label: f.value for f in card.facts}
     assert facts["Cash on hand"] == "$7,000 on Jun 30, 2025" and facts["Outstanding loans"] == "$1,000"
