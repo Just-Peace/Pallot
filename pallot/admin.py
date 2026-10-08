@@ -4,6 +4,7 @@ pallot-cache's (maintain.py), run on the host, never the page's."""
 
 from __future__ import annotations
 
+import datetime as dt
 from dataclasses import dataclass
 
 from .ballot import Services
@@ -14,7 +15,7 @@ from .sources import (
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
 )
 from .sources.endorsement_feeds import EndorsementSource
-from .text import display_time, iso_utc
+from .text import display_date, display_time, iso_utc
 
 
 @dataclass(frozen=True)
@@ -265,11 +266,25 @@ class Admin:
             return None
         return f"Paused until {display_time(until)} after {info.pause.after}; {info.pause.kept}."
 
+    def bundled(self, info: SourceInfo) -> str | None:
+        """ "Came with N answers, checked <date>." for a source whose answers come with Pallot (bundles/)."""
+        loaded = [self.svc.bundles[tag] for tag in info.cache_tags if tag in self.svc.bundles]
+        if not loaded:
+            return None
+        checked = display_date(dt.datetime.fromtimestamp(min(b.checked_at or 0 for b in loaded)).date())
+        count = sum(len(b.answers) for b in loaded)
+        return f"Came with {count:,} answer{'' if count == 1 else 's'}, checked {checked}."
+
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
-        """One line under the source's description: what it's missing, or where its data stands."""
-        paused = self.paused(info)
+        """One line under the source's description: what it's missing, or where its data stands,
+        then what came with Pallot."""
         if info.id == fec.SOURCE:
             return self._fec_notice(info)
+        notice, tone = self._state(info)
+        return " ".join(filter(None, (notice, self.bundled(info)))) or None, tone
+
+    def _state(self, info: SourceInfo) -> tuple[str | None, Tone]:
+        paused = self.paused(info)
         if info.id == google.SOURCE:
             return (paused, "warn") if paused else ((None, "info") if self.svc.google.keyed else (google.KEY_NOTE, "warn"))
         if paused:
@@ -290,7 +305,7 @@ class Admin:
                      f"{trouble}.")
         else:
             state = None
-        snapshot = svc.snapshot_note()
+        snapshot = self.bundled(info)
         if not svc.keyed:
             return " ".join(filter(None, (state, snapshot, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
         if state:

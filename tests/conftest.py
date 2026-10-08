@@ -530,9 +530,9 @@ def fec_unpaced(monkeypatch):
 @pytest.fixture
 def make_app(tmp_path, upstream):
     """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY,
-    endorsements_dir=FIXTURES / "endorsements", google_key="", fec_extra_keys=(), fec_bundled=None) -> a new app; call
-    again on the same dir to 'restart'. It answers to TestClient's host name, testserver. No FEC snapshot is loaded
-    unless ``fec_bundled`` names one."""
+    endorsements_dir=FIXTURES / "endorsements", google_key="", fec_extra_keys=(), bundles=None) -> a new app; call
+    again on the same dir to 'restart'. It answers to TestClient's host name, testserver. No bundled answers are
+    loaded unless ``bundles`` names a folder of them."""
     refreshed: list[Path] = []
     tec_refreshed: list[dict[str, Any]] = []
 
@@ -550,7 +550,7 @@ def make_app(tmp_path, upstream):
     def options(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
                 fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements",
                 google_key: str = "", fec_extra_keys: tuple[str, ...] = (),
-                fec_bundled: Path | None = None) -> dict[str, Any]:
+                bundles: Path | None = None) -> dict[str, Any]:
         return dict(
             config=Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, fec_extra_keys=fec_extra_keys,
                           google_api_key=google_key, allowed_hosts=("testserver",)),
@@ -561,7 +561,7 @@ def make_app(tmp_path, upstream):
             voteforpeace_refresh=voteforpeace_refresh or fake_voteforpeace_refresh,
             tec_bundled=FIXTURES / "tec",
             tec_refresh=tec_refresh or fake_tec_refresh,
-            fec_bundled=fec_bundled or tmp_path / "no-fec-snapshot",
+            bundles=bundles or tmp_path / "no-bundles",
             endorsements_dir=endorsements_dir,
             min_interval={},
         )

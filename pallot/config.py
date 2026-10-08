@@ -39,6 +39,7 @@ class Ttls:
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
     fec_backoff: int = 2 * 60  # how long a key the FEC rate limits rests (its limit counts the last minute)
     fec_refused_backoff: int = HOUR  # how long a key the FEC refuses rests
+    fec_bundle: int = 7 * DAY  # the FEC's answers bundled with Pallot, from when they were last checked (bundles/)
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
