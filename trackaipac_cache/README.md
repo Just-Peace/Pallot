@@ -2,7 +2,7 @@
 
 A local JSON copy of the congressional AIPAC funding and endorsement data on [trackaipac.com](https://www.trackaipac.com).
 
-This folder is a copy of `trackaipac_cache` from `git@github.com:Fahd-Siddiqui/TrackAipacCache.git` (branch `develop`, commit `423443a`), brought into this repo instead of being installed as a dependency. Its tests are in `tests/trackaipac/`. Changes made here are not synced back to that repo.
+This folder is a copy of `trackaipac_cache` from `git@github.com:Fahd-Siddiqui/TrackAipacCache.git` (branch `develop`, commit `423443a`), brought into this repo instead of being installed as a dependency. Its tests are in `tests/trackaipac/`. Changes made here are not synced back to that repo. This copy differs from the original: it keeps no `history/` folder (git keeps the history), so it has no `history()` function and its `meta.json` has no `latest_snapshot`.
 
 | Page on the site | Category    |
 |------------------|-------------|
@@ -29,7 +29,6 @@ t.list_watchlist(state="TX", party="R")
 t.list_endorsed(incumbents_only=True)      # True: incumbents, False: challengers, None: all
 t.list_congress(state="CA", chamber="senate")
 t.search("AIPAC")
-t.history("Mary Peltola")                  # one Snapshot per listing for each saved day
 t.last_refreshed()
 ```
 
@@ -47,9 +46,8 @@ Without `--data-dir`, this updates `trackaipac_cache/data/` in this repo (commit
 
 ## Data (`trackaipac_cache/data/`)
 
-- `history/YYYY-MM-DD.json`: one row per entry on the site, in page order. Each row holds the entry's verbatim `lines` plus the parsed fields. A file is written only when the site changed; a second change on the same day overwrites that day's file.
 - `registry.json`: `candidate_id` → name, state, district, party, chamber. Entries are never removed.
-- `current.json`: the latest snapshot, grouped per person. It is generated, so don't edit it.
+- `current.json`: the latest snapshot, grouped per person. Each listing is one entry on the site, with its verbatim `lines` plus the parsed fields, in page order. It is generated, so don't edit it. It is rewritten only when the site changed, and a refresh compares the pages with its listings. Git keeps the earlier versions.
 - `meta.json`: `last_refresh`, `last_checked`, and a hash of each page's data.
 
 ## Tests

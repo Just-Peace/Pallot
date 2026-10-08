@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, fields
-from datetime import date, datetime
-from pathlib import Path
+from datetime import datetime
 from typing import Any
 
 BASE_URL = "https://www.trackaipac.com"
@@ -93,7 +92,7 @@ class ParsedRecord:
         }
 
     def snapshot_row(self) -> dict[str, Any]:
-        """History-file row."""
+        """The row stored in current.json."""
         return {
             "candidate_id": self.candidate_id,
             "source": self.source,
@@ -160,17 +159,6 @@ class Listing:
 
 
 @dataclass(frozen=True)
-class Snapshot(Listing):
-    """A listing as it appeared in one history file."""
-
-    date: date
-
-    @classmethod
-    def from_history(cls, snapshot_date: date, row: dict[str, Any]) -> Snapshot:
-        return cls(**Listing._kwargs(row), date=snapshot_date)
-
-
-@dataclass(frozen=True)
 class Candidate:
     """A person in current.json with every listing they have, unmodified."""
 
@@ -217,7 +205,7 @@ class RefreshResult:
     added: tuple[str, ...] = ()
     removed: tuple[str, ...] = ()
     modified: dict[str, tuple[str, ...]] = field(default_factory=dict)
-    snapshot_path: Path | None = None
+    snapshot: str | None = None
     warnings: tuple[str, ...] = ()
 
     @property
@@ -230,7 +218,7 @@ class RefreshResult:
         else:
             verb = "updated" if self.status == "updated" else "would update"
             head = (
-                f"{verb} {self.snapshot_path.name if self.snapshot_path else ''}: "
+                f"{verb} {self.snapshot or ''}: "
                 f"sources changed: {', '.join(self.changed_sources) or 'none (forced)'}; "
                 f"{len(self.added)} added, {len(self.removed)} removed, {len(self.modified)} modified"
             )

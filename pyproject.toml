@@ -36,9 +36,9 @@ version = { attr = "pallot.__version__" }
 
 [tool.setuptools.package-data]
 pallot = ["sources.toml", "static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*", "endorsements/*.json"]
-trackaipac_cache = ["data/*.json", "data/history/*.json"]
+trackaipac_cache = ["data/*.json"]
 tec_cache = ["data/*.json"]
-voteforpeace_cache = ["data/*.json", "data/history/*.json"]
+voteforpeace_cache = ["data/*.json"]
 fec_cache = ["data/*.json"]
 
 [tool.pytest.ini_options]

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 BASE_URL = "https://voteforpeace.info"
@@ -65,7 +64,7 @@ class ParsedRecord:
     articles: tuple[Article, ...] = ()
 
     def snapshot_row(self) -> dict[str, Any]:
-        """History-file row."""
+        """The row stored in current.json."""
         return {
             "candidate_id": self.candidate_id,
             "name": self.name,
@@ -100,7 +99,7 @@ class RefreshResult:
     added: tuple[str, ...] = ()
     removed: tuple[str, ...] = ()
     modified: dict[str, tuple[str, ...]] = field(default_factory=dict)
-    snapshot_path: Path | None = None
+    snapshot: str | None = None
     warnings: tuple[str, ...] = ()
 
     @property
@@ -113,7 +112,7 @@ class RefreshResult:
         else:
             verb = "updated" if self.status == "updated" else "would update"
             head = (
-                f"{verb} {self.snapshot_path.name if self.snapshot_path else ''}: "
+                f"{verb} {self.snapshot or ''}: "
                 f"{len(self.added)} added, {len(self.removed)} removed, {len(self.modified)} modified"
             )
         lines = [head, f"candidates: {self.record_count}"]

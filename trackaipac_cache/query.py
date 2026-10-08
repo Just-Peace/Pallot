@@ -1,13 +1,13 @@
-"""Read-side API. Reads current.json, except history() (registry.json + history/*.json)."""
+"""Read-side API. Reads current.json."""
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, TypeVar
 
 from .errors import AmbiguousNameError
-from .models import CATEGORIES, STATES, Candidate, Snapshot
+from .models import STATES, Candidate
 from .parser import normalize_name
 from .store import Paths, read_json, resolve_data_dir
 
@@ -46,14 +46,6 @@ def _load(path: Path, transform: Callable[[Any], T], default: T) -> T:
 
 def _to_candidates(doc: Any) -> tuple[Candidate, ...]:
     return tuple(Candidate.from_dict(c) for c in (doc or {}).get("candidates", []))
-
-
-def _identity(doc: Any) -> dict[str, dict[str, Any]]:
-    return doc or {}
-
-
-def _rows(doc: Any) -> list[dict[str, Any]]:
-    return doc or []
 
 
 def _paths(data_dir: str | Path | None) -> Paths:
@@ -174,39 +166,8 @@ def search(query: str, *, data_dir: str | Path | None = None) -> list[Candidate]
     return [item[3] for item in ranked]
 
 
-def history(name_or_id: str, *, data_dir: str | Path | None = None) -> list[Snapshot]:
-    """Every snapshot row for one person across history/*.json, oldest first (within a
-    day: by category, then page order).
-
-    Resolves through registry.json, so people no longer listed are still found.
-    """
-    paths = _paths(data_dir)
-    candidate_id = _resolve_id(name_or_id, paths)
-    if candidate_id is None:
-        return []
-    snapshots: list[Snapshot] = []
-    for path in paths.history_files():
-        day = date.fromisoformat(path.stem)
-        rows = [r for r in _load(path, _rows, []) if r.get("candidate_id") == candidate_id]
-        rows.sort(key=lambda r: CATEGORIES.index(r["category"]) if r.get("category") in CATEGORIES else len(CATEGORIES))
-        snapshots += [Snapshot.from_history(day, r) for r in rows]
-    return snapshots
-
-
 def last_refreshed(*, data_dir: str | Path | None = None) -> datetime | None:
     """When data was last written (not merely checked); None if the cache was never filled."""
     meta = read_json(_paths(data_dir).meta, default={}) or {}
     stamp = meta.get("last_refresh")
     return datetime.fromisoformat(stamp) if stamp else None
-
-
-def _resolve_id(name_or_id: str, paths: Paths) -> str | None:
-    registry = _load(paths.registry, _identity, {})
-    key = name_or_id.strip()
-    if key.lower() in registry:
-        return key.lower()
-    wanted = normalize_name(key)
-    matches = sorted(cid for cid, ident in registry.items() if normalize_name(ident.get("name", "")) == wanted)
-    if len(matches) > 1:
-        raise AmbiguousNameError(key, matches)
-    return matches[0] if matches else None

@@ -40,35 +40,33 @@ def refresh(
     digest = hash_rows(rows)
 
     meta = store.load_meta(paths)
-    latest = paths.latest_snapshot()
-    if latest is not None and meta.get("rows_hash") == digest and not force:
+    previous = paths.current_rows()
+    if previous is not None and meta.get("rows_hash") == digest and not force:
         if not dry_run:
             meta["last_checked"] = _iso(now)
             store.write_json(paths.meta, meta)
         return RefreshResult(status="no_changes", checked_at=now, record_count=len(rows), warnings=tuple(notes))
 
-    previous = store.read_json(latest, default=[]) if latest else []
-    added, removed, modified = diff_rows(previous, rows)
-    snapshot_path = paths.snapshot(now.date())
+    added, removed, modified = diff_rows(previous or [], rows)
+    snapshot = now.date().isoformat()
     result_kwargs = dict(
         checked_at=now,
         record_count=len(rows),
         added=added,
         removed=removed,
         modified=modified,
-        snapshot_path=snapshot_path,
+        snapshot=snapshot,
         warnings=tuple(notes),
     )
     if dry_run:
         return RefreshResult(status="would_update", **result_kwargs)
 
-    store.write_json(snapshot_path, rows)
-    store.write_json(paths.current, store.build_current(rows, snapshot_path.stem))
+    store.write_json(paths.current, store.build_current(rows, snapshot))
+    meta.pop("latest_snapshot", None)
     meta.update(
         schema_version=store.SCHEMA_VERSION,
         last_refresh=_iso(now),
         last_checked=_iso(now),
-        latest_snapshot=snapshot_path.stem,
         rows_hash=digest,
     )
     store.write_json(paths.meta, meta)

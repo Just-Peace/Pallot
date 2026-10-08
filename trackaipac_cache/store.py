@@ -1,11 +1,10 @@
-"""On-disk layout: registry.json, history/YYYY-MM-DD.json, current.json, meta.json."""
+"""On-disk layout: registry.json, current.json, meta.json."""
 
 from __future__ import annotations
 
 import json
 import os
 import tempfile
-from datetime import date
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -33,27 +32,13 @@ class Paths:
         self.registry = root / "registry.json"
         self.current = root / "current.json"
         self.meta = root / "meta.json"
-        self.history_dir = root / "history"
 
-    def snapshot(self, day: date) -> Path:
-        return self.history_dir / f"{day.isoformat()}.json"
-
-    def history_files(self) -> list[Path]:
-        if not self.history_dir.is_dir():
-            return []
-        return sorted(p for p in self.history_dir.glob("*.json") if _is_day_stem(p.stem))
-
-    def latest_snapshot(self) -> Path | None:
-        files = self.history_files()
-        return files[-1] if files else None
-
-
-def _is_day_stem(stem: str) -> bool:
-    try:
-        date.fromisoformat(stem)
-    except ValueError:
-        return False
-    return True
+    def current_rows(self) -> list[dict[str, Any]] | None:
+        """The rows of the last refresh, read back out of current.json (None before any)."""
+        document = read_json(self.current)
+        if document is None:
+            return None
+        return [listing for candidate in document.get("candidates", []) for listing in candidate.get("listings", [])]
 
 
 def read_json(path: Path, default: Any = None) -> Any:
@@ -86,7 +71,6 @@ def load_meta(paths: Paths) -> dict[str, Any]:
     meta.setdefault("schema_version", SCHEMA_VERSION)
     meta.setdefault("last_refresh", None)
     meta.setdefault("last_checked", None)
-    meta.setdefault("latest_snapshot", None)
     meta.setdefault("source_hashes", {})
     return meta
 
@@ -99,8 +83,7 @@ def snapshot_rows(records: Iterable[ParsedRecord]) -> list[dict[str, Any]]:
 
 def upsert_registry(registry: dict[str, dict[str, Any]], records: Iterable[ParsedRecord]) -> dict[str, dict[str, Any]]:
     """Return a new registry. Ids seen in this fetch get their identity exactly as this
-    fetch shows it; ids no longer listed keep their last-seen identity (so history()
-    can still resolve them)."""
+    fetch shows it; ids no longer listed keep their last-seen identity."""
     by_id: dict[str, list[ParsedRecord]] = {}
     for record in records:
         by_id.setdefault(record.candidate_id, []).append(record)
