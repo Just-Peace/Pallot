@@ -119,7 +119,7 @@
             <p>They're how much of your ballot shows at first, chosen with Minimal | Simple | Detailed at the top of the ballot or under Ballot view in <a href="settings.html#view-title">Settings</a>. Nothing is left out of either: anything folded opens with a click.</p>
             <ul>
               <li><strong>Minimal</strong>: only the races and their candidates. The map, money boxes, polls, endorsements, ratings and funding are folded or hidden.</li>
-              <li><strong>Simple</strong>, where Pallot starts: the map of your districts and each race's money box are folded to one line. The polls, endorsements and ratings show.</li>
+              <li><strong>Simple</strong>, where Pallot starts: the map of your districts is folded to one line. The money, polls, endorsements and ratings show.</li>
               <li><strong>Detailed</strong>: everything is open, the map and the money boxes included.</li>
             </ul>
             <p>Each part also has its own switch, under "Show" in the ballot's Options and in Settings. Flip one and the view is "Custom", your own mix; choosing Minimal, Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
@@ -297,11 +297,13 @@
           <summary>What do the Funding chips mean?</summary>
           <div class="faq-body">
             <p>The Funding line under a candidate's name sums up, in a word, where their campaign's money comes from. They're facts worked out from the campaign's reports, not endorsements. Hover over a chip, or open the FEC or TEC tab in Details, for the figure behind it.</p>
+            <p>A chip says <strong>Mostly</strong> when its side is more than half, and <strong>Overwhelmingly</strong> when it's more than three quarters. Green chips are money from many people at home; amber ones are money from a few, from far away, or from the candidate.</p>
             <ul>
-              <li><strong>Mostly small donors:</strong> donations of $200 or less are more than half of everything the campaign raised. For state offices, that's the donations the campaign didn't itemize plus the itemized ones of $200 or less, since most Texas campaigns itemize every donation.</li>
-              <li><strong>Mostly Texas donors:</strong> more than half of the itemized donations from individuals with an address came from Texas. It counts only itemized donations: for Congress, those from donors who gave more than $200 in all; for state offices, every donation the campaign itemized. Donations with no address are left out.</li>
-              <li><strong>Mostly self-funded:</strong> the candidate's own gifts and loans to their campaign are more than half of what it raised. Only for Congress: state reports don't separate them.</li>
+              <li><strong>Small donors</strong> (green) or <strong>large donations</strong> (amber): the share of everything the campaign raised that came in donations under $500. Over half is small donors; under half is large donations, which counts everything else the campaign raised: donations of $500 or more, PACs and the candidate's own money. Small donations are the ones the campaign didn't itemize plus the itemized ones under $500. For Congress, a donation that wasn't itemized is from a donor who gave $200 or less in all.</li>
+              <li><strong>Texas donors</strong> (green) or <strong>out-of-state donors</strong> (amber): the share of the itemized donations from individuals with an address that came from Texas. It counts only itemized donations: for Congress, those from donors who gave more than $200 in all; for state offices, every donation the campaign itemized. Donations with no address are left out.</li>
+              <li><strong>Self-funded</strong> (amber): the candidate's own gifts and loans to their campaign are more than half of what it raised. Only for Congress: state reports don't separate them.</li>
             </ul>
+            <p>At exactly half, there's no chip.</p>
             <p>A campaign that raised less than $10,000 gets none, since a few donations would decide it. The federal chips need Pallot's FEC key: with the shared demonstration key the FEC gives totals only (see <a href="#fec-key">why the FEC tab shows only totals</a>). Turn the line off with Funding under the ballot's Options, or in <a href="settings.html#view-title">Settings</a>.</p>
           </div>
         </details>

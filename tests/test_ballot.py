@@ -132,11 +132,11 @@ def test_federal_races_get_fec_money(client):
     assert any("Senate" in link["label"] for link in fec["links"])  # personal financial disclosures
     assert set(fec["figures"]) == {"raised", "spent", "cash", "outside_for", "small_share", "self_share", "in_state_share"}  # what Pick by rule tests
     assert fec["figures"]["in_state_share"] == 77.6  # Texas, of the states the donors gave from
-    assert [(b["text"], b["hint"]) for b in fec["highlights"]] == [
-        ("Mostly small donors", "54% of the $68.6M raised came from donations of $200 or less (FEC, 2021–26)"),
-        ("Mostly Texas donors", "78% of itemized donations from individuals with an address came from Texas (FEC, 2021–26)"),
+    assert [(b["text"], b["tone"], b["hint"]) for b in fec["highlights"]] == [
+        ("Mostly small donors", "good", "70% of the $68.6M raised came from donations under $500 (FEC, 2021–26)"),
+        ("Overwhelmingly Texas donors", "good", "78% of itemized donations from individuals with an address came from Texas (FEC, 2021–26)"),
     ]
-    assert (fec["figures"]["small_share"], fec["figures"]["self_share"]) == (53.6, 0.0)  # percents of raised
+    assert (fec["figures"]["small_share"], fec["figures"]["self_share"]) == (70.4, 0.0)  # percents of raised
     assert fec["figures"]["raised"] == 68560930.42 and fec["figures"]["outside_for"] == pytest.approx(4.1e6, rel=0.05)
 
     paxton = next(card for card in senate["candidates"][0]["cards"] if card["source"] == "fec")

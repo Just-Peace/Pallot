@@ -304,7 +304,7 @@ function draw(rule, options, startScope) {
             + "congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it "
             + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. So “Democrats who spent under $1M” "
             + "still picks a county race's Democrat. “The least” and “the most” compare the candidates in each race. Small "
-            + "donations ($200 or less) and Texas donors (their share of itemized donations with an address) are known in "
+            + "donations (under $500) and Texas donors (their share of itemized donations with an address) are known in "
             + "congressional races with an FEC key, and in state races from the Texas Ethics Commission. Self-funding is known "
             + "only in congressional races, with an FEC key."),
           h("p", {}, "Without the Write-ins chip, a rule picks only the names printed on the ballot. If more candidates match than "

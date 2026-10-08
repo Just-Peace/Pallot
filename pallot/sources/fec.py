@@ -378,7 +378,7 @@ def card(row: dict[str, Any], match: Match | None, details: Details | None, *, s
              url=SENATE_DISCLOSURES if senate else HOUSE_DISCLOSURES),
     ]
     home = seat.partition("-")[0]
-    figures = _figures(campaign, totals, details.outside, details.states, home)
+    figures = _figures(campaign, totals, details.outside, details.states, details.sizes, home)
     breakdowns = [
         _where_from(totals, raised, span),
         _sizes(details.sizes),
@@ -418,13 +418,21 @@ def _in_state(rows: list[dict[str, Any]] | None, home: str) -> float | None:
     return _share(sum(_number(r["total"]) or 0 for r in placed if r["state"] == home), whole)
 
 
+def _small(sizes: list[dict[str, Any]] | None, raised: float | None) -> float | None:
+    """The share of what was raised in donations under $500, in percent: the FEC's two smallest
+    size groups ($200 and under, which holds the unitemized money, and $200.01–$499.99)."""
+    if not sizes:
+        return None
+    return _share(sum(_number(r.get("total")) or 0 for r in sizes if (r.get("size") or 0) < 500), raised)
+
+
 def _figures(campaign: Money, totals: dict[str, Any], outside: list[dict[str, Any]] | None,
-             states: list[dict[str, Any]] | None, home: str) -> dict[str, float]:
+             states: list[dict[str, Any]] | None, sizes: list[dict[str, Any]] | None, home: str) -> dict[str, float]:
     """Pick by rule's figures. The shares (small donations and the candidate's own gifts and
     loans, of what was raised; donors in the state, of itemized donations) and outside spending
     only from the calls a key makes, so a campaign nobody spent for is 0, not missing."""
     figures = {"raised": campaign.raised, "spent": campaign.spent, "cash": campaign.cash}
-    figures["small_share"] = _share(_number(totals.get("individual_unitemized_contributions")), campaign.raised)
+    figures["small_share"] = _small(sizes, campaign.raised)
     figures["self_share"] = _share(_own(totals), campaign.raised)
     figures["in_state_share"] = _in_state(states, home)
     if outside is not None:

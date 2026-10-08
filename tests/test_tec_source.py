@@ -179,8 +179,9 @@ def test_funding_chips_from_the_tec(tmp_path):
                  by_state={"TX": 2000.0, "other": 1000.0, "unknown": 9000.0})  # an unknown address is left out
     card = tec.card(filer, None, None, window="2024-11-06")
     assert card.figures["in_state_share"] == 66.7
-    [chip] = card.highlights
-    assert chip.text == "Mostly Texas donors" and chip.tone == "neutral"
+    large, chip = card.highlights
+    assert (large.text, large.tone) == ("Overwhelmingly large donations", "warn")  # $800 of $40K in donations under $500
+    assert chip.text == "Mostly Texas donors" and chip.tone == "good"
     assert chip.hint == "67% of itemized donations from individuals with an address came from Texas (TEC, since Nov 6, 2024)"
     assert tec.card(jane(by_state={"unknown": 50.0}), None, None, window=None).figures.get("in_state_share") is None
 
@@ -189,7 +190,7 @@ def test_small_donor_share_from_the_tec():
     sizes = [{"amount": 25000.0, "count": 300}] + [{"amount": 5000.0, "count": 5}] * 5
     filer = jane(totals={**jane()["totals"], "raised": 50000.0, "unitemized": 5000.0}, sizes=sizes)
     card = tec.card(filer, None, None, window="2024-11-06")
-    assert card.figures["small_share"] == 60.0  # $5K unitemized and $25K itemized at $200 or less, of $50K
+    assert card.figures["small_share"] == 70.0  # $5K unitemized and $30K itemized under $500, of $50K
     assert "Mostly small donors" in [chip.text for chip in card.highlights]
     older = jane(sizes=[{"amount": 400.0, "count": 1}] + [{"amount": 0.0, "count": 0}] * 4)  # "Under $500" came first
     card = tec.card(older, None, None, window=None)
