@@ -9,6 +9,14 @@
    "last_refresh": "2026-10-08T18:54:13+00:00",
    "races": 39
   },
+  "officeholders": {
+   "answers": 2,
+   "answers_hash": "e0fecb760b6d3a8752f1fd322aa71d3340b02d13e95a6f4666c97facf647deb1",
+   "congress": 39,
+   "last_checked": "2026-10-08T20:26:01+00:00",
+   "last_refresh": "2026-10-08T20:26:01+00:00",
+   "legislature": 178
+  },
   "sos": {
    "answers": 9,
    "answers_hash": "27470e241117589aafa633487bdb566ffe8e1f2b365f3390aa8c765ee90ab3d1",
@@ -25,6 +33,16 @@
    "last_checked": "2026-10-08T20:03:40+00:00",
    "last_refresh": "2026-10-08T20:03:40+00:00",
    "server_errors": 0
+  },
+  "tigerweb": {
+   "answers": 220,
+   "answers_hash": "e8536e58304eb293560c796738020436093f82bd63cb56db4dfad15e7230b493",
+   "cd": 38,
+   "hd": 150,
+   "last_checked": "2026-10-08T20:30:48+00:00",
+   "last_refresh": "2026-10-08T20:30:48+00:00",
+   "missing": 0,
+   "sd": 31
   }
  }
 }

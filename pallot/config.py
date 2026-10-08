@@ -50,6 +50,7 @@ class Ttls:
     key_dates_backoff: int = HOUR  # after that page is refused us, stop asking for this long
     outlines: int = 30 * DAY  # TIGERweb's district outlines for the map, as long as the geocoder's districts
     outlines_backoff: int = HOUR  # after TIGERweb refuses us, stop asking for this long
+    tigerweb_bundle: int = 37 * DAY  # TIGERweb's outlines bundled with Pallot (bundles/), refreshed weekly: a week of grace
     tiles: int = 7 * DAY  # OpenStreetMap's map tiles: its tile usage policy asks for at least 7 days
     tiles_backoff: int = HOUR  # after OpenStreetMap's tile server refuses us, stop asking for this long
     election_precincts: int = 7 * DAY  # the TLC portal's list of precinct maps: a new one comes after each statewide election
@@ -60,6 +61,7 @@ class Ttls:
     endorsement_feeds_backoff: int = HOUR  # after an organization's site refuses us, stop asking it for this long
     officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat
     officeholders_backoff: int = HOUR  # after either list is refused us, stop asking for this long
+    officeholders_bundle: int = 14 * DAY  # both lists bundled with Pallot (bundles/), refreshed weekly: a week of grace
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # delete expired suggestions, tiles and addresses not found once expired this long
 
