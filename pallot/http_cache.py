@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import contextlib
 import contextvars
 import hashlib
 import json
@@ -46,7 +47,7 @@ import time
 from collections import OrderedDict, deque
 from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import Any, Callable, Collection, Mapping, Sequence
+from typing import Any, Callable, Collection, Iterable, Iterator, Mapping, Sequence
 
 import httpx
 
@@ -184,6 +185,17 @@ _call_stats: contextvars.ContextVar[CallStats | None] = contextvars.ContextVar("
 _refreshing: contextvars.ContextVar[bool] = contextvars.ContextVar("pallot_refreshing", default=False)
 REFRESH_WAITS = 10 * 60  # refresh() waits out a pause of a source's keys that ends within this
 REFRESH_TRIES = 3  # how many times refresh() asks a request whose keys were all resting
+
+
+@contextlib.contextmanager
+def offline() -> Iterator[None]:
+    """Requests made inside (refresh's, a bundled snapshot's) go at their keys' ``refresh_limit``:
+    nobody is waiting on them."""
+    token = _refreshing.set(True)
+    try:
+        yield
+    finally:
+        _refreshing.reset(token)
 
 
 def track_calls() -> CallStats:
@@ -401,6 +413,20 @@ class HttpCache:
             raise
         return written
 
+    def seed(self, source: str, answers: Iterable[tuple[RequestSpec, Any]], fetched_at: float, ttl: float) -> int:
+        """Store answers fetched elsewhere (a bundled snapshot) as fetched at ``fetched_at`` and
+        kept ``ttl`` from then, where no copy as new is stored; returns how many were stored."""
+        stored = 0
+        for spec, value in answers:
+            with self._lock:
+                row = self._db.execute(
+                    "SELECT fetched_at FROM responses INDEXED BY responses_key_dates WHERE key = ?", (spec.key,)
+                ).fetchone()
+            if row is None or row[0] < fetched_at:
+                self._store(spec, source, value, fetched_at, ttl, None, ())
+                stored += 1
+        return stored
+
     def peek(self, spec: RequestSpec) -> Cached | None:
         """The stored copy of ``spec``, fresh or not, without asking anyone (Settings reads
         what's kept this way)."""
@@ -418,8 +444,8 @@ class HttpCache:
         """Send ``source``'s requests (get_json's and refresh's) with ``keys`` in ``header``, each
         key in turn. With ``limit`` (count, seconds), a key sends at most that many requests in any
         window that long: a request takes the open key with room soonest, and waits only when
-        every key's window is full. ``refresh_limit`` replaces it while refresh() runs, which
-        nobody waits on. A key answered with a status in ``rest_on`` rests for its seconds and the
+        every key's window is full. ``refresh_limit`` replaces it inside offline() (refresh's,
+        and a bundled snapshot's requests), which nobody waits on. A key answered with a status in ``rest_on`` rests for its seconds and the
         request goes again with the next open key; the source is paused only while every key
         rests. Like ``source_headers``, the keys are never stored."""
         self._keys[source] = _Keys(header, tuple(keys), dict(rest_on), limit, refresh_limit)
@@ -816,11 +842,8 @@ class HttpCache:
             )
             return None
 
-        offline = _refreshing.set(True)
-        try:
+        with offline():
             errors = [e for e in await asyncio.gather(*(one(row) for row in rows)) if e]
-        finally:
-            _refreshing.reset(offline)
         return RefreshReport(
             refreshed=len(rows) - len(errors) - skipped,
             failed=len(errors),

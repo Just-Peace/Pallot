@@ -225,6 +225,26 @@ async def test_shared_keys_take_turns_and_rest_when_refused(tmp_path):
     assert sorted(name.split(":")[3] for name in names if name.startswith("rest:demo:")) == ["403", "429", "429", "429"]
 
 
+async def test_seeded_answers_fill_in_but_never_replace_a_newer_copy(tmp_path):
+    clock = Clock()
+    older, newer = RequestSpec("GET", URL, params={"q": "older"}), RequestSpec("GET", URL, params={"q": "newer"})
+    with respx.mock() as router:
+        route = router.get(URL).mock(return_value=httpx.Response(200, json={"v": "live"}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            await cache.get_json("demo", older, ttl=60)
+            clock.now += 10
+            await cache.get_json("demo", newer, ttl=60)
+            snapshot = [(older, {"v": "bundled"}), (newer, {"v": "bundled"}), (SPEC, {"v": "bundled"})]
+            assert cache.seed("demo", snapshot, clock.now - 5, ttl=60) == 2  # not newer: it was fetched after the snapshot
+            assert (await cache.get_json("demo", newer, ttl=60)).value == {"v": "live"}
+            assert cache.seed("demo", snapshot, clock.now + 1, ttl=60) == 3
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": "bundled"}
+            clock.now += 62
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": "live"}  # stale: asked again
+    assert route.call_count == 3
+
+
 @pytest.fixture
 def waits(monkeypatch):
     """asyncio.sleep moves the test's Clock on instead of waiting; returns (clock, the waits asked for)."""
