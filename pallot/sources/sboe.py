@@ -2,17 +2,20 @@
 
 The Census geocoder doesn't cover SBOE districts, and counties like Harris are split
 across several, so we look the point up ourselves: the KML is plain lat/lon, which keeps
-this to a ray-casting point-in-polygon test with no GIS libraries. The map is downloaded
-once into the data folder, through HttpCache.download, and kept.
+this to a ray-casting point-in-polygon test with no GIS libraries. The map comes with Pallot
+(pallot/data) and is copied into the data folder when none is kept, so a lookup never downloads it;
+only pallot-cache's hard refresh fetches it again, through HttpCache.download, for a newer plan.
 """
 
 from __future__ import annotations
 
 import asyncio
+import filecmp
 import io
 import math
 import os
 import re
+import shutil
 import xml.etree.ElementTree as ET
 import zipfile
 from dataclasses import dataclass
@@ -32,6 +35,7 @@ KML_URL = (
     "/resource/a8a7daf2-ab21-4742-bf56-e1ab697580ea/download/plane2106_kml.zip"
 )
 HOST = urlsplit(KML_URL).hostname
+BUNDLED = Path(__file__).resolve().parent.parent / "data" / "plane2106_kml.zip"  # bump it when a new plan is adopted
 REFUSALS = (403, 429)  # answers that pause the portal for Ttls.election_precincts_backoff
 MAX_BYTES = 20 * 1_048_576  # the map is about 1.9 MB
 FAILED_FLAG = f"failed:{SOURCE}"
@@ -201,14 +205,16 @@ def locate(districts: list[District], lat: float, lon: float, tolerance_m: float
 
 
 class SboeMap:
-    """The map kept at ``path``, downloaded by the first lookup that needs it. One that fails
+    """The map kept at ``path``, copied from ``bundled`` (the one that comes with Pallot) when none
+    is kept. Without a bundled one, the first lookup that needs it downloads it; one that fails
     isn't downloaded again by a lookup for ``Ttls.retry_after``, and a refusal pauses the portal;
     a refresh always tries."""
 
-    def __init__(self, cache: HttpCache, ttl: Ttls, path: Path):
+    def __init__(self, cache: HttpCache, ttl: Ttls, path: Path, bundled: Path = BUNDLED):
         self.cache = cache
         self.ttl = ttl
         self.path = path
+        self.bundled = bundled
         self.last_error: str | None = None  # why the last download failed, until one succeeds
         self._districts: list[District] | None = None
         self._outlines: dict[tuple[int, float], list[Ring]] = {}
@@ -230,11 +236,12 @@ class SboeMap:
         return self._outlines[key]
 
     async def _load(self) -> list[District]:
-        """The districts, read once; with no map kept, downloaded, unless the last download
-        failed a short while ago (UpstreamError, without asking)."""
+        """The districts, read once; with no map kept, the bundled one, else downloaded, unless the
+        last download failed a short while ago (UpstreamError, without asking)."""
         if self._districts is None:
             async with self._lock:
                 if self._districts is None:
+                    await asyncio.to_thread(self.ensure_seeded)
                     if self.path.exists():
                         self._districts = await asyncio.to_thread(self._read)
                     elif until := self.cache.flag_until(FAILED_FLAG):
@@ -250,6 +257,22 @@ class SboeMap:
             async with self._lock:
                 if self._districts is None and self.path.exists():
                     self._districts = await asyncio.to_thread(self._read)
+
+    def ensure_seeded(self) -> bool:
+        """Copy in the bundled map if none is kept (whole, so a lookup never reads half of it); True if copied."""
+        if self.path.exists() or not self.bundled.exists():
+            return False
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        part = self.path.with_name(f".{self.path.name}.seed")
+        try:
+            shutil.copyfile(self.bundled, part)
+            os.replace(part, self.path)
+        finally:
+            part.unlink(missing_ok=True)
+        return True
+
+    def _bundled_kept(self) -> bool:
+        return self.bundled.exists() and filecmp.cmp(self.path, self.bundled, shallow=False)
 
     def _read(self) -> list[District]:
         return parse_zip(self.path.read_bytes())
@@ -315,6 +338,8 @@ class SboeMap:
     def details(self) -> list[Fact]:
         if not self.path.exists():
             return [Fact(label="SBOE map", value="fetched on the first lookup")]
+        if self._bundled_kept():
+            return [Fact(label="SBOE map", value=f"plan E2106, came with Pallot · {display_size(self.size())}")]
         downloaded = display_time(self.path.stat().st_mtime)
         return [Fact(label="SBOE map", value=f"downloaded {downloaded} · {display_size(self.size())}")]
 
@@ -339,4 +364,6 @@ class SboeMap:
         self._districts, self._outlines, self.last_error = None, {}, None
         self.path.unlink(missing_ok=True)
         self.cache.clear(SOURCE)  # it keeps no responses, only its pause and retry flags
+        if self.ensure_seeded():
+            return "Back to the State Board of Education map that came with Pallot."
         return "The State Board of Education map will be downloaded again on the next lookup."

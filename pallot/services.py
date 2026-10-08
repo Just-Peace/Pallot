@@ -16,7 +16,7 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import census, google, key_dates, nominatim, osm_tiles, suggestions
+from .sources import census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
@@ -69,12 +69,13 @@ async def open_services(
     tec_refresh: Callable[..., Any] | None = None,
     tec_bundled: Path | None = None,
     fec_bundled: Path | None = None,
+    sboe_bundled: Path | None = None,
     endorsements_dir: Path = ENDORSEMENTS_DIR,
     min_interval: Mapping[str, float] = MIN_INTERVAL,
     tidy: bool = True,
 ) -> AsyncIterator[Services]:
     """Every service, on one HTTP client and the cache in ``config.data_dir``, with the bundled
-    snapshots seeded and the FEC's bundled answers in the cache. ``tidy``: remove what an interrupted precinct map download left (the
+    snapshots and SBOE map seeded and the FEC's bundled answers in the cache. ``tidy``: remove what an interrupted precinct map download left (the
     server, at startup; never pallot-cache, which may run beside a server's download)."""
     config.data_dir.mkdir(parents=True, exist_ok=True)
     async with httpx.AsyncClient(
@@ -104,7 +105,7 @@ async def open_services(
                 nominatim=Nominatim(cache, config.ttl),
                 google=Google(cache, config.ttl, config.google_api_key),
                 suggestions=Suggestions(cache, config.ttl),
-                sboe=SboeMap(cache, config.ttl, config.sboe_path),
+                sboe=SboeMap(cache, config.ttl, config.sboe_path, sboe_bundled or sboe.BUNDLED),
                 election_precincts=election_precincts,
                 county_precincts=CountyPrecincts(cache, config.ttl, election_precincts),
                 sos=Sos(cache, config.ttl, today),
@@ -128,6 +129,7 @@ async def open_services(
             await asyncio.to_thread(svc.trackaipac.ensure_seeded)
             await asyncio.to_thread(svc.voteforpeace.ensure_seeded)
             await asyncio.to_thread(svc.tec.ensure_seeded)
+            await asyncio.to_thread(svc.sboe.ensure_seeded)
             await asyncio.to_thread(svc.fec.load_snapshot, fec_bundled)
             yield svc
         finally:
