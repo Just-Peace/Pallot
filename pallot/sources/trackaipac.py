@@ -62,8 +62,7 @@ class TrackAipac(BundledSnapshot):
         super().__init__(data_dir, trackaipac_cache, refresh_fn=refresh_fn, bundled_dir=bundled_dir)
 
     def _discard(self) -> None:
-        shutil.rmtree(self.data_dir, ignore_errors=True)  # refreshes add history files too
-
+        shutil.rmtree(self.data_dir, ignore_errors=True)
     async def _refresh(self) -> str:
         return summary_of(await asyncio.to_thread(self._refresh_fn or trackaipac_cache.refresh, data_dir=self.data_dir))
 

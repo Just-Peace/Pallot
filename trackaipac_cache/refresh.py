@@ -47,8 +47,8 @@ def refresh(
     counts = {source: len(result.records) for source, result in results.items()}
 
     meta = store.load_meta(paths)
-    latest = paths.latest_snapshot()
-    changed = changed_sources(hashes, meta, snapshot_present=latest is not None)
+    previous = paths.current_rows()
+    changed = changed_sources(hashes, meta, snapshot_present=previous is not None)
 
     if not changed and not force:
         if not dry_run:
@@ -57,9 +57,8 @@ def refresh(
         return RefreshResult(status="no_changes", checked_at=now, record_counts=counts, warnings=tuple(notes))
 
     rows = store.snapshot_rows(records)
-    previous = store.read_json(latest, default=[]) if latest else []
-    added, removed, modified = diff_rows(previous, rows)
-    snapshot_path = paths.snapshot(now.date())
+    added, removed, modified = diff_rows(previous or [], rows)
+    snapshot = now.date().isoformat()
 
     result_kwargs = dict(
         checked_at=now,
@@ -68,7 +67,7 @@ def refresh(
         added=added,
         removed=removed,
         modified=modified,
-        snapshot_path=snapshot_path,
+        snapshot=snapshot,
         warnings=tuple(notes),
     )
     if dry_run:
@@ -76,14 +75,13 @@ def refresh(
 
     registry = store.read_json(paths.registry, default={}) or {}
     new_registry = store.upsert_registry(registry, records)
-    store.write_json(snapshot_path, rows)
     store.write_json(paths.registry, new_registry)
-    store.write_json(paths.current, store.build_current(new_registry, rows, snapshot_path.stem))
+    store.write_json(paths.current, store.build_current(new_registry, rows, snapshot))
+    meta.pop("latest_snapshot", None)
     meta.update(
         schema_version=store.SCHEMA_VERSION,
         last_refresh=_iso(now),
         last_checked=_iso(now),
-        latest_snapshot=snapshot_path.stem,
         source_hashes=hashes,
     )
     store.write_json(paths.meta, meta)

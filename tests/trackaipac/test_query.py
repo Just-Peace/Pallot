@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 
 import pytest
 
@@ -140,30 +140,6 @@ def test_search_ranks_name_matches_first(cache):
     assert name_hit == sorted(name_hit, reverse=True)
 
 
-def test_history(cache):
-    snaps = t.history("Mary Peltola", data_dir=cache)
-    assert [(s.date, s.category, s.israel_lobby_total) for s in snaps] == [
-        (date(2026, 9, 1), "watchlist", 96546),
-        (date(2026, 9, 2), "watchlist", 99999),
-    ]
-    assert snaps[0].lines[2] == "Israel Lobby Total: $96,546"
-
-
-def test_history_of_removed_candidate_and_repeat_listings(cache):
-    assert [s.date for s in t.history("Tom Sell", data_dir=cache)] == [date(2026, 9, 1)]
-    mejia = t.history("nj-analilia-mejia", data_dir=cache)
-    assert [(s.date.day, s.category, s.incumbent) for s in mejia] == [
-        (1, "endorsed", False), (1, "endorsed", True), (1, "congress", None),
-        (2, "endorsed", False), (2, "endorsed", True), (2, "congress", None),
-    ]
-
-
-def test_history_unknown_and_ambiguous(cache):
-    assert t.history("Nobody McNobody", data_dir=cache) == []
-    with pytest.raises(t.AmbiguousNameError):
-        t.history("Mike Rogers", data_dir=cache)
-
-
 def test_last_refreshed(cache, tmp_path):
     assert t.last_refreshed(data_dir=cache) == datetime(2026, 9, 2, 12, tzinfo=timezone.utc)
     assert t.last_refreshed(data_dir=tmp_path) is None
@@ -173,8 +149,6 @@ def test_empty_cache_reads(tmp_path):
     assert t.get_candidate("Mary Peltola", data_dir=tmp_path) is None
     assert t.list_watchlist(data_dir=tmp_path) == []
     assert t.search("mary", data_dir=tmp_path) == []
-    assert t.history("Mary Peltola", data_dir=tmp_path) == []
-
 
 def test_reads_see_rewrites(pages, tmp_path):
     refresh(data_dir=tmp_path, fetcher=lambda: pages, now=at(1))

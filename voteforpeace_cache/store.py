@@ -1,11 +1,10 @@
-"""On-disk layout: history/YYYY-MM-DD.json, current.json, meta.json."""
+"""On-disk layout: current.json, meta.json."""
 
 from __future__ import annotations
 
 import json
 import os
 import tempfile
-from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -26,24 +25,11 @@ class Paths:
         self.root = root
         self.current = root / "current.json"
         self.meta = root / "meta.json"
-        self.history_dir = root / "history"
 
-    def snapshot(self, day: date) -> Path:
-        return self.history_dir / f"{day.isoformat()}.json"
-
-    def latest_snapshot(self) -> Path | None:
-        if not self.history_dir.is_dir():
-            return None
-        files = sorted(p for p in self.history_dir.glob("*.json") if _is_day_stem(p.stem))
-        return files[-1] if files else None
-
-
-def _is_day_stem(stem: str) -> bool:
-    try:
-        date.fromisoformat(stem)
-    except ValueError:
-        return False
-    return True
+    def current_rows(self) -> list[dict[str, Any]] | None:
+        """The rows of the last refresh, read back out of current.json (None before any)."""
+        document = read_json(self.current)
+        return None if document is None else document.get("candidates", [])
 
 
 def read_json(path: Path, default: Any = None) -> Any:
@@ -76,7 +62,6 @@ def load_meta(paths: Paths) -> dict[str, Any]:
     meta.setdefault("schema_version", SCHEMA_VERSION)
     meta.setdefault("last_refresh", None)
     meta.setdefault("last_checked", None)
-    meta.setdefault("latest_snapshot", None)
     meta.setdefault("rows_hash", None)
     return meta
 

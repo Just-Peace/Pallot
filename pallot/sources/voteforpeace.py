@@ -54,8 +54,7 @@ class VoteForPeace(BundledSnapshot):
         super().__init__(data_dir, voteforpeace_cache, refresh_fn=refresh_fn, bundled_dir=bundled_dir)
 
     def _discard(self) -> None:
-        shutil.rmtree(self.data_dir, ignore_errors=True)  # refreshes add history files too
-
+        shutil.rmtree(self.data_dir, ignore_errors=True)
     async def _refresh(self) -> str:
         refresh = self._refresh_fn or voteforpeace_cache.refresh
         return summary_of(await asyncio.to_thread(refresh, data_dir=self.data_dir))

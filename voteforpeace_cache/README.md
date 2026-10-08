@@ -21,9 +21,8 @@ Without `--data-dir`, this updates `voteforpeace_cache/data/` in this repo (comm
 
 ## Data (`voteforpeace_cache/data/`)
 
-- `history/YYYY-MM-DD.json`: one row per candidate, in page order (state by state). A file is written only when the site changed; a second change on the same day overwrites that day's file.
-- `current.json`: `{"snapshot": "YYYY-MM-DD", "candidates": [...]}`, the latest day's rows. It is generated, so don't edit it.
-- `meta.json`: `last_refresh`, `last_checked`, `latest_snapshot`, and a hash of the rows.
+- `current.json`: `{"snapshot": "YYYY-MM-DD", "candidates": [...]}`, one row per candidate in page order (state by state). It is generated, so don't edit it. It is rewritten only when the site changed, and a refresh compares the page with its rows. Git keeps the earlier versions.
+- `meta.json`: `last_refresh`, `last_checked`, and a hash of the rows.
 
 A row keeps the site's own fields: `candidate_id`, `name`, `slug`, `url` (the candidate's page), `state`, `section`, `party`, `rating`, `office_title`, `district`, `level`, `jurisdiction`, the election (`election_date`, `election_label`, `election_stage`, `election_result`), `featured_text`, `notes` (as plain text), `endorsements` (the groups it cites: `organization`, `type`, `notes`, `link`) and `articles` (`title`, `url`, `description`).
 
