@@ -1,4 +1,4 @@
-// The web search behind each candidate's "Web search" link. The engine is a per-browser
+// The web search behind each candidate's "Web search" and Stances links. The engine is a per-browser
 // choice on the Settings page; Google unless changed. An AI assistant gets the same query as a prompt.
 
 import { setUiPref, uiPref } from "./storage.js";
@@ -35,4 +35,9 @@ export function searchHref(query) {
 export function searchTitle(name) {
   const engine = currentEngine();
   return engine.ai ? `Ask ${engine.label} about ${name}` : `Search ${engine.label} for ${name}`;
+}
+
+export function stanceTitle(name, topic) {
+  const engine = currentEngine();
+  return engine.ai ? `Ask ${engine.label} where ${name} stands on ${topic}` : `Search ${engine.label} for ${name} on ${topic}`;
 }

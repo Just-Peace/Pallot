@@ -203,7 +203,7 @@ export function avatar(candidate, extraClass = null) {
 }
 
 // What to search the web for: the candidate plus the office and place, so common names find the right person.
-function searchQuery(race, candidate) {
+export function candidateQuery(race, candidate) {
   const { ballot } = page;
   const { county, state_name: stateName } = ballot.location;
   const terms = [candidate.name, race.name];
@@ -216,7 +216,7 @@ function searchQuery(race, candidate) {
 }
 
 export function searchLink(race, candidate, className, label) {
-  return extLink(searchHref(searchQuery(race, candidate)), label, {
+  return extLink(searchHref(candidateQuery(race, candidate)), label, {
     class: className,
     title: searchTitle(candidate.name),
     "aria-label": `${searchTitle(candidate.name)} (opens in a new tab)`,

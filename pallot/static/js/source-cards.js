@@ -303,7 +303,7 @@ export function raceMoney(race, onCompare = null) {
   });
 }
 
-function cardPanel(card) {
+export function cardPanel(card) {
   return h(
     "div",
     { class: "card-panel" },

@@ -1,11 +1,12 @@
-// Details: a candidate's cards from every source, one tab each, in a dialog, with Pick and a web
-// search. ‹ and › step through the race's other candidates.
+// Details: a candidate's Stances (stances.js), then their cards from every source, one tab each, in a
+// dialog, with Pick and a web search. ‹ and › step through the race's other candidates.
 
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
 import { candidatePills } from "./labels.js";
-import { avatar, choose, searchLink } from "./race-cards.js";
+import { avatar, candidateQuery, choose, searchLink } from "./race-cards.js";
 import { searchTitle } from "./search.js";
-import { renderTabs } from "./source-cards.js";
+import { cardPanel, renderTabs } from "./source-cards.js";
+import { stancesPanel } from "./stances.js";
 
 let page = null; // { picks }
 const details = $("#details");
@@ -35,8 +36,11 @@ export function showDetails(race, index, focus = null) {
   pickButton.disabled = multiFull;
 
   const tabs = h("div", { class: "details-tabs" });
-  if (candidate.cards.length) renderTabs(tabs, candidate.cards, `d-${slug(candidate.key)}`);
-  else tabs.append(h("p", { class: "muted details-empty" }, "No source has details on this candidate yet."));
+  const stances = { kind: "stances", label: "Stances" };
+  const panelFor = (card) => (card === stances
+    ? stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length)
+    : cardPanel(card));
+  renderTabs(tabs, [stances, ...candidate.cards], `d-${slug(candidate.key)}`, panelFor);
 
   const count = race.candidates.length;
   const step = (offset, label, symbol) => {
