@@ -12,7 +12,7 @@ import { extLink, h } from "./dom.js";
 import { SHORT_DATE, formatDate, listed } from "./format.js";
 
 const captured = (list) => formatDate(list.captured, SHORT_DATE);
-const FETCHED = "fetched from its website at most once a week";
+const fetched = (list) => (list.captured ? `fetched from its website on ${captured(list)}` : "fetched from its website");
 
 function clause(lists) {
   if (!lists.length) return "";
@@ -20,17 +20,17 @@ function clause(lists) {
   return `, which of ${listed(lists.map((list) => list.label))} endorse them`;
 }
 
-const when = (list) => (list.live ? FETCHED : `as captured on ${captured(list)}`);
+const when = (list) => (list.live ? fetched(list) : `as captured on ${captured(list)}`);
 
 const row = (list) => h("tr", {}, h("th", { scope: "row" }, extLink(list.url, list.label)),
-  h("td", {}, list.live ? "Its endorsements, fetched weekly" : `Its endorsements, as of ${captured(list)}`));
+  h("td", {}, `Its endorsements, ${list.live ? (list.captured ? `fetched ${captured(list)}` : "fetched live") : `as of ${captured(list)}`}`));
 
 const item = (list) => h("li", {}, h("strong", {}, list.label), `: ${list.description} `,
   extLink(list.url, "Its list"), `, ${when(list)}.`);
 
 function live(lists) {
-  const fetched = lists.filter((list) => list.live).map((list) => list.label);
-  return fetched.length ? ` (${listed(fetched)})` : "";
+  const feeds = lists.filter((list) => list.live).map((list) => list.label);
+  return feeds.length ? ` (${listed(feeds)})` : "";
 }
 
 export async function showEndorsementLists() {
