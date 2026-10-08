@@ -17,8 +17,13 @@ asked for it again for ``retry_after`` seconds. Some sources answer an error wit
 its answers (check_answers), and an answer it refuses is handled like a failed request, so it
 never replaces a good copy; with none, it's kept for ``retry_after`` and raised as
 UpstreamError meanwhile. A source can also be paused as a whole when it answers with certain
-statuses (Ballotpedia refusing us, the FEC's rate limit): while paused, whatever is stored is
+statuses (Ballotpedia refusing us): while paused, whatever is stored is
 served and nothing is fetched, not even by refresh().
+
+A source with several API keys (share_keys) sends its requests with each key in turn. A key
+the source refuses or rate limits rests for a while, and the request goes again with the next;
+the source is paused only while every key rests. A resting key is flagged by a short hash of
+it, never the key, so a key changed in .env is asked at once.
 
 A source whose site hands out a token it rotates (headers_from_page) has a page fetched just
 before each of its requests is sent, and the headers read from it sent with that request; the
@@ -41,7 +46,7 @@ import time
 from collections import OrderedDict
 from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import Any, Callable, Collection, Mapping
+from typing import Any, Callable, Collection, Mapping, Sequence
 
 import httpx
 
@@ -119,6 +124,26 @@ class _Stored:
 
 class Unreadable(ValueError):
     """An answer a reader refuses; its message says why, for people (never a header's value)."""
+
+
+class KeysResting(ValueError):
+    """Every key of a source rests, so a request can't be sent."""
+
+
+@dataclass(frozen=True)
+class KeyRest:
+    """Why a key rests (the status its source answered) and until when."""
+
+    status: int
+    until: float
+
+
+@dataclass
+class _Keys:
+    header: str
+    keys: tuple[str, ...]
+    rest_on: dict[int, float]  # status -> how long a key answered with it rests
+    turn: int = 0  # where the next request starts looking for an open key
 
 
 class UpstreamError(Exception):
@@ -202,7 +227,7 @@ def value_is_empty(value: Any, path: tuple[str, ...] = ()) -> bool:
 
 
 def describe_error(exc: Exception) -> str:
-    if isinstance(exc, Unreadable):
+    if isinstance(exc, (Unreadable, KeysResting)):
         return str(exc)
     if isinstance(exc, httpx.HTTPStatusError):
         return f"HTTP {exc.response.status_code}"
@@ -223,6 +248,14 @@ def _retry_flag(key: str) -> str:
 
 def _pause_flag(source: str) -> str:
     return f"paused:{source}"
+
+
+def _key_hash(key: str) -> str:
+    return hashlib.sha256(key.encode()).hexdigest()[:12]
+
+
+def _key_flag(source: str, key: str, status: int) -> str:
+    return f"rest:{source}:{_key_hash(key)}:{status}"
 
 
 class HttpCache:
@@ -260,6 +293,7 @@ class HttpCache:
         self._throttle_locks: dict[str, asyncio.Lock] = {}
         self._retry_after = retry_after
         self._pause_on: dict[str, tuple[frozenset[int], float]] = {}
+        self._keys: dict[str, _Keys] = {}
         self._checks: dict[str, Callable[[Any], str | None]] = {}
         self._pages: dict[str, tuple[RequestSpec, Callable[[str], dict[str, str]]]] = {}
 
@@ -369,7 +403,42 @@ class HttpCache:
         """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
         self._pause_on[source] = (frozenset(statuses), seconds)
 
+    def share_keys(self, source: str, header: str, keys: Sequence[str], rest_on: Mapping[int, float]) -> None:
+        """Send ``source``'s requests (get_json's and refresh's) with ``keys`` in ``header``, each
+        key in turn. A key answered with a status in ``rest_on`` rests for its seconds and the
+        request goes again with the next open key; the source is paused only while every key
+        rests. Like ``source_headers``, the keys are never stored."""
+        self._keys[source] = _Keys(header, tuple(keys), dict(rest_on))
+
+    def key_rests(self, source: str) -> list[KeyRest | None]:
+        """For each of ``source``'s keys, in order: why and until when it rests, or None while it's open."""
+        with self._lock:
+            rows = self._db.execute(
+                "SELECT name, expires_at FROM flags WHERE source = ? AND name LIKE ? AND expires_at > ?",
+                (source, f"rest:{source}:%", self._clock()),
+            ).fetchall()
+        rests: dict[str, KeyRest] = {}
+        for name, until in rows:
+            hashed, status = name.rsplit(":", 2)[1:]
+            if hashed not in rests or until > rests[hashed].until:
+                rests[hashed] = KeyRest(int(status), until)
+        return [rests.get(_key_hash(key)) for key in self._keys[source].keys]
+
+    def _next_key(self, source: str) -> str | None:
+        """The next open key in turn, or None while every key rests."""
+        keys = self._keys[source]
+        rests = self.key_rests(source)
+        for step in range(len(keys.keys)):
+            index = (keys.turn + step) % len(keys.keys)
+            if rests[index] is None:
+                keys.turn = index + 1
+                return keys.keys[index]
+        return None
+
     def paused_until(self, source: str) -> float | None:
+        if source in self._keys:
+            rests = self.key_rests(source)
+            return None if not rests or None in rests else min(rest.until for rest in rests if rest)
         return self.flag_until(_pause_flag(source))
 
     def headers_from_page(self, source: str, page: RequestSpec, read: Callable[[str], dict[str, str]]) -> None:
@@ -406,7 +475,8 @@ class HttpCache:
             self._refused(source, exc)
             kept = await self._fall_back(source, spec)
             if kept is None:
-                raise UpstreamError(source, describe_error(exc), _status(exc)) from exc
+                until = self.paused_until(source) if source in self._keys else None
+                raise UpstreamError(source, describe_error(exc), _status(exc), until=until) from exc
             return kept
         now = self._clock()
         why = self._refusal(source, value)
@@ -451,13 +521,25 @@ class HttpCache:
         return {**(spec.headers or {}), **self._source_headers.get(source, {}), **found} or None
 
     async def _send(self, source: str, spec: RequestSpec, headers: dict[str, str] | None) -> httpx.Response:
-        await self._throttle(source)
-        stats = current_calls()
-        if stats:
-            stats.called(source)
-        response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=headers)
-        response.raise_for_status()
-        return response
+        keys = self._keys.get(source)
+        while True:
+            await self._throttle(source)
+            sent = headers
+            if keys:
+                key = self._next_key(source)
+                if key is None:
+                    raise KeysResting(f"every {source} key is resting")
+                sent = {**(headers or {}), keys.header: key}
+            stats = current_calls()
+            if stats:
+                stats.called(source)
+            response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=sent)
+            if keys and response.status_code in keys.rest_on:
+                self.set_flag(_key_flag(source, key, response.status_code), source, keys.rest_on[response.status_code])
+                if None in self.key_rests(source):
+                    continue
+            response.raise_for_status()
+            return response
 
     async def _throttle(self, source: str) -> None:
         interval = self._min_interval.get(source)

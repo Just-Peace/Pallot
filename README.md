@@ -50,7 +50,7 @@ Open http://127.0.0.1:8000. It only listens on this machine, because Pallot has 
 
 Pallot needs no keys to run. To break down congressional candidates' money (where it came from, donation sizes, largest donors, outside spending), it needs a free FEC key:
 1. Get one from the [OpenFEC developers page](https://api.open.fec.gov/developers/); api.data.gov emails it to you.
-2. Put it in `.env` as `PALLOT_FEC_API_KEY=...`.
+2. Put it in `.env` as `PALLOT_FEC_API_KEY=...`. Each key allows 1,000 calls an hour. For more, add up to four more keys as `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5`: Pallot uses them in turn.
 3. Restart Pallot: `docker compose up -d`, or Ctrl+C and `uv run pallot` again.
 
 Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals and runs out after a few requests. The other settings are under [Configuration](#configuration).
@@ -236,7 +236,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address aga
 - If the Census geocoder, Nominatim or Google (each on its own), Texas SOS, Ballotpedia (its ballot or its address search, each on its own), FiftyPlusOne, the seat holders' lists, the Texas SOS's dates page, TIGERweb, OpenStreetMap's tile server or the Texas Legislative Council's portal (the precinct and SBOE maps) refuses a request, Pallot stops asking it for an hour; if a county's map server does, it stops asking all seven counties for an hour. What it already sent still shows.
 - If the State Board of Education map can't be downloaded, lookups don't try again for 15 minutes, and your SBOE district is missing meanwhile. `pallot-cache refresh` always tries.
 - If a precinct map's download fails, the map already kept stays, and lookups don't try that map again for a week (15 minutes while no map is kept), unless the portal lists a changed one. `pallot-cache refresh` always tries.
-- If the FEC answers that its rate limit is reached, Pallot stops asking it for an hour and shows what it already has meanwhile. With `DEMO_KEY`, that limit is shared by everything on your IP address.
+- If the FEC answers that a key reached its rate limit, or refuses a key, Pallot stops using that key for an hour and asks with your other keys (`PALLOT_FEC_API_KEY2` to `5`). Settings names the key and why. When every key is resting, Pallot stops asking the FEC and shows what it already has meanwhile. A key you change in `.env` is used as soon as Pallot restarts. With `DEMO_KEY`, the limit is shared by everything on your IP address.
 - `pallot-cache` doesn't ask a paused source either, and stops asking one that pauses partway through. Its refresh of TrackAIPAC and Vote for Peace stops at once if their site refuses it.
 
 ## Settings
@@ -316,7 +316,7 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 | Variable | Default |
 |---|---|
 | `PALLOT_DATA_DIR` | `data/` in the project (cache, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data, and your `sources.toml` if you add one; git-ignored) |
-| `PALLOT_FEC_API_KEY` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). It's only sent to the FEC, in a header, and Pallot never writes it anywhere |
+| `PALLOT_FEC_API_KEY`, `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). The extra keys are optional: Pallot uses all of them in turn, and skips one the FEC has rate limited or refused. They are only sent to the FEC, in a header, and Pallot never writes them anywhere (a resting key is noted by a short hash of it) |
 | `PALLOT_GOOGLE_API_KEY` | none, so Google is never asked. A [Google Geocoding API key](https://developers.google.com/maps/documentation/geocoding/get-api-key), to find addresses the Census and OpenStreetMap can't. It's only sent to Google, in a header, and Pallot never writes it anywhere. Google bills by the request, though Pallot asks only for an address both others missed, and keeps the answer for 30 days |
 | `PALLOT_USER_AGENT` | `Pallot/0.1 (personal ballot helper; +https://github.com/Just-Peace/Pallot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `PALLOT_HTTP_TIMEOUT` | `30` seconds |

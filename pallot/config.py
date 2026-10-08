@@ -13,6 +13,7 @@ DAY = 24 * HOUR
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE = PROJECT_DIR / ".env"
+FEC_KEY_NAMES = ("PALLOT_FEC_API_KEY", *(f"PALLOT_FEC_API_KEY{n}" for n in range(2, 6)))
 DEMO_KEY = "DEMO_KEY"  # api.data.gov's shared key: a few requests an hour, per IP address
 
 
@@ -36,7 +37,7 @@ class Ttls:
     ballotpedia: int = DAY
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
-    fec_backoff: int = HOUR  # after the FEC's rate limit, stop asking for this long
+    fec_backoff: int = HOUR  # how long a key the FEC rate limits or refuses rests
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
     key_dates: int = DAY  # the Texas SOS's page of each election's deadlines
@@ -67,6 +68,8 @@ class Config:
     # A free key from https://api.open.fec.gov/developers/ (issued by api.data.gov); without
     # one, the shared DEMO_KEY. Only ever sent to the FEC, never written to disk.
     fec_api_key: str = field(default=DEMO_KEY, repr=False)
+    # PALLOT_FEC_API_KEY2 to 5, in order, blank where unset: the FEC's requests are spread over all the keys.
+    fec_extra_keys: tuple[str, ...] = field(default=(), repr=False)
     # A Google Geocoding API key, for addresses neither the Census nor Nominatim can place. Empty:
     # Google isn't used. Only ever sent to Google, never written to disk.
     google_api_key: str = field(default="", repr=False)
@@ -80,6 +83,15 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 8000  # `uv run pallot`'s default port; the Docker image always listens on 8000
     prune_every: int = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
+
+    @property
+    def fec_api_keys(self) -> dict[str, str]:
+        """Each FEC key set, by the variable it's in, once each; the shared DEMO_KEY when none is."""
+        keys: dict[str, str] = {}
+        for name, key in zip(FEC_KEY_NAMES, (self.fec_api_key, *self.fec_extra_keys)):
+            if key and key != DEMO_KEY and key not in keys.values():
+                keys[name] = key
+        return keys or {FEC_KEY_NAMES[0]: DEMO_KEY}
 
     @property
     def cache_path(self) -> Path:
@@ -150,6 +162,7 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         http_timeout=float(env.get("PALLOT_HTTP_TIMEOUT") or Config.http_timeout),
         ttl=Ttls(**overrides),
         fec_api_key=(env.get("PALLOT_FEC_API_KEY") or "").strip() or DEMO_KEY,
+        fec_extra_keys=tuple((env.get(name) or "").strip() for name in FEC_KEY_NAMES[1:]),
         google_api_key=(env.get("PALLOT_GOOGLE_API_KEY") or "").strip(),
         allowed_hosts=tuple(
             name.strip().lower() for name in (env.get("PALLOT_ALLOWED_HOSTS") or "").split(",") if name.strip()

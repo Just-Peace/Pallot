@@ -27,6 +27,14 @@ def test_no_file_or_an_empty_key_means_demo_key(tmp_path, monkeypatch):
     assert load_config(env_file=tmp_path / ".env").fec_api_key == DEMO_KEY
 
 
+def test_up_to_five_fec_keys_by_their_variables():
+    env = {f"PALLOT_FEC_API_KEY{n}": f"k{n}" for n in range(2, 8)} | {"PALLOT_FEC_API_KEY": "k1"}
+    assert list(load_config(env).fec_api_keys.values()) == ["k1", "k2", "k3", "k4", "k5"]
+    assert load_config({"PALLOT_FEC_API_KEY3": " only "}).fec_api_keys == {"PALLOT_FEC_API_KEY3": "only"}
+    assert load_config({"PALLOT_FEC_API_KEY": "k", "PALLOT_FEC_API_KEY2": "k"}).fec_api_keys == {"PALLOT_FEC_API_KEY": "k"}
+    assert load_config({}).fec_api_keys == {"PALLOT_FEC_API_KEY": DEMO_KEY}
+
+
 def test_allowed_hosts_are_a_comma_separated_list():
     assert load_config({"PALLOT_ALLOWED_HOSTS": " Pallot.lan, nas.local ,"}).allowed_hosts == ("pallot.lan", "nas.local")
     assert load_config({}).allowed_hosts == ()
