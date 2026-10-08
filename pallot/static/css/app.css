@@ -391,7 +391,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .setting-row .seg-option { padding: 6px 16px; font-size: 0.9rem; }
 .view-switches { grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); }
 
-.source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 12px; margin: 14px 0; }
+.source-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 12px; margin: 14px 0; align-items: start; }
 .source-row { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
   padding: 10px 12px; }
 .source-row.is-off { opacity: 0.75; }
