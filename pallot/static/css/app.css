@@ -885,12 +885,13 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .stances .badge-link { font-size: 0.85rem; padding: 4px 10px; }
 .details-tabs { padding: 0 20px; }
 .details-foot { padding: 12px 20px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-/* the tabs (under Details' head, --head-h) and the foot stay in view while the dialog scrolls */
+/* the head (with its ✕), the tabs under it (--head-h, dialogHead) and the foot stay in view while the dialog scrolls */
+.details .details-head { position: sticky; top: 0; z-index: 3; background: var(--panel); }
 .details-tabs > .tabs { position: sticky; top: var(--head-h, 0px); z-index: 2; background: var(--panel); }
 .details-foot { position: sticky; bottom: 0; z-index: 2; background: var(--panel); }
-/* Details' head (details.js) stays at the top, with Search and Pick beside ‹ › ✕ and the name in its
-   party's colour. Scrolled down (.compact), it shrinks to a small photo, the name and the buttons' icons. */
-.cand-details .details-head { position: sticky; top: 0; z-index: 3; background: var(--panel); transition: padding 0.15s; }
+/* Details' head (details.js) has Search and Pick beside ‹ › ✕ and the name in its party's colour.
+   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons' icons. */
+.cand-details .details-head { transition: padding 0.15s; }
 .cand-details .details-head .avatar { transition: width 0.15s, height 0.15s, font-size 0.15s; }
 .details-actions { display: flex; gap: 6px; flex: none; }
 #details-name[data-party] { color: var(--party-text, var(--party, var(--text))); }
@@ -955,7 +956,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
   margin: 0 0 10px; }
 .race-money .breakdown { margin: 0; }
 /* a money or poll box's title folds it to one line, with a race's chevron (foldBox in source-cards.js) */
-.box-toggle { display: inline-flex; align-items: center; gap: 4px; margin: -3px 0 -3px -4px; padding: 0; border: 0;
+.box-toggle { display: inline-flex; align-items: flex-start; gap: 4px; margin: -3px 0 -3px -4px; padding: 0; border: 0;
   background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; text-align: left;
   cursor: pointer; }
 .box-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
@@ -963,6 +964,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .race-money.collapsed .breakdown-head { margin: 0; }
 .breakdown-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin: 0 0 6px; }
 .breakdown-head .breakdown-title { margin: 0; }
+/* the box's corner (Compare funding, the source, the polls) stays at the right, also under a long title */
+.breakdown-head > :not(.breakdown-title) { margin-left: auto; }
 .compare-btn { color: var(--accent); border-color: var(--accent); }
 .compare-btn:hover:not(:disabled) { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--accent-soft); }
 .compare-btn .icon { width: 14px; height: 14px; }
@@ -981,7 +984,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend .rest { color: var(--muted); }
 .stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
-.box-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.box-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
 
 /* ---- compare dialog ---- */
 
@@ -1128,7 +1131,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .rule-preview { border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 640px) {
-  .rules { max-height: calc(100dvh - 24px); margin-top: 12px; }
   .rules .details-title p { display: none; }
   .rule-bar { padding: 8px 16px; }
   .rule-bar select { flex: 1 1 auto; }
@@ -1189,19 +1191,51 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (max-width: 640px) {
   h1 { font-size: 1.45rem; }
   .panel, .welcome { padding: 16px; }
+  /* the footer ends the page instead of staying pinned, so the screen is left to the ballot */
+  html { scroll-padding-bottom: 0; }
+  .site-footer { position: static; }
+  .site-footer p { padding-right: 68px; } /* clear of Back to top */
+  .content { padding-bottom: 24px; }
+  .to-top { bottom: 16px; }
+  .toast { bottom: 12px; }
+  /* the toolbar's buttons a size down, so they take two lines; Options opens from the toolbar's
+     left edge, where it always fits on the screen */
+  .ballot-tools, .ballot-tools .tool-group { gap: 6px; }
+  .progress-strip .btn.small, .ballot-tools .btn.small { padding: 5px 9px; font-size: 0.8rem; }
+  .ballot-tools .seg-option { padding: 4px 10px; font-size: 0.8rem; }
+  .ballot-tools .icon { width: 14px; height: 14px; }
+  #view-controls { position: relative; }
+  #view-menu { position: static; }
+  /* the strip: the bar, the count (wrapping if need be) and Next on one line, then the section chips */
   .progress-strip { gap: 8px; padding: 8px 0; }
-  .progress-strip .btn.small { padding: 5px 10px; font-size: 0.8rem; }
-  /* the bar on a line of its own, the count (wrapping if need be) and Next under it */
-  .progress-info { flex-wrap: wrap; row-gap: 6px; }
-  .progress-info .bar { flex: 1 1 100%; }
-  .progress { flex: 1 1 0; min-width: 0; white-space: normal; font-size: 0.85rem; }
+  .progress-info { gap: 10px; }
+  .progress-info .bar { min-width: 40px; }
+  .progress { flex: 0 1 auto; min-width: 0; white-space: normal; font-size: 0.85rem; }
+  .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
+  /* the race cards: less padding, so each candidate's row has more room */
+  .race-head { gap: 10px; padding: 10px 12px; }
+  .race.collapsed .race-head { padding-top: 9px; padding-bottom: 9px; }
   .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
   .race-status { max-width: none; }
-  .cand-actions { margin-left: 30px; }
-  /* Profile, Note and Search share the line under the name */
-  .cand-grid { grid-template-columns: 20px auto auto minmax(0, 1fr);
-    grid-template-areas: "pick photo name name" "pick photo profile actions"; }
-  .cand-grid > .cand-actions { justify-self: end; }
+  .race.collapsed .race-name { white-space: normal; } /* the pick has a line of its own, so the name wraps rather than being cut */
+  .race-body { padding: 10px 10px 12px; }
+  .race-money { padding: 8px 10px; }
+  .race-money .breakdown-title { font-size: 0.75rem; letter-spacing: 0.04em; }
+  .cand { padding: 8px 10px; }
+  /* a candidate: the radio, the photo and the name on the first line; under them, at the card's
+     edge like the lines below, Profile, with Note, Ban and Search at the right, as wider */
+  .cand-grid { column-gap: 8px; row-gap: 6px; grid-template-columns: 20px auto minmax(0, 1fr) auto;
+    grid-template-areas: "pick photo name name" "profile profile profile actions"; }
+  .cand-grid .avatar { width: 32px; height: 32px; font-size: 0.72rem; }
+  .cand-grid > .cand-actions { justify-content: flex-end; gap: 5px; }
+  /* the buttons, pills and chips a size down, each still at least 22px tall */
+  .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: 0.78rem; }
+  .cand-profile .profile-btn { padding: 4px 11px; font-size: 0.78rem; line-height: inherit; } /* as tall as Note and Ban beside it */
+  .party { padding: 1px 7px; font-size: 0.66rem; }
+  .pill { padding: 1px 7px; font-size: 0.72rem; }
+  .badges { gap: 5px; }
+  .badge { padding: 2px 7px; font-size: 0.74rem; }
+  .line-title { font-size: 0.76rem; }
   .badges, .note, .cand-lines { margin-left: 0; }
   .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
@@ -1211,7 +1245,11 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .share-label { grid-column: 1; grid-row: 1; }
   .share-amount { grid-column: 2; grid-row: 1; }
   .share .bar { grid-column: 1 / -1; grid-row: 2; }
-  .details-head { padding: 14px 16px 10px; }
+  /* dialogs: nearly the whole screen, as tall as what's visible (dvh), so a browser's toolbar never covers their foot */
+  .details { width: calc(100vw - 16px); max-width: none; max-height: calc(100dvh - 16px); margin: 8px auto auto; }
+  .details-head { gap: 12px; padding: 14px 16px 10px; }
+  .details-head .avatar.large { width: 48px; height: 48px; font-size: 1rem; }
+  .details-title h2 { font-size: 1.15rem; }
   .details-tabs { padding: 0 16px; }
   /* Details' Search and Pick get a line of their own under the name, until the head shrinks */
   .cand-details .details-head { flex-wrap: wrap; }
@@ -1228,6 +1266,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .compact .icon-btn.step { padding: 2px 8px 6px; }
   .compact .icon-btn.close { padding: 4px 8px; }
   .cmp-controls { padding: 10px 16px; }
+  /* a candidate's chip wraps between whole parts, and its name never breaks */
+  .cmp-chip { flex-wrap: wrap; row-gap: 0; border-radius: var(--radius-sm); }
+  .cmp-chip-name { white-space: nowrap; }
   /* each bar: the name, amount and count on one line, the bar under them */
   .cmp-grid { grid-template-columns: minmax(0, 1fr) max-content max-content; }
   .cmp-group, .cmp-bars, .cmp-bar { grid-template-columns: minmax(0, 1fr) max-content max-content; grid-template-columns: subgrid; }
@@ -1240,9 +1281,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .tabs { margin: 0 -16px; padding: 0 16px; }
   .faq-body { padding-left: 16px; }
   .data-action { flex-direction: column; align-items: flex-start; }
-  .section-chips ul { gap: 4px; }
-  .section-chips li { flex: 1 1 auto; }
-  .section-chips a { padding: 4px 6px; font-size: 0.8rem; text-align: center; }
+  /* Settings' chips keep their words on one line, and go onto a second line if they need one */
+  .section-chips ul { flex-wrap: wrap; gap: 4px; }
+  .section-chips a { padding: 4px 10px; font-size: 0.8rem; white-space: nowrap; }
   /* three-column tables become one block per row, each cell labelled */
   .data-table.stack thead { display: none; }
   .data-table.stack, .data-table.stack tbody, .data-table.stack tr, .data-table.stack tbody th, .data-table.stack td { display: block; width: auto; }
