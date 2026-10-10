@@ -1,17 +1,17 @@
 {
-  "content_hash": "d5a3e72b0fcbe652b532e372b57663e1016547ef4d8ad57f731e6ef1549c646f",
+  "content_hash": "6b7ee2175b3ce57c674c9599cd2a0e500d89931e94a87832099c7123d4f81cd6",
   "counts": {
-    "contribs": 802814,
+    "contribs": 802975,
     "dce": 9670,
     "filers": 10624,
-    "reports": 8278,
+    "reports": 8281,
     "snapshot_filers": 2153
   },
-  "last_checked": "2026-10-08T13:50:20+00:00",
-  "last_refresh": "2026-10-08T13:50:20+00:00",
+  "last_checked": "2026-10-10T15:49:33+00:00",
+  "last_refresh": "2026-10-10T15:49:33+00:00",
   "members": {
     "contribs_100.csv": {
-      "crc": 1788829322,
+      "crc": 4049114134,
       "first": "20260505",
       "last": "20261005"
     },
@@ -26,7 +26,7 @@
       "last": "20261005"
     },
     "contribs_103.csv": {
-      "crc": 4156679745,
+      "crc": 1213948181,
       "first": "20260805",
       "last": "20261006"
     },
@@ -36,19 +36,19 @@
       "last": "20261001"
     },
     "contribs_105.csv": {
-      "crc": 2133224758,
+      "crc": 1757557073,
       "first": "20260929",
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 3594340234,
+      "crc": 1274002526,
       "first": "20260929",
       "last": "20261006"
     },
     "contribs_107.csv": {
-      "crc": 3944866862,
+      "crc": 3213024330,
       "first": "20261001",
-      "last": "20261006"
+      "last": "20261008"
     },
     "contribs_108.csv": {
       "crc": 1827220130,
@@ -66,9 +66,9 @@
       "last": "20261006"
     },
     "contribs_111.csv": {
-      "crc": 3773644551,
+      "crc": 2631375594,
       "first": "20261005",
-      "last": "20261007"
+      "last": "20261009"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -202,11 +202,11 @@
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-10-08",
+  "snapshot": "2026-10-10",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"4d016014a1934e0a193549f12fdd0180-127\"",
-    "last_modified": "Thu, 08 Oct 2026 10:35:03 GMT",
-    "size": 1062929059
+    "etag": "\"0aa6dcb7102bf02f83ebd6c8e05bd339-127\"",
+    "last_modified": "Sat, 10 Oct 2026 10:35:03 GMT",
+    "size": 1062969558
   }
 }

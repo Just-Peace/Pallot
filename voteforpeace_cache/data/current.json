@@ -1066,28 +1066,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "8a99a3fa-85f4-44ec-9508-7a9fe4522507",
-      "district": null,
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [],
-      "featured_text": null,
-      "jurisdiction": "Flagstaff",
-      "level": "local",
-      "name": "Drew Stanley",
-      "notes": null,
-      "office_title": "City Council Member, Flagstaff",
-      "party": null,
-      "rating": "vote",
-      "section": "Arizona",
-      "slug": "drew-stanley",
-      "state": "AZ",
-      "url": "https://voteforpeace.info/arizona/drew-stanley"
-    },
-    {
-      "articles": [],
       "candidate_id": "24ca8deb-80de-4e05-b19f-e498a3890a69",
       "district": "4",
       "election_date": "Nov 3, 2026",
@@ -1312,7 +1290,7 @@
           "type": "endorsed"
         }
       ],
-      "featured_text": "Most endorsements",
+      "featured_text": "Strongest pro-peace stance",
       "jurisdiction": null,
       "level": "statewide",
       "name": "Jane Kim",
@@ -1444,6 +1422,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "3b09f191-b91c-4433-b2fb-03780db6f508",
+      "district": "9",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Matthew Adams",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "matthew-adams",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/matthew-adams"
+    },
+    {
+      "articles": [],
       "candidate_id": "9e339957-543c-4920-afac-e43b697e3ae1",
       "district": "33",
       "election_date": "Nov 3, 2026",
@@ -1480,6 +1493,12 @@
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
         {
           "link": null,
           "notes": null,
@@ -1773,6 +1792,12 @@
           "notes": null,
           "organization": "DSA",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -1845,6 +1870,70 @@
       "slug": "mia-bonta",
       "state": "CA",
       "url": "https://voteforpeace.info/california/mia-bonta"
+    },
+    {
+      "articles": [],
+      "candidate_id": "2d4b4a30-be96-4d51-8bcd-717b5a083d2a",
+      "district": "26",
+      "election_date": "Jun 2, 2026",
+      "election_label": "Primary: Jun 2, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Track AIPAC",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Julia Brownley",
+      "notes": "This candidate takes money from AIPAC and affiliated lobbies and has not signed block the bombs act.",
+      "office_title": "U.S. Representative",
+      "party": "Democrat",
+      "rating": "reject",
+      "section": "California",
+      "slug": "julia-brownley",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/julia-brownley"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c2ff837c-df63-4992-924b-9770d79a88d4",
+      "district": "55",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Isaac Bryan",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "isaac-bryan",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/isaac-bryan"
     },
     {
       "articles": [],
@@ -2134,6 +2223,12 @@
           "notes": null,
           "organization": "If Not Now",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -2308,6 +2403,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "06c6f38c-1004-4287-a6b1-f1f586e8b969",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Damon Connolly",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "damon-connolly",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/damon-connolly"
+    },
+    {
+      "articles": [],
       "candidate_id": "19d7659a-6198-4f8a-b4dc-c14354730d67",
       "district": "46",
       "election_date": "Nov 3, 2026",
@@ -2389,6 +2519,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         },
         {
@@ -2501,6 +2637,12 @@
           "notes": null,
           "organization": "Track AIPAC",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -2559,6 +2701,12 @@
           "notes": null,
           "organization": "CAIR Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -2573,6 +2721,41 @@
       "slug": "sade-elhawary",
       "state": "CA",
       "url": "https://voteforpeace.info/california/sade-elhawary"
+    },
+    {
+      "articles": [],
+      "candidate_id": "2425b830-fb76-43e7-9e04-7cbe924f492f",
+      "district": "12",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Jackie Elward",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "jackie-elward",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jackie-elward"
     },
     {
       "articles": [],
@@ -2674,6 +2857,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -2750,10 +2939,10 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "John Garamendi",
-      "notes": "This candidate takes money from AIPAC and affiliated lobbies.\nSupports an arms embargo; received a \"C\" on the USCPR Action Congress Scorecard on Palestinian rights.",
+      "notes": "This candidate has signed onto block the bombs and does not currently take funding from AIPAC and affiliated lobbies.",
       "office_title": "U.S. Representative",
       "party": "Democrat",
-      "rating": "reject",
+      "rating": "vote",
       "section": "California",
       "slug": "john-garamendi",
       "state": "CA",
@@ -2793,28 +2982,6 @@
       "slug": "robert-garcia",
       "state": "CA",
       "url": "https://voteforpeace.info/california/robert-garcia"
-    },
-    {
-      "articles": [],
-      "candidate_id": "7b16547f-4d53-4ac7-8289-108b90b9d660",
-      "district": null,
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [],
-      "featured_text": null,
-      "jurisdiction": "Palo Alto",
-      "level": "local",
-      "name": "Raymond Goins",
-      "notes": null,
-      "office_title": "City Council, Palo Alto",
-      "party": null,
-      "rating": "vote",
-      "section": "California",
-      "slug": "raymond-goins",
-      "state": "CA",
-      "url": "https://voteforpeace.info/california/raymond-goins"
     },
     {
       "articles": [],
@@ -2888,6 +3055,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         }
       ],
@@ -3108,6 +3281,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         },
@@ -3301,6 +3480,12 @@
           "notes": null,
           "organization": "CAIR Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -3422,6 +3607,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -3510,6 +3701,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -3596,6 +3793,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         },
         {
@@ -3712,7 +3915,14 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Peace and Freedom Party",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": "South San Francisco",
       "level": "local",
@@ -3757,6 +3967,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         }
       ],
@@ -3863,6 +4079,12 @@
           "notes": null,
           "organization": "For the People Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -3927,6 +4149,12 @@
           "notes": null,
           "organization": "CAIR Action (Preferred, not Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -3978,6 +4206,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "CAIR Action",
           "type": "endorsed"
         }
@@ -4014,6 +4248,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         }
       ],
@@ -4211,6 +4451,70 @@
     },
     {
       "articles": [],
+      "candidate_id": "b31e5d7e-b35a-4ef8-b2e6-36ea693fc9ec",
+      "district": "61",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Tina McKinnor",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "tina-mckinnor",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/tina-mckinnor"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f3e75e93-bf51-4e57-9f95-571da8dac82b",
+      "district": "20",
+      "election_date": "Jun 2, 2026",
+      "election_label": "Primary: Jun 2, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "California",
+      "level": "state_legislature",
+      "name": "Caroline Menjivar",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "caroline-menjivar",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/caroline-menjivar"
+    },
+    {
+      "articles": [],
       "candidate_id": "40064a4d-6456-4afd-8d99-981bb80dcfe8",
       "district": null,
       "election_date": null,
@@ -4265,6 +4569,35 @@
       "slug": "dave-min",
       "state": "CA",
       "url": "https://voteforpeace.info/california/dave-min"
+    },
+    {
+      "articles": [],
+      "candidate_id": "9738b844-ad58-4d02-ade6-6da278bb7734",
+      "district": "37",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Samantha Mota",
+      "notes": "The candidate has criticized incumbent Sydney Kamlager for accepting corporate and AIPAC funding.",
+      "office_title": "U.S. Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "samantha-mota",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/samantha-mota"
     },
     {
       "articles": [],
@@ -4329,6 +4662,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         },
@@ -4336,6 +4675,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
           "type": "endorsed"
         }
       ],
@@ -4429,6 +4774,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         }
       ],
@@ -4534,6 +4885,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "399c880d-ec9f-4f83-a021-7aca753c6904",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Neva Parker",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "neva-parker",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/neva-parker"
+    },
+    {
+      "articles": [],
       "candidate_id": "e3168924-3233-4a80-9018-20bc667b3a83",
       "district": null,
       "election_date": null,
@@ -4553,6 +4933,35 @@
       "slug": "claude-parrish",
       "state": "CA",
       "url": "https://voteforpeace.info/california/claude-parrish"
+    },
+    {
+      "articles": [],
+      "candidate_id": "6f919982-aebd-4138-8139-f87137c68739",
+      "district": "28",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Gail Pellerin",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "gail-pellerin",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/gail-pellerin"
     },
     {
       "articles": [],
@@ -4694,6 +5103,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "d365b6f1-6c25-4264-ab0e-005660de0c31",
+      "district": "34",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Randall Putz",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "randall-putz",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/randall-putz"
+    },
+    {
+      "articles": [],
       "candidate_id": "48235cb3-5534-4c4c-9eb5-fb7bffe4c625",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -4747,6 +5185,12 @@
           "notes": null,
           "organization": "DSA",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -4799,12 +5243,19 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Mark Rendon",
-      "notes": null,
+      "notes": "Green party platform of opposition to special interest dollars and public dollars funding genocide.",
       "office_title": "State Assembly Member",
       "party": "Green",
       "rating": "vote",
@@ -4870,6 +5321,41 @@
       "slug": "rocio-rivas",
       "state": "CA",
       "url": "https://voteforpeace.info/california/rocio-rivas"
+    },
+    {
+      "articles": [],
+      "candidate_id": "8f218322-e7f8-4721-84b9-56be5cd580c8",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Chris Rogers",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "chris-rogers",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/chris-rogers"
     },
     {
       "articles": [],
@@ -5069,6 +5555,12 @@
           "notes": null,
           "organization": "CAIR Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -5107,7 +5599,7 @@
       "notes": "This candidate takes money from AIPAC and affiliated lobbies and has not signed block the bombs act.",
       "office_title": "U.S. Representative",
       "party": "Democrat",
-      "rating": "neutral",
+      "rating": "vote",
       "section": "California",
       "slug": "linda-s-nchez",
       "state": "CA",
@@ -5156,6 +5648,64 @@
     },
     {
       "articles": [],
+      "candidate_id": "03fa477c-d484-48d7-ac21-7ed01eb5c146",
+      "district": "40",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Pilar Schiavo",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "pilar-schiavo",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/pilar-schiavo"
+    },
+    {
+      "articles": [],
+      "candidate_id": "a4348558-30cf-497a-afad-2aee429c5ad3",
+      "district": "44",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Nick Schultz",
+      "notes": null,
+      "office_title": "State Assembly Member",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "nick-schultz",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/nick-schultz"
+    },
+    {
+      "articles": [],
       "candidate_id": "e3d57490-0cb1-4756-a0e7-01e3fbd0fe86",
       "district": "79",
       "election_date": "Nov 3, 2026",
@@ -5163,6 +5713,12 @@
       "election_result": "pending",
       "election_stage": "general",
       "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        },
         {
           "link": null,
           "notes": null,
@@ -5331,6 +5887,12 @@
           "notes": null,
           "organization": "Track AIPAC",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -5377,6 +5939,64 @@
     },
     {
       "articles": [],
+      "candidate_id": "b5031b83-64c9-40e7-8d27-7149e15e388d",
+      "district": "28",
+      "election_date": "Jun 2, 2026",
+      "election_label": "Primary: Jun 2, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "California",
+      "level": "state_legislature",
+      "name": "Lola Smallwood-Cuevas",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "lola-smallwood-cuevas",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/lola-smallwood-cuevas"
+    },
+    {
+      "articles": [],
+      "candidate_id": "71531e46-65f4-4dbc-8206-2f9e16c44d05",
+      "district": "38",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Track AIPAC",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Hilda Solis",
+      "notes": "This candidate has a track record of taking money from AIPAC and affiliated lobbies",
+      "office_title": "U.S. Representative",
+      "party": "Democrat",
+      "rating": "reject",
+      "section": "California",
+      "slug": "hilda-solis",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/hilda-solis"
+    },
+    {
+      "articles": [],
       "candidate_id": "a2f832dd-02f2-4d5b-8b52-da603f67f121",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -5419,7 +6039,7 @@
     {
       "articles": [],
       "candidate_id": "05b135e8-c90c-41e3-b52f-e576a38f4723",
-      "district": null,
+      "district": "3",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -5461,7 +6081,7 @@
       "level": "statewide",
       "name": "Samuel Sukaton",
       "notes": "This candidate is running in district 3 of State board of equalization, which covers of LA County; it may not be on your ballot.",
-      "office_title": "State Board of Equalization, District 3",
+      "office_title": "State Board of Equalization",
       "party": "Democrat",
       "rating": "vote",
       "section": "California",
@@ -5798,6 +6418,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -5909,6 +6535,12 @@
           "notes": null,
           "organization": "Indivisible",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -6000,6 +6632,12 @@
           "link": null,
           "notes": null,
           "organization": "For the People Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         }
       ],
@@ -7769,35 +8407,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "8cf6eb1d-2351-4703-8f9b-c700e3511477",
-      "district": null,
-      "election_date": null,
-      "election_label": null,
-      "election_result": "pending",
-      "election_stage": "primary",
-      "endorsements": [
-        {
-          "link": null,
-          "notes": null,
-          "organization": "Vote for Peace Questionnaire",
-          "type": "endorsed"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": null,
-      "level": "state",
-      "name": "Branden Scrivener",
-      "notes": null,
-      "office_title": "U.S. HOUSE, FL District 12",
-      "party": null,
-      "rating": "vote",
-      "section": "Fl",
-      "slug": "branden-scrivener",
-      "state": "FL",
-      "url": "https://voteforpeace.info/fl/branden-scrivener"
-    },
-    {
-      "articles": [],
       "candidate_id": "28099fda-05a8-4d93-a797-6fe5009b71a6",
       "district": "34",
       "election_date": "Nov 3, 2026",
@@ -8408,6 +9017,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "8cf6eb1d-2351-4703-8f9b-c700e3511477",
+      "district": null,
+      "election_date": "Aug 18, 2026",
+      "election_label": "Primary: Aug 18, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state",
+      "name": "Branden Scrivener",
+      "notes": null,
+      "office_title": "U.S. HOUSE, FL District 12",
+      "party": null,
+      "rating": "vote",
+      "section": "Florida",
+      "slug": "branden-scrivener",
+      "state": "FL",
+      "url": "https://voteforpeace.info/florida/branden-scrivener"
+    },
+    {
+      "articles": [],
       "candidate_id": "be57f528-83de-4683-8d42-4d60ebf482e7",
       "district": "42",
       "election_date": "Nov 3, 2026",
@@ -8682,7 +9320,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Ruwa Romman",
-      "notes": "Georgia State Representative Ruwa Romman has taken a consistent stance against militarism both at home and abroad. She was one of the first elected officials to oppose Cop City and the militarization of police around Metro Atlanta.\nOn the international stage, she has been a vocal critic of unconditional U.S. military aid, particularly regarding the conflict in Gaza and is against legislation that codifies the IHRA definition.",
+      "notes": "Current Georgia State Representative Ruwa Romman has taken a consistent stance against militarism both at home and abroad. She was one of the first elected officials to oppose Cop City and the militarization of police around Metro Atlanta.\nOn the international stage, she has been a vocal critic of unconditional U.S. military aid, particularly regarding the conflict in Gaza and is against legislation that codifies the IHRA definition.",
       "office_title": "State Senator",
       "party": "Democrat",
       "rating": "vote",
@@ -8872,7 +9510,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Michelle Au",
-      "notes": "Voted in support of HB30; no known stance on reject war lobbies like AIPAC, Lockheed Martin, or Palatir.",
+      "notes": "Voted in support of HB30; no known stance on reject war lobbies like AIPAC, Lockheed Martin, or Palantir.",
       "office_title": "State Representative",
       "party": "Democrat",
       "rating": "reject",
@@ -8894,7 +9532,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Bethany Ballard",
-      "notes": "Voted in support of HB30; no known stance on reject war lobbies like AIPAC, Lockheed Martin, or Palatir.",
+      "notes": "Voted in support of HB30; no known stance on reject war lobbies like AIPAC, Lockheed Martin, or Palantir.",
       "office_title": "State Representative",
       "party": "Republican",
       "rating": "reject",
@@ -10023,7 +10661,7 @@
     {
       "articles": [],
       "candidate_id": "e99c9355-03d0-4565-b4ee-36eac41ded1f",
-      "district": "Forsyth",
+      "district": null,
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -10037,11 +10675,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": "County",
-      "level": "local",
+      "jurisdiction": "Forsyth",
+      "level": "county",
       "name": "Shuchita Patel",
       "notes": null,
-      "office_title": "County Board of Commissioners, District 3, County",
+      "office_title": "County Board of Commissioners, District 3, Forsyth",
       "party": null,
       "rating": "vote",
       "section": "Georgia",
@@ -10602,6 +11240,18 @@
           "notes": null,
           "organization": "All United",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Coalition Activate",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -10703,6 +11353,35 @@
       "slug": "elizabeth-granato",
       "state": "IL",
       "url": "https://voteforpeace.info/illinois/elizabeth-granato"
+    },
+    {
+      "articles": [],
+      "candidate_id": "29d179ca-b029-464e-b0c8-e18b510cfed9",
+      "district": "20",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Coalition Activate",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Graciela Guzmán",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": null,
+      "rating": "vote",
+      "section": "Illinois",
+      "slug": "graciela-guzm-n",
+      "state": "IL",
+      "url": "https://voteforpeace.info/illinois/graciela-guzm-n"
     },
     {
       "articles": [],
@@ -10916,6 +11595,12 @@
           "notes": null,
           "organization": "The Justice Coalition",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Coalition Activate",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -11114,6 +11799,12 @@
           "notes": null,
           "organization": "The Justice Coalition",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Coalition Activate",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -11283,6 +11974,12 @@
           "link": null,
           "notes": null,
           "organization": "The Justice Coalition",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Coalition Activate",
           "type": "endorsed"
         }
       ],
@@ -13335,11 +14032,11 @@
         }
       ],
       "featured_text": null,
-      "jurisdiction": "Dearborn",
+      "jurisdiction": "Wayne",
       "level": "county",
       "name": "Mallak Anani",
       "notes": null,
-      "office_title": "School Board Member, Dearborn",
+      "office_title": "School Board Member, Wayne",
       "party": null,
       "rating": "vote",
       "section": "Michigan",
@@ -13612,6 +14309,12 @@
           "notes": null,
           "organization": "JVP Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -13845,6 +14548,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
           "type": "endorsed"
         }
       ],
@@ -14449,7 +15158,7 @@
       "level": "state_legislature",
       "name": "Joanna Whaley",
       "notes": null,
-      "office_title": "State House of Representatives",
+      "office_title": "State Representative",
       "party": "Democrat",
       "rating": "vote",
       "section": "Michigan",
@@ -14470,6 +15179,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         }
       ],
@@ -14709,6 +15424,12 @@
           "notes": null,
           "organization": "Take Action Minnesota",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -14795,6 +15516,12 @@
           "link": null,
           "notes": null,
           "organization": "Track AIPAC",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
           "type": "endorsed"
         }
       ],
@@ -15218,6 +15945,12 @@
           "notes": null,
           "organization": "USCPR Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -15334,6 +16067,12 @@
           "link": null,
           "notes": null,
           "organization": "Indivisible",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
           "type": "endorsed"
         }
       ],
@@ -16830,6 +17569,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         }
       ],
@@ -18428,13 +19173,19 @@
           "notes": null,
           "organization": "Working Families Party",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "federal",
       "name": "Bob Brooks",
-      "notes": "While the Working Families Party questionnaire does not explicitly ask about AIPAC, it does screen candidates who have pledged not to take any corporate or special interest dollars. We have not been able to independently verify this candidate's position on militarism or war lobbies.",
+      "notes": null,
       "office_title": "U.S. House",
       "party": null,
       "rating": "vote",
@@ -18521,13 +19272,19 @@
           "notes": null,
           "organization": "Working Families Party",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "state_legislature",
-      "name": "Ce-Ce Gerlach Gerlach",
-      "notes": "While the Working Families Party questionnaire does not explicitly ask about AIPAC, it does screen candidates who have pledged not to take any corporate or special interest dollars. We have not been able to independently verify this candidate's position on militarism or war lobbies.",
+      "name": "Ce-Ce Gerlach",
+      "notes": null,
       "office_title": "State Representative",
       "party": null,
       "rating": "vote",
@@ -18777,6 +19534,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "7b1a1364-6040-490e-8239-0c77e9e0734a",
+      "district": "16",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Mark Pinsley",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": null,
+      "rating": "vote",
+      "section": "Pennsylvania",
+      "slug": "mark-pinsley",
+      "state": "PA",
+      "url": "https://voteforpeace.info/pennsylvania/mark-pinsley"
+    },
+    {
+      "articles": [],
       "candidate_id": "c37a0097-cef3-4349-9818-f979d72b71f8",
       "district": "3",
       "election_date": "Nov 3, 2026",
@@ -18824,6 +19610,12 @@
           "link": null,
           "notes": null,
           "organization": "PAL PAC",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "For the People Action",
           "type": "endorsed"
         }
       ],
@@ -25110,7 +25902,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Ryan Clancy",
-      "notes": "$36",
+      "notes": "$35",
       "office_title": "State Assembly Member",
       "party": null,
       "rating": "vote",
@@ -25505,5 +26297,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-08"
+  "snapshot": "2026-10-10"
 }
