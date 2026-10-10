@@ -2715,6 +2715,13 @@
     "party": "D",
     "state": "NV"
   },
+  "nv-david-flippo": {
+    "chamber": "house",
+    "district": "02",
+    "name": "David Flippo",
+    "party": "R",
+    "state": "NV"
+  },
   "nv-dina-titus": {
     "chamber": "house",
     "district": "01",

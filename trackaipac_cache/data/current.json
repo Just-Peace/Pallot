@@ -15106,20 +15106,21 @@
           "donate_url": null,
           "donations": 134134,
           "election_date": null,
-          "ie": 94674,
+          "ie": 189294,
           "incumbent": false,
-          "israel_lobby_total": 228808,
+          "israel_lobby_total": 328428,
           "lines": [
             "Candidate for U.S. Senate",
             "MI [R]",
-            "Israel Lobby Total: $228,808",
+            "Israel Lobby Total: $328,428",
             "Donations: $134,134",
-            "IE: $94,674",
-            "AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, YJL"
+            "IE: $189,294",
+            "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, YJL"
           ],
           "name": "Mike Rogers",
           "notes": [],
           "pacs": [
+            "AIPAC",
             "AMP",
             "AGG",
             "BICOUNTY",
@@ -18936,60 +18937,6 @@
       "state": "NH"
     },
     {
-      "candidate_id": "nh-scott-brown",
-      "categories": [
-        "watchlist"
-      ],
-      "chamber": "senate",
-      "district": null,
-      "listings": [
-        {
-          "campaign_url": null,
-          "candidate_id": "nh-scott-brown",
-          "category": "watchlist",
-          "chamber": "senate",
-          "district": null,
-          "donate_url": null,
-          "donations": 42600,
-          "election_date": null,
-          "ie": 0,
-          "incumbent": false,
-          "israel_lobby_total": 42600,
-          "lines": [
-            "Candidate for U.S. Senate",
-            "NH [R]",
-            "Israel Lobby Total: $42,600",
-            "Donations: $42,600",
-            "IE: $0",
-            "AMP ('12), AUSD ('12), COPAC ('12), HEARTLAND ('12), RJC ('14), SUNPAC ('12), USI ('12), WAPAC ('12)"
-          ],
-          "name": "Scott Brown",
-          "notes": [],
-          "pacs": [
-            "AMP ('12)",
-            "AUSD ('12)",
-            "COPAC ('12)",
-            "HEARTLAND ('12)",
-            "RJC ('14)",
-            "SUNPAC ('12)",
-            "USI ('12)",
-            "WAPAC ('12)"
-          ],
-          "party": "R",
-          "seat": "NH-SEN",
-          "seat_text": "NH [R]",
-          "section": null,
-          "source": "candidates",
-          "state": "NH",
-          "title": "Candidate for U.S. Senate"
-        }
-      ],
-      "name": "Scott Brown",
-      "party": "R",
-      "seat": "NH-SEN",
-      "state": "NH"
-    },
-    {
       "candidate_id": "nj-adam-hamawy",
       "categories": [
         "endorsed"
@@ -20148,6 +20095,53 @@
       "name": "Catherine Cortez-Masto",
       "party": "D",
       "seat": "NV-SEN",
+      "state": "NV"
+    },
+    {
+      "candidate_id": "nv-david-flippo",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "02",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "nv-david-flippo",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "02",
+          "donate_url": null,
+          "donations": null,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 1000,
+          "lines": [
+            "Candidate for U.S. House",
+            "NV-02 [R]",
+            "Israel Lobby Total: $1,000",
+            "IE: $0",
+            "AIPAC, AMP"
+          ],
+          "name": "David Flippo",
+          "notes": [],
+          "pacs": [
+            "AIPAC",
+            "AMP"
+          ],
+          "party": "R",
+          "seat": "NV-02",
+          "seat_text": "NV-02 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "NV",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "David Flippo",
+      "party": "R",
+      "seat": "NV-02",
       "state": "NV"
     },
     {
@@ -32505,5 +32499,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-08"
+  "snapshot": "2026-10-10"
 }
