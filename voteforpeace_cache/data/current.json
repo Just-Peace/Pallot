@@ -210,6 +210,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "00d32670-1a0e-46dc-b613-5e7ca3d15801",
+      "district": "26",
+      "election_date": "Jul 21, 2026",
+      "election_label": "Primary: Jul 21, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Flavio Bravo",
+      "notes": null,
+      "office_title": "State Senator District 26",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Arizona",
+      "slug": "flavio-bravo",
+      "state": "AZ",
+      "url": "https://voteforpeace.info/arizona/flavio-bravo"
+    },
+    {
+      "articles": [],
       "candidate_id": "a09f9407-2987-4682-8a30-bf0473d9c560",
       "district": "6",
       "election_date": "Nov 3, 2026",
@@ -1454,6 +1483,35 @@
       "slug": "matthew-adams",
       "state": "CA",
       "url": "https://voteforpeace.info/california/matthew-adams"
+    },
+    {
+      "articles": [],
+      "candidate_id": "4c9bc1d3-c46f-4043-aeab-082919613559",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Orange County Justice for Palestine",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Irvine",
+      "level": "local",
+      "name": "Larry Agran",
+      "notes": null,
+      "office_title": "Mayor, Irvine",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "larry-agran",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/larry-agran"
     },
     {
       "articles": [],
@@ -3515,6 +3573,12 @@
           "notes": null,
           "organization": "Richmond 4 Palestine",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -4272,6 +4336,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "37cf10ac-e106-4ba5-b444-98c62458ad48",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Fullerton",
+      "level": "local",
+      "name": "Jozef Maldonado",
+      "notes": null,
+      "office_title": "City Council Member, District 5, Fullerton",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "jozef-maldonado",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jozef-maldonado"
+    },
+    {
+      "articles": [],
       "candidate_id": "0ffa47f9-ff00-4ebe-87c2-169efecb6bce",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -4537,6 +4630,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "504e5992-403c-443e-93dc-e792edb28a23",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Alhambra",
+      "level": "local",
+      "name": "Melissa Michelson",
+      "notes": null,
+      "office_title": "City Council Member, District 5, Alhambra",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "melissa-michelson",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/melissa-michelson"
+    },
+    {
+      "articles": [],
       "candidate_id": "cb19c03a-58ad-477b-b0ad-e6e98c64697f",
       "district": "47",
       "election_date": "Nov 3, 2026",
@@ -4649,6 +4771,35 @@
       "slug": "alicia-munoz",
       "state": "CA",
       "url": "https://voteforpeace.info/california/alicia-munoz"
+    },
+    {
+      "articles": [],
+      "candidate_id": "2686aeec-640e-41fd-92d3-fdee9a785998",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Fontana",
+      "level": "local",
+      "name": "Kamal Namou",
+      "notes": null,
+      "office_title": "City Treasurer, Fontana",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "kamal-namou",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/kamal-namou"
     },
     {
       "articles": [],
@@ -5263,6 +5414,35 @@
       "slug": "mark-rendon",
       "state": "CA",
       "url": "https://voteforpeace.info/california/mark-rendon"
+    },
+    {
+      "articles": [],
+      "candidate_id": "22b982db-b140-486d-a802-b182b1caa7da",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Anaheim",
+      "level": "local",
+      "name": "Elia Renteria-Garcia",
+      "notes": null,
+      "office_title": "City Council Member, Anaheim",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "elia-renteria-garcia",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/elia-renteria-garcia"
     },
     {
       "articles": [],
@@ -6219,6 +6399,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "3819f9de-a101-4898-9cb7-c88945e42d4d",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Stanton",
+      "level": "local",
+      "name": "Donald Torres",
+      "notes": null,
+      "office_title": "City Council Member, Stanton",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "donald-torres",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/donald-torres"
+    },
+    {
+      "articles": [],
       "candidate_id": "435a822a-2a66-4c9e-b75b-6a15c4ac1b49",
       "district": "35",
       "election_date": "Nov 3, 2026",
@@ -6496,6 +6705,35 @@
       "slug": "ben-vasquez",
       "state": "CA",
       "url": "https://voteforpeace.info/california/ben-vasquez"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f01dc2da-7e5f-4602-97b4-ce1815eaf5c0",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Santa Ana",
+      "level": "local",
+      "name": "Benjamin Vazquez",
+      "notes": null,
+      "office_title": "City Council Member, Ward 2, Santa Ana",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "benjamin-vazquez",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/benjamin-vazquez"
     },
     {
       "articles": [],
@@ -26297,5 +26535,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-10"
+  "snapshot": "2026-10-11"
 }
