@@ -7458,6 +7458,52 @@
       "state": "FL"
     },
     {
+      "candidate_id": "fl-mike-klein",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "03",
+      "listings": [
+        {
+          "campaign_url": "https://mikeklein4congress.com/",
+          "candidate_id": "fl-mike-klein",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "03",
+          "donate_url": "https://mikeklein4congress.com/",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://mikeklein4congress.com/)",
+            "FL-03 [I]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Mike](https://mikeklein4congress.com/)"
+          ],
+          "name": "Mike Klein",
+          "notes": [
+            "General Election"
+          ],
+          "pacs": [],
+          "party": "I",
+          "seat": "FL-03",
+          "seat_text": "FL-03 [I]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Mike Klein",
+      "party": "I",
+      "seat": "FL-03",
+      "state": "FL"
+    },
+    {
       "candidate_id": "fl-neal-dunn",
       "categories": [
         "congress"
@@ -32499,5 +32545,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-11"
+  "snapshot": "2026-10-12"
 }

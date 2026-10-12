@@ -1432,6 +1432,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         }
@@ -1483,6 +1489,35 @@
       "slug": "matthew-adams",
       "state": "CA",
       "url": "https://voteforpeace.info/california/matthew-adams"
+    },
+    {
+      "articles": [],
+      "candidate_id": "5fe43fe6-4382-4d6e-a5e1-b394911f1885",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oakland",
+      "level": "local",
+      "name": "Nate Adams",
+      "notes": null,
+      "office_title": "City Council Member, Oakland",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "nate-adams",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/nate-adams"
     },
     {
       "articles": [],
@@ -1605,6 +1640,28 @@
       "slug": "aziz-akbari",
       "state": "CA",
       "url": "https://voteforpeace.info/california/aziz-akbari"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f6882627-c140-491c-aa36-b28e0302080b",
+      "district": "63",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Kevin Akin",
+      "notes": "This candidate is running against an incumbent Republican. He represents the Peace and Freedom party, which has a platform that has been outspoken against US tax funds supporting endless wars and genocide.",
+      "office_title": "State Assembly Member",
+      "party": "Independent",
+      "rating": "vote",
+      "section": "California",
+      "slug": "kevin-akin",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/kevin-akin"
     },
     {
       "articles": [],
@@ -1758,6 +1815,70 @@
     },
     {
       "articles": [],
+      "candidate_id": "1c488bea-9026-49c7-823e-9c9c90971691",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oakland",
+      "level": "local",
+      "name": "Valarie Bachelor",
+      "notes": null,
+      "office_title": "Board of Education, Oakland",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "valarie-bachelor",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/valarie-bachelor"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b91c0f7c-065b-4eb2-bba5-e6b964a6ad6d",
+      "district": "Area 5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Dublin",
+      "level": "local",
+      "name": "Seema Badar",
+      "notes": null,
+      "office_title": "Dublin Unified School District, Dublin",
+      "party": "Nonpartisan",
+      "rating": "vote",
+      "section": "California",
+      "slug": "seema-badar",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/seema-badar"
+    },
+    {
+      "articles": [],
       "candidate_id": "3f550e49-ad37-4f8f-a484-a9a730249272",
       "district": "44",
       "election_date": "Nov 3, 2026",
@@ -1838,6 +1959,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "3024d9a2-022e-410e-bc98-88664880199f",
+      "district": "6",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Alex Behrend",
+      "notes": null,
+      "office_title": "Board of Supervisors, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "alex-behrend",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/alex-behrend"
+    },
+    {
+      "articles": [],
       "candidate_id": "007258d8-e9bf-400a-a9b8-37d2567e654e",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -1914,6 +2064,12 @@
           "notes": null,
           "organization": "For the People Action",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -1928,6 +2084,35 @@
       "slug": "mia-bonta",
       "state": "CA",
       "url": "https://voteforpeace.info/california/mia-bonta"
+    },
+    {
+      "articles": [],
+      "candidate_id": "6365aebe-e6ca-4426-86a6-f0b85c142065",
+      "district": "10",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Dion-Jay Brookter",
+      "notes": null,
+      "office_title": "Board of Supervisors, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "dion-jay-brookter",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/dion-jay-brookter"
     },
     {
       "articles": [],
@@ -1971,6 +2156,12 @@
           "link": null,
           "notes": null,
           "organization": "DSA",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
           "type": "endorsed"
         },
         {
@@ -2139,7 +2330,7 @@
       ],
       "featured_text": null,
       "jurisdiction": "Los Angeles",
-      "level": "county",
+      "level": "local",
       "name": "Estefany Castañeda",
       "notes": null,
       "office_title": "Centinela Valley Union High School District, Trustee Area 5, Los Angeles",
@@ -2330,6 +2521,35 @@
       "slug": "gordon-chester",
       "state": "CA",
       "url": "https://voteforpeace.info/california/gordon-chester"
+    },
+    {
+      "articles": [],
+      "candidate_id": "e8a2c263-9aa0-4582-8270-ad591b21803e",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Virginia Cheung",
+      "notes": null,
+      "office_title": "Board of Education, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "virginia-cheung",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/virginia-cheung"
     },
     {
       "articles": [],
@@ -2757,6 +2977,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "CAIR Action",
           "type": "endorsed"
         },
@@ -2814,6 +3040,35 @@
       "slug": "jackie-elward",
       "state": "CA",
       "url": "https://voteforpeace.info/california/jackie-elward"
+    },
+    {
+      "articles": [],
+      "candidate_id": "77e82974-370f-42e1-adcb-3284c019aa8b",
+      "district": "10",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "JR Eppler",
+      "notes": null,
+      "office_title": "Board of Supervisors, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "jr-eppler",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jr-eppler"
     },
     {
       "articles": [],
@@ -3106,6 +3361,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "For the People Action",
           "type": "endorsed"
         },
@@ -3326,6 +3587,35 @@
       "slug": "rhonda-haymon",
       "state": "CA",
       "url": "https://voteforpeace.info/california/rhonda-haymon"
+    },
+    {
+      "articles": [],
+      "candidate_id": "6171f7c1-9ce0-4222-aae1-0634520de86d",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Ryan Hazelton",
+      "notes": null,
+      "office_title": "Board of Education, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "ryan-hazelton",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/ryan-hazelton"
     },
     {
       "articles": [],
@@ -3862,12 +4152,6 @@
         {
           "link": null,
           "notes": null,
-          "organization": "DSA",
-          "type": "endorsed"
-        },
-        {
-          "link": null,
-          "notes": null,
           "organization": "CAIR Action",
           "type": "endorsed"
         }
@@ -4052,6 +4336,35 @@
       "slug": "alex-lee",
       "state": "CA",
       "url": "https://voteforpeace.info/california/alex-lee"
+    },
+    {
+      "articles": [],
+      "candidate_id": "9280f034-52c4-4340-8862-8efecc0fdc41",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oakland",
+      "level": "local",
+      "name": "Barbara Lee",
+      "notes": null,
+      "office_title": "Mayor, Oakland",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "barbara-lee",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/barbara-lee"
     },
     {
       "articles": [],
@@ -4337,7 +4650,7 @@
     {
       "articles": [],
       "candidate_id": "37cf10ac-e106-4ba5-b444-98c62458ad48",
-      "district": null,
+      "district": "5",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -4355,7 +4668,7 @@
       "level": "local",
       "name": "Jozef Maldonado",
       "notes": null,
-      "office_title": "City Council Member, District 5, Fullerton",
+      "office_title": "City Council Member, Fullerton",
       "party": null,
       "rating": "vote",
       "section": "California",
@@ -4522,6 +4835,64 @@
     },
     {
       "articles": [],
+      "candidate_id": "bfaa000b-e142-4900-a5a3-032d69d0bbed",
+      "district": "8",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Gary McCoy",
+      "notes": null,
+      "office_title": "Board of Supervisors, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "gary-mccoy",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/gary-mccoy"
+    },
+    {
+      "articles": [],
+      "candidate_id": "76a83532-52ee-4c3c-8d26-bb0bcfd572e4",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Bunny McFadden",
+      "notes": null,
+      "office_title": "San Francisco City College Board, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "bunny-mcfadden",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/bunny-mcfadden"
+    },
+    {
+      "articles": [],
       "candidate_id": "f4a67c09-b254-4d1a-a56f-8dab169062dd",
       "district": "1",
       "election_date": "Nov 3, 2026",
@@ -4608,25 +4979,32 @@
     },
     {
       "articles": [],
-      "candidate_id": "40064a4d-6456-4afd-8d99-981bb80dcfe8",
-      "district": null,
-      "election_date": null,
-      "election_label": "Won General",
-      "election_result": "won",
+      "candidate_id": "70d4e5d2-8c7b-4c1a-a610-a0152b8fbcd0",
+      "district": "7",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
-      "jurisdiction": "Orange",
-      "level": "county",
-      "name": "Robert Mestman",
-      "notes": "No known pro-peace stances, though has been endorsed by leaders like Florice Hoffman who have strongly opposed ceasefire resolutions.\nThis candidate is more focused on accountability and justice in the criminal justice system. Endorsed by the Orange County Democratic Party as well as the Association of Orange County Deputy District Attorneys and 12 police associations including the Santa Ana Police Officers' Association and the OC Democratic Party.\nHe helped establish and lead Orange County's first Conviction Integrity Unit, focused on accountability and ensuring fairness in the justice system. He also served as a special federal prosecutor on public corruption cases and sits on the Board of Directors of the California District Attorneys Association.",
-      "office_title": "County Superior Court Justice, Office 13, Orange",
+      "jurisdiction": "Berkeley",
+      "level": "local",
+      "name": "Syrak Micael",
+      "notes": null,
+      "office_title": "City Council Member, Berkeley",
       "party": null,
-      "rating": "neutral",
+      "rating": "vote",
       "section": "California",
-      "slug": "robert-mestman",
+      "slug": "syrak-micael",
       "state": "CA",
-      "url": "https://voteforpeace.info/california/robert-mestman"
+      "url": "https://voteforpeace.info/california/syrak-micael"
     },
     {
       "articles": [],
@@ -4850,6 +5228,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "86e2866e-a09f-44e7-b7fc-cc7bc0506c51",
+      "district": "8",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Michael Nguyen",
+      "notes": null,
+      "office_title": "Board of Supervisors, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "michael-nguyen",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/michael-nguyen"
+    },
+    {
+      "articles": [],
       "candidate_id": "fa010e3f-7c9e-4849-b167-42abdaeaed03",
       "district": "23",
       "election_date": "Nov 3, 2026",
@@ -4925,6 +5332,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
           "type": "endorsed"
         },
         {
@@ -5062,28 +5475,6 @@
       "slug": "neva-parker",
       "state": "CA",
       "url": "https://voteforpeace.info/california/neva-parker"
-    },
-    {
-      "articles": [],
-      "candidate_id": "e3168924-3233-4a80-9018-20bc667b3a83",
-      "district": null,
-      "election_date": null,
-      "election_label": "Won General",
-      "election_result": "won",
-      "election_stage": "general",
-      "endorsements": [],
-      "featured_text": null,
-      "jurisdiction": "Orange",
-      "level": "county",
-      "name": "Claude Parrish",
-      "notes": "This candidate's tenure has been marred by a workplace misconduct investigation finding he violated gender discrimination and retaliation policies and harassed a subordinate over her medical disability. He is endorsed by the Republican Party of California",
-      "office_title": "County Assessor, Orange",
-      "party": "Democrat",
-      "rating": "reject",
-      "section": "California",
-      "slug": "claude-parrish",
-      "state": "CA",
-      "url": "https://voteforpeace.info/california/claude-parrish"
     },
     {
       "articles": [],
@@ -5280,6 +5671,35 @@
       "slug": "randall-putz",
       "state": "CA",
       "url": "https://voteforpeace.info/california/randall-putz"
+    },
+    {
+      "articles": [],
+      "candidate_id": "2e678105-af30-4195-b876-e4ac33b7c077",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oakland",
+      "level": "local",
+      "name": "Janani Ramachandran",
+      "notes": null,
+      "office_title": "City Council Member, Oakland",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "janani-ramachandran",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/janani-ramachandran"
     },
     {
       "articles": [],
@@ -5695,28 +6115,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "04ff164e-936e-4972-bd76-694b2f5a0c72",
-      "district": null,
-      "election_date": null,
-      "election_label": "Won General",
-      "election_result": "won",
-      "election_stage": "general",
-      "endorsements": [],
-      "featured_text": null,
-      "jurisdiction": "Orange",
-      "level": "county",
-      "name": "Ami Sagel",
-      "notes": "No known pro-peace stances.\nAppointed by Governor Newsom in 2023 and is a Democrat. Her career has focused on seeking justice for children and families. Currently serves on the Family Law panel handling sensitive cases involving children. However, she is also under scrutiny — a broad organized judicial recall effort has named her among 12 OC judges, with organizers citing concerns about due process and the handling of domestic violence and custody cases.",
-      "office_title": "County Superior Court Justice, Office 41, Orange",
-      "party": null,
-      "rating": "neutral",
-      "section": "California",
-      "slug": "ami-sagel",
-      "state": "CA",
-      "url": "https://voteforpeace.info/california/ami-sagel"
-    },
-    {
-      "articles": [],
       "candidate_id": "417aa9a8-7406-4d51-a8ac-596780890aa9",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -5784,47 +6182,6 @@
       "slug": "linda-s-nchez",
       "state": "CA",
       "url": "https://voteforpeace.info/california/linda-s-nchez"
-    },
-    {
-      "articles": [],
-      "candidate_id": "49e689b7-e765-4b88-ae6c-15f293390503",
-      "district": "2",
-      "election_date": null,
-      "election_label": "Won General",
-      "election_result": "won",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": null,
-          "notes": null,
-          "organization": "Orange County Justice for Palestine",
-          "type": "endorsed"
-        },
-        {
-          "link": null,
-          "notes": null,
-          "organization": "Vote for Peace Questionnaire",
-          "type": "endorsed"
-        },
-        {
-          "link": null,
-          "notes": null,
-          "organization": "CAIR Action",
-          "type": "endorsed"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": "Orange",
-      "level": "county",
-      "name": "Vicente Sarmiento",
-      "notes": null,
-      "office_title": "County Supervisor, Orange",
-      "party": null,
-      "rating": "vote",
-      "section": "California",
-      "slug": "vicente-sarmiento",
-      "state": "CA",
-      "url": "https://voteforpeace.info/california/vicente-sarmiento"
     },
     {
       "articles": [],
@@ -6218,6 +6575,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "623eb793-0963-4fb6-8150-34710e267742",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Redwood City",
+      "level": "local",
+      "name": "Chris Sturken",
+      "notes": null,
+      "office_title": "City Council Member, Redwood City",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "chris-sturken",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/chris-sturken"
+    },
+    {
+      "articles": [],
       "candidate_id": "05b135e8-c90c-41e3-b52f-e576a38f4723",
       "district": "3",
       "election_date": "Nov 3, 2026",
@@ -6268,6 +6654,35 @@
       "slug": "sam-sukaton",
       "state": "CA",
       "url": "https://voteforpeace.info/california/sam-sukaton"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c8a5a81f-e95b-4c2e-bc04-0e854196f9da",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Hayward",
+      "level": "local",
+      "name": "George Syrop",
+      "notes": null,
+      "office_title": "City Council Member, Hayward",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "george-syrop",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/george-syrop"
     },
     {
       "articles": [],
@@ -6332,6 +6747,35 @@
       "slug": "karina-talamantes",
       "state": "CA",
       "url": "https://voteforpeace.info/california/karina-talamantes"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0e543d5f-2b2f-4036-b0fb-613419072f0a",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Francisco",
+      "level": "local",
+      "name": "Reina Tello",
+      "notes": null,
+      "office_title": "Board of Education, San Francisco",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "reina-tello",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/reina-tello"
     },
     {
       "articles": [],
@@ -6527,6 +6971,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "67af5410-bd70-4188-b83d-a31614275aca",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Aliso Viejo",
+      "level": "local",
+      "name": "Marie Tsaasan",
+      "notes": null,
+      "office_title": "City Council Member, Aliso Viejo",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "marie-tsaasan",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/marie-tsaasan"
+    },
+    {
+      "articles": [],
       "candidate_id": "030f8118-059b-496f-89d4-3e2161c39ffa",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -6614,6 +7087,12 @@
           "link": "https://www.trackaipac.com/endorsements",
           "notes": null,
           "organization": "Track AIPAC",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "AROC Action",
           "type": "endorsed"
         },
         {
@@ -6753,6 +7232,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "AROC Action",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
         },
@@ -6793,6 +7278,35 @@
       "slug": "randy-villegas",
       "state": "CA",
       "url": "https://voteforpeace.info/california/randy-villegas"
+    },
+    {
+      "articles": [],
+      "candidate_id": "1024e2ce-e93d-489b-9e0c-97c8c02b18c3",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Aliso Viejo",
+      "level": "local",
+      "name": "Steven Von der Porten",
+      "notes": null,
+      "office_title": "City Council Member, District 2, Aliso Viejo",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "steven-von-der-porten",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/steven-von-der-porten"
     },
     {
       "articles": [],
@@ -13141,6 +13655,35 @@
       "slug": "terri-hill",
       "state": "MD",
       "url": "https://voteforpeace.info/maryland/terri-hill"
+    },
+    {
+      "articles": [],
+      "candidate_id": "3c6bf179-34b0-44bb-9dd1-27b250a45fa5",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Sam Husseini",
+      "notes": "Vocal journalist and activist against the influence of war lobbies like AIPAC on elections; track record of reporting on the ongoing genocide in Gaza.",
+      "office_title": "U.S. Representative",
+      "party": "Green",
+      "rating": "vote",
+      "section": "Maryland",
+      "slug": "sam-husseini",
+      "state": "MD",
+      "url": "https://voteforpeace.info/maryland/sam-husseini"
     },
     {
       "articles": [],
@@ -26535,5 +27078,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-11"
+  "snapshot": "2026-10-12"
 }
