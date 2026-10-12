@@ -11,7 +11,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 env:
   LAST_DAY: "2026-11-15"
@@ -40,13 +39,27 @@ jobs:
     if: needs.season.outputs.active == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    env:
-      GH_TOKEN: ${{ secrets.PALLOT_REFRESH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.BASE }}
+          fetch-depth: 0
           token: ${{ secrets.PALLOT_REFRESH_TOKEN || github.token }}
+
+      - id: branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git rev-parse -q --verify "origin/$BRANCH" >/dev/null; then
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            if ! git merge --no-edit "origin/$BASE"; then
+              git merge --abort
+              echo "::error::$BRANCH conflicts with $BASE. Merge $BASE into it by hand, or delete the branch, then run again."
+              exit 1
+            fi
+          else
+            git checkout -B "$BRANCH"
+          fi
 
       - uses: astral-sh/setup-uv@v6
 
@@ -88,7 +101,7 @@ jobs:
         continue-on-error: true
         run: uv run pytest
 
-      - id: pr
+      - id: commit
         if: steps.changes.outputs.changed == 'true'
         env:
           OUTCOMES: |
@@ -99,21 +112,8 @@ jobs:
             - `pytest`: ${{ steps.tests.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B "$BRANCH"
-          git commit -q -m "chore: refresh bundled caches" -m "Daily run of .github/workflows/refresh-caches.yml." -m "$OUTCOMES"
-          git push --force origin "$BRANCH"
-          body=$(printf 'The daily refresh of the bundled snapshots ([run](%s)).\n\n%s\n\nA step that failed wrote nothing; its snapshot is unchanged here.\n' "$RUN_URL" "$OUTCOMES")
-          number=$(gh pr list --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')
-          if [ -z "$number" ]; then
-            gh pr create --head "$BRANCH" --base "$BASE" --title "chore: refresh bundled caches" --body "$body"
-          else
-            gh pr edit "$number" --body "$body"
-          fi
-
-      - if: steps.pr.outcome == 'success' && steps.tests.outcome == 'success'
-        run: gh pr merge "$BRANCH" --squash --auto || gh pr merge "$BRANCH" --squash --delete-branch
+          git commit -q -m "chore: refresh bundled caches" -m "Daily run of .github/workflows/refresh-caches.yml: $RUN_URL" -m "$OUTCOMES"
+          git push origin "$BRANCH"
 
       - if: always()
         env:
