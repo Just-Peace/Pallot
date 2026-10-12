@@ -109,8 +109,6 @@ export function showDetails(race, index, focus = null, at = "profile") {
   ], steps.previous, steps.next);
   details.classList.remove("compact");
   details.replaceChildren(head, tabBox);
-  headSize.disconnect();
-  headSize.observe(head);
   if (!details.open) details.showModal();
   details.scrollTop = 0;
   const pressed = steps[focus];
@@ -123,12 +121,9 @@ const word = (text) => h("span", { class: "btn-word" }, text);
 
 // The head shrinks to the photo, the name and the buttons' icons once the voter scrolls down, and
 // grows back at the top. It shrinks only with room to scroll after, and grows back nearer the top
-// than it shrank, so it never flips back and forth. The tabs stick under it (--head-h).
+// than it shrank, so it never flips back and forth. The tabs stick under it (--head-h, dialogHead).
 const SHRINK_AT = 48;
 const GROW_AT = 8;
-const headSize = new ResizeObserver(([entry]) => {
-  details.style.setProperty("--head-h", `${entry.target.offsetHeight}px`);
-});
 
 function syncCompact() {
   const top = details.scrollTop;

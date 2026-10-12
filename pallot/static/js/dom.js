@@ -132,10 +132,20 @@ export function autosave(field, save, wait) {
 }
 
 // A dialog's heading row: ``content``, then ``buttons`` and ✕, which closes it. ``close`` is
-// the ✕, to focus.
+// the ✕, to focus. The head stays at the top as the dialog scrolls, and its height is kept in the
+// dialog's --head-h, so its tabs stick right under it.
+const headSizes = new WeakMap(); // dialog -> the ResizeObserver on its current head
+
 export function dialogHead(dialog, content, ...buttons) {
   const close = h("button", { type: "button", class: "icon-btn close", "aria-label": "Close", on: { click: () => dialog.close() } }, "✕");
-  return { head: h("div", { class: "details-head" }, content, h("div", { class: "details-nav" }, buttons, close)), close };
+  const head = h("div", { class: "details-head" }, content, h("div", { class: "details-nav" }, buttons, close));
+  if (!headSizes.has(dialog)) {
+    headSizes.set(dialog, new ResizeObserver(([entry]) => dialog.style.setProperty("--head-h", `${entry.target.offsetHeight}px`)));
+  }
+  const sizes = headSizes.get(dialog);
+  sizes.disconnect();
+  sizes.observe(head);
+  return { head, close };
 }
 
 // A click on the backdrop, outside the dialog's box, closes it, with no returnValue.
