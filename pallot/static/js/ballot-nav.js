@@ -9,7 +9,7 @@ import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
-import { initEndorserBar, moreEndorsers, syncEndorserBar } from "./endorser-bar.js";
+import { initEndorserBar, moreHelp } from "./endorser-bar.js";
 import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
@@ -46,7 +46,6 @@ const refill = () => {
 // What puts the ballot back to each view switch when it changes, without a reload; each runs once
 // however many of its switches changed.
 const APPLY = {
-  showEndorserBar: syncEndorserBar,
   showMap: syncMapShown,
   showPolls: () => syncBoxes("showPolls"),
   showEndorsements: syncLines,
@@ -79,7 +78,7 @@ const showPickedButton = h("button", { type: "button", class: "link-btn", on: { 
 export const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
 
 // The left pane's list of sections, each with how many of its races are picked, with the
-// pollChips switch a mark on those with polls, and with the endorser bar how many races match.
+// pollChips switch a mark on those with polls, and with an endorser chosen in Help me pick how many races match.
 export function renderSections() {
   sectionCounts = [];
   sectionLinks = [];
@@ -108,8 +107,8 @@ export function syncPollMarks() {
   for (const { races, mark } of sectionCounts) mark.hidden = !(on && races.some(hasPolls));
 }
 
-// The sections' match counts from the endorser bar: ``count(races)``, the races with a match, or
-// null while it highlights nothing.
+// The sections' match counts from Help me pick: ``count(races)``, the races with a match, or null
+// while no endorser is chosen.
 function syncMatchMarks(count) {
   for (const { races, matchMark } of sectionCounts) {
     const n = count ? count(races) : 0;
@@ -146,9 +145,8 @@ export function updateProgress() {
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
-// Print, which needs them, waits, in the toolbar and in More, a line under it saying why (the endorser
-// bar's Pick them and More rules… wait too). ``failed``: they won't come, so the bar goes but they
-// stay off.
+// Print, which needs them, waits, in the toolbar and in More, a line under it saying why (Help me
+// pick's More rules… waits too). ``failed``: they won't come, so the bar goes but they stay off.
 const needCards = [$("#print-btn"), morePrint].map((button) => ({ button, title: button.title }));
 const cardsLoading = $("#cards-loading");
 const CARDS_STEPS = [
@@ -190,7 +188,7 @@ const TIPS = [
   },
   {
     id: "rule", when: () => wants("endorsements"), target: () => $("#endorser-btn"), after: () => tools,
-    text: () => "Help me pick rings who the endorsers you trust endorse, and can pick them for you.",
+    text: () => "Help me pick picks who the endorsers you trust endorse, and outlines who to avoid.",
   },
   {
     id: "next", when: () => anyPicked() && !nextButton.disabled, target: () => nextButton, after: () => progressInfo,
@@ -342,13 +340,13 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections: View's detail (with its "?") and focuses, the toolbar's buttons (with the line
-// saying why Print waits), and Expand and Collapse all from View.
+// More's sections: View's detail (with its "?") and focuses, Help me pick's controls and the
+// toolbar's buttons (with the line saying why Print waits), and Expand and Collapse all from View.
 function fillMoreSheet() {
   bindViewControls(moreView);
   bindViewControls(moreFocus);
   addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
-  addMoreSection({ id: "picks", label: "Your picks" }, moreEndorsers, morePrint,
+  addMoreSection({ id: "picks", label: "Your picks" }, moreHelp, morePrint,
     moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }), waitNotes[1]);
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
@@ -464,16 +462,21 @@ export function initNav(context) {
     viewMenu.open = false;
   });
 
-  // View closes like a menu: a click elsewhere, or Esc.
+  // View and Help me pick close like menus: a click elsewhere (by the path the click took, since Help
+  // me pick draws its panel again as the voter chooses), Esc, or opening the other.
+  const menus = [viewMenu, $("#help-menu")];
   document.addEventListener("click", (event) => {
-    if (viewMenu.open && !viewMenu.contains(event.target)) viewMenu.open = false;
+    const path = event.composedPath();
+    for (const menu of menus) if (menu.open && !path.includes(menu)) menu.open = false;
   });
-  viewMenu.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !viewMenu.open) return;
-    event.preventDefault();
-    viewMenu.open = false;
-    viewMenu.querySelector("summary").focus();
-  });
+  for (const menu of menus) {
+    menu.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !menu.open) return;
+      event.preventDefault();
+      menu.open = false;
+      menu.querySelector("summary").focus();
+    });
+  }
 
   nextButton.addEventListener("click", nextRace);
   document.addEventListener("keydown", stepRace);
