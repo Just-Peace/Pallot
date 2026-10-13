@@ -19,12 +19,17 @@ const AS_OF_WORDS = { fec: "reports through", tec: "reports through", polls: "la
 // The line under a card: "From the FEC, reports through Mar 31, 2026 · Open the FEC · How these
 // figures are put together". The FAQ link, for the money sources and polls, opens a new tab, so
 // the ballot and any open dialog stay put.
+// A link to another website, with the badges' ↗ after its label (none for an email address).
+function webLink(url, label) {
+  return extLink(url, url.startsWith("mailto:") ? label : [label, " ", h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")]);
+}
+
 export function sourceLine(card) {
   const faq = MONEY_FAQ[card.source];
   return h("p", { class: "fine" },
     `From ${card.label}`,
     card.as_of ? `, ${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : "",
-    card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
+    card.url ? [" · ", webLink(card.url, `Open ${card.label}`)] : null,
     faq ? [" · ", extLink(faq, "How these figures are put together")] : null);
 }
 
@@ -359,14 +364,14 @@ const cardSummary = (card) => [
         h("ul", { class: "badges", "aria-label": "Funding" }, fundingChips(card).map((b) => badge(b))))
     : card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
   card.facts.length
-    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
+    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? webLink(f.url, f.value) : f.value)]))
     : null,
 ];
 const cardQuotes = (card) => card.quotes.length
   ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
   : null;
 const cardLinks = (card) => card.links.length
-  ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label))))
+  ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, webLink(l.url, l.label))))
   : null;
 
 // ``described``: false in a tab's sections (Profile, Endorsements), named by their source, whose
