@@ -19,7 +19,6 @@ export const VIEW_DEFAULTS = {
   showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
-  showEndorserBar: false, // the endorser bar (endorser-bar.js), from the toolbar's Help me pick
 };
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.

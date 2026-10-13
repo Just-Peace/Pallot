@@ -163,7 +163,10 @@
             </div>
             <span class="tool-divider" aria-hidden="true"></span>
             <div class="tool-group">
-            <button class="btn ghost small with-icon" id="endorser-btn" type="button" aria-pressed="false" aria-controls="endorser-bar" title="Highlight who the endorsers you trust endorse, and pick by rule"><span data-icon="ring"></span>Help me pick</button>
+            <details class="menu" id="help-menu">
+              <summary class="btn ghost small with-icon" id="endorser-btn" title="Pick who the endorsers you trust endorse, and mark who to avoid"><span data-icon="ring"></span><span id="help-summary">Help me pick</span></summary>
+              <div class="menu-panel" id="help-panel"></div>
+            </details>
             <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
             </div>
@@ -188,7 +191,6 @@
             <p class="fine">Change it any time under View.</p>
           </div>
         </section>
-        <section class="endorser-bar" id="endorser-bar" aria-labelledby="endorser-bar-title" hidden></section>
         <div class="ballot-top">
           <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>

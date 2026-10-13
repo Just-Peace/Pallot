@@ -671,9 +671,10 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 /* the race on screen, and More (more-sheet.js): narrow screens only (see the end of the file) */
 .strip-race, .progress-info .more-btn { display: none; }
 
-/* View: a <details> whose panel drops down over the ballot, in groups (How much detail, What matters
-   to you, Races) and a foot (Settings, the appearance toggle and a "?"). A dot on it while picked
-   races, or races without a match, are hidden. */
+/* View and Help me pick: a <details> whose panel drops down over the ballot, in groups (How much
+   detail, What matters to you, Races; Endorsers you trust, Avoid) and a foot (Settings and the
+   appearance toggle, or More rules… and Clear, and a "?"). A dot on View while picked races are
+   hidden, on Help me pick while races without a match are. */
 .ballot-tools { align-items: center; }
 .tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .tool-divider { width: 1px; align-self: stretch; min-height: 24px; background: var(--line-strong); }
@@ -681,13 +682,27 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .menu { position: relative; }
 .menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
 .menu > summary::-webkit-details-marker { display: none; }
-.menu.filtered > summary::before, .menu.filtered-match > summary::before { content: "";width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.menu.filtered > summary::before { content: "";width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .menu-panel { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max-content; max-width: min(300px, calc(100vw - 32px));
   padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pop); }
 .menu-panel .check { font-size: 0.9rem; }
 .menu-panel .seg { margin: 4px 0 0; }
 #view-panel { width: min(320px, calc(100vw - 32px)); max-width: none; }
+/* Help me pick's panel (endorser-bar.js), and its copy in More's Your picks (.sheet-help), whose
+   buttons are the sheet's own size; an Avoid chip amber once chosen */
+#help-panel { width: min(360px, calc(100vw - 32px)); max-width: none; }
+:is(#help-panel, .sheet-help) .rule-chips { margin: 4px 0 2px; }
+:is(#help-panel, .sheet-help) .menu-group > .fine { margin: 6px 0 0; }
+:is(#help-panel, .sheet-help) .menu-group > .check { margin: 8px 0 0; }
+.help-summary { margin: 0; font-size: 0.9rem; font-weight: 600; }
+.rule-chip.bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
+.sheet-help { padding: 0 0 6px; }
+.sheet-help .rule-chip { min-height: 40px; }
+.sheet-sub { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-weight: 700; }
+.sheet-help-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.sheet-help-foot .sheet-action { flex: 1 1 auto; width: auto; }
+.sheet-help-foot .btn { min-height: 40px; }
 #view-focus .focus-chips { margin: 4px 0 4px; }
 .menu-group { margin: 0 0 10px; padding: 0 0 8px; border: 0; border-bottom: 1px solid var(--line); }
 .menu-group:has(+ .menu-foot) { margin-bottom: 0; border-bottom: 0; }
@@ -741,30 +756,13 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .head-compare { flex: none; margin-top: -2px; gap: 4px; }
 .stance-link { margin: 8px 0 0; }
 
-/* "Only races I haven't picked" and the endorser bar's "Only races with a match": a section goes too
+/* "Only races I haven't picked" and Help me pick's "Only races with a match": a section goes too
    once all its races are hidden (a maybe section stays, for its explanation and its link to the
    precinct form). */
 .race.hidden-picked, .race.hidden-nomatch { display: none; }
 .group:not(.maybe):not(:has(.race:not(.hidden-picked, .hidden-nomatch))) { display: none; }
 
-/* The endorser bar (endorser-bar.js), under the strip, never sticky; its chips are Pick by rule's,
-   an Avoid chip amber once chosen */
-.endorser-bar { margin: 8px 0 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
-  border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
-.bar-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 8px; }
-.bar-head h2 { flex: 0 1 auto; margin: 0; font-size: 1.05rem; }
-.bar-head .help-link { margin-right: auto; }
-.bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 0; }
-.bar-head + .bar-row { margin-top: 0; }
-.bar-row > .muted { margin: 0; }
-.bar-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-.bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
-.bar-summary { margin: 10px 0 0; font-size: 0.9rem; font-weight: 600; }
-.bar-summary:empty { display: none; }
-.bar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 10px 0 0; }
-.bar-actions .check { margin: 0; font-size: 0.9rem; }
-.endorser-bar > .fine { margin: 8px 0 0; }
-/* what the bar marks: a match ringed in the accent; the others in a race with a match dimmed, still
+/* what Help me pick marks: a match ringed in the accent; the others in a race with a match dimmed, still
    readable and pickable, the row's line saying it in words; one to avoid outlined in amber, dashed */
 .cand.bar-match { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
 .cand.bar-match.picked { box-shadow: inset 4px 0 0 var(--pick), 0 0 0 2px var(--accent); }
@@ -1485,14 +1483,14 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .entry .button-row .btn { flex: 1 1 auto; }
   .confirm-dialog .button-row { flex-direction: column; }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
-  /* the toolbar's buttons a size down, so they take two lines; View opens from the toolbar's
-     left edge, where it always fits on the screen */
+  /* the toolbar's buttons a size down, so they take two lines; View and Help me pick open from the
+     toolbar's left edge, where they always fit on the screen */
   .ballot-tools, .ballot-tools .tool-group { gap: 6px; }
   .progress-strip .btn.small, .ballot-tools .btn.small { padding: 5px 9px; font-size: 0.8rem; }
   .ballot-tools .seg-option { padding: 4px 10px; font-size: 0.8rem; }
   .ballot-tools .icon { width: 14px; height: 14px; }
-  #view-controls { position: relative; }
-  #view-menu { position: static; }
+  #view-controls, .ballot-tools { position: relative; }
+  #view-menu, #help-menu { position: static; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
   .head-compare .btn-word, .rule-btn .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
@@ -1539,8 +1537,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .badge { padding: 2px 7px; font-size: 0.74rem; }
   .line-title { font-size: 0.76rem; }
   .badges, .note, .cand-lines, .bar-why { margin-left: 0; }
-  .endorser-bar { padding: 10px 12px; }
-  .bar-actions .btn { flex: 1 1 auto; justify-content: center; }
   .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }

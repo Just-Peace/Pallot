@@ -4,15 +4,15 @@
 // row's Endorsements line and share Details' Endorsements tab, a money card's highlights and badges
 // make the row's Funding line, the filing and profile cards share Details' Profile tab, every other
 // card gets its own tab, and a money or poll box folds, with its source in its corner. The row's endorsement chips link to their
-// source, or open a menu that also offers the endorser bar; its Funding chips open Details' money tab.
+// source, or open a menu that also offers Help me pick; its Funding chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { fundingHelp, helpLink } from "./help.js";
 import { icon } from "./icons.js";
-import { addToBar, barChoice } from "./pick-rules.js";
-import { showToast } from "./toast.js";
-import { setViewPref, viewPref } from "./view.js";
+import { chooseInHelp } from "./endorser-bar.js";
+import { barChoice } from "./pick-rules.js";
+import { viewPref } from "./view.js";
 
 // The FAQ answers that say how each source's figures are put together.
 const MONEY_FAQ = { fec: "fec-money", tec: "tec-money", polls: "polls" };
@@ -111,28 +111,26 @@ function badge(item, card = null, first = false, label = item.text, onOpen = nul
 let lineIds = 0;
 const POPOVERS = Object.hasOwn(HTMLElement.prototype, "popover");
 
-// A chip the endorser bar knows (barChoice in pick-rules.js): a button opening a small menu, over
-// the page, with its source's page for the candidate (the plain chip's link) and "Highlight List A's
-// picks" (or Avoid, for an amber one), which adds it to the bar and shows the bar. A browser without
+// A chip Help me pick knows (barChoice in pick-rules.js): a button opening a small menu, over the
+// page, with its source's page for the candidate (the plain chip's link) and "Pick List A's
+// candidates" (or Avoid, for an amber one), which chooses it in Help me pick. A browser without
 // popovers gets the plain chip.
 function chipMenu(item, card, first, label, choice) {
   const flag = isLikely(card) && first ? likelyFlag() : null;
   const id = `chip-menu-${++lineIds}`;
   const add = () => {
     menu.hidePopover();
-    addToBar(choice.kind, choice.id);
-    setViewPref("showEndorserBar", true);
-    showToast(choice.kind === "endorsers" ? `Highlighting ${choice.label}'s picks in every race.` : `Outlining everyone marked “${choice.label}”.`);
+    chooseInHelp(choice);
   };
   const button = h("button", {
     type: "button", class: ["badge badge-btn chip-menu-btn", `tone-${item.tone}`], popovertarget: id,
     title: [label !== item.text ? item.text : null, item.hint, isLikely(card) ? "Likely match" : null].filter(Boolean).join(" · ") || null,
-    "aria-label": `${item.text}${flag ? " (likely match)" : ""}: open, or ${choice.kind === "endorsers" ? "highlight" : "avoid"} on the ballot`,
+    "aria-label": `${item.text}${flag ? " (likely match)" : ""}: open, or ${choice.kind === "endorsers" ? "pick who it endorses" : "avoid on the ballot"}`,
   }, label, flag, h("span", { class: "badge-caret", "aria-hidden": "true" }, "▾"));
   const menu = h("div", { id, popover: "auto", class: "chip-menu" },
     safeUrl(item.url) ? webLink(item.url, `Open ${card.label}`) : null,
     h("button", { type: "button", class: "link-btn", on: { click: add } },
-      choice.kind === "endorsers" ? `Highlight ${choice.label}'s picks` : `Avoid “${choice.label}” on the ballot`));
+      choice.kind === "endorsers" ? `Pick ${choice.label}'s candidates` : `Avoid “${choice.label}” on the ballot`));
   const place = (box) => {
     const below = box.bottom + 4;
     const fits = below + menu.offsetHeight <= innerHeight - 8;
@@ -157,8 +155,8 @@ function chipMenu(item, card, first, label, choice) {
 // source's name, since the heading says "Endorsements"; an amber one says what it is ("TrackAIPAC
 // watchlist"), so it doesn't rest on the colour. The showEndorsements view switch shows it; with
 // openEndorsements off, one button counts them ("3 endorsements") and opens them in place, until
-// syncLines(). A chip links to its source's page for the candidate, or opens chipMenu() when the
-// endorser bar knows it.
+// syncLines(). A chip links to its source's page for the candidate, or opens chipMenu() when Help
+// me pick knows it.
 export function sourceLines(candidate) {
   const items = greenFirst(candidate.cards.flatMap((card) => sided(card).map((b) => ({ b, card }))), (item) => item.b.tone);
   const chips = chipsOf(items, (b, card, first) => {
