@@ -139,15 +139,8 @@
             <details class="menu" id="view-menu">
               <summary class="btn ghost small with-icon" title="How much shows, and what matters to you"><span data-icon="eye"></span><span id="view-summary">View</span></summary>
               <div class="menu-panel" id="view-panel">
-                <div class="menu-group">
+                <div class="menu-group" id="view-detail">
                   <p class="menu-label" aria-hidden="true">How much detail</p>
-                  <fieldset class="seg" aria-describedby="mode-caption">
-                    <legend class="sr-only">How much detail</legend>
-                    <label class="seg-option"><input type="radio" name="view-mode" value="minimal">Minimal</label>
-                    <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
-                    <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
-                  </fieldset>
-                  <p class="fine mode-caption" id="mode-caption">Minimal: names only · Simple: adds money, polls, endorsements · Detailed: everything.</p>
                 </div>
                 <div class="menu-group" id="view-focus">
                   <p class="menu-label" aria-hidden="true">What matters to you</p>
@@ -160,14 +153,20 @@
                   </div>
                   <label class="check"><input type="checkbox" id="hide-picked" data-view="hidePicked"> Only races I haven't picked</label>
                 </div>
-                <p class="menu-more"><button class="link-btn" id="view-ask-again" type="button">Ask me again</button> · <a href="settings.html#view-title">More in Settings</a></p>
+                <div class="menu-foot">
+                  <a class="btn ghost small with-icon" href="settings.html#view-title"><span data-icon="settings"></span>Settings</a>
+                  <button class="btn ghost small with-icon" id="theme-toggle" type="button"></button>
+                  <a class="help-link" href="faq.html#view-modes" target="_blank" rel="noopener" title="Help: focus and views" aria-label="Help: focus and views (opens in a new tab)">?</a>
+                </div>
               </div>
             </details>
-            <a class="help-link" href="faq.html#view-modes" target="_blank" rel="noopener" title="Help: focus and views" aria-label="Help: focus and views (opens in a new tab)">?</a>
             </div>
             <span class="tool-divider" aria-hidden="true"></span>
             <div class="tool-group">
-            <button class="btn ghost small with-icon" id="endorser-btn" type="button" aria-pressed="false" aria-controls="endorser-bar" title="Highlight who the endorsers you trust endorse, and pick by rule"><span data-icon="ring"></span>Help me pick</button>
+            <details class="menu" id="help-menu">
+              <summary class="btn ghost small with-icon" id="endorser-btn" title="Pick who the endorsers you trust endorse, and mark who to avoid"><span data-icon="ring"></span><span id="help-summary">Help me pick</span></summary>
+              <div class="menu-panel" id="help-panel"></div>
+            </details>
             <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
             </div>
@@ -186,20 +185,12 @@
           <p class="muted">Choose any, or none. The ballot below changes as you choose.</p>
           <form class="focus-ask-detail">
             <h3>How much detail?</h3>
-            <fieldset class="seg" aria-describedby="focus-ask-caption">
-              <legend class="sr-only">How much detail</legend>
-              <label class="seg-option"><input type="radio" name="view-mode" value="minimal">Minimal</label>
-              <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
-              <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
-            </fieldset>
-            <p class="fine mode-caption" id="focus-ask-caption">Minimal: names only · Simple: adds money, polls, endorsements · Detailed: everything.</p>
           </form>
           <div class="focus-ask-foot">
             <button class="btn primary small" type="button" id="focus-ask-done">Done</button>
             <p class="fine">Change it any time under View.</p>
           </div>
         </section>
-        <section class="endorser-bar" id="endorser-bar" aria-labelledby="endorser-bar-title" hidden></section>
         <div class="ballot-top">
           <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
