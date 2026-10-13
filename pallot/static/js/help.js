@@ -7,7 +7,7 @@ import { extLink, h } from "./dom.js";
 import { TIPS, readJson, writeJson } from "./storage.js";
 import { showToast } from "./toast.js";
 
-const POPOVERS = Object.hasOwn(HTMLElement.prototype, "popover");
+const popovers = () => typeof HTMLElement !== "undefined" && Object.hasOwn(HTMLElement.prototype, "popover");
 
 // A "?" opening the FAQ's answer ``anchor`` in a new tab; ``topic`` names it for a screen reader.
 export function helpLink(anchor, topic) {
@@ -50,7 +50,7 @@ function placeNote(button) {
 
 // The click that closed the note by landing on its own button doesn't open it again.
 function toggleNote(button, content) {
-  if (!POPOVERS) {
+  if (!popovers()) {
     showToast(h("span", {}, content()));
     return;
   }
