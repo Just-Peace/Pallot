@@ -162,12 +162,14 @@
                 <label class="check"><input type="checkbox" id="open-boxes" data-view="openBoxes"> Open money &amp; poll boxes</label>
                 <label class="check"><input type="checkbox" id="collapse-on-pick" data-view="collapseOnPick"> Collapse a race when I pick</label>
                 <label class="check"><input type="checkbox" id="hide-picked" data-view="hidePicked"> Only races I haven't picked</label>
+                <label class="check" id="only-matches-option" hidden><input type="checkbox" id="only-matches"> Only races with a match</label>
                 <p class="menu-more"><a href="settings.html#view-title">Open Settings</a></p>
               </div>
             </details>
             </div>
             <span class="tool-divider" aria-hidden="true"></span>
             <div class="tool-group">
+            <button class="btn ghost small with-icon" id="endorser-btn" type="button" aria-pressed="false" aria-controls="endorser-bar" title="Highlight who the endorsers you trust endorse, in every race"><span data-icon="ring"></span>Endorsers</button>
             <button class="btn ghost small with-icon" id="rule-btn" type="button" title="Pick by party, endorsements, money and polls"><span data-icon="filter"></span>Pick by rule</button>
             <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
@@ -178,6 +180,7 @@
             <div class="loading-bar" aria-hidden="true"></div>
           </div>
         </div>
+        <section class="endorser-bar" id="endorser-bar" aria-labelledby="endorser-bar-title" hidden></section>
         <div class="ballot-top">
           <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
@@ -195,6 +198,7 @@
           </div>
         </section>
         <div id="messages"></div>
+        <div class="notice rule-banner" id="rule-banner" role="status" hidden></div>
         <div id="groups"></div>
         <div id="maybe"></div>
         <div id="measures"></div>

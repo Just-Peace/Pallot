@@ -18,6 +18,7 @@ export const VIEW_DEFAULTS = {
   showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
+  showEndorserBar: false, // the endorser bar (endorser-bar.js), from the toolbar's Endorsers or a focus
 };
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.
@@ -33,8 +34,8 @@ export const PRESETS = {
 // turns on. Besides the stored switches: openMoney and openPolls open one kind of box (else they
 // follow openBoxes), fundingFirst puts the Funding line before Endorsements, compareInHead puts
 // Compare funding in the race's head, pollChips a "47% in polls" pill on each polled candidate and
-// a mark on the sections with polls, stanceLinks "Profile & issues" and "See where they stand",
-// and showEndorserBar the endorser bar. The wording never names an issue or a source.
+// a mark on the sections with polls, and stanceLinks "Profile & issues" and "See where they stand".
+// The wording never names an issue or a source.
 export const FOCUSES = {
   simple: { label: "Keep it simple", on: ["collapseOnPick"] },
   money: { label: "Follow the money", on: ["showFunding", "openMoney", "fundingFirst", "compareInHead"] },
@@ -43,7 +44,7 @@ export const FOCUSES = {
   stances: { label: "Where they stand", on: ["stanceLinks"] },
 };
 const FOLLOWS = { openMoney: "openBoxes", openPolls: "openBoxes" };
-const FOCUS_ONLY = new Set(["fundingFirst", "compareInHead", "pollChips", "stanceLinks", "showEndorserBar"]);
+const FOCUS_ONLY = new Set(["fundingFirst", "compareInHead", "pollChips", "stanceLinks"]);
 
 // The chosen focuses, in FOCUSES' order.
 export function focuses() {

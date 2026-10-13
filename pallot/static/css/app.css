@@ -665,7 +665,7 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .strip-race, .progress-info .more-btn { display: none; }
 
 /* Options: a <details> whose panel drops down over the ballot. A dot on it while picked
-   races are hidden. */
+   races, or races without a match, are hidden. */
 .ballot-tools { align-items: center; }
 .tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .tool-divider { width: 1px; align-self: stretch; min-height: 24px; background: var(--line-strong); }
@@ -673,7 +673,7 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .menu { position: relative; }
 .menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
 .menu > summary::-webkit-details-marker { display: none; }
-.menu.filtered > summary::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.menu.filtered > summary::before, .menu.filtered-match > summary::before { content: "";width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .menu-panel { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max-content; max-width: min(300px, calc(100vw - 32px));
   padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pop); }
@@ -718,10 +718,57 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .head-compare { flex: none; margin-top: -2px; gap: 4px; }
 .stance-link { margin: 8px 0 0; }
 
-/* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
-   section stays, for its explanation and its link to the precinct form). */
-.race.hidden-picked { display: none; }
-.group:not(.maybe):not(:has(.race:not(.hidden-picked))) { display: none; }
+/* "Only races I haven't picked" and the endorser bar's "Only races with a match": a section goes too
+   once all its races are hidden (a maybe section stays, for its explanation and its link to the
+   precinct form). */
+.race.hidden-picked, .race.hidden-nomatch { display: none; }
+.group:not(.maybe):not(:has(.race:not(.hidden-picked, .hidden-nomatch))) { display: none; }
+
+/* The endorser bar (endorser-bar.js), under the strip, never sticky; its chips are Pick by rule's,
+   an Avoid chip amber once chosen */
+.endorser-bar { margin: 8px 0 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+  border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
+.bar-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 8px; }
+.bar-head h2 { flex: 1 1 auto; margin: 0; font-size: 1.05rem; }
+.bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 0; }
+.bar-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
+.bar-summary { margin: 10px 0 0; font-size: 0.9rem; font-weight: 600; }
+.bar-summary:empty { display: none; }
+.bar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 10px 0 0; }
+.bar-actions .check { margin: 0; font-size: 0.9rem; }
+.endorser-bar > .fine { margin: 8px 0 0; }
+/* what the bar marks: a match ringed in the accent; the others in a race with a match dimmed, still
+   readable and pickable, the row's line saying it in words; one to avoid outlined in amber, dashed */
+.cand.bar-match { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.cand.bar-match.picked { box-shadow: inset 4px 0 0 var(--pick), 0 0 0 2px var(--accent); }
+.cand.bar-dim { opacity: 0.7; }
+.cand.bar-dim:hover, .cand.bar-dim:focus-within { opacity: 1; }
+.cand.bar-avoid { border-color: var(--warn); border-style: dashed; box-shadow: 0 0 0 1px var(--warn); }
+.cand.bar-avoid.picked { box-shadow: inset 4px 0 0 var(--pick), 0 0 0 1px var(--warn); }
+.bar-why { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 6px 0 0 30px; font-size: 0.82rem; font-weight: 600; }
+.bar-by { display: inline-flex; align-items: center; gap: 5px; color: var(--accent); }
+.bar-by .icon { width: 13px; height: 13px; flex: none; }
+.bar-avoid-why { color: var(--warn); }
+.match-tag { flex: none; align-self: center; padding: 1px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+  white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
+.match-tag.none { background: var(--neutral-soft); color: var(--muted); }
+.match-mark { display: inline-flex; align-items: center; gap: 2px; vertical-align: -1px; margin-left: 5px; font-size: 0.75rem;
+  font-weight: 700; color: var(--accent); }
+.match-mark .icon { width: 12px; height: 12px; }
+/* an endorsement chip's menu (chipMenu in source-cards.js), a popover placed under the chip */
+.badge-caret { font-size: 0.7em; opacity: 0.8; }
+.chip-menu { inset: auto; margin: 0; padding: 6px; min-width: 12rem; max-width: calc(100vw - 16px); color: var(--text);
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); box-shadow: var(--shadow-pop); }
+.chip-menu:popover-open { display: flex; flex-direction: column; }
+.chip-menu > a, .chip-menu > .link-btn { display: flex; align-items: center; gap: 4px; padding: 8px 10px; border-radius: 6px; font-size: 0.9rem; text-align: left;
+  color: var(--text); text-decoration: none; }
+.chip-menu > a:hover, .chip-menu > .link-btn:hover { background: var(--neutral-soft); }
+/* after Pick by rule's Apply: the rule in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
+.rule-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; border-left-color: var(--accent); }
+.rule-banner > p { margin: 0; flex: 1 1 20rem; }
+.rule-banner > .rule-banner-actions { flex: none; display: flex; gap: 14px; }
+.rule-banner > .close { align-self: flex-start; }
 
 /* While a lookup runs: "Finding your ballot" until the races are known, then a line along the
    strip until their cards are in. Each has a bar that moves, since how long is never known. The
@@ -1250,6 +1297,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 .rule-chip[aria-pressed="true"]::before { content: "✓"; }
 .rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
 .rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.rule-combine { margin: 8px 0 0; }
 .rule-form > .fine { margin: 12px 0 0; }
 .rule-how { margin: 12px 0 0; font-size: 0.85rem; color: var(--muted); }
 .rule-how > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
@@ -1416,7 +1464,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .badges { gap: 5px; }
   .badge { padding: 2px 7px; font-size: 0.74rem; }
   .line-title { font-size: 0.76rem; }
-  .badges, .note, .cand-lines { margin-left: 0; }
+  .badges, .note, .cand-lines, .bar-why { margin-left: 0; }
+  .endorser-bar { padding: 10px 12px; }
+  .bar-actions .btn { flex: 1 1 auto; justify-content: center; }
   .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
@@ -1481,7 +1531,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 
 @media (pointer: coarse) {
   .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .measure-option, .switch, .check, .site-nav a, .jump-list a,
-  .race-toggle, .box-toggle, .map-toggle, .entry-tab,
+  .race-toggle, .box-toggle, .map-toggle, .entry-tab, .chip-menu > a, .chip-menu > .link-btn,
   input[type="text"], input[type="number"], select { min-height: 44px; }
   a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
   .seg-option { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
