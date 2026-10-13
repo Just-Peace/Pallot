@@ -19,7 +19,6 @@ export const VIEW_DEFAULTS = {
   showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
-  showEndorserBar: false, // the endorser bar (endorser-bar.js), from the toolbar's Help me pick
 };
 
 // How much of the ballot shows. Simple is the defaults, so a new voter starts there.
@@ -27,6 +26,13 @@ export const PRESETS = {
   minimal: { showMap: false, showPolls: false, showEndorsements: false, showFunding: false, openBoxes: false, showSources: false },
   simple: { showMap: false, showPolls: true, showEndorsements: true, showFunding: true, openBoxes: false, showSources: false },
   detailed: { showMap: true, showPolls: true, showEndorsements: true, showFunding: true, openBoxes: true, showSources: true },
+};
+
+// Each mode's name, and its hint: what it shows, on hover and to a screen reader (modeChoice).
+export const VIEW_MODES = {
+  minimal: { label: "Minimal", hint: "Names only" },
+  simple: { label: "Simple", hint: "Adds money, polls and endorsements, folded" },
+  detailed: { label: "Detailed", hint: "Everything open" },
 };
 
 // What matters to the voter, any number at once, kept with the view settings ("focuses"): each
@@ -132,6 +138,14 @@ export function focusChips({ hints = false } = {}) {
         h("span", { class: "focus-option-text" }, h("span", { class: "focus-option-label" }, focus.label),
           h("span", { class: "focus-option-hint" }, focus.hint)))
       : h("label", { class: "focus-chip" }, h("input", { type: "checkbox", name: "focus", value }), focus.label))));
+}
+
+// Minimal, Simple and Detailed as radios named "view-mode", each with its hint as a title: on the
+// label for the pointer, on the radio for its accessible description.
+export function modeChoice() {
+  return h("fieldset", { class: "seg" }, h("legend", { class: "sr-only" }, "How much detail"),
+    Object.entries(VIEW_MODES).map(([value, { label, hint }]) => h("label", { class: "seg-option", title: hint },
+      h("input", { type: "radio", name: "view-mode", value, title: hint }), label)));
 }
 
 // The fine print under When to vote and Your districts, saying where they come from, behind a link

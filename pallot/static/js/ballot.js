@@ -61,7 +61,7 @@ const page = {
   ballot: null, picks: null, request: null,
   loadingCards: false, // the ballot's cards haven't arrived (or failed to)
   lookup, showDetails, openDistricts, updateProgress, renderRaces, openRules,
-  markEndorsers: syncEndorserBar, // the endorser bar's marks, after the cards are built again
+  markEndorsers: syncEndorserBar, // Help me pick's marks, after the cards are built again
 };
 let pendingLookup = null; // the AbortController of the latest lookup, cancelled by the next one
 
@@ -324,7 +324,7 @@ function render() {
 }
 
 // Redraws the races and propositions in place, from the saved picks, with the
-// progress, the filters, the endorser bar's marks and the rule's banner: after the picks change as a
+// progress, the filters, Help me pick's marks and the rule's banner: after the picks change as a
 // whole (Clear picks, Pick by rule, their Undo, another tab). The rest of the page, an open edit of
 // the districts and a note being typed included, stays as it is.
 function renderRaces() {
