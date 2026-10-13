@@ -207,10 +207,11 @@ const TIPS = [
 ];
 
 // A tip, once the ballot and its cards are in, with nothing over them: not while "What matters to
-// you?" asks, nor with a dialog open.
+// you?" asks, nor with a dialog open. It runs again after "Got it" and as the voter scrolls, so the
+// next tip shows once what it's about is in the window.
 function maybeTip() {
   if (!page?.ballot || page.loadingCards || result.hidden || !focusAsk.hidden || document.querySelector("dialog[open]")) return;
-  showTip(TIPS);
+  showTip(TIPS, maybeTip);
 }
 
 // ---- view: detail and focus, collapse, only unpicked races, next race, j/k ------------
@@ -499,9 +500,11 @@ export function initNav(context) {
 
   const markSoon = onFrame(markCurrentSection);
   const chipsSoon = onFrame(chipsOnScroll);
+  const tipSoon = onFrame(maybeTip);
   addEventListener("scroll", () => {
     markSoon();
     chipsSoon();
+    tipSoon();
   }, { passive: true });
   addEventListener("resize", markSoon);
   jumpList.addEventListener("scroll", onFrame(syncChipFades), { passive: true });

@@ -95,7 +95,7 @@ export function fundingHelp() {
 // ---- first-run tips ---------------------------------------------------------------------
 
 const seen = () => new Set(readJson(TIPS, []));
-let shown = null; // the tip shown on this visit, { id, box }: at most one a visit
+let shown = null; // the tip showing, { id, box }, until its "Got it": one at a time
 
 export function forgetTips() {
   writeJson(TIPS, []);
@@ -110,26 +110,28 @@ function onScreen(element) {
 
 // Shows the first of ``tips`` not seen yet whose ``when()`` holds and whose ``target()`` (an element
 // or a list, the first on screen counting) is in the window, after ``after(target)`` (else the
-// target), with an arrow at the target. Once a tip has shown on this visit, no other does; if the page
-// drew it away before "Got it", only it may come back.
-export function showTip(tips) {
+// target), with an arrow at the target. No other shows until its "Got it", which runs ``next()`` to
+// show the next one whose target is on screen; if the page drew it away before, only it may come back.
+export function showTip(tips, next) {
   if (shown?.box.isConnected) return;
   const done = seen();
   for (const tip of shown ? tips.filter((t) => t.id === shown.id) : tips) {
     if (done.has(tip.id) || !tip.when()) continue;
     const target = [tip.target()].flat().find(onScreen);
     if (target) {
-      drawTip(tip, target);
+      drawTip(tip, target, next);
       return;
     }
   }
 }
 
-function drawTip(tip, target) {
+function drawTip(tip, target, next) {
   const got = h("button", { type: "button", class: "btn small", on: { click: () => {
     writeJson(TIPS, [...seen(), tip.id]);
     row.remove();
+    shown = null;
     target.focus?.({ preventScroll: true });
+    next?.();
   } } }, "Got it");
   const box = h("div", { class: "tip", role: "note" }, h("p", {}, tip.text()), got);
   const row = h("div", { class: "tip-row" }, box);

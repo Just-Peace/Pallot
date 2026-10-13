@@ -251,10 +251,10 @@ function showView() {
 bindViewControls(viewSection);
 onViewChange(showView);
 
-// Tips: "Show tips again" forgets the ones dismissed, so the ballot shows them again, one a visit.
+// Tips: "Show tips again" forgets the ones dismissed, so the ballot shows them again, one at a time.
 $("#tips-again").addEventListener("click", () => {
   forgetTips();
-  setStatus($("#tips-status"), "The ballot will show its tips again, one a visit.", "ok");
+  setStatus($("#tips-status"), "The ballot will show its tips again, one at a time.", "ok");
 });
 
 // Ban list (ban-list.js): the names banned from Details and the names or patterns typed here, a
