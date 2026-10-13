@@ -7,7 +7,7 @@
 // source, or open a menu that also offers the endorser bar; its Funding chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
-import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, listed, percent, plural } from "./format.js";
+import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { fundingHelp, helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import { addToBar, barChoice } from "./pick-rules.js";
@@ -73,12 +73,10 @@ const chipsOf = (items, chip) => {
 };
 
 // The view switch (view.js) that shows a race box of each kind, and the one that opens it rather
-// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading,
-// and the fine line naming who it leaves out for having nothing to show.
+// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
 const OPENS = { money: "openMoney", polls: "openPolls" };
 const SHORT_TITLES = { money: "Money raised", polls: "Polls" };
-const LEFT_OUT = { money: "No money reported", polls: "Not in the polls" };
 
 // The "?" on a tab, badge or button whose source only likely matched the candidate.
 function likelyFlag(title = "Likely match") {
@@ -370,14 +368,17 @@ function setBoxOpen(box, open) {
   box.classList.toggle("collapsed", !open);
   box.querySelector(".box-toggle").setAttribute("aria-expanded", String(open));
   box.querySelector(".box-body").hidden = !open;
+  const asOf = box.querySelector(".box-asof");
+  if (asOf) asOf.hidden = !open;
 }
 
 // A race box that folds: its short heading ("Money raised", "Polls") as a button that folds it to
-// that one line, with ``action`` (the box's corner) beside it; folded, it names nobody. Open, the
-// rest of its first breakdown's title, or just its brackets' period, and its date ("2021-26 · reports
-// through Sep 30, 2026", "since Jan 1, 2025 · …") sit in small print at its foot, and the button's
-// name is the whole title. The view switch ``setting`` shows or
-// hides it, and its kind's OPENS opens or folds it; a click opens or folds just this one, until syncBoxes().
+// that one line, with ``action`` (the box's corner) at the right; folded, it names nobody. Open, the
+// rest of its first breakdown's title, or just its brackets' period, and its date ("since Nov 6, 2024
+// · reports through Sep 24, 2026", "latest poll Oct 5, 2026") sit in small print beside the heading,
+// hidden from screen readers since the button's name is the whole title and date. The view switch
+// ``setting`` shows or hides it, and its kind's OPENS opens or folds it; a click opens or folds just
+// this one, until syncBoxes().
 function foldBox(race, card, setting, action, body) {
   const id = `box-${slug(race.key)}-${card.source}`;
   const title = card.breakdowns[0]?.title || card.description;
@@ -391,8 +392,9 @@ function foldBox(race, card, setting, action, body) {
   }, h("span", { class: "chevron", "aria-hidden": "true" }), short);
   const foot = [period, asOf].filter(Boolean).join(" · ");
   const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
-    h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle), action),
-    h("div", { class: "box-body", id }, body, foot ? h("p", { class: "fine box-asof" }, foot) : null));
+    h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle),
+      foot ? h("span", { class: "box-asof", "aria-hidden": "true" }, foot) : null, action),
+    h("div", { class: "box-body", id }, body));
   setBoxOpen(box, viewPref(OPENS[card.kind]));
   return box;
 }
@@ -438,8 +440,8 @@ export function pollPill(race, candidate) {
 
 // A race's cards (money raised per money source, then polls), shown above its candidates.
 // With ``onCompare``, the first comparable one has a button for the Compare dialog. A money or
-// poll box shows only the candidates with something above zero, and names the rest in a fine line;
-// with nobody left, it isn't drawn. Compare, Details and Pick by rule still have everyone.
+// poll box shows only the candidates with something above zero; with nobody left, it isn't drawn.
+// Compare, Details and Pick by rule still have everyone.
 export function raceMoney(race, onCompare = null) {
   if (!race.cards?.length) return null;
   const candidate = (key) => race.candidates.find((c) => c.key === key);
@@ -464,11 +466,9 @@ export function raceMoney(race, onCompare = null) {
     const [head, ...rest] = card.breakdowns;
     const shown = head ? head.parts.filter((p) => p.amount > 0) : [];
     if (!shown.length && !rest.length) return null;
-    const left = head ? head.parts.filter((p) => !(p.amount > 0)).map((p) => p.label) : [];
     const polls = card.kind === "polls";
     return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
       shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people) : moneyStack(shown, people)) : null,
-      left.length ? h("p", { class: "fine box-left-out" }, `${LEFT_OUT[card.kind]}: ${listed(left)}`) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);
   });
@@ -493,13 +493,11 @@ const cardLinks = (card) => card.links.length
   ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, webLink(l.url, l.label))))
   : null;
 
-// ``described``: false in the Profile tab's sections, named by their source, whose description
-// Settings already gives.
-export function cardPanel(card, { described = true } = {}) {
+export function cardPanel(card) {
   return h(
     "div",
     { class: "card-panel" },
-    described && card.description ? h("p", { class: "muted" }, card.description) : null,
+    card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
     cardSummary(card),
     cardQuotes(card),
@@ -518,11 +516,33 @@ export function foldSection(name, extra, body, tone = null) {
     h("div", { class: "section-body" }, body));
 }
 
+// A Profile or Endorsements section's title line, at the right: how it matched and the day of the
+// source's copy ("Exact match · Oct 8, 2026"), or just the day for a source with no match (Texas
+// SOS). The match's reason is in its tooltip and, for screen readers, after it.
+function sectionMeta(card) {
+  const exact = card.match?.confidence === "exact";
+  const parts = [exact ? "Exact match" : null, card.as_of ? formatDate(card.as_of, SHORT_DATE) : null].filter(Boolean);
+  if (!parts.length) return null;
+  return h("span", { class: "section-meta", title: [exact ? `Matched${matchWhy(card.match)}` : null,
+    card.as_of ? `${card.label}'s data as of ${formatDate(card.as_of, SHORT_DATE)}` : null].filter(Boolean).join(" ") },
+    parts.join(" · "), exact ? h("span", { class: "sr-only" }, `: matched${matchWhy(card.match)}`) : null);
+}
+
+const likelyLine = (card) => isLikely(card)
+  ? h("p", { class: "match-line" }, h("strong", {}, "Likely match"), matchWhy(card.match))
+  : null;
+
+// A Profile section's body: a likely match's reason, the facts, the quotes and the links, with no
+// match box, chips or "Open …" line, since the title line has the match and the links the pages.
+function profileBody(card) {
+  return h("div", { class: "card-panel" }, likelyLine(card), cardFacts(card), cardQuotes(card), cardLinks(card));
+}
+
 // Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's and
-// Ballotpedia's profiles, a section each with its whole card but its description.
+// Ballotpedia's profiles, a section each.
 export function profilePanel(cards) {
   return h("div", { class: "card-panel profile" },
-    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card, { described: false }))));
+    cards.map((card) => foldSection(card.label, [isLikely(card) ? likelyFlag() : null, sectionMeta(card)], profileBody(card))));
 }
 
 // A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
@@ -575,15 +595,6 @@ const SIDE_ORDER = { good: 0, warn: 1 };
 const SIDE_TONES = ["good", "warn", null];
 const side = (card) => Math.min(2, ...card.badges.map((b) => SIDE_ORDER[b.tone] ?? 2));
 
-function endorsementMeta(card) {
-  const exact = card.match?.confidence === "exact";
-  const parts = [exact ? "Exact match" : null, card.as_of ? formatDate(card.as_of, SHORT_DATE) : null].filter(Boolean);
-  if (!parts.length) return null;
-  return h("span", { class: "section-meta", title: [exact ? `Matched${matchWhy(card.match)}` : null,
-    card.as_of ? `${card.label}'s data as of ${formatDate(card.as_of, SHORT_DATE)}` : null].filter(Boolean).join(" ") },
-    parts.join(" · "), exact ? h("span", { class: "sr-only" }, `: matched${matchWhy(card.match)}`) : null);
-}
-
 // The facts, an Office as a chip linking to the source's page for the candidate (no "Office" label)
 // and the rest as rows, in order: TrackAIPAC's figures follow the listing they're from.
 function endorsementFacts(card) {
@@ -601,7 +612,7 @@ function endorsementFacts(card) {
 
 function endorsementBody(card) {
   return h("div", { class: "card-panel" },
-    isLikely(card) ? h("p", { class: "match-line" }, h("strong", {}, "Likely match"), matchWhy(card.match)) : null,
+    likelyLine(card),
     endorsementFacts(card),
     cardQuotes(card),
     cardLinks(card));
@@ -612,7 +623,7 @@ export function endorsementsPanel(cards) {
   const section = (card) => foldSection(card.label, [
     card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
     isLikely(card) ? likelyFlag() : null,
-    endorsementMeta(card),
+    sectionMeta(card),
   ], endorsementBody(card), SIDE_TONES[side(card)]);
   return h("div", { class: "card-panel endorsements" },
     h("p", { class: "muted" }, plural(cards.length, "endorsement")),
