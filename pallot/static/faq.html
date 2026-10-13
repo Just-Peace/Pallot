@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pallot · FAQ</title>
   <meta name="description" content="Answers about Pallot: what's on your ballot, where candidate information comes from, how the money figures are put together, and where your picks are kept.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -32,6 +32,23 @@
           <summary>Which addresses and elections does Pallot cover?</summary>
           <div class="faq-body">
             <p>Texas addresses, for now. The list of elections comes from the Texas Secretary of State (Texas SOS). Pallot shows the next one unless you choose another.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="voter-card">
+          <summary>Can I use Pallot without my address?</summary>
+          <div class="faq-body">
+            <p>Yes. Choose "My voter card" on the card at the top of the ballot page, and type your county and your precinct number, as your voter registration certificate shows them. Your address isn't asked for or sent anywhere.</p>
+            <p>Pallot finds your precinct on the Texas Legislative Council's precinct map, which it already keeps, and takes three points spread through it. It asks the US Census for the districts at those points, keeping only the ones all three share, reads your State Board of Education district from the Council's map, and, in seven counties, your commissioner and JP precincts from the county's records. With Ballotpedia on, it asks Ballotpedia's ballot at the same three points. A precinct can cross a city or school district line, so a race Ballotpedia lists at only some of the points is left off, like any race Pallot can't place (see "Why are some races left off my ballot?"). Only those points go to the Census and Ballotpedia; <a href="privacy.html#lookups">Privacy</a> has the details.</p>
+            <p>Under "More districts (optional)" you can type any district your card lists: U.S. House, State Senate, State House, SBOE, Commissioner and JP. A number you type wins over the one Pallot found. While the precinct map is still downloading (the first lookup after Pallot is installed), or if Pallot can't find your precinct on it, the ballot has the statewide and county races and the districts you typed, and a note says why.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="find-precinct">
+          <summary>Where do I find my precinct?</summary>
+          <div class="faq-body">
+            <p>On your voter registration certificate, the card your county mails you after you register and every two years after. Your county and precinct number ("Pct") are near the top; your districts and commissioner and JP precincts are under them. "Where do I find these?" on the voter card tab shows a sketch.</p>
+            <p>Lost your card? The Texas Secretary of State's <a href="https://teamrv-mvp.sos.texas.gov/MVP/mvp.do" target="_blank" rel="noopener noreferrer">Am I Registered?</a> page shows your county and precinct once it finds you, and your county elections office can tell you too.</p>
           </div>
         </details>
 
@@ -77,7 +94,7 @@
           <summary>What does "Depends on your commissioner or JP precinct" mean?</summary>
           <div class="faq-body">
             <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, Pallot gets them from the county's own records (see "How does Pallot know my commissioner and JP precincts?"); elsewhere, it uses Ballotpedia's answer when it has one. Ballotpedia only names a precinct that has a race on this ballot, so when yours has none this time, those races stay listed until you enter your precincts.</p>
-            <p>Until Pallot knows them, those races are listed under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot to narrow the list. You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
+            <p>Until Pallot knows them, those races are left off your ballot, and a note at the top says so (see "Why are some races left off my ballot?"); "Show these races anyway" lists them under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot ("Enter it" in the note opens the boxes). You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
             <p>The small print under "Your districts" says where each number came from: your county, Ballotpedia, or you. If one is wrong, the pencil at the top of "Your districts" turns every number, your U.S. House, State Senate, State House and SBOE districts too, into a box you can change or empty, and the reset arrow puts the looked-up ones back. Only the numbers you change are kept as yours; the others keep following your address, your county's records and Ballotpedia.</p>
           </div>
         </details>
@@ -114,15 +131,25 @@
         </details>
 
         <details class="faq" id="view-modes">
-          <summary>What's the difference between Minimal, Simple and Detailed?</summary>
+          <summary>Focus and views: what do they change?</summary>
           <div class="faq-body">
-            <p>They're how much of your ballot shows at first, chosen with Minimal | Simple | Detailed at the top of the ballot or under Ballot view in <a href="settings.html#view-title">Settings</a>. Nothing is left out of either: anything folded opens with a click.</p>
+            <p><strong>Focus</strong> is what matters to you. Pallot asks once, after your first ballot, and you can change it any time under Focus at the top of the ballot (in More, on a phone) or under Ballot view in <a href="settings.html#view-title">Settings</a>. Choose any number; each one opens more, and together they open everything each one does:</p>
             <ul>
-              <li><strong>Minimal</strong>: only the races and their candidates. The map, funding (the money boxes and Funding chips), polls and endorsements are folded or hidden.</li>
-              <li><strong>Simple</strong>, where Pallot starts: the map of your districts is folded to one line. Funding, polls and endorsements show.</li>
-              <li><strong>Detailed</strong>: everything is open, the map and the money boxes included.</li>
+              <li><strong>Keep it simple</strong>: the ballot starts from Minimal, a race folds once you pick, and candidate rows stay light on a phone. With other focuses, it hides only what none of them opens. Choosing Simple or Detailed drops it.</li>
+              <li><strong>Follow the money</strong>: the money boxes open, each candidate's Funding line comes first, Compare funding sits in each race's heading, and a candidate's Profile opens on their money tab.</li>
+              <li><strong>Endorsements &amp; scorecards</strong>: every candidate's endorsements show.</li>
+              <li><strong>Polls</strong>: the poll boxes open, each polled candidate shows their share ("47% in polls"), and the sections with polls get a small bar mark.</li>
+              <li><strong>Where they stand</strong>: the candidate's button reads "Profile &amp; issues" and opens on Issues, and each race has a "See where they stand" link.</li>
             </ul>
-            <p>Each part also has its own switch, under "Show" in the ballot's Options and in Settings. Flip one and the view is "Custom", your own mix; choosing Minimal, Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
+            <p>With no focus chosen, the ballot is just the view below. While a focus decides a switch in Options or Settings, that switch is greyed out. Your focus is kept in this browser, never sent anywhere, and an open ballot in another tab follows it at once.</p>
+            <p>The <strong>views</strong>, Minimal | Simple | Detailed at the top of the ballot or in Settings, are how much of your ballot shows at first; a focus adds to the one you chose. Nothing is left out of any: anything folded opens with a click.</p>
+            <ul>
+              <li><strong>Minimal</strong>: only the races and their candidates. The map is folded; funding (the money boxes and Funding chips), polls and endorsements are hidden.</li>
+              <li><strong>Simple</strong>, where Pallot starts: funding, polls and endorsements show, with each race's money and poll boxes folded to one line ("Money raised", "Polls") and the map of your districts folded too. On a phone, each candidate's Note, Ban and Search wait behind "…", and their Funding line shows what they raised and "+3 more".</li>
+              <li><strong>Detailed</strong>: everything is open, the map and the money and poll boxes included, and a phone shows each candidate's whole row.</li>
+            </ul>
+            <p>In every view, a money or poll box lists only the candidates with money or polling above zero, and a line under it names the rest. Write-ins with nothing to show share one line at the end of their race; click a name to show their row.</p>
+            <p>Each part also has its own switch, in the ballot's Options and in Settings, "Open money &amp; poll boxes" among them. Flip one and the view is "Custom", your own mix; choosing Minimal, Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
           </div>
         </details>
 
@@ -137,10 +164,18 @@
           </div>
         </details>
 
-        <details class="faq">
-          <summary>Why are some races under "Special districts" or "Couldn't confirm"?</summary>
+        <details class="faq" id="left-out">
+          <summary>Why are some races left off my ballot?</summary>
           <div class="faq-body">
-            <p>Ballotpedia lists water and municipal utility districts (MUDs) for your area, but you only vote in one if your home is inside it, and Pallot can't tell whether it is. "Couldn't confirm" holds races for districts Pallot couldn't place your address in. For both, check your county's sample ballot.</p>
+            <p>Your ballot holds the races Pallot found for your districts and precincts, and those for the numbers you entered. A race whose district or precinct Pallot doesn't know is left off, and nothing (money, polls, endorsements) is fetched for it: a commissioner, JP or constable race until your precincts are known, a district Pallot couldn't place you in, or, for a voter card, a city or school race that's on the ballot in only part of your precinct.</p>
+            <p>One note at the top of the ballot says what's missing, such as "Your Justice of the Peace precinct isn't known: 6 races depend on it". "Enter it" opens the boxes under "Your districts". "Show these races anyway" brings them back for this ballot, under "Depends on your commissioner or JP precinct", "Couldn't confirm" (districts Pallot couldn't place you in) and "Only on part of your precinct", each saying why; "Hide these races" leaves them off again.</p>
+          </div>
+        </details>
+
+        <details class="faq">
+          <summary>Why are some races under "Special districts"?</summary>
+          <div class="faq-body">
+            <p>Ballotpedia lists water and municipal utility districts (MUDs) for your area, but you only vote in one if your home is inside it, and Pallot can't tell whether it is. They're always listed in their own section, so check your county's sample ballot for them.</p>
           </div>
         </details>
 
@@ -266,6 +301,7 @@
           <div class="faq-body">
             <p>Some organizations publish the candidates they endorse. Pallot comes with a copy of some of those lists, each made once, on the date it shows, and never fetched again, so a list doesn't change after that date. Others it fetches from the organization's own website, at most once a week, so they follow the organization's changes; Settings shows when each was last fetched. Where the organization agreed, Pallot also comes with a recent copy of its list, refreshed daily, and fetches it only once that copy is two days old. A candidate on a list has the list's name under "Endorsements" on their row, and a tab in Details with the office as the organization lists it, its note, and a link to its list.</p>
             <p>The lists can cover the whole country. Pallot keeps every state, and uses only the candidates in your address's state (Texas, for now), matched by name with the office and district, or the county, to confirm, like Vote for Peace's. A list can still name a district from before Texas redrew its maps: the candidate is then only a likely match, and the card says which district the list names. Each list has its own switch in <a href="settings.html">Settings</a>, and Pick by rule can pick the candidates a list endorses.</p>
+            <p>The endorser bar shows who the endorsers you trust endorse, in every race. Turn it on with "Endorsers" at the top of your ballot, the "Endorsements &amp; scorecards" focus, or "Highlight" on a candidate's endorsement chip. Choose any of TrackAIPAC, Vote for Peace (its Allies) and the lists that endorse someone on your ballot, each by its own name; "Any of" or "All of" says how several combine. Under "Avoid", choose TrackAIPAC's watchlist or Vote for Peace's Opposed. In each race, the candidates who match get a ring and a line, "Matches: endorsed by …", and the others are dimmed but still readable and pickable; one to avoid gets a dashed amber outline and "To avoid: …". The race's heading says how many match, and each section chip how many of its races have a match. "Pick them" opens Pick by rule set to the same choices (see <a href="#pick-by-rule">Can Pallot pick for me?</a>), so it picks exactly who the bar rings, and only once you press Apply. Your choices stay in this browser.</p>
             <ul><template data-endorsements="list"></template></ul>
             <p data-endorsements="none" hidden>This copy of Pallot comes with no endorsement lists yet.</p>
           </div>
@@ -304,7 +340,7 @@
         <details class="faq" id="funding">
           <summary>What do the Funding chips mean?</summary>
           <div class="faq-body">
-            <p>The Funding line under a candidate's name sums up, in a word, where their campaign's money comes from. They're facts worked out from the campaign's reports, not endorsements. Hover over a chip, or open the FEC or TEC tab in Details, for the figure behind it.</p>
+            <p>The Funding line under a candidate's name sums up, in a word, where their campaign's money comes from. They're facts worked out from the campaign's reports, not endorsements. Hover over a chip, or open the FEC or TEC tab in Details, for the figure behind it. On a phone, outside the Detailed view, the line shows what they raised and "+3 more", which shows the rest.</p>
             <p>A chip says <strong>Mostly</strong> when its side is more than half, and <strong>Overwhelmingly</strong> when it's more than three quarters. Green chips are money from many people at home; amber ones are money from a few, from far away, or from the candidate.</p>
             <ul>
               <li><strong>Small donors</strong> (green) or <strong>large donations</strong> (amber): the share of everything the campaign raised that came in donations under $500. Over half is small donors; under half is large donations, which counts everything else the campaign raised: donations of $500 or more, PACs and the candidate's own money. Small donations are the ones the campaign didn't itemize plus the itemized ones under $500. For Congress, a donation that wasn't itemized is from a donor who gave $200 or less in all.</li>
@@ -432,13 +468,13 @@
         <details class="faq" id="no-money">
           <summary>Why doesn't a candidate show any money?</summary>
           <div class="faq-body">
-            <p>A race's money box lists every candidate on your ballot, and "not found in FEC data" or "not found in TEC data" means Pallot found no reports for them. Usually that's because:</p>
+            <p>A race's money box lists only the candidates who raised something. The line under it, "No money reported: …", names the rest: Pallot found no reports for them, or their reports show nothing raised. Compare funding and Details still list everyone. Usually it's because:</p>
             <ul>
               <li>they haven't filed a report yet, or haven't raised or spent enough to have to (a congressional campaign starts reporting to the FEC after $5,000);</li>
               <li>their name is written differently in the reports than on the ballot, and Pallot leaves out a match it isn't sure of;</li>
               <li>for state races, the Texas Ethics Commission summary is older than their first report, until we refresh it.</li>
             </ul>
-            <p>The "Open FEC" or "Open TEC" link under the money box goes to the source's own search, where you can try other spellings.</p>
+            <p>The "FEC ↗" or "TEC ↗" link in the money box's corner goes to the source's own search, where you can try other spellings.</p>
           </div>
         </details>
 
@@ -494,10 +530,11 @@
         <details class="faq" id="pick-by-rule">
           <summary>Can Pallot pick for me?</summary>
           <div class="faq-body">
-            <p>Only by a rule you set. "Pick by rule", at the top of your ballot or in a race's heading, picks the candidates of the parties you choose, and only if they're the incumbent (or not), any endorser you choose endorses them (TrackAIPAC, Vote for Peace's allies or an endorsement list), their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, donors in Texas gave at least a share of their itemized donations, or they lead the polls. It can also skip, and take back the picks of, anyone on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
+            <p>Only by a rule you set. "Pick by rule", at the top of your ballot or in a race's heading, picks the candidates of the parties you choose, and only if they're the incumbent (or not), any endorser you choose endorses them (TrackAIPAC, Vote for Peace's allies or an endorsement list; or, with "All of them", every one you choose that endorses someone in the race), their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, donors in Texas gave at least a share of their itemized donations, or they lead the polls. It can also skip, and take back the picks of, anyone on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
             <p>A TrackAIPAC, Vote for Peace, endorsement list, money or polls condition counts only in races where Pallot has that information: money in congressional and state races, TrackAIPAC in congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it endorses someone, polls in U.S. Senate, U.S. House and Governor races. So "Democrats who spent under $1 million" still picks the Democrat for county judge. Where more candidates match than a race has seats, the rule leaves the race for you rather than guessing; two candidates tied for the least money is one of those. It picks only the names printed on the ballot, unless you choose the Write-ins chip.</p>
             <p>Small donations, Texas donors and a candidate's own money are counted as for the <a href="#funding">Funding chips</a>, with the share you choose in place of half. A candidate's own money counts only in congressional races.</p>
-            <p>The dialog shows only the conditions your ballot has something for. Beside them, it says your rule in words and what it would change, race by race, before anything does, and Apply offers Undo. Reset clears the rule. Your rule stays in this browser, like your picks.</p>
+            <p>The dialog shows only the conditions your ballot has something for. Beside them, it says your rule in words and what it would change, race by race, before anything does, and Apply offers Undo. After Apply, a line above the races says the rule in words, with Edit, which opens the dialog again, and Undo, which puts your picks back; it stays until you clear your picks or change the rule. Reset clears the rule. Your rule stays in this browser, like your picks.</p>
+            <p>The <a href="#endorsements">endorser bar</a>'s "Pick them" opens this dialog set to the bar's choices: its endorsers under Pick and its Avoid chips under Don't pick, for every race. The bar highlights by the same rule, so what it rings is what Apply picks.</p>
           </div>
         </details>
 

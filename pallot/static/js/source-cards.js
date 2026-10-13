@@ -4,12 +4,14 @@
 // row's Endorsements line and share Details' Endorsements tab, a money card's highlights and badges
 // make the row's Funding line, the filing and profile cards share Details' Profile tab, every other
 // card gets its own tab, and a money or poll box folds, with its source in its corner. The row's endorsement chips link to their
-// source; its Funding chips open Details' money tab.
+// source, or open a menu that also offers the endorser bar; its Funding chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
-import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
+import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, listed, percent, plural } from "./format.js";
 import { icon } from "./icons.js";
-import { viewPref } from "./view.js";
+import { addToBar, barChoice } from "./pick-rules.js";
+import { showToast } from "./toast.js";
+import { setViewPref, viewPref } from "./view.js";
 
 // The FAQ answers that say how each source's figures are put together.
 const MONEY_FAQ = { fec: "faq.html#fec-money", tec: "faq.html#tec-money", polls: "faq.html#polls" };
@@ -69,8 +71,13 @@ const chipsOf = (items, chip) => {
   });
 };
 
-// The view switch (view.js) that opens or folds a race box of each kind; other boxes always show.
+// The view switch (view.js) that shows a race box of each kind, and the one that opens it rather
+// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading,
+// and the fine line naming who it leaves out for having nothing to show.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
+const OPENS = { money: "openMoney", polls: "openPolls" };
+const SHORT_TITLES = { money: "Money raised", polls: "Polls" };
+const LEFT_OUT = { money: "No money reported", polls: "Not in the polls" };
 
 // The "?" on a tab, badge or button whose source only likely matched the candidate.
 function likelyFlag(title = "Likely match") {
@@ -100,15 +107,62 @@ function badge(item, card = null, first = false, label = item.text, onOpen = nul
 }
 
 let lineIds = 0;
+const POPOVERS = Object.hasOwn(HTMLElement.prototype, "popover");
+
+// A chip the endorser bar knows (barChoice in pick-rules.js): a button opening a small menu, over
+// the page, with its source's page for the candidate (the plain chip's link) and "Highlight List A's
+// picks" (or Avoid, for an amber one), which adds it to the bar and shows the bar. A browser without
+// popovers gets the plain chip.
+function chipMenu(item, card, first, label, choice) {
+  const flag = isLikely(card) && first ? likelyFlag() : null;
+  const id = `chip-menu-${++lineIds}`;
+  const add = () => {
+    menu.hidePopover();
+    addToBar(choice.kind, choice.id);
+    setViewPref("showEndorserBar", true);
+    showToast(choice.kind === "endorsers" ? `Highlighting ${choice.label}'s picks in every race.` : `Outlining everyone marked “${choice.label}”.`);
+  };
+  const button = h("button", {
+    type: "button", class: ["badge badge-btn chip-menu-btn", `tone-${item.tone}`], popovertarget: id,
+    title: [label !== item.text ? item.text : null, item.hint, isLikely(card) ? "Likely match" : null].filter(Boolean).join(" · ") || null,
+    "aria-label": `${item.text}${flag ? " (likely match)" : ""}: open, or ${choice.kind === "endorsers" ? "highlight" : "avoid"} on the ballot`,
+  }, label, flag, h("span", { class: "badge-caret", "aria-hidden": "true" }, "▾"));
+  const menu = h("div", { id, popover: "auto", class: "chip-menu" },
+    safeUrl(item.url) ? webLink(item.url, `Open ${card.label}`) : null,
+    h("button", { type: "button", class: "link-btn", on: { click: add } },
+      choice.kind === "endorsers" ? `Highlight ${choice.label}'s picks` : `Avoid “${choice.label}” on the ballot`));
+  const place = (box) => {
+    const below = box.bottom + 4;
+    const fits = below + menu.offsetHeight <= innerHeight - 8;
+    menu.style.top = `${fits ? below : Math.max(8, box.top - menu.offsetHeight - 4)}px`;
+    menu.style.left = `${Math.max(8, Math.min(box.left, innerWidth - menu.offsetWidth - 8))}px`;
+  };
+  const close = () => {
+    if (menu.matches(":popover-open")) menu.hidePopover();
+  };
+  menu.addEventListener("toggle", (event) => {
+    if (event.newState !== "open") return;
+    place(button.getBoundingClientRect());
+    addEventListener("scroll", close, { once: true, passive: true });
+  });
+  menu.addEventListener("beforetoggle", (event) => {
+    if (event.newState === "open") place(button.getBoundingClientRect());
+  });
+  return h("li", {}, button, menu);
+}
 
 // The candidate's Endorsements line, a ul labelled by its heading. A green chip shows just the
 // source's name, since the heading says "Endorsements"; an amber one says what it is ("TrackAIPAC
 // watchlist"), so it doesn't rest on the colour. With the showEndorsements view switch off, one
 // button counts them ("3 endorsements") and opens them in place, until syncLines(). A chip links
-// to its source's page for the candidate.
+// to its source's page for the candidate, or opens chipMenu() when the endorser bar knows it.
 export function sourceLines(candidate) {
   const items = greenFirst(candidate.cards.flatMap((card) => sided(card).map((b) => ({ b, card }))), (item) => item.b.tone);
-  const chips = chipsOf(items, (b, card, first) => badge(b, card, first, b.tone === "good" ? card.label : b.text));
+  const chips = chipsOf(items, (b, card, first) => {
+    const label = b.tone === "good" ? card.label : b.text;
+    const choice = POPOVERS ? barChoice(card, b) : null;
+    return choice ? chipMenu(b, card, first, label, choice) : badge(b, card, first, label);
+  });
   if (!chips.length) return null;
   const id = `lines-${++lineIds}`;
   const body = h("div", { class: "cand-lines-body", id }, h("div", { class: "badge-line" },
@@ -139,19 +193,32 @@ export function syncLines() {
 // The candidate's Funding line, after their other lines: each money card's chips (fundingChips),
 // as its tab in Details shows them, with a "?" on the first of a card that only likely matched. The showFunding
 // view switch hides it, with the money boxes, until syncFunding(). A chip opens Details at its money source,
-// ``onOpen(card)``.
+// ``onOpen(card)``. On a phone, outside Detailed, it shows the first chip and "+3 more", which opens the rest in place.
 export function fundingLine(candidate, onOpen) {
   const cards = candidate.cards.filter((card) => fundingChips(card).length);
   if (!cards.length) return null;
   const id = `funding-${++lineIds}`;
+  const chips = chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))), (b, card, first) => badge(b, card, first, b.text, onOpen));
+  const more = chips.length > 1
+    ? h("li", { class: "more-chips" }, h("button", { type: "button", class: "link-btn", on: { click: () => {
+        element.classList.add("open");
+        chips[1].querySelector("a, button")?.focus();
+      } } }, `+${chips.length - 1} more`))
+    : null;
   const element = h("div", { class: "cand-lines funding-line", on: { "pallot:sync": () => {
     element.hidden = !viewPref("showFunding");
   } } }, h("div", { class: "badge-line" },
     h("span", { class: "line-title", id }, "Funding"),
-    h("ul", { class: "badges", "aria-labelledby": id },
-      chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))), (b, card, first) => badge(b, card, first, b.text, onOpen)))));
+    h("ul", { class: "badges", "aria-labelledby": id }, chips[0], more, chips.slice(1))));
   element.hidden = !viewPref("showFunding");
   return element;
+}
+
+// A write-in whose row would show nothing but their name: no endorsement either way, and no money
+// or polling in the race's boxes. The race lists such write-ins on one line (race-cards.js).
+export function quietWriteIn(race, candidate) {
+  if (!candidate.write_in || candidate.cards.some((card) => sided(card).length)) return false;
+  return !(race.cards || []).some((card) => card.breakdowns?.[0]?.parts.some((p) => p.candidate_key === candidate.key && p.amount > 0));
 }
 
 // Every candidate's Funding line goes back to the showFunding switch.
@@ -231,26 +298,22 @@ function stackedBar(item, people) {
 
 // A money box's head, like a poll's: one bar for the total the race's candidates raised, a
 // segment per candidate in their party's colour, then a legend with what each raised and the total.
-function moneyStack(item, people) {
-  const shown = item.parts.filter((p) => p.amount != null && p.amount > 0);
-  const sum = shown.reduce((total, p) => total + p.amount, 0);
+// ``parts`` are only those who raised something (raceMoney).
+function moneyStack(parts, people) {
+  const sum = parts.reduce((total, p) => total + p.amount, 0);
   const partyAttr = (part) => (part.candidate_key && people ? people.party(part.candidate_key) : null);
   const likely = (part) => (part.candidate_key && people?.likely(part.candidate_key) ? likelyFlag("Likely match: see Issues") : null);
   return [
-    sum > 0
-      ? h("div", { class: "stack-bar", role: "img", "aria-label": shown.map((p) => `${p.label} ${DOLLARS.format(p.amount)}`).join(", ") },
-          shown.map((part) => h("span", {
-            "data-party": partyAttr(part), style: `width: ${width(part.amount / sum)}`,
-            title: `${part.label} ${DOLLARS.format(part.amount)}`,
-          })))
-      : null,
-    h("ul", { class: "stack-legend" }, item.parts.map((part) => h("li", {
-      "data-party": partyAttr(part), class: part.amount == null ? "rest" : null,
-    },
+    h("div", { class: "stack-bar", role: "img", "aria-label": parts.map((p) => `${p.label} ${DOLLARS.format(p.amount)}`).join(", ") },
+      parts.map((part) => h("span", {
+        "data-party": partyAttr(part), style: `width: ${width(part.amount / sum)}`,
+        title: `${part.label} ${DOLLARS.format(part.amount)}`,
+      }))),
+    h("ul", { class: "stack-legend" }, parts.map((part) => h("li", { "data-party": partyAttr(part) },
       h("span", { class: "cmp-swatch", "aria-hidden": "true" }),
       h("span", {}, part.label, likely(part)),
-      h("strong", {}, part.amount == null ? "—" : DOLLARS_SHORT.format(part.amount)))),
-      sum > 0 ? h("li", { class: "stack-total" }, h("span", {}, "Total"), h("strong", {}, DOLLARS_SHORT.format(sum))) : null),
+      h("strong", {}, DOLLARS_SHORT.format(part.amount)))),
+      h("li", { class: "stack-total" }, h("span", {}, "Total"), h("strong", {}, DOLLARS_SHORT.format(sum)))),
   ];
 }
 
@@ -286,23 +349,28 @@ function setBoxOpen(box, open) {
   box.querySelector(".box-body").hidden = !open;
 }
 
-// A race box that folds: its first breakdown's title and its date ("latest poll Oct 5", "reports
-// through Sep 30"), the source being in its corner, as a button that folds it to that one line,
-// with ``action`` (the box's corner) beside it; folded, it names nobody. It opens as the view
-// switch ``setting`` says; a click opens or folds just this one, until syncBoxes().
+// A race box that folds: its short heading ("Money raised", "Polls") as a button that folds it to
+// that one line, with ``action`` (the box's corner) beside it; folded, it names nobody. Open, the
+// rest of its first breakdown's title, or just its brackets' period, and its date ("2021-26 · reports
+// through Sep 30, 2026", "since Jan 1, 2025 · …") sit in small print at its foot, and the button's
+// name is the whole title. The view switch ``setting`` shows or
+// hides it, and its kind's OPENS opens or folds it; a click opens or folds just this one, until syncBoxes().
 function foldBox(race, card, setting, action, body) {
   const id = `box-${slug(race.key)}-${card.source}`;
   const title = card.breakdowns[0]?.title || card.description;
-  const text = [title, card.as_of ? `${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : null]
-    .filter(Boolean).join(" · ");
+  const short = SHORT_TITLES[card.kind];
+  const rest = title.startsWith(short) ? title.slice(short.length).trim() : title;
+  const period = /\(([^()]+)\)$/.exec(rest)?.[1] || rest;
+  const asOf = card.as_of ? `${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : null;
   const toggle = h("button", {
-    type: "button", class: "box-toggle", "aria-controls": id,
+    type: "button", class: "box-toggle", "aria-controls": id, "aria-label": [title, asOf].filter(Boolean).join(" · "),
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
-  }, h("span", { class: "chevron", "aria-hidden": "true" }), text);
-  const box = h("div", { class: "race-money", "data-fold": setting },
+  }, h("span", { class: "chevron", "aria-hidden": "true" }), short);
+  const foot = [period, asOf].filter(Boolean).join(" · ");
+  const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
     h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle), action),
-    h("div", { class: "box-body", id }, body));
-  setBoxOpen(box, viewPref(setting));
+    h("div", { class: "box-body", id }, body, foot ? h("p", { class: "fine box-asof" }, foot) : null));
+  setBoxOpen(box, viewPref(OPENS[card.kind]));
   return box;
 }
 
@@ -321,13 +389,30 @@ function moneyCorner(card, compare) {
     card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
 }
 
-// Every race box that ``setting`` folds goes back to it, whether it was opened or folded by hand.
+// After a view switch changes: openMoney or openPolls opens or folds every box of its kind, whether
+// it was opened or folded by hand; showFunding or showPolls shows or hides its kind of box.
 export function syncBoxes(setting) {
-  for (const box of document.querySelectorAll(`.race-money[data-fold="${setting}"]`)) setBoxOpen(box, viewPref(setting));
+  for (const box of document.querySelectorAll(".race-money[data-show]")) {
+    if (box.dataset.open === setting) setBoxOpen(box, viewPref(setting));
+    else if (box.dataset.show === setting) box.hidden = !viewPref(setting);
+  }
+}
+
+const pollHead = (race) => (race.cards || []).find((card) => card.kind === "polls")?.breakdowns?.[0];
+
+// Whether the race's poll box has anyone polling above zero.
+export const hasPolls = (race) => Boolean(pollHead(race)?.parts.some((p) => p.amount > 0));
+
+// With the pollChips switch, a pill on a polled candidate's row: "47% in polls".
+export function pollPill(race, candidate) {
+  const share = viewPref("pollChips") ? pollHead(race)?.parts.find((p) => p.candidate_key === candidate.key)?.amount : null;
+  return share > 0 ? h("span", { class: "pill poll-pill", title: "Their share in the race's poll box" }, `${pct(share)} in polls`) : null;
 }
 
 // A race's cards (money raised per money source, then polls), shown above its candidates.
-// With ``onCompare``, the first comparable one has a button for the Compare dialog.
+// With ``onCompare``, the first comparable one has a button for the Compare dialog. A money or
+// poll box shows only the candidates with something above zero, and names the rest in a fine line;
+// with nobody left, it isn't drawn. Compare, Details and Pick by rule still have everyone.
 export function raceMoney(race, onCompare = null) {
   if (!race.cards?.length) return null;
   const candidate = (key) => race.candidates.find((c) => c.key === key);
@@ -350,9 +435,13 @@ export function raceMoney(race, onCompare = null) {
         sourceLine(card));
     }
     const [head, ...rest] = card.breakdowns;
+    const shown = head ? head.parts.filter((p) => p.amount > 0) : [];
+    if (!shown.length && !rest.length) return null;
+    const left = head ? head.parts.filter((p) => !(p.amount > 0)).map((p) => p.label) : [];
     const polls = card.kind === "polls";
     return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
-      head ? h("section", { class: "breakdown" }, polls ? breakdownRows(head, people, false) : moneyStack(head, people)) : null,
+      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people, false) : moneyStack(shown, people)) : null,
+      left.length ? h("p", { class: "fine box-left-out" }, `${LEFT_OUT[card.kind]}: ${listed(left)}`) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);
   });

@@ -11,11 +11,11 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
-import { fundingLine, raceMoney, sourceLines } from "./source-cards.js";
+import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
-import { viewPref } from "./view.js";
+import { focusTab, viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, loadingCards, showDetails, openPrecincts, updateProgress, openRules }
+let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules, markEndorsers }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 const fills = new Map(); // race key -> builds what its cards make again, in place
 
@@ -65,6 +65,7 @@ export function refillCards() {
     button.disabled = page.loadingCards;
     button.title = page.loadingCards ? STILL_LOADING : "Pick by rule";
   }
+  page.markEndorsers();
 }
 
 export function setAllCollapsed(collapsed) {
@@ -143,27 +144,44 @@ function raceCard(race) {
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
   ].filter(Boolean).join(" · ");
-  const rows = [...race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)];
+  const candRows = race.candidates.map((c) => candidateRow(race, c));
+  const quiet = quietWriteIns(race, candRows);
+  const rows = [...candRows, writeInRow(race)];
   const body = h("fieldset", { class: "race-options" },
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
-    h("ul", { class: "cands" }, rows.map((r) => r.row)));
-  const money = part(() => raceMoney(race, () => openCompare($("#compare"), race)));
+    h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
+  const compare = () => openCompare($("#compare"), race);
+  const money = part(() => raceMoney(race, compare));
+  // With the compareInHead switch, Compare funding in the race's head too.
+  const headCompare = part(() => viewPref("compareInHead") && comparable(race).length
+    ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare funding",
+      "aria-label": `Compare funding in ${race.name}`, on: { click: compare } }, icon("bars"), h("span", { class: "btn-word" }, "Compare"))
+    : null);
+  // With the stanceLinks switch, a line under the candidates opening the first one's Issues.
+  const stances = part(() => viewPref("stanceLinks") && race.candidates.length
+    ? h("p", { class: "stance-link" }, h("button", { type: "button", class: "link-btn", disabled: page.loadingCards,
+      title: page.loadingCards ? STILL_LOADING : null, "aria-label": `See where the candidates for ${race.name} stand`,
+      on: { click: () => page.showDetails(race, 0, null, "issues") } }, "See where they stand"))
+    : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
   // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in).
   const ruleButton = race.candidates.length > 1
     ? h("button", { type: "button", class: "icon-btn rule-btn", title: page.loadingCards ? STILL_LOADING : "Pick by rule",
       "aria-label": `Pick by rule in ${race.name}`, disabled: page.loadingCards,
-      on: { click: () => page.openRules(race.key) } }, icon("filter"))
+      on: { click: () => page.openRules({ raceKey: race.key }) } }, icon("filter"))
     : null;
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: ruleButton,
+    title: race.name, meta: meta(), body: [...notes, money.nodes, body, stances.nodes], tools: [headCompare.nodes, ruleButton],
   });
   fills.set(race.key, () => {
     card.setMeta(meta());
     money.refill();
+    headCompare.refill();
+    stances.refill();
     for (const row of rows) row.fill?.();
+    quiet.sync();
   });
 
   redraw.set(race.key, () => {
@@ -184,8 +202,36 @@ function raceCard(race) {
       if (note) note.hidden = !on;
     }
     for (const { sync } of rows) sync();
+    quiet.sync();
   });
   return card.article;
+}
+
+// The write-ins with nothing to show but their name (quietWriteIn) share one line at the end of
+// the race, before the blank: "Write-ins: Bradford Hall, Zul Mohamed". A name opens that write-in's
+// row in place, to pick; one picked or with a note keeps their row. ``sync`` runs after a redraw or
+// a refill, once the cards are in.
+function quietWriteIns(race, candRows) {
+  const opened = new Set();
+  const line = h("li", { class: "writeins-line", hidden: true });
+  const open = (candRow) => {
+    opened.add(candRow.candidate.key);
+    sync();
+    candRow.row.querySelector(".pick-input").focus();
+  };
+  const sync = () => {
+    const picked = page.picks.picked(race.key);
+    const folded = candRows.filter(({ candidate }) => !opened.has(candidate.key) && !picked.includes(candidate.key)
+      && !page.picks.note(candidate.key) && quietWriteIn(race, candidate));
+    for (const candRow of candRows) candRow.row.hidden = folded.includes(candRow);
+    line.hidden = !folded.length;
+    line.replaceChildren(h("span", { class: "line-title" }, "Write-ins"),
+      h("span", { class: "writeins-names" }, folded.map((candRow, i) => [i ? ", " : null, h("button", {
+        type: "button", class: "link-btn", title: "Show this write-in, to pick them",
+        "aria-label": `Show ${candRow.candidate.name}, a write-in candidate`, on: { click: () => open(candRow) },
+      }, candRow.candidate.name)])));
+  };
+  return { line, sync };
 }
 
 // Puts ``text`` in a box the voter isn't typing in, if it changed (another tab, Clear picks, Undo).
@@ -306,20 +352,29 @@ function candidateRow(race, candidate) {
     const waiting = page.loadingCards;
     return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
       title: waiting ? STILL_LOADING : `${candidate.name}'s profile: ${sources ? `${plural(sources, "source")} and issues` : "issues"}`,
-      on: { click: () => page.showDetails(race, index()) } },
-      "Profile");
+      on: { click: () => page.showDetails(race, index(), null, focusTab()) } },
+      viewPref("stanceLinks") ? "Profile & issues" : "Profile");
   };
-  // What the cards make, in the order fill() builds it again.
+  // What the cards make, in the order fill() builds it again. The Endorsements line comes before
+  // the Funding line, unless the fundingFirst switch says otherwise.
   const profile = part(profileButton);
   const photo = part(() => avatar(candidate));
-  const pills = part(() => candidatePills(candidate, race));
-  const lines = part(() => sourceLines(candidate));
-  const funding = part(() => fundingLine(candidate, openAt));
+  const pills = part(() => [candidatePills(candidate, race), pollPill(race, candidate)]);
+  const lines = part(() => {
+    const both = [sourceLines(candidate), fundingLine(candidate, openAt)];
+    return viewPref("fundingFirst") ? both.reverse() : both;
+  });
   const ban = part(() => banButton(candidate));
   const fill = () => {
-    [profile, photo, pills, lines, funding, ban].forEach((p) => p.refill());
+    [profile, photo, pills, lines, ban].forEach((p) => p.refill());
     row.classList.toggle("banned", isBanned(candidate));
   };
+  // On a phone, outside Detailed, Note, Ban and Search wait behind "…", which opens them in place.
+  const moreButton = h("button", {
+    type: "button", class: "icon-btn row-more", "aria-expanded": "false", "aria-controls": `actions-${id}`,
+    title: "Note, ban and search", "aria-label": `More for ${candidate.name}: note, ban and search`,
+    on: { click: () => moreButton.setAttribute("aria-expanded", String(row.classList.toggle("actions-open"))) },
+  }, "…");
 
   const row = h(
     "li",
@@ -334,14 +389,14 @@ function candidateRow(race, candidate) {
           h("span", { class: "cand-name" }, candidate.name),
           h("span", { class: "cand-sub" }, pills.nodes))),
       h("div", { class: "cand-profile" }, profile.nodes),
-      h("div", { class: "cand-actions" },
+      moreButton,
+      h("div", { class: "cand-actions", id: `actions-${id}` },
         noteButton, ban.nodes, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
     lines.nodes,
-    funding.nodes,
     noteBox,
   );
   row.classList.toggle("banned", isBanned(candidate));
-  return { row, sync, fill };
+  return { candidate, row, sync, fill };
 }
 
 // What ``build()`` makes (a node, a list of them or nothing), behind a marker so ``refill()`` can
@@ -428,7 +483,7 @@ function settle(key, filled) {
 
 function precinctLink() {
   return h("p", { class: "precinct-link" },
-    h("button", { type: "button", class: "link-btn", on: { click: () => page.openPrecincts() } }, "Enter your commissioner and JP precincts"));
+    h("button", { type: "button", class: "link-btn", on: { click: () => page.openDistricts() } }, "Enter your commissioner and JP precincts"));
 }
 
 function measureCard(measure) {

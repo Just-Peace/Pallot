@@ -16,7 +16,7 @@ import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./pick
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
 import { showToast } from "./toast.js";
-import { bindViewControls, onViewChange, showViewControls } from "./view.js";
+import { bindViewControls, focusChips, focuses, onViewChange, showViewControls } from "./view.js";
 
 const groupList = $("#source-groups");
 const summary = $("#sources-summary");
@@ -165,7 +165,8 @@ function sourceGroup(group) {
 function renderSummary(overview) {
   const last = overview.last_lookup;
   const lookup = last
-    ? `Last lookup ${relativeTime(last.at)}: ${plural(last.external_calls, "request")} to the sources, `
+    ? `Last lookup ${relativeTime(last.at)}, ${last.found_by === "voter_card" ? "by voter card" : "by address"}: `
+      + `${plural(last.external_calls, "request")} to the sources, `
       + `${last.cache_hits} answered from the saved copies, ${last.elapsed_ms} ms.`
     : "No ballot looked up since Pallot started.";
   summary.textContent = `${lookup} Everything the server has saved takes ${formatBytes(overview.total_bytes)}.`;
@@ -230,16 +231,20 @@ themeChoice.addEventListener("change", (event) => {
   showTheme();
 });
 
-// Ballot view: Simple, Detailed (neither when the switches are mixed) and the switches. An open
-// ballot applies a change at once (onViewChange there), so it's not marked as a settings change.
+// Ballot view: the focus chips, Simple, Detailed (neither when the switches are mixed) and the
+// switches, those a focus decides greyed out. An open ballot applies a change at once (onViewChange
+// there), so it's not marked as a settings change.
 const viewSection = $("#view-title").closest("section");
+$("#focus-setting .fine").before(focusChips());
 
 function showView() {
   const mode = showViewControls(viewSection);
-  $("#view-mode-note").textContent = {
-    minimal: "Minimal shows only the ballot and its candidates. Simple adds funding, polls and endorsements. Detailed opens everything.",
-    simple: "Simple folds the map and where the dates and districts come from. Minimal folds everything; Detailed opens everything.",
-    detailed: "Detailed opens everything. Simple folds the map and where the dates and districts come from; Minimal folds everything.",
+  const chosen = focuses();
+  $("#focus-lock-note").hidden = !chosen.length;
+  $("#view-mode-note").textContent = chosen.includes("simple") ? "Keep it simple holds the ballot at Minimal. Choose Simple or Detailed to drop it." : {
+    minimal: "Minimal shows only the ballot and its candidates, with no money or poll boxes. Simple adds funding, polls and endorsements. Detailed opens everything.",
+    simple: "Simple folds the money and poll boxes to one line each, the map, and where the dates and districts come from, and keeps candidate rows light on a phone. Minimal hides the boxes; Detailed opens everything.",
+    detailed: "Detailed opens everything, the money and poll boxes included, and shows each candidate's whole row on a phone. Simple folds the boxes; Minimal hides them.",
     custom: "Your own mix, below.",
   }[mode];
 }

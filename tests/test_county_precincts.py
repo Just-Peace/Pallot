@@ -316,7 +316,7 @@ def test_maps_on_the_ballot(client, upstream, monkeypatch):
     assert ("Your election precinct isn't wholly inside one of Travis County's justice of the peace precincts on its map, "
             "so Pallot doesn't guess your justice of the peace precinct; it's on your voter registration certificate."
             ) in ballot["notes"]
-    assert "precinct" in [s["id"] for s in ballot["maybe"]]  # the JP and constable races wait for the voter
+    assert ballot["left_out"]["missing"] == ["jp"]  # the JP and constable races wait for the voter
 
 
 def test_pallot_cache_refreshes_and_rebuilds_the_countys_records(client, make_app, upstream):
