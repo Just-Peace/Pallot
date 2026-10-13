@@ -285,7 +285,7 @@ def test_a_write_in_only_district_race_isnt_guessed(client, upstream):
         _write_in(990001, 900001, "SID ELSEWHERE", cdOfficeType="SR",
                   txOfficeName="MEMBER, STATE BOARD OF EDUCATION, DISTRICT 3", nbSortOrder=49, nbSecondarySortOrder=3),
     ]
-    ballot = get_ballot(client)
+    ballot = get_ballot(client, all_races=True)
     assert ballot["districts"]["sboe"] is None
     unconfirmed = next(s for s in ballot["maybe"] if s["id"] == "unconfirmed")
     assert [r["name"] for r in unconfirmed["races"]] == ["Member, State Board of Education, District 5"]
@@ -399,7 +399,7 @@ def test_entered_precincts_override_the_countys(client):
 
 
 def test_an_emptied_precinct_overrides_the_county_and_ballotpedia(client):
-    ballot = get_ballot(client, precincts={"commissioner": None, "jp": None})
+    ballot = get_ballot(client, precincts={"commissioner": None, "jp": None}, all_races=True)
     d = ballot["districts"]
     assert (d["jp"], d["constable"], d["commissioner"]) == (None, None, None)
     assert set(d["precinct_sources"].values()) == {"you"}
@@ -415,7 +415,7 @@ def test_no_precincts_sent_brings_the_countys_numbers_back(client):
 
 def test_without_the_countys_list_ballotpedia_gives_the_precincts(client, upstream):
     switch(client, "county_precincts", False)
-    ballot = get_ballot(client)
+    ballot = get_ballot(client, all_races=True)
     d = ballot["districts"]
     assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, None)
     assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"} and d["county_source"] is None

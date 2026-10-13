@@ -60,7 +60,7 @@ export function linkedText(text) {
   let match;
   while ((match = pattern.exec(text))) {
     const [, label, url] = match;
-    const own = /^settings\.html#[a-z0-9-]+$/.test(url);
+    const own = /^settings\.html#[a-z0-9_-]+$/.test(url);
     parts.push(text.slice(last, match.index),
       own ? h("a", { href: url }, label) : /^(https?:\/\/|mailto:)/i.test(url) ? extLink(url, label) : label);
     last = pattern.lastIndex;
