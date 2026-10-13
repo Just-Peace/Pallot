@@ -39,10 +39,11 @@ from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
+from .sources.wikidata import Wikidata
 
 MIN_INTERVAL = {
     "nominatim": 1.0, "suggestions": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
-    "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, **{feed.source: 1.0 for feed in FEEDS},
+    "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, **{feed.source: 1.0 for feed in FEEDS},
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
@@ -125,6 +126,7 @@ async def open_services(
                 tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                 polls=Polls(cache, config.ttl, today),
                 officeholders=Officeholders(cache, config.ttl),
+                wikidata=Wikidata(cache, config.ttl),
                 key_dates=key_dates.KeyDatesPage(cache, config.ttl),
                 tigerweb=Tigerweb(cache, config.ttl),
                 tiles=Tiles(cache, config.ttl),

@@ -200,8 +200,16 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS and Ballotpedia share the Profile tab, where Details opens, and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
+            <p>From the Texas Secretary of State's candidate filings, <a href="#wikidata">Wikidata</a>, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS, Wikidata and Ballotpedia share the Profile tab, where Details opens, and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
             <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Matched" and "Likely match"</a>). "Incumbent" comes from the state's filing, from Ballotpedia when it matches the candidate exactly in the same race, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="wikidata">
+          <summary>Where do the Wikidata profiles and photos come from?</summary>
+          <div class="faq-body">
+            <p>From <a href="https://www.wikidata.org" target="_blank" rel="noopener noreferrer">Wikidata</a>, the free knowledge base behind Wikipedia, which anyone can edit. Pallot keeps its list of every living person who holds or held a Texas office (a U.S. or Texas Senate or House seat, or a statewide office), and matches the candidates to it by name, with the office to confirm. A candidate who has never held a Texas office has no Wikidata section.</p>
+            <p>A candidate running for an office they already hold (or held) is "Matched"; one running for another office, or listed with another party, is a "Likely match" (see <a href="#matches">"Matched" and "Likely match"</a>). Wikidata's photo, from Wikimedia Commons, is shown only for a match, otherwise Ballotpedia's when it's on. The section links to the person's Wikidata item, which keeps the same address even if their name changes, and to their Wikipedia article, website and Ballotpedia page when Wikidata has them. Turn Wikidata off in <a href="settings.html">Settings</a> to hide it.</p>
           </div>
         </details>
 
@@ -266,7 +274,7 @@
         <details class="faq" id="fresh">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
+            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC and Wikidata, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
             <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when we refresh them; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>Settings shows how old each source's copy is. Only we can fetch a copy again early, on the server.</p>
           </div>

@@ -63,7 +63,7 @@ def test_capitol_ballot(client):
     assert all(r["group"] == "local" for r in special["races"]) and any(r["seats"] > 1 for r in special["races"])
 
     paxton = senate["candidates"][0]
-    assert sources_of(paxton) == ["fec", "sos", "polls", "ballotpedia", "trackaipac"]  # the tabs in Details
+    assert sources_of(paxton) == ["fec", "sos", "polls", "wikidata", "ballotpedia", "trackaipac"]  # the tabs in Details
     tap = card_of(paxton, "trackaipac")
     assert tap["match"]["confidence"] == "exact"
     watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
@@ -84,7 +84,7 @@ def test_capitol_ballot(client):
 
     statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
     assert statuses == {"geocoding": "used", "google": "unused", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
-                        "key_dates": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "mupac": "used", "cair": "used", "emgage": "used", "fec": "used",
+                        "key_dates": "used", "wikidata": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "mupac": "used", "cair": "used", "emgage": "used", "fec": "used",
                         "tec": statuses["tec"], "polls": "used", "officeholders": "used", "election_precincts": "used",
                         "county_precincts": "used"}
     # (suggestions are asked for while typing, the map after)
@@ -96,8 +96,8 @@ def test_every_card_says_its_kind(client):
     cards = [card for race in ballot["races"] for card in race["cards"]]
     cards += [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]]
     assert {(card["source"], card["kind"]) for card in cards} == {
-        ("fec", "money"), ("tec", "money"), ("polls", "polls"), ("sos", "filing"), ("ballotpedia", "profile"),
-        ("trackaipac", "endorsement"), ("voteforpeace", "endorsement"),
+        ("fec", "money"), ("tec", "money"), ("polls", "polls"), ("sos", "filing"), ("wikidata", "profile"),
+        ("ballotpedia", "profile"), ("trackaipac", "endorsement"), ("voteforpeace", "endorsement"),
         ("emgage", "endorsement"), ("examplepac", "endorsement"), ("cair", "endorsement"),
     }
 
@@ -308,7 +308,7 @@ def test_ballotpedia_off(client):
     assert "precinct" not in maybe and "special" not in maybe
     assert last_use(client, "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
-    assert sources_of(senate["candidates"][0]) == ["fec", "sos", "polls", "trackaipac"]
+    assert sources_of(senate["candidates"][0]) == ["fec", "sos", "polls", "wikidata", "trackaipac"]
 
 
 def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):

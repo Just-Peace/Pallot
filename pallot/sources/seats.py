@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from typing import Any, Hashable
+from typing import Any, Callable, Hashable
 
 from ..matching import FIRST_LAST, FULL, INITIAL, TITLES, NameIndex, match_person
 from ..models import Match, Race
@@ -137,6 +137,7 @@ def match_entries(
     source: str,
     entry_id: str,
     city: str | None = None,
+    seats_of: Callable[[dict[str, Any]], set[str]] = entry_seats,
 ) -> dict[str, tuple[dict[str, Any], Match]]:
     """Candidate key -> (entry, match), in any race. A race's seat comes from race_seat, so a
     name found for another seat or county is only "likely". One entry goes to one candidate in a
@@ -145,7 +146,8 @@ def match_entries(
     in the county, so there a last name alone ("Ebony Williams" for LaShawn Williams) isn't a
     match. A city race also takes an entry whose jurisdiction is the voter's ``city`` (Vote for
     Peace files Austin's council as "Austin"). ``source`` names the list in a match's notes;
-    ``entry_id`` is the entries' unique key."""
+    ``entry_id`` is the entries' unique key; ``seats_of`` reads an entry's seats (entry_seats
+    unless the source already knows them)."""
     bp_races = {f"bp:{r.id}": r for r in bp_ballot.races} if bp_ballot else {}
     out: dict[str, tuple[dict[str, Any], Match]] = {}
     for race in races:
@@ -155,7 +157,7 @@ def match_entries(
         for candidate in race.candidates:
             found = match_person(
                 index, candidate.name, candidate.party, seat,
-                seats_of=lambda entry: fit(entry_seats(entry), seat, place), party_of=party_code, source=source,
+                seats_of=lambda entry: fit(seats_of(entry), seat, place), party_of=party_code, source=source,
                 seat_text=office_text, name_of=lambda entry: entry.get("name"),
             )
             if found and not (_strength(found[1]) == _LAST_NAME and seat and seat.startswith("COUNTY:")):

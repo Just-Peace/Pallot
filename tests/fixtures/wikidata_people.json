@@ -1,0 +1,2079 @@
+{
+ "head": {
+  "vars": [
+   "p",
+   "label",
+   "pos",
+   "posL",
+   "dL",
+   "start",
+   "end",
+   "party"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas State House district 49"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28314533"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Gina Hinojosa"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2017-01-10T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 29th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562489"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Sylvia Garcia"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 29th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562489"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Sylvia Garcia"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas State House district 144"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16734396"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Mary Ann Perez"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Senate, District 24"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28370262"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Dawn Buckingham"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2017-01-10T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-10T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 11th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101196462"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "August Pfluger"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 11th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101196462"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "August Pfluger"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 11th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101196462"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "August Pfluger"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 35th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q104148369"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Greg Casar"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Senate, District 21"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562493"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Judith Zaffirini"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1987-01-13T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas State House district 12"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100952910"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Trey Wharton"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 36th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16979824"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Brian Babin"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2017-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 36th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16979824"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Brian Babin"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 36th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16979824"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Brian Babin"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-06T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2017-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 36th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16979824"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Brian Babin"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 27th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q55313952"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Michael Cloud"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 27th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q55313952"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Michael Cloud"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2018-06-30T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 27th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q55313952"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Michael Cloud"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 7th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q58324313"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lizzie Pannill Fletcher"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 7th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q58324313"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lizzie Pannill Fletcher"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2021-01-03T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas State House district 70"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q6388290"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ken Paxton"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2003-01-14T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2013-01-08T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Senate, District 8"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q6388290"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ken Paxton"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2013-01-08T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-04T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q6388290"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q7707525"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Attorney General"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ken Paxton"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-05T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 7th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q58324313"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lizzie Pannill Fletcher"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-03T00:00:00Z"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Senate, District 14"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q97861447"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Sarah Eckhardt"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2020-07-31T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Senate, District 11"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q79585969"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Mayes Middleton"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-10T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 7th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q58324313"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lizzie Pannill Fletcher"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas State House district 23"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q79585969"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Mayes Middleton"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-08T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-10T00:00:00Z"
+    }
+   },
+   {
+    "dL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas's 35th congressional district"
+    },
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q104148369"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13218630"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "United States representative"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Greg Casar"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-03T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q115522497"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ellen Troxclair"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q97861447"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Sarah Eckhardt"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q131618557"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lauren Ashley Simmons"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q131010745"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Charlene Ward Johnson"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q88693641"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Vikki Goodwin"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16193904"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Steve Toth"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-08T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q27892618"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Jolanda Jones"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2022-05-18T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q84202665"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Sheryl Cole"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562489"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Sylvia Garcia"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2013-03-11T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-01-03T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101048006"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Shelby Slawson"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100178804"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ray Lopez"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2019-03-21T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562493"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Judith Zaffirini"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100742942"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "James Talarico"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2018-11-19T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101168868"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ann Johnson"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q105097108"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Penny Morales Shaw"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q106423151"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lacey Hull"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18630880"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Dennis Paul"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18739889"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Mike Schofield"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q17091672"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Gene Wu"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16734396"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Mary Ann Perez"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16193904"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Steve Toth"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2013-01-08T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-13T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q115522497"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ellen Troxclair"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-10T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q131618557"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lauren Ashley Simmons"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-14T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q122955277"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Charles Cunningham"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-01T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q131010745"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Charlene Ward Johnson"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2025-01-14T00:00:00Z"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5605224"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q7707525"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Attorney General"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Greg Abbott"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2002-12-02T00:00:00Z"
+    },
+    "end": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-05T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5605224"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5589725"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Governor of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Greg Abbott"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-20T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5296366"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Donna Howard"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q7450514"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Senfronia Thompson"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q79585993"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Christina Morales"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q66309757"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Jon Rosenthal"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28228777"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Tom Oliverson"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28228784"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Valoree Swanson"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28370262"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Dawn Buckingham"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q4750367"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Ana Hernandez"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5214174"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18565274"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the State Senate of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Dan Patrick"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28151630"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18604553"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "member of the Texas House of Representatives"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Harold Dutton Jr."
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29552"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28370262"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q124518473"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas Land Commissioner"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Dawn Buckingham"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2023-01-10T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5214174"
+    },
+    "pos": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q639115"
+    },
+    "posL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lieutenant Governor of Texas"
+    },
+    "label": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Dan Patrick"
+    },
+    "party": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q29468"
+    },
+    "start": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "2015-01-20T00:00:00Z"
+    }
+   }
+  ]
+ }
+}

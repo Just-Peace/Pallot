@@ -8,7 +8,7 @@ from pathlib import Path
 from pallot.config import Ttls
 from pallot.http_cache import HttpCache, RequestSpec
 
-from . import county_precincts, endorsement_feeds, fec, officeholders, polls, sos, store, tigerweb
+from . import county_precincts, endorsement_feeds, fec, officeholders, polls, sos, store, tigerweb, wikidata
 from .entry import Bundle
 
 BUNDLES: tuple[Bundle, ...] = (
@@ -17,6 +17,7 @@ BUNDLES: tuple[Bundle, ...] = (
     Bundle("sos", sos.build_ballot_orders, "daily", lifetime=sos.lifetime, name="sos_ballot_order",
            include=sos.is_ballot_order, keep=sos.published),
     Bundle("officeholders", officeholders.build, "weekly"),
+    Bundle("wikidata", wikidata.build, "weekly"),
     Bundle("tigerweb", tigerweb.build, "weekly", keep=tigerweb.drawn),
     Bundle("county_precincts", county_precincts.build, "weekly"),
     Bundle("polls", polls.build, "daily"),
