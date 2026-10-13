@@ -166,11 +166,12 @@ function raceCard(race) {
     : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
-  // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in).
+  // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in);
+  // its words show wider than a phone.
   const ruleButton = race.candidates.length > 1
-    ? h("button", { type: "button", class: "icon-btn rule-btn", title: page.loadingCards ? STILL_LOADING : "Pick by rule",
+    ? h("button", { type: "button", class: "icon-btn rule-btn with-icon", title: page.loadingCards ? STILL_LOADING : "Pick by rule",
       "aria-label": `Pick by rule in ${race.name}`, disabled: page.loadingCards,
-      on: { click: () => page.openRules({ raceKey: race.key }) } }, icon("filter"))
+      on: { click: () => page.openRules({ raceKey: race.key }) } }, icon("filter"), h("span", { class: "btn-word" }, "Pick by rule"))
     : null;
   const card = collapsibleCard(race.key, {
     title: race.name, meta: meta(), body: [...notes, money.nodes, body, stances.nodes], tools: [headCompare.nodes, ruleButton],

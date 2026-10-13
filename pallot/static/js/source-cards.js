@@ -8,13 +8,14 @@
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, listed, percent, plural } from "./format.js";
+import { fundingHelp, helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import { addToBar, barChoice } from "./pick-rules.js";
 import { showToast } from "./toast.js";
 import { setViewPref, viewPref } from "./view.js";
 
 // The FAQ answers that say how each source's figures are put together.
-const MONEY_FAQ = { fec: "faq.html#fec-money", tec: "faq.html#tec-money", polls: "faq.html#polls" };
+const MONEY_FAQ = { fec: "fec-money", tec: "tec-money", polls: "polls" };
 // What a card's date means.
 const AS_OF_WORDS = { fec: "reports through", tec: "reports through", polls: "latest poll" };
 
@@ -32,7 +33,7 @@ export function sourceLine(card) {
     `From ${card.label}`,
     card.as_of ? `, ${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : "",
     card.url ? [" · ", webLink(card.url, `Open ${card.label}`)] : null,
-    faq ? [" · ", extLink(faq, "How these figures are put together")] : null);
+    faq ? [" · ", extLink(`faq.html#${faq}`, "How these figures are put together")] : null);
 }
 
 const width = (fraction) => `${(Math.min(1, Math.max(0, fraction || 0)) * 100).toFixed(1)}%`;
@@ -86,19 +87,22 @@ function likelyFlag(title = "Likely match") {
 
 // A badge with a url links to that source's page for the candidate (opens a new tab). On
 // the candidate row it carries its ``card``: the source's name, and for a likely match a
-// note, plus a "?" on the ``first`` of that source's badges. With ``onOpen(card)`` it's a button
-// that opens Details at the source (a Funding chip). ``label`` shows instead of the badge's text,
-// which then names it and is its tooltip.
-function badge(item, card = null, first = false, label = item.text, onOpen = null) {
+// note, plus a "?" on the ``first`` of that source's badges. With ``onOpen(card)`` it's a button,
+// drawn like Profile with a chevron, that opens Details at the source to see who gave to ``who`` (a
+// Funding chip). ``label`` shows instead of the badge's text, which then names it and is its tooltip.
+function badge(item, card = null, first = false, label = item.text, onOpen = null, who = null) {
   const likely = card && isLikely(card);
   const short = label !== item.text;
-  const title = [short ? item.text : null, item.hint, card && !short ? `From ${card.label}` : null,
-    likely ? "Likely match" : null].filter(Boolean).join(" · ") || null;
   const flag = likely && first ? likelyFlag() : null;
   if (onOpen) {
-    return h("li", {}, h("button", { type: "button", class: ["badge badge-btn", `tone-${item.tone}`], title,
-      "aria-label": `${item.text}${flag ? " (likely match)" : ""}: open in Details`, on: { click: () => onOpen(card) } }, label, flag));
+    const see = `See who gave to ${who}`;
+    return h("li", {}, h("button", { type: "button", class: ["badge badge-btn badge-open", `tone-${item.tone}`],
+      title: [see, item.hint, likely ? "Likely match" : null].filter(Boolean).join(" · "),
+      "aria-label": `${item.text}${flag ? " (likely match)" : ""}: ${see.toLowerCase()}`, on: { click: () => onOpen(card) } },
+    label, flag, h("span", { class: "badge-chevron", "aria-hidden": "true" }, "›")));
   }
+  const title = [short ? item.text : null, item.hint, card && !short ? `From ${card.label}` : null,
+    likely ? "Likely match" : null].filter(Boolean).join(" · ") || null;
   const name = short ? `${item.text}${flag ? " (likely match)" : ""}` : null;
   return h("li", {}, safeUrl(item.url)
     ? extLink(item.url, [label, flag, h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")],
@@ -194,11 +198,13 @@ export function syncLines() {
 // as its tab in Details shows them, with a "?" on the first of a card that only likely matched. The showFunding
 // view switch hides it, with the money boxes, until syncFunding(). A chip opens Details at its money source,
 // ``onOpen(card)``. On a phone, outside Detailed, it shows the first chip and "+3 more", which opens the rest in place.
+// The "?" beside its heading says what the colors mean (fundingHelp).
 export function fundingLine(candidate, onOpen) {
   const cards = candidate.cards.filter((card) => fundingChips(card).length);
   if (!cards.length) return null;
   const id = `funding-${++lineIds}`;
-  const chips = chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))), (b, card, first) => badge(b, card, first, b.text, onOpen));
+  const chips = chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))),
+    (b, card, first) => badge(b, card, first, b.text, onOpen, candidate.name));
   const more = chips.length > 1
     ? h("li", { class: "more-chips" }, h("button", { type: "button", class: "link-btn", on: { click: () => {
         element.classList.add("open");
@@ -208,7 +214,7 @@ export function fundingLine(candidate, onOpen) {
   const element = h("div", { class: "cand-lines funding-line", on: { "pallot:sync": () => {
     element.hidden = !viewPref("showFunding");
   } } }, h("div", { class: "badge-line" },
-    h("span", { class: "line-title", id }, "Funding"),
+    h("span", { class: "line-title" }, h("span", { id }, "Funding"), fundingHelp()),
     h("ul", { class: "badges", "aria-labelledby": id }, chips[0], more, chips.slice(1))));
   element.hidden = !viewPref("showFunding");
   return element;
@@ -317,16 +323,16 @@ function moneyStack(parts, people) {
   ];
 }
 
-// A Breakdown's bars and note (``withNote``). With a total they're shares of it (and show a %);
-// without one they're scaled to the largest part.
-function breakdownRows(item, people = null, withNote = true) {
+// A Breakdown's bars and note. With a total they're shares of it (and show a %); without one
+// they're scaled to the largest part.
+function breakdownRows(item, people = null) {
   const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
   const scale = item.total || largest;
   return [
     item.unit === "percent"
       ? stackedBar(item, people)
       : h("ul", { class: "breakdown-rows" }, item.parts.map((part) => shareRow(part, scale, Boolean(item.total), people))),
-    withNote && item.note ? h("p", { class: "fine" }, item.note) : null,
+    item.note ? h("p", { class: "fine" }, item.note) : null,
   ];
 }
 
@@ -374,19 +380,23 @@ function foldBox(race, card, setting, action, body) {
   return box;
 }
 
-// A poll box's corner, like a candidate's Note and Search: how many polls (its tooltip says how
-// the bar is worked out, and it opens the FAQ's answer) and the source.
+// A poll box's corner, like a candidate's Note and Search: how many polls, the source, and a "?" to
+// the FAQ's answer on how the bar is worked out.
 function pollCorner(card, head) {
   return h("span", { class: "box-links" },
-    head?.count ? extLink(MONEY_FAQ.polls, plural(head.count, "poll"), { class: "icon-btn", title: head.note }) : null,
-    card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
+    head?.count ? h("span", { class: "box-count" }, plural(head.count, "poll")) : null,
+    card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null,
+    helpLink(MONEY_FAQ.polls, "how the poll bar is worked out"));
 }
 
-// A money box's corner, like a poll box's: Compare funding (``compare``) and the source.
+// A money box's corner, like a poll box's: Compare funding (``compare``), the source, and a "?" to
+// the FAQ's answer on how its figures are put together.
 function moneyCorner(card, compare) {
+  const faq = MONEY_FAQ[card.source];
   return h("span", { class: "box-links" },
     compare,
-    card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
+    card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null,
+    faq ? helpLink(faq, `how ${card.label}'s figures are put together`) : null);
 }
 
 // After a view switch changes: openMoney or openPolls opens or folds every box of its kind, whether
@@ -440,7 +450,7 @@ export function raceMoney(race, onCompare = null) {
     const left = head ? head.parts.filter((p) => !(p.amount > 0)).map((p) => p.label) : [];
     const polls = card.kind === "polls";
     return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
-      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people, false) : moneyStack(shown, people)) : null,
+      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people) : moneyStack(shown, people)) : null,
       left.length ? h("p", { class: "fine box-left-out" }, `${LEFT_OUT[card.kind]}: ${listed(left)}`) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);

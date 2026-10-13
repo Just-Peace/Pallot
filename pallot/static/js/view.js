@@ -88,14 +88,16 @@ export function setViewPref(name, value) {
   changed();
 }
 
-// Choosing or dropping a focus also answers the ballot's question (focusAsked).
+// Choosing or dropping a focus also answers the ballot's question (focusAsked), and, like choosing a
+// mode, ends the caption under the modes (modeChosen).
 export function setFocus(id, on) {
   const others = focuses().filter((f) => f !== id);
-  setUiPrefs({ focuses: on ? [...others, id] : others, focusAsked: true });
+  setUiPrefs({ focuses: on ? [...others, id] : others, focusAsked: true, modeChosen: true });
   changed();
 }
 
 export const focusAsked = () => uiPref("focusAsked") === true;
+export const modeChosen = () => uiPref("modeChosen") === true;
 export const dismissFocusAsk = () => setUiPrefs({ focusAsked: true });
 
 // "minimal", "simple", "detailed", or "custom" when the stored switches match neither; Minimal
@@ -109,7 +111,7 @@ export function viewMode() {
 // Sets every switch of the mode at once, so another tab never sees half of it. A mode above
 // Minimal drops "Keep it simple", which would hold the ballot at Minimal.
 export function setViewMode(mode) {
-  const changes = { ...PRESETS[mode] };
+  const changes = { ...PRESETS[mode], modeChosen: true };
   if (mode !== "minimal" && focuses().includes("simple")) changes.focuses = focuses().filter((id) => id !== "simple");
   setUiPrefs(changes);
   changed();

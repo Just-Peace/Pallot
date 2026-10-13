@@ -126,12 +126,12 @@
               <p class="strip-race" id="strip-race" aria-hidden="true"></p>
               <p class="progress" id="progress" aria-live="polite"></p>
             </div>
-            <button class="btn small" id="next-race" type="button" title="Or press j and k to move from race to race">Next race to pick</button>
+            <button class="btn small" id="next-race" type="button" aria-keyshortcuts="j k" title="Or press j and k to move from race to race">Next race to pick</button>
             <button class="btn small with-icon more-btn" id="more-btn" type="button" aria-haspopup="dialog" aria-controls="more-sheet"><span data-icon="more"></span>More</button>
           </div>
           <div class="button-row ballot-tools" id="ballot-tools">
             <div class="tool-group" id="view-controls">
-            <fieldset class="seg" title="How much of the ballot shows at first">
+            <fieldset class="seg" aria-describedby="mode-caption">
               <legend class="sr-only">How much of the ballot shows</legend>
               <label class="seg-option"><input type="radio" name="view-mode" value="minimal">Minimal</label>
               <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
@@ -166,6 +166,8 @@
                 <p class="menu-more"><a href="settings.html#view-title">Open Settings</a></p>
               </div>
             </details>
+            <a class="help-link" href="faq.html#view-modes" target="_blank" rel="noopener" title="Help: focus and views" aria-label="Help: focus and views (opens in a new tab)">?</a>
+            <p class="fine mode-caption" id="mode-caption" hidden>Minimal: names only · Simple: adds money, polls, endorsements · Detailed: everything.</p>
             </div>
             <span class="tool-divider" aria-hidden="true"></span>
             <div class="tool-group">
@@ -174,6 +176,7 @@
             <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
             </div>
+            <p class="fine wait-note" id="wait-note" hidden>Profile, Pick by rule and Print wait for money, polls and endorsements.</p>
           </div>
           <div class="cards-loading" id="cards-loading" role="status" hidden>
             <span>Loading money, polls and endorsements…</span>

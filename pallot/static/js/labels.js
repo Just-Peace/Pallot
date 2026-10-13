@@ -1,5 +1,6 @@
 import { banMatches } from "./ban-list.js";
 import { h } from "./dom.js";
+import { noteButton } from "./help.js";
 import { icon } from "./icons.js";
 
 export const GROUP_ORDER = ["federal", "state", "legislature", "judicial", "county", "precinct", "local"];
@@ -70,23 +71,27 @@ export function partyName(candidate) {
   return candidate.party_name || PARTY_NAMES[candidate.party] || "";
 }
 
-// The red pill of a candidate on the voter's ban list; its tooltip, and a screen reader, say what matched.
+// A pill whose words need a reason: a click or a tap shows ``why`` in a note (help.js), and a screen
+// reader hears it with the pill's words.
+const reasonPill = (className, label, why) => noteButton({ class: ["pill pill-btn", className], title: why }, [
+  label, h("span", { class: "sr-only" }, ` (${why})`)], () => why);
+
+// The red pill of a candidate on the voter's ban list; its note says what matched.
 function bannedPill(candidate) {
   const matched = banMatches(candidate.name);
   if (!matched.length) return null;
-  const why = `On your ban list: matches ${matched.map((entry) => `“${entry.text}”`).join(", ")}`;
-  return h("span", { class: "pill pill-banned", title: why }, icon("ban"), "Banned", h("span", { class: "sr-only" }, ` (${why})`));
+  return reasonPill("pill-banned", [icon("ban"), "Banned"], `On your ban list: matches ${matched.map((entry) => `“${entry.text}”`).join(", ")}`);
 }
 
-// The pills under a candidate's name: Banned (bannedPill), their party, Party holds seat (its
-// tooltip, and a screen reader, name the race's holder), Incumbent, Write-in.
+// The pills under a candidate's name: Banned (bannedPill), their party, Party holds seat (its note
+// names the race's holder), Incumbent, Write-in.
 export function candidatePills(candidate, race = null) {
   const party = partyName(candidate);
   const holder = candidate.party_holds_seat ? race?.holder : null;
   return [
     bannedPill(candidate),
     party ? h("span", { class: ["party", `party-${candidate.party || "none"}`] }, party) : null,
-    holder ? h("span", { class: "pill", title: holder.hint }, "Party holds seat", h("span", { class: "sr-only" }, ` (${holder.hint})`)) : null,
+    holder ? reasonPill(null, "Party holds seat", holder.hint) : null,
     candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,
     candidate.write_in ? h("span", { class: "pill" }, "Write-in") : null,
   ];

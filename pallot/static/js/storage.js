@@ -11,6 +11,7 @@ export const ENDORSER_BAR = "pallot.endorserBar.v1"; // the endorser bar's choic
 export const SOURCES = "pallot.sources.v1"; // the sources the voter turned on or off: id → true or false
 export const BAN_LIST = "pallot.banList.v1"; // the voter's ban list (ban-list.js)
 export const UI = "pallot.ui.v1"; // the view settings (uiPref), several at once with setUiPrefs
+export const TIPS = "pallot.tips.v1"; // the ids of the first-run tips the voter has dismissed (help.js)
 
 // The Settings page stamps every change that affects the ballot, so a ballot page that was
 // open meanwhile (in another tab, or kept for the Back button) can tell it's out of date.

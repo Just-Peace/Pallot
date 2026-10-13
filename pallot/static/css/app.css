@@ -552,7 +552,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .district.missing strong { background: var(--warn-soft); color: var(--warn); font-weight: 650; }
 .district-note { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); }
 .precinct-prompt + .district-note, .district-warn + .district-note { margin-top: 8px; }
-.district abbr { text-decoration: none; }
 .districts-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 8px; }
 .districts-card .districts-head h2 { margin: 0; }
 .district-actions { display: flex; gap: 2px; margin: -6px -8px -6px 0; }
@@ -729,7 +728,8 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .endorser-bar { margin: 8px 0 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
   border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
 .bar-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 8px; }
-.bar-head h2 { flex: 1 1 auto; margin: 0; font-size: 1.05rem; }
+.bar-head h2 { flex: 0 1 auto; margin: 0; font-size: 1.05rem; }
+.bar-head .help-link { margin-right: auto; }
 .bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 0; }
 .bar-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
@@ -764,6 +764,39 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .chip-menu > a, .chip-menu > .link-btn { display: flex; align-items: center; gap: 4px; padding: 8px 10px; border-radius: 6px; font-size: 0.9rem; text-align: left;
   color: var(--text); text-decoration: none; }
 .chip-menu > a:hover, .chip-menu > .link-btn:hover { background: var(--neutral-soft); }
+
+/* Help (help.js): a "?" opening the FAQ's answer, a note over the page on a click or a tap (a pill's
+   reason, the Funding chips' colours), and the first-run tips, each under what it's about with its
+   arrow at it (--tip-x). The modes' caption and the line saying why some buttons wait. */
+.help-link { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 20px; height: 20px; padding: 0;
+  border: 1px solid var(--line-strong); border-radius: 50%; background: transparent; color: var(--muted); font-family: inherit;
+  font-size: 0.75rem; font-weight: 700; line-height: 1; text-decoration: none; cursor: pointer; vertical-align: middle; }
+.help-link:hover { color: var(--accent); border-color: var(--accent); }
+.line-title .help-link { width: 16px; height: 16px; margin-left: 5px; font-size: 0.68rem; vertical-align: 1px; }
+.details-nav .help-link { width: 26px; height: 26px; font-size: 0.85rem; }
+.sheet-label .help-link { margin-left: 2px; }
+.pop-note { inset: auto; margin: 0; padding: 10px 12px; width: max-content; max-width: min(320px, calc(100vw - 16px)); color: var(--text);
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); box-shadow: var(--shadow-pop);
+  font-size: 0.88rem; line-height: 1.4; }
+.pop-note p { margin: 0; }
+.pop-note p + p { margin-top: 6px; }
+.pop-note .badge { margin-right: 4px; }
+button.pill-btn { border: 0; font-family: inherit; line-height: inherit; cursor: pointer; text-decoration: underline dotted;
+  text-underline-offset: 2px; }
+button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 0 0 0 1px var(--line-strong);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 40%, transparent); }
+.badge-chevron { margin-left: -1px; font-size: 1.1em; line-height: 1; opacity: 0.8; }
+.tip-row { flex: 1 1 100%; min-width: 0; }
+.tip { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; width: fit-content; max-width: 100%;
+  margin: 10px 0 2px; padding: 8px 10px 8px 14px; color: var(--text); background: var(--accent-soft); border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); font-size: 0.88rem; }
+.tip::before { content: ""; position: absolute; top: -6px; left: calc(var(--tip-x, 24px) - 5px); width: 10px; height: 10px;
+  background: inherit; border: solid var(--accent); border-width: 1px 0 0 1px; transform: rotate(45deg); }
+.tip p { margin: 0; flex: 1 1 14rem; }
+.tip .btn { flex: none; }
+.cand > .tip-row .tip { margin-left: 30px; max-width: calc(100% - 30px); }
+.mode-caption, .ballot-tools .wait-note { flex: 1 1 100%; margin: 0; }
+.sheet-section .mode-caption, .sheet-section .wait-note { margin: 6px 0 0; }
 /* after Pick by rule's Apply: the rule in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
 .rule-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; border-left-color: var(--accent); }
 .rule-banner > p { margin: 0; flex: 1 1 20rem; }
@@ -1037,7 +1070,8 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .details-tabs > .tabs { position: sticky; top: var(--head-h, 0px); z-index: 2; background: var(--panel); }
 .details-foot { position: sticky; bottom: 0; z-index: 2; background: var(--panel); }
 /* Details' head (details.js) has Search and Pick beside ‹ › ✕ and the name in its party's colour.
-   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons' icons. */
+   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons; on a phone, Search
+   and Ban keep only their icons, and Pick its word. */
 .cand-details .details-head { transition: padding 0.15s; }
 .cand-details .details-head .avatar { transition: width 0.15s, height 0.15s, font-size 0.15s; }
 .details-actions { display: flex; gap: 6px; flex: none; }
@@ -1048,7 +1082,7 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .compact .details-head { align-items: center; gap: 10px; padding: 8px 20px; }
 .compact .details-head .avatar.large { width: 32px; height: 32px; font-size: 0.8rem; }
 .compact .details-title h2 { margin: 0; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.compact .details-title p, .compact .btn-word { display: none; }
+.compact .details-title p { display: none; }
 .compact .details-actions .btn { padding: 6px 8px; }
 .compact .icon-btn.step { padding: 2px 11px 6px; }
 @media (prefers-reduced-motion: reduce) { .cand-details .details-head, .cand-details .details-head .avatar { transition: none; } }
@@ -1134,7 +1168,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend .rest { color: var(--muted); }
 .stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
-.box-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.box-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
+.box-count { font-size: 0.82rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
 
 /* ---- compare dialog ---- */
 
@@ -1177,7 +1212,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .cmp-bar .bar { height: 10px; border-radius: 3px; }
 .cmp-bar .bar span { width: var(--w-dollars); background: var(--bar); }
 .compare[data-scale="share"] .has-shares .cmp-bar .bar span { width: var(--w-share); }
-.cmp-name { overflow: hidden; color: var(--muted); white-space: nowrap; text-overflow: ellipsis; }
+.cmp-name { color: var(--muted); overflow-wrap: anywhere; }
 .cmp-amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
 .cmp-count { color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
 
@@ -1321,7 +1356,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .rules .details-foot .btn { flex: 1 1 auto; justify-content: center; padding-inline: 12px; font-size: 0.9rem; }
   .rules .details-foot .btn.primary { order: -1; flex-basis: 100%; }
 }
-.rule-btn { flex: none; display: inline-flex; align-items: center; margin-top: -2px; padding: 5px 8px; }
+.rule-btn { flex: none; display: inline-flex; align-items: center; gap: 5px; margin-top: -2px; padding: 5px 8px; }
 .rule-btn .icon { width: 14px; height: 14px; }
 
 /* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
@@ -1420,7 +1455,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .ballot-tools .icon { width: 14px; height: 14px; }
   #view-controls { position: relative; }
   #view-menu, #focus-menu { position: static; }
-  .head-compare .btn-word { display: none; }
+  .head-compare .btn-word, .rule-btn .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
   .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
@@ -1493,6 +1528,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .compact .details-title h2 { font-size: 0.95rem; line-height: 1.15; white-space: normal; display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .compact .details-actions .btn { padding: 6px 7px; }
+  .compact .details-actions .btn:not(.primary) .btn-word { display: none; }
   .compact .icon-btn.step { padding: 2px 8px 6px; }
   .compact .icon-btn.close { padding: 4px 8px; }
   .cmp-controls { padding: 10px 16px; }
@@ -1504,8 +1540,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cmp-group, .cmp-bars, .cmp-bar { grid-template-columns: minmax(0, 1fr) max-content max-content; grid-template-columns: subgrid; }
   .cmp-bar { row-gap: 1px; }
   .cmp-bar .cmp-name { grid-column: 1; grid-row: 1; }
-  /* a long name on up to two lines, rather than cut */
-  .cmp-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; overflow-wrap: anywhere; }
   .cmp-bar .cmp-amount { grid-column: 2; grid-row: 1; }
   .cmp-bar .cmp-count { grid-column: 3; grid-row: 1; }
   .cmp-bar .bar { grid-column: 1 / -1; grid-row: 2; }
@@ -1548,9 +1582,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
   .icon-btn.row-more { min-width: 44px; }
-  button.badge-btn, a.badge-link, .cal-link, .ban-remove { position: relative; }
-  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after { content: ""; position: absolute; left: 50%; top: 50%;
-    width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+  button.badge-btn, a.badge-link, .cal-link, .ban-remove, .help-link, button.pill-btn { position: relative; }
+  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after, .help-link::after, button.pill-btn::after { content: "";
+    position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* the strip's section chips: 44px tall, the pill drawn inside at its usual size */
   .progress-strip .jump-list a, .progress-strip .jump-list a:hover, .progress-strip .jump-list a[aria-current] {
     position: relative; border-color: transparent; background: none; }
