@@ -1171,6 +1171,20 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .box-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
 .box-count { font-size: 0.82rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
 
+/* Details' Polls tab (pollsPanel): the median large beside one bar, then a bar per poll on 0-100
+   in the candidate's party colour, the median a line across them. A margin's rival shows as text
+   only where there's no hover for its tooltip. */
+.poll-median, .poll-rows .share { --bar: var(--party, var(--party-other-pick)); }
+.poll-median { display: flex; align-items: center; gap: 14px; }
+.poll-median-value { font-size: 1.9rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.poll-median .bar { height: 12px; }
+.poll-median .bar span { background: var(--bar); transition: none; }
+.poll-rows.marked .bar { position: relative; overflow: visible; }
+.poll-rows.marked .bar::after { content: ""; position: absolute; left: var(--mark); top: -3px; bottom: -3px; width: 2px;
+  margin-left: -1px; border-radius: 1px; background: var(--text); opacity: 0.6; }
+.share-versus { margin-left: 6px; color: var(--muted); font-size: 0.8rem; }
+@media (hover: hover) { .share-versus > [aria-hidden="true"] { display: none; } }
+
 /* ---- compare dialog ---- */
 
 /* A race's candidates side by side. Each category is a tight group of thin bars, one per

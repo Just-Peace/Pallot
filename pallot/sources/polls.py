@@ -23,7 +23,7 @@ from typing import Any, Callable
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, last_name
-from ..models import Breakdown, Candidate, Fact, Link, Race, Share, SourceCard
+from ..models import Breakdown, Candidate, Race, Share, SourceCard
 from ..text import display_date, display_time, web_url
 from . import CardSet
 
@@ -200,10 +200,6 @@ def medians(race: Race, kept: list[Reading]) -> dict[str, float]:
 # -- cards ------------------------------------------------------------------------------
 
 
-def _pct(value: float) -> str:
-    return f"{round(value, 1):g}%"
-
-
 def _span(kept: list[Reading]) -> str:
     first, last = display_date(kept[-1].end), display_date(kept[0].end)
     return f"{first} – {last}" if first != last else last or ""
@@ -231,26 +227,37 @@ def race_card(race: Race, kept: list[Reading], middle: dict[str, float]) -> Sour
     )
 
 
+def _margin(candidate: Candidate, reading: Reading, names: dict[str, str]) -> Share:
+    """This candidate's share in one poll, with their lead over (or gap behind) the closest rival
+    as its tag, green ahead and amber behind; the rival is named only in ``versus``."""
+    share = reading.shares[candidate.key]
+    rival = next(key for key in reading.shares if key != candidate.key)
+    lead = round(share - reading.shares[rival], 1)
+    return Share(
+        label=reading.pollster,
+        amount=share,
+        note=" · ".join(filter(None, (display_date(reading.end), _POPULATIONS.get(reading.population, reading.population)))),
+        tone="good" if lead > 0 else "warn" if lead < 0 else "neutral",
+        tag=f"+{lead:g}" if lead > 0 else f"−{-lead:g}" if lead < 0 else "Tied",
+        candidate_key=candidate.key,
+        url=reading.url,
+        versus=names[rival],
+    )
+
+
 def candidate_card(candidate: Candidate, race: Race, kept: list[Reading], median: float) -> SourceCard:
-    """The Polls tab: the median, then each poll it's taken from."""
+    """The Polls tab: the median, then a bar for each poll it's taken from, newest first."""
     names = {c.key: c.name for c in race.candidates}
     theirs = [r for r in kept if candidate.key in r.shares]
-    facts = [Fact(label="Median", value=f"{_pct(median)} across {len(theirs)} poll{'s' if len(theirs) != 1 else ''}")]
-    for r in theirs:
-        others = ", ".join(f"{names[key]} {_pct(share)}" for key, share in r.shares.items() if key != candidate.key)
-        value = " · ".join(filter(None, (
-            _pct(r.shares[candidate.key]), others, display_date(r.end), _POPULATIONS.get(r.population, r.population),
-        )))
-        facts.append(Fact(label=r.pollster, value=value, url=r.url))
     return SourceCard(
         source=SOURCE,
         kind="polls",
         label=LABEL,
-        description=f"Public polls of this race, from FiftyPlusOne. {_method(kept)}",
+        description="Public polls of this race, from FiftyPlusOne.",
         url=SITE,
         as_of=kept[0].end or None,
-        facts=facts,
-        links=[Link(label="FiftyPlusOne", url=SITE)],
+        breakdowns=[Breakdown(title="Each poll", unit="points", parts=[_margin(candidate, r, names) for r in theirs],
+                              note=_method(theirs), count=len(theirs), mark=round(median, 1))],
         figures={"poll": round(median, 1)},
     )
 

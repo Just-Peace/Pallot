@@ -87,13 +87,23 @@ def test_bar_and_tab_for_a_race():
     assert "2 polls, Aug 1, 2026 – Sep 1, 2026" in breakdown.note
 
     tab = polls.candidate_card(SENATE.candidates[1], SENATE, readings, middle["talarico"])
-    assert (tab.label, tab.badges, tab.figures) == ("Polls", [], {"poll": 47.0})
+    assert (tab.label, tab.badges, tab.facts, tab.figures) == ("Polls", [], [], {"poll": 47.0})
     assert bar.figures == {}
-    assert [(f.label, f.value, f.url) for f in tab.facts] == [
-        ("Median", "47% across 2 polls", None),
-        ("Pollster a", "48% · Ken Paxton 44% · Sep 1, 2026 · likely voters", "https://polls.test/1"),
-        ("Pollster b", "46% · Ken Paxton 45% · Aug 1, 2026 · likely voters", "https://polls.test/2"),
+    [each] = tab.breakdowns
+    assert (each.title, each.unit, each.mark, each.count) == ("Each poll", "points", 47.0, 2)
+    assert "2 polls, Aug 1, 2026 – Sep 1, 2026" in each.note
+    assert [(p.label, p.amount, p.note, p.url, p.tag, p.tone, p.versus, p.candidate_key) for p in each.parts] == [
+        ("Pollster a", 48.0, "Sep 1, 2026 · likely voters", "https://polls.test/1", "+4", "good", "Ken Paxton", "talarico"),
+        ("Pollster b", 46.0, "Aug 1, 2026 · likely voters", "https://polls.test/2", "+1", "good", "Ken Paxton", "talarico"),
     ]
+    behind = polls.candidate_card(SENATE.candidates[0], SENATE, readings, middle["paxton"]).breakdowns[0].parts
+    assert [(p.amount, p.tag, p.tone, p.versus) for p in behind] == [(44.0, "−4", "warn", "James Talarico"), (45.0, "−1", "warn", "James Talarico")]
+
+
+def test_a_tie_in_a_poll_is_said():
+    readings = kept([poll(1, "a", "2026-09-01", question({"Talarico": 45.5, "Paxton": 45.5}))])
+    [part] = polls.candidate_card(SENATE.candidates[1], SENATE, readings, 45.5).breakdowns[0].parts
+    assert (part.tag, part.tone) == ("Tied", "neutral")
 
 
 @pytest.mark.anyio
@@ -137,8 +147,11 @@ def test_capitol_ballot_polls(client, upstream):
 
     talarico = next(c for c in senate["candidates"] if c["name"] == "James Talarico")
     tab = next(card for card in talarico["cards"] if card["source"] == "polls")
-    assert tab["badges"] == [] and tab["facts"][0] == {"label": "Median", "value": "47% across 28 polls", "url": None}
-    assert tab["facts"][1]["label"] == "Big Data Poll" and tab["facts"][1]["value"].startswith("46.8% · Ken Paxton 44.9%")
+    assert tab["badges"] == [] and tab["facts"] == [] and tab["figures"] == {"poll": 47.0}
+    each = tab["breakdowns"][0]
+    assert (each["unit"], each["mark"], each["count"]) == ("points", 47.0, 28)
+    first = each["parts"][0]
+    assert (first["label"], first["amount"], first["tag"], first["versus"]) == ("Big Data Poll", 46.8, "+1.9", "Ken Paxton")
 
     assert upstream.count("fiftyplusone.news") == 3  # one page each of the Senate, House and Governor lists
     assert all("Mozilla" in agent for agent in upstream.polls_agents)
