@@ -1,7 +1,7 @@
-// The ballot page. The left pane (chrome.js) holds "Your ballot" with your address and this
-// page's form under it, the list of sections, and links to the other pages at the bottom (on a
-// phone, a top bar; see topbar.js); the main area has the progress strip and the races, each
-// one collapsible.
+// The ballot page. The left pane (chrome.js) holds "Your ballot" with your address under it, the
+// list of sections, and links to the other pages at the bottom (on a phone, a top bar; see
+// topbar.js); the main area has the entry card (entry-card.js) and a short welcome until there's a
+// ballot, then the progress strip and the races, each one collapsible.
 //
 // This module looks the ballot up, draws it and starts the page. Its parts are their own
 // modules, each handed ``page``: the districts card (districts-card.js), the race cards
@@ -14,12 +14,12 @@ import {
 } from "./ballot-nav.js";
 import { electionLine } from "./ballot-shared.js";
 import { onBanListChanged } from "./ban-list.js";
-import { initChrome, setPaneCollapsed } from "./chrome.js";
+import { initChrome, narrow } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openPrecincts, renderDistricts } from "./districts-card.js";
-import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus } from "./dom.js";
-import { showEndorsementLists } from "./endorsement-lists.js";
+import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus, stepText } from "./dom.js";
+import { focusEntry, loadEntryConfig, placeEntry } from "./entry-card.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
@@ -30,11 +30,10 @@ import { buildPrintSheet } from "./print.js";
 import { initRaceCards, redrawCards, refillCards, renderCards } from "./race-cards.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
-import { showToast } from "./toast.js";
+import { hideToast, showToast } from "./toast.js";
 import { openPanel } from "./topbar.js";
 
 initChrome();
-showEndorsementLists(); // in the welcome steps
 
 const form = $("#lookup-form");
 const addressInput = $("#address");
@@ -44,7 +43,10 @@ const partySelect = $("#party");
 const submitButton = $("#lookup-btn");
 const cancelButton = $("#cancel-change");
 const addressCard = $("#address-card");
+const entryHint = $("#entry-hint");
 const statusBox = $("#status");
+const entry = $("#entry");
+const entryTitle = $("#entry-title");
 const welcome = $("#welcome");
 const loading = $("#loading");
 const result = $("#result");
@@ -64,28 +66,42 @@ let pendingLookup = null; // the AbortController of the latest lookup, cancelled
 
 function setStatus(message, kind = "info") {
   showStatus(statusBox, message, kind);
-  if (message && kind === "error") showAddressPanel(); // the line is under the address
+  if (message && kind === "error") showEntry(true, { focus: false }); // the line is in the entry card
 }
 
-// ---- the address: a saved card, or the form ------------------------------------------
+// ---- the address: a saved card in the pane, or the entry card ------------------------
 
-// The address and the form: on a phone, the top bar's panel; wider, the pane, unfolded.
-function showAddressPanel() {
-  openPanel("address");
-  setPaneCollapsed(false);
+let hasAddress = false; // the pane's address card has one to show
+const typingDevice = matchMedia("(hover: hover) and (pointer: fine)");
+
+function showAddressCard(card) {
+  showAddress(card);
+  hasAddress = true;
+  addressCard.hidden = false;
+  entryHint.hidden = true;
 }
 
-function showForm(show) {
-  form.hidden = !show;
-  addressCard.hidden = show;
+// The entry card: in the main area, above the ballot when there is one; on a phone with a ballot
+// showing, in the top bar's address panel, which stays open until it's sent or cancelled.
+// ``focus``: put the cursor in its first box.
+function showEntry(show, { focus = show } = {}) {
+  const inPanel = show && narrow.matches && Boolean(page.ballot);
+  placeEntry(inPanel ? $(".side-address") : null);
+  entry.hidden = !show;
+  entryTitle.textContent = page.ballot ? "Look up another ballot" : "See your ballot, race by race";
   cancelButton.hidden = !page.ballot;
-  if (show) showAddressPanel();
-  else openPanel(null);
-  if (show) addressInput.focus();
+  addressCard.hidden = inPanel || !hasAddress;
+  welcome.hidden = !show || Boolean(page.ballot) || !loading.hidden;
+  openPanel(inPanel ? "address" : null);
+  if (show && !inPanel && page.ballot) scrollTo({ top: 0 });
+  if (focus) focusEntry();
 }
 
-$("#change-address").addEventListener("click", () => showForm(true));
-cancelButton.addEventListener("click", () => showForm(false));
+$("#change-address").addEventListener("click", () => showEntry(true));
+cancelButton.addEventListener("click", () => showEntry(false));
+narrow.addEventListener("change", () => {
+  if (!entry.hidden) showEntry(true, { focus: false });
+});
 
 // ---- elections dropdown -------------------------------------------------------------
 
@@ -135,7 +151,7 @@ function readForm() {
 const QUICK_CARDS_MS = 250;
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// keepForm: leave the address form open afterwards ("Change" on another page opened it).
+// keepForm: leave the entry card open, meanwhile and afterwards ("Change" on another page opened it).
 // keepBallot: leave the ballot showing meanwhile (new precincts), rather than "Finding your ballot".
 // clearPicks: the old address's Picks, cleared once the new ballot arrives, with Undo.
 // A new lookup cancels one still running, its cards included, so an older answer can't replace a
@@ -145,9 +161,10 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
   const controller = new AbortController();
   pendingLookup = controller;
   setStatus("Looking up your ballot…", "busy");
+  if (keepBallot) showToast("Updating your ballot…");
   submitButton.disabled = true;
   // Only a lookup that isn't cached takes long enough to see this.
-  const loadingShown = keepBallot ? null : setTimeout(() => showLoading(true), 300);
+  const loadingShown = keepBallot ? null : setTimeout(() => showLoading(true, { keepEntry: keepForm }), 300);
   try {
     const answers = api.lines("/api/ballot", request, { signal: controller.signal });
     const first = (await answers.next()).value;
@@ -175,14 +192,18 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     render();
     setStatus("");
     if (cleared) offerUndoClear(clearPicks, cleared);
-    if (keepForm) cancelButton.hidden = false;
-    else showForm(false);
+    else if (keepBallot) hideToast();
+    showEntry(keepForm, { focus: false });
     if (rest) addCards(rest, controller);
   } catch (error) {
     if (controller.signal.aborted) return;
     showLoading(false);
-    setStatus(error.message, "error");
-    if (!page.ballot) showForm(true);
+    if (keepBallot) {
+      setStatus("");
+      showToast(error.message);
+    } else {
+      setStatus(error.message, "error");
+    }
   } finally {
     clearTimeout(loadingShown);
     if (pendingLookup === controller) submitButton.disabled = false;
@@ -232,23 +253,33 @@ function mergeCards(ballot, complete) {
   Object.assign(ballot, { warnings: complete.warnings, notes: complete.notes, meta: complete.meta });
 }
 
-// "Finding your ballot", in place of the ballot or the welcome.
-function showLoading(show) {
+// "Finding your ballot", in place of the ballot, or of the entry card and the welcome (``keepEntry``:
+// the card stays). Its second line changes as the wait goes on, so a long first lookup never looks stuck.
+const LOADING_STEPS = [
+  [0, "Finding your districts…"],
+  [3000, "Reading your county's ballot…"],
+  [10000, "A first lookup takes up to a minute; later ones are instant."],
+];
+let stopLoadingSteps = null;
+
+function showLoading(show, { keepEntry = false } = {}) {
+  stopLoadingSteps?.();
+  stopLoadingSteps = show ? stepText($("#loading-step"), LOADING_STEPS) : null;
   loading.hidden = !show;
   jump.hidden = show || !page.ballot; // the sections are the old ballot's
   if (show) {
     welcome.hidden = true;
     result.hidden = true;
+    if (!keepEntry && entry.parentElement === loading.parentElement) entry.hidden = true;
   } else if (page.ballot) {
     result.hidden = false;
-  } else {
-    welcome.hidden = false;
   }
 }
 
 // ---- rendering ----------------------------------------------------------------------
 
 function render() {
+  showLoading(false);
   renderAddress();
   renderHeader();
   renderKeyDates();
@@ -256,9 +287,7 @@ function render() {
   syncMap(page.ballot);
   renderMessages();
   renderSections();
-  loading.hidden = true;
   welcome.hidden = true;
-  result.hidden = false;
   renderCards();
   renderRaces();
   setCardsLoading(page.loadingCards);
@@ -283,7 +312,7 @@ function renderAddress() {
     matched: location.matched_address || "",
     election: electionLine(page.ballot),
   };
-  showAddress(card);
+  showAddressCard(card);
   writeJson(ADDRESS_CARD, card); // the other pages show it too
 }
 
@@ -438,14 +467,13 @@ function start() {
   if (initial?.address) {
     // Show the remembered address right away; the lookup fills in the rest.
     addressInput.value = initial.address;
-    showAddress(rememberedCard(initial.address));
-    form.hidden = true;
-    addressCard.hidden = false;
-  } else {
-    showAddressPanel(); // the form is the first thing to fill in
+    showAddressCard(rememberedCard(initial.address));
   }
-  if (changing) showForm(true);
+  // A first visit starts with the cursor in the address box, except on a touch screen, where the
+  // keyboard would cover the card.
+  if (changing || !initial?.address) showEntry(true, { focus: changing || typingDevice.matches });
   loadElections(initial?.election_date);
+  loadEntryConfig({ typed: () => Boolean(addressInput.value.trim()) });
   if (initial?.address) {
     if (initial.party) partySelect.value = initial.party;
     lookup(initial, { keepForm: changing });

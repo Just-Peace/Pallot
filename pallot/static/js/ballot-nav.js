@@ -4,7 +4,7 @@
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
-import { $, h, onFrame, onReturn, trackHeight } from "./dom.js";
+import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
@@ -100,12 +100,23 @@ export function updateProgress() {
   syncChipFades();
 }
 
-// While the cards are coming, the strip's bar says so, and Pick by rule and Print, which need
-// them, wait, in the toolbar and in More. ``failed``: they won't come, so the bar goes but they stay off.
+// While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
+// Pick by rule and Print, which need them, wait, in the toolbar and in More. ``failed``: they won't
+// come, so the bar goes but they stay off.
 const needCards = [$("#rule-btn"), $("#print-btn"), moreRule, morePrint].map((button) => ({ button, title: button.title }));
+const cardsLoading = $("#cards-loading");
+const CARDS_STEPS = [
+  [0, "Loading money, polls and endorsements…"],
+  [4000, "Still gathering money, polls and endorsements…"],
+  [10000, "A first lookup takes up to a minute; later ones are instant."],
+];
+let stopCardsSteps = null;
 
 export function setCardsLoading(waiting, { failed = false } = {}) {
-  $("#cards-loading").hidden = !waiting || failed;
+  const shown = waiting && !failed;
+  stopCardsSteps?.();
+  stopCardsSteps = shown ? stepText(cardsLoading.querySelector("span"), CARDS_STEPS) : null;
+  cardsLoading.hidden = !shown;
   for (const { button, title } of needCards) {
     button.disabled = waiting;
     button.title = waiting ? STILL_LOADING : title;

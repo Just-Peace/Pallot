@@ -93,6 +93,13 @@ export function setStatus(box, message, kind = "info") {
   box.textContent = message || "";
 }
 
+// Changes ``box``'s text as a wait goes on: ``steps`` is [[ms, text], …], the first at 0. Returns
+// a function that stops it.
+export function stepText(box, steps) {
+  const timers = steps.map(([ms, text]) => setTimeout(() => { box.textContent = text; }, ms));
+  return () => timers.forEach(clearTimeout);
+}
+
 // ``run``, at most once a frame however often the returned function is called (scrolling).
 export function onFrame(run) {
   let pending = false;

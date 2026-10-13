@@ -60,7 +60,7 @@ Update the docs in the same commit as the change.
 | A source's row in Settings (label, description, notices) or in `pallot-cache` | `SOURCES` in `pallot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, staleness, refresh and clear in its `KeptSource` methods), and `pallot/static/settings.html` if the page's text changes |
 | Which sources start on | `pallot/sources.toml`, and README's "Which sources start on" |
 | A page, or a link in the left pane                                        | `PAGES` in `pallot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
-| A new source, or what's sent to or kept from one                          | the tables in `pallot/static/privacy.html` and `pallot/static/about.html`; the welcome steps in `pallot/static/index.html`            |
+| A new source, or what's sent to or kept from one                          | the tables in `pallot/static/privacy.html` and `pallot/static/about.html`; the sources named in About's "What it does" (`about.html`)            |
 | A new endorsement list                                                    | only its file, `pallot/endorsements/<source>.json` (DEVELOPMENT.md's "Endorsement lists"): the pages name the lists from it |
 | A source's answers bundled with Pallot | a `Bundle` in `bundles/registry.py`, its builder, `Ttls.<source>_bundle` (DEVELOPMENT.md's "bundles"), and README's "Bundled snapshots" |
 | A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `pallot/config.py`, and README's "Configuration"                                                  |
