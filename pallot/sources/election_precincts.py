@@ -56,6 +56,8 @@ FIRST_WAIT = 20.0  # seconds the first lookup waits for the first map, beside th
 FIELDS = ("CNTY", "PREC")  # the county's FIPS code, and its name for the precinct ("0300")
 SHAPEFILE = ("shp", "shx", "dbf")
 MAP_FILE = "map.json"
+CARD_INSET_M = 50.0  # how far inside its edges a voter card's precinct is asked about
+CARD_POINTS = 3  # the points of it asked about: a precinct can cross a city or school district line
 
 BBox = tuple[float, float, float, float]  # min x, min y, max x, max y, in the map's projection
 
@@ -429,6 +431,26 @@ class ElectionPrecincts:
         if stats:
             stats.used(SOURCE, stored.downloaded_at)
         return await asyncio.to_thread(self._locate, county, point, block)
+
+    async def card(self, county: int, name: str) -> tuple[Found, list[tuple[float, float]]] | None:
+        """The precinct a voter card names in ``county`` (FIPS), "300" or "0300" alike, and up to
+        CARD_POINTS points (lat, lon) spread through it, CARD_INSET_M from its edges, or nearer
+        when it's too narrow (none when it's too small); None when the map has no such precinct.
+        Raises as at()."""
+        stored = await self._ready()
+        stats = current_calls()
+        if stats:
+            stats.used(SOURCE, stored.downloaded_at)
+        wanted = display_name(name.strip().upper())
+        code = next((c for c in sorted(await self.codes(county)) if display_name(c).upper() == wanted), None)
+        if code is None:
+            return None
+        points = await self.interior(county, code, CARD_INSET_M) or await self.interior(county, code, 0.0)
+        if len(points) > CARD_POINTS:
+            step = (len(points) - 1) / (CARD_POINTS - 1)
+            points = [points[round(i * step)] for i in range(CARD_POINTS)]
+        found = Found(code, display_name(code), county, stored.resource.label, stored.resource.primary)
+        return found, [(lat, lon) for lon, lat in points]
 
     async def outline(self, county: int, code: str) -> list[Ring] | None:
         """The precinct's rings in lon/lat, simplified to SIMPLIFY_DEG once and kept; None when no

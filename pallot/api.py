@@ -24,8 +24,11 @@ from . import __version__, ics
 from .admin import Admin
 from .ballot import BallotError, Services, election_dates, start_ballot
 from .config import Config, load_config
+from .counties import COUNTIES
 from .http_cache import UpstreamError
-from .models import Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, SourcesOverview, SuggestResult
+from .models import (
+    Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, EntryConfig, SourcesOverview, SuggestResult,
+)
 from .outlines import district_outlines
 from .services import MIN_INTERVAL, open_services, prune
 from .settings import HEADER, Sources
@@ -188,6 +191,12 @@ def create_app(
         if request.method not in SAFE_METHODS and from_another_site(request):
             return JSONResponse({"detail": "Refused: this request came from another website."}, status_code=403)
         return await call_next(request)
+
+    @app.get("/api/config", response_model=EntryConfig)
+    def entry_config() -> EntryConfig:
+        """What the ballot page's entry card offers: the voter card tab, and the tab a first visit
+        starts on (PALLOT_DEFAULT_ENTRY)."""
+        return EntryConfig(default_entry=config.default_entry, voter_card=True, counties=list(COUNTIES))
 
     @app.get("/api/elections", response_model=list[ElectionDate])
     async def elections(request: Request) -> list[ElectionDate]:

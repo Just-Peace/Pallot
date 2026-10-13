@@ -266,6 +266,8 @@ class Upstream:
         self.refusing: dict[str, int] = {}  # host -> the status it refuses every request with, e.g. 429
         self.ballotpedia_status: int | None = None
         self.ballotpedia_edit: Callable[[dict[str, Any]], None] | None = None  # changes the Capitol's ballot before it's sent
+        self.ballotpedia_at: Callable[[float, float], dict[str, Any] | None] | None = None  # its answer at (lat, lon), if any
+        self.census_coordinates: str | None = None  # the recorded address whose geographies the Census gives any point (default: MoPac's)
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
         self.fec_sent: list[str | None] = []  # the X-Api-Key of each request to the FEC, in order
@@ -331,6 +333,9 @@ class Upstream:
                 if name == "hd93":
                     return httpx.Response(200, json=hd93_census())
                 return _file(f"census_{name}.json") if name else httpx.Response(200, json={"result": {"addressMatches": []}})
+            if self.census_coordinates:
+                match = load(f"census_{self.census_coordinates}.json")["result"]["addressMatches"][0]
+                return httpx.Response(200, json={"result": {"geographies": match["geographies"]}})
             return _file("census_coords_mopac.json")
         if url.host == "nominatim.openstreetmap.org":
             return _file("nominatim_mopac.json") if self._addresses.get(params["q"]) == "mopac" else httpx.Response(200, json=[])
@@ -386,6 +391,8 @@ class Upstream:
                 return httpx.Response(self.ballotpedia_status)
             if request.headers.get("origin") != ballotpedia.ORIGIN:
                 return httpx.Response(403)
+            if self.ballotpedia_at and (answer := self.ballotpedia_at(float(params["lat"]), float(params["long"]))):
+                return httpx.Response(200, json=answer)
             lat, lon = capitol_point()
             if params["lat"] == f"{lat:.5f}" and params["long"] == f"{lon:.5f}":
                 if self.ballotpedia_edit:

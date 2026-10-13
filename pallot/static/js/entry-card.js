@@ -9,7 +9,7 @@
 // starts on.
 
 import { api } from "./api.js";
-import { $, pairBox } from "./dom.js";
+import { $, h, pairBox } from "./dom.js";
 import { DISTRICTS, STATES } from "./labels.js";
 
 const ENTRIES = {
@@ -48,12 +48,20 @@ export function focusEntry() {
 // { commissioner, jp } }, each district or precinct only when filled in.
 export function readVoterCard() {
   const number = (input) => (input.value.trim() ? Number(input.value) : null);
-  const request = { county: $("#vc-county").value.trim(), precinct: number($("#vc-precinct")), districts: {}, precincts: {} };
+  const request = { county: $("#vc-county").value.trim(), precinct: $("#vc-precinct").value.trim(), districts: {}, precincts: {} };
   for (const input of $("#vc-districts").querySelectorAll("input")) {
     const value = number(input);
     if (value != null) request[DISTRICTS[input.name].unit === "precinct" ? "precincts" : "districts"][input.name] = value;
   }
   return request;
+}
+
+// Fills the voter card's boxes from a remembered lookup ({ county, precinct, districts, precincts }).
+export function fillVoterCard({ county = "", precinct = "", districts = {}, precincts = {} } = {}) {
+  $("#vc-county").value = county;
+  $("#vc-precinct").value = precinct ?? "";
+  const numbers = { ...districts, ...precincts };
+  for (const input of $("#vc-districts").querySelectorAll("input")) input.value = numbers[input.name] ?? "";
 }
 
 // The card in the main area, or in the top bar's address panel (``panel``, the pane's .side-address).
@@ -89,8 +97,9 @@ function initTabs() {
 }
 
 // Asks the server whether it takes a voter card, and which tab to start on. Without an answer, the
-// card has only the address. ``typed()``: whether the voter has already started on the address.
-export async function loadEntryConfig({ typed = () => false } = {}) {
+// card has only the address. ``startOn()``: the tab of the voter's last lookup, if any;
+// ``typed()``: whether the voter has already started on the address.
+export async function loadEntryConfig({ startOn = () => null, typed = () => false } = {}) {
   let config = null;
   try {
     config = await api.get("/api/config");
@@ -98,10 +107,13 @@ export async function loadEntryConfig({ typed = () => false } = {}) {
     return;
   }
   if (!config?.voter_card) return;
-  drawVoterCardBoxes();
+  $("#vc-counties").replaceChildren(...(config.counties || []).map((name) => h("option", { value: name })));
   initTabs();
   tabs.hidden = false;
-  if (!chosenByVoter && !typed()) selectEntry(config.default_entry === "voter_card" ? "voter_card" : "address");
+  if (chosenByVoter) return;
+  const mode = startOn() || (typed() ? "address" : config.default_entry);
+  selectEntry(mode === "voter_card" ? "voter_card" : "address");
 }
 
+drawVoterCardBoxes();
 selectEntry("address");

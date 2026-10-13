@@ -5,7 +5,7 @@ from __future__ import annotations
 import datetime as dt
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 Tone = Literal["neutral", "info", "good", "warn"]
 CardKind = Literal["money", "polls", "filing", "profile", "endorsement"]
@@ -202,15 +202,16 @@ class Measure(BaseModel):
 
 class Location(BaseModel):
     matched_address: str | None
-    lat: float
-    lon: float
+    lat: float | None  # None: a voter card's precinct the precinct map couldn't place
+    lon: float | None
     state: str | None = None  # postal code, "TX"
     state_name: str | None = None
     county: str | None
     city: str | None
     school_district: str | None
-    geocoder: Literal["census", "nominatim", "google"]
+    geocoder: Literal["census", "nominatim", "google"] | None  # None: found from a voter card
     approximate: bool = False
+    source: Literal["address", "voter_card"] = "address"  # a voter card's point is one inside its precinct
 
 
 class ElectionPrecinct(BaseModel):
@@ -293,6 +294,7 @@ class LastLookup(Meta):
     """The latest ballot lookup since Pallot started, for the Settings page."""
 
     at: str
+    found_by: Literal["address", "voter_card"] = "address"
 
 
 class Outline(BaseModel):
@@ -310,6 +312,16 @@ class DistrictOutlines(BaseModel):
     meta: Meta
 
 
+class LeftOut(BaseModel):
+    """Races the voter's districts and precincts don't settle. They're left off the ballot, with no
+    cards fetched, unless the request asks for them (``all_races``)."""
+
+    races: int
+    missing: list[str]  # the districts and precincts ("cd", "jp") whose numbers would settle some of them
+    lines: list[str]  # a sentence each: "Your Justice of the Peace precinct isn't known: 6 races depend on it."
+    shown: bool  # asked for, so they're in Ballot.maybe
+
+
 class Ballot(BaseModel):
     election_date: str | None
     elections: list[ElectionRef]
@@ -322,6 +334,7 @@ class Ballot(BaseModel):
     notes: list[str]
     warnings: list[str]
     meta: Meta
+    left_out: LeftOut | None = None
 
 
 class PrecinctInput(BaseModel):
@@ -340,11 +353,41 @@ class DistrictInput(BaseModel):
 
 
 class BallotRequest(BaseModel):
-    address: str = Field(min_length=5, max_length=200)
+    """An address, or the County and Precinct number on a voter registration certificate."""
+
+    address: str | None = Field(default=None, min_length=5, max_length=200)
+    county: str | None = Field(default=None, min_length=2, max_length=40)
+    precinct: str | None = Field(default=None, min_length=1, max_length=8)
     election_date: dt.date | None = None
     party: Literal["D", "R"] | None = None
     precincts: PrecinctInput | None = None
     districts: DistrictInput | None = None
+    all_races: bool = False  # also the races the districts and precincts don't settle ("Show these races anyway")
+
+    @field_validator("precinct", mode="before")
+    @classmethod
+    def _precinct_as_text(cls, value: object) -> object:
+        if isinstance(value, int) and not isinstance(value, bool):
+            return str(value)
+        return value.strip() if isinstance(value, str) else value
+
+    @model_validator(mode="after")
+    def _address_or_card(self) -> BallotRequest:
+        if not self.address and not (self.county and self.precinct):
+            raise ValueError("Enter an address, or the county and precinct number on your voter registration certificate.")
+        return self
+
+    @property
+    def voter_card(self) -> bool:
+        return not self.address
+
+
+class EntryConfig(BaseModel):
+    """What the entry card offers: GET /api/config."""
+
+    default_entry: Literal["address", "voter_card"]  # the tab a first visit starts on
+    voter_card: bool  # the voter card tab shows
+    counties: list[str]  # Texas's counties, for the County box's suggestions
 
 
 class ElectionDate(BaseModel):
