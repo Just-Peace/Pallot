@@ -137,6 +137,13 @@
               <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
               <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
             </fieldset>
+            <details class="menu" id="focus-menu">
+              <summary class="btn ghost small with-icon" title="What matters to you"><span data-icon="check"></span><span id="focus-summary">Focus</span></summary>
+              <div class="menu-panel" id="focus-panel">
+                <p class="menu-label">What matters to you</p>
+                <p class="fine focus-help">Choose any. Each adds to Minimal, Simple or Detailed.</p>
+              </div>
+            </details>
             <details class="menu" id="view-menu">
               <summary class="btn ghost small with-icon" title="What the ballot shows"><span data-icon="settings"></span>Options</summary>
               <div class="menu-panel">
@@ -176,6 +183,17 @@
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
           <section class="district-map" id="district-map" aria-labelledby="district-map-title" hidden></section>
         </div>
+        <section class="focus-ask" id="focus-ask" aria-labelledby="focus-ask-title" hidden>
+          <div class="focus-ask-head">
+            <h2 id="focus-ask-title">What matters to you?</h2>
+            <button class="icon-btn close" type="button" id="focus-ask-close" aria-label="Close without choosing">✕</button>
+          </div>
+          <p class="muted">Choose any. The ballot changes as you choose.</p>
+          <div class="focus-ask-foot">
+            <button class="btn primary small" type="button" id="focus-ask-done">Done</button>
+            <p class="fine">You can change this any time under Focus.</p>
+          </div>
+        </section>
         <div id="messages"></div>
         <div id="groups"></div>
         <div id="maybe"></div>

@@ -69,10 +69,11 @@ const chipsOf = (items, chip) => {
   });
 };
 
-// The view switch (view.js) that shows a race box of each kind, which then folds or opens as
-// openBoxes says; other boxes always show, open. Each box's short heading, and the fine line naming
-// who it leaves out for having nothing to show.
+// The view switch (view.js) that shows a race box of each kind, and the one that opens it rather
+// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading,
+// and the fine line naming who it leaves out for having nothing to show.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
+const OPENS = { money: "openMoney", polls: "openPolls" };
 const SHORT_TITLES = { money: "Money raised", polls: "Polls" };
 const LEFT_OUT = { money: "No money reported", polls: "Not in the polls" };
 
@@ -304,7 +305,7 @@ function setBoxOpen(box, open) {
 // rest of its first breakdown's title, or just its brackets' period, and its date ("2021-26 · reports
 // through Sep 30, 2026", "since Jan 1, 2025 · …") sit in small print at its foot, and the button's
 // name is the whole title. The view switch ``setting`` shows or
-// hides it, and openBoxes opens or folds it; a click opens or folds just this one, until syncBoxes().
+// hides it, and its kind's OPENS opens or folds it; a click opens or folds just this one, until syncBoxes().
 function foldBox(race, card, setting, action, body) {
   const id = `box-${slug(race.key)}-${card.source}`;
   const title = card.breakdowns[0]?.title || card.description;
@@ -317,10 +318,10 @@ function foldBox(race, card, setting, action, body) {
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
   }, h("span", { class: "chevron", "aria-hidden": "true" }), short);
   const foot = [period, asOf].filter(Boolean).join(" · ");
-  const box = h("div", { class: "race-money", "data-show": setting, hidden: !viewPref(setting) },
+  const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
     h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle), action),
     h("div", { class: "box-body", id }, body, foot ? h("p", { class: "fine box-asof" }, foot) : null));
-  setBoxOpen(box, viewPref("openBoxes"));
+  setBoxOpen(box, viewPref(OPENS[card.kind]));
   return box;
 }
 
@@ -339,13 +340,24 @@ function moneyCorner(card, compare) {
     card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null);
 }
 
-// After a view switch changes: openBoxes opens or folds every race box, whether it was opened or
-// folded by hand; showFunding or showPolls shows or hides its kind of box.
+// After a view switch changes: openMoney or openPolls opens or folds every box of its kind, whether
+// it was opened or folded by hand; showFunding or showPolls shows or hides its kind of box.
 export function syncBoxes(setting) {
   for (const box of document.querySelectorAll(".race-money[data-show]")) {
-    if (setting === "openBoxes") setBoxOpen(box, viewPref(setting));
+    if (box.dataset.open === setting) setBoxOpen(box, viewPref(setting));
     else if (box.dataset.show === setting) box.hidden = !viewPref(setting);
   }
+}
+
+const pollHead = (race) => (race.cards || []).find((card) => card.kind === "polls")?.breakdowns?.[0];
+
+// Whether the race's poll box has anyone polling above zero.
+export const hasPolls = (race) => Boolean(pollHead(race)?.parts.some((p) => p.amount > 0));
+
+// With the pollChips switch, a pill on a polled candidate's row: "47% in polls".
+export function pollPill(race, candidate) {
+  const share = viewPref("pollChips") ? pollHead(race)?.parts.find((p) => p.candidate_key === candidate.key)?.amount : null;
+  return share > 0 ? h("span", { class: "pill poll-pill", title: "Their share in the race's poll box" }, `${pct(share)} in polls`) : null;
 }
 
 // A race's cards (money raised per money source, then polls), shown above its candidates.

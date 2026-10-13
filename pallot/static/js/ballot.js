@@ -10,7 +10,7 @@
 import { lookupLabel, rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import {
-  applyHidePicked, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, updateProgress,
+  applyHidePicked, askFocus, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, syncPollMarks, updateProgress,
 } from "./ballot-nav.js";
 import { electionLine } from "./ballot-shared.js";
 import { onBanListChanged } from "./ban-list.js";
@@ -252,6 +252,7 @@ async function addCards(rest, controller) {
       + "Look the address up again to try again.");
   }
   refillCards();
+  syncPollMarks();
   renderMessages();
   setCardsLoading(page.loadingCards, { failed: page.loadingCards });
 }
@@ -312,6 +313,7 @@ function render() {
   renderMessages();
   renderSections();
   welcome.hidden = true;
+  askFocus();
   renderCards();
   renderRaces();
   setCardsLoading(page.loadingCards);

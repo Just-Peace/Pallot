@@ -11,9 +11,9 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
-import { fundingLine, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
+import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
-import { viewPref } from "./view.js";
+import { focusTab, viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
@@ -150,7 +150,19 @@ function raceCard(race) {
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
-  const money = part(() => raceMoney(race, () => openCompare($("#compare"), race)));
+  const compare = () => openCompare($("#compare"), race);
+  const money = part(() => raceMoney(race, compare));
+  // With the compareInHead switch, Compare funding in the race's head too.
+  const headCompare = part(() => viewPref("compareInHead") && comparable(race).length
+    ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare funding",
+      "aria-label": `Compare funding in ${race.name}`, on: { click: compare } }, icon("bars"), h("span", { class: "btn-word" }, "Compare"))
+    : null);
+  // With the stanceLinks switch, a line under the candidates opening the first one's Issues.
+  const stances = part(() => viewPref("stanceLinks") && race.candidates.length
+    ? h("p", { class: "stance-link" }, h("button", { type: "button", class: "link-btn", disabled: page.loadingCards,
+      title: page.loadingCards ? STILL_LOADING : null, "aria-label": `See where the candidates for ${race.name} stand`,
+      on: { click: () => page.showDetails(race, 0, null, "issues") } }, "See where they stand"))
+    : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
   // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in).
@@ -160,11 +172,13 @@ function raceCard(race) {
       on: { click: () => page.openRules(race.key) } }, icon("filter"))
     : null;
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: ruleButton,
+    title: race.name, meta: meta(), body: [...notes, money.nodes, body, stances.nodes], tools: [headCompare.nodes, ruleButton],
   });
   fills.set(race.key, () => {
     card.setMeta(meta());
     money.refill();
+    headCompare.refill();
+    stances.refill();
     for (const row of rows) row.fill?.();
     quiet.sync();
   });
@@ -337,18 +351,21 @@ function candidateRow(race, candidate) {
     const waiting = page.loadingCards;
     return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
       title: waiting ? STILL_LOADING : `${candidate.name}'s profile: ${sources ? `${plural(sources, "source")} and issues` : "issues"}`,
-      on: { click: () => page.showDetails(race, index()) } },
-      "Profile");
+      on: { click: () => page.showDetails(race, index(), null, focusTab()) } },
+      viewPref("stanceLinks") ? "Profile & issues" : "Profile");
   };
-  // What the cards make, in the order fill() builds it again.
+  // What the cards make, in the order fill() builds it again. The Endorsements line comes before
+  // the Funding line, unless the fundingFirst switch says otherwise.
   const profile = part(profileButton);
   const photo = part(() => avatar(candidate));
-  const pills = part(() => candidatePills(candidate, race));
-  const lines = part(() => sourceLines(candidate));
-  const funding = part(() => fundingLine(candidate, openAt));
+  const pills = part(() => [candidatePills(candidate, race), pollPill(race, candidate)]);
+  const lines = part(() => {
+    const both = [sourceLines(candidate), fundingLine(candidate, openAt)];
+    return viewPref("fundingFirst") ? both.reverse() : both;
+  });
   const ban = part(() => banButton(candidate));
   const fill = () => {
-    [profile, photo, pills, lines, funding, ban].forEach((p) => p.refill());
+    [profile, photo, pills, lines, ban].forEach((p) => p.refill());
     row.classList.toggle("banned", isBanned(candidate));
   };
   // On a phone, outside Detailed, Note, Ban and Search wait behind "…", which opens them in place.
@@ -375,7 +392,6 @@ function candidateRow(race, candidate) {
       h("div", { class: "cand-actions", id: `actions-${id}` },
         noteButton, ban.nodes, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
     lines.nodes,
-    funding.nodes,
     noteBox,
   );
   row.classList.toggle("banned", isBanned(candidate));
