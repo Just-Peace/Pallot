@@ -21,7 +21,7 @@ from typing import Any, Callable, Iterable
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, match_person, match_unique
-from ..models import Badge, Fact, Link, Match, Race, SourceCard
+from ..models import Fact, Link, Match, Race, SourceCard
 from ..text import display_time, iso_utc, parse_date
 from . import CardSet
 
@@ -345,7 +345,6 @@ def card(candidate: BpCandidate, race: BpRace, fetched_at: float, match: Match |
         image=candidate.photo,
         as_of=iso_utc(fetched_at),
         match=match,
-        badges=[Badge(text="Ballotpedia profile", tone="info", url=candidate.url)] if candidate.url else [],
         facts=[f for f in facts if f.value],
         links=links,
     )

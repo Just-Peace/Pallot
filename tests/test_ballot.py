@@ -68,7 +68,7 @@ def test_capitol_ballot(client):
     assert tap["match"]["confidence"] == "exact"
     watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
     assert watchlist["text"] == "TrackAIPAC watchlist $0" and watchlist["url"].endswith("/candidates")
-    profile = next(b for b in card_of(paxton, "ballotpedia")["badges"] if b["text"] == "Ballotpedia profile")
+    profile = next(link for link in card_of(paxton, "ballotpedia")["links"] if link["label"] == "Ballotpedia profile")
     assert profile["url"].startswith("https://ballotpedia.org/")
     talarico = senate["candidates"][1]
     assert sources_of(talarico)[-4:] == ["trackaipac", "voteforpeace", "emgage", "examplepac"]  # the endorsement lists last

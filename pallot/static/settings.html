@@ -25,10 +25,10 @@
 
       <section class="panel" aria-labelledby="view-title">
         <h2 id="view-title">Ballot view</h2>
-        <p class="panel-intro">What matters to you, and how much of the ballot shows at first. Anything folded opens with a click, and the ballot's Focus, Simple | Detailed and Options have the same choices.</p>
+        <p class="panel-intro">What matters to you, and how much of the ballot shows at first. Anything folded opens with a click, and the ballot's View menu has the same choices.</p>
         <div class="setting-row" id="focus-setting">
           <h3 class="setting-label">What matters to you</h3>
-          <p class="fine">Choose any, or none for the view below as it is. Each one opens more of the ballot: Keep it simple starts from Minimal and folds a race once you pick; Follow the money opens the money boxes and puts Funding first; Endorsements &amp; scorecards opens the endorsements; Polls opens the poll boxes and shows each candidate's share; Where they stand opens a candidate's Issues first. <a href="faq.html#view-modes">More on focus</a></p>
+          <p class="fine">Choose any, or none for the view below as it is. Each one only adds to it, and nothing it turns on is locked. <a href="faq.html#view-modes">More on focus</a></p>
         </div>
         <div class="setting-row" id="ballot-view">
           <fieldset class="seg">
@@ -38,7 +38,7 @@
             <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
           </fieldset>
           <p class="fine" id="view-mode-note"></p>
-          <p class="fine" id="focus-lock-note" hidden>Switches your focus decides are greyed out; change the focus above to change them.</p>
+          <p class="fine">A focus turns its switches on. Turning one of them off drops that focus.</p>
         </div>
         <div class="source-list view-switches" id="view-switches">
           <div class="source-row">
@@ -55,7 +55,7 @@
           </div>
           <div class="source-row">
             <label class="switch" for="view-open-boxes"><input type="checkbox" role="switch" id="view-open-boxes" data-view="openBoxes"><span class="source-name">Open money &amp; poll boxes</span></label>
-            <p class="source-desc">Each race's money and poll boxes open, rather than folded to one line. A box lists only the candidates with money or polling, and names the rest in a line under it.</p>
+            <p class="source-desc">Each race's money and poll boxes open, rather than folded to one line. A box lists only the candidates with money or polling; Compare and Details list everyone.</p>
           </div>
           <div class="source-row">
             <label class="switch" for="view-show-endorsements"><input type="checkbox" role="switch" id="view-show-endorsements" data-view="showEndorsements"><span class="source-name">Endorsements</span></label>

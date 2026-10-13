@@ -19,6 +19,7 @@ const ENTRIES = {
 const tabs = $("#entry-tabs");
 const card = $("#entry");
 const home = card.parentElement;
+const above = card.previousElementSibling; // the welcome's heading, which stays above the card
 let chosen = "address";
 let chosenByVoter = false;
 
@@ -67,7 +68,9 @@ export function fillVoterCard({ county = "", precinct = "", districts = {}, prec
 // The card in the main area, or in the top bar's address panel (``panel``, the pane's .side-address).
 export function placeEntry(panel = null) {
   const target = panel || home;
-  if (card.parentElement !== target) target.prepend(card);
+  if (card.parentElement === target) return;
+  if (!panel && above) above.after(card);
+  else target.prepend(card);
 }
 
 function drawVoterCardBoxes() {
