@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pallot · About</title>
   <meta name="description" content="What Pallot is, where its information comes from, and what it isn't.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -24,8 +24,8 @@
       <section class="panel prose" aria-labelledby="what">
         <h2 id="what">What it does</h2>
         <ul>
-          <li>Shows every race on your ballot, in ballot order, from your home address. It covers Texas for now.</li>
-          <li>Puts what each source says about a candidate side by side: their money, polls and endorsements.</li>
+          <li>Shows every race on your ballot, in ballot order, from your home address, or from the county and precinct on your voter registration certificate. It covers Texas for now.</li>
+          <li>Puts what each source says about a candidate side by side. Each candidate shows how much money they've raised and from whom, what the state's filings, Wikidata, Ballotpedia, TrackAIPAC and Vote for Peace say<span data-endorsements="clause"></span>, and where they stand in public polls, plus a web search. A race says when its seat is open, and which party holds it now.</li>
           <li>Shows when to vote and your districts, with a map.</li>
           <li>Lets you pick, take notes, and print your picks to take to the polls.</li>
         </ul>
@@ -47,6 +47,7 @@
             <thead><tr><th scope="col">Source</th><th scope="col">Used for</th></tr></thead>
             <tbody>
               <tr><th scope="row"><a href="https://www.sos.state.tx.us/elections/" target="_blank" rel="noopener noreferrer">Texas Secretary of State</a></th><td>Elections, ballot order, candidates and key dates</td></tr>
+              <tr><th scope="row"><a href="https://www.wikidata.org/" target="_blank" rel="noopener noreferrer">Wikidata</a></th><td>Profiles and photos of candidates who hold or held a Texas office, with links to Wikipedia (CC0; photos from Wikimedia Commons)</td></tr>
               <tr><th scope="row"><a href="https://ballotpedia.org/" target="_blank" rel="noopener noreferrer">Ballotpedia</a></th><td>Local races, candidate profiles and address suggestions (off at first)</td></tr>
               <tr><th scope="row"><a href="https://geocoding.geo.census.gov/geocoder/" target="_blank" rel="noopener noreferrer">US Census</a></th><td>Your county and districts, and their outlines</td></tr>
               <tr><th scope="row"><a href="https://data.capitol.texas.gov/" target="_blank" rel="noopener noreferrer">Texas Legislative Council</a></th><td>Your State Board of Education district and election precinct</td></tr>
@@ -78,8 +79,9 @@
 
       <section class="panel prose" aria-labelledby="credits">
         <h2 id="credits">Who makes it</h2>
-        <p>Pallot is made by <a href="https://github.com/Just-Peace" target="_blank" rel="noopener noreferrer">Just-Peace</a> for American voters who'd rather see the whole ballot for themselves. We don't back any candidate or party. Your vote is yours.</p>
-        <p class="fine">Map data © OpenStreetMap contributors. Map by <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a> (BSD 2-Clause, © Volodymyr Agafonkin and CloudMade), bundled with Pallot. Icons by <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">Feather</a> (MIT). Seat holders from congress-legislators (public domain) and Open States (CC0), bundled with Pallot and refreshed weekly. District outlines from the US Census's TIGERweb (public domain), bundled with Pallot and refreshed weekly. Commissioner and JP precincts from the seven counties' public map servers, bundled with Pallot and refreshed weekly. Polls from FiftyPlusOne, bundled with Pallot with FiftyPlusOne's permission and refreshed daily. Endorsement lists from Muslims United PAC, CAIR Action and Emgage PAC, each bundled with Pallot with its organization's permission and refreshed daily.Address suggestions use Esri data. Pallot <span data-version></span>.</p>
+        <p>Pallot is made by <a href="https://github.com/Just-Peace" target="_blank" rel="noopener noreferrer">Just-Peace</a> for voters who want to see their whole ballot and weigh every candidate for themselves. We don't back any candidate or party, and your vote is yours.</p>
+        <p>Questions, corrections or ideas: write to <a href="mailto:admin@just-peace.org">admin@just-peace.org</a>, or open a <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issue</a>.</p>
+        <p class="fine">Map data © OpenStreetMap contributors. Map by <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a> (BSD 2-Clause, © Volodymyr Agafonkin and CloudMade), bundled with Pallot. Icons by <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">Feather</a> (MIT). Seat holders from congress-legislators (public domain) and Open States (CC0), bundled with Pallot and refreshed weekly. Officeholders' profiles from Wikidata (CC0), its list of Texas officeholders bundled with Pallot and refreshed weekly; candidate photos from Wikimedia Commons, each under its own file's licence. District outlines from the US Census's TIGERweb (public domain), bundled with Pallot and refreshed weekly. Commissioner and JP precincts from the seven counties' public map servers, bundled with Pallot and refreshed weekly. Polls from FiftyPlusOne, bundled with Pallot with FiftyPlusOne's permission and refreshed daily. Endorsement lists from Muslims United PAC, CAIR Action and Emgage PAC, each bundled with Pallot with its organization's permission and refreshed daily.Address suggestions use Esri data. Pallot <span data-version></span>.</p>
       </section>
     </main>
   </div>

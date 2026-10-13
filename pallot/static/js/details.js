@@ -9,12 +9,12 @@ import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
 import { avatar, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
 import { searchWord } from "./search.js";
-import { cardPanel, endorsementsPanel, isLikely, moneyPanel, profilePanel, renderTabs } from "./source-cards.js";
+import { cardPanel, endorsementsPanel, isLikely, moneyPanel, pollsPanel, profilePanel, renderTabs } from "./source-cards.js";
 import { stancesPanel } from "./stances.js";
 
 let page = null; // { picks }
 const details = $("#details");
-const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Ballotpedia
+const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Wikidata, Ballotpedia
 let shown = "profile"; // the tab shown, which ‹ and › keep
 
 export function initDetails(context) {
@@ -25,8 +25,9 @@ export function initDetails(context) {
 
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
-// ``at`` is the tab to show: "profile", "issues", "endorsements" or a source's (a Funding chip's
-// money source); a tab the candidate hasn't got shows the first one, Profile or else Issues.
+// ``at`` is the tab to show: "profile", "issues", "endorsements", "money" (the first money source's,
+// for "Follow the money") or a source's (a Funding chip's money source); a tab the candidate hasn't
+// got shows the first one, Profile or else Issues.
 export function showDetails(race, index, focus = null, at = "profile") {
   const { picks } = page;
   const candidate = race.candidates[index];
@@ -76,12 +77,13 @@ export function showDetails(race, index, focus = null, at = "profile") {
       .map((card) => ({ key: card.source, label: card.label, likely: isLikely(card), card })),
     endorsements,
   ].filter(Boolean);
-  const initial = Math.max(0, tabs.findIndex((tab) => tab.key === at));
+  const initial = Math.max(0, tabs.findIndex((tab) => (at === "money" ? tab.card?.kind === "money" : tab.key === at)));
   shown = tabs[initial].key;
   const panelFor = (tab) => {
     if (tab === issues) return stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length);
     if (tab === profile) return profilePanel(profiled);
     if (tab === endorsements) return endorsementsPanel(grouped);
+    if (tab.card.kind === "polls") return pollsPanel(tab.card, candidate.party);
     return tab.card.kind === "money" ? moneyPanel(tab.card) : cardPanel(tab.card);
   };
   const tabBox = h("div", { class: "details-tabs" });
@@ -115,8 +117,8 @@ export function showDetails(race, index, focus = null, at = "profile") {
   (pressed && !pressed.disabled ? pressed : close).focus();
 }
 
-// A head button's word, which hides once the head shrinks, leaving its icon; the button's
-// accessible name and tooltip say the rest.
+// A head button's word; once the head shrinks on a phone, Search's and Ban's hide, leaving their
+// icons, and the button's accessible name and tooltip say the rest.
 const word = (text) => h("span", { class: "btn-word" }, text);
 
 // The head shrinks to the photo, the name and the buttons' icons once the voter scrolls down, and

@@ -1,6 +1,7 @@
 """Assemble one voter's ballot from the enabled sources.
 
-The Census gives the county and districts, the SBOE map adds the State Board of
+The Census gives the county and districts, at the address or, for a voter card, at points inside its
+precinct on the precinct map (locate_precinct), the SBOE map adds the State Board of
 Education district, and the Texas Legislative Council's precinct map the election precinct,
 whose county's records may settle the commissioner and JP precincts, whichever ballot source is
 on. Official path: the county's Texas SOS
@@ -15,18 +16,19 @@ import asyncio
 import datetime as dt
 import time
 import zipfile
-from dataclasses import dataclass, field
+from collections import Counter
+from dataclasses import dataclass, field, replace
 from typing import Any, Callable
 
 from bundles.store import Loaded
 
-from . import enrich
+from . import counties, enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .matching import NameIndex
 from .models import (
     GROUPS, Ballot, BallotRequest, Candidate, CountySource, Districts, ElectionDate, ElectionPrecinct, ElectionRef,
-    KeyDates, LastLookup, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, RaceNote, SourceUse,
+    KeyDates, LastLookup, LeftOut, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, RaceNote, SourceUse,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Sources
@@ -47,6 +49,7 @@ from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
 from .sources.officeholders import Officeholders
+from .sources.wikidata import Wikidata
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
@@ -66,7 +69,12 @@ MAYBE_SECTIONS = {
     ),
     "unconfirmed": (
         "Couldn't confirm",
-        "Pallot couldn't work out which of these districts your address is in, so check your county's sample ballot.",
+        "Pallot couldn't work out which of these districts you're in, so check your county's sample ballot.",
+    ),
+    "partial": (
+        "Only on part of your precinct",
+        "Your precinct crosses a city, school or other district line: Ballotpedia lists these races at some points "
+        "in it and not at others. Your county's sample ballot says which are yours.",
     ),
     "special": (
         "Special districts (MUDs, water and utility districts)",
@@ -74,6 +82,8 @@ MAYBE_SECTIONS = {
         "Check your county's sample ballot.",
     ),
 }
+LEFT_OUT = ("precinct", "unconfirmed", "partial")  # the sections a ballot leaves out unless it's asked for them
+WAITING_ORDER = (*DISTRICT_KINDS, "commissioner", "jp", "precinct_other", "partial")
 
 
 GEOCODED_BY = {"census": "US Census", "nominatim": "OpenStreetMap + US Census", "google": "Google + US Census"}
@@ -107,6 +117,7 @@ class Services:
     tec: Tec
     polls: Polls
     officeholders: Officeholders
+    wikidata: Wikidata
     key_dates: KeyDatesPage
     tigerweb: Tigerweb
     tiles: Tiles
@@ -198,6 +209,97 @@ async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, 
         approximate=approximate,
     )
     return place, location
+
+
+@dataclass
+class CardPlace:
+    """Where a voter card's precinct is: the Census's place at a point inside it, its points that
+    Ballotpedia is asked about, and the precinct on the map; or, when the map can't place it, only
+    the county, with a note or a warning saying why."""
+
+    county: str  # as Texas names it: "Travis"
+    county_fips: str  # "453", as Place has it
+    location: Location
+    place: Place | None = None
+    precinct: ElectionPrecinct | None = None
+    points: list[tuple[float, float]] = field(default_factory=list)  # (lat, lon)
+    note: str | None = None
+    warning: str | None = None
+    error: str | None = None  # the precinct map's, for Settings
+
+
+def _shared(places: list[Place]) -> Place:
+    """The first place, keeping only the districts, city and school district every one of them has."""
+    first = places[0]
+    keep = {
+        attr: getattr(first, attr) if len({getattr(p, attr) for p in places}) == 1 else None
+        for attr in ("cd", "sd", "hd", "city", "school_district")
+    }
+    return replace(first, **keep, matched_address=None, block_point=None)
+
+
+async def locate_precinct(svc: Services, county: str, precinct: str, sources: Sources) -> CardPlace:
+    """A voter card's precinct, as locate() places an address: points inside it from the Texas
+    Legislative Council's precinct map, and the Census's districts there, kept where every point
+    agrees. No address or geocoder is involved. Without the map (turned off, still downloading,
+    unreadable) or the precinct on it, only the county, so the ballot has the statewide and county
+    races and the districts the voter typed."""
+    known = counties.find(county)
+    if known is None:
+        raise BallotError(422, f"Texas has no county called “{county.strip()}”. Check the spelling on your voter "
+                               "registration certificate.")
+    name, fips = known
+
+    def location(place: Place | None) -> Location:
+        return Location(
+            matched_address=None, lat=place.lat if place else None, lon=place.lon if place else None,
+            state="TX", state_name="Texas", county=name, city=place.city if place else None,
+            school_district=place.school_district if place else None, geocoder=None, source="voter_card",
+        )
+
+    card = CardPlace(county=name, county_fips=f"{fips:03d}", location=location(None))
+    fallback = (f"so this ballot has the statewide and {name} County races, and any districts you enter under "
+                "\"More districts\".")
+    if not sources.enabled(election_precincts_source.SOURCE):
+        card.note = (f"\"Election precincts\" is off, so Pallot can't find your districts from your precinct, {fallback} "
+                     f"[Turn it on in Settings](settings.html#toggle-{election_precincts_source.SOURCE}).")
+        return card
+    try:
+        on_map = await svc.election_precincts.card(fips, precinct)
+    except StillDownloading as exc:
+        card.note = (f"Pallot finds your districts on its precinct map, which is still downloading ({exc.size / 1_048_576:.0f} "
+                     f"MB, the first time only), {fallback} Reload the page in a minute.")
+        return card
+    except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
+        card.error = str(exc).removeprefix(f"{election_precincts_source.SOURCE}: ")
+        card.warning = f"Couldn't load the Texas Legislative Council's precinct map, {fallback}"
+        return card
+    if on_map is None:
+        card.warning = (f"The Texas Legislative Council's precinct map has no precinct {precinct} in {name} County, "
+                        f"{fallback} Check the number on your voter registration certificate.")
+        return card
+    found, points = on_map
+    card.precinct = ElectionPrecinct(
+        name=found.name, code=found.code, county=found.county, map_label=found.label, primary_map=found.primary
+    )
+    if not points:
+        card.note = f"Precinct {found.name} is too small to find on the precinct map, {fallback}"
+        return card
+    try:
+        places = [p for p in await asyncio.gather(*(svc.census.at(lat, lon) for lat, lon in points)) if p is not None]
+    except UpstreamError as exc:
+        if exc.until:
+            raise BallotError(502, f"The US Census is paused until {display_time(exc.until)} after refusing a request. "
+                                   "Precincts already looked up still work.") from exc
+        raise BallotError(502, f"The US Census isn't responding ({exc}). Try again in a minute.") from exc
+    places = [p for p in places if p.state_fips == TEXAS_FIPS and p.county_fips == card.county_fips]
+    if not places:
+        card.warning = f"The US Census doesn't place precinct {found.name} in {name} County, {fallback}"
+        return card
+    card.place = _shared(places)
+    card.points = [(p.lat, p.lon) for p in places]
+    card.location = location(card.place)
+    return card
 
 
 def placement(scope: OfficeScope, districts: Districts) -> str:
@@ -308,6 +410,7 @@ class _Builder:
         self.use_tec = sources.enabled("tec")
         self.use_polls = sources.enabled("polls")
         self.use_officeholders = sources.enabled("officeholders")
+        self.use_wikidata = sources.enabled("wikidata")
         self.use_key_dates = sources.enabled(key_dates_source.SOURCE)
         self.use_election_precincts = sources.enabled(election_precincts_source.SOURCE)
         self.use_county_precincts = self.use_election_precincts and sources.enabled(county_precincts_source.SOURCE)
@@ -320,6 +423,8 @@ class _Builder:
         self.unlisted: set[str] = set()  # SOS race keys with only write-ins, so not on the county's ballot order
         self.state_names = NameIndex()  # everyone the state lists for the day, kept or not
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
+        self.waiting: Counter[str] = Counter()  # the left-out races, by what would settle them (WAITING_ORDER)
+        self.where = "precinct" if request.voter_card else "address"
         self.ballot: Ballot  # set by races(), for finish()
         self.every_race: list[Race] = []
         self.location: Location
@@ -329,38 +434,54 @@ class _Builder:
         """The ballot without cards, kept in ``self.ballot`` for ``finish()``."""
         if not (self.use_sos or self.use_bp):
             raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
-        place, location = await locate(self.svc, self.request.address, self.sources)
-        if location.approximate:
-            self.warnings.append(
-                f"Pallot could only place this address approximately ({location.matched_address}), "
-                "so double-check \"Your districts\" at the top of your ballot."
-            )
+        card: CardPlace | None = None
+        if self.request.address:
+            place, location = await locate(self.svc, self.request.address, self.sources)
+            if location.approximate:
+                self.warnings.append(
+                    f"Pallot could only place this address approximately ({location.matched_address}), "
+                    "so double-check \"Your districts\" at the top of your ballot."
+                )
+            county_name, county_fips, points = place.county, place.county_fips, [(place.lat, place.lon)]
+        else:
+            card = await locate_precinct(self.svc, self.request.county or "", self.request.precinct or "", self.sources)
+            place, location, points = card.place, card.location, card.points
+            county_name, county_fips = card.county, card.county_fips
+            self.notes += [card.note] if card.note else []
+            self.warnings += [card.warning] if card.warning else []
+            if card.error:
+                self.errors[election_precincts_source.SOURCE] = card.error
 
         elections, day = await self._elections()
-        sos_data, bp_ballot, deadlines, sboe, found_precincts = await asyncio.gather(
-            self._sos(elections, place) if elections else _nothing(),
-            self._ballotpedia(place, day) if self.use_bp else _nothing(),
+        if card:
+            precinct_search = self._card_precincts(card)
+        elif self.use_election_precincts and place:
+            precinct_search = self._precinct_and_county(place, location)
+        else:
+            precinct_search = _nothing()
+        sos_data, bp_found, deadlines, sboe, found_precincts = await asyncio.gather(
+            self._sos(elections, county_name, county_fips) if elections else _nothing(),
+            self._ballotpedia(points, day) if self.use_bp and points else _nothing(),
             self._key_dates() if self.use_key_dates else _nothing(),
-            self._sboe(place),
-            self._precinct_and_county(place, location) if self.use_election_precincts else _nothing(),
+            self._sboe(place) if place else _nothing(),
+            precinct_search,
         )
+        bp_ballot, bp_partial = bp_found or (None, ())
         election_precinct, county = found_precincts or (None, None)
         if sos_data is None and not (bp_ballot and bp_ballot.races):
             if "sos" in self.errors and (until := self.svc.cache.paused_until("sos")):
                 raise BallotError(502, f"Texas SOS is paused until {display_time(until)} after refusing a request, "
-                                       "and nothing is cached yet for this address.")
+                                       f"and nothing is cached yet for this {self.where}.")
             if "sos" in self.errors:
                 raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.errors['sos']}).")
-            raise BallotError(404, " ".join(self.warnings) or "No ballot data found for this address.")
+            raise BallotError(404, " ".join(self.warnings) or f"No ballot data found for this {self.where}.")
         if self.use_sos and sos_data is None:
             self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
-        if not self.use_bp:
-            self.notes.append("Ballotpedia is off, so city council, school board and special district races aren't "
-                              "listed. [Turn it on in Settings](settings.html#toggle-ballotpedia) to add them.")
 
         precincts, precinct_sources = self._precincts(bp_ballot, county)
         entered = self.request.districts.model_dump(exclude_unset=True) if self.request.districts else {}
-        found = {"cd": place.cd, "sd": place.sd, "hd": place.hd, "sboe": sboe}
+        found = {"cd": place.cd if place else None, "sd": place.sd if place else None,
+                 "hd": place.hd if place else None, "sboe": sboe}
         districts = Districts(
             **{**found, **entered},
             entered=[kind for kind in DISTRICT_KINDS if kind in entered],
@@ -375,20 +496,21 @@ class _Builder:
         if sos_data:
             races = self._sos_races(sos_data, districts)
             if bp_ballot:
-                races += self._bp_races(bp_ballot, self.state_names)
+                races += self._bp_races(bp_ballot, self.state_names, bp_partial)
             self._district_notes(districts, [e for e, _ in sos_data.orders])
         else:
-            races = self._bp_races(bp_ballot, None) if bp_ballot else []
+            races = self._bp_races(bp_ballot, None, bp_partial) if bp_ballot else []
 
+        shown = self.request.all_races
         maybe = [
             MaybeSection(
                 id=key,
                 title=MAYBE_SECTIONS[key][0],
-                explanation=MAYBE_SECTIONS[key][1].format(county=place.county or "your"),
+                explanation=MAYBE_SECTIONS[key][1].format(county=location.county or "your"),
                 races=found,
             )
             for key, found in self.maybe.items()
-            if found
+            if found and (shown or key not in LEFT_OUT)
         ]
         every_race = races + [race for section in maybe for race in section.races]
         bp_counterparts = ballotpedia_source.counterparts(bp_ballot, every_race) if bp_ballot else {}
@@ -409,11 +531,13 @@ class _Builder:
             use_tec=self.use_tec,
             use_polls=self.use_polls,
             use_officeholders=self.use_officeholders,
+            use_wikidata=self.use_wikidata,
+            use_ballotpedia=self.use_bp,
             day=ballot_day,
             scopes=self.scopes,
-            county=place.county,
-            city=place.city,
-            state=place.state,
+            county=location.county,
+            city=location.city,
+            state=location.state,
             bp_counterparts=bp_counterparts,
         )
         self.every_race = every_race
@@ -439,6 +563,7 @@ class _Builder:
             notes=list(self.notes),
             warnings=list(self.warnings),
             meta=self._meta(),
+            left_out=self._left_out(shown),
         )
         return self.ballot
 
@@ -452,7 +577,7 @@ class _Builder:
         self.ballot.notes = self.notes
         self.ballot.warnings = self.warnings
         self.ballot.meta = meta
-        self.svc.last_lookup = LastLookup(at=iso_utc(time.time()), **meta.model_dump())
+        self.svc.last_lookup = LastLookup(at=iso_utc(time.time()), found_by=self.location.source, **meta.model_dump())
         self.svc.last_uses = {use.id: use for use in self._sources(self.location)}
         return self.ballot
 
@@ -490,19 +615,19 @@ class _Builder:
                 self.warnings.append("This date has party primaries. Choose Democratic or Republican to see those races.")
         return chosen, day
 
-    async def _sos(self, elections: list[Election], place: Place) -> SosData | None:
+    async def _sos(self, elections: list[Election], county: str | None, county_fips: str | None) -> SosData | None:
         sos = self.svc.sos
         try:
-            counties, lookups = await asyncio.gather(sos.counties(), sos.lookups())
-            county_id = find_county(counties, place.county, place.county_fips)
+            listed, lookups = await asyncio.gather(sos.counties(), sos.lookups())
+            county_id = find_county(listed, county, county_fips)
             if county_id is None:
-                self.warnings.append(f"Texas SOS doesn't list {place.county} County.")
+                self.warnings.append(f"Texas SOS doesn't list {county} County.")
                 return None
-            orders = await asyncio.gather(*(self._rows(e, county_id, place.county) for e in elections))
+            orders = await asyncio.gather(*(self._rows(e, county_id, county) for e in elections))
         except UpstreamError as exc:
             self.errors["sos"] = str(exc)
             return None
-        return SosData(set(counties), lookups, list(zip(elections, orders)))
+        return SosData(set(listed), lookups, list(zip(elections, orders)))
 
     async def _rows(self, election: Election, county_id: int, county: str | None) -> list[dict[str, Any]]:
         """The county's ballot order, plus the declared write-ins from the statewide candidate
@@ -560,8 +685,18 @@ class _Builder:
         self, place: Place, location: Location
     ) -> tuple[ElectionPrecinct | None, county_precincts_source.Found | None]:
         precinct, codes = await self._election_precinct(place, location)
-        county = await self._county(place, codes) if self.use_county_precincts and codes else None
+        county = await self._county(place.county, place.county_fips, codes) if self.use_county_precincts and codes else None
         return precinct, county
+
+    async def _card_precincts(
+        self, card: CardPlace
+    ) -> tuple[ElectionPrecinct | None, county_precincts_source.Found | None]:
+        """The voter card's precinct, found on the map by locate_precinct(), and what its county's
+        records say for it."""
+        precinct = card.precinct
+        if not (precinct and self.use_county_precincts):
+            return precinct, None
+        return precinct, await self._county(card.county, card.county_fips, (precinct.code,))
 
     async def _election_precinct(self, place: Place, location: Location) -> tuple[ElectionPrecinct | None, tuple[str, ...]]:
         """The precinct from the Texas Legislative Council's map, and the codes of the precincts the
@@ -601,26 +736,36 @@ class _Builder:
         )
         return precinct, answer.codes
 
-    async def _county(self, place: Place, codes: tuple[str, ...]) -> county_precincts_source.Found | None:
+    async def _county(
+        self, name: str | None, fips: str | None, codes: tuple[str, ...]
+    ) -> county_precincts_source.Found | None:
         """What the county's records say for those precincts; None, with a note, when they can't be read."""
         try:
-            return await self.svc.county_precincts.at(int(place.county_fips or 0), codes)
+            return await self.svc.county_precincts.at(int(fips or 0), codes)
         except (UpstreamError, OSError, ValueError) as exc:
             self.errors[county_precincts_source.SOURCE] = str(exc).removeprefix(f"{county_precincts_source.SOURCE}: ")
-            self.notes.append(f"Couldn't read {place.county or 'your'} County's records of its election precincts, so they "
+            self.notes.append(f"Couldn't read {name or 'your'} County's records of its election precincts, so they "
                               "don't give your commissioner and JP precincts this time.")
             return None
 
-    async def _ballotpedia(self, place: Place, day: dt.date | None) -> BpBallot | None:
+    async def _ballotpedia(
+        self, points: list[tuple[float, float]], day: dt.date | None
+    ) -> tuple[BpBallot, tuple[BpRace, ...]] | None:
+        """Ballotpedia's ballot at the address, or what its ballots at the points of a voter card's
+        precinct share (ballotpedia.common), and the races only some of them have. One at a time,
+        each cached and throttled as any request."""
+        ballots = []
         try:
-            ballot = await self.svc.ballotpedia.ballot(place.lat, place.lon, day)
+            for lat, lon in points:
+                ballots.append(await self.svc.ballotpedia.ballot(lat, lon, day))
         except BallotpediaUnavailable as exc:
             self.errors["ballotpedia"] = str(exc)
             self.warnings.append(f"Ballotpedia isn't available ({exc}), so city and school races aren't shown.")
             return None
-        if not ballot.races and day:
-            self.notes.append(f"Ballotpedia has nothing for {day:%b %d, %Y} at this address yet.")
-        return ballot
+        ballot, partial = ballotpedia_source.common(ballots)
+        if not (ballot.races or partial) and day:
+            self.notes.append(f"Ballotpedia has nothing for {day:%b %d, %Y} for this {self.where} yet.")
+        return ballot, partial
 
     async def _key_dates(self) -> list[Deadlines]:
         try:
@@ -698,6 +843,7 @@ class _Builder:
                     entries.append((_sort_key(first, scope.name), race))
                 else:
                     self.maybe[where].append(race)
+                    self.waiting["jp" if scope.kind == "constable" else scope.kind] += 1
         entries.sort(key=lambda e: (GROUPS.index(e[1].group), e[0]))
         return [race for _, race in entries]
 
@@ -715,13 +861,14 @@ class _Builder:
             write_in=write_in,
         )
 
-    def _bp_races(self, ballot: BpBallot, state_names: NameIndex | None) -> list[Race]:
+    def _bp_races(self, ballot: BpBallot, state_names: NameIndex | None, partial: tuple[BpRace, ...] = ()) -> list[Race]:
         """Ballotpedia's races: all of them without the state's ballot. With it, the city, school
         and special-district races, and any other race none of whose candidates the state lists
         (an appraisal district's board). Special districts always go to the "may be on your
-        ballot" list."""
+        ballot" list, and the races on only part of a voter card's precinct (``partial``) to
+        their own."""
         races = []
-        for bp_race in ballot.races:
+        for bp_race in (*ballot.races, *partial):
             if state_names is not None and not _adds_to_state_ballot(bp_race, state_names):
                 continue
             race = Race(
@@ -745,8 +892,35 @@ class _Builder:
                     for c in bp_race.candidates
                 ],
             )
-            (self.maybe["special"] if bp_race.group == "special" else races).append(race)
+            if bp_race.group == "special":
+                self.maybe["special"].append(race)
+            elif bp_race in partial:
+                self.maybe["partial"].append(race)
+                self.waiting["partial"] += 1
+            else:
+                races.append(race)
         return sorted(races, key=lambda r: GROUPS.index(r.group))
+
+    def _left_out(self, shown: bool) -> LeftOut | None:
+        """What the races the districts and precincts don't settle are waiting for, a line each."""
+        if not self.waiting:
+            return None
+        lines, missing = [], []
+        for kind in WAITING_ORDER:
+            count = self.waiting.get(kind, 0)
+            if not count:
+                continue
+            races = f"{count} {'race depends' if count == 1 else 'races depend'}"
+            if kind in KIND_LABELS:
+                missing.append(kind)
+                unit = "district" if kind in DISTRICT_KINDS else "precinct"
+                lines.append(f"Your {KIND_LABELS[kind]} {unit} isn't known: {races} on it.")
+            elif kind == "precinct_other":
+                lines.append(f"{races} on a county precinct Pallot can't tell from your {self.where}.")
+            else:
+                on = f"{count} {'race is' if count == 1 else 'races are'}"
+                lines.append(f"{on} on the ballot in only part of your precinct.")
+        return LeftOut(races=sum(self.waiting.values()), missing=missing, lines=lines, shown=shown)
 
     def _district_notes(self, districts: Districts, elections: list[Election]) -> None:
         """Say which of the voter's districts have no race here: State Senate and SBOE seats
@@ -802,13 +976,17 @@ class _Builder:
             )
 
         geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim", "sboe"))
-        geocoding.message = GEOCODED_BY[location.geocoder]
+        if location.geocoder:
+            geocoding.message = GEOCODED_BY[location.geocoder]
+        else:
+            geocoding.message = "Voter card: precinct map + US Census" if location.lat is not None else "Voter card: county only"
         return [
             geocoding,
             status(google_source.SOURCE, "Google geocoding", self.sources.enabled(google_source.SOURCE),
                    (google_source.SOURCE,)),
             status("sos", "Texas SOS", self.use_sos, ("sos",)),
             status(key_dates_source.SOURCE, key_dates_source.LABEL, self.use_key_dates, (key_dates_source.SOURCE,)),
+            status("wikidata", "Wikidata", self.use_wikidata, ("wikidata",)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             snapshot("voteforpeace", "Vote for Peace", self.use_vfp, self.svc.voteforpeace.document),

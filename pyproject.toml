@@ -26,7 +26,7 @@ voteforpeace-cache = "voteforpeace_cache.__main__:main"
 pallot-bundle = "bundles.__main__:main"
 
 [dependency-groups]
-dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21"]  # installed by `uv sync`
+dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21", "ruff>=0.15"]  # installed by `uv sync`
 
 [tool.setuptools]
 packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "voteforpeace_cache", "bundles"]
@@ -50,3 +50,9 @@ markers = [
     "shipped_defaults: sees the sources on and off as Pallot ships them, not as the tests turn them on",
 ]
 filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]
+
+[tool.ruff]
+extend-exclude = ["pallot/static", "*/data"]
+
+[tool.ruff.lint]
+select = ["F401", "F841"]  # unused imports and variables: AGENTS.md's "Leave it clean"

@@ -1,13 +1,14 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, officeholders, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
 the key dates one (the Texas SOS's Important Election Dates page, kept as served), the seat
 holders two (Congress's current members, cut down to Texas's and a few others, and Open States'
-Texas legislators, cut down to the columns Pallot reads), the
+Texas legislators, cut down to the columns Pallot reads), Wikidata two (its Texas officeholders,
+cut down to the recorded ballots' candidates and three others, and their details), the
 district outlines four (TIGERweb's layer list, and the Capitol's three districts), and the
 election precincts one (the Texas Legislative Council portal's list of precinct maps; the
 tests make up the map itself), and the county precincts four (Travis's and Harris's lists of their
@@ -45,9 +46,11 @@ from pallot.config import DEMO_KEY, load_config  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
     ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, officeholders, polls, sos,
-    suggestions, tigerweb,
+    suggestions, tigerweb, wikidata,
 )
+from pallot.matching import full_key  # noqa: E402
 from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
+from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -238,6 +241,25 @@ def record_officeholders(client: httpx.Client) -> None:
     print(f"{path.name}: {path.stat().st_size:,} bytes")
 
 
+def record_wikidata(client: httpx.Client) -> None:
+    """Wikidata's Texas officeholders, cut down to the recorded ballots' candidates and a few others, and
+    their details, as Pallot asks for them."""
+
+    def get(spec) -> dict:
+        response = client.get(spec.url, params=spec.params, headers=spec.headers)
+        response.raise_for_status()
+        return response.json()
+
+    names = {full_key(display_person(row.get("txFullNameBallot") or ""))
+             for path in FIXTURES.glob("sos_ballot_*.json") for row in json.loads(path.read_text(encoding="utf-8"))}
+    answer = get(wikidata.people_spec())
+    rows = answer["results"]["bindings"]
+    ids = {row["p"]["value"] for row in rows if full_key(row["label"]["value"]) in names}
+    ids |= set(sorted({row["p"]["value"] for row in rows} - ids)[:3])
+    save("wikidata_people.json", {**answer, "results": {"bindings": [row for row in rows if row["p"]["value"] in ids]}})
+    save("wikidata_details.json", get(wikidata.details_spec(sorted(i.rsplit("/", 1)[1] for i in ids))))
+
+
 def record_tigerweb(client: httpx.Client) -> None:
     """TIGERweb's layer list, then the Capitol's districts, sent as Pallot sends them."""
 
@@ -337,7 +359,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "officeholders", "tigerweb", "election_precincts",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
                                            "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     only = parser.parse_args(argv).only
@@ -355,6 +377,8 @@ def main(argv: list[str] | None = None) -> int:
             record_key_dates(client)
         if only in (None, "officeholders"):
             record_officeholders(client)
+        if only in (None, "wikidata"):
+            record_wikidata(client)
         if only in (None, "tigerweb"):
             record_tigerweb(client)
         if only in (None, "election_precincts"):

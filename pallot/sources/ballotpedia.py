@@ -21,7 +21,7 @@ from typing import Any, Callable, Iterable
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, match_person, match_unique
-from ..models import Badge, Fact, Link, Match, Race, SourceCard
+from ..models import Fact, Link, Match, Race, SourceCard
 from ..text import display_time, iso_utc, parse_date
 from . import CardSet
 
@@ -274,6 +274,31 @@ def parse(payload: dict[str, Any], day: dt.date | None, fetched_at: float, today
     return BpBallot(parse_date(chosen.get("date")), tuple(races), tuple(measures), precincts, fetched_at, city_council)
 
 
+def common(ballots: list[BpBallot]) -> tuple[BpBallot, tuple[BpRace, ...]]:
+    """What Ballotpedia's ballots at points in one precinct all have: the races, measures, precincts
+    and city council district they share; and the races only some of them have, once each. One
+    precinct can cross a city or school district line, so neither kind of race is guessed."""
+    first, *rest = ballots
+    if not rest:
+        return first, ()
+    shared = set.intersection(*({race.id for race in ballot.races} for ballot in ballots))
+    partial: dict[int, BpRace] = {}
+    for ballot in ballots:
+        for race in ballot.races:
+            if race.id not in shared:
+                partial.setdefault(race.id, race)
+    measures = set.intersection(*({measure.id for measure in ballot.measures} for ballot in ballots))
+    together = BpBallot(
+        day=first.day,
+        races=tuple(race for race in first.races if race.id in shared),
+        measures=tuple(measure for measure in first.measures if measure.id in measures),
+        precincts={kind: n for kind, n in first.precincts.items() if all(b.precincts.get(kind) == n for b in rest)},
+        fetched_at=min(ballot.fetched_at for ballot in ballots),
+        city_council=first.city_council if all(b.city_council == first.city_council for b in rest) else None,
+    )
+    return together, tuple(partial.values())
+
+
 class Ballotpedia:
     def __init__(self, cache: HttpCache, ttl: Ttls, today: Callable[[], dt.date] = dt.date.today):
         self.cache = cache
@@ -320,7 +345,6 @@ def card(candidate: BpCandidate, race: BpRace, fetched_at: float, match: Match |
         image=candidate.photo,
         as_of=iso_utc(fetched_at),
         match=match,
-        badges=[Badge(text="Ballotpedia profile", tone="info", url=candidate.url)] if candidate.url else [],
         facts=[f for f in facts if f.value],
         links=links,
     )

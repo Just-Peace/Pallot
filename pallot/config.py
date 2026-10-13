@@ -6,7 +6,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import Mapping
+from typing import Literal, Mapping
 
 HOUR = 3600
 DAY = 24 * HOUR
@@ -65,6 +65,9 @@ class Ttls:
     officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat
     officeholders_backoff: int = HOUR  # after either list is refused us, stop asking for this long
     officeholders_bundle: int = 14 * DAY  # both lists bundled with Pallot (bundles/), refreshed weekly: a week of grace
+    wikidata: int = 7 * DAY  # Wikidata's list of Texas officeholders, and the matched people's profiles
+    wikidata_backoff: int = HOUR  # after Wikidata's query service refuses us, stop asking for this long
+    wikidata_bundle: int = 14 * DAY  # the list bundled with Pallot (bundles/), refreshed weekly: a week of grace
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # delete expired suggestions, tiles and addresses not found once expired this long
 
@@ -94,6 +97,8 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 8000  # `uv run pallot`'s default port; the Docker image always listens on 8000
     prune_every: int = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
+    # The entry card's tab on a first visit: "address", or "voter_card" (County and Precinct number).
+    default_entry: Literal["address", "voter_card"] = "address"
 
     @property
     def fec_api_keys(self) -> dict[str, str]:
@@ -183,7 +188,13 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         host=env.get("PALLOT_HOST") or Config.host,
         port=int(env.get("PALLOT_PORT") or Config.port),
         prune_every=int(env.get("PALLOT_PRUNE_EVERY") or Config.prune_every),
+        default_entry=_entry(env.get("PALLOT_DEFAULT_ENTRY")),
     )
+
+
+def _entry(value: str | None) -> Literal["address", "voter_card"]:
+    """PALLOT_DEFAULT_ENTRY: "voter_card" (or "voter-card", "card"); anything else is the address."""
+    return "voter_card" if (value or "").strip().lower().replace("-", "_") in ("voter_card", "card") else "address"
 
 
 def _megabytes(value: str | None) -> int | None:

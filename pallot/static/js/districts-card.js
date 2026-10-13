@@ -1,9 +1,10 @@
-// Your districts: the voter's districts and precincts, where they came from, and a prompt for a
-// precinct races wait on. The pencil turns each number into a box; the voter's numbers go back
-// to the server with the address (``page.lookup``), and Reset goes back to the looked-up ones.
+// Your districts: the voter's districts and precincts, where they came from, and the races left
+// off the ballot until a missing one is entered. The pencil turns each number into a box; the
+// voter's numbers go back to the server with the address (``page.lookup``), and Reset goes back to
+// the looked-up ones.
 
 import { goTo } from "./ballot-nav.js";
-import { $, h } from "./dom.js";
+import { $, h, pairBox } from "./dom.js";
 import { listed } from "./format.js";
 import { icon } from "./icons.js";
 import { DISTRICTS, PRECINCT_KINDS, STATES } from "./labels.js";
@@ -18,11 +19,11 @@ export function initDistrictsCard(context) {
   page = context;
 }
 
-// The name on the card: "State Senate", "SBOE" with its long name as a tooltip, "JP & Constable".
-function districtLabel(kind) {
-  const { short, long } = DISTRICTS[kind];
-  const name = short === long ? short : h("abbr", { title: long }, short);
-  return kind === "jp" ? [name, " & Constable"] : name;
+// The name on the card, spelled out ("State Board of Education", "Justice of the Peace & Constable"),
+// or ``short`` ("SBOE", as the voter card has it) in the edit boxes.
+function districtLabel(kind, { short = false } = {}) {
+  const name = DISTRICTS[kind][short ? "short" : "long"];
+  return kind === "jp" ? `${name} & Constable` : name;
 }
 
 // "State Senate district", "Justice of the Peace and Constable precinct": a box's tooltip.
@@ -40,9 +41,8 @@ function shownNumbers(d) {
 function district(label, value, { notUp = false, missing = false, title = null, edit = null } = {}) {
   if (edit) {
     const max = STATES[page.ballot.location.state]?.districtCounts?.[edit];
-    return h("label", { class: "district editing", title: spelledOut(edit) }, label ? [label, " "] : null,
-      h("input", { type: "number", class: "district-input", name: edit, min: "1", max: max ? String(max) : null, inputmode: "numeric",
-        value: value ?? null }));
+    return pairBox(label, { name: edit, max: max ? String(max) : null, value: value ?? null },
+      { class: "district editing", title: spelledOut(edit) });
   }
   const shown = value == null
     ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, missing ? "missing: races depend on it" : "not known"))
@@ -87,11 +87,21 @@ function notUpNote(d) {
   return h("p", { class: "district-note" }, `${listed(names)} ${names.length > 1 ? "aren't" : "isn't"} up for election this time.`);
 }
 
+// A line of the card; while it has boxes, a .pair-grid.
 function districtRow(...items) {
   const shown = items.filter(Boolean);
+  const boxes = shown.some((item) => item.classList.contains("pair"));
   return shown.length
-    ? h("p", { class: "district-line" }, shown.map((item, i) => [i ? h("span", { class: "sep" }, " · ") : null, item]))
+    ? h("p", { class: ["district-line", boxes && "pair-grid"] }, shown.map((item, i) => [i ? h("span", { class: "sep" }, " · ") : null, item]))
     : null;
+}
+
+// Where the districts came from: the address, or the voter card's precinct (no districts when the
+// precinct map couldn't place it).
+function districtsSource(location) {
+  if (location.source !== "voter_card") return "Districts from the US Census and the Texas Legislative Council.";
+  if (location.lat == null) return "County and precinct from your voter card.";
+  return "Districts from your voter card: the US Census and the Texas Legislative Council, inside your precinct on the Council's map.";
 }
 
 // " U.S. House and SBOE districts you entered."
@@ -108,21 +118,23 @@ export function renderDistricts() {
   }
   const { location, districts: d } = ballot;
   const shown = shownNumbers(d);
-  const waiting = ballot.maybe.find((section) => section.id === "precinct");
-  const missing = PRECINCT_KINDS.filter((kind) => shown[kind] == null);
-  const prompted = Boolean(waiting) && missing.length > 0;
-  const needed = (kind) => prompted && missing.includes(kind);
+  const leftOut = new Set(ballot.left_out?.missing || []);
+  const needed = (kind) => shown[kind] == null && leftOut.has(kind);
   const school = location.school_district?.replace(/\bIndependent School District\b/, "ISD");
   const precinct = d.election_precinct;
+  const fromCard = location.source === "voter_card";
+  const precinctName = precinct?.name ?? (fromCard ? page.request?.precinct : null);
   const notUp = new Set(d.not_up || []);
-  const number = (kind, options = {}) => district(districtLabel(kind), shown[kind],
+  const number = (kind, options = {}) => district(districtLabel(kind, { short: editing }), shown[kind],
     { notUp: notUp.has(kind), missing: needed(kind), edit: editing ? kind : null, ...options });
 
   const rows = [
     districtRow(number("cd"), number("sd"), number("hd"), number("sboe")),
     districtRow(
       location.county && district("County", location.county),
-      precinct && district("Precinct", precinct.name, { title: `Election precinct, from the map “${precinct.map_label}”` }),
+      precinctName && district("Precinct", precinctName, {
+        title: precinct ? `Election precinct, from the map “${precinct.map_label}”` : "Election precinct, from your voter card",
+      }),
       number("commissioner"),
       number("jp"),
     ),
@@ -134,13 +146,13 @@ export function renderDistricts() {
     location.approximate
       ? h("p", { class: "district-warn" }, "Approximate address: check these against your voter registration certificate.")
       : null,
-    prompted ? precinctPrompt(waiting, missing) : null,
+    leftOutNote(),
     editing ? null : notUpNote(d),
   ].filter(Boolean);
   $("#districts-card").replaceChildren(
     h("div", { class: "districts-head" }, h("h2", { id: "districts-card-title" }, "Your districts"), districtActions(d)),
     ...(editing ? [districtsForm(rows, shown)] : rows),
-    sourceNote("Districts from the US Census and the Texas Legislative Council.",
+    sourceNote(districtsSource(location),
       enteredDistricts(d), precinct ? electionPrecinctSource(precinct) : "", precinctSources(d)),
   );
   $("#districts-card").hidden = false;
@@ -171,7 +183,7 @@ function districtsForm(rows, shown) {
     const districts = { ...page.request.districts };
     const precincts = { ...page.request.precincts };
     let changed = false;
-    for (const input of form.querySelectorAll(".district-input")) {
+    for (const input of form.querySelectorAll(".pair-box")) {
       const kind = input.name;
       const typed = parseInt(input.value, 10);
       const value = typed > 0 ? typed : null;
@@ -187,28 +199,39 @@ function districtsForm(rows, shown) {
   return form;
 }
 
-function precinctPrompt(waiting, missing) {
-  const count = waiting.races.length;
-  const one = missing.length === 1;
-  const enter = h("button", { type: "button", class: "link-btn", on: { click: openPrecincts } }, one ? "Enter it" : "Enter them");
-  const seeRaces = () => {
-    const first = $("#maybe-precinct .race");
-    if (first) goTo(first);
-  };
-  const see = h("button", { type: "button", class: "link-btn", on: { click: seeRaces } }, one && count === 1 ? "See the race" : "See the races");
-  // it names the precincts it asks for, since the card also shows the election precinct
-  const asked = `your ${listed(missing.map((kind) => DISTRICTS[kind].long.toLowerCase()))} ${one ? "precinct" : "precincts"}`;
-  const precinct = page.ballot.districts.election_precinct;
-  return h("p", { class: "precinct-prompt" },
-    precinct
-      ? `Your election precinct is ${precinct.name}. Enter ${asked} from the same voter registration certificate. `
-      : `Enter ${asked} from your voter registration certificate. `,
-    `${count} ${count === 1 ? "race depends" : "races depend"} on ${one ? "it" : "them"}. `, enter, " · ", see);
+// The races the districts and precincts don't settle, which the ballot leaves out: what's missing,
+// Enter it (the boxes), Show these races anyway, which asks again with them, and, while they're
+// shown at the end of the ballot, See the races.
+function leftOutNote() {
+  const left = page.ballot.left_out;
+  if (!left) return null;
+  const count = left.races === 1 ? "1 race" : `${left.races} races`;
+  const link = (label, run) => h("button", { type: "button", class: "link-btn", on: { click: run } }, label);
+  const enter = left.missing.length
+    ? link(left.missing.length === 1 ? "Enter it" : "Enter them", () => openDistricts(left.missing))
+    : null;
+  const toggle = link(left.shown ? "Hide these races" : "Show these races anyway", () => showLeftOut(!left.shown));
+  const see = left.shown
+    ? link(left.races === 1 ? "See the race" : "See the races", () => {
+      const first = $('[id^="maybe-"] .race');
+      if (first) goTo(first);
+    })
+    : null;
+  const head = left.shown
+    ? `Showing ${count} that may not be on your ballot, at the end, each section saying why.`
+    : `${count} left off your ballot, because Pallot can't tell whether ${left.races === 1 ? "it's" : "they're"} yours.`;
+  return h("div", { class: "district-warn left-out" },
+    h("p", {}, head), ...left.lines.map((line) => h("p", {}, line)), h("p", { class: "left-out-actions" }, enter, see, toggle));
+}
+
+function showLeftOut(show) {
+  const { all_races: _shown, ...request } = page.request;
+  page.lookup(show ? { ...request, all_races: true } : request, { keepBallot: true });
 }
 
 // The first empty box (of ``kinds``, when given), else the first.
 function firstEmptyBox(kinds = null) {
-  const inputs = [...document.querySelectorAll("#districts-form .district-input")]
+  const inputs = [...document.querySelectorAll("#districts-form .pair-box")]
     .filter((input) => !kinds || kinds.includes(input.name));
   return inputs.find((input) => !input.value) ?? inputs[0];
 }
@@ -219,14 +242,14 @@ function setEditing(on) {
   (on ? firstEmptyBox() : $("#districts-edit"))?.focus();
 }
 
-// Opens the boxes, at the first empty precinct: the prompt's Enter it, and the link above the
-// races that wait on the precincts.
-export function openPrecincts() {
+// Opens the boxes, at the first empty one of ``kinds`` (by default the precincts): the left-out
+// note's Enter it, and the link above the races that wait on the precincts.
+export function openDistricts(kinds = PRECINCT_KINDS) {
   if (!editing) {
     editing = true;
     renderDistricts();
   }
-  const field = firstEmptyBox(PRECINCT_KINDS);
+  const field = firstEmptyBox(kinds);
   field.scrollIntoView({ block: "center" });
   field.focus({ preventScroll: true });
 }
@@ -241,7 +264,7 @@ async function updateDistricts(entered) {
   await page.lookup(request, { keepBallot: true });
   if (page.ballot === before) return;
   $("#districts-edit")?.focus();
-  const waiting = page.ballot.maybe.some((section) => section.id === "precinct");
+  const waiting = Boolean(page.ballot.left_out?.missing.some((kind) => PRECINCT_KINDS.includes(kind)));
   const target = waiting ? "#maybe-precinct .race" : "#group-precinct .race";
   const show = { label: "Show", run: () => { const first = $(target); if (first) goTo(first); } };
   showToast(waiting ? "Your ballot is updated. Some races still depend on your commissioner or JP precinct."

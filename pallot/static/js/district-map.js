@@ -64,7 +64,7 @@ export function syncMap(next) {
   const asked = KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]);
   const precinct = districts.election_precinct;
   if (precinct) asked.push(["election_precinct", precinct.code], ["county", precinct.county]);
-  const nextQuery = new URLSearchParams(asked).toString();
+  const nextQuery = next.location.lat == null ? "" : new URLSearchParams(asked).toString(); // a voter card the map couldn't place
   section.hidden = !nextQuery;
   if (!nextQuery) {
     query = "";
@@ -262,13 +262,14 @@ function makeMap() {
 
 function placePin() {
   if (!map) return;
-  const { lat, lon, approximate } = ballot.location;
+  const { lat, lon, approximate, source } = ballot.location;
   if (pin) {
     pin.setLatLng([lat, lon]);
   } else {
     pin = L.circleMarker([lat, lon], { radius: 7, className: "map-pin" }).addTo(map);
   }
-  pin.unbindTooltip().bindTooltip(approximate ? "Your address (approximate)" : "Your address");
+  pin.unbindTooltip().bindTooltip(source === "voter_card" ? "A point in your precinct"
+    : approximate ? "Your address (approximate)" : "Your address");
   pin.bringToFront();
 }
 

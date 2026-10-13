@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pallot · Settings</title>
   <meta name="description" content="Choose how Pallot looks, how much of the ballot shows, its web search engine and sources, keep your ban list, see what it has saved, and clear what this browser keeps.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -25,7 +25,11 @@
 
       <section class="panel" aria-labelledby="view-title">
         <h2 id="view-title">Ballot view</h2>
-        <p class="panel-intro">How much of the ballot shows at first. Anything folded opens with a click, and the ballot's Simple | Detailed and Options have the same choices.</p>
+        <p class="panel-intro">What matters to you, and how much of the ballot shows at first. Anything folded opens with a click, and the ballot's View menu has the same choices.</p>
+        <div class="setting-row" id="focus-setting">
+          <h3 class="setting-label">What matters to you</h3>
+          <p class="fine">Choose any, or none for the view below as it is. Each one only adds to it, and nothing it turns on is locked. <a href="faq.html#view-modes">More on focus</a></p>
+        </div>
         <div class="setting-row" id="ballot-view">
           <fieldset class="seg">
             <legend class="sr-only">How much of the ballot shows</legend>
@@ -34,6 +38,7 @@
             <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
           </fieldset>
           <p class="fine" id="view-mode-note"></p>
+          <p class="fine">A focus turns its switches on. Turning one of them off drops that focus.</p>
         </div>
         <div class="source-list view-switches" id="view-switches">
           <div class="source-row">
@@ -42,11 +47,15 @@
           </div>
           <div class="source-row">
             <label class="switch" for="view-show-funding"><input type="checkbox" role="switch" id="view-show-funding" data-view="showFunding"><span class="source-name">Funding</span></label>
-            <p class="source-desc">Each race's money box (folded, it's one line, with Compare funding) and the Funding line under each candidate's name, worked out from their campaign's reports: green for small donors or Texas donors, amber for large donations, out-of-state donors or self-funding, "Mostly" over half and "Overwhelmingly" over three quarters, then what they raised and the outside spending for and against them.</p>
+            <p class="source-desc">Each race's money box (folded, it's one line, with Compare funding) and the Funding line under each candidate's name, worked out from their campaign's reports: green for small donors or Texas donors, amber for large donations, out-of-state donors or self-funding, "Mostly" over half and "Overwhelmingly" over three quarters, then what they raised and the outside spending for and against them. On a phone, outside Detailed, the line shows what they raised and "+3 more".</p>
           </div>
           <div class="source-row">
             <label class="switch" for="view-show-polls"><input type="checkbox" role="switch" id="view-show-polls" data-view="showPolls"><span class="source-name">Polls</span></label>
             <p class="source-desc">The poll bar in U.S. Senate, U.S. House and Governor races. Folded, it's one line.</p>
+          </div>
+          <div class="source-row">
+            <label class="switch" for="view-open-boxes"><input type="checkbox" role="switch" id="view-open-boxes" data-view="openBoxes"><span class="source-name">Open money &amp; poll boxes</span></label>
+            <p class="source-desc">Each race's money and poll boxes open, rather than folded to one line. A box lists only the candidates with money or polling; Compare and Details list everyone.</p>
           </div>
           <div class="source-row">
             <label class="switch" for="view-show-endorsements"><input type="checkbox" role="switch" id="view-show-endorsements" data-view="showEndorsements"><span class="source-name">Endorsements</span></label>
@@ -64,6 +73,12 @@
             <label class="switch" for="view-hide-picked"><input type="checkbox" role="switch" id="view-hide-picked" data-view="hidePicked"><span class="source-name">Only races I haven't picked</span></label>
             <p class="source-desc">Hides the races you've picked, so the ones left stand out.</p>
           </div>
+        </div>
+        <div class="setting-row" id="tips-setting">
+          <h3 class="setting-label">Tips</h3>
+          <p class="fine">Short tips on the ballot, one a visit, each until you press "Got it". A "?" opens the FAQ's answer. <a href="faq.html#tips">More on tips</a></p>
+          <button class="btn small" type="button" id="tips-again">Show tips again</button>
+          <p class="status" id="tips-status" role="status" aria-live="polite"></p>
         </div>
       </section>
 
@@ -118,14 +133,14 @@
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear my picks &amp; notes</h3>
-              <p>Removes your picks, notes, write-ins and pick rule. Keeps your address and your choices. Undo puts them back for a few seconds.</p>
+              <p>Removes your picks, notes, write-ins and pick rule. Keeps your address and your choices. Pallot asks first, and Undo puts them back for a few seconds.</p>
             </div>
             <button class="btn small danger" id="clear-my-picks" type="button">Clear picks &amp; notes</button>
           </li>
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear browser data</h3>
-              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources, view choices and ban list. Your sources go back to Pallot's defaults. Undo puts it back for a few seconds.</p>
+              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources, view choices and ban list. Your sources go back to Pallot's defaults. Pallot asks first, and Undo puts it back for a few seconds.</p>
             </div>
             <button class="btn small danger" id="clear-browser-data" type="button">Clear browser data</button>
           </li>

@@ -44,7 +44,7 @@ function barRow(value, candidate, largest, whole, what) {
   const share = whole && amount != null ? amount / whole : null;
   const dollars = largest > 0 && amount ? amount / largest : 0;
   return h("li", { class: "cmp-bar", "data-party": candidate?.party || null },
-    h("span", { class: "cmp-name", title: candidate?.name }, candidate?.name || "Unknown"),
+    h("span", { class: "cmp-name" }, candidate?.name || "Unknown"),
     bar({ dollars, share: share ?? dollars }),
     h("span", { class: "cmp-amount", title: amount != null ? DOLLARS.format(amount) : "No figure from this source" },
       amountText(amount, share)),

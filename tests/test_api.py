@@ -34,10 +34,11 @@ def test_elections_list(client):
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "google", "election_precincts", "county_precincts",
-                                                       "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "ballotpedia",
-                                                       "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac", "fec", "tec", "polls"]
-    geocoding, google, precincts, county, outlines, tiles, suggestions, sos, dates, _, holders, tracker, peace, _, _, example, _, fec, tec, polls = (
-        overview["sources"])
+                                                       "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "wikidata",
+                                                       "ballotpedia", "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
+                                                       "mupac", "fec", "tec", "polls"]
+    (geocoding, google, precincts, county, outlines, tiles, suggestions, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
+     fec, tec, polls) = overview["sources"]
     assert (google["toggleable"], google["enabled"]) == (True, True) and "PALLOT_GOOGLE_API_KEY" in google["notice"]
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
@@ -63,6 +64,7 @@ def test_sources_overview(client):
     assert (polls["label"], polls["toggleable"], polls["notice"]) == ("Polls (FiftyPlusOne)", True, None)
     assert (holders["label"], holders["toggleable"], holders["enabled"], holders["group"]) == (
         "Seat holders (congress-legislators, Open States)", True, True, "ballot")
+    assert (wiki["label"], wiki["toggleable"], wiki["enabled"], wiki["group"]) == ("Wikidata", True, True, "ballot")
     shown = [s["notice"] or "" for s in overview["sources"]] + [f["value"] for s in overview["sources"] for f in s["details"]]
     assert not [text for text in shown if ISO_TIME.search(text)]
 
@@ -116,7 +118,7 @@ def test_ballotpedia_and_vote_for_peace_start_off(client):
     assert all(on for source, on in enabled.items() if source not in {"ballotpedia", "voteforpeace"})
     ballot = get_ballot(client)
     assert last_use(client, "ballotpedia")["status"] == "off"
-    assert any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
+    assert not any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
     assert not any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
                    for card in c["cards"])
 
@@ -131,7 +133,7 @@ def test_sources_are_grouped(client):
     assert grouped == {
         "address": ["geocoding", "google", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
         "official": ["sos", "key_dates", "fec", "tec"],
-        "ballot": ["ballotpedia", "officeholders"],
+        "ballot": ["wikidata", "ballotpedia", "officeholders"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
     }
@@ -269,8 +271,9 @@ def test_every_page_leaves_its_left_pane_and_footer_to_chrome_js_and_its_files_e
     html = client.get(f"/{page}").text
     assert "<footer" not in html
     aside = re.search(r'<aside class="sidebar"[^>]*>(.*?)</aside>', html, re.S).group(1)
-    if page == "./":  # the ballot's own parts of the pane: its form and status line, and the section list
-        assert aside.count('data-slot="address"') == 2 and 'id="jump"' in aside and "address-card" not in aside
+    if page == "./":  # the ballot's own parts of the pane: its hint before an address, and the section list
+        assert aside.count('data-slot="address"') == 1 and 'id="jump"' in aside and "address-card" not in aside
+        assert 'id="lookup-form"' not in aside  # the form is the entry card, in the main area
     else:
         assert not aside.strip()
     entry = {"./": "ballot", "settings.html": "settings", "faq.html": "faq"}.get(page, "page")  # settings.js and faq.js import page.js

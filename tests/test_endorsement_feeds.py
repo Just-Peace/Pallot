@@ -178,7 +178,7 @@ def test_entries_match_as_a_frozen_lists_do():
     assert {key: card.match.confidence for key, card in cards.items()} == {"sos:1:18:0": "exact", "sos:1:9:0": "likely"}
     # Rashida Tlaib is on the list for Michigan's 12th, never Texas's.
     green = cards["sos:1:18:0"]
-    assert {f.label: f.value for f in green.facts}["List fetched"] == "Oct 4, 2026"
+    assert green.as_of == "2026-10-04" and [f.label for f in green.facts] == ["Office"]
     assert green.url == "https://muslimsunitedpac.com/endorsements/al-green-tx" and green.flags == [FLAG]
 
 
@@ -191,7 +191,7 @@ def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
         "Muslims United PAC", "endorsement", today.isoformat(), "exact", [FLAG])
     assert [(b["text"], b["url"]) for b in casar["badges"]] == [
         ("Endorsed by Muslims United PAC", "https://muslimsunitedpac.com/endorsements/greg-casar-tx")]
-    assert {f["label"]: f["value"] for f in casar["facts"]}["Office on the list"] == "U.S. House, District 37"
+    assert {f["label"]: f["value"] for f in casar["facts"]}["Office"] == "U.S. House, District 37"
     assert casar["quotes"][0].startswith("As Chair of the Congressional Progressive Caucus")
     assert upstream.count(FEED_HOST) == 1
     assert last_use(client, MUPAC)["status"] == "used" and last_use(client, MUPAC)["calls"] == 1
@@ -214,13 +214,13 @@ def test_cair_matches_texas_candidates(client, upstream):
     assert (casar["label"], casar["match"]["confidence"], casar["flags"], casar["quotes"]) == (
         "CAIR Action", "exact", [FLAG], [ENDORSED])
     assert [(b["text"], b["url"]) for b in casar["badges"]] == [("Endorsed by CAIR Action", CAIR_TX)]
-    assert {f["label"]: f["value"] for f in casar["facts"]}["Office on the list"] == "U.S. Representative, District 37"
+    assert {f["label"]: f["value"] for f in casar["facts"]}["Office"] == "U.S. Representative, District 37"
     assert cards_from(ballot, CAIR)["Montserrat Garibay"]["match"]["confidence"] == "exact"  # State House District 49
     assert upstream.count(CAIR_HOST) == 1
 
     plummer = cards_from(get_ballot(client, "harris"), CAIR)["Letitia Plummer"]  # a county office, by its county
     assert plummer["match"]["confidence"] == "exact"
-    assert {f["label"]: f["value"] for f in plummer["facts"]}["Office on the list"] == "Harris County Judge"
+    assert {f["label"]: f["value"] for f in plummer["facts"]}["Office"] == "Harris County Judge"
     assert get_ballot(client, "ut")["meta"]["external_calls"] == 0 and upstream.count(CAIR_HOST) == 1
     assert [(f["label"], f["value"]) for f in row(client, CAIR)["details"]] == [
         ("Texas candidates", "17"), ("All candidates", "591 in 27 states")]

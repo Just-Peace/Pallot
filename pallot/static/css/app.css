@@ -114,6 +114,8 @@ body {
   color: var(--text);
   font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* viewport-fit=cover: a phone held sideways keeps the page clear of its notch */
+  padding: 0 env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
 }
 
 a { color: var(--accent); }
@@ -180,16 +182,18 @@ button, input, select, textarea { font: inherit; }
 /* « in the brand's row folds the pane to a rail of icons (chrome.js); see the end of the file */
 .pane-toggle { position: absolute; top: 21px; right: 14px; }
 
-/* centred beside the pane, wide; the bottom clears the pinned footer */
-.content { width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 24px 32px calc(var(--footer-h, 36px) + 32px); }
+/* centred beside the pane, wide; the bottom clears the pinned footer, and a toast while one shows (toast.js) */
+.content { width: 100%; max-width: var(--content-max); margin: 0 auto;
+  padding: 24px 32px calc(var(--footer-h, 36px) + 32px + var(--toast-space, 0px)); }
 
-/* The footer, on every page (chrome.js): pinned to the bottom of the window, beside the pane. */
-.site-footer { position: fixed; left: var(--sidebar); right: 0; bottom: 0; z-index: 6; padding: 6px 0;
+/* The footer, on every page (chrome.js): pinned to the bottom of the window, beside the pane,
+   above a phone's home indicator. */
+.site-footer { position: fixed; left: var(--sidebar); right: 0; bottom: 0; z-index: 6; padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px));
   background: var(--bg); border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; }
 .site-footer p { max-width: var(--content-max); margin: 0 auto; padding: 0 32px; } /* lined up with the content */
 
 /* Back to top (chrome.js): once you've scrolled a screen, above the footer */
-.to-top { position: fixed; right: 20px; bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
+.to-top { position: fixed; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
   width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--panel);
   color: var(--accent); box-shadow: var(--shadow-pop); cursor: pointer;
   opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 0.15s, transform 0.15s, visibility 0.15s; }
@@ -262,6 +266,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn.danger { color: var(--danger); border-color: var(--danger); }
 .btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
+.btn.primary.danger { background: var(--danger); border-color: var(--danger); color: var(--danger-soft); }
+.btn.primary.danger:hover:not(:disabled) { background: var(--danger); opacity: 0.88; }
 
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .button-row.end { justify-content: flex-end; }
@@ -312,8 +318,18 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 .jump-list .count.complete { color: var(--good); font-weight: 700; }
 /* the section on screen (ballot-nav.js, or page.js on the other pages, marks it as you scroll) */
 .jump-list a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
-/* in the sticky strip (a phone, or the pane folded): a row of chips */
-.progress-strip .jump-list { display: flex; align-items: center; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
+/* in the sticky strip (a phone, or the pane folded): a row of chips, scrolling sideways without a
+   scrollbar, faded at an edge with more beyond it (ballot-nav.js) */
+.progress-strip .jump-list { display: flex; align-items: center; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px;
+  scrollbar-width: none; }
+.progress-strip .jump-list::-webkit-scrollbar { display: none; }
+.progress-strip .jump-list.fade-start { -webkit-mask-image: linear-gradient(to right, transparent, #000 28px);
+  mask-image: linear-gradient(to right, transparent, #000 28px); }
+.progress-strip .jump-list.fade-end { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+.progress-strip .jump-list.fade-start.fade-end {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
 /* a chip as wide as the row at most: a long title ("Depends on your commissioner or JP precinct") wraps */
 .progress-strip .jump-list li { flex: none; max-width: 100%; }
 .progress-strip .jump-list a { border: 1px solid var(--line); border-radius: 999px; }
@@ -462,8 +478,40 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 /* ---- ballot area ---- */
 
-.welcome { padding: 28px 32px; margin-top: 8px; }
-.steps { margin: 16px 0 0; padding-left: 22px; display: grid; gap: 8px; }
+/* The entry card (entry-card.js), and the welcome above and under it, until there's a ballot */
+.welcome-head { max-width: 560px; margin: 8px 0 16px; }
+.welcome-head h1 { margin: 0 0 6px; }
+.welcome-head .lede { margin: 0; }
+.entry { max-width: 560px; margin-top: 8px; padding: 24px 28px; }
+.entry h2 { margin: 0 0 16px; font-size: 1.5rem; }
+.entry-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); background: var(--panel-2); }
+.entry-tab { padding: 8px 12px; border: 0; border-radius: calc(var(--radius-sm) - 2px); background: none; color: var(--muted);
+  font-weight: 600; cursor: pointer; }
+.entry-tab:hover { color: var(--text); }
+.entry-tab[aria-selected="true"] { background: var(--panel); color: var(--accent); box-shadow: var(--shadow); }
+.entry-tab:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+.entry-fields { display: grid; gap: 12px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.field-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.field-row > .field { flex: 1 1 180px; }
+.entry-fold > summary { width: max-content; max-width: 100%; color: var(--accent); font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+.entry-districts { min-width: 0; margin: 0; padding: 0; border: 0; }
+.entry-districts > legend { padding: 0; font-weight: 600; font-size: 0.9rem; }
+.entry-districts > .fine { margin-top: 2px; }
+.entry-districts .pair-grid { margin-top: 8px; }
+.vc-sketch { display: block; width: 100%; max-width: 320px; height: auto; margin: 10px 0 4px; font-family: inherit; }
+.vc-card { fill: var(--panel-2); stroke: var(--line-strong); }
+.vc-mark { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.vc-title { fill: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; }
+.vc-label { fill: var(--muted); font-size: 10px; font-weight: 600; }
+.vc-value { fill: var(--text); font-size: 12px; font-weight: 700; }
+.vc-line { stroke: var(--line-strong); stroke-width: 2; }
+.entry .status { margin: 0; }
+.entry form > .fine { margin: 0; }
+.welcome { max-width: 560px; margin: 4px 0 0; }
+.welcome-points { display: grid; gap: 10px; margin: 0; padding: 0 4px; list-style: none; }
+.welcome-points li { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.welcome-points .icon { width: 20px; height: 20px; color: var(--accent); }
 
 .ballot-head h1 { margin: 0; }
 .ballot-head p { margin: 2px 0 0; }
@@ -509,8 +557,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .district.not-up strong { background: var(--neutral-soft); }
 .district.missing strong { background: var(--warn-soft); color: var(--warn); font-weight: 650; }
 .district-note { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); }
-.precinct-prompt + .district-note, .district-warn + .district-note { margin-top: 8px; }
-.district abbr { text-decoration: none; }
+.district-warn + .district-note { margin-top: 8px; }
 .districts-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 8px; }
 .districts-card .districts-head h2 { margin: 0; }
 .district-actions { display: flex; gap: 2px; margin: -6px -8px -6px 0; }
@@ -520,16 +567,19 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .icon-only[aria-pressed="true"] { color: var(--accent); }
 .icon-only:disabled { opacity: 0.35; cursor: default; background: none; color: var(--muted); }
 .icon-only .icon { width: 16px; height: 16px; }
-/* a number open for editing: a box in its place, in the same line */
-/* while editing, a line's numbers sit in a row with even gaps, wrapping whole, without the dots */
-.district-line:has(.editing) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; line-height: 2; }
-.district-line:has(.editing) .sep { display: none; }
-.district.editing { font-weight: inherit; font-size: inherit; }
-/* a box the size of the number it stands for: no spinner, the text's height and weight */
-input.district-input { width: calc(3ch + 12px); height: 1.6em; padding: 0 5px; margin-left: 2px; font-size: inherit;
+/* Label-and-box pairs (pairBox in dom.js), for any form of short numbers: Your districts while
+   editing, each number's box in its place. A .pair-grid holds them in a row with even gaps,
+   wrapping whole, without the dots; on a phone, a two-column grid, each label over its box (see
+   the end of the file). Each box is the size of the number it stands for: no spinner, the text's
+   height and weight; on a touch screen, 44px tall with 16px text, so iOS doesn't zoom. */
+.pair-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; line-height: 2; }
+.pair-grid .sep { display: none; }
+.pair { white-space: nowrap; }
+input.pair-box { width: calc(3ch + 12px); height: 1.6em; padding: 0 5px; margin-left: 0.35em; font-size: inherit;
   font-weight: 650; line-height: 1; text-align: center; vertical-align: baseline; border-radius: 4px;
   appearance: textfield; -moz-appearance: textfield; }
-input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.district.editing { font-weight: inherit; font-size: inherit; }
 .districts-form .button-row { margin: 8px 0 0; align-items: center; }
 /* the map's legend: a button per district, right above it, that highlights the district */
 .map-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
@@ -592,9 +642,11 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .map-swatch .map-outline.sboe { stroke-dasharray: 6 2 1 2; }
 .map-swatch .map-outline.election_precinct { stroke-dasharray: 4.5 2.5 0.1 2.5 0.1 2.5; }
 [data-theme="dark"] .map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); } /* OpenStreetMap's tiles are light */
-.district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
+.district-warn { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
   background: var(--warn-soft); color: var(--warn); }
-.precinct-prompt .link-btn, .district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
+.district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
+.left-out p { margin: 0 0 4px; }
+.left-out .left-out-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0 0; }
 .precinct-link { margin: 0 0 12px; }
 
 .progress-strip {
@@ -616,31 +668,164 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.2s; }
 .progress { margin: 0; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
 #next-race { flex: none; }
+/* the race on screen, and More (more-sheet.js): narrow screens only (see the end of the file) */
+.strip-race, .progress-info .more-btn { display: none; }
 
-/* Options: a <details> whose panel drops down over the ballot. A dot on it while picked
-   races are hidden. */
+/* View: a <details> whose panel drops down over the ballot, in groups (How much detail, What matters
+   to you, Races) and a foot. A dot on it while picked races, or races without a match, are hidden. */
 .ballot-tools { align-items: center; }
 .tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .tool-divider { width: 1px; align-self: stretch; min-height: 24px; background: var(--line-strong); }
-.menu-actions { margin: 0 0 10px; }
+.menu-actions { margin: 4px 0 6px; }
 .menu { position: relative; }
 .menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; }
 .menu > summary::-webkit-details-marker { display: none; }
-.menu.filtered > summary::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.menu.filtered > summary::before, .menu.filtered-match > summary::before { content: "";width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .menu-panel { position: absolute; left: 0; top: calc(100% + 6px); z-index: 20; width: max-content; max-width: min(300px, calc(100vw - 32px));
   padding: 12px 14px 4px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pop); }
 .menu-panel .check { font-size: 0.9rem; }
-.menu-panel .seg { margin: 0 0 10px; }
-.menu-group { margin: 0 0 10px; padding: 0 0 6px; border: 0; border-bottom: 1px solid var(--line); }
+.menu-panel .seg { margin: 4px 0 0; }
+#view-panel { width: min(320px, calc(100vw - 32px)); max-width: none; }
+#view-focus .focus-chips { margin: 4px 0 4px; }
+.menu-group { margin: 0 0 10px; padding: 0 0 8px; border: 0; border-bottom: 1px solid var(--line); }
+.menu-group:has(+ .menu-more) { margin-bottom: 0; border-bottom: 0; }
 .menu-label { padding: 0; margin: 0 0 2px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--muted); }
 .menu-more { margin: 6px 0 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.85rem; }
 
-/* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
-   section stays, for its explanation and its link to the precinct form). */
-.race.hidden-picked { display: none; }
-.group:not(.maybe):not(:has(.race:not(.hidden-picked))) { display: none; }
+/* The focus chips (view.js): checkboxes drawn as chips, ticked when chosen, in View and More; on the
+   "What matters to you?" card and in Settings, a card each with its hint (.focus-option), two a row
+   on a wide screen */
+.focus-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.focus-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
+  font-size: 0.88rem; font-weight: 600; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
+  border-radius: 999px; cursor: pointer; }
+.focus-chip input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.focus-chip:hover { background: var(--neutral-soft); }
+.focus-chip:has(input:checked) { color: var(--text); background: var(--accent-soft); border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent); }
+.focus-chip:has(input:checked)::before { content: "✓"; }
+.focus-chip:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.focus-chips.focus-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.focus-option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--panel);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm); cursor: pointer; }
+.focus-option:hover { background: var(--neutral-soft); }
+.focus-option:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.focus-option input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--accent); cursor: pointer; }
+.focus-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.focus-option-label { font-size: 0.92rem; font-weight: 600; }
+.focus-option-hint { font-size: 0.82rem; line-height: 1.35; color: var(--muted); }
+/* the first-run card, right under the strip and above everything else on the ballot, so nothing above
+   it moves as the voter chooses */
+.focus-ask { margin: 12px 0 0; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line);
+  border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
+.focus-ask-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.focus-ask h2 { margin: 0; font-size: 1.05rem; }
+.focus-ask > .muted { margin: 2px 0 10px; font-size: 0.9rem; }
+.focus-ask-detail { margin: 14px 0 0; }
+.focus-ask-detail h3 { margin: 0 0 6px; font-size: 0.95rem; }
+.focus-ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 12px 0 0; }
+.focus-ask-foot .fine { margin: 0; }
+#focus-setting { margin-bottom: 14px; }
+#focus-setting h3 { margin: 0 0 4px; font-size: 0.95rem; }
+#focus-setting .focus-chips { margin: 8px 0 4px; }
+/* what a focus adds to the ballot: a poll mark on a section, a candidate's poll share, Compare in
+   a race's head, "See where they stand" under its candidates */
+.poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
+.poll-mark .icon { width: 13px; height: 13px; }
+.pill.poll-pill { background: var(--accent-soft); color: var(--accent); }
+.head-compare { flex: none; margin-top: -2px; gap: 4px; }
+.stance-link { margin: 8px 0 0; }
+
+/* "Only races I haven't picked" and the endorser bar's "Only races with a match": a section goes too
+   once all its races are hidden (a maybe section stays, for its explanation and its link to the
+   precinct form). */
+.race.hidden-picked, .race.hidden-nomatch { display: none; }
+.group:not(.maybe):not(:has(.race:not(.hidden-picked, .hidden-nomatch))) { display: none; }
+
+/* The endorser bar (endorser-bar.js), under the strip, never sticky; its chips are Pick by rule's,
+   an Avoid chip amber once chosen */
+.endorser-bar { margin: 8px 0 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+  border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
+.bar-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 8px; }
+.bar-head h2 { flex: 0 1 auto; margin: 0; font-size: 1.05rem; }
+.bar-head .help-link { margin-right: auto; }
+.bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 0; }
+.bar-head + .bar-row { margin-top: 0; }
+.bar-row > .muted { margin: 0; }
+.bar-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
+.bar-summary { margin: 10px 0 0; font-size: 0.9rem; font-weight: 600; }
+.bar-summary:empty { display: none; }
+.bar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 10px 0 0; }
+.bar-actions .check { margin: 0; font-size: 0.9rem; }
+.endorser-bar > .fine { margin: 8px 0 0; }
+/* what the bar marks: a match ringed in the accent; the others in a race with a match dimmed, still
+   readable and pickable, the row's line saying it in words; one to avoid outlined in amber, dashed */
+.cand.bar-match { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.cand.bar-match.picked { box-shadow: inset 4px 0 0 var(--pick), 0 0 0 2px var(--accent); }
+.cand.bar-dim { opacity: 0.7; }
+.cand.bar-dim:hover, .cand.bar-dim:focus-within { opacity: 1; }
+.cand.bar-avoid { border-color: var(--warn); border-style: dashed; box-shadow: 0 0 0 1px var(--warn); }
+.cand.bar-avoid.picked { box-shadow: inset 4px 0 0 var(--pick), 0 0 0 1px var(--warn); }
+.bar-why { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 6px 0 0 30px; font-size: 0.82rem; font-weight: 600; }
+.bar-by { display: inline-flex; align-items: center; gap: 5px; color: var(--accent); }
+.bar-by .icon { width: 13px; height: 13px; flex: none; }
+.bar-avoid-why { color: var(--warn); }
+.match-tag { flex: none; align-self: center; padding: 1px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+  white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
+.match-tag.none { background: var(--neutral-soft); color: var(--muted); }
+.match-mark { display: inline-flex; align-items: center; gap: 2px; vertical-align: -1px; margin-left: 5px; font-size: 0.75rem;
+  font-weight: 700; color: var(--accent); }
+.match-mark .icon { width: 12px; height: 12px; }
+/* an endorsement chip's menu (chipMenu in source-cards.js), a popover placed under the chip */
+.badge-caret { font-size: 0.7em; opacity: 0.8; }
+.chip-menu { inset: auto; margin: 0; padding: 6px; min-width: 12rem; max-width: calc(100vw - 16px); color: var(--text);
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); box-shadow: var(--shadow-pop); }
+.chip-menu:popover-open { display: flex; flex-direction: column; }
+.chip-menu > a, .chip-menu > .link-btn { display: flex; align-items: center; gap: 4px; padding: 8px 10px; border-radius: 6px; font-size: 0.9rem; text-align: left;
+  color: var(--text); text-decoration: none; }
+.chip-menu > a:hover, .chip-menu > .link-btn:hover { background: var(--neutral-soft); }
+
+/* Help (help.js): a "?" opening the FAQ's answer, a note over the page on a click or a tap (a pill's
+   reason, the Funding chips' colours), and the first-run tips, each under what it's about with its
+   arrow at it (--tip-x). The modes' caption and the line saying why some buttons wait. */
+.help-link { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 20px; height: 20px; padding: 0;
+  border: 1px solid var(--line-strong); border-radius: 50%; background: transparent; color: var(--muted); font-family: inherit;
+  font-size: 0.75rem; font-weight: 700; line-height: 1; text-decoration: none; cursor: pointer; vertical-align: middle; }
+.help-link:hover { color: var(--accent); border-color: var(--accent); }
+.line-title .help-link { width: 16px; height: 16px; margin-left: 5px; font-size: 0.68rem; vertical-align: 1px; }
+.details-nav .help-link { width: 26px; height: 26px; font-size: 0.85rem; }
+.sheet-label .help-link { margin-left: 2px; }
+.pop-note { inset: auto; margin: 0; padding: 10px 12px; width: max-content; max-width: min(320px, calc(100vw - 16px)); color: var(--text);
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); box-shadow: var(--shadow-pop);
+  font-size: 0.88rem; line-height: 1.4; }
+.pop-note p { margin: 0; }
+.pop-note p + p { margin-top: 6px; }
+.pop-note .badge { margin-right: 4px; }
+button.pill-btn { border: 0; font-family: inherit; line-height: inherit; cursor: pointer; text-decoration: underline dotted;
+  text-underline-offset: 2px; }
+button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 0 0 0 1px var(--line-strong);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 40%, transparent); }
+.badge-chevron { margin-left: -1px; font-size: 1.1em; line-height: 1; opacity: 0.8; }
+.tip-row { flex: 1 1 100%; min-width: 0; }
+.tip { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; width: fit-content; max-width: 100%;
+  margin: 10px 0 2px; padding: 8px 10px 8px 14px; color: var(--text); background: var(--accent-soft); border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); font-size: 0.88rem; }
+.tip::before { content: ""; position: absolute; top: -6px; left: calc(var(--tip-x, 24px) - 5px); width: 10px; height: 10px;
+  background: inherit; border: solid var(--accent); border-width: 1px 0 0 1px; transform: rotate(45deg); }
+.tip p { margin: 0; flex: 1 1 14rem; }
+.tip .btn { flex: none; }
+.cand > .tip-row .tip { margin-left: 30px; max-width: calc(100% - 30px); }
+.ballot-tools .wait-note { flex: 1 1 100%; margin: 0; }
+.mode-caption, .sheet-section .wait-note { margin: 6px 0 0; }
+.sheet-section .focus-chips { margin: 10px 0 4px; }
+/* after Pick by rule's Apply: the rule in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
+.rule-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; border-left-color: var(--accent); }
+.rule-banner > p { margin: 0; flex: 1 1 20rem; }
+.rule-banner > .rule-banner-actions { flex: none; display: flex; gap: 14px; }
+.rule-banner > .close { align-self: flex-start; }
 
 /* While a lookup runs: "Finding your ballot" until the races are known, then a line along the
    strip until their cards are in. Each has a bar that moves, since how long is never known. The
@@ -656,13 +841,16 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .cards-loading { order: 1; flex: 1 1 100%; display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted);
   animation: appear 0.2s 0.4s both; }
 @keyframes appear { from { opacity: 0; } }
+/* without movement, the whole bar pulses, so it never looks stuck */
+@keyframes pulse { from { opacity: 0.15; } to { opacity: 0.85; } }
 @media (prefers-reduced-motion: reduce) {
-  .loading-bar::after { width: 100%; animation: none; opacity: 0.5; }
+  .loading-bar::after { width: 100%; animation: pulse 1.4s ease-in-out infinite alternate; }
   .cards-loading { animation: none; }
 }
 
 /* A message at the foot of the window ("Cleared your picks and notes. Undo"; toast.js). Empty,
-   it's invisible but stays in the page, so each new message is announced. */
+   it's invisible but stays in the page, so each new message is announced. On a phone it clears the
+   home indicator (see the end of the file). */
 .toast { position: fixed; left: 50%; bottom: calc(var(--footer-h, 0px) + 12px); z-index: 40; transform: translateX(-50%); display: flex; align-items: center; gap: 16px;
   width: max-content; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: var(--radius-sm); background: var(--text); color: var(--bg);
   box-shadow: var(--shadow-pop); font-size: 0.92rem; }
@@ -707,7 +895,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .race.collapsed { content-visibility: visible; }
 .race.has-pick { border-left-color: var(--pick); }
 
-/* The heading stays under the strip (--strip-h, ballot.js) until its card has scrolled by. */
+/* The heading stays under the strip (--strip-h, ballot-nav.js) until its card has scrolled by.
+   Not on narrow screens, where the strip names the race instead. */
 .race-head { position: sticky; top: var(--strip-h, 0px); z-index: 1; display: flex; align-items: flex-start; gap: 12px;
   padding: 13px 16px; background: var(--panel); }
 .race:not(.collapsed) .race-head { border-bottom: 1px solid var(--line); }
@@ -779,6 +968,12 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .cand-grid .cand-sub { margin: 0; }
 .cand-grid > .cand-profile { grid-area: profile; justify-self: start; }
 .cand-grid > .cand-actions { grid-area: actions; margin-left: 0; }
+/* a phone's "…" for Note, Ban and Search (candidateRow), only outside Detailed */
+.icon-btn.row-more { display: none; padding: 2px 12px; font-size: 1rem; line-height: 1.2; }
+/* the write-ins with nothing to show, on one line at the end of the race (quietWriteIns) */
+.writeins-line { display: flex; align-items: baseline; gap: 4px 10px; padding: 4px 12px; font-size: 0.88rem; }
+.writeins-names { min-width: 0; color: var(--muted); }
+.writeins-names .link-btn { white-space: normal; text-align: left; }
 .icon-btn.profile-btn { padding: 1px 9px; font-size: 0.76rem; line-height: 1.3; background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
 .icon-btn.profile-btn:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-contrast); }
 
@@ -816,6 +1011,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .badge-line .badges { margin: 0; }
 .lines-toggle:not([hidden]) + .cand-lines-body { margin-top: 6px; }
 .panel-funding { margin: 8px 0; }
+/* the Funding line's "+3 more", only on a phone outside Detailed (fundingLine) */
+.funding-line .more-chips { display: none; }
 .badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 6px; padding: 2px 8px; font-size: 0.78rem;
   font-weight: 600; background: var(--neutral-soft); color: var(--text); }
 a.badge-link { text-decoration: none; }
@@ -857,12 +1054,14 @@ dialog {
   color: var(--text);
   padding: 0;
   box-shadow: var(--shadow-pop);
+  overscroll-behavior: contain;
 }
 dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
-/* the page stays put behind a modal: scrolling past a dialog's end doesn't scroll the ballot, and
-   the gutter keeps the page from shifting when its scrollbar goes */
+/* the page stays put behind a modal: scrolling past a dialog's end doesn't scroll the ballot (nor,
+   on iOS, bounce it: overscroll-behavior above), and the gutter keeps the page from shifting when
+   its scrollbar goes. Heights are of what's visible (dvh), so a phone's toolbar never hides a foot. */
 html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
-.details { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 10vh); margin: 5vh auto auto; }
+.details { width: min(720px, calc(100vw - 32px)); max-height: 90vh; max-height: 90dvh; margin: 5vh auto auto; }
 .details-head { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
 .details-title { flex: 1; min-width: 0; }
 .details-title h2 { margin: 0 0 2px; }
@@ -873,14 +1072,17 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
 .stances .badges { margin: 0; }
 /* a box on a Details tab (foldSection): a source on Profile or Endorsements, an issue group, a money breakdown;
-   folded, its name and what's beside it (a "?", an endorsement's chips) */
+   its title line is its name and what's beside it (a "?", an endorsement's chips, at the right its match and date) */
 .source-section { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); margin: 0 0 8px; }
 .source-section > summary { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 10px 12px;
   cursor: pointer; font-weight: 650; }
 .source-section > summary::-webkit-details-marker { display: none; }
 .source-section > summary:hover .source-section-name { color: var(--accent); }
 .source-section .likely-flag { margin-left: 0; }
-.source-section[open] > summary .badge { display: none; }
+.source-section.tone-good { border-left: 3px solid var(--good); }
+.source-section.tone-warn { border-left: 3px solid var(--warn); }
+.source-section .section-meta { margin-left: auto; font-size: 0.8rem; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.match-line { margin: 4px 0 8px; font-size: 0.85rem; color: var(--warn); }
 .source-section > .section-body { padding: 0 12px 10px; }
 .stances .badge-link { font-size: 0.85rem; padding: 4px 10px; }
 .details-tabs { padding: 0 20px; }
@@ -890,7 +1092,8 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .details-tabs > .tabs { position: sticky; top: var(--head-h, 0px); z-index: 2; background: var(--panel); }
 .details-foot { position: sticky; bottom: 0; z-index: 2; background: var(--panel); }
 /* Details' head (details.js) has Search and Pick beside ‹ › ✕ and the name in its party's colour.
-   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons' icons. */
+   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons; on a phone, Search
+   and Ban keep only their icons, and Pick its word. */
 .cand-details .details-head { transition: padding 0.15s; }
 .cand-details .details-head .avatar { transition: width 0.15s, height 0.15s, font-size 0.15s; }
 .details-actions { display: flex; gap: 6px; flex: none; }
@@ -901,7 +1104,7 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .compact .details-head { align-items: center; gap: 10px; padding: 8px 20px; }
 .compact .details-head .avatar.large { width: 32px; height: 32px; font-size: 0.8rem; }
 .compact .details-title h2 { margin: 0; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.compact .details-title p, .compact .btn-word { display: none; }
+.compact .details-title p { display: none; }
 .compact .details-actions .btn { padding: 6px 8px; }
 .compact .icon-btn.step { padding: 2px 11px 6px; }
 @media (prefers-reduced-motion: reduce) { .cand-details .details-head, .cand-details .details-head .avatar { transition: none; } }
@@ -966,6 +1169,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .breakdown-head .breakdown-title { margin: 0; }
 /* the box's corner (Compare funding, the source, the polls) stays at the right, also under a long title */
 .breakdown-head > :not(.breakdown-title) { margin-left: auto; }
+/* an open box's period and date, beside its title; the corner stays at the right, and on a phone it wraps under the title */
+.breakdown-head > .box-asof { margin-left: 0; color: var(--muted); font-size: 0.76rem; text-transform: none; letter-spacing: normal; }
 .compare-btn { color: var(--accent); border-color: var(--accent); }
 .compare-btn:hover:not(:disabled) { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--accent-soft); }
 .compare-btn .icon { width: 14px; height: 14px; }
@@ -984,7 +1189,22 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend .rest { color: var(--muted); }
 .stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
-.box-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.box-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
+.box-count { font-size: 0.82rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+
+/* Details' Polls tab (pollsPanel): the median large beside one bar, then a bar per poll on 0-100
+   in the candidate's party colour, the median a line across them. A margin's rival shows as text
+   only where there's no hover for its tooltip. */
+.poll-median, .poll-rows .share { --bar: var(--party, var(--party-other-pick)); }
+.poll-median { display: flex; align-items: center; gap: 14px; }
+.poll-median-value { font-size: 1.9rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.poll-median .bar { height: 12px; }
+.poll-median .bar span { background: var(--bar); transition: none; }
+.poll-rows.marked .bar { position: relative; overflow: visible; }
+.poll-rows.marked .bar::after { content: ""; position: absolute; left: var(--mark); top: -3px; bottom: -3px; width: 2px;
+  margin-left: -1px; border-radius: 1px; background: var(--text); opacity: 0.6; }
+.share-versus { margin-left: 6px; color: var(--muted); font-size: 0.8rem; }
+@media (hover: hover) { .share-versus > [aria-hidden="true"] { display: none; } }
 
 /* ---- compare dialog ---- */
 
@@ -995,8 +1215,10 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
    so every bar starts on the same line. */
 .compare { width: min(960px, calc(100vw - 32px)); }
 .compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--party, var(--party-other-pick)); } /* no party, or one without a colour: white (dark ink on the light theme) */
-.cmp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 20px; border-bottom: 1px solid var(--line);
-  background: var(--panel-2); }
+/* Dollars | Share stays under the head as the dialog scrolls; the tabs under it scroll away */
+.cmp-controls { position: sticky; top: var(--head-h, 0px); z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+  padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--panel-2); }
+.compare .details-tabs > .tabs { position: static; }
 .cmp-controls .fine { flex: 1 1 260px; margin: 0; }
 .seg { display: inline-flex; gap: 2px; margin: 0; padding: 2px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel); }
 .seg-option { position: relative; padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--muted);
@@ -1025,7 +1247,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .cmp-bar .bar { height: 10px; border-radius: 3px; }
 .cmp-bar .bar span { width: var(--w-dollars); background: var(--bar); }
 .compare[data-scale="share"] .has-shares .cmp-bar .bar span { width: var(--w-share); }
-.cmp-name { overflow: hidden; color: var(--muted); white-space: nowrap; text-overflow: ellipsis; }
+.cmp-name { color: var(--muted); overflow-wrap: anywhere; }
 .cmp-amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
 .cmp-count { color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
 
@@ -1049,27 +1271,51 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .cmp-entry.shared { background: var(--info-soft); }
 .cmp-entry.linked { box-shadow: 0 0 0 2px var(--info); }
 
-.small-dialog { width: min(460px, calc(100vw - 32px)); }
+.small-dialog { width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); }
 .small-dialog form { padding: 20px; }
+/* the buttons stay in view while a short screen scrolls the dialog (Print my picks held sideways) */
+.small-dialog form > .button-row:last-child { position: sticky; bottom: 0; margin: -8px 0 -20px; padding: 8px 0 20px;
+  background: var(--panel); }
+.confirm-dialog h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.confirm-body { margin: 0 0 18px; color: var(--text); line-height: 1.5; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
 .check input { margin-top: 4px; accent-color: var(--accent); }
 .print-layout { border: 0; margin: 0 0 6px; padding: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
+
+/* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */
+.sheet { width: min(560px, 100%); max-width: none; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto auto 0;
+  border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0;
+  padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+.sheet form { padding: 0 16px 12px; }
+.sheet-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 0 8px; background: var(--panel); }
+.sheet-head h2 { margin: 0; font-size: 1.1rem; }
+.sheet-section { padding: 10px 0; border-top: 1px solid var(--line); }
+.sheet-label { margin: 0 0 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.sheet-section .seg { display: flex; }
+.sheet-section .seg-option { flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 44px; }
+.sheet-action { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 0 8px; border: 0;
+  border-radius: var(--radius-sm); background: none; color: var(--text); font-weight: 600; text-align: left; cursor: pointer; }
+.sheet-action:hover:not(:disabled) { background: var(--neutral-soft); }
+.sheet-action .icon { width: 18px; height: 18px; color: var(--accent); }
+.sheet-action.danger, .sheet-action.danger .icon { color: var(--danger); }
+.sheet-action:disabled { opacity: 0.55; cursor: not-allowed; }
 
 /* ---- Pick by rule (pick-rule-dialog.js) ---- */
 /* The rule on the left, what it would do on the right, each scrolling on its own; the heading,
    Apply to and the buttons stay put. Under 800px, one column that scrolls whole. */
 .rules { width: min(1000px, calc(100vw - 32px)); }
 .rules[open] { display: flex; flex-direction: column; overflow: hidden; }
-.rule-bar { display: flex; align-items: center; gap: 8px 12px; padding: 10px 20px; border-bottom: 1px solid var(--line);
+.rule-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 20px; border-bottom: 1px solid var(--line);
   background: var(--panel-2); }
-.rule-bar select { width: auto; min-width: 0; max-width: 24rem; flex: 0 1 auto; padding: 6px 9px; }
+.rule-bar select { width: auto; min-width: 0; max-width: min(24rem, 100%); flex: 0 1 auto; padding: 6px 9px; }
 .rule-label { flex: none; font-weight: 600; }
 .rule-reset { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; }
 .rule-reset .icon { width: 14px; height: 14px; }
-.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
-.rule-form { overflow-y: auto; padding: 2px 20px 18px; }
-.rule-preview { overflow-y: auto; padding: 16px 18px; border-left: 1px solid var(--line); background: var(--panel-2); }
+.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; overscroll-behavior: contain; }
+.rule-form { overflow-y: auto; overscroll-behavior: contain; padding: 2px 20px 18px; }
+.rule-preview { overflow-y: auto; overscroll-behavior: contain; padding: 16px 18px; border-left: 1px solid var(--line); background: var(--panel-2); }
 .rule-preview h3 { margin: 0 0 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .rule-preview h3:not(:first-child) { margin-top: 16px; }
 .rule-words { margin: 0 0 8px; padding-left: 10px; border-left: 3px solid var(--line-strong); font-size: 0.92rem; line-height: 1.45; }
@@ -1106,8 +1352,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .rule-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 .rule-row .check { margin: 6px 0; flex: 0 1 auto; }
 .rule-row.stacked .rule-inputs { flex-basis: 100%; margin: -2px 0 6px 26px; }
-.rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.rule-inputs select { width: auto; padding: 6px 9px; }
+.rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.rule-inputs select { width: auto; max-width: 100%; padding: 6px 9px; }
 .rule-amount-wrap { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
 input.rule-amount { width: 7.5em; padding: 6px 9px; }
 input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
@@ -1121,6 +1367,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 .rule-chip[aria-pressed="true"]::before { content: "✓"; }
 .rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
 .rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.rule-combine { margin: 8px 0 0; }
 .rule-form > .fine { margin: 12px 0 0; }
 .rule-how { margin: 12px 0 0; font-size: 0.85rem; color: var(--muted); }
 .rule-how > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
@@ -1133,7 +1380,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (max-width: 640px) {
   .rules .details-title p { display: none; }
   .rule-bar { padding: 8px 16px; }
-  .rule-bar select { flex: 1 1 auto; }
+  .rule-bar select { flex: 1 1 0; max-width: 100%; }
   .rule-form { padding: 2px 16px 16px; }
   .rule-preview { padding: 14px 16px; }
   .rule-set { padding: 0 12px 8px; }
@@ -1144,7 +1391,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .rules .details-foot .btn { flex: 1 1 auto; justify-content: center; padding-inline: 12px; font-size: 0.9rem; }
   .rules .details-foot .btn.primary { order: -1; flex-basis: 100%; }
 }
-.rule-btn { flex: none; display: inline-flex; align-items: center; margin-top: -2px; padding: 5px 8px; }
+.rule-btn { flex: none; display: inline-flex; align-items: center; gap: 5px; margin-top: -2px; padding: 5px 8px; }
 .rule-btn .icon { width: 14px; height: 14px; }
 
 /* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
@@ -1161,14 +1408,55 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .side-inner > :not(.brand, .topbar-buttons) { flex: 1 1 100%; }
   .sidebar:not([data-open="address"]) .side-address, .sidebar:not([data-open="menu"]) :is(.site-nav, .page-sections) { display: none; }
   .side-address { margin-top: 0; padding-bottom: 6px; }
+  /* with a ballot showing, "Change" opens the entry card here, without its own frame */
+  .side-address .entry { max-width: none; margin: 0; padding: 4px 0 0; border: 0; box-shadow: none; background: none; }
+  .side-address .entry h2 { margin-bottom: 12px; font-size: 1.1rem; }
   .side-bottom { margin-top: 0; }
-  .content { padding: 20px 16px calc(var(--footer-h, 52px) + 24px); }
+  .content { padding: 20px 16px calc(var(--footer-h, 52px) + 24px + var(--toast-space, 0px)); }
   .pane-toggle { display: none; }
   .site-footer { left: 0; }
   .site-footer p { padding: 0 16px; }
-  .to-top { right: 16px; }
+  .to-top { right: calc(16px + env(safe-area-inset-right, 0px)); }
   .ballot-tools { margin: 12px 0 4px; }
   .section-chips { display: block; margin: -12px -16px 12px; padding: 8px 16px; }
+
+  /* The strip, slim (ballot-nav.js): the section chips on top, then one line with the race on
+     screen over the progress, Next and More, the bar along the strip's foot. Scrolling down, the
+     strip slides up by the chips' row (--chips-shift); any scroll up brings it back. The race
+     headings don't stick, so they never cover the top of a card. */
+  .progress-strip { row-gap: 6px; padding: 6px 0 9px; transition: transform 0.2s ease; }
+  .progress-strip.chips-away { transform: translateY(calc(-1 * var(--chips-shift, 0px))); }
+  .progress-strip > #jump { order: -1; }
+  .progress-info { flex: 1 1 100%; gap: 8px; }
+  .progress-info .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 0; }
+  .progress-text { flex: 1 1 auto; min-width: 0; min-height: 2.4rem; display: flex; flex-direction: column; justify-content: center; }
+  .strip-race { display: block; margin: 0; font-weight: 700; font-size: 0.9rem; line-height: 1.25;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .strip-race:empty { display: none; }
+  .progress { overflow: hidden; text-overflow: ellipsis; }
+  .strip-race:not(:empty) + .progress { font-size: 0.78rem; font-weight: 500; line-height: 1.25; color: var(--muted); }
+  .progress-info .more-btn { display: inline-flex; flex: none; }
+  /* while the cards load, a moving line along the strip's foot; its words for screen readers only */
+  .cards-loading { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; gap: 0; }
+  .cards-loading > span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .cards-loading .loading-bar { height: 3px; border-radius: 0; }
+  .race-head { position: static; }
+}
+@media (max-width: 960px) and (prefers-reduced-motion: reduce) { .progress-strip { transition: none; } }
+
+/* ---- phones, upright or held sideways ---- */
+
+@media (max-width: 640px), (max-width: 960px) and (max-height: 500px) {
+  /* the footer ends the page instead of staying pinned, so the screen is left to the ballot */
+  html { scroll-padding-bottom: 0; }
+  .site-footer { position: static; }
+  .site-footer p { padding-right: 68px; } /* clear of Back to top */
+  .content { padding-bottom: calc(24px + var(--toast-space, 0px)); }
+  /* clear of the home indicator */
+  .to-top { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .toast { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .details { max-height: calc(100dvh - 16px); margin-top: 8px; }
 }
 
 /* ---- the left pane folded (chrome.js): a rail of icons, each name a tooltip ---- */
@@ -1190,15 +1478,11 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 
 @media (max-width: 640px) {
   h1 { font-size: 1.45rem; }
-  .panel, .welcome { padding: 16px; }
-  /* the footer ends the page instead of staying pinned, so the screen is left to the ballot */
-  html { scroll-padding-bottom: 0; }
-  .site-footer { position: static; }
-  .site-footer p { padding-right: 68px; } /* clear of Back to top */
-  .content { padding-bottom: 24px; }
-  .to-top { bottom: 16px; }
-  .toast { bottom: 12px; }
-  /* the toolbar's buttons a size down, so they take two lines; Options opens from the toolbar's
+  .panel { padding: 16px; }
+  .entry .button-row .btn { flex: 1 1 auto; }
+  .confirm-dialog .button-row { flex-direction: column; }
+  .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
+  /* the toolbar's buttons a size down, so they take two lines; View opens from the toolbar's
      left edge, where it always fits on the screen */
   .ballot-tools, .ballot-tools .tool-group { gap: 6px; }
   .progress-strip .btn.small, .ballot-tools .btn.small { padding: 5px 9px; font-size: 0.8rem; }
@@ -1206,12 +1490,15 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .ballot-tools .icon { width: 14px; height: 14px; }
   #view-controls { position: relative; }
   #view-menu { position: static; }
-  /* the strip: the bar, the count (wrapping if need be) and Next on one line, then the section chips */
-  .progress-strip { gap: 8px; padding: 8px 0; }
-  .progress-info { gap: 10px; }
-  .progress-info .bar { min-width: 40px; }
-  .progress { flex: 0 1 auto; min-width: 0; white-space: normal; font-size: 0.85rem; }
+  .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
+  .head-compare .btn-word, .rule-btn .btn-word { display: none; }
+  .head-compare { padding: 4px 9px; }
+  .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
+  /* Your districts while editing, and any .pair-grid: two columns, each label over its box */
+  .pair-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 10px 12px; line-height: 1.3; }
+  .pair-grid > :not(.sep) { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; white-space: normal; }
+  input.pair-box { width: 100%; height: 44px; margin: 0; }
   /* the race cards: less padding, so each candidate's row has more room */
   .race-head { gap: 10px; padding: 10px 12px; }
   .race.collapsed .race-head { padding-top: 9px; padding-bottom: 9px; }
@@ -1231,12 +1518,26 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   /* the buttons, pills and chips a size down, each still at least 22px tall */
   .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: 0.78rem; }
   .cand-profile .profile-btn { padding: 4px 11px; font-size: 0.78rem; line-height: inherit; } /* as tall as Note and Ban beside it */
+  /* outside Detailed, a lighter row: Note, Ban and Search behind "…" at the right of Profile,
+     opening on a line of their own, and the Funding line's first chip with "+3 more" */
+  :root:not([data-view-mode="detailed"]) .cand-grid { grid-template-areas: "pick photo name name" "profile profile profile more"; }
+  :root:not([data-view-mode="detailed"]) .cand.actions-open .cand-grid {
+    grid-template-areas: "pick photo name name" "profile profile profile more" "actions actions actions actions"; }
+  :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { grid-area: more; justify-self: end; display: inline-flex;
+    align-items: center; justify-content: center; }
+  :root:not([data-view-mode="detailed"]) .cand:not(.actions-open) .cand-grid > .cand-actions { display: none; }
+  :root:not([data-view-mode="detailed"]) .funding-line:not(.open) .badge-line { flex-direction: row; align-items: center; }
+  :root:not([data-view-mode="detailed"]) .funding-line:not(.open) .badges > li:nth-child(n+3) { display: none; }
+  :root:not([data-view-mode="detailed"]) .funding-line:not(.open) .more-chips { display: block; }
+  .writeins-line { padding: 2px 10px; }
   .party { padding: 1px 7px; font-size: 0.66rem; }
   .pill { padding: 1px 7px; font-size: 0.72rem; }
   .badges { gap: 5px; }
   .badge { padding: 2px 7px; font-size: 0.74rem; }
   .line-title { font-size: 0.76rem; }
-  .badges, .note, .cand-lines { margin-left: 0; }
+  .badges, .note, .cand-lines, .bar-why { margin-left: 0; }
+  .endorser-bar { padding: 10px 12px; }
+  .bar-actions .btn { flex: 1 1 auto; justify-content: center; }
   .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
@@ -1263,6 +1564,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .compact .details-title h2 { font-size: 0.95rem; line-height: 1.15; white-space: normal; display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .compact .details-actions .btn { padding: 6px 7px; }
+  .compact .details-actions .btn:not(.primary) .btn-word { display: none; }
   .compact .icon-btn.step { padding: 2px 8px 6px; }
   .compact .icon-btn.close { padding: 4px 8px; }
   .cmp-controls { padding: 10px 16px; }
@@ -1291,6 +1593,41 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .data-table.stack tbody tr:last-child { border-bottom: 0; }
   .data-table.stack th, .data-table.stack td { border: 0; padding: 2px 0; }
   .data-table.stack td::before { content: attr(data-label) ": "; color: var(--muted); font-weight: 600; }
+}
+
+/* ---- touch screens: every control at least 44px tall, as Apple and Android ask, by padding
+   rather than bigger text. Chips and links in a line of text stay their size, with a 44px hit area
+   drawn around them (::after). ---- */
+
+@media (pointer: coarse) {
+  .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .measure-option, .switch, .check, .site-nav a, .jump-list a,
+  .race-toggle, .box-toggle, .map-toggle, .entry-tab, .chip-menu > a, .chip-menu > .link-btn,
+  input[type="text"], input[type="number"], select { min-height: 44px; }
+  a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
+  .seg-option { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  .toast .link-btn { margin-block: -10px; }
+  .icon-only { min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+  .check { align-items: center; margin: 2px 0; }
+  .check input { margin-top: 0; }
+  .box-toggle { align-items: center; }
+  .jump-list a { align-items: center; }
+  .suggestion { padding-block: 12px; }
+  .mail-voting > summary, .rule-details > summary, .rule-how > summary, .entry-fold > summary { padding-block: 10px; }
+  .district-warn .link-btn { vertical-align: middle; }
+  input.pair-box { font-size: 16px; min-width: calc(3ch + 24px); }
+  .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
+  .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
+  .icon-btn.row-more { min-width: 44px; }
+  button.badge-btn, a.badge-link, .cal-link, .ban-remove, .help-link, button.pill-btn { position: relative; }
+  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after, .help-link::after, button.pill-btn::after { content: "";
+    position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+  /* the strip's section chips: 44px tall, the pill drawn inside at its usual size */
+  .progress-strip .jump-list a, .progress-strip .jump-list a:hover, .progress-strip .jump-list a[aria-current] {
+    position: relative; border-color: transparent; background: none; }
+  .progress-strip .jump-list a::before { content: ""; position: absolute; inset: 6px 0; z-index: -1; border: 1px solid var(--line);
+    border-radius: 999px; }
+  .progress-strip .jump-list a:hover::before { background: var(--neutral-soft); }
+  .progress-strip .jump-list a[aria-current]::before { border-color: var(--accent); background: var(--accent-soft); }
 }
 
 /* ---- print: only the picks sheet ---- */

@@ -1,14 +1,14 @@
 // What every page shares: the left pane, drawn into the page's <aside class="sidebar"> (the
 // brand, "Your ballot", the address card, then the other pages at the foot), the footer pinned
 // to the bottom of the window, and Back to top. A page can put its own parts in the aside: those
-// marked data-slot="address" go under the address card (the ballot's form and status line),
+// marked data-slot="address" go under the address card (the ballot's hint, before an address),
 // anything else goes above the other pages (a page's section list). Each page's entry script
 // calls initChrome() before its own code looks for the pane.
 //
 // Wider than 960px, « folds the pane into a rail of icons (remembered as paneCollapsed in
 // pallot.ui.v1); the ballot then shows its sections as chips in the strip (onPaneToggle).
 
-import { h, onFrame, trackHeight } from "./dom.js";
+import { extLink, h, onFrame, trackHeight } from "./dom.js";
 import { icon, logo } from "./icons.js";
 import { setUiPref, uiPref } from "./storage.js";
 import { initTopBar } from "./topbar.js";
@@ -50,7 +50,7 @@ export function onPaneToggle(listener) {
 }
 
 // Folds the pane to its rail of icons, or unfolds it. In the rail each link's name is a tooltip.
-export function setPaneCollapsed(collapsed) {
+function setPaneCollapsed(collapsed) {
   const changed = collapsed !== isPaneCollapsed();
   document.documentElement.classList.toggle("pane-collapsed", collapsed);
   const label = collapsed ? "Expand the left pane" : "Collapse the left pane";
@@ -101,11 +101,12 @@ function renderSidebar(sidebar) {
 // The running version as `git describe` writes it (v1.1.1-g1a2b3c4): in the footer, and in any
 // element marked data-version (About's credits).
 const VERSION_LABEL = COMMIT ? `v${VERSION}-g${COMMIT}` : `v${VERSION}`;
+const CONTACT = "admin@just-peace.org";
 
 function renderFooter(app) {
   const footer = h("footer", { class: "site-footer" },
     h("p", {}, "Pallot is an unofficial helper: always check your county's official sample ballot. · ",
-      h("a", { href: "about.html#sources" }, "Sources"), ` · ${VERSION_LABEL}`));
+      h("a", { href: "about.html#sources" }, "Sources"), " · ", extLink(`mailto:${CONTACT}`, CONTACT), ` · ${VERSION_LABEL}`));
   app.after(footer);
   trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
 }

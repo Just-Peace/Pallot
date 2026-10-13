@@ -91,9 +91,7 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
     badges = [Badge(text=f"Vote for Peace: {label}", tone=_TONES.get(rating or "", "neutral"), url=page,
                     hint="Ally, Neutral or Opposed, as Vote for Peace marks them")]
 
-    facts = [Fact(label="Vote for Peace says", value=label), Fact(label="Office on Vote for Peace", value=office_text(person))]
-    if person.get("party"):
-        facts.append(Fact(label="Party on Vote for Peace", value=person["party"]))
+    facts = [Fact(label="Office", value=office_text(person), url=page)]  # its rating is the chip's
     if person.get("election_label"):
         facts.append(Fact(label="Election", value=person["election_label"]))
     if person.get("election_result") not in (None, "pending"):

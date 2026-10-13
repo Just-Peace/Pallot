@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pallot · Your ballot</title>
   <meta name="description" content="See every race on your ballot, research candidates across sources, pick, take notes and print your picks.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -15,31 +15,7 @@
   <a class="skip" href="#main">Skip to the ballot</a>
   <div class="app">
     <aside class="sidebar" aria-label="Your ballot, address and pages">
-      <form id="lookup-form" class="lookup-form" data-slot="address">
-        <div class="field">
-          <label for="address">Home address</label>
-          <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
-                 placeholder="1100 Congress Ave, Austin, TX 78701">
-        </div>
-        <div class="field">
-          <label for="election">Election</label>
-          <select id="election"><option value="">Next election</option></select>
-        </div>
-        <div class="field" id="party-field" hidden>
-          <label for="party">Primary ballot</label>
-          <select id="party">
-            <option value="">Choose a party</option>
-            <option value="D">Democratic</option>
-            <option value="R">Republican</option>
-          </select>
-        </div>
-        <div class="button-row">
-          <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
-          <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
-        </div>
-        <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and, if it can't match it, to OpenStreetMap and then Google, if this Pallot has a Google key; its location goes to Ballotpedia, if it's on) to find your districts, and is remembered in this browser. As you type, it's also sent to Ballotpedia for suggestions, unless they're off in Settings. More in <a href="privacy.html">Privacy</a>.</p>
-      </form>
-      <p id="status" data-slot="address" class="status" role="status" aria-live="polite"></p>
+      <p id="entry-hint" class="muted small" data-slot="address">Enter your address to see your ballot.</p>
       <nav class="side-section" id="jump" aria-labelledby="jump-title" hidden>
         <h2 class="side-title" id="jump-title"><span data-icon="list"></span>Sections</h2>
         <ul class="jump-list" id="jump-list"></ul>
@@ -47,21 +23,100 @@
     </aside>
 
     <main id="main" class="content">
-      <section id="welcome" class="panel welcome" aria-labelledby="welcome-title">
-        <h1 id="welcome-title">Your ballot, race by race</h1>
-        <p class="lede">Enter your home address to see every race you'll vote in.</p>
-        <ol class="steps">
-          <li><strong>Compare sources.</strong> Each candidate shows how much money they've raised and from whom, what the state's filings, Ballotpedia, TrackAIPAC and Vote for Peace say<span data-endorsements="clause"></span>, and where they stand in public polls, plus a web search. A race says when its seat is open, and which party holds it now.</li>
-          <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
-          <li><strong>Know the dates and your districts.</strong> The top of the ballot has the last day to register, early voting and Election Day, to add to your calendar, and your districts and election precinct, with a map of them. In seven of the largest counties, your commissioner and JP precincts too.</li>
-          <li><strong>Print your picks</strong> and take the sheet with you to vote.</li>
-        </ol>
+      <header id="welcome-head" class="welcome-head" data-welcome hidden>
+        <h1>Welcome to Pallot</h1>
+        <p class="lede">Look up your ballot to see every race on it and research each candidate before you vote. No account, ads or tracking: your picks stay in this browser.</p>
+      </header>
+
+      <section id="entry" class="panel entry" aria-labelledby="entry-title" hidden>
+        <h2 id="entry-title">See your ballot, race by race</h2>
+        <form id="lookup-form" class="lookup-form">
+          <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by" hidden>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">My address</button>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-card" aria-controls="entry-voter-card">My voter card</button>
+          </div>
+          <div id="entry-address" aria-labelledby="entry-tab-address">
+            <fieldset class="entry-fields">
+              <div class="field">
+                <label for="address">Home address</label>
+                <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
+                       placeholder="1100 Congress Ave, Austin, TX 78701">
+              </div>
+            </fieldset>
+          </div>
+          <div id="entry-voter-card" aria-labelledby="entry-tab-card" hidden>
+            <fieldset class="entry-fields" disabled>
+              <div class="field-row">
+                <div class="field">
+                  <label for="vc-county">County</label>
+                  <input id="vc-county" name="county" type="text" autocomplete="off" required maxlength="40" placeholder="Travis" list="vc-counties">
+                  <datalist id="vc-counties"></datalist>
+                </div>
+                <div class="field">
+                  <label for="vc-precinct">Precinct number</label>
+                  <input id="vc-precinct" name="precinct" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"
+                         required maxlength="8" pattern="[0-9A-Za-z]{1,8}" title="The precinct number on your card, such as 300 or 101A" placeholder="300">
+                </div>
+              </div>
+              <fieldset class="entry-districts">
+                <legend>More districts (optional)</legend>
+                <p class="fine">Fill in any your card lists, for races your precinct alone doesn't settle.</p>
+                <div class="pair-grid" id="vc-districts"></div>
+              </fieldset>
+              <details class="entry-fold">
+                <summary>Where do I find these?</summary>
+                <svg class="vc-sketch" viewBox="0 0 280 124" role="img" aria-label="A voter registration certificate: County and Precinct near the top, the districts under them">
+                  <rect class="vc-card" x="1.5" y="1.5" width="277" height="121" rx="6"/>
+                  <text class="vc-title" x="14" y="20">VOTER REGISTRATION CERTIFICATE</text>
+                  <rect class="vc-mark" x="10" y="30" width="122" height="26" rx="4"/>
+                  <text class="vc-label" x="18" y="47">COUNTY</text>
+                  <text class="vc-value" x="70" y="47">TRAVIS</text>
+                  <rect class="vc-mark" x="142" y="30" width="80" height="26" rx="4"/>
+                  <text class="vc-label" x="150" y="47">PCT</text>
+                  <text class="vc-value" x="180" y="47">300</text>
+                  <text class="vc-label" x="14" y="76">CONG 10 · SEN 14 · REP 49 · SBOE 5</text>
+                  <text class="vc-label" x="14" y="92">COMM 2 · JP 5</text>
+                  <line class="vc-line" x1="14" y1="108" x2="150" y2="108"/>
+                </svg>
+                <p class="fine">On your voter registration certificate, the card your county mailed you: the county and precinct are near the top, and the districts under them. Lost it? Look yourself up on the Secretary of State's <a href="https://teamrv-mvp.sos.texas.gov/MVP/mvp.do" target="_blank" rel="noopener noreferrer">Am I Registered?</a> page.</p>
+              </details>
+            </fieldset>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="election">Election</label>
+              <select id="election"><option value="">Next election</option></select>
+            </div>
+            <div class="field" id="party-field" hidden>
+              <label for="party">Primary ballot</label>
+              <select id="party">
+                <option value="">Choose a party</option>
+                <option value="D">Democratic</option>
+                <option value="R">Republican</option>
+              </select>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
+            <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
+          </div>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <p class="fine">Texas only. Kept in this browser. What's sent where: <a href="privacy.html#lookups">Privacy</a>.</p>
+        </form>
+      </section>
+
+      <section id="welcome" class="welcome" aria-label="What Pallot does" data-welcome hidden>
+        <ul class="welcome-points">
+          <li><span data-icon="bars"></span>Compare money, endorsements and polls for every candidate.</li>
+          <li><span data-icon="printer"></span>Pick, add notes, and print your picks to take with you.</li>
+          <li><span data-icon="calendar"></span>Key dates and your districts, at the top.</li>
+        </ul>
       </section>
 
       <section id="loading" class="loading" role="status" hidden>
         <p class="loading-title">Finding your ballot…</p>
         <div class="loading-bar" aria-hidden="true"></div>
-        <p class="muted">A first lookup takes a little longer.</p>
+        <p class="muted" id="loading-step"></p>
       </section>
 
       <section id="result" hidden>
@@ -72,56 +127,86 @@
         <div class="progress-strip" id="progress-strip">
           <div class="progress-info">
             <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
-            <p class="progress" id="progress" aria-live="polite"></p>
-            <button class="btn small" id="next-race" type="button" title="Or press j and k to move from race to race">Next race to pick</button>
+            <div class="progress-text">
+              <p class="strip-race" id="strip-race" aria-hidden="true"></p>
+              <p class="progress" id="progress" aria-live="polite"></p>
+            </div>
+            <button class="btn small" id="next-race" type="button" aria-keyshortcuts="j k" title="Or press j and k to move from race to race">Next race to pick</button>
+            <button class="btn small with-icon more-btn" id="more-btn" type="button" aria-haspopup="dialog" aria-controls="more-sheet"><span data-icon="more"></span>More</button>
           </div>
           <div class="button-row ballot-tools" id="ballot-tools">
             <div class="tool-group" id="view-controls">
-            <fieldset class="seg" title="How much of the ballot shows at first">
-              <legend class="sr-only">How much of the ballot shows</legend>
-              <label class="seg-option"><input type="radio" name="view-mode" value="minimal">Minimal</label>
-              <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
-              <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
-            </fieldset>
             <details class="menu" id="view-menu">
-              <summary class="btn ghost small with-icon" title="What the ballot shows"><span data-icon="settings"></span>Options</summary>
-              <div class="menu-panel">
-                <div class="button-row menu-actions">
-                  <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
-                  <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
+              <summary class="btn ghost small with-icon" title="How much shows, and what matters to you"><span data-icon="eye"></span><span id="view-summary">View</span></summary>
+              <div class="menu-panel" id="view-panel">
+                <div class="menu-group">
+                  <p class="menu-label" aria-hidden="true">How much detail</p>
+                  <fieldset class="seg" aria-describedby="mode-caption">
+                    <legend class="sr-only">How much detail</legend>
+                    <label class="seg-option"><input type="radio" name="view-mode" value="minimal">Minimal</label>
+                    <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
+                    <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
+                  </fieldset>
+                  <p class="fine mode-caption" id="mode-caption">Minimal: names only · Simple: adds money, polls, endorsements · Detailed: everything.</p>
                 </div>
-                <fieldset class="menu-group">
-                  <legend class="menu-label">Show</legend>
-                  <label class="check"><input type="checkbox" id="show-map" data-view="showMap"> Map of your districts</label>
-                  <label class="check"><input type="checkbox" id="show-funding" data-view="showFunding"> Funding</label>
-                  <label class="check"><input type="checkbox" id="show-polls" data-view="showPolls"> Polls</label>
-                  <label class="check"><input type="checkbox" id="show-endorsements" data-view="showEndorsements"> Endorsements</label>
-                  <label class="check"><input type="checkbox" id="show-sources" data-view="showSources"> Where dates &amp; districts come from</label>
-                </fieldset>
-                <label class="check"><input type="checkbox" id="collapse-on-pick" data-view="collapseOnPick"> Collapse a race when I pick</label>
-                <label class="check"><input type="checkbox" id="hide-picked" data-view="hidePicked"> Only races I haven't picked</label>
-                <p class="menu-more"><a href="settings.html#view-title">Open Settings</a></p>
+                <div class="menu-group" id="view-focus">
+                  <p class="menu-label" aria-hidden="true">What matters to you</p>
+                </div>
+                <div class="menu-group">
+                  <p class="menu-label">Races</p>
+                  <div class="button-row menu-actions">
+                    <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
+                    <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
+                  </div>
+                  <label class="check"><input type="checkbox" id="hide-picked" data-view="hidePicked"> Only races I haven't picked</label>
+                </div>
+                <p class="menu-more"><button class="link-btn" id="view-ask-again" type="button">Ask me again</button> · <a href="settings.html#view-title">More in Settings</a></p>
               </div>
             </details>
+            <a class="help-link" href="faq.html#view-modes" target="_blank" rel="noopener" title="Help: focus and views" aria-label="Help: focus and views (opens in a new tab)">?</a>
             </div>
             <span class="tool-divider" aria-hidden="true"></span>
             <div class="tool-group">
-            <button class="btn ghost small with-icon" id="rule-btn" type="button" title="Pick by party, endorsements, money and polls"><span data-icon="filter"></span>Pick by rule</button>
+            <button class="btn ghost small with-icon" id="endorser-btn" type="button" aria-pressed="false" aria-controls="endorser-bar" title="Highlight who the endorsers you trust endorse, and pick by rule"><span data-icon="ring"></span>Help me pick</button>
             <button class="btn small danger with-icon" id="clear-picks" type="button"><span data-icon="x"></span>Clear picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
             </div>
+            <p class="fine wait-note" id="wait-note" hidden>Profile, Pick by rule and Print wait for money, polls and endorsements.</p>
           </div>
           <div class="cards-loading" id="cards-loading" role="status" hidden>
             <span>Loading money, polls and endorsements…</span>
             <div class="loading-bar" aria-hidden="true"></div>
           </div>
         </div>
+        <section class="focus-ask" id="focus-ask" aria-labelledby="focus-ask-title" hidden>
+          <div class="focus-ask-head">
+            <h2 id="focus-ask-title" tabindex="-1">What matters to you?</h2>
+            <button class="icon-btn close" type="button" id="focus-ask-close" aria-label="Close without choosing">✕</button>
+          </div>
+          <p class="muted">Choose any, or none. The ballot below changes as you choose.</p>
+          <form class="focus-ask-detail">
+            <h3>How much detail?</h3>
+            <fieldset class="seg" aria-describedby="focus-ask-caption">
+              <legend class="sr-only">How much detail</legend>
+              <label class="seg-option"><input type="radio" name="view-mode" value="minimal">Minimal</label>
+              <label class="seg-option"><input type="radio" name="view-mode" value="simple">Simple</label>
+              <label class="seg-option"><input type="radio" name="view-mode" value="detailed">Detailed</label>
+            </fieldset>
+            <p class="fine mode-caption" id="focus-ask-caption">Minimal: names only · Simple: adds money, polls, endorsements · Detailed: everything.</p>
+          </form>
+          <div class="focus-ask-foot">
+            <button class="btn primary small" type="button" id="focus-ask-done">Done</button>
+            <p class="fine">Change it any time under View.</p>
+          </div>
+        </section>
+        <section class="endorser-bar" id="endorser-bar" aria-labelledby="endorser-bar-title" hidden></section>
         <div class="ballot-top">
           <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
           <section class="district-map" id="district-map" aria-labelledby="district-map-title" hidden></section>
         </div>
         <div id="messages"></div>
+        <div class="notice rule-banner" id="rule-banner" role="status" hidden></div>
         <div id="groups"></div>
         <div id="maybe"></div>
         <div id="measures"></div>
@@ -134,6 +219,16 @@
   <dialog id="compare" class="details compare" aria-labelledby="compare-title"></dialog>
 
   <dialog id="rules" class="details rules" aria-labelledby="rules-title"></dialog>
+
+  <dialog id="more-sheet" class="sheet" aria-labelledby="more-title">
+    <form method="dialog">
+      <div class="sheet-head">
+        <h2 id="more-title">More</h2>
+        <button class="icon-btn close" value="" aria-label="Close">✕</button>
+      </div>
+      <div class="sheet-body" id="more-body"></div>
+    </form>
+  </dialog>
 
   <dialog id="print-dialog" class="small-dialog" aria-labelledby="print-title">
     <form method="dialog">

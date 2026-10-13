@@ -1,15 +1,17 @@
 // The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees in words and race by race
-// what it would change, then applies it (with Undo). Opened
-// from the strip for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
+// what it would change, then applies it (with Undo, and a banner above the races). Opened from the
+// strip for every race, from a race's funnel for that race, or from the endorser bar's Pick them with
+// the bar's rule. ballot.js hands over ``page``.
 
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
 import { COUNT, listed, plural } from "./format.js";
+import { helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import {
   DEFAULT_RULE, MONEY, WRITE_INS, allRaces, available, ballotParties, describeRule, loadRule, parseAmount, plan, saveRule, scopes,
 } from "./pick-rules.js";
-import { showToast } from "./toast.js";
+import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, renderRaces }
@@ -109,15 +111,50 @@ function raceLine(row) {
     h("span", { class: "rule-race-name" }, race.name), h("span", {}, [what, ...back].filter(Boolean).join(" · ")));
 }
 
+// ---- the banner -----------------------------------------------------------------------
+
+// After Apply, one line above the races says the rule in words, with Edit and Undo (the toast's
+// Undo, kept). It goes once the picks are cleared, the rule changes (here or in another tab) or the
+// ballot is drawn again; Undo and ✕ take it away too.
+const banner = $("#rule-banner");
+let shownRule = null; // the rule the banner shows, as saved
+
+function showBanner(words, undo) {
+  shownRule = JSON.stringify(loadRule());
+  banner.replaceChildren(
+    h("p", {}, h("strong", {}, "Picked by your rule: "), [words.pick, words.skip].filter(Boolean).join(" ")),
+    h("p", { class: "rule-banner-actions" },
+      h("button", { type: "button", class: "link-btn", on: { click: () => openRules() } }, "Edit"),
+      h("button", { type: "button", class: "link-btn", on: { click: () => {
+        hideToast();
+        undo();
+      } } }, "Undo")),
+    h("button", { type: "button", class: "icon-btn close", "aria-label": "Close this line", on: { click: hideBanner } }, "✕"));
+  banner.hidden = false;
+}
+
+export function hideBanner() {
+  shownRule = null;
+  banner.hidden = true;
+  banner.replaceChildren();
+}
+
+// After the picks change as a whole: the banner goes once the saved rule isn't its own (ballot.js
+// takes it away when the picks are cleared).
+export function syncRuleBanner() {
+  if (shownRule && JSON.stringify(loadRule()) !== shownRule) hideBanner();
+}
+
 // ---- the dialog -----------------------------------------------------------------------
 
 const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, with room to list the races
 
-// ``raceKey``: the race whose funnel opened it, which is then where the rule applies.
-export function openRules(raceKey = null) {
+// ``raceKey``: the race whose funnel opened it, which is then where the rule applies. ``preset``: a
+// rule to start from instead of the saved one (the endorser bar's Pick them), saved only by Apply.
+export function openRules({ raceKey = null, preset = null } = {}) {
   if (!page.ballot || page.loadingCards) return; // its conditions are about the cards
   const options = scopes(page.ballot, raceKey);
-  draw(loadRule(), options, options[0]);
+  draw(preset ? structuredClone(preset) : loadRule(), options, options[0]);
   if (!dialog.open) dialog.showModal();
   $("#rule-scope").focus();
 }
@@ -188,16 +225,16 @@ function draw(rule, options, startScope) {
     const before = page.picks.setMany(changes);
     if (folded.length) page.picks.setCollapsed(folded, true);
     dialog.close();
+    const undo = () => {
+      hideBanner();
+      page.picks.setMany(before);
+      if (folded.length) page.picks.setCollapsed(folded, false);
+      page.renderRaces();
+    };
+    showBanner(describeRule(rule, parties, has), undo);
     page.renderRaces();
     const did = [picked ? `picked ${plural(picked, "race")}` : null, takenBack ? `took back ${plural(takenBack, "pick")}` : null];
-    showToast(`Your rule ${did.filter(Boolean).join(" and ")}.`, {
-      label: "Undo",
-      run: () => {
-        page.picks.setMany(before);
-        if (folded.length) page.picks.setCollapsed(folded, false);
-        page.renderRaces();
-      },
-    });
+    showToast(`Your rule ${did.filter(Boolean).join(" and ")}.`, { label: "Undo", run: undo });
   }
 
   function reset() {
@@ -251,7 +288,15 @@ function draw(rule, options, startScope) {
           chip(label, rule.endorsedBy.includes(source), set((on) => {
             rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
           })))),
-        h("p", { class: "fine" }, "Endorsements from any of the ones you choose.",
+        has.endorsers.length > 1
+          ? h("div", { class: "seg rule-combine" }, [["any", "Any of them"], ["all", "All of them"]].map(([value, text]) =>
+            h("label", { class: "seg-option" },
+              h("input", { type: "radio", name: "rule-endorsed", value, checked: (value === "all") === rule.endorsedAll,
+                on: { change: set(() => { rule.endorsedAll = value === "all"; }) } }), text)))
+          : null,
+        h("p", { class: "fine" }, has.endorsers.length > 1
+          ? "Any of them: endorsed by at least one you choose. All of them: by every one you choose that endorses someone in the race."
+          : "Endorsements from the one you choose.",
           has.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it marks Ally." : ""),
       ]),
     group("Money",
@@ -286,7 +331,8 @@ function draw(rule, options, startScope) {
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),
-    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press Apply.")));
+    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press Apply.")),
+  helpLink("pick-by-rule", "Pick by rule"));
   dialog.replaceChildren(
     head,
     h("div", { class: "rule-bar" },
@@ -299,7 +345,7 @@ function draw(rule, options, startScope) {
         missing.length ? h("p", { class: "fine" }, `Not offered, since nothing on your ballot has them: ${listed(missing)}.`) : null,
         h("details", { class: "rule-how" }, h("summary", {}, "How rules work"),
           h("p", {}, "Pick takes the candidates who meet every condition you turn on, from any party you choose, with endorsements "
-            + "from any of the endorsers you choose. Don't pick "
+            + "from any or all of the endorsers you choose. Don't pick "
             + "takes back anyone who meets any one of its conditions, even a pick you made yourself. "
             + "On your ban list, on at first, shows when someone on your ballot is marked Banned."),
           h("p", {}, "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "

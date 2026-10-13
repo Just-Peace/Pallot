@@ -41,6 +41,20 @@ def test_trackaipac_lists_and_money_for_pick_by_rule():
     assert trackaipac.card(watched, EXACT, None).figures == {"israel_lobby": 0}
 
 
+def test_trackaipac_office_names_its_page_and_links_there():
+    person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"],
+              "listings": [listing("watchlist", 0, section="Candidate for U.S. Senate", seat_text="TX [D]", donations=1000),
+                           listing("congress", section="Texas", seat_text="TX-SEN [D]")]}
+    result = trackaipac.card(person, EXACT, "2026-09-27")
+    assert [(f.label, f.value, f.url) for f in result.facts] == [
+        ("Office", "TX-SEN · Watchlist page, Candidate for U.S. Senate", trackaipac.CATEGORY_PAGES["watchlist"]),
+        ("Israel lobby total", "$0", None), ("PAC money", "$1,000", None),
+        ("Office", "TX-SEN · Congress page", trackaipac.CATEGORY_PAGES["congress"])]
+    assert result.links == []  # its pages are the Offices' links
+    unlisted = trackaipac.card({"name": "Jane Doe", "seat": "TX-10"}, EXACT, None)
+    assert [(f.label, f.value) for f in unlisted.facts] == [("Office", "TX-10")]
+
+
 def test_trackaipac_notes_link_to_the_site_not_to_pallot():
     person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"], "listings": [listing(
         "watchlist", 0, notes=["[This candidate is pro-israel.](/james-talarico)",
@@ -51,14 +65,15 @@ def test_trackaipac_notes_link_to_the_site_not_to_pallot():
     ]
 
 
-def test_ballotpedia_profile_badge_links_to_the_profile():
+def test_ballotpedia_profile_links_to_the_profile_once():
     race = BpRace(1, "U.S. Senate Texas", "State", "Texas", "federal", 1, "https://ballotpedia.org/race", ())
     with_survey = BpCandidate(7, "Ken Paxton", "R", "Republican Party", False, False, "On the Ballot",
                               "https://ballotpedia.org/Ken_Paxton", None, True)
     result = ballotpedia_card(with_survey, race, 0.0, None)
-    [badge] = result.badges
-    assert (badge.text, badge.url) == ("Ballotpedia profile", "https://ballotpedia.org/Ken_Paxton")
+    assert result.badges == []
+    assert [(link.label, link.url) for link in result.links] == [
+        ("Ballotpedia profile", "https://ballotpedia.org/Ken_Paxton"), ("This race on Ballotpedia", "https://ballotpedia.org/race")]
     assert any(f.label == "Candidate survey" for f in result.facts)
 
     no_profile = BpCandidate(8, "Someone", None, None, False, False, None, None, None, False)
-    assert ballotpedia_card(no_profile, race, 0.0, None).badges == []
+    assert [link.label for link in ballotpedia_card(no_profile, race, 0.0, None).links] == ["This race on Ballotpedia"]

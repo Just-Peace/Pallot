@@ -1,4 +1,4 @@
-// The Settings page: how much of the ballot shows (view.js); the web search engine; the ban list; the sources, under the groups the
+// The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the ban list; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
 // what the server has saved from each and how the last lookup used it; the appearance; and Clear data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
@@ -10,13 +10,14 @@ import "./page.js";
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
-import { $, h, linkedText, onReturn, setStatus } from "./dom.js";
+import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
+import { forgetTips } from "./help.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
 import { showToast } from "./toast.js";
-import { bindViewControls, onViewChange, showViewControls } from "./view.js";
+import { bindViewControls, focusChips, migrateView, onViewChange, showViewControls } from "./view.js";
 
 const groupList = $("#source-groups");
 const summary = $("#sources-summary");
@@ -165,7 +166,8 @@ function sourceGroup(group) {
 function renderSummary(overview) {
   const last = overview.last_lookup;
   const lookup = last
-    ? `Last lookup ${relativeTime(last.at)}: ${plural(last.external_calls, "request")} to the sources, `
+    ? `Last lookup ${relativeTime(last.at)}, ${last.found_by === "voter_card" ? "by voter card" : "by address"}: `
+      + `${plural(last.external_calls, "request")} to the sources, `
       + `${last.cache_hits} answered from the saved copies, ${last.elapsed_ms} ms.`
     : "No ballot looked up since Pallot started.";
   summary.textContent = `${lookup} Everything the server has saved takes ${formatBytes(overview.total_bytes)}.`;
@@ -230,22 +232,30 @@ themeChoice.addEventListener("change", (event) => {
   showTheme();
 });
 
-// Ballot view: Simple, Detailed (neither when the switches are mixed) and the switches. An open
-// ballot applies a change at once (onViewChange there), so it's not marked as a settings change.
+// Ballot view: the focuses, each with its hint, Minimal, Simple, Detailed (none when the switches are
+// mixed) and the switches, none locked: turning off one a focus turns on drops it (setViewPref). An
+// open ballot applies a change at once (onViewChange there), so it's not marked as a settings change.
 const viewSection = $("#view-title").closest("section");
+$("#focus-setting .fine").after(focusChips({ hints: true }));
 
 function showView() {
   const mode = showViewControls(viewSection);
   $("#view-mode-note").textContent = {
-    minimal: "Minimal shows only the ballot and its candidates. Simple adds funding, polls and endorsements. Detailed opens everything.",
-    simple: "Simple folds the map and where the dates and districts come from. Minimal folds everything; Detailed opens everything.",
-    detailed: "Detailed opens everything. Simple folds the map and where the dates and districts come from; Minimal folds everything.",
+    minimal: "Minimal shows only the ballot and its candidates, with no money or poll boxes. Simple adds funding, polls and endorsements. Detailed opens everything.",
+    simple: "Simple folds the money and poll boxes to one line each, the map, and where the dates and districts come from, and keeps candidate rows light on a phone. Minimal hides the boxes; Detailed opens everything.",
+    detailed: "Detailed opens everything, the money and poll boxes included, and shows each candidate's whole row on a phone. Simple folds the boxes; Minimal hides them.",
     custom: "Your own mix, below.",
   }[mode];
 }
 
 bindViewControls(viewSection);
 onViewChange(showView);
+
+// Tips: "Show tips again" forgets the ones dismissed, so the ballot shows them again, one a visit.
+$("#tips-again").addEventListener("click", () => {
+  forgetTips();
+  setStatus($("#tips-status"), "The ballot will show its tips again, one a visit.", "ok");
+});
 
 // Ban list (ban-list.js): the names banned from Details and the names or patterns typed here, a
 // chip each with a remove button. A change is marked, so an open ballot reloads with it.
@@ -292,7 +302,7 @@ banForm.addEventListener("submit", (event) => {
   banEntry.focus();
 });
 
-// What's kept in this browser is cleared at once, with Undo to put it back.
+// What's kept in this browser is cleared once the voter says so, with Undo to put it back.
 function clearInBrowser(clear, message, nothing) {
   const removed = clear();
   markSettingsChanged();
@@ -323,12 +333,24 @@ function showBrowserData() {
   showBanList();
 }
 
-$("#clear-my-picks").addEventListener("click", () => {
-  clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and pick rule were removed from this browser.", "There were no picks or notes to clear.");
+$("#clear-my-picks").addEventListener("click", async () => {
+  const sure = await confirmDialog({
+    title: "Clear your picks and notes?",
+    body: "Your picks, notes, write-ins and pick rule will be removed. Your address and settings stay.",
+    confirm: "Clear picks",
+    danger: true,
+  });
+  if (sure) clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and pick rule were removed from this browser.", "There were no picks or notes to clear.");
 });
 
-$("#clear-browser-data").addEventListener("click", () => {
-  clearInBrowser(clearBrowserData, "Everything Pallot kept in this browser was removed.", "Pallot had nothing saved in this browser.");
+$("#clear-browser-data").addEventListener("click", async () => {
+  const sure = await confirmDialog({
+    title: "Clear everything Pallot keeps in this browser?",
+    body: "Your picks, notes, address, appearance, search engine, sources, view and ban list will be removed.",
+    confirm: "Clear everything",
+    danger: true,
+  });
+  if (sure) clearInBrowser(clearBrowserData, "Everything Pallot kept in this browser was removed.", "Pallot had nothing saved in this browser.");
 });
 
 // Back from the ballot (or another tab), a lookup since may have changed what's saved, and may
@@ -341,6 +363,7 @@ onReturn(() => {
   load();
 });
 
+migrateView();
 showTheme();
 showView();
 showBanList();

@@ -60,7 +60,7 @@ export function linkedText(text) {
   let match;
   while ((match = pattern.exec(text))) {
     const [, label, url] = match;
-    const own = /^settings\.html#[a-z0-9-]+$/.test(url);
+    const own = /^settings\.html#[a-z0-9_-]+$/.test(url);
     parts.push(text.slice(last, match.index),
       own ? h("a", { href: url }, label) : /^(https?:\/\/|mailto:)/i.test(url) ? extLink(url, label) : label);
     last = pattern.lastIndex;
@@ -78,10 +78,26 @@ export function slug(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+// A label and its number box (a district, a precinct). Inside a .pair-grid the pairs sit in a
+// wrapping row; on a phone they line up in two columns, each label over its box, and on a touch
+// screen the box is 44px tall with 16px text, so iOS doesn't zoom. ``label`` is text, a node or a
+// list of them; ``input`` is the box's attributes, ``props`` the label's.
+export function pairBox(label, input = {}, props = {}) {
+  return h("label", { ...props, class: ["pair", props.class] }, h("span", { class: "pair-label" }, label),
+    h("input", { type: "number", inputmode: "numeric", min: "1", ...input, class: ["pair-box", input.class] }));
+}
+
 // A status line: ``kind`` is busy, ok, error or info.
 export function setStatus(box, message, kind = "info") {
   box.className = `status status-${kind}`;
   box.textContent = message || "";
+}
+
+// Changes ``box``'s text as a wait goes on: ``steps`` is [[ms, text], …], the first at 0. Returns
+// a function that stops it.
+export function stepText(box, steps) {
+  const timers = steps.map(([ms, text]) => setTimeout(() => { box.textContent = text; }, ms));
+  return () => timers.forEach(clearTimeout);
 }
 
 // ``run``, at most once a frame however often the returned function is called (scrolling).
@@ -155,5 +171,39 @@ export function closeOnBackdrop(dialog) {
     const box = dialog.getBoundingClientRect();
     const inside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
     if (!inside) dialog.close("");
+  });
+}
+
+// Asks before something the voter can't easily take back. ``body`` is text, a node or a list of
+// them; ``danger`` makes the confirm button red. Cancel has the focus, and Esc or a tap on the
+// backdrop cancels. Resolves true only for the confirm button. Any page can call it: the dialog is
+// made the first time it's needed. A second question while one is open answers the first with false.
+let settleConfirm = null;
+
+export function confirmDialog({ title, body = null, confirm = "Continue", cancel = "Cancel", danger = false }) {
+  let dialog = document.getElementById("confirm-dialog");
+  if (!dialog) {
+    dialog = h("dialog", { id: "confirm-dialog", class: "small-dialog confirm-dialog", "aria-labelledby": "confirm-title", "aria-describedby": "confirm-body" });
+    closeOnBackdrop(dialog);
+    dialog.addEventListener("close", () => {
+      const settle = settleConfirm;
+      settleConfirm = null;
+      settle?.(dialog.returnValue === "confirm");
+    });
+    document.body.append(dialog);
+  }
+  settleConfirm?.(false);
+  const cancelButton = h("button", { class: "btn ghost", value: "" }, cancel);
+  dialog.replaceChildren(h("form", { method: "dialog" },
+    h("h2", { id: "confirm-title" }, title),
+    h("div", { id: "confirm-body", class: "confirm-body" }, body),
+    h("div", { class: "button-row end" },
+      cancelButton,
+      h("button", { class: ["btn primary", danger && "danger"], value: "confirm" }, confirm))));
+  dialog.returnValue = "";
+  return new Promise((resolve) => {
+    settleConfirm = resolve;
+    if (!dialog.open) dialog.showModal();
+    cancelButton.focus();
   });
 }
