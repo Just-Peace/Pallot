@@ -9,7 +9,7 @@ import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
 import { avatar, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
 import { searchWord } from "./search.js";
-import { cardPanel, endorsementsPanel, isLikely, moneyPanel, profilePanel, renderTabs } from "./source-cards.js";
+import { cardPanel, endorsementsPanel, isLikely, moneyPanel, pollsPanel, profilePanel, renderTabs } from "./source-cards.js";
 import { stancesPanel } from "./stances.js";
 
 let page = null; // { picks }
@@ -83,6 +83,7 @@ export function showDetails(race, index, focus = null, at = "profile") {
     if (tab === issues) return stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length);
     if (tab === profile) return profilePanel(profiled);
     if (tab === endorsements) return endorsementsPanel(grouped);
+    if (tab.card.kind === "polls") return pollsPanel(tab.card, candidate.party);
     return tab.card.kind === "money" ? moneyPanel(tab.card) : cardPanel(tab.card);
   };
   const tabBox = h("div", { class: "details-tabs" });

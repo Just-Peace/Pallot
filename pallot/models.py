@@ -50,18 +50,23 @@ class Share(BaseModel):
     tone: Tone | None = None
     tag: str | None = None  # a word shown as a badge in the row's tone ("for", "against")
     candidate_key: str | None = None  # in a race comparison, whose row this is (for the party colour)
+    url: str | None = None  # where the part comes from (a poll's page)
+    versus: str | None = None  # whom the tag measures against (a poll's closest rival)
 
 
 class Breakdown(BaseModel):
     """Money split into parts, drawn as labelled bars. With a ``total`` the bars are shares
     of it (and show a %); without one they are scaled to the largest part. In "percent"
-    the amounts are percentages of one whole (a poll), drawn as a single stacked bar."""
+    the amounts are percentages of one whole (a poll), drawn as a single stacked bar; in
+    "points" each part is a percentage of its own whole (one poll each), a bar of 0-100
+    apiece, with ``mark`` drawn as a line across them (the median)."""
 
     title: str
     parts: list[Share] = Field(default_factory=list)
     total: float | None = None
     note: str | None = None
-    unit: Literal["dollars", "percent"] = "dollars"
+    unit: Literal["dollars", "percent", "points"] = "dollars"
+    mark: float | None = None
     count: int | None = None  # how many it's worked out from (a poll bar's polls)
 
 

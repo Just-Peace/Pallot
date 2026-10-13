@@ -252,22 +252,35 @@ export function tagBadge(part) {
   return part.tag ? h("span", { class: ["badge share-tag", `tone-${part.tone || "neutral"}`] }, part.tag) : null;
 }
 
+// A poll row's tag: the lead over the closest rival ("+1.9"), who is named in its tooltip and,
+// for touch screens and screen readers, in a "vs Ken Paxton" after it.
+function marginTag(part) {
+  const said = part.tag === "Tied" ? `Tied with ${part.versus}`
+    : `${part.tone === "good" ? "Ahead of" : "Behind"} ${part.versus} by ${part.tag.slice(1)} points`;
+  return [h("span", { class: ["badge share-tag", `tone-${part.tone || "neutral"}`], title: said, "aria-hidden": "true" }, part.tag),
+    h("span", { class: "share-versus" }, h("span", { class: "sr-only" }, `${said}. `), h("span", { "aria-hidden": "true" }, `vs ${part.versus}`))];
+}
+
 // One row of a breakdown: the label (with its note), a bar, and the amount. In a race's box,
 // ``people`` knows each candidate (by key): their party, so the bars take the party colours,
 // and whether the box's source only likely matched them, which puts a "?" after the name.
-function shareRow(part, scale, showPercent, people) {
+// In "points" (a poll each) the amount is the candidate's share, the label links to the poll,
+// and the tag is marginTag().
+function shareRow(part, scale, showPercent, people, points = false) {
   const count = part.count ? plural(part.count, "donation") : null;
   const note = [part.note, count].filter(Boolean).join(" · ");
   const party = part.candidate_key && people ? people.party(part.candidate_key) : null;
   const likely = part.candidate_key && people?.likely(part.candidate_key);
+  const label = points && safeUrl(part.url) ? webLink(part.url, part.label) : part.label;
   return h(
     "li",
-    { class: ["share", part.tone && `tone-${part.tone}`], "data-party": party || null },
-    h("span", { class: "share-label" }, part.label, likely ? likelyFlag("Likely match: see Issues") : null, tagBadge(part),
+    { class: ["share", !points && part.tone && `tone-${part.tone}`], "data-party": party || null },
+    h("span", { class: "share-label" }, label, likely ? likelyFlag("Likely match: see Issues") : null,
+      points && part.versus ? marginTag(part) : tagBadge(part),
       note ? h("span", { class: "share-note" }, note) : null),
     bar(scale > 0 && part.amount != null ? part.amount / scale : 0),
     h("span", { class: "share-amount" },
-      part.amount == null ? "—" : DOLLARS.format(part.amount),
+      part.amount == null ? "—" : points ? `${part.amount}%` : DOLLARS.format(part.amount),
       showPercent && part.amount != null && scale > 0 ? h("span", { class: "share-pct" }, percent(part.amount / scale)) : null),
   );
 }
@@ -324,14 +337,18 @@ function moneyStack(parts, people) {
 }
 
 // A Breakdown's bars and note. With a total they're shares of it (and show a %); without one
-// they're scaled to the largest part.
+// they're scaled to the largest part. In "points" each bar is 0-100, with its ``mark`` (the
+// median) a line across them.
 function breakdownRows(item, people = null) {
   const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
-  const scale = item.total || largest;
+  const points = item.unit === "points";
+  const scale = points ? 100 : item.total || largest;
   return [
     item.unit === "percent"
       ? stackedBar(item, people)
-      : h("ul", { class: "breakdown-rows" }, item.parts.map((part) => shareRow(part, scale, Boolean(item.total), people))),
+      : h("ul", { class: ["breakdown-rows", points && "poll-rows", points && item.mark != null && "marked"],
+          style: points && item.mark != null ? `--mark: ${width(item.mark / 100)}` : null },
+        item.parts.map((part) => shareRow(part, scale, Boolean(item.total), people, points))),
     item.note ? h("p", { class: "fine" }, item.note) : null,
   ];
 }
@@ -519,6 +536,25 @@ export function moneyPanel(card) {
     cardQuotes(card),
     (card.breakdowns || []).map((b) => foldSection(b.title, null, breakdownRows(b))),
     cardLinks(card),
+    sourceLine(card));
+}
+
+// Details' Polls tab: the candidate's median, large, over one bar in their party's colour, with
+// how it's worked out; then a bar per poll on the same 0-100 scale, the median a line across them,
+// each pollster linking to its poll. The rows name no other candidate but in a margin's "vs".
+export function pollsPanel(card, party) {
+  const [each] = card.breakdowns;
+  const median = card.figures?.poll;
+  const people = { party: () => party || null, likely: () => false };
+  return h("div", { class: "card-panel polls" },
+    matchNote(card),
+    median != null ? foldSection("Median", null, [
+      h("div", { class: "poll-median", "data-party": party || null },
+        h("strong", { class: "poll-median-value" }, `${median}%`), bar(median / 100)),
+      each?.note ? h("p", { class: "fine" }, each.note) : null,
+    ]) : null,
+    each ? foldSection(each.title, each.count ? h("span", { class: "section-meta" }, plural(each.count, "poll")) : null,
+      breakdownRows({ ...each, note: null }, people)) : null,
     sourceLine(card));
 }
 
