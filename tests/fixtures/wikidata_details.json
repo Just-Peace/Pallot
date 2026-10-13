@@ -1,0 +1,1388 @@
+{
+ "head": {
+  "vars": [
+   "p",
+   "desc",
+   "img",
+   "born",
+   "site",
+   "siteRole",
+   "bp",
+   "article",
+   "partyL"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5214174"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Dan_Patrick_(politician)"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://danpatrick.org/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Lieutenant Governor of Texas since 2015"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1950-04-04T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Dan%20Patrick%20Texas%20%28cropped%29.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Dan_Patrick"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5605224"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Greg_Abbott"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://www.gregabbott.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Governor of Texas since 2015"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1957-11-13T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Greg%20Abbott%20at%20NASA%202024%20%28cropped%29.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Greg_Abbott"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q6388290"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Ken_Paxton"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://kenpaxton.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Attorney General of Texas since 2015"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1962-12-23T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/K%20Paxton.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Ken_Paxton"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16193904"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Steve_Toth"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://stevetothfortexas.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Businessman and Texas state legislator"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1960-11-29T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/SteveTothTheWoodlandsTX07JUNE2019.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Steve_Toth"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16979824"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Brian_Babin"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://babin.house.gov/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "U.S. Representative from Texas"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1948-03-23T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Brian%20Babin%20official%20congressional%20photo%202.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Brian_Babin"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18630880"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Dennis_Paul"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas engineer and politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1961-01-01T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q18739889"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Mike_Schofield"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://www.mikeschofield.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas lawyer and state legislator"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1964-06-27T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28228777"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Tom_Oliverson"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1972-01-01T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Tom%20Oliverson.png"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28228784"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Valoree_Swanson"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "politician, Republican member of the Texas House of Representatives"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1957-09-22T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28370262"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Dawn_Buckingham"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://dawnbuckingham.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American physician and politician (born 1968)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1965-01-01T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Sen.%20Dawn%20Buckingham%2C%20M.D.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Dawn_Buckingham"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q55313952"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Michael_Cloud"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://www.cloudforcongress.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician (born 1975)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1975-05-13T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Cloud.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Michael_Cloud_(Texas)"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q55313952"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Michael_Cloud"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://cloud.house.gov/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician (born 1975)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1975-05-13T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Michael%20Cloud.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Michael_Cloud_(Texas)"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q79585969"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Mayes_Middleton"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1981-09-18T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Mayes%20Middleton%20by%20Gage%20Skidmore.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101048006"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Shelby_Slawson"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American lawyer and politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1977-05-03T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Shelby%20Slawson%202023.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101196462"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/August_Pfluger"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://pfluger.house.gov"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American military officer and politician (born 1977)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1977-12-28T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/August%20Pfluger%20official%20photo.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "August_Pfluger"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101196462"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/August_Pfluger"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://augustpfluger.com"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American military officer and politician (born 1977)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1977-12-28T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/August%20Pfluger%20official%20photo.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "August_Pfluger"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q106423151"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Lacey_Hull"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas legislator"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1986-08-21T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q115522497"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Ellen_Troxclair"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q4750367"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Ana_Hernandez"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://anafortexas.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1978-08-25T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q5296366"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Donna_Howard"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://www.votedonna.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1951-10-25T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/DonnaHoward.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Donna_Howard"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q7450514"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Senfronia_Thompson"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://senfroniathompson.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1939-01-01T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Senfronia%20Thompson%202757.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562489"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Sylvia_Garcia"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://www.sylviaforsenate.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1950-09-06T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Sylvia%20Garcia%2C%20official%20portrait%2C%20116th%20Congress.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Sylvia_Garcia"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q13562493"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Judith_Zaffirini"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://judithzaffirini.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician in Texas (born 1946)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1946-02-13T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Zaffirini%202009%20CROPPED.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q16734396"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Mary_Ann_Perez"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://votemaryannperez.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1962-01-01T00:00:00Z"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Mary_Ann_Perez"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q17091672"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Gene_Wu"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://genefortexas.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician (born 1978)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1978-03-23T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Gene%20Wu%202.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q27892618"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Jolanda_Jones"
+    },
+    "site": {
+     "type": "uri",
+     "value": "http://www.jolandajones.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American heptathlete"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1965-11-06T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Jolanda%20Jones.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28151630"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Harold_Dutton_Jr."
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1945-02-17T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q28314533"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Gina_Hinojosa"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://ginafortexas.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American lawyer and politician, Democratic member of the Texas House of Representatives"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1973-12-08T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Gina%20Hinojosa%2016%20February%202017%20%28cropped%29.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Gina_Hinojosa"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q58324313"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Lizzie_Fletcher"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://www.lizziefletcher.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician (born 1975)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1975-02-13T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Lizzie%20Fletcher%2C%20official%20portrait%2C%20116th%20Congress.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Lizzie_Pannill_Fletcher"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q66309757"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Jon_Rosenthal"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American engineer and politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1963-08-17T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Jon%20Rosenthal.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q79585993"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Christina_Morales"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1968-04-13T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Christina%20Morales%20portrait.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q84202665"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Sheryl_Cole"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician, Texas Democratic member of the Texas House of Representatives from 2019"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1964-08-16T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/DIG14450-014%20%2847221181291%29.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q88693641"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Vikki_Goodwin"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1967-05-18T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Town%20hall%20discussion%20with%20Vikki%20Goodwin.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q97861447"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Sarah_Eckhardt"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American attorney and Texas Senate member"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1968-01-01T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Discussion%20with%20Texas%20District%2014%20Senator%20Sarah%20Eckhardt.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Sarah_Eckhardt"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100178804"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Ray_Lopez"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1949-01-01T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100742942"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/James_Talarico"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://house.texas.gov/members/3685"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician and former teacher"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1989-05-17T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/James%20Talarico%20Press%20Conference.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "James_Talarico"
+    },
+    "siteRole": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q120942996"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100742942"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/James_Talarico"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://jamestalarico.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician and former teacher"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1989-05-17T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/James%20Talarico%20Press%20Conference.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "James_Talarico"
+    },
+    "siteRole": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q130304960"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101168868"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Ann_Johnson_(politician)"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://www.annjohnson.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician and attorney"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1974-08-13T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q104148369"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Greg_Casar"
+    },
+    "site": {
+     "type": "uri",
+     "value": "https://www.casarforcongress.com/"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician (born 1989)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1989-05-04T00:00:00Z"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Rep.%20Greg%20Casar%20-%20118th%20Congress.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q105097108"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Penny_Morales_Shaw"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas legislator"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1966-03-17T00:00:00Z"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q131010745"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Democratic Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Charlene_Ward_Johnson"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Texas politician"
+    },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/Charlene%20Ward%20Johnson%20HCC%202022.jpg"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q100952910"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Trey_Wharton"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1966-12-17T00:00:00Z"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "Trey_Wharton"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q122955277"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Charles_Cunningham_(politician)"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q131618557"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/Lauren_Ashley_Simmons"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American politician"
+    }
+   }
+  ]
+ }
+}

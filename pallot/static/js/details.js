@@ -14,7 +14,7 @@ import { stancesPanel } from "./stances.js";
 
 let page = null; // { picks }
 const details = $("#details");
-const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Ballotpedia
+const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Wikidata, Ballotpedia
 let shown = "profile"; // the tab shown, which ‹ and › keep
 
 export function initDetails(context) {

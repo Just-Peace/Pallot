@@ -84,6 +84,14 @@
    "last_refresh": "2026-10-08T20:30:48+00:00",
    "missing": 0,
    "sd": 31
+  },
+  "wikidata": {
+   "answers": 1,
+   "answers_hash": "82067c28f48f62016c556a6444c50281b8c2b1c560013f3bc85bb14ea9ec86bf",
+   "last_checked": "2026-10-13T01:18:31+00:00",
+   "last_refresh": "2026-10-13T01:18:31+00:00",
+   "people": 662,
+   "with_seats": 653
   }
  }
 }

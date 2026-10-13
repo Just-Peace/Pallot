@@ -15,7 +15,9 @@ from typing import TYPE_CHECKING, Any, Awaitable, Sequence
 
 from .models import Race, SourceCard
 from .offices import OfficeScope
-from .sources import CardSet, SeatInfo, ballotpedia, fec, officeholders, polls, sos, tec, trackaipac, voteforpeace
+from .sources import (
+    CardSet, SeatInfo, ballotpedia, fec, officeholders, polls, sos, tec, trackaipac, voteforpeace, wikidata,
+)
 from .sources.ballotpedia import BpBallot, BpRace
 from .sources.endorsement_feeds import EndorsementSource, FeedUnavailable
 from .sources.sos import Election, Lookups
@@ -24,13 +26,14 @@ if TYPE_CHECKING:
     from .ballot import Services
 
 CARD_ORDER = (
-    fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE, voteforpeace.SOURCE,
-    officeholders.SOURCE,
+    fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, wikidata.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE,
+    voteforpeace.SOURCE, officeholders.SOURCE,
 )
 UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
     fec.SOURCE: (fec.FecUnavailable, "Couldn't load FEC campaign finance ({})."),
     polls.SOURCE: (polls.PollsUnavailable, "Couldn't load polls from FiftyPlusOne ({})."),
     officeholders.SOURCE: (officeholders.OfficeholdersUnavailable, "Couldn't load who holds each seat ({})."),
+    wikidata.SOURCE: (wikidata.WikidataUnavailable, "Couldn't load Wikidata profiles ({})."),
 }
 
 
@@ -62,6 +65,8 @@ async def run(
     use_tec: bool = False,
     use_polls: bool = False,
     use_officeholders: bool = False,
+    use_wikidata: bool = False,
+    use_ballotpedia: bool = False,
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
@@ -95,6 +100,8 @@ async def run(
         jobs[polls.SOURCE] = polls.cards(svc.polls, races, day)
     if use_officeholders:
         jobs[officeholders.SOURCE] = officeholders.cards(svc.officeholders, races, scopes or {}, county, bp_ballot, day)
+    if use_wikidata:
+        jobs[wikidata.SOURCE] = wikidata.cards(svc.wikidata, races, scopes or {}, county, bp_ballot, use_ballotpedia)
     answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 
     outcome = Outcome()

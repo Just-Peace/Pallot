@@ -16,7 +16,7 @@ from pallot.api import create_app
 from pallot.services import MIN_INTERVAL
 from pallot.config import DEMO_KEY, Config, Ttls, load_config
 from pallot.http_cache import HttpCache, track_calls
-from pallot.sources import fec, key_dates, officeholders, polls
+from pallot.sources import fec, key_dates, officeholders, polls, wikidata
 from pallot.sources.county_precincts import COUNTIES, CountyPrecincts
 from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
 from pallot.sources.endorsement_feeds import make_feeds
@@ -105,6 +105,23 @@ def test_officeholders_live():
     assert len([h for h in legislature if h.seat.startswith("STATESEN:")]) >= 28
     assert len([h for h in legislature if h.seat.startswith("STATEREP:")]) >= 140
     assert all(h.party for h in legislature)
+
+
+def test_wikidata_live():
+    """Wikidata's query service still lists Texas's officeholders with their seats, and their details."""
+    agent = {"User-Agent": Config.user_agent}
+    spec = wikidata.people_spec()
+    response = httpx.get(spec.url, params=spec.params, headers={**spec.headers, **agent}, timeout=90)
+    response.raise_for_status()
+    people = wikidata.people_from(response.json())
+    assert len(people) >= 400
+    seats = {seat for person in people for seat in person.seats}
+    assert "TX-SEN" in seats and "GOVERNOR" in seats and len([s for s in seats if s.startswith("TX-")]) >= 30
+    spec = wikidata.details_spec(["Q5605224"])
+    response = httpx.get(spec.url, params=spec.params, headers={**spec.headers, **agent}, timeout=60)
+    response.raise_for_status()
+    abbott = wikidata.details_from(response.json())["Q5605224"]
+    assert abbott.photo and abbott.article and abbott.party
 
 
 def test_key_dates_live():

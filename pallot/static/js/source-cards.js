@@ -19,12 +19,17 @@ const AS_OF_WORDS = { fec: "reports through", tec: "reports through", polls: "la
 // The line under a card: "From the FEC, reports through Mar 31, 2026 · Open the FEC · How these
 // figures are put together". The FAQ link, for the money sources and polls, opens a new tab, so
 // the ballot and any open dialog stay put.
+// A link to another website, with the badges' ↗ after its label (none for an email address).
+function webLink(url, label) {
+  return extLink(url, url.startsWith("mailto:") ? label : [label, " ", h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")]);
+}
+
 export function sourceLine(card) {
   const faq = MONEY_FAQ[card.source];
   return h("p", { class: "fine" },
     `From ${card.label}`,
     card.as_of ? `, ${AS_OF_WORDS[card.source] || "data as of"} ${formatDate(card.as_of, SHORT_DATE)}` : "",
-    card.url ? [" · ", extLink(card.url, `Open ${card.label}`)] : null,
+    card.url ? [" · ", webLink(card.url, `Open ${card.label}`)] : null,
     faq ? [" · ", extLink(faq, "How these figures are put together")] : null);
 }
 
@@ -359,21 +364,23 @@ const cardSummary = (card) => [
         h("ul", { class: "badges", "aria-label": "Funding" }, fundingChips(card).map((b) => badge(b))))
     : card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
   card.facts.length
-    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? extLink(f.url, f.value) : f.value)]))
+    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? webLink(f.url, f.value) : f.value)]))
     : null,
 ];
 const cardQuotes = (card) => card.quotes.length
   ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
   : null;
 const cardLinks = (card) => card.links.length
-  ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label))))
+  ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, webLink(l.url, l.label))))
   : null;
 
-export function cardPanel(card) {
+// ``described``: false in a tab's sections (Profile, Endorsements), named by their source, whose
+// description Settings already gives.
+export function cardPanel(card, { described = true } = {}) {
   return h(
     "div",
     { class: "card-panel" },
-    card.description ? h("p", { class: "muted" }, card.description) : null,
+    described && card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
     cardSummary(card),
     cardQuotes(card),
@@ -392,11 +399,11 @@ export function foldSection(name, extra, body) {
     h("div", { class: "section-body" }, body));
 }
 
-// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Ballotpedia's
-// profile, a section each with its whole card.
+// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's and
+// Ballotpedia's profiles, a section each with its whole card but its description.
 export function profilePanel(cards) {
   return h("div", { class: "card-panel profile" },
-    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card))));
+    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card, { described: false }))));
 }
 
 // A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
@@ -420,7 +427,7 @@ function chipWords(item, card) {
   return words ? words[0].toUpperCase() + words.slice(1) : item.text;
 }
 
-// Details' Endorsements tab: a section per source with its whole card, all open, green ones (for
+// Details' Endorsements tab: a section per source with its whole card but its description, all open, green ones (for
 // the candidate) first, then amber (against), then the rest. Folded, a section is its name, its
 // "?" and its chips.
 const SIDE_ORDER = { good: 0, warn: 1 };
@@ -431,7 +438,7 @@ export function endorsementsPanel(cards) {
   const section = (card) => foldSection(card.label, [
     isLikely(card) ? likelyFlag() : null,
     card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
-  ], cardPanel(card));
+  ], cardPanel(card, { described: false }));
   return h("div", { class: "card-panel endorsements" },
     h("p", { class: "muted" }, plural(cards.length, "endorsement")),
     sorted.map(section));

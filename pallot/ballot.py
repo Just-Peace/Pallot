@@ -47,6 +47,7 @@ from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
 from .sources.officeholders import Officeholders
+from .sources.wikidata import Wikidata
 from .sources.polls import Polls
 from .sources.sboe import SboeMap
 from .sources.sos import Election, Lookups, Sos, find_county, still_running
@@ -107,6 +108,7 @@ class Services:
     tec: Tec
     polls: Polls
     officeholders: Officeholders
+    wikidata: Wikidata
     key_dates: KeyDatesPage
     tigerweb: Tigerweb
     tiles: Tiles
@@ -308,6 +310,7 @@ class _Builder:
         self.use_tec = sources.enabled("tec")
         self.use_polls = sources.enabled("polls")
         self.use_officeholders = sources.enabled("officeholders")
+        self.use_wikidata = sources.enabled("wikidata")
         self.use_key_dates = sources.enabled(key_dates_source.SOURCE)
         self.use_election_precincts = sources.enabled(election_precincts_source.SOURCE)
         self.use_county_precincts = self.use_election_precincts and sources.enabled(county_precincts_source.SOURCE)
@@ -409,6 +412,8 @@ class _Builder:
             use_tec=self.use_tec,
             use_polls=self.use_polls,
             use_officeholders=self.use_officeholders,
+            use_wikidata=self.use_wikidata,
+            use_ballotpedia=self.use_bp,
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,
@@ -809,6 +814,7 @@ class _Builder:
                    (google_source.SOURCE,)),
             status("sos", "Texas SOS", self.use_sos, ("sos",)),
             status(key_dates_source.SOURCE, key_dates_source.LABEL, self.use_key_dates, (key_dates_source.SOURCE,)),
+            status("wikidata", "Wikidata", self.use_wikidata, ("wikidata",)),
             status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
             snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
             snapshot("voteforpeace", "Vote for Peace", self.use_vfp, self.svc.voteforpeace.document),

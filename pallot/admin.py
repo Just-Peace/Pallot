@@ -12,7 +12,7 @@ from .models import CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus,
 from .settings import Sources
 from .sources import (
     KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
-    polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace,
+    polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
 from .text import display_date, display_time, iso_utc
@@ -133,6 +133,11 @@ SOURCES = (
         key_dates.SOURCE, "Key election dates (Texas SOS)", key_dates.DESCRIPTION, True, (key_dates.SOURCE,),
         group=OFFICIAL,
         pause=Pause("the Texas SOS website refused a request", "dates it already sent still show"),
+    ),
+    SourceInfo(
+        wikidata.SOURCE, "Wikidata", wikidata.DESCRIPTION, True, (wikidata.SOURCE,),
+        group=BALLOT,
+        pause=Pause("Wikidata refused a request", "profiles it already sent still show"),
     ),
     SourceInfo(
         ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,),

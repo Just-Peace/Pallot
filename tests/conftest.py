@@ -279,6 +279,7 @@ class Upstream:
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
         self.officeholders_status: int | None = None  # e.g. 403 when the seat holders' lists are refused us
         self.congress_members: list[dict[str, Any]] | None = None  # Congress's members (default: the recorded ones)
+        self.wikidata_status: int | None = None  # e.g. 429 when Wikidata's query service throttles us
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
@@ -412,6 +413,15 @@ class Upstream:
             if self.congress_members is not None:
                 return httpx.Response(200, json=self.congress_members)
             return _file("officeholders_congress.json")
+        if url.host == "query.wikidata.org":
+            if self.wikidata_status:
+                return httpx.Response(self.wikidata_status)
+            if "VALUES" not in params["query"]:
+                return _file("wikidata_people.json")
+            asked = set(re.findall(r"wd:(Q\d+)", params["query"]))
+            answer = load("wikidata_details.json")
+            rows = [row for row in answer["results"]["bindings"] if row["p"]["value"].rsplit("/", 1)[1] in asked]
+            return httpx.Response(200, json={**answer, "results": {"bindings": rows}})
         if url.host == "fiftyplusone.news":
             self.polls_agents.add(request.headers.get("user-agent"))
             if self.polls_status:
