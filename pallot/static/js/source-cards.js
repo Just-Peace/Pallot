@@ -7,7 +7,7 @@
 // source, or open a menu that also offers the endorser bar; its Funding chips open Details' money tab.
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
-import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, listed, percent, plural } from "./format.js";
+import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { fundingHelp, helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import { addToBar, barChoice } from "./pick-rules.js";
@@ -73,12 +73,10 @@ const chipsOf = (items, chip) => {
 };
 
 // The view switch (view.js) that shows a race box of each kind, and the one that opens it rather
-// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading,
-// and the fine line naming who it leaves out for having nothing to show.
+// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
 const OPENS = { money: "openMoney", polls: "openPolls" };
 const SHORT_TITLES = { money: "Money raised", polls: "Polls" };
-const LEFT_OUT = { money: "No money reported", polls: "Not in the polls" };
 
 // The "?" on a tab, badge or button whose source only likely matched the candidate.
 function likelyFlag(title = "Likely match") {
@@ -370,14 +368,17 @@ function setBoxOpen(box, open) {
   box.classList.toggle("collapsed", !open);
   box.querySelector(".box-toggle").setAttribute("aria-expanded", String(open));
   box.querySelector(".box-body").hidden = !open;
+  const asOf = box.querySelector(".box-asof");
+  if (asOf) asOf.hidden = !open;
 }
 
 // A race box that folds: its short heading ("Money raised", "Polls") as a button that folds it to
-// that one line, with ``action`` (the box's corner) beside it; folded, it names nobody. Open, the
-// rest of its first breakdown's title, or just its brackets' period, and its date ("2021-26 · reports
-// through Sep 30, 2026", "since Jan 1, 2025 · …") sit in small print at its foot, and the button's
-// name is the whole title. The view switch ``setting`` shows or
-// hides it, and its kind's OPENS opens or folds it; a click opens or folds just this one, until syncBoxes().
+// that one line, with ``action`` (the box's corner) at the right; folded, it names nobody. Open, the
+// rest of its first breakdown's title, or just its brackets' period, and its date ("since Nov 6, 2024
+// · reports through Sep 24, 2026", "latest poll Oct 5, 2026") sit in small print beside the heading,
+// hidden from screen readers since the button's name is the whole title and date. The view switch
+// ``setting`` shows or hides it, and its kind's OPENS opens or folds it; a click opens or folds just
+// this one, until syncBoxes().
 function foldBox(race, card, setting, action, body) {
   const id = `box-${slug(race.key)}-${card.source}`;
   const title = card.breakdowns[0]?.title || card.description;
@@ -391,8 +392,9 @@ function foldBox(race, card, setting, action, body) {
   }, h("span", { class: "chevron", "aria-hidden": "true" }), short);
   const foot = [period, asOf].filter(Boolean).join(" · ");
   const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
-    h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle), action),
-    h("div", { class: "box-body", id }, body, foot ? h("p", { class: "fine box-asof" }, foot) : null));
+    h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle),
+      foot ? h("span", { class: "box-asof", "aria-hidden": "true" }, foot) : null, action),
+    h("div", { class: "box-body", id }, body));
   setBoxOpen(box, viewPref(OPENS[card.kind]));
   return box;
 }
@@ -438,8 +440,8 @@ export function pollPill(race, candidate) {
 
 // A race's cards (money raised per money source, then polls), shown above its candidates.
 // With ``onCompare``, the first comparable one has a button for the Compare dialog. A money or
-// poll box shows only the candidates with something above zero, and names the rest in a fine line;
-// with nobody left, it isn't drawn. Compare, Details and Pick by rule still have everyone.
+// poll box shows only the candidates with something above zero; with nobody left, it isn't drawn.
+// Compare, Details and Pick by rule still have everyone.
 export function raceMoney(race, onCompare = null) {
   if (!race.cards?.length) return null;
   const candidate = (key) => race.candidates.find((c) => c.key === key);
@@ -464,11 +466,9 @@ export function raceMoney(race, onCompare = null) {
     const [head, ...rest] = card.breakdowns;
     const shown = head ? head.parts.filter((p) => p.amount > 0) : [];
     if (!shown.length && !rest.length) return null;
-    const left = head ? head.parts.filter((p) => !(p.amount > 0)).map((p) => p.label) : [];
     const polls = card.kind === "polls";
     return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
       shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people) : moneyStack(shown, people)) : null,
-      left.length ? h("p", { class: "fine box-left-out" }, `${LEFT_OUT[card.kind]}: ${listed(left)}`) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);
   });

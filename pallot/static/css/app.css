@@ -1149,13 +1149,12 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .box-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
 .race-money.collapsed { padding-block: 6px; }
 .race-money.collapsed .breakdown-head { margin: 0; }
-/* who the box leaves out for having nothing to show, then its period and date at the foot's right */
-.box-left-out { margin-top: 8px; }
-.box-asof { margin-top: 6px; text-align: right; font-size: 0.76rem; }
 .breakdown-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin: 0 0 6px; }
 .breakdown-head .breakdown-title { margin: 0; }
 /* the box's corner (Compare funding, the source, the polls) stays at the right, also under a long title */
 .breakdown-head > :not(.breakdown-title) { margin-left: auto; }
+/* an open box's period and date, beside its title; the corner stays at the right, and on a phone it wraps under the title */
+.breakdown-head > .box-asof { margin-left: 0; color: var(--muted); font-size: 0.76rem; text-transform: none; letter-spacing: normal; }
 .compare-btn { color: var(--accent); border-color: var(--accent); }
 .compare-btn:hover:not(:disabled) { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--accent-soft); }
 .compare-btn .icon { width: 14px; height: 14px; }
