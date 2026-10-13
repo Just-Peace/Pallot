@@ -262,6 +262,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn.danger { color: var(--danger); border-color: var(--danger); }
 .btn.danger:hover:not(:disabled) { background: var(--danger-soft); }
+.btn.primary.danger { background: var(--danger); border-color: var(--danger); color: var(--danger-soft); }
+.btn.primary.danger:hover:not(:disabled) { background: var(--danger); opacity: 0.88; }
 
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .button-row.end { justify-content: flex-end; }
@@ -1054,6 +1056,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 
 .small-dialog { width: min(460px, calc(100vw - 32px)); }
 .small-dialog form { padding: 20px; }
+.confirm-dialog h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.confirm-body { margin: 0 0 18px; color: var(--text); line-height: 1.5; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
 .check input { margin-top: 4px; accent-color: var(--accent); }
 .print-layout { border: 0; margin: 0 0 6px; padding: 0; }
@@ -1201,6 +1205,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .content { padding-bottom: 24px; }
   .to-top { bottom: 16px; }
   .toast { bottom: 12px; }
+  .confirm-dialog .button-row { flex-direction: column; }
+  .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   /* the toolbar's buttons a size down, so they take two lines; Options opens from the toolbar's
      left edge, where it always fits on the screen */
   .ballot-tools, .ballot-tools .tool-group { gap: 6px; }
