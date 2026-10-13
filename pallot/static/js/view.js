@@ -29,6 +29,13 @@ export const PRESETS = {
   detailed: { showMap: true, showPolls: true, showEndorsements: true, showFunding: true, openBoxes: true, showSources: true },
 };
 
+// Each mode's name, and its hint: what it shows, on hover and to a screen reader (modeChoice).
+export const VIEW_MODES = {
+  minimal: { label: "Minimal", hint: "Names only" },
+  simple: { label: "Simple", hint: "Adds money, polls and endorsements, folded" },
+  detailed: { label: "Detailed", hint: "Everything open" },
+};
+
 // What matters to the voter, any number at once, kept with the view settings ("focuses"): each
 // turns on its switches, so what shows is the mode's with the union of what the chosen ones open.
 // Besides the stored switches: openMoney, openPolls and openEndorsements open one kind of box or
@@ -132,6 +139,14 @@ export function focusChips({ hints = false } = {}) {
         h("span", { class: "focus-option-text" }, h("span", { class: "focus-option-label" }, focus.label),
           h("span", { class: "focus-option-hint" }, focus.hint)))
       : h("label", { class: "focus-chip" }, h("input", { type: "checkbox", name: "focus", value }), focus.label))));
+}
+
+// Minimal, Simple and Detailed as radios named "view-mode", each with its hint as a title: on the
+// label for the pointer, on the radio for its accessible description.
+export function modeChoice() {
+  return h("fieldset", { class: "seg" }, h("legend", { class: "sr-only" }, "How much detail"),
+    Object.entries(VIEW_MODES).map(([value, { label, hint }]) => h("label", { class: "seg-option", title: hint },
+      h("input", { type: "radio", name: "view-mode", value, title: hint }), label)));
 }
 
 // The fine print under When to vote and Your districts, saying where they come from, behind a link

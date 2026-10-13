@@ -3,6 +3,7 @@
 // strip's parts go on a phone, with the race on screen, More and the chips that make way while
 // scrolling down, and the first-run tips.
 
+import { applyTheme, bindThemeToggle } from "./appearance.js";
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
@@ -15,8 +16,8 @@ import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { STILL_LOADING, cardFor, redrawRace, refillCards, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import {
-  FOCUSES, bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, migrateView, onViewChange, setViewPref, showViewControls,
-  syncSourceNotes, viewPref,
+  FOCUSES, VIEW_MODES, bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, migrateView, modeChoice, onViewChange,
+  setViewPref, showViewControls, syncSourceNotes, viewPref,
 } from "./view.js";
 
 let page = null; // { ballot, picks }
@@ -31,10 +32,7 @@ const nextButton = $("#next-race");
 const jump = $("#jump");
 const jumpList = $("#jump-list");
 const stripRace = $("#strip-race");
-const VIEW_MODES = [["minimal", "Minimal"], ["simple", "Simple"], ["detailed", "Detailed"]];
-const moreCaption = h("p", { class: "fine mode-caption", id: "more-mode-caption" }, $("#mode-caption").textContent);
-const moreView = h("fieldset", { class: "seg", "aria-describedby": "more-mode-caption" }, h("legend", { class: "sr-only" }, "How much detail"),
-  VIEW_MODES.map(([value, label]) => h("label", { class: "seg-option" }, h("input", { type: "radio", name: "view-mode", value }), label)));
+const moreView = modeChoice();
 const moreFocus = focusChips();
 const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
 const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: true }, $("#wait-note").textContent)];
@@ -221,7 +219,7 @@ function maybeTip() {
 // "View · Custom" while the switches are mixed.
 function viewLabel(mode) {
   const chosen = focuses();
-  const detail = VIEW_MODES.find(([value]) => value === mode)?.[1] || "Custom";
+  const detail = VIEW_MODES[mode]?.label || "Custom";
   const focus = chosen.length > 1 ? `${chosen.length} focuses` : chosen.length ? FOCUSES[chosen[0]].short : null;
   return ["View", detail, focus].filter(Boolean).join(" · ");
 }
@@ -255,6 +253,7 @@ export function askFocus() {
 
 function initFocusAsk() {
   focusAsk.querySelector(".muted").after(focusChips({ hints: true }));
+  focusAsk.querySelector(".focus-ask-detail").append(modeChoice());
   bindViewControls(focusAsk);
   const close = () => {
     dismissFocusAsk();
@@ -264,15 +263,6 @@ function initFocusAsk() {
   };
   $("#focus-ask-done").addEventListener("click", close);
   $("#focus-ask-close").addEventListener("click", close);
-}
-
-// "Ask me again", in View and in More: the card again, scrolled to (clear of the strip) with its
-// heading focused. Closing it answers the question again.
-function showFocusAsk() {
-  viewMenu.open = false;
-  focusAsk.hidden = false;
-  focusAsk.scrollIntoView({ block: "start" });
-  $("#focus-ask-title").focus({ preventScroll: true });
 }
 
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
@@ -352,13 +342,12 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections: View's detail (with its caption and "?"), focuses and Ask me again, the toolbar's
-// buttons (with the line saying why Print waits), and Expand and Collapse all from View.
+// More's sections: View's detail (with its "?") and focuses, the toolbar's buttons (with the line
+// saying why Print waits), and Expand and Collapse all from View.
 function fillMoreSheet() {
   bindViewControls(moreView);
   bindViewControls(moreFocus);
-  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreCaption, moreFocus,
-    moreAction("Ask me again", "help", showFocusAsk));
+  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
   addMoreSection({ id: "picks", label: "Your picks" }, moreEndorsers, morePrint,
     moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }), waitNotes[1]);
   addMoreSection({ id: "races", label: "Races" },
@@ -457,11 +446,14 @@ export function initNav(context) {
   page = context;
   migrateView();
   initEndorserBar(page, { sectionMarks: syncMatchMarks });
+  $("#view-detail").append(modeChoice());
   $("#view-focus").append(focusChips());
+  bindThemeToggle($("#theme-toggle"));
   initFocusAsk();
   bindViewControls(viewControls);
   onViewChange(applyView);
   onReturn(applyView); // back from Settings, a page kept for Back missed its changes
+  onReturn(applyTheme); // and the appearance, with View's toggle
   applyView();
   $("#expand-all").addEventListener("click", () => {
     setAllCollapsed(false);
@@ -471,7 +463,6 @@ export function initNav(context) {
     setAllCollapsed(true);
     viewMenu.open = false;
   });
-  $("#view-ask-again").addEventListener("click", showFocusAsk);
 
   // View closes like a menu: a click elsewhere, or Esc.
   document.addEventListener("click", (event) => {
