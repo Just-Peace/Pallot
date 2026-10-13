@@ -155,9 +155,10 @@ function chipMenu(item, card, first, label, choice) {
 
 // The candidate's Endorsements line, a ul labelled by its heading. A green chip shows just the
 // source's name, since the heading says "Endorsements"; an amber one says what it is ("TrackAIPAC
-// watchlist"), so it doesn't rest on the colour. With the showEndorsements view switch off, one
-// button counts them ("3 endorsements") and opens them in place, until syncLines(). A chip links
-// to its source's page for the candidate, or opens chipMenu() when the endorser bar knows it.
+// watchlist"), so it doesn't rest on the colour. The showEndorsements view switch shows it; with
+// openEndorsements off, one button counts them ("3 endorsements") and opens them in place, until
+// syncLines(). A chip links to its source's page for the candidate, or opens chipMenu() when the
+// endorser bar knows it.
 export function sourceLines(candidate) {
   const items = greenFirst(candidate.cards.flatMap((card) => sided(card).map((b) => ({ b, card }))), (item) => item.b.tone);
   const chips = chipsOf(items, (b, card, first) => {
@@ -179,15 +180,18 @@ export function sourceLines(candidate) {
     on: { click: () => show(body.hidden) },
   }, plural(chips.length, "endorsement"));
   const sync = () => {
-    toggle.hidden = viewPref("showEndorsements");
-    show(viewPref("showEndorsements"));
+    const open = viewPref("openEndorsements");
+    element.hidden = !viewPref("showEndorsements");
+    toggle.hidden = open;
+    show(open);
   };
   const element = h("div", { class: "cand-lines", on: { "pallot:sync": sync } }, toggle, body);
   sync();
   return element;
 }
 
-// Every candidate's lines go back to the showEndorsements switch, opened by hand or not.
+// Every candidate's lines go back to the showEndorsements and openEndorsements switches, opened by
+// hand or not.
 export function syncLines() {
   for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
 }

@@ -52,6 +52,7 @@ const APPLY = {
   showMap: syncMapShown,
   showPolls: () => syncBoxes("showPolls"),
   showEndorsements: syncLines,
+  openEndorsements: syncLines,
   showFunding: () => {
     syncBoxes("showFunding");
     syncFunding();
@@ -216,7 +217,7 @@ function maybeTip() {
 
 // ---- view: detail and focus, collapse, only unpicked races, next race, j/k ------------
 
-// The View menu's button: "View · Simple", "View · Simple · Money", "View · Simple · 2 focuses",
+// The View menu's button: "View · Simple", "View · Simple · Funding", "View · Simple · 2 focuses",
 // "View · Custom" while the switches are mixed.
 function viewLabel(mode) {
   const chosen = focuses();
