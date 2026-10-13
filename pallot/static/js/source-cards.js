@@ -493,13 +493,11 @@ const cardLinks = (card) => card.links.length
   ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, webLink(l.url, l.label))))
   : null;
 
-// ``described``: false in the Profile tab's sections, named by their source, whose description
-// Settings already gives.
-export function cardPanel(card, { described = true } = {}) {
+export function cardPanel(card) {
   return h(
     "div",
     { class: "card-panel" },
-    described && card.description ? h("p", { class: "muted" }, card.description) : null,
+    card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
     cardSummary(card),
     cardQuotes(card),
@@ -518,11 +516,33 @@ export function foldSection(name, extra, body, tone = null) {
     h("div", { class: "section-body" }, body));
 }
 
+// A Profile or Endorsements section's title line, at the right: how it matched and the day of the
+// source's copy ("Exact match · Oct 8, 2026"), or just the day for a source with no match (Texas
+// SOS). The match's reason is in its tooltip and, for screen readers, after it.
+function sectionMeta(card) {
+  const exact = card.match?.confidence === "exact";
+  const parts = [exact ? "Exact match" : null, card.as_of ? formatDate(card.as_of, SHORT_DATE) : null].filter(Boolean);
+  if (!parts.length) return null;
+  return h("span", { class: "section-meta", title: [exact ? `Matched${matchWhy(card.match)}` : null,
+    card.as_of ? `${card.label}'s data as of ${formatDate(card.as_of, SHORT_DATE)}` : null].filter(Boolean).join(" ") },
+    parts.join(" · "), exact ? h("span", { class: "sr-only" }, `: matched${matchWhy(card.match)}`) : null);
+}
+
+const likelyLine = (card) => isLikely(card)
+  ? h("p", { class: "match-line" }, h("strong", {}, "Likely match"), matchWhy(card.match))
+  : null;
+
+// A Profile section's body: a likely match's reason, the facts, the quotes and the links, with no
+// match box, chips or "Open …" line, since the title line has the match and the links the pages.
+function profileBody(card) {
+  return h("div", { class: "card-panel" }, likelyLine(card), cardFacts(card), cardQuotes(card), cardLinks(card));
+}
+
 // Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's and
-// Ballotpedia's profiles, a section each with its whole card but its description.
+// Ballotpedia's profiles, a section each.
 export function profilePanel(cards) {
   return h("div", { class: "card-panel profile" },
-    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card, { described: false }))));
+    cards.map((card) => foldSection(card.label, [isLikely(card) ? likelyFlag() : null, sectionMeta(card)], profileBody(card))));
 }
 
 // A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
@@ -575,15 +595,6 @@ const SIDE_ORDER = { good: 0, warn: 1 };
 const SIDE_TONES = ["good", "warn", null];
 const side = (card) => Math.min(2, ...card.badges.map((b) => SIDE_ORDER[b.tone] ?? 2));
 
-function endorsementMeta(card) {
-  const exact = card.match?.confidence === "exact";
-  const parts = [exact ? "Exact match" : null, card.as_of ? formatDate(card.as_of, SHORT_DATE) : null].filter(Boolean);
-  if (!parts.length) return null;
-  return h("span", { class: "section-meta", title: [exact ? `Matched${matchWhy(card.match)}` : null,
-    card.as_of ? `${card.label}'s data as of ${formatDate(card.as_of, SHORT_DATE)}` : null].filter(Boolean).join(" ") },
-    parts.join(" · "), exact ? h("span", { class: "sr-only" }, `: matched${matchWhy(card.match)}`) : null);
-}
-
 // The facts, an Office as a chip linking to the source's page for the candidate (no "Office" label)
 // and the rest as rows, in order: TrackAIPAC's figures follow the listing they're from.
 function endorsementFacts(card) {
@@ -601,7 +612,7 @@ function endorsementFacts(card) {
 
 function endorsementBody(card) {
   return h("div", { class: "card-panel" },
-    isLikely(card) ? h("p", { class: "match-line" }, h("strong", {}, "Likely match"), matchWhy(card.match)) : null,
+    likelyLine(card),
     endorsementFacts(card),
     cardQuotes(card),
     cardLinks(card));
@@ -612,7 +623,7 @@ export function endorsementsPanel(cards) {
   const section = (card) => foldSection(card.label, [
     card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
     isLikely(card) ? likelyFlag() : null,
-    endorsementMeta(card),
+    sectionMeta(card),
   ], endorsementBody(card), SIDE_TONES[side(card)]);
   return h("div", { class: "card-panel endorsements" },
     h("p", { class: "muted" }, plural(cards.length, "endorsement")),
