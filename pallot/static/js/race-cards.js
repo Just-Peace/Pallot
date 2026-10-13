@@ -11,7 +11,7 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
-import { fundingLine, raceMoney, sourceLines } from "./source-cards.js";
+import { fundingLine, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -143,11 +143,13 @@ function raceCard(race) {
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
   ].filter(Boolean).join(" · ");
-  const rows = [...race.candidates.map((c) => candidateRow(race, c)), writeInRow(race)];
+  const candRows = race.candidates.map((c) => candidateRow(race, c));
+  const quiet = quietWriteIns(race, candRows);
+  const rows = [...candRows, writeInRow(race)];
   const body = h("fieldset", { class: "race-options" },
     h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
-    h("ul", { class: "cands" }, rows.map((r) => r.row)));
+    h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
   const money = part(() => raceMoney(race, () => openCompare($("#compare"), race)));
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
@@ -164,6 +166,7 @@ function raceCard(race) {
     card.setMeta(meta());
     money.refill();
     for (const row of rows) row.fill?.();
+    quiet.sync();
   });
 
   redraw.set(race.key, () => {
@@ -184,8 +187,36 @@ function raceCard(race) {
       if (note) note.hidden = !on;
     }
     for (const { sync } of rows) sync();
+    quiet.sync();
   });
   return card.article;
+}
+
+// The write-ins with nothing to show but their name (quietWriteIn) share one line at the end of
+// the race, before the blank: "Write-ins: Bradford Hall, Zul Mohamed". A name opens that write-in's
+// row in place, to pick; one picked or with a note keeps their row. ``sync`` runs after a redraw or
+// a refill, once the cards are in.
+function quietWriteIns(race, candRows) {
+  const opened = new Set();
+  const line = h("li", { class: "writeins-line", hidden: true });
+  const open = (candRow) => {
+    opened.add(candRow.candidate.key);
+    sync();
+    candRow.row.querySelector(".pick-input").focus();
+  };
+  const sync = () => {
+    const picked = page.picks.picked(race.key);
+    const folded = candRows.filter(({ candidate }) => !opened.has(candidate.key) && !picked.includes(candidate.key)
+      && !page.picks.note(candidate.key) && quietWriteIn(race, candidate));
+    for (const candRow of candRows) candRow.row.hidden = folded.includes(candRow);
+    line.hidden = !folded.length;
+    line.replaceChildren(h("span", { class: "line-title" }, "Write-ins"),
+      h("span", { class: "writeins-names" }, folded.map((candRow, i) => [i ? ", " : null, h("button", {
+        type: "button", class: "link-btn", title: "Show this write-in, to pick them",
+        "aria-label": `Show ${candRow.candidate.name}, a write-in candidate`, on: { click: () => open(candRow) },
+      }, candRow.candidate.name)])));
+  };
+  return { line, sync };
 }
 
 // Puts ``text`` in a box the voter isn't typing in, if it changed (another tab, Clear picks, Undo).
@@ -320,6 +351,12 @@ function candidateRow(race, candidate) {
     [profile, photo, pills, lines, funding, ban].forEach((p) => p.refill());
     row.classList.toggle("banned", isBanned(candidate));
   };
+  // On a phone, outside Detailed, Note, Ban and Search wait behind "…", which opens them in place.
+  const moreButton = h("button", {
+    type: "button", class: "icon-btn row-more", "aria-expanded": "false", "aria-controls": `actions-${id}`,
+    title: "Note, ban and search", "aria-label": `More for ${candidate.name}: note, ban and search`,
+    on: { click: () => moreButton.setAttribute("aria-expanded", String(row.classList.toggle("actions-open"))) },
+  }, "…");
 
   const row = h(
     "li",
@@ -334,14 +371,15 @@ function candidateRow(race, candidate) {
           h("span", { class: "cand-name" }, candidate.name),
           h("span", { class: "cand-sub" }, pills.nodes))),
       h("div", { class: "cand-profile" }, profile.nodes),
-      h("div", { class: "cand-actions" },
+      moreButton,
+      h("div", { class: "cand-actions", id: `actions-${id}` },
         noteButton, ban.nodes, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
     lines.nodes,
     funding.nodes,
     noteBox,
   );
   row.classList.toggle("banned", isBanned(candidate));
-  return { row, sync, fill };
+  return { candidate, row, sync, fill };
 }
 
 // What ``build()`` makes (a node, a list of them or nothing), behind a marker so ``refill()`` can

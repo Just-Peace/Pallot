@@ -237,9 +237,9 @@ const viewSection = $("#view-title").closest("section");
 function showView() {
   const mode = showViewControls(viewSection);
   $("#view-mode-note").textContent = {
-    minimal: "Minimal shows only the ballot and its candidates. Simple adds funding, polls and endorsements. Detailed opens everything.",
-    simple: "Simple folds the map and where the dates and districts come from. Minimal folds everything; Detailed opens everything.",
-    detailed: "Detailed opens everything. Simple folds the map and where the dates and districts come from; Minimal folds everything.",
+    minimal: "Minimal shows only the ballot and its candidates, with no money or poll boxes. Simple adds funding, polls and endorsements. Detailed opens everything.",
+    simple: "Simple folds the money and poll boxes to one line each, the map, and where the dates and districts come from, and keeps candidate rows light on a phone. Minimal hides the boxes; Detailed opens everything.",
+    detailed: "Detailed opens everything, the money and poll boxes included, and shows each candidate's whole row on a phone. Simple folds the boxes; Minimal hides them.",
     custom: "Your own mix, below.",
   }[mode];
 }
