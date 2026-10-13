@@ -48,7 +48,8 @@ const entryHint = $("#entry-hint");
 const statusBox = $("#status");
 const entry = $("#entry");
 const entryTitle = $("#entry-title");
-const welcome = $("#welcome");
+const welcome = document.querySelectorAll("[data-welcome]"); // the heading above the entry card and the points under it
+const showWelcome = (show) => welcome.forEach((el) => { el.hidden = !show; });
 const loading = $("#loading");
 const result = $("#result");
 const jump = $("#jump");
@@ -93,7 +94,7 @@ function showEntry(show, { focus = show } = {}) {
   entryTitle.textContent = page.ballot ? "Look up another ballot" : "See your ballot, race by race";
   cancelButton.hidden = !page.ballot;
   addressCard.hidden = inPanel || !hasAddress;
-  welcome.hidden = !show || Boolean(page.ballot) || !loading.hidden;
+  showWelcome(show && !page.ballot && loading.hidden);
   openPanel(inPanel ? "address" : null);
   if (show && !inPanel && page.ballot) scrollTo({ top: 0 });
   if (focus) focusEntry();
@@ -295,7 +296,7 @@ function showLoading(show, { keepEntry = false } = {}) {
   loading.hidden = !show;
   jump.hidden = show || !page.ballot; // the sections are the old ballot's
   if (show) {
-    welcome.hidden = true;
+    showWelcome(false);
     result.hidden = true;
     if (!keepEntry && entry.parentElement === loading.parentElement) entry.hidden = true;
   } else if (page.ballot) {
@@ -314,7 +315,7 @@ function render() {
   syncMap(page.ballot);
   renderMessages();
   renderSections();
-  welcome.hidden = true;
+  showWelcome(false);
   askFocus();
   hideBanner();
   renderCards();

@@ -478,9 +478,12 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 /* ---- ballot area ---- */
 
-/* The entry card (entry-card.js), and the welcome under it, until there's a ballot */
+/* The entry card (entry-card.js), and the welcome above and under it, until there's a ballot */
+.welcome-head { max-width: 560px; margin: 8px 0 16px; }
+.welcome-head h1 { margin: 0 0 6px; }
+.welcome-head .lede { margin: 0; }
 .entry { max-width: 560px; margin-top: 8px; padding: 24px 28px; }
-.entry h1 { margin: 0 0 16px; font-size: 1.5rem; }
+.entry h2 { margin: 0 0 16px; font-size: 1.5rem; }
 .entry-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm); background: var(--panel-2); }
 .entry-tab { padding: 8px 12px; border: 0; border-radius: calc(var(--radius-sm) - 2px); background: none; color: var(--muted);
@@ -492,7 +495,10 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .field-row { display: flex; flex-wrap: wrap; gap: 12px; }
 .field-row > .field { flex: 1 1 180px; }
 .entry-fold > summary { width: max-content; max-width: 100%; color: var(--accent); font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-.entry-fold .pair-grid { margin-top: 8px; }
+.entry-districts { min-width: 0; margin: 0; padding: 0; border: 0; }
+.entry-districts > legend { padding: 0; font-weight: 600; font-size: 0.9rem; }
+.entry-districts > .fine { margin-top: 2px; }
+.entry-districts .pair-grid { margin-top: 8px; }
 .vc-sketch { display: block; width: 100%; max-width: 320px; height: auto; margin: 10px 0 4px; font-family: inherit; }
 .vc-card { fill: var(--panel-2); stroke: var(--line-strong); }
 .vc-mark { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
@@ -1389,7 +1395,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .side-address { margin-top: 0; padding-bottom: 6px; }
   /* with a ballot showing, "Change" opens the entry card here, without its own frame */
   .side-address .entry { max-width: none; margin: 0; padding: 4px 0 0; border: 0; box-shadow: none; background: none; }
-  .side-address .entry h1 { margin-bottom: 12px; font-size: 1.1rem; }
+  .side-address .entry h2 { margin-bottom: 12px; font-size: 1.1rem; }
   .side-bottom { margin-top: 0; }
   .content { padding: 20px 16px calc(var(--footer-h, 52px) + 24px + var(--toast-space, 0px)); }
   .pane-toggle { display: none; }

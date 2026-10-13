@@ -23,8 +23,13 @@
     </aside>
 
     <main id="main" class="content">
+      <header id="welcome-head" class="welcome-head" data-welcome hidden>
+        <h1>Welcome to Pallot</h1>
+        <p class="lede">Look up your ballot to see every race on it and research each candidate before you vote. No account, ads or tracking: your picks stay in this browser.</p>
+      </header>
+
       <section id="entry" class="panel entry" aria-labelledby="entry-title" hidden>
-        <h1 id="entry-title">See your ballot, race by race</h1>
+        <h2 id="entry-title">See your ballot, race by race</h2>
         <form id="lookup-form" class="lookup-form">
           <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by" hidden>
             <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">My address</button>
@@ -53,11 +58,11 @@
                          required maxlength="8" pattern="[0-9A-Za-z]{1,8}" title="The precinct number on your card, such as 300 or 101A" placeholder="300">
                 </div>
               </div>
-              <details class="entry-fold">
-                <summary>More districts (optional)</summary>
+              <fieldset class="entry-districts">
+                <legend>More districts (optional)</legend>
                 <p class="fine">Fill in any your card lists, for races your precinct alone doesn't settle.</p>
                 <div class="pair-grid" id="vc-districts"></div>
-              </details>
+              </fieldset>
               <details class="entry-fold">
                 <summary>Where do I find these?</summary>
                 <svg class="vc-sketch" viewBox="0 0 280 124" role="img" aria-label="A voter registration certificate: County and Precinct near the top, the districts under them">
@@ -100,7 +105,7 @@
         </form>
       </section>
 
-      <section id="welcome" class="welcome" aria-label="What Pallot does" hidden>
+      <section id="welcome" class="welcome" aria-label="What Pallot does" data-welcome hidden>
         <ul class="welcome-points">
           <li><span data-icon="bars"></span>Compare money, endorsements and polls for every candidate.</li>
           <li><span data-icon="printer"></span>Pick, add notes, and print your picks to take with you.</li>
