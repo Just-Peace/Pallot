@@ -6,6 +6,7 @@
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
 import { COUNT, listed, plural } from "./format.js";
+import { helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import {
   DEFAULT_RULE, MONEY, WRITE_INS, allRaces, available, ballotParties, describeRule, loadRule, parseAmount, plan, saveRule, scopes,
@@ -330,7 +331,8 @@ function draw(rule, options, startScope) {
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),
-    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press Apply.")));
+    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press Apply.")),
+  helpLink("pick-by-rule", "Pick by rule"));
   dialog.replaceChildren(
     head,
     h("div", { class: "rule-bar" },

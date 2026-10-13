@@ -1,4 +1,4 @@
-// The Settings page: how much of the ballot shows (view.js); the web search engine; the ban list; the sources, under the groups the
+// The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the ban list; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
 // what the server has saved from each and how the last lookup used it; the appearance; and Clear data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
@@ -12,6 +12,7 @@ import { api } from "./api.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
 import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
+import { forgetTips } from "./help.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
@@ -251,6 +252,12 @@ function showView() {
 
 bindViewControls(viewSection);
 onViewChange(showView);
+
+// Tips: "Show tips again" forgets the ones dismissed, so the ballot shows them again, one a visit.
+$("#tips-again").addEventListener("click", () => {
+  forgetTips();
+  setStatus($("#tips-status"), "The ballot will show its tips again, one a visit.", "ok");
+});
 
 // Ban list (ban-list.js): the names banned from Details and the names or patterns typed here, a
 // chip each with a remove button. A change is marked, so an open ballot reloads with it.

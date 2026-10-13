@@ -8,6 +8,7 @@
 
 import { $, h } from "./dom.js";
 import { listed, plural } from "./format.js";
+import { helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import { moreAction } from "./more-sheet.js";
 import { allRaces, barMarks, barOptions, barRule, loadBar, loadRule, saveBar } from "./pick-rules.js";
@@ -115,7 +116,8 @@ function drawBar(choices, options) {
     : null;
   const allyNote = options.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it marks Ally." : "";
   bar.replaceChildren(
-    h("div", { class: "bar-head" }, h("h2", { id: "endorser-bar-title", tabindex: "-1" }, "Endorsers you trust"), mode, close),
+    h("div", { class: "bar-head" }, h("h2", { id: "endorser-bar-title", tabindex: "-1" }, "Endorsers you trust"),
+      helpLink("endorsements", "the endorser bar"), mode, close),
     endorsers,
     avoids,
     summary,

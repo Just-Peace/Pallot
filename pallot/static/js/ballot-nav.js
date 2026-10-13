@@ -1,7 +1,7 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
 // which one is on screen), Simple | Detailed, Focus and Options, the "What matters to you?" card,
-// j and k, and where the strip's parts go on a phone, with the race on screen, More and the chips
-// that make way while scrolling down.
+// j and k, where the strip's parts go on a phone, with the race on screen, More and the chips
+// that make way while scrolling down, and the first-run tips.
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
@@ -9,13 +9,14 @@ import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
 import { initEndorserBar, moreEndorsers, syncEndorserBar } from "./endorser-bar.js";
+import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { STILL_LOADING, cardFor, redrawRace, refillCards, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import {
-  bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, onViewChange, setViewPref, showViewControls, syncSourceNotes,
-  viewPref,
+  bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, modeChosen, onViewChange, setViewPref, showViewControls,
+  syncSourceNotes, viewPref,
 } from "./view.js";
 
 let page = null; // { ballot, picks }
@@ -31,11 +32,16 @@ const jump = $("#jump");
 const jumpList = $("#jump-list");
 const stripRace = $("#strip-race");
 const VIEW_MODES = [["minimal", "Minimal"], ["simple", "Simple"], ["detailed", "Detailed"]];
-const moreView = h("fieldset", { class: "seg" }, h("legend", { class: "sr-only" }, "How much of the ballot shows"),
+const modeCaption = $("#mode-caption");
+const moreCaption = h("p", { class: "fine mode-caption", id: "more-mode-caption", hidden: true }, modeCaption.textContent);
+const moreView = h("fieldset", { class: "seg", "aria-describedby": "more-mode-caption" }, h("legend", { class: "sr-only" }, "How much of the ballot shows"),
   VIEW_MODES.map(([value, label]) => h("label", { class: "seg-option" }, h("input", { type: "radio", name: "view-mode", value }), label)));
 const moreFocus = focusChips();
 const moreRule = moreAction("Pick by rule", "filter", () => $("#rule-btn").click());
 const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
+const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: true }, $("#wait-note").textContent)];
+const progressInfo = strip.querySelector(".progress-info");
+const coarse = matchMedia("(pointer: coarse)");
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
 // The rows' and race heads' parts a focus adds, built again in place.
 const refill = () => {
@@ -139,11 +145,12 @@ export function updateProgress() {
     element.classList.toggle("complete", !maybe && picked === keys.length);
   }
   syncChipFades();
+  maybeTip();
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
-// Pick by rule and Print, which need them, wait, in the toolbar and in More. ``failed``: they won't
-// come, so the bar goes but they stay off.
+// Pick by rule and Print, which need them, wait, in the toolbar and in More, a line under them saying
+// why. ``failed``: they won't come, so the bar goes but they stay off.
 const needCards = [$("#rule-btn"), $("#print-btn"), moreRule, morePrint].map((button) => ({ button, title: button.title }));
 const cardsLoading = $("#cards-loading");
 const CARDS_STEPS = [
@@ -162,6 +169,49 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
     button.disabled = waiting;
     button.title = waiting ? STILL_LOADING : title;
   }
+  for (const note of waitNotes) note.hidden = !waiting;
+  maybeTip();
+}
+
+// ---- first-run tips (help.js) ---------------------------------------------------------
+
+// Each points at what it's about, and shows only for a voter whose focus it concerns (all of them
+// without a focus): no money tip for a voter who chose only Polls.
+const wants = (focus) => !focuses().length || focuses().includes(focus);
+const anyPicked = () => [...page.ballot.races.map((r) => r.key), ...page.ballot.measures.map(measureKey)].some((key) => page.picks.has(key));
+const TIPS = [
+  {
+    id: "funding", when: () => viewPref("showFunding") && wants("money"),
+    target: () => [...result.querySelectorAll(".funding-line .badge-open")], after: (chip) => chip.closest(".funding-line"),
+    text: () => `${coarse.matches ? "Tap" : "Click"} a Funding chip to see who gave.`,
+  },
+  {
+    id: "profile", when: () => wants("stances"),
+    target: () => [...result.querySelectorAll(".profile-btn:not(:disabled)")], after: (button) => button.closest(".cand-main"),
+    text: () => `${viewPref("stanceLinks") ? "Profile & issues" : "Profile"} shows where each candidate stands, issue by issue.`,
+  },
+  {
+    id: "rule", when: () => wants("endorsements"), target: () => $("#rule-btn"), after: () => tools,
+    text: () => "Pick by rule can fill your ballot from the endorsers you trust.",
+  },
+  {
+    id: "next", when: () => anyPicked() && !nextButton.disabled, target: () => nextButton, after: () => progressInfo,
+    text: () => (coarse.matches ? "Next race jumps to the next one you haven't picked."
+      : "Next race jumps to one you haven't picked; j and k step too."),
+  },
+  {
+    id: "print", when: anyPicked, target: () => $(narrow.matches ? "#more-btn" : "#print-btn"),
+    after: () => (narrow.matches ? progressInfo : tools),
+    text: () => (narrow.matches ? "Print your picks from More: phones can't be used at Texas voting stations."
+      : "Print your picks: phones can't be used at the voting station in Texas."),
+  },
+];
+
+// A tip, once the ballot and its cards are in, with nothing over them: not while "What matters to
+// you?" asks, nor with a dialog open.
+function maybeTip() {
+  if (!page?.ballot || page.loadingCards || result.hidden || !focusAsk.hidden || document.querySelector("dialog[open]")) return;
+  showTip(TIPS);
 }
 
 // ---- view: Simple or Detailed, collapse, only unpicked races, next race, j/k ----------
@@ -169,12 +219,14 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
 // After any change of the view settings, here or in another tab: the toolbar's Simple | Detailed,
 // Focus and Options, More's and the question's chips show them, and each switch that changed applies
 // to the ballot in place, putting back what the voter opened or folded by hand. The page carries the
-// mode (data-view-mode), so a phone's candidate rows stay whole in Detailed.
+// mode (data-view-mode), so a phone's candidate rows stay whole in Detailed. Until the voter has
+// chosen a mode or a focus, a line under the modes says what each shows.
 function applyView() {
   document.documentElement.dataset.viewMode = showViewControls(viewControls);
   for (const root of [moreView, moreFocus, focusAsk]) showViewControls(root);
   const count = focuses().length;
   $("#focus-summary").textContent = count ? `Focus · ${count}` : "Focus";
+  for (const caption of [modeCaption, moreCaption]) caption.hidden = modeChosen() || count > 0;
   const runs = new Set();
   for (const [name, apply] of Object.entries(APPLY)) {
     const value = viewPref(name);
@@ -182,6 +234,7 @@ function applyView() {
     applied[name] = value;
   }
   runs.forEach((run) => run());
+  maybeTip();
 }
 
 // "What matters to you?": after a ballot is drawn, until the voter chooses a focus or closes it. Its
@@ -197,6 +250,7 @@ function initFocusAsk() {
     dismissFocusAsk();
     focusAsk.hidden = true;
     focusMenu.querySelector("summary").focus({ preventScroll: true });
+    maybeTip();
   };
   $("#focus-ask-done").addEventListener("click", close);
   $("#focus-ask-close").addEventListener("click", close);
@@ -279,14 +333,15 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections: how much shows, the focus, the toolbar's buttons, and Expand and Collapse all from Options.
+// More's sections: how much shows (with the toolbar's caption and "?"), the focus, the toolbar's
+// buttons (with the line saying why two wait), and Expand and Collapse all from Options.
 function fillMoreSheet() {
   bindViewControls(moreView);
   bindViewControls(moreFocus);
-  addMoreSection({ id: "view", label: "How much shows" }, moreView);
+  addMoreSection({ id: "view", label: ["How much shows ", helpLink("view-modes", "focus and views")] }, moreView, moreCaption);
   addMoreSection({ id: "focus", label: "Focus", after: "view" }, moreFocus);
   addMoreSection({ id: "picks", label: "Your picks" }, moreEndorsers, moreRule, morePrint,
-    moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }));
+    moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }), waitNotes[1]);
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
     moreAction("Collapse all", "collapse", () => setAllCollapsed(true)));

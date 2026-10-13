@@ -9,7 +9,8 @@ import { icon } from "./icons.js";
 const sheet = $("#more-sheet");
 const body = $("#more-body");
 
-// Adds a section under its heading, or after the section ``after`` (an id given earlier), and returns it.
+// Adds a section under its heading (``label``: text, a node or a list of them), or after the section
+// ``after`` (an id given earlier), and returns it.
 export function addMoreSection({ id, label, after = null }, ...children) {
   const section = h("section", { class: "sheet-section", "data-section": id, "aria-labelledby": `more-${id}` },
     h("h3", { class: "sheet-label", id: `more-${id}` }, label), children);

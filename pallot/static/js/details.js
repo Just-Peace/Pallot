@@ -116,8 +116,8 @@ export function showDetails(race, index, focus = null, at = "profile") {
   (pressed && !pressed.disabled ? pressed : close).focus();
 }
 
-// A head button's word, which hides once the head shrinks, leaving its icon; the button's
-// accessible name and tooltip say the rest.
+// A head button's word; once the head shrinks on a phone, Search's and Ban's hide, leaving their
+// icons, and the button's accessible name and tooltip say the rest.
 const word = (text) => h("span", { class: "btn-word" }, text);
 
 // The head shrinks to the photo, the name and the buttons' icons once the voter scrolls down, and

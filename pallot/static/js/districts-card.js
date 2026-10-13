@@ -18,11 +18,11 @@ export function initDistrictsCard(context) {
   page = context;
 }
 
-// The name on the card: "State Senate", "SBOE" with its long name as a tooltip, "JP & Constable".
-function districtLabel(kind) {
-  const { short, long } = DISTRICTS[kind];
-  const name = short === long ? short : h("abbr", { title: long }, short);
-  return kind === "jp" ? [name, " & Constable"] : name;
+// The name on the card, spelled out ("State Board of Education", "Justice of the Peace & Constable"),
+// or ``short`` ("SBOE", as the voter card has it) in the edit boxes.
+function districtLabel(kind, { short = false } = {}) {
+  const name = DISTRICTS[kind][short ? "short" : "long"];
+  return kind === "jp" ? `${name} & Constable` : name;
 }
 
 // "State Senate district", "Justice of the Peace and Constable precinct": a box's tooltip.
@@ -127,7 +127,7 @@ export function renderDistricts() {
   const fromCard = location.source === "voter_card";
   const precinctName = precinct?.name ?? (fromCard ? page.request?.precinct : null);
   const notUp = new Set(d.not_up || []);
-  const number = (kind, options = {}) => district(districtLabel(kind), shown[kind],
+  const number = (kind, options = {}) => district(districtLabel(kind, { short: editing }), shown[kind],
     { notUp: notUp.has(kind), missing: needed(kind), edit: editing ? kind : null, ...options });
 
   const rows = [
