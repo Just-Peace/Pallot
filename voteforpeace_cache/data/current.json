@@ -9178,7 +9178,7 @@
       "level": "state_legislature",
       "name": "Jordyn Balderas",
       "notes": null,
-      "office_title": "State Representative District 34",
+      "office_title": "State Representative",
       "party": "Democrat",
       "rating": "vote",
       "section": "Florida",
@@ -9236,7 +9236,7 @@
       "level": "state_legislature",
       "name": "Daniel Cicirelli",
       "notes": null,
-      "office_title": "State Representative District 31",
+      "office_title": "State Representative",
       "party": "Democrat",
       "rating": "vote",
       "section": "Florida",
@@ -9425,6 +9425,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "b94ea857-2249-4f65-95ff-1207b1dae41d",
+      "district": "03",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Track AIPAC",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Mike Klein",
+      "notes": null,
+      "office_title": "U.S. Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Florida",
+      "slug": "mike-klein",
+      "state": "FL",
+      "url": "https://voteforpeace.info/florida/mike-klein"
+    },
+    {
+      "articles": [],
       "candidate_id": "2bfd2c3b-2a7b-4796-bd14-8950c5a3f081",
       "district": "26",
       "election_date": "Nov 3, 2026",
@@ -9491,7 +9520,7 @@
       "level": "state_legislature",
       "name": "Daniel McDow",
       "notes": null,
-      "office_title": "State Representative District 33",
+      "office_title": "State Representative",
       "party": "Democrat",
       "rating": "vote",
       "section": "Florida",
@@ -9759,7 +9788,7 @@
       "level": "state_legislature",
       "name": "Ricardo Santiago",
       "notes": null,
-      "office_title": "State Representative District 50",
+      "office_title": "State Representative",
       "party": "Democrat",
       "rating": "vote",
       "section": "Florida",
@@ -9770,11 +9799,11 @@
     {
       "articles": [],
       "candidate_id": "8cf6eb1d-2351-4703-8f9b-c700e3511477",
-      "district": null,
-      "election_date": "Aug 18, 2026",
-      "election_label": "Primary: Aug 18, 2026",
+      "district": "12",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
-      "election_stage": "primary",
+      "election_stage": "general",
       "endorsements": [
         {
           "link": null,
@@ -9785,10 +9814,10 @@
       ],
       "featured_text": null,
       "jurisdiction": null,
-      "level": "state",
+      "level": "federal",
       "name": "Branden Scrivener",
       "notes": null,
-      "office_title": "U.S. HOUSE, FL District 12",
+      "office_title": "U.S. Representative",
       "party": null,
       "rating": "vote",
       "section": "Florida",
@@ -9817,7 +9846,7 @@
       "level": "state_legislature",
       "name": "Felipe Sousa Lazaballet",
       "notes": null,
-      "office_title": "State Representative District 42",
+      "office_title": "State Representative",
       "party": "Democrat",
       "rating": "vote",
       "section": "Florida",
@@ -27078,5 +27107,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-12"
+  "snapshot": "2026-10-13"
 }
