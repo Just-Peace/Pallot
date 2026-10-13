@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any, Collection
 
 from ..matching import NameIndex
-from ..models import Badge, Fact, Link, Match, Race, SourceCard, Tone
+from ..models import Badge, Fact, Match, Race, SourceCard, Tone
 from ..offices import OfficeScope
 from ..text import display_date
 from . import CardSet, RefreshFailed
@@ -128,14 +128,6 @@ class EndorsementList:
 
     def card(self, entry: dict[str, Any], match: Match) -> SourceCard:
         page = entry.get("url") or self.url
-        facts = [
-            Fact(label="Endorsed by", value=self.organization, url=self.url),
-            Fact(label="Office on the list", value=office_text(entry)),
-        ]
-        if entry.get("party"):
-            facts.append(Fact(label="Party on the list", value=entry["party"]))
-        facts.append(Fact(label="List fetched" if self.live else "List captured",
-                          value=display_date(self.captured) or self.captured))
         return SourceCard(
             source=self.source,
             kind="endorsement",
@@ -146,9 +138,8 @@ class EndorsementList:
             match=match,
             badges=[Badge(text=f"Endorsed by {self.label}", tone="good", url=page,
                           hint=f"On {self.organization}'s endorsement list")],
-            facts=facts,
+            facts=[Fact(label="Office", value=office_text(entry), url=page)],
             quotes=[entry["note"]] if entry.get("note") else [],
-            links=[Link(label=f"{self.label}'s endorsement list", url=self.url)] if page != self.url else [],
             flags=[FLAG],
         )
 
