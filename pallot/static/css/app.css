@@ -922,7 +922,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 }
 .chevron { grid-area: chevron; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
   border-radius: 6px; color: var(--muted); }
-/* A chevron: down while open, right while folded (a race, the map, a FAQ answer; Options only points down) */
+/* A chevron: down while open, right while folded (a race, the map, a FAQ answer; View only points down) */
 .chevron::before, .faq > summary::before, .source-group > summary::before, .menu > summary::after { content: ""; flex: none; width: 7px; height: 7px;
   border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
   transition: transform 0.15s; }
