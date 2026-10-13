@@ -118,11 +118,12 @@
           <div class="faq-body">
             <p>They're how much of your ballot shows at first, chosen with Minimal | Simple | Detailed at the top of the ballot or under Ballot view in <a href="settings.html#view-title">Settings</a>. Nothing is left out of either: anything folded opens with a click.</p>
             <ul>
-              <li><strong>Minimal</strong>: only the races and their candidates. The map, funding (the money boxes and Funding chips), polls and endorsements are folded or hidden.</li>
-              <li><strong>Simple</strong>, where Pallot starts: the map of your districts is folded to one line. Funding, polls and endorsements show.</li>
-              <li><strong>Detailed</strong>: everything is open, the map and the money boxes included.</li>
+              <li><strong>Minimal</strong>: only the races and their candidates. The map is folded; funding (the money boxes and Funding chips), polls and endorsements are hidden.</li>
+              <li><strong>Simple</strong>, where Pallot starts: funding, polls and endorsements show, with each race's money and poll boxes folded to one line ("Money raised", "Polls") and the map of your districts folded too. On a phone, each candidate's Note, Ban and Search wait behind "…", and their Funding line shows what they raised and "+3 more".</li>
+              <li><strong>Detailed</strong>: everything is open, the map and the money and poll boxes included, and a phone shows each candidate's whole row.</li>
             </ul>
-            <p>Each part also has its own switch, under "Show" in the ballot's Options and in Settings. Flip one and the view is "Custom", your own mix; choosing Minimal, Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
+            <p>In every view, a money or poll box lists only the candidates with money or polling above zero, and a line under it names the rest. Write-ins with nothing to show share one line at the end of their race; click a name to show their row.</p>
+            <p>Each part also has its own switch, in the ballot's Options and in Settings, "Open money &amp; poll boxes" among them. Flip one and the view is "Custom", your own mix; choosing Minimal, Simple or Detailed sets them all again. Your choice is kept in this browser, and an open ballot in another tab follows it at once.</p>
           </div>
         </details>
 
@@ -304,7 +305,7 @@
         <details class="faq" id="funding">
           <summary>What do the Funding chips mean?</summary>
           <div class="faq-body">
-            <p>The Funding line under a candidate's name sums up, in a word, where their campaign's money comes from. They're facts worked out from the campaign's reports, not endorsements. Hover over a chip, or open the FEC or TEC tab in Details, for the figure behind it.</p>
+            <p>The Funding line under a candidate's name sums up, in a word, where their campaign's money comes from. They're facts worked out from the campaign's reports, not endorsements. Hover over a chip, or open the FEC or TEC tab in Details, for the figure behind it. On a phone, outside the Detailed view, the line shows what they raised and "+3 more", which shows the rest.</p>
             <p>A chip says <strong>Mostly</strong> when its side is more than half, and <strong>Overwhelmingly</strong> when it's more than three quarters. Green chips are money from many people at home; amber ones are money from a few, from far away, or from the candidate.</p>
             <ul>
               <li><strong>Small donors</strong> (green) or <strong>large donations</strong> (amber): the share of everything the campaign raised that came in donations under $500. Over half is small donors; under half is large donations, which counts everything else the campaign raised: donations of $500 or more, PACs and the candidate's own money. Small donations are the ones the campaign didn't itemize plus the itemized ones under $500. For Congress, a donation that wasn't itemized is from a donor who gave $200 or less in all.</li>
@@ -432,13 +433,13 @@
         <details class="faq" id="no-money">
           <summary>Why doesn't a candidate show any money?</summary>
           <div class="faq-body">
-            <p>A race's money box lists every candidate on your ballot, and "not found in FEC data" or "not found in TEC data" means Pallot found no reports for them. Usually that's because:</p>
+            <p>A race's money box lists only the candidates who raised something. The line under it, "No money reported: …", names the rest: Pallot found no reports for them, or their reports show nothing raised. Compare funding and Details still list everyone. Usually it's because:</p>
             <ul>
               <li>they haven't filed a report yet, or haven't raised or spent enough to have to (a congressional campaign starts reporting to the FEC after $5,000);</li>
               <li>their name is written differently in the reports than on the ballot, and Pallot leaves out a match it isn't sure of;</li>
               <li>for state races, the Texas Ethics Commission summary is older than their first report, until we refresh it.</li>
             </ul>
-            <p>The "Open FEC" or "Open TEC" link under the money box goes to the source's own search, where you can try other spellings.</p>
+            <p>The "FEC ↗" or "TEC ↗" link in the money box's corner goes to the source's own search, where you can try other spellings.</p>
           </div>
         </details>
 

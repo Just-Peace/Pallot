@@ -802,6 +802,12 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .cand-grid .cand-sub { margin: 0; }
 .cand-grid > .cand-profile { grid-area: profile; justify-self: start; }
 .cand-grid > .cand-actions { grid-area: actions; margin-left: 0; }
+/* a phone's "…" for Note, Ban and Search (candidateRow), only outside Detailed */
+.icon-btn.row-more { display: none; padding: 2px 12px; font-size: 1rem; line-height: 1.2; }
+/* the write-ins with nothing to show, on one line at the end of the race (quietWriteIns) */
+.writeins-line { display: flex; align-items: baseline; gap: 4px 10px; padding: 4px 12px; font-size: 0.88rem; }
+.writeins-names { min-width: 0; color: var(--muted); }
+.writeins-names .link-btn { white-space: normal; text-align: left; }
 .icon-btn.profile-btn { padding: 1px 9px; font-size: 0.76rem; line-height: 1.3; background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
 .icon-btn.profile-btn:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-contrast); }
 
@@ -839,6 +845,8 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .badge-line .badges { margin: 0; }
 .lines-toggle:not([hidden]) + .cand-lines-body { margin-top: 6px; }
 .panel-funding { margin: 8px 0; }
+/* the Funding line's "+3 more", only on a phone outside Detailed (fundingLine) */
+.funding-line .more-chips { display: none; }
 .badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 6px; padding: 2px 8px; font-size: 0.78rem;
   font-weight: 600; background: var(--neutral-soft); color: var(--text); }
 a.badge-link { text-decoration: none; }
@@ -990,6 +998,9 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .box-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
 .race-money.collapsed { padding-block: 6px; }
 .race-money.collapsed .breakdown-head { margin: 0; }
+/* who the box leaves out for having nothing to show, then its period and date at the foot's right */
+.box-left-out { margin-top: 8px; }
+.box-asof { margin-top: 6px; text-align: right; font-size: 0.76rem; }
 .breakdown-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin: 0 0 6px; }
 .breakdown-head .breakdown-title { margin: 0; }
 /* the box's corner (Compare funding, the source, the polls) stays at the right, also under a long title */
@@ -1318,6 +1329,18 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   /* the buttons, pills and chips a size down, each still at least 22px tall */
   .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: 0.78rem; }
   .cand-profile .profile-btn { padding: 4px 11px; font-size: 0.78rem; line-height: inherit; } /* as tall as Note and Ban beside it */
+  /* outside Detailed, a lighter row: Note, Ban and Search behind "…" at the right of Profile,
+     opening on a line of their own, and the Funding line's first chip with "+3 more" */
+  :root:not([data-view-mode="detailed"]) .cand-grid { grid-template-areas: "pick photo name name" "profile profile profile more"; }
+  :root:not([data-view-mode="detailed"]) .cand.actions-open .cand-grid {
+    grid-template-areas: "pick photo name name" "profile profile profile more" "actions actions actions actions"; }
+  :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { grid-area: more; justify-self: end; display: inline-flex;
+    align-items: center; justify-content: center; }
+  :root:not([data-view-mode="detailed"]) .cand:not(.actions-open) .cand-grid > .cand-actions { display: none; }
+  :root:not([data-view-mode="detailed"]) .funding-line:not(.open) .badge-line { flex-direction: row; align-items: center; }
+  :root:not([data-view-mode="detailed"]) .funding-line:not(.open) .badges > li:nth-child(n+3) { display: none; }
+  :root:not([data-view-mode="detailed"]) .funding-line:not(.open) .more-chips { display: block; }
+  .writeins-line { padding: 2px 10px; }
   .party { padding: 1px 7px; font-size: 0.66rem; }
   .pill { padding: 1px 7px; font-size: 0.72rem; }
   .badges { gap: 5px; }
@@ -1404,6 +1427,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   input.pair-box { font-size: 16px; min-width: calc(3ch + 24px); }
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
+  .icon-btn.row-more { min-width: 44px; }
   button.badge-btn, a.badge-link, .cal-link, .ban-remove { position: relative; }
   button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after { content: ""; position: absolute; left: 50%; top: 50%;
     width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
