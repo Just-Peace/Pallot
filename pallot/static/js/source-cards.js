@@ -553,10 +553,8 @@ export function pollsPanel(card, party) {
         h("strong", { class: "poll-median-value" }, `${median}%`), bar(median / 100)),
       each?.note ? h("p", { class: "fine" }, each.note) : null,
     ]) : null,
-    each ? foldSection(each.title, each.count ? h("span", { class: "section-meta" }, plural(each.count, "poll")) : null, [
-      breakdownRows({ ...each, note: null }, people),
-      each.mark != null ? h("p", { class: "fine" }, `The line across the bars marks the median, ${each.mark}%.`) : null,
-    ]) : null,
+    each ? foldSection(each.title, each.count ? h("span", { class: "section-meta" }, plural(each.count, "poll")) : null,
+      breakdownRows({ ...each, note: null }, people)) : null,
     sourceLine(card));
 }
 

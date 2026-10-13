@@ -208,8 +208,7 @@ def _span(kept: list[Reading]) -> str:
 def _method(kept: list[Reading]) -> str:
     if len(kept) == 1:
         return f"One poll so far: {kept[0].pollster}, {display_date(kept[0].end)}."
-    return (f"The median of each pollster's latest poll: {len(kept)} polls, {_span(kept)}. "
-            "Likely voters where a poll asked them.")
+    return f"Median of {len(kept)} polls, {_span(kept)}."
 
 
 def race_card(race: Race, kept: list[Reading], middle: dict[str, float]) -> SourceCard:
