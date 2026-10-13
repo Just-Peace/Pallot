@@ -78,6 +78,15 @@ export function slug(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+// A label and its number box (a district, a precinct). Inside a .pair-grid the pairs sit in a
+// wrapping row; on a phone they line up in two columns, each label over its box, and on a touch
+// screen the box is 44px tall with 16px text, so iOS doesn't zoom. ``label`` is text, a node or a
+// list of them; ``input`` is the box's attributes, ``props`` the label's.
+export function pairBox(label, input = {}, props = {}) {
+  return h("label", { ...props, class: ["pair", props.class] }, h("span", { class: "pair-label" }, label),
+    h("input", { type: "number", inputmode: "numeric", min: "1", ...input, class: ["pair-box", input.class] }));
+}
+
 // A status line: ``kind`` is busy, ok, error or info.
 export function setStatus(box, message, kind = "info") {
   box.className = `status status-${kind}`;

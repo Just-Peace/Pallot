@@ -1,5 +1,6 @@
 // A message at the foot of the window for 10 seconds, with an optional action such as Undo, so
-// clearing the voter's own data can be put back.
+// clearing the voter's own data can be put back. While it shows, the page gets room at its foot
+// (--toast-space), so the toast never hides the last buttons.
 // The element is made the first time it's needed, then stays in the page while empty, so screen
 // readers announce each new message; the first message waits a moment for them to notice it.
 
@@ -19,6 +20,7 @@ export function showToast(message, action = null) {
   const show = () => {
     pending = null;
     toast.replaceChildren(h("span", {}, message), action ? h("button", { type: "button", class: "link-btn", on: { click: run } }, action.label) : "");
+    document.documentElement.style.setProperty("--toast-space", `${toast.offsetHeight + 12}px`);
   };
   if (toast) {
     show();
@@ -35,4 +37,5 @@ export function hideToast() {
   clearTimeout(pending);
   pending = null;
   toast?.replaceChildren();
+  document.documentElement.style.removeProperty("--toast-space");
 }

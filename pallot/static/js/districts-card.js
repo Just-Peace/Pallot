@@ -3,7 +3,7 @@
 // to the server with the address (``page.lookup``), and Reset goes back to the looked-up ones.
 
 import { goTo } from "./ballot-nav.js";
-import { $, h } from "./dom.js";
+import { $, h, pairBox } from "./dom.js";
 import { listed } from "./format.js";
 import { icon } from "./icons.js";
 import { DISTRICTS, PRECINCT_KINDS, STATES } from "./labels.js";
@@ -40,9 +40,8 @@ function shownNumbers(d) {
 function district(label, value, { notUp = false, missing = false, title = null, edit = null } = {}) {
   if (edit) {
     const max = STATES[page.ballot.location.state]?.districtCounts?.[edit];
-    return h("label", { class: "district editing", title: spelledOut(edit) }, label ? [label, " "] : null,
-      h("input", { type: "number", class: "district-input", name: edit, min: "1", max: max ? String(max) : null, inputmode: "numeric",
-        value: value ?? null }));
+    return pairBox(label, { name: edit, max: max ? String(max) : null, value: value ?? null },
+      { class: "district editing", title: spelledOut(edit) });
   }
   const shown = value == null
     ? h("strong", { class: "unknown" }, "—", h("span", { class: "sr-only" }, missing ? "missing: races depend on it" : "not known"))
@@ -87,10 +86,12 @@ function notUpNote(d) {
   return h("p", { class: "district-note" }, `${listed(names)} ${names.length > 1 ? "aren't" : "isn't"} up for election this time.`);
 }
 
+// A line of the card; while it has boxes, a .pair-grid.
 function districtRow(...items) {
   const shown = items.filter(Boolean);
+  const boxes = shown.some((item) => item.classList.contains("pair"));
   return shown.length
-    ? h("p", { class: "district-line" }, shown.map((item, i) => [i ? h("span", { class: "sep" }, " · ") : null, item]))
+    ? h("p", { class: ["district-line", boxes && "pair-grid"] }, shown.map((item, i) => [i ? h("span", { class: "sep" }, " · ") : null, item]))
     : null;
 }
 
@@ -171,7 +172,7 @@ function districtsForm(rows, shown) {
     const districts = { ...page.request.districts };
     const precincts = { ...page.request.precincts };
     let changed = false;
-    for (const input of form.querySelectorAll(".district-input")) {
+    for (const input of form.querySelectorAll(".pair-box")) {
       const kind = input.name;
       const typed = parseInt(input.value, 10);
       const value = typed > 0 ? typed : null;
@@ -208,7 +209,7 @@ function precinctPrompt(waiting, missing) {
 
 // The first empty box (of ``kinds``, when given), else the first.
 function firstEmptyBox(kinds = null) {
-  const inputs = [...document.querySelectorAll("#districts-form .district-input")]
+  const inputs = [...document.querySelectorAll("#districts-form .pair-box")]
     .filter((input) => !kinds || kinds.includes(input.name));
   return inputs.find((input) => !input.value) ?? inputs[0];
 }
