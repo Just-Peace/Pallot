@@ -370,34 +370,9 @@ function renderMessages() {
   const { warnings, notes } = page.ballot;
   $("#messages").replaceChildren(
     hidingNote,
-    leftOutNote() || "",
     ...warnings.map((w) => h("p", { class: "notice notice-warn" }, w)),
     ...notes.map((n) => h("p", { class: "notice" }, linkedText(n))),
   );
-}
-
-// The races the districts and precincts don't settle, which the ballot leaves out: what's missing,
-// Enter it (the districts card's boxes), and Show these races anyway, which asks again with them.
-function leftOutNote() {
-  const left = page.ballot.left_out;
-  if (!left) return null;
-  const count = left.races === 1 ? "1 race" : `${left.races} races`;
-  const enter = left.missing.length
-    ? h("button", { type: "button", class: "link-btn", on: { click: () => openDistricts(left.missing) } },
-      left.missing.length === 1 ? "Enter it" : "Enter them")
-    : null;
-  const toggle = h("button", { type: "button", class: "link-btn", on: { click: () => showLeftOut(!left.shown) } },
-    left.shown ? "Hide these races" : "Show these races anyway");
-  const head = left.shown
-    ? `Showing ${count} that may not be on your ballot, at the end, each section saying why.`
-    : `${count} left off your ballot, because Pallot can't tell whether ${left.races === 1 ? "it's" : "they're"} yours.`;
-  return h("div", { class: "notice left-out" },
-    h("p", {}, head), ...left.lines.map((line) => h("p", {}, line)), h("p", { class: "left-out-actions" }, enter, toggle));
-}
-
-function showLeftOut(show) {
-  const { all_races: _shown, ...request } = page.request;
-  lookup(show ? { ...request, all_races: true } : request, { keepBallot: true });
 }
 
 // ---- print / clear ------------------------------------------------------------------

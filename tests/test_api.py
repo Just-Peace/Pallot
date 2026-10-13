@@ -118,7 +118,7 @@ def test_ballotpedia_and_vote_for_peace_start_off(client):
     assert all(on for source, on in enabled.items() if source not in {"ballotpedia", "voteforpeace"})
     ballot = get_ballot(client)
     assert last_use(client, "ballotpedia")["status"] == "off"
-    assert any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
+    assert not any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
     assert not any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
                    for card in c["cards"])
 
