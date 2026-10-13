@@ -20,7 +20,7 @@ from urllib.parse import quote
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import FIRST_LAST, FULL, NameIndex
-from ..models import Badge, Fact, Link, Match, Race, SourceCard
+from ..models import Fact, Link, Match, Race, SourceCard
 from ..offices import OfficeScope
 from ..text import display_date, display_time, iso_utc
 from . import CardSet
@@ -289,7 +289,6 @@ def card(person: Person, match: Match, found: Details | None, fetched_at: float,
         image=found.photo,
         as_of=iso_utc(fetched_at),
         match=match,
-        badges=[Badge(text="Wikidata", tone="info", url=item)],
         facts=[f for f in facts if f.value],
         links=links,
     )
