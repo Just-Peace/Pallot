@@ -15,7 +15,7 @@ import { fundingLine, quietWriteIn, raceMoney, sourceLines } from "./source-card
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, loadingCards, showDetails, openPrecincts, updateProgress, openRules }
+let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 const fills = new Map(); // race key -> builds what its cards make again, in place
 
@@ -466,7 +466,7 @@ function settle(key, filled) {
 
 function precinctLink() {
   return h("p", { class: "precinct-link" },
-    h("button", { type: "button", class: "link-btn", on: { click: () => page.openPrecincts() } }, "Enter your commissioner and JP precincts"));
+    h("button", { type: "button", class: "link-btn", on: { click: () => page.openDistricts() } }, "Enter your commissioner and JP precincts"));
 }
 
 function measureCard(measure) {

@@ -52,9 +52,9 @@ export function initTopBar(pane) {
   });
   // Phones have no Esc: a tap outside the top bar closes the panel, and so does scrolling the page,
   // unless the voter is typing in it (a phone's keyboard scrolls the page), a dialog is asking, or
-  // it's the address form, which stays until it's sent or cancelled.
+  // it's the ballot's entry card, which stays until it's sent or cancelled.
   const shown = () => sidebar.dataset.open && buttons[sidebar.dataset.open].offsetParent
-    && !(sidebar.dataset.open === "address" && addressPanel.querySelector("form:not([hidden])"));
+    && !(sidebar.dataset.open === "address" && addressPanel.querySelector(".entry:not([hidden])"));
   document.addEventListener("pointerdown", (event) => {
     if (shown() && !sidebar.contains(event.target) && !event.target.closest?.("dialog")) openPanel(null);
   });

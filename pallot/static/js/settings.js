@@ -165,7 +165,8 @@ function sourceGroup(group) {
 function renderSummary(overview) {
   const last = overview.last_lookup;
   const lookup = last
-    ? `Last lookup ${relativeTime(last.at)}: ${plural(last.external_calls, "request")} to the sources, `
+    ? `Last lookup ${relativeTime(last.at)}, ${last.found_by === "voter_card" ? "by voter card" : "by address"}: `
+      + `${plural(last.external_calls, "request")} to the sources, `
       + `${last.cache_hits} answered from the saved copies, ${last.elapsed_ms} ms.`
     : "No ballot looked up since Pallot started.";
   summary.textContent = `${lookup} Everything the server has saved takes ${formatBytes(overview.total_bytes)}.`;

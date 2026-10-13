@@ -1,7 +1,7 @@
 // What every page shares: the left pane, drawn into the page's <aside class="sidebar"> (the
 // brand, "Your ballot", the address card, then the other pages at the foot), the footer pinned
 // to the bottom of the window, and Back to top. A page can put its own parts in the aside: those
-// marked data-slot="address" go under the address card (the ballot's form and status line),
+// marked data-slot="address" go under the address card (the ballot's hint, before an address),
 // anything else goes above the other pages (a page's section list). Each page's entry script
 // calls initChrome() before its own code looks for the pane.
 //
@@ -50,7 +50,7 @@ export function onPaneToggle(listener) {
 }
 
 // Folds the pane to its rail of icons, or unfolds it. In the rail each link's name is a tooltip.
-export function setPaneCollapsed(collapsed) {
+function setPaneCollapsed(collapsed) {
   const changed = collapsed !== isPaneCollapsed();
   document.documentElement.classList.toggle("pane-collapsed", collapsed);
   const label = collapsed ? "Expand the left pane" : "Collapse the left pane";

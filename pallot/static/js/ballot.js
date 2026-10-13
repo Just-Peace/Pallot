@@ -1,25 +1,25 @@
-// The ballot page. The left pane (chrome.js) holds "Your ballot" with your address and this
-// page's form under it, the list of sections, and links to the other pages at the bottom (on a
-// phone, a top bar; see topbar.js); the main area has the progress strip and the races, each
-// one collapsible.
+// The ballot page. The left pane (chrome.js) holds "Your ballot" with your address under it, the
+// list of sections, and links to the other pages at the bottom (on a phone, a top bar; see
+// topbar.js); the main area has the entry card (entry-card.js) and a short welcome until there's a
+// ballot, then the progress strip and the races, each one collapsible.
 //
 // This module looks the ballot up, draws it and starts the page. Its parts are their own
 // modules, each handed ``page``: the districts card (districts-card.js), the race cards
 // (race-cards.js), Details (details.js), and the strip, sections and the view controls (ballot-nav.js).
 
-import { rememberedCard, showAddress } from "./address.js";
+import { lookupLabel, rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import {
   applyHidePicked, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, updateProgress,
 } from "./ballot-nav.js";
 import { electionLine } from "./ballot-shared.js";
 import { onBanListChanged } from "./ban-list.js";
-import { initChrome, setPaneCollapsed } from "./chrome.js";
+import { initChrome, narrow } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
-import { initDistrictsCard, openPrecincts, renderDistricts } from "./districts-card.js";
-import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus } from "./dom.js";
-import { showEndorsementLists } from "./endorsement-lists.js";
+import { initDistrictsCard, openDistricts, renderDistricts } from "./districts-card.js";
+import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus, stepText } from "./dom.js";
+import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, readVoterCard } from "./entry-card.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
@@ -30,11 +30,10 @@ import { buildPrintSheet } from "./print.js";
 import { initRaceCards, redrawCards, refillCards, renderCards } from "./race-cards.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
-import { showToast } from "./toast.js";
+import { hideToast, showToast } from "./toast.js";
 import { openPanel } from "./topbar.js";
 
 initChrome();
-showEndorsementLists(); // in the welcome steps
 
 const form = $("#lookup-form");
 const addressInput = $("#address");
@@ -44,7 +43,10 @@ const partySelect = $("#party");
 const submitButton = $("#lookup-btn");
 const cancelButton = $("#cancel-change");
 const addressCard = $("#address-card");
+const entryHint = $("#entry-hint");
 const statusBox = $("#status");
+const entry = $("#entry");
+const entryTitle = $("#entry-title");
 const welcome = $("#welcome");
 const loading = $("#loading");
 const result = $("#result");
@@ -56,7 +58,7 @@ const printDialog = $("#print-dialog");
 const page = {
   ballot: null, picks: null, request: null,
   loadingCards: false, // the ballot's cards haven't arrived (or failed to)
-  lookup, showDetails, openPrecincts, updateProgress, renderRaces, openRules,
+  lookup, showDetails, openDistricts, updateProgress, renderRaces, openRules,
 };
 let pendingLookup = null; // the AbortController of the latest lookup, cancelled by the next one
 
@@ -64,28 +66,42 @@ let pendingLookup = null; // the AbortController of the latest lookup, cancelled
 
 function setStatus(message, kind = "info") {
   showStatus(statusBox, message, kind);
-  if (message && kind === "error") showAddressPanel(); // the line is under the address
+  if (message && kind === "error") showEntry(true, { focus: false }); // the line is in the entry card
 }
 
-// ---- the address: a saved card, or the form ------------------------------------------
+// ---- the address: a saved card in the pane, or the entry card ------------------------
 
-// The address and the form: on a phone, the top bar's panel; wider, the pane, unfolded.
-function showAddressPanel() {
-  openPanel("address");
-  setPaneCollapsed(false);
+let hasAddress = false; // the pane's address card has one to show
+const typingDevice = matchMedia("(hover: hover) and (pointer: fine)");
+
+function showAddressCard(card) {
+  showAddress(card);
+  hasAddress = true;
+  addressCard.hidden = false;
+  entryHint.hidden = true;
 }
 
-function showForm(show) {
-  form.hidden = !show;
-  addressCard.hidden = show;
+// The entry card: in the main area, above the ballot when there is one; on a phone with a ballot
+// showing, in the top bar's address panel, which stays open until it's sent or cancelled.
+// ``focus``: put the cursor in its first box.
+function showEntry(show, { focus = show } = {}) {
+  const inPanel = show && narrow.matches && Boolean(page.ballot);
+  placeEntry(inPanel ? $(".side-address") : null);
+  entry.hidden = !show;
+  entryTitle.textContent = page.ballot ? "Look up another ballot" : "See your ballot, race by race";
   cancelButton.hidden = !page.ballot;
-  if (show) showAddressPanel();
-  else openPanel(null);
-  if (show) addressInput.focus();
+  addressCard.hidden = inPanel || !hasAddress;
+  welcome.hidden = !show || Boolean(page.ballot) || !loading.hidden;
+  openPanel(inPanel ? "address" : null);
+  if (show && !inPanel && page.ballot) scrollTo({ top: 0 });
+  if (focus) focusEntry();
 }
 
-$("#change-address").addEventListener("click", () => showForm(true));
-cancelButton.addEventListener("click", () => showForm(false));
+$("#change-address").addEventListener("click", () => showEntry(true));
+cancelButton.addEventListener("click", () => showEntry(false));
+narrow.addEventListener("change", () => {
+  if (!entry.hidden) showEntry(true, { focus: false });
+});
 
 // ---- elections dropdown -------------------------------------------------------------
 
@@ -119,15 +135,35 @@ function syncPartyField() {
 
 // ---- lookup -------------------------------------------------------------------------
 
+// The entry card's request: the address, or the voter card's county and precinct with the districts
+// filled in under it. The same address keeps the districts entered on the ballot, and a voter card
+// sends its own boxes.
 function readForm() {
-  const request = { address: addressInput.value.trim() };
+  let request;
+  if (entryMode() === "voter_card") {
+    const { county, precinct, districts, precincts } = readVoterCard();
+    request = { county, precinct };
+    if (Object.keys(districts).length) request.districts = districts;
+    if (Object.keys(precincts).length) request.precincts = precincts;
+  } else {
+    request = { address: addressInput.value.trim() };
+    if (page.request?.address === request.address) {
+      if (page.request.precincts) request.precincts = page.request.precincts;
+      if (page.request.districts) request.districts = page.request.districts;
+    }
+  }
   if (electionSelect.value) request.election_date = electionSelect.value;
   if (!partyField.hidden && partySelect.value) request.party = partySelect.value;
-  if (page.request?.address === request.address) {
-    if (page.request.precincts) request.precincts = page.request.precincts;
-    if (page.request.districts) request.districts = page.request.districts;
-  }
+  if (page.request?.all_races && ballotOf(page.request) === ballotOf(request)) request.all_races = true;
   return request;
+}
+
+// Which ballot a request is for: two requests for the same address, or the same county and
+// precinct, are one ballot, whatever else they ask.
+const plain = (text) => String(text ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+function ballotOf(request) {
+  if (request.address) return `address:${plain(request.address)}`;
+  return `card:${plain(request.county).replace(/\s+county$/, "")}:${plain(request.precinct).replace(/^0+(?=.)/, "")}`;
 }
 
 // The server sends the ballot as soon as its races are known, then again with every card. When
@@ -135,7 +171,7 @@ function readForm() {
 const QUICK_CARDS_MS = 250;
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// keepForm: leave the address form open afterwards ("Change" on another page opened it).
+// keepForm: leave the entry card open, meanwhile and afterwards ("Change" on another page opened it).
 // keepBallot: leave the ballot showing meanwhile (new precincts), rather than "Finding your ballot".
 // clearPicks: the old address's Picks, cleared once the new ballot arrives, with Undo.
 // A new lookup cancels one still running, its cards included, so an older answer can't replace a
@@ -145,9 +181,10 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
   const controller = new AbortController();
   pendingLookup = controller;
   setStatus("Looking up your ballot…", "busy");
+  if (keepBallot) showToast("Updating your ballot…");
   submitButton.disabled = true;
   // Only a lookup that isn't cached takes long enough to see this.
-  const loadingShown = keepBallot ? null : setTimeout(() => showLoading(true), 300);
+  const loadingShown = keepBallot ? null : setTimeout(() => showLoading(true, { keepEntry: keepForm }), 300);
   try {
     const answers = api.lines("/api/ballot", request, { signal: controller.signal });
     const first = (await answers.next()).value;
@@ -165,6 +202,10 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
         rest = Promise.resolve(quick);
       }
     }
+    if (!request.address) { // as Texas and the precinct map write them: "Travis", "300"
+      request.county = found.location.county || request.county;
+      request.precinct = found.districts.election_precinct?.name || request.precinct;
+    }
     page.ballot = found;
     page.request = request;
     page.loadingCards = Boolean(rest);
@@ -175,14 +216,18 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     render();
     setStatus("");
     if (cleared) offerUndoClear(clearPicks, cleared);
-    if (keepForm) cancelButton.hidden = false;
-    else showForm(false);
+    else if (keepBallot) hideToast();
+    showEntry(keepForm, { focus: false });
     if (rest) addCards(rest, controller);
   } catch (error) {
     if (controller.signal.aborted) return;
     showLoading(false);
-    setStatus(error.message, "error");
-    if (!page.ballot) showForm(true);
+    if (keepBallot) {
+      setStatus("");
+      showToast(error.message);
+    } else {
+      setStatus(error.message, "error");
+    }
   } finally {
     clearTimeout(loadingShown);
     if (pendingLookup === controller) submitButton.disabled = false;
@@ -232,23 +277,33 @@ function mergeCards(ballot, complete) {
   Object.assign(ballot, { warnings: complete.warnings, notes: complete.notes, meta: complete.meta });
 }
 
-// "Finding your ballot", in place of the ballot or the welcome.
-function showLoading(show) {
+// "Finding your ballot", in place of the ballot, or of the entry card and the welcome (``keepEntry``:
+// the card stays). Its second line changes as the wait goes on, so a long first lookup never looks stuck.
+const LOADING_STEPS = [
+  [0, "Finding your districts…"],
+  [3000, "Reading your county's ballot…"],
+  [10000, "A first lookup takes up to a minute; later ones are instant."],
+];
+let stopLoadingSteps = null;
+
+function showLoading(show, { keepEntry = false } = {}) {
+  stopLoadingSteps?.();
+  stopLoadingSteps = show ? stepText($("#loading-step"), LOADING_STEPS) : null;
   loading.hidden = !show;
   jump.hidden = show || !page.ballot; // the sections are the old ballot's
   if (show) {
     welcome.hidden = true;
     result.hidden = true;
+    if (!keepEntry && entry.parentElement === loading.parentElement) entry.hidden = true;
   } else if (page.ballot) {
     result.hidden = false;
-  } else {
-    welcome.hidden = false;
   }
 }
 
 // ---- rendering ----------------------------------------------------------------------
 
 function render() {
+  showLoading(false);
   renderAddress();
   renderHeader();
   renderKeyDates();
@@ -256,9 +311,7 @@ function render() {
   syncMap(page.ballot);
   renderMessages();
   renderSections();
-  loading.hidden = true;
   welcome.hidden = true;
-  result.hidden = false;
   renderCards();
   renderRaces();
   setCardsLoading(page.loadingCards);
@@ -277,13 +330,15 @@ function renderRaces() {
 
 function renderAddress() {
   const { location } = page.ballot;
+  const fromCard = location.source === "voter_card";
   const card = {
-    address: page.request.address,
-    place: [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
+    address: lookupLabel(page.request),
+    place: fromCard ? "From your voter card"
+      : [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
     matched: location.matched_address || "",
     election: electionLine(page.ballot),
   };
-  showAddress(card);
+  showAddressCard(card);
   writeJson(ADDRESS_CARD, card); // the other pages show it too
 }
 
@@ -307,9 +362,34 @@ function renderMessages() {
   const { warnings, notes } = page.ballot;
   $("#messages").replaceChildren(
     hidingNote,
+    leftOutNote() || "",
     ...warnings.map((w) => h("p", { class: "notice notice-warn" }, w)),
     ...notes.map((n) => h("p", { class: "notice" }, linkedText(n))),
   );
+}
+
+// The races the districts and precincts don't settle, which the ballot leaves out: what's missing,
+// Enter it (the districts card's boxes), and Show these races anyway, which asks again with them.
+function leftOutNote() {
+  const left = page.ballot.left_out;
+  if (!left) return null;
+  const count = left.races === 1 ? "1 race" : `${left.races} races`;
+  const enter = left.missing.length
+    ? h("button", { type: "button", class: "link-btn", on: { click: () => openDistricts(left.missing) } },
+      left.missing.length === 1 ? "Enter it" : "Enter them")
+    : null;
+  const toggle = h("button", { type: "button", class: "link-btn", on: { click: () => showLeftOut(!left.shown) } },
+    left.shown ? "Hide these races" : "Show these races anyway");
+  const head = left.shown
+    ? `Showing ${count} that may not be on your ballot, at the end, each section saying why.`
+    : `${count} left off your ballot, because Pallot can't tell whether ${left.races === 1 ? "it's" : "they're"} yours.`;
+  return h("div", { class: "notice left-out" },
+    h("p", {}, head), ...left.lines.map((line) => h("p", {}, line)), h("p", { class: "left-out-actions" }, enter, toggle));
+}
+
+function showLeftOut(show) {
+  const { all_races: _shown, ...request } = page.request;
+  lookup(show ? { ...request, all_races: true } : request, { keepBallot: true });
 }
 
 // ---- print / clear ------------------------------------------------------------------
@@ -365,17 +445,15 @@ initRules(page);
 initDistrictsCard(page);
 initNav(page);
 
-// A new address starts a new ballot: when this election has picks, notes or write-ins, the voter
-// is asked first, and they're cleared once the new ballot arrives. A new election or party
-// alone keeps them, and nothing else the voter chose is cleared.
-const plainAddress = (address) => address.trim().replace(/\s+/g, " ").toLowerCase();
-const sameAddress = (a, b) => plainAddress(a) === plainAddress(b);
-
+// A new address or precinct starts a new ballot, and so does switching between the address and the
+// voter card: when this election has picks, notes or write-ins, the voter is asked first, and
+// they're cleared once the new ballot arrives. A new election or party alone keeps them, and
+// nothing else the voter chose is cleared.
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const request = readForm();
   const old = page.ballot && page.picks;
-  if (!old || sameAddress(request.address, page.request.address)) {
+  if (!old || ballotOf(request) === ballotOf(page.request)) {
     lookup(request);
     return;
   }
@@ -384,9 +462,12 @@ form.addEventListener("submit", async (event) => {
     lookup(request);
     return;
   }
+  const card = !request.address;
+  const switching = card !== !page.request.address;
   const sure = await confirmDialog({
-    title: "Look up a new address?",
-    body: "A new address starts a new ballot. Your picks, notes and write-ins for this election will be cleared. Your settings stay.",
+    title: switching ? (card ? "Look up by voter card instead?" : "Look up by address instead?")
+      : card ? "Look up a new precinct?" : "Look up a new address?",
+    body: `A new ${card ? "precinct" : "address"} starts a new ballot. Your picks, notes and write-ins for this election will be cleared. Your settings stay.`,
     confirm: "Continue",
   });
   if (sure) lookup(request, { clearPicks: old });
@@ -435,18 +516,22 @@ function start() {
   const initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
     : readJson(LAST_LOOKUP, null);
-  if (initial?.address) {
-    // Show the remembered address right away; the lookup fills in the rest.
-    addressInput.value = initial.address;
-    showAddress(rememberedCard(initial.address));
-    form.hidden = true;
-    addressCard.hidden = false;
-  } else {
-    showAddressPanel(); // the form is the first thing to fill in
+  const label = lookupLabel(initial);
+  if (label) {
+    // Show the remembered address or voter card right away; the lookup fills in the rest.
+    if (initial.address) addressInput.value = initial.address;
+    else fillVoterCard(initial);
+    showAddressCard(rememberedCard(label));
   }
-  if (changing) showForm(true);
+  // A first visit starts with the cursor in the address box, except on a touch screen, where the
+  // keyboard would cover the card.
+  if (changing || !label) showEntry(true, { focus: changing || typingDevice.matches });
   loadElections(initial?.election_date);
-  if (initial?.address) {
+  loadEntryConfig({
+    startOn: () => (label ? (initial.address ? "address" : "voter_card") : null),
+    typed: () => Boolean(addressInput.value.trim()),
+  });
+  if (label) {
     if (initial.party) partySelect.value = initial.party;
     lookup(initial, { keepForm: changing });
   }

@@ -15,31 +15,7 @@
   <a class="skip" href="#main">Skip to the ballot</a>
   <div class="app">
     <aside class="sidebar" aria-label="Your ballot, address and pages">
-      <form id="lookup-form" class="lookup-form" data-slot="address">
-        <div class="field">
-          <label for="address">Home address</label>
-          <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
-                 placeholder="1100 Congress Ave, Austin, TX 78701">
-        </div>
-        <div class="field">
-          <label for="election">Election</label>
-          <select id="election"><option value="">Next election</option></select>
-        </div>
-        <div class="field" id="party-field" hidden>
-          <label for="party">Primary ballot</label>
-          <select id="party">
-            <option value="">Choose a party</option>
-            <option value="D">Democratic</option>
-            <option value="R">Republican</option>
-          </select>
-        </div>
-        <div class="button-row">
-          <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
-          <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
-        </div>
-        <p class="fine">Currently covers Texas addresses. Your address is sent to the US Census geocoder (and, if it can't match it, to OpenStreetMap and then Google, if this Pallot has a Google key; its location goes to Ballotpedia, if it's on) to find your districts, and is remembered in this browser. As you type, it's also sent to Ballotpedia for suggestions, unless they're off in Settings. More in <a href="privacy.html">Privacy</a>.</p>
-      </form>
-      <p id="status" data-slot="address" class="status" role="status" aria-live="polite"></p>
+      <p id="entry-hint" class="muted small" data-slot="address">Enter your address to see your ballot.</p>
       <nav class="side-section" id="jump" aria-labelledby="jump-title" hidden>
         <h2 class="side-title" id="jump-title"><span data-icon="list"></span>Sections</h2>
         <ul class="jump-list" id="jump-list"></ul>
@@ -47,21 +23,95 @@
     </aside>
 
     <main id="main" class="content">
-      <section id="welcome" class="panel welcome" aria-labelledby="welcome-title">
-        <h1 id="welcome-title">Your ballot, race by race</h1>
-        <p class="lede">Enter your home address to see every race you'll vote in.</p>
-        <ol class="steps">
-          <li><strong>Compare sources.</strong> Each candidate shows how much money they've raised and from whom, what the state's filings, Wikidata, Ballotpedia, TrackAIPAC and Vote for Peace say<span data-endorsements="clause"></span>, and where they stand in public polls, plus a web search. A race says when its seat is open, and which party holds it now.</li>
-          <li><strong>Pick and take notes.</strong> Choose a candidate in each race and jot down why. Collapse races as you go.</li>
-          <li><strong>Know the dates and your districts.</strong> The top of the ballot has the last day to register, early voting and Election Day, to add to your calendar, and your districts and election precinct, with a map of them. In seven of the largest counties, your commissioner and JP precincts too.</li>
-          <li><strong>Print your picks</strong> and take the sheet with you to vote.</li>
-        </ol>
+      <section id="entry" class="panel entry" aria-labelledby="entry-title" hidden>
+        <h1 id="entry-title">See your ballot, race by race</h1>
+        <form id="lookup-form" class="lookup-form">
+          <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by" hidden>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">My address</button>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-card" aria-controls="entry-voter-card">My voter card</button>
+          </div>
+          <div id="entry-address" aria-labelledby="entry-tab-address">
+            <fieldset class="entry-fields">
+              <div class="field">
+                <label for="address">Home address</label>
+                <input id="address" name="address" type="text" autocomplete="street-address" required minlength="5" maxlength="200"
+                       placeholder="1100 Congress Ave, Austin, TX 78701">
+              </div>
+            </fieldset>
+          </div>
+          <div id="entry-voter-card" aria-labelledby="entry-tab-card" hidden>
+            <fieldset class="entry-fields" disabled>
+              <div class="field-row">
+                <div class="field">
+                  <label for="vc-county">County</label>
+                  <input id="vc-county" name="county" type="text" autocomplete="off" required maxlength="40" placeholder="Travis" list="vc-counties">
+                  <datalist id="vc-counties"></datalist>
+                </div>
+                <div class="field">
+                  <label for="vc-precinct">Precinct number</label>
+                  <input id="vc-precinct" name="precinct" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"
+                         required maxlength="8" pattern="[0-9A-Za-z]{1,8}" title="The precinct number on your card, such as 300 or 101A" placeholder="300">
+                </div>
+              </div>
+              <details class="entry-fold">
+                <summary>More districts (optional)</summary>
+                <p class="fine">Fill in any your card lists, for races your precinct alone doesn't settle.</p>
+                <div class="pair-grid" id="vc-districts"></div>
+              </details>
+              <details class="entry-fold">
+                <summary>Where do I find these?</summary>
+                <svg class="vc-sketch" viewBox="0 0 280 124" role="img" aria-label="A voter registration certificate: County and Precinct near the top, the districts under them">
+                  <rect class="vc-card" x="1.5" y="1.5" width="277" height="121" rx="6"/>
+                  <text class="vc-title" x="14" y="20">VOTER REGISTRATION CERTIFICATE</text>
+                  <rect class="vc-mark" x="10" y="30" width="122" height="26" rx="4"/>
+                  <text class="vc-label" x="18" y="47">COUNTY</text>
+                  <text class="vc-value" x="70" y="47">TRAVIS</text>
+                  <rect class="vc-mark" x="142" y="30" width="80" height="26" rx="4"/>
+                  <text class="vc-label" x="150" y="47">PCT</text>
+                  <text class="vc-value" x="180" y="47">300</text>
+                  <text class="vc-label" x="14" y="76">CONG 10 · SEN 14 · REP 49 · SBOE 5</text>
+                  <text class="vc-label" x="14" y="92">COMM 2 · JP 5</text>
+                  <line class="vc-line" x1="14" y1="108" x2="150" y2="108"/>
+                </svg>
+                <p class="fine">On your voter registration certificate, the card your county mailed you: the county and precinct are near the top, and the districts under them. Lost it? Look yourself up on the Secretary of State's <a href="https://teamrv-mvp.sos.texas.gov/MVP/mvp.do" target="_blank" rel="noopener noreferrer">Am I Registered?</a> page.</p>
+              </details>
+            </fieldset>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="election">Election</label>
+              <select id="election"><option value="">Next election</option></select>
+            </div>
+            <div class="field" id="party-field" hidden>
+              <label for="party">Primary ballot</label>
+              <select id="party">
+                <option value="">Choose a party</option>
+                <option value="D">Democratic</option>
+                <option value="R">Republican</option>
+              </select>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
+            <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
+          </div>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <p class="fine">Texas only. Kept in this browser. What's sent where: <a href="privacy.html#lookups">Privacy</a>.</p>
+        </form>
+      </section>
+
+      <section id="welcome" class="welcome" aria-label="What Pallot does" hidden>
+        <ul class="welcome-points">
+          <li><span data-icon="bars"></span>Compare money, endorsements and polls for every candidate.</li>
+          <li><span data-icon="printer"></span>Pick, add notes, and print your picks to take with you.</li>
+          <li><span data-icon="calendar"></span>Key dates and your districts, at the top.</li>
+        </ul>
       </section>
 
       <section id="loading" class="loading" role="status" hidden>
         <p class="loading-title">Finding your ballot…</p>
         <div class="loading-bar" aria-hidden="true"></div>
-        <p class="muted">A first lookup takes a little longer.</p>
+        <p class="muted" id="loading-step"></p>
       </section>
 
       <section id="result" hidden>

@@ -271,8 +271,9 @@ def test_every_page_leaves_its_left_pane_and_footer_to_chrome_js_and_its_files_e
     html = client.get(f"/{page}").text
     assert "<footer" not in html
     aside = re.search(r'<aside class="sidebar"[^>]*>(.*?)</aside>', html, re.S).group(1)
-    if page == "./":  # the ballot's own parts of the pane: its form and status line, and the section list
-        assert aside.count('data-slot="address"') == 2 and 'id="jump"' in aside and "address-card" not in aside
+    if page == "./":  # the ballot's own parts of the pane: its hint before an address, and the section list
+        assert aside.count('data-slot="address"') == 1 and 'id="jump"' in aside and "address-card" not in aside
+        assert 'id="lookup-form"' not in aside  # the form is the entry card, in the main area
     else:
         assert not aside.strip()
     entry = {"./": "ballot", "settings.html": "settings", "faq.html": "faq"}.get(page, "page")  # settings.js and faq.js import page.js

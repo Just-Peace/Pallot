@@ -60,7 +60,7 @@ export function linkedText(text) {
   let match;
   while ((match = pattern.exec(text))) {
     const [, label, url] = match;
-    const own = /^settings\.html#[a-z0-9-]+$/.test(url);
+    const own = /^settings\.html#[a-z0-9_-]+$/.test(url);
     parts.push(text.slice(last, match.index),
       own ? h("a", { href: url }, label) : /^(https?:\/\/|mailto:)/i.test(url) ? extLink(url, label) : label);
     last = pattern.lastIndex;
@@ -91,6 +91,13 @@ export function pairBox(label, input = {}, props = {}) {
 export function setStatus(box, message, kind = "info") {
   box.className = `status status-${kind}`;
   box.textContent = message || "";
+}
+
+// Changes ``box``'s text as a wait goes on: ``steps`` is [[ms, text], …], the first at 0. Returns
+// a function that stops it.
+export function stepText(box, steps) {
+  const timers = steps.map(([ms, text]) => setTimeout(() => { box.textContent = text; }, ms));
+  return () => timers.forEach(clearTimeout);
 }
 
 // ``run``, at most once a frame however often the returned function is called (scrolling).
