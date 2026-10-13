@@ -18,7 +18,7 @@ import { initChrome, setPaneCollapsed } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openPrecincts, renderDistricts } from "./districts-card.js";
-import { $, closeOnBackdrop, extLink, h, linkedText, onReturn, setStatus as showStatus } from "./dom.js";
+import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus } from "./dom.js";
 import { showEndorsementLists } from "./endorsement-lists.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
@@ -137,9 +137,10 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // keepForm: leave the address form open afterwards ("Change" on another page opened it).
 // keepBallot: leave the ballot showing meanwhile (new precincts), rather than "Finding your ballot".
+// clearPicks: the old address's Picks, cleared once the new ballot arrives, with Undo.
 // A new lookup cancels one still running, its cards included, so an older answer can't replace a
 // newer ballot. Resolves once the ballot is drawn; its cards may still be coming.
-async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
+async function lookup(request, { keepForm = false, keepBallot = false, clearPicks = null } = {}) {
   pendingLookup?.abort();
   const controller = new AbortController();
   pendingLookup = controller;
@@ -168,9 +169,12 @@ async function lookup(request, { keepForm = false, keepBallot = false } = {}) {
     page.request = request;
     page.loadingCards = Boolean(rest);
     writeJson(LAST_LOOKUP, request);
+    clearPicks?.reload();
+    const cleared = clearPicks?.clear();
     page.picks = new Picks(found.election_date);
     render();
     setStatus("");
+    if (cleared) offerUndoClear(clearPicks, cleared);
     if (keepForm) cancelButton.hidden = false;
     else showForm(false);
     if (rest) addCards(rest, controller);
@@ -361,10 +365,45 @@ initRules(page);
 initDistrictsCard(page);
 initNav(page);
 
-form.addEventListener("submit", (event) => {
+// A new address starts a new ballot: when this election has picks, notes or write-ins, the voter
+// is asked first, and they're cleared once the new ballot arrives. A new election or party
+// alone keeps them, and nothing else the voter chose is cleared.
+const plainAddress = (address) => address.trim().replace(/\s+/g, " ").toLowerCase();
+const sameAddress = (a, b) => plainAddress(a) === plainAddress(b);
+
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  lookup(readForm());
+  const request = readForm();
+  const old = page.ballot && page.picks;
+  if (!old || sameAddress(request.address, page.request.address)) {
+    lookup(request);
+    return;
+  }
+  old.reload();
+  if (old.isEmpty()) {
+    lookup(request);
+    return;
+  }
+  const sure = await confirmDialog({
+    title: "Look up a new address?",
+    body: "A new address starts a new ballot. Your picks, notes and write-ins for this election will be cleared. Your settings stay.",
+    confirm: "Continue",
+  });
+  if (sure) lookup(request, { clearPicks: old });
 });
+
+function offerUndoClear(picks, cleared) {
+  showToast("Cleared your picks for the old address.", {
+    label: "Undo",
+    run: () => {
+      picks.reload();
+      picks.restore(cleared);
+      page.picks.reload();
+      renderRaces();
+    },
+  });
+}
+
 electionSelect.addEventListener("change", syncPartyField);
 attachSuggestions(addressInput);
 

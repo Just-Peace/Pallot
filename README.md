@@ -58,7 +58,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 ## Using it
 
 - **Left pane**, the same on every page. On a phone or a narrow window it's a **top bar** instead, with your address and the pages each behind a button.
-  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with its city and county, and the election ("November 3, 2026 · 2026 November General Election"). **Change** opens the form again; on the other pages it takes you to the ballot with the form open.
+  - at the top, **Your ballot**, with your address under it. After a lookup the address is saved in the browser and shown as a card with its city and county, and the election ("November 3, 2026 · 2026 November General Election"). **Change** opens the form again; on the other pages it takes you to the ballot with the form open. A different address starts a new ballot: if you've made picks, notes or write-ins for this election, Pallot asks first (**Cancel** or **Continue**), then clears them once the new ballot shows, with **Undo** for 10 seconds. A new election or primary ballot for the same address keeps them, and an address change never touches your settings, sources, view, appearance, search engine, ban list or pick rule.
   - **«** at its top folds the pane into a narrow rail of icons, each named in a tooltip; **»** brings it back. The choice is remembered in the browser. On the ballot, the sections then show as chips in the strip at the top. The pane opens again by itself when the address form or an error needs to be seen.
   - while you type an address, **suggestions** from Ballotpedia's address search appear under the box, once you've typed a house number and a few letters of the street: ↑/↓ and Enter pick one, which only fills the box in. Only Texas addresses are suggested. Turn them off in Settings to get the browser's own address autofill back.
   - on the ballot, the list of sections, with how many races in each you've picked. The section on screen is highlighted as you scroll. On a phone they're a row of chips that stays in view.
@@ -261,7 +261,7 @@ The **Settings** page, linked from the left pane, has six sections: **Ballot vie
   - **Clear my picks & notes**: your picks, notes, write-ins and pick rule. Your address stays;
   - **Clear browser data**: everything Pallot keeps in this browser, your address, sources, appearance, search engine, view choices and ban list included, so the ballot goes back to Simple.
 
-  Both clear at once and offer **Undo** for 10 seconds.
+  Both ask first: **Cancel** changes nothing, and the red button clears and offers **Undo** for 10 seconds.
 
 Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).
 

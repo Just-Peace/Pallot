@@ -10,7 +10,7 @@ import "./page.js";
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
-import { $, h, linkedText, onReturn, setStatus } from "./dom.js";
+import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
@@ -292,7 +292,7 @@ banForm.addEventListener("submit", (event) => {
   banEntry.focus();
 });
 
-// What's kept in this browser is cleared at once, with Undo to put it back.
+// What's kept in this browser is cleared once the voter says so, with Undo to put it back.
 function clearInBrowser(clear, message, nothing) {
   const removed = clear();
   markSettingsChanged();
@@ -323,12 +323,24 @@ function showBrowserData() {
   showBanList();
 }
 
-$("#clear-my-picks").addEventListener("click", () => {
-  clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and pick rule were removed from this browser.", "There were no picks or notes to clear.");
+$("#clear-my-picks").addEventListener("click", async () => {
+  const sure = await confirmDialog({
+    title: "Clear your picks and notes?",
+    body: "Your picks, notes, write-ins and pick rule will be removed. Your address and settings stay.",
+    confirm: "Clear picks",
+    danger: true,
+  });
+  if (sure) clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and pick rule were removed from this browser.", "There were no picks or notes to clear.");
 });
 
-$("#clear-browser-data").addEventListener("click", () => {
-  clearInBrowser(clearBrowserData, "Everything Pallot kept in this browser was removed.", "Pallot had nothing saved in this browser.");
+$("#clear-browser-data").addEventListener("click", async () => {
+  const sure = await confirmDialog({
+    title: "Clear everything Pallot keeps in this browser?",
+    body: "Your picks, notes, address, appearance, search engine, sources, view and ban list will be removed.",
+    confirm: "Clear everything",
+    danger: true,
+  });
+  if (sure) clearInBrowser(clearBrowserData, "Everything Pallot kept in this browser was removed.", "Pallot had nothing saved in this browser.");
 });
 
 // Back from the ballot (or another tab), a lookup since may have changed what's saved, and may

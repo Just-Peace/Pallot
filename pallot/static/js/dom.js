@@ -157,3 +157,37 @@ export function closeOnBackdrop(dialog) {
     if (!inside) dialog.close("");
   });
 }
+
+// Asks before something the voter can't easily take back. ``body`` is text, a node or a list of
+// them; ``danger`` makes the confirm button red. Cancel has the focus, and Esc or a tap on the
+// backdrop cancels. Resolves true only for the confirm button. Any page can call it: the dialog is
+// made the first time it's needed. A second question while one is open answers the first with false.
+let settleConfirm = null;
+
+export function confirmDialog({ title, body = null, confirm = "Continue", cancel = "Cancel", danger = false }) {
+  let dialog = document.getElementById("confirm-dialog");
+  if (!dialog) {
+    dialog = h("dialog", { id: "confirm-dialog", class: "small-dialog confirm-dialog", "aria-labelledby": "confirm-title", "aria-describedby": "confirm-body" });
+    closeOnBackdrop(dialog);
+    dialog.addEventListener("close", () => {
+      const settle = settleConfirm;
+      settleConfirm = null;
+      settle?.(dialog.returnValue === "confirm");
+    });
+    document.body.append(dialog);
+  }
+  settleConfirm?.(false);
+  const cancelButton = h("button", { class: "btn ghost", value: "" }, cancel);
+  dialog.replaceChildren(h("form", { method: "dialog" },
+    h("h2", { id: "confirm-title" }, title),
+    h("div", { id: "confirm-body", class: "confirm-body" }, body),
+    h("div", { class: "button-row end" },
+      cancelButton,
+      h("button", { class: ["btn primary", danger && "danger"], value: "confirm" }, confirm))));
+  dialog.returnValue = "";
+  return new Promise((resolve) => {
+    settleConfirm = resolve;
+    if (!dialog.open) dialog.showModal();
+    cancelButton.focus();
+  });
+}
