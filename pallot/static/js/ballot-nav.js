@@ -1,7 +1,7 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
-// which one is on screen), Simple | Detailed, Focus and Options, the "What matters to you?" card,
-// j and k, where the strip's parts go on a phone, with the race on screen, More and the chips
-// that make way while scrolling down, and the first-run tips.
+// which one is on screen), the View menu, the "What matters to you?" card, j and k, where the
+// strip's parts go on a phone, with the race on screen, More and the chips that make way while
+// scrolling down, and the first-run tips.
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
@@ -15,7 +15,7 @@ import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { STILL_LOADING, cardFor, redrawRace, refillCards, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import {
-  bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, modeChosen, onViewChange, setViewPref, showViewControls,
+  FOCUSES, bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, migrateView, onViewChange, setViewPref, showViewControls,
   syncSourceNotes, viewPref,
 } from "./view.js";
 
@@ -25,19 +25,17 @@ const strip = $("#progress-strip");
 const tools = $("#ballot-tools");
 const viewControls = $("#view-controls");
 const viewMenu = $("#view-menu");
-const focusMenu = $("#focus-menu");
+const viewSummary = $("#view-summary");
 const focusAsk = $("#focus-ask");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const jumpList = $("#jump-list");
 const stripRace = $("#strip-race");
 const VIEW_MODES = [["minimal", "Minimal"], ["simple", "Simple"], ["detailed", "Detailed"]];
-const modeCaption = $("#mode-caption");
-const moreCaption = h("p", { class: "fine mode-caption", id: "more-mode-caption", hidden: true }, modeCaption.textContent);
-const moreView = h("fieldset", { class: "seg", "aria-describedby": "more-mode-caption" }, h("legend", { class: "sr-only" }, "How much of the ballot shows"),
+const moreCaption = h("p", { class: "fine mode-caption", id: "more-mode-caption" }, $("#mode-caption").textContent);
+const moreView = h("fieldset", { class: "seg", "aria-describedby": "more-mode-caption" }, h("legend", { class: "sr-only" }, "How much detail"),
   VIEW_MODES.map(([value, label]) => h("label", { class: "seg-option" }, h("input", { type: "radio", name: "view-mode", value }), label)));
 const moreFocus = focusChips();
-const moreRule = moreAction("Pick by rule", "filter", () => $("#rule-btn").click());
 const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
 const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: true }, $("#wait-note").textContent)];
 const progressInfo = strip.querySelector(".progress-info");
@@ -149,9 +147,10 @@ export function updateProgress() {
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
-// Pick by rule and Print, which need them, wait, in the toolbar and in More, a line under them saying
-// why. ``failed``: they won't come, so the bar goes but they stay off.
-const needCards = [$("#rule-btn"), $("#print-btn"), moreRule, morePrint].map((button) => ({ button, title: button.title }));
+// Print, which needs them, waits, in the toolbar and in More, a line under it saying why (the endorser
+// bar's Pick them and More rules… wait too). ``failed``: they won't come, so the bar goes but they
+// stay off.
+const needCards = [$("#print-btn"), morePrint].map((button) => ({ button, title: button.title }));
 const cardsLoading = $("#cards-loading");
 const CARDS_STEPS = [
   [0, "Loading money, polls and endorsements…"],
@@ -191,8 +190,8 @@ const TIPS = [
     text: () => `${viewPref("stanceLinks") ? "Profile & issues" : "Profile"} shows where each candidate stands, issue by issue.`,
   },
   {
-    id: "rule", when: () => wants("endorsements"), target: () => $("#rule-btn"), after: () => tools,
-    text: () => "Pick by rule can fill your ballot from the endorsers you trust.",
+    id: "rule", when: () => wants("endorsements"), target: () => $("#endorser-btn"), after: () => tools,
+    text: () => "Help me pick rings who the endorsers you trust endorse, and can pick them for you.",
   },
   {
     id: "next", when: () => anyPicked() && !nextButton.disabled, target: () => nextButton, after: () => progressInfo,
@@ -214,19 +213,26 @@ function maybeTip() {
   showTip(TIPS);
 }
 
-// ---- view: Simple or Detailed, collapse, only unpicked races, next race, j/k ----------
+// ---- view: detail and focus, collapse, only unpicked races, next race, j/k ------------
 
-// After any change of the view settings, here or in another tab: the toolbar's Simple | Detailed,
-// Focus and Options, More's and the question's chips show them, and each switch that changed applies
-// to the ballot in place, putting back what the voter opened or folded by hand. The page carries the
-// mode (data-view-mode), so a phone's candidate rows stay whole in Detailed. Until the voter has
-// chosen a mode or a focus, a line under the modes says what each shows.
+// The View menu's button: "View · Simple", "View · Simple · Money", "View · Simple · 2 focuses",
+// "View · Custom" while the switches are mixed.
+function viewLabel(mode) {
+  const chosen = focuses();
+  const detail = VIEW_MODES.find(([value]) => value === mode)?.[1] || "Custom";
+  const focus = chosen.length > 1 ? `${chosen.length} focuses` : chosen.length ? FOCUSES[chosen[0]].short : null;
+  return ["View", detail, focus].filter(Boolean).join(" · ");
+}
+
+// After any change of the view settings, here or in another tab: the View menu, More's View and the
+// question's card show them, and each switch that changed applies to the ballot in place, putting
+// back what the voter opened or folded by hand. The page carries the mode (data-view-mode), so a
+// phone's candidate rows stay whole in Detailed.
 function applyView() {
-  document.documentElement.dataset.viewMode = showViewControls(viewControls);
+  const mode = showViewControls(viewControls);
+  document.documentElement.dataset.viewMode = mode;
   for (const root of [moreView, moreFocus, focusAsk]) showViewControls(root);
-  const count = focuses().length;
-  $("#focus-summary").textContent = count ? `Focus · ${count}` : "Focus";
-  for (const caption of [modeCaption, moreCaption]) caption.hidden = modeChosen() || count > 0;
+  viewSummary.textContent = viewLabel(mode);
   const runs = new Set();
   for (const [name, apply] of Object.entries(APPLY)) {
     const value = viewPref(name);
@@ -237,23 +243,34 @@ function applyView() {
   maybeTip();
 }
 
-// "What matters to you?": after a ballot is drawn, until the voter chooses a focus or closes it. Its
-// chips change the ballot at once; it stays until Done or ✕, which leave the choice under Focus.
+// "What matters to you?": a card at the top of the ballot, right under the strip, so nothing above it
+// moves as the ballot changes under it. It shows after a ballot is drawn, until the voter chooses a
+// focus or closes it. Its focuses and detail change the ballot at once; it stays until Done or ✕,
+// which leave the choice under View.
 export function askFocus() {
   focusAsk.hidden = focusAsked();
 }
 
 function initFocusAsk() {
-  focusAsk.querySelector(".muted").after(focusChips());
+  focusAsk.querySelector(".muted").after(focusChips({ hints: true }));
   bindViewControls(focusAsk);
   const close = () => {
     dismissFocusAsk();
     focusAsk.hidden = true;
-    focusMenu.querySelector("summary").focus({ preventScroll: true });
+    viewMenu.querySelector("summary").focus({ preventScroll: true });
     maybeTip();
   };
   $("#focus-ask-done").addEventListener("click", close);
   $("#focus-ask-close").addEventListener("click", close);
+}
+
+// "Ask me again", in View and in More: the card again, scrolled to (clear of the strip) with its
+// heading focused. Closing it answers the question again.
+function showFocusAsk() {
+  viewMenu.open = false;
+  focusAsk.hidden = false;
+  focusAsk.scrollIntoView({ block: "start" });
+  $("#focus-ask-title").focus({ preventScroll: true });
 }
 
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
@@ -321,7 +338,7 @@ function stepRace(event) {
 // ---- phones ---------------------------------------------------------------------------
 
 // On a phone (or a narrow window) the section chips join the sticky strip, and the toolbar
-// (Simple | Detailed, Options, Pick by rule, Clear picks, Print) moves under the heading, where it
+// (View, Help me pick, Clear picks, Print) moves under the heading, where it
 // scrolls away. So what stays in view is the race on screen, the progress, Next, More (which holds
 // the toolbar's buttons) and the sections. With the left pane folded, the chips join the strip too.
 function placeForWidth() {
@@ -333,14 +350,14 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections: how much shows (with the toolbar's caption and "?"), the focus, the toolbar's
-// buttons (with the line saying why two wait), and Expand and Collapse all from Options.
+// More's sections: View's detail (with its caption and "?"), focuses and Ask me again, the toolbar's
+// buttons (with the line saying why Print waits), and Expand and Collapse all from View.
 function fillMoreSheet() {
   bindViewControls(moreView);
   bindViewControls(moreFocus);
-  addMoreSection({ id: "view", label: ["How much shows ", helpLink("view-modes", "focus and views")] }, moreView, moreCaption);
-  addMoreSection({ id: "focus", label: "Focus", after: "view" }, moreFocus);
-  addMoreSection({ id: "picks", label: "Your picks" }, moreEndorsers, moreRule, morePrint,
+  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreCaption, moreFocus,
+    moreAction("Ask me again", "help", showFocusAsk));
+  addMoreSection({ id: "picks", label: "Your picks" }, moreEndorsers, morePrint,
     moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }), waitNotes[1]);
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
@@ -436,8 +453,9 @@ export function markCurrentSection() {
 // Wires the strip, the view controls and the keys; the left pane must be drawn (initChrome).
 export function initNav(context) {
   page = context;
+  migrateView();
   initEndorserBar(page, { sectionMarks: syncMatchMarks });
-  $("#focus-panel .menu-label").after(focusChips());
+  $("#view-focus").append(focusChips());
   initFocusAsk();
   bindViewControls(viewControls);
   onViewChange(applyView);
@@ -451,19 +469,18 @@ export function initNav(context) {
     setAllCollapsed(true);
     viewMenu.open = false;
   });
+  $("#view-ask-again").addEventListener("click", showFocusAsk);
 
-  // Focus and Options close like menus: a click elsewhere, or Esc.
-  for (const menu of [focusMenu, viewMenu]) {
-    document.addEventListener("click", (event) => {
-      if (menu.open && !menu.contains(event.target)) menu.open = false;
-    });
-    menu.addEventListener("keydown", (event) => {
-      if (event.key !== "Escape" || !menu.open) return;
-      event.preventDefault();
-      menu.open = false;
-      menu.querySelector("summary").focus();
-    });
-  }
+  // View closes like a menu: a click elsewhere, or Esc.
+  document.addEventListener("click", (event) => {
+    if (viewMenu.open && !viewMenu.contains(event.target)) viewMenu.open = false;
+  });
+  viewMenu.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !viewMenu.open) return;
+    event.preventDefault();
+    viewMenu.open = false;
+    viewMenu.querySelector("summary").focus();
+  });
 
   nextButton.addEventListener("click", nextRace);
   document.addEventListener("keydown", stepRace);

@@ -379,8 +379,6 @@ function renderMessages() {
 
 for (const dialog of [$("#compare"), printDialog]) closeOnBackdrop(dialog);
 
-$("#rule-btn").addEventListener("click", () => openRules());
-
 const walletChoice = $("#print-wallet");
 for (const radio of printDialog.querySelectorAll('input[name="print-layout"]')) {
   radio.addEventListener("change", () => { $("#print-notes").disabled = walletChoice.checked; }); // notes don't fit
