@@ -19,7 +19,7 @@ from pallot.config import DAY, Config
 from pallot.http_cache import HttpCache, RequestSpec
 from pallot.services import prune
 
-from .conftest import get_ballot, last_use, load
+from .conftest import get_ballot, load
 
 
 def rows(client: TestClient) -> dict[str, dict]:

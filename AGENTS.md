@@ -21,6 +21,7 @@ Rules for coding agents (and people) changing Pallot. Read these first:
    - The body is bullets saying what changed and why, then a `Checked:` paragraph saying how it was verified (tests run, what was looked at in the app). Recent commits on `develop` follow this pattern.
    - If you committed along the way, fold everything into one commit before pushing: `git reset --soft $(git merge-base HEAD develop)`, then commit again. Don't use interactive rebase.
 6. **Push the branch** with `git push -u origin <branch>`, and open its pull request into `develop` (`gh pr create --base develop`), with `Closes #<issue>` in its description. Merging it then closes the issue and links the two. Pull requests are squash-merged. After amending a commit on your own branch, use `git push --force-with-lease`, never a plain `--force`.
+7. **Wait for the checks.** GitHub Actions runs the tests on the pull request (see [Before committing](#before-committing)). Watch them with `gh pr checks <N>`. If one fails, fix it, amend, and push again before asking for a merge.
 
 
 
@@ -123,12 +124,17 @@ How to write them:
 
 ## Before committing
 
-- `uv run pytest` passes. It runs offline, against the recorded responses in `tests/fixtures/`.
-  - Run the whole suite once, just before the feature's commit, and only when code changed. A change to Markdown files only (README, DEVELOPMENT, AGENTS) needs no test run.
-  - While working, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. The whole suite runs in parallel, one worker per CPU, and takes about 30 seconds.
-  - Add tests for new behaviour, mocking HTTP with `respx`.
+- GitHub Actions checks every pull request (`.github/workflows/tests.yml`):
+  - the whole suite, `uv run pytest`, offline against the recorded responses in `tests/fixtures/`;
+  - ruff, for unused imports and variables;
+  - the Docker build, when `Dockerfile`, `compose.yaml`, `pyproject.toml` or `uv.lock` changed.
+  - A change to Markdown files only skips them.
+- Locally, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. Leave the whole suite to GitHub.
+- Run `uv run ruff check` before committing code. `uv run ruff check --fix` removes what it finds.
+- After pushing, check the pull request with `gh pr checks <N>`, and fix what fails. A pull request is ready to merge only when its checks are green.
+- Add tests for new behaviour, mocking HTTP with `respx`.
   - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|tec|trackaipac|voteforpeace`.
-- `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address.
+- `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address. The maintainer can also start the Live tests workflow from the Actions tab.
 - For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
 - For a UI change, run `uv run pallot` and look at what changed:
   - the ballot, Details, Compare, Settings and the print preview;
