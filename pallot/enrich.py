@@ -66,6 +66,7 @@ async def run(
     use_polls: bool = False,
     use_officeholders: bool = False,
     use_wikidata: bool = False,
+    use_ballotpedia: bool = False,
     day: dt.date | None = None,
     scopes: dict[str, OfficeScope] | None = None,
     county: str | None = None,
@@ -100,7 +101,7 @@ async def run(
     if use_officeholders:
         jobs[officeholders.SOURCE] = officeholders.cards(svc.officeholders, races, scopes or {}, county, bp_ballot, day)
     if use_wikidata:
-        jobs[wikidata.SOURCE] = wikidata.cards(svc.wikidata, races, scopes or {}, county, bp_ballot)
+        jobs[wikidata.SOURCE] = wikidata.cards(svc.wikidata, races, scopes or {}, county, bp_ballot, use_ballotpedia)
     answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 
     outcome = Outcome()

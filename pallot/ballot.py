@@ -413,6 +413,7 @@ class _Builder:
             use_polls=self.use_polls,
             use_officeholders=self.use_officeholders,
             use_wikidata=self.use_wikidata,
+            use_ballotpedia=self.use_bp,
             day=ballot_day,
             scopes=self.scopes,
             county=place.county,

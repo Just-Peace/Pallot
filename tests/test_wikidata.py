@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from pallot.models import Match
 from pallot.sources import wikidata
-from pallot.sources.wikidata import details_from, people_from, photo_url, seat_of
+from pallot.sources.wikidata import details_from, people_from, photo_url, seat_of, trusted
 
 from .conftest import find_race, get_ballot, last_use, load, switch
 
@@ -33,6 +34,8 @@ def test_the_list_is_folded_into_one_person_each():
     assert {"ATTYGEN", "STATESEN:8", "STATEREP:70"} <= paxton.seats
     assert paxton.held[0].text() == "Texas Attorney General (2015–)"  # the office still held comes first
     assert people["James Talarico"].seats == {"STATEREP:*"}
+    assert people["Sarah Eckhardt"].held[0].text() == "State Senator, District 14 (2020–)"
+    assert people["Greg Casar"].held[0].text() == "U.S. Representative, TX-35 (2025–)"
     details = details_from(load("wikidata_details.json"))
     assert details["Q6388290"].article == "https://en.wikipedia.org/wiki/Ken_Paxton"
     assert details["Q6388290"].photo.startswith("https://commons.wikimedia.org/wiki/Special:FilePath/")
@@ -56,12 +59,35 @@ def test_an_exact_match_gets_its_photo_and_stable_links(client, upstream):
     assert last_use(client, wikidata.SOURCE)["status"] == "used"
 
 
-def test_someone_running_for_another_office_is_likely_and_brings_no_photo(client, upstream):
-    paxton = person(find_race(get_ballot(client), "U.S. Senator"), "Ken Paxton")
+def test_someone_running_for_another_office_is_likely_and_still_has_their_photo(client, upstream):
+    ballot = get_ballot(client)
+    paxton = person(find_race(ballot, "U.S. Senator"), "Ken Paxton")
     card = card_of(paxton)
     assert card["match"] == {"confidence": "likely", "method": "full name",
                              "note": "Wikidata lists them for Texas Attorney General (2015–)"}
-    assert card["image"] is None and "ballotpedia" in paxton["photo_url"]
+    assert paxton["photo_url"] == card["image"] and "commons.wikimedia.org" in card["image"]
+    talarico = card_of(person(find_race(ballot, "U.S. Senator"), "James Talarico"))
+    assert talarico["match"]["note"] == "Wikidata lists them for State Representative (2018–)"
+    sites = [(link["label"], link["url"]) for link in talarico["links"] if "website" in link["label"].lower()]
+    assert sites == [("Campaign website", "https://jamestalarico.com/"),
+                     ("Government website", "https://house.texas.gov/members/3685")]  # by each statement's role
+
+
+def test_a_loose_name_or_another_party_is_no_match():
+    full, initial = Match(confidence="likely", method="full name"), Match(confidence="likely", method="first initial and last name")
+    assert trusted(full, "D", "D") and trusted(full, "D", None) and trusted(full, None, "R")
+    assert not trusted(full, "D", "R")  # a namesake in the other party
+    assert not trusted(initial, "R", "R")  # "Thomas Smith" isn't the former State Representative T. Smith
+    assert not trusted(Match(confidence="likely", method="last name, in the same seat"), "R", "R")
+
+
+def test_the_card_is_short_and_links_ballotpedia_only_while_it_is_on(client, upstream):
+    card = card_of(person(find_race(get_ballot(client), "Governor"), "Greg Abbott"))
+    assert card["description"] is None  # Settings describes the source
+    assert "Ballotpedia" in {link["label"] for link in card["links"]}
+    switch(client, "ballotpedia", False)
+    card = card_of(person(find_race(get_ballot(client), "Governor"), "Greg Abbott"))
+    assert "Ballotpedia" not in {link["label"] for link in card["links"]}
 
 
 def test_a_second_lookup_asks_nothing(client, upstream):

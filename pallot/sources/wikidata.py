@@ -6,8 +6,8 @@ answer for the whole state and bundled with Pallot; then DETAILS, for only the p
 this ballot (their description, photo, birth date, party, website, Wikipedia article and
 Ballotpedia page). Nothing about the voter is sent, only Wikidata's own item ids. Matching is by
 name with the seat to corroborate (seats.match_entries); Wikidata often leaves a Texas House
-member's district out, so that office counts as any district's seat. A photo is used only on an
-exact match.
+member's district out, so that office counts as any district's seat. Only a full (or first and
+last) name with no party against it is kept (trusted), so the photo is used for every match kept.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from urllib.parse import quote
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
-from ..matching import NameIndex
+from ..matching import FIRST_LAST, FULL, NameIndex
 from ..models import Badge, Fact, Link, Match, Race, SourceCard
 from ..offices import OfficeScope
 from ..text import display_date, display_time, iso_utc
@@ -53,12 +53,13 @@ PEOPLE = """SELECT DISTINCT ?p ?label ?pos ?posL ?dL ?start ?end ?party WHERE {
   OPTIONAL { ?p wdt:P102 ?party }
   ?p rdfs:label ?label . FILTER(LANG(?label) = "en")
 }"""
-DETAILS = """SELECT ?p ?desc ?img ?born ?site ?bp ?article ?partyL WHERE {
+DETAILS = """SELECT ?p ?desc ?img ?born ?site ?siteRole ?bp ?article ?partyL WHERE {
   VALUES ?p { %s }
   OPTIONAL { ?p schema:description ?desc . FILTER(LANG(?desc) = "en") }
   OPTIONAL { ?p wdt:P18 ?img }
   OPTIONAL { ?p wdt:P569 ?born }
-  OPTIONAL { ?p wdt:P856 ?site }
+  OPTIONAL { ?p p:P856 ?ws . ?ws ps:P856 ?site . FILTER NOT EXISTS { ?ws wikibase:rank wikibase:DeprecatedRank }
+             OPTIONAL { ?ws pq:P3831 ?siteRole } }
   OPTIONAL { ?p wdt:P2390 ?bp }
   OPTIONAL { ?article schema:about ?p ; schema:isPartOf <https://en.wikipedia.org/> }
   OPTIONAL { ?p wdt:P102 ?party . ?party rdfs:label ?partyL . FILTER(LANG(?partyL) = "en") }
@@ -70,6 +71,8 @@ STATEWIDE = {
     "Q124518473": "LANDCOMM", "Q7707628": "AGRICULTUR", "Q1647484": "RRCOMM",
 }
 SPEAKER = "Q7574310"
+_CHAMBERS = {"STATEREP": "State Representative", "STATESEN": "State Senator"}
+SITE_ROLES = {"Q130304960": "Campaign website", "Q120942996": "Government website"}  # P3831 on a P856 statement
 PARTIES = {"Q29552": "D", "Q29468": "R", "Q558334": "L"}
 _QID = re.compile(r"^Q\d+$")
 _CONGRESS = re.compile(r"^Texas's (\d+)(?:st|nd|rd|th) congressional district$")
@@ -82,17 +85,24 @@ class WikidataUnavailable(Exception):
 @dataclass
 class Held:
     office: str  # Wikidata's label: "United States representative"
-    district: str | None  # "Texas's 35th congressional district"
+    seat: str | None  # as seat_of reads it: "TX-35", "STATESEN:2", "STATEREP:*"
     start: str | None  # ISO dates
     end: str | None
 
-    def text(self, capital: bool = True) -> str:
-        """ "Member of the Texas House of Representatives (2018–)"; uncapitalized, as Wikidata
-        labels it, inside a sentence."""
+    def text(self) -> str:
+        """ "State Senator, District 2 (2015–)", "U.S. Representative, TX-17 (2019–2021)", or
+        Wikidata's label for any other office ("Texas Attorney General (2015–)")."""
         years = "–".join([(self.start or "")[:4], (self.end or "")[:4]]) if self.start or self.end else ""
-        where = f", {self.district}" if self.district and self.district != "Texas" else ""
-        office = f"{self.office[:1].upper()}{self.office[1:]}" if capital else self.office
-        return f"{office}{where}" + (f" ({years})" if years else "")
+        kind, _, number = (self.seat or "").partition(":")
+        if kind in _CHAMBERS and not self.office.lower().startswith("speaker"):
+            office = _CHAMBERS[kind] + (f", District {number}" if number.isdigit() else "")
+        elif self.seat == "TX-SEN":
+            office = "U.S. Senator"
+        elif self.seat and self.seat.startswith("TX-"):
+            office = f"U.S. Representative, {self.seat}"
+        else:
+            office = f"{self.office[:1].upper()}{self.office[1:]}"
+        return office + (f" ({years})" if years else "")
 
 
 @dataclass
@@ -106,7 +116,7 @@ class Person:
     def entry(self) -> dict[str, Any]:
         """The shape seats.match_entries reads: ``office_title`` words the latest office for a match's notes."""
         return {"qid": self.qid, "name": self.name, "party": self.party, "seats": self.seats,
-                "office_title": self.held[0].text(capital=False) if self.held else None, "person": self}
+                "office_title": self.held[0].text() if self.held else None, "person": self}
 
 
 @dataclass
@@ -117,7 +127,7 @@ class Details:
     party: str | None = None
     article: str | None = None
     ballotpedia: str | None = None
-    websites: list[str] = field(default_factory=list)
+    websites: dict[str, str] = field(default_factory=dict)  # url -> "Campaign website", "Government website" or "Website"
 
 
 def _value(row: dict[str, Any], name: str) -> str | None:
@@ -162,13 +172,14 @@ def people_from(answer: dict[str, Any]) -> list[Person]:
         person = people.setdefault(qid, Person(qid, name))
         if party := _qid(_value(row, "party")):
             parties.setdefault(qid, set()).add(party)
-        position, district = _qid(_value(row, "pos")), _value(row, "dL")
-        if position and (seat := seat_of(position, district)):
+        position = _qid(_value(row, "pos"))
+        seat = seat_of(position, _value(row, "dL")) if position else None
+        if seat:
             person.seats.add(seat)
-        office = Held(_value(row, "posL") or "", district, (_value(row, "start") or "")[:10] or None,
+        office = Held(_value(row, "posL") or "", seat, (_value(row, "start") or "")[:10] or None,
                       (_value(row, "end") or "")[:10] or None)
         if office.office:
-            held.setdefault(qid, {})[(office.office, office.district, office.start, office.end)] = office
+            held.setdefault(qid, {})[(office.office, office.seat, office.start, office.end)] = office
     for qid, person in people.items():
         found = parties.get(qid, set())
         person.party = PARTIES.get(next(iter(found))) if len(found) == 1 else None
@@ -192,8 +203,10 @@ def details_from(answer: dict[str, Any]) -> dict[str, Details]:
         found.article = found.article or _value(row, "article")
         found.ballotpedia = found.ballotpedia or _value(row, "bp")
         site = _value(row, "site")
-        if site and site.startswith(("http://", "https://")) and site not in found.websites:
-            found.websites.append(site)
+        if site and site.startswith(("http://", "https://")):
+            role = SITE_ROLES.get(_qid(_value(row, "siteRole")) or "")
+            if role or site not in found.websites:
+                found.websites[site] = role or "Website"
     return out
 
 
@@ -250,7 +263,9 @@ class Wikidata:
         return out
 
 
-def card(person: Person, match: Match, found: Details | None, fetched_at: float) -> SourceCard:
+def card(person: Person, match: Match, found: Details | None, fetched_at: float, ballotpedia: bool = False) -> SourceCard:
+    """The Profile tab's section. No description, which Settings already gives; the Ballotpedia
+    link only while Ballotpedia is on (``ballotpedia``)."""
     item = f"{ITEM}{person.qid}"
     found = found or Details()
     facts = [
@@ -262,16 +277,16 @@ def card(person: Person, match: Match, found: Details | None, fetched_at: float)
     links = [Link(label="Wikidata item", url=item)]
     if found.article:
         links.append(Link(label="Wikipedia article", url=found.article))
-    links += [Link(label="Official website", url=site) for site in found.websites]
-    if found.ballotpedia:
+    order = ("Campaign website", "Website", "Government website")
+    links += [Link(label=role, url=site) for site, role in sorted(found.websites.items(), key=lambda s: order.index(s[1]))]
+    if found.ballotpedia and ballotpedia:
         links.append(Link(label="Ballotpedia", url=f"https://ballotpedia.org/{quote(found.ballotpedia)}"))
     return SourceCard(
         source=SOURCE,
         kind="profile",
         label=LABEL,
-        description=DESCRIPTION,
         url=item,
-        image=found.photo if match.confidence == "exact" else None,
+        image=found.photo,
         as_of=iso_utc(fetched_at),
         match=match,
         badges=[Badge(text="Wikidata", tone="info", url=item)],
@@ -280,15 +295,30 @@ def card(person: Person, match: Match, found: Details | None, fetched_at: float)
     )
 
 
+def trusted(match: Match, party: str | None, their_party: str | None) -> bool:
+    """Whether a match is close enough to show. The list is everyone who has held a Texas office,
+    not a list of candidates, so a first initial or a last name alone finds namesakes (a Senate
+    candidate Bradford Hall found a former state senator "B. Hall"), and so does another party:
+    only the full name, or the first and last name, with no party against it, counts."""
+    return match.method.startswith((FULL, FIRST_LAST)) and not (party and their_party and party != their_party)
+
+
 async def cards(
     wd: Wikidata, races: list[Race], scopes: dict[str, OfficeScope], county: str | None, bp_ballot: BpBallot | None,
+    ballotpedia: bool = False,
 ) -> CardSet:
-    """A card for each candidate found among Texas's officeholders on Wikidata. Raises
+    """A card for each candidate found among Texas's officeholders on Wikidata (only the matches
+    trusted() keeps). ``ballotpedia``: Ballotpedia is on, so the card may link to it. Raises
     WikidataUnavailable when the list can't be had; without the matched people's details, the cards
     keep the item's link and offices, with a warning."""
     _, index, fetched_at = await wd.people()
-    found = match_entries(index, races, scopes, county, bp_ballot, source=LABEL, entry_id="qid",
-                          seats_of=lambda entry: entry["seats"])
+    parties = {c.key: c.party for race in races for c in race.candidates}
+    found = {
+        key: (entry, match)
+        for key, (entry, match) in match_entries(index, races, scopes, county, bp_ballot, source=LABEL, entry_id="qid",
+                                                 seats_of=lambda entry: entry["seats"]).items()
+        if trusted(match, parties.get(key), entry["party"])
+    }
     out = CardSet()
     if not found:
         return out
@@ -298,5 +328,5 @@ async def cards(
         details = {}
         out.warnings.append(f"Wikidata profiles are missing their photos and links ({exc}).")
     for key, (entry, match) in found.items():
-        out.candidates[key] = card(entry["person"], match, details.get(entry["qid"]), fetched_at)
+        out.candidates[key] = card(entry["person"], match, details.get(entry["qid"]), fetched_at, ballotpedia)
     return out

@@ -6,6 +6,7 @@
    "img",
    "born",
    "site",
+   "siteRole",
    "bp",
    "article",
    "partyL"
@@ -27,6 +28,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Dan_Patrick_(politician)"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://danpatrick.org/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -36,10 +41,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1950-04-04T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://danpatrick.org/"
     },
     "img": {
      "type": "uri",
@@ -64,6 +65,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Greg_Abbott"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://www.gregabbott.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -73,10 +78,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1957-11-13T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://www.gregabbott.com/"
     },
     "img": {
      "type": "uri",
@@ -101,6 +102,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Ken_Paxton"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://kenpaxton.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -110,10 +115,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1962-12-23T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://kenpaxton.com/"
     },
     "img": {
      "type": "uri",
@@ -138,6 +139,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Steve_Toth"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://stevetothfortexas.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -147,10 +152,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1960-11-29T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://stevetothfortexas.com/"
     },
     "img": {
      "type": "uri",
@@ -175,6 +176,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Brian_Babin"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://babin.house.gov/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -184,10 +189,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1948-03-23T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://babin.house.gov/"
     },
     "img": {
      "type": "uri",
@@ -237,6 +238,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Mike_Schofield"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://www.mikeschofield.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -246,10 +251,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1964-06-27T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://www.mikeschofield.com/"
     }
    },
    {
@@ -320,6 +321,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Dawn_Buckingham"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://dawnbuckingham.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -329,10 +334,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1965-01-01T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://dawnbuckingham.com/"
     },
     "img": {
      "type": "uri",
@@ -357,6 +358,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Michael_Cloud"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://www.cloudforcongress.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -366,10 +371,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1975-05-13T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "https://cloud.house.gov/"
     },
     "img": {
      "type": "uri",
@@ -394,6 +395,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Michael_Cloud"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://cloud.house.gov/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -403,10 +408,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1975-05-13T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "https://www.cloudforcongress.com/"
     },
     "img": {
      "type": "uri",
@@ -489,6 +490,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/August_Pfluger"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://pfluger.house.gov"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -499,9 +504,42 @@
      "type": "literal",
      "value": "1977-12-28T00:00:00Z"
     },
+    "img": {
+     "type": "uri",
+     "value": "http://commons.wikimedia.org/wiki/Special:FilePath/August%20Pfluger%20official%20photo.jpg"
+    },
+    "bp": {
+     "type": "literal",
+     "value": "August_Pfluger"
+    }
+   },
+   {
+    "p": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q101196462"
+    },
+    "partyL": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "Republican Party"
+    },
+    "article": {
+     "type": "uri",
+     "value": "https://en.wikipedia.org/wiki/August_Pfluger"
+    },
     "site": {
      "type": "uri",
-     "value": "https://pfluger.house.gov"
+     "value": "https://augustpfluger.com"
+    },
+    "desc": {
+     "xml:lang": "en",
+     "type": "literal",
+     "value": "American military officer and politician (born 1977)"
+    },
+    "born": {
+     "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+     "type": "literal",
+     "value": "1977-12-28T00:00:00Z"
     },
     "img": {
      "type": "uri",
@@ -571,6 +609,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Ana_Hernandez"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://anafortexas.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -580,10 +622,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1978-08-25T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://anafortexas.com/"
     }
    },
    {
@@ -600,6 +638,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Donna_Howard"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://www.votedonna.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -609,10 +651,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1951-10-25T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://www.votedonna.com/"
     },
     "img": {
      "type": "uri",
@@ -637,6 +675,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Senfronia_Thompson"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://senfroniathompson.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -646,10 +688,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1939-01-01T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://senfroniathompson.com/"
     },
     "img": {
      "type": "uri",
@@ -670,6 +708,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Sylvia_Garcia"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://www.sylviaforsenate.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -679,10 +721,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1950-09-06T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://www.sylviaforsenate.com/"
     },
     "img": {
      "type": "uri",
@@ -707,6 +745,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Judith_Zaffirini"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://judithzaffirini.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -716,10 +758,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1946-02-13T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://judithzaffirini.com/"
     },
     "img": {
      "type": "uri",
@@ -740,6 +778,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Mary_Ann_Perez"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://votemaryannperez.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -749,10 +791,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1962-01-01T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://votemaryannperez.com/"
     },
     "bp": {
      "type": "literal",
@@ -773,6 +811,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Gene_Wu"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://genefortexas.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -782,10 +824,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1978-03-23T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://genefortexas.com/"
     },
     "img": {
      "type": "uri",
@@ -806,6 +844,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Jolanda_Jones"
     },
+    "site": {
+     "type": "uri",
+     "value": "http://www.jolandajones.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -815,10 +857,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1965-11-06T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "http://www.jolandajones.com/"
     },
     "img": {
      "type": "uri",
@@ -864,6 +902,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Gina_Hinojosa"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://ginafortexas.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -873,10 +915,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1973-12-08T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "https://ginafortexas.com/"
     },
     "img": {
      "type": "uri",
@@ -901,6 +939,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Lizzie_Fletcher"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://www.lizziefletcher.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -910,10 +952,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1975-02-13T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "https://www.lizziefletcher.com/"
     },
     "img": {
      "type": "uri",
@@ -1112,6 +1150,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/James_Talarico"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://house.texas.gov/members/3685"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -1122,10 +1164,6 @@
      "type": "literal",
      "value": "1989-05-17T00:00:00Z"
     },
-    "site": {
-     "type": "uri",
-     "value": "https://house.texas.gov/members/3685"
-    },
     "img": {
      "type": "uri",
      "value": "http://commons.wikimedia.org/wiki/Special:FilePath/James%20Talarico%20Press%20Conference.jpg"
@@ -1133,6 +1171,10 @@
     "bp": {
      "type": "literal",
      "value": "James_Talarico"
+    },
+    "siteRole": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q120942996"
     }
    },
    {
@@ -1149,6 +1191,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/James_Talarico"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://jamestalarico.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -1159,10 +1205,6 @@
      "type": "literal",
      "value": "1989-05-17T00:00:00Z"
     },
-    "site": {
-     "type": "uri",
-     "value": "https://jamestalarico.com/"
-    },
     "img": {
      "type": "uri",
      "value": "http://commons.wikimedia.org/wiki/Special:FilePath/James%20Talarico%20Press%20Conference.jpg"
@@ -1170,6 +1212,10 @@
     "bp": {
      "type": "literal",
      "value": "James_Talarico"
+    },
+    "siteRole": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q130304960"
     }
    },
    {
@@ -1186,6 +1232,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Ann_Johnson_(politician)"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://www.annjohnson.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -1195,10 +1245,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1974-08-13T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "https://www.annjohnson.com/"
     }
    },
    {
@@ -1215,6 +1261,10 @@
      "type": "uri",
      "value": "https://en.wikipedia.org/wiki/Greg_Casar"
     },
+    "site": {
+     "type": "uri",
+     "value": "https://www.casarforcongress.com/"
+    },
     "desc": {
      "xml:lang": "en",
      "type": "literal",
@@ -1224,10 +1274,6 @@
      "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
      "type": "literal",
      "value": "1989-05-04T00:00:00Z"
-    },
-    "site": {
-     "type": "uri",
-     "value": "https://www.casarforcongress.com/"
     },
     "img": {
      "type": "uri",
