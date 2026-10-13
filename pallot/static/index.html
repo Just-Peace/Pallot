@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pallot · Your ballot</title>
   <meta name="description" content="See every race on your ballot, research candidates across sources, pick, take notes and print your picks.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -72,8 +72,12 @@
         <div class="progress-strip" id="progress-strip">
           <div class="progress-info">
             <div class="bar" aria-hidden="true"><span id="progress-bar"></span></div>
-            <p class="progress" id="progress" aria-live="polite"></p>
+            <div class="progress-text">
+              <p class="strip-race" id="strip-race" aria-hidden="true"></p>
+              <p class="progress" id="progress" aria-live="polite"></p>
+            </div>
             <button class="btn small" id="next-race" type="button" title="Or press j and k to move from race to race">Next race to pick</button>
+            <button class="btn small with-icon more-btn" id="more-btn" type="button" aria-haspopup="dialog" aria-controls="more-sheet"><span data-icon="more"></span>More</button>
           </div>
           <div class="button-row ballot-tools" id="ballot-tools">
             <div class="tool-group" id="view-controls">
@@ -134,6 +138,16 @@
   <dialog id="compare" class="details compare" aria-labelledby="compare-title"></dialog>
 
   <dialog id="rules" class="details rules" aria-labelledby="rules-title"></dialog>
+
+  <dialog id="more-sheet" class="sheet" aria-labelledby="more-title">
+    <form method="dialog">
+      <div class="sheet-head">
+        <h2 id="more-title">More</h2>
+        <button class="icon-btn close" value="" aria-label="Close">✕</button>
+      </div>
+      <div class="sheet-body" id="more-body"></div>
+    </form>
+  </dialog>
 
   <dialog id="print-dialog" class="small-dialog" aria-labelledby="print-title">
     <form method="dialog">

@@ -114,6 +114,8 @@ body {
   color: var(--text);
   font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* viewport-fit=cover: a phone held sideways keeps the page clear of its notch */
+  padding: 0 env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
 }
 
 a { color: var(--accent); }
@@ -180,16 +182,18 @@ button, input, select, textarea { font: inherit; }
 /* « in the brand's row folds the pane to a rail of icons (chrome.js); see the end of the file */
 .pane-toggle { position: absolute; top: 21px; right: 14px; }
 
-/* centred beside the pane, wide; the bottom clears the pinned footer */
-.content { width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 24px 32px calc(var(--footer-h, 36px) + 32px); }
+/* centred beside the pane, wide; the bottom clears the pinned footer, and a toast while one shows (toast.js) */
+.content { width: 100%; max-width: var(--content-max); margin: 0 auto;
+  padding: 24px 32px calc(var(--footer-h, 36px) + 32px + var(--toast-space, 0px)); }
 
-/* The footer, on every page (chrome.js): pinned to the bottom of the window, beside the pane. */
-.site-footer { position: fixed; left: var(--sidebar); right: 0; bottom: 0; z-index: 6; padding: 6px 0;
+/* The footer, on every page (chrome.js): pinned to the bottom of the window, beside the pane,
+   above a phone's home indicator. */
+.site-footer { position: fixed; left: var(--sidebar); right: 0; bottom: 0; z-index: 6; padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px));
   background: var(--bg); border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; }
 .site-footer p { max-width: var(--content-max); margin: 0 auto; padding: 0 32px; } /* lined up with the content */
 
 /* Back to top (chrome.js): once you've scrolled a screen, above the footer */
-.to-top { position: fixed; right: 20px; bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
+.to-top { position: fixed; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
   width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--panel);
   color: var(--accent); box-shadow: var(--shadow-pop); cursor: pointer;
   opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity 0.15s, transform 0.15s, visibility 0.15s; }
@@ -314,8 +318,18 @@ a.btn.with-icon, .btn.with-icon, a.link-btn.with-icon { display: inline-flex; }
 .jump-list .count.complete { color: var(--good); font-weight: 700; }
 /* the section on screen (ballot-nav.js, or page.js on the other pages, marks it as you scroll) */
 .jump-list a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
-/* in the sticky strip (a phone, or the pane folded): a row of chips */
-.progress-strip .jump-list { display: flex; align-items: center; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px; }
+/* in the sticky strip (a phone, or the pane folded): a row of chips, scrolling sideways without a
+   scrollbar, faded at an edge with more beyond it (ballot-nav.js) */
+.progress-strip .jump-list { display: flex; align-items: center; gap: 6px; margin: 0; overflow-x: auto; padding-bottom: 4px;
+  scrollbar-width: none; }
+.progress-strip .jump-list::-webkit-scrollbar { display: none; }
+.progress-strip .jump-list.fade-start { -webkit-mask-image: linear-gradient(to right, transparent, #000 28px);
+  mask-image: linear-gradient(to right, transparent, #000 28px); }
+.progress-strip .jump-list.fade-end { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+.progress-strip .jump-list.fade-start.fade-end {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
 /* a chip as wide as the row at most: a long title ("Depends on your commissioner or JP precinct") wraps */
 .progress-strip .jump-list li { flex: none; max-width: 100%; }
 .progress-strip .jump-list a { border: 1px solid var(--line); border-radius: 999px; }
@@ -522,16 +536,19 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .icon-only[aria-pressed="true"] { color: var(--accent); }
 .icon-only:disabled { opacity: 0.35; cursor: default; background: none; color: var(--muted); }
 .icon-only .icon { width: 16px; height: 16px; }
-/* a number open for editing: a box in its place, in the same line */
-/* while editing, a line's numbers sit in a row with even gaps, wrapping whole, without the dots */
-.district-line:has(.editing) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; line-height: 2; }
-.district-line:has(.editing) .sep { display: none; }
-.district.editing { font-weight: inherit; font-size: inherit; }
-/* a box the size of the number it stands for: no spinner, the text's height and weight */
-input.district-input { width: calc(3ch + 12px); height: 1.6em; padding: 0 5px; margin-left: 2px; font-size: inherit;
+/* Label-and-box pairs (pairBox in dom.js), for any form of short numbers: Your districts while
+   editing, each number's box in its place. A .pair-grid holds them in a row with even gaps,
+   wrapping whole, without the dots; on a phone, a two-column grid, each label over its box (see
+   the end of the file). Each box is the size of the number it stands for: no spinner, the text's
+   height and weight; on a touch screen, 44px tall with 16px text, so iOS doesn't zoom. */
+.pair-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; line-height: 2; }
+.pair-grid .sep { display: none; }
+.pair { white-space: nowrap; }
+input.pair-box { width: calc(3ch + 12px); height: 1.6em; padding: 0 5px; margin-left: 0.35em; font-size: inherit;
   font-weight: 650; line-height: 1; text-align: center; vertical-align: baseline; border-radius: 4px;
   appearance: textfield; -moz-appearance: textfield; }
-input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.district.editing { font-weight: inherit; font-size: inherit; }
 .districts-form .button-row { margin: 8px 0 0; align-items: center; }
 /* the map's legend: a button per district, right above it, that highlights the district */
 .map-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
@@ -618,6 +635,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.2s; }
 .progress { margin: 0; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
 #next-race { flex: none; }
+/* the race on screen, and More (more-sheet.js): narrow screens only (see the end of the file) */
+.strip-race, .progress-info .more-btn { display: none; }
 
 /* Options: a <details> whose panel drops down over the ballot. A dot on it while picked
    races are hidden. */
@@ -664,7 +683,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 }
 
 /* A message at the foot of the window ("Cleared your picks and notes. Undo"; toast.js). Empty,
-   it's invisible but stays in the page, so each new message is announced. */
+   it's invisible but stays in the page, so each new message is announced. On a phone it clears the
+   home indicator (see the end of the file). */
 .toast { position: fixed; left: 50%; bottom: calc(var(--footer-h, 0px) + 12px); z-index: 40; transform: translateX(-50%); display: flex; align-items: center; gap: 16px;
   width: max-content; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: var(--radius-sm); background: var(--text); color: var(--bg);
   box-shadow: var(--shadow-pop); font-size: 0.92rem; }
@@ -709,7 +729,8 @@ input.district-input::-webkit-inner-spin-button, input.district-input::-webkit-o
 .race.collapsed { content-visibility: visible; }
 .race.has-pick { border-left-color: var(--pick); }
 
-/* The heading stays under the strip (--strip-h, ballot.js) until its card has scrolled by. */
+/* The heading stays under the strip (--strip-h, ballot-nav.js) until its card has scrolled by.
+   Not on narrow screens, where the strip names the race instead. */
 .race-head { position: sticky; top: var(--strip-h, 0px); z-index: 1; display: flex; align-items: flex-start; gap: 12px;
   padding: 13px 16px; background: var(--panel); }
 .race:not(.collapsed) .race-head { border-bottom: 1px solid var(--line); }
@@ -859,12 +880,14 @@ dialog {
   color: var(--text);
   padding: 0;
   box-shadow: var(--shadow-pop);
+  overscroll-behavior: contain;
 }
 dialog::backdrop { background: rgba(10, 16, 24, 0.55); }
-/* the page stays put behind a modal: scrolling past a dialog's end doesn't scroll the ballot, and
-   the gutter keeps the page from shifting when its scrollbar goes */
+/* the page stays put behind a modal: scrolling past a dialog's end doesn't scroll the ballot (nor,
+   on iOS, bounce it: overscroll-behavior above), and the gutter keeps the page from shifting when
+   its scrollbar goes. Heights are of what's visible (dvh), so a phone's toolbar never hides a foot. */
 html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
-.details { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 10vh); margin: 5vh auto auto; }
+.details { width: min(720px, calc(100vw - 32px)); max-height: 90vh; max-height: 90dvh; margin: 5vh auto auto; }
 .details-head { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
 .details-title { flex: 1; min-width: 0; }
 .details-title h2 { margin: 0 0 2px; }
@@ -1000,8 +1023,10 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
    so every bar starts on the same line. */
 .compare { width: min(960px, calc(100vw - 32px)); }
 .compare .cmp-chip, .compare .cmp-bar, .compare .cmp-col { --bar: var(--party, var(--party-other-pick)); } /* no party, or one without a colour: white (dark ink on the light theme) */
-.cmp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 20px; border-bottom: 1px solid var(--line);
-  background: var(--panel-2); }
+/* Dollars | Share stays under the head as the dialog scrolls; the tabs under it scroll away */
+.cmp-controls { position: sticky; top: var(--head-h, 0px); z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+  padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--panel-2); }
+.compare .details-tabs > .tabs { position: static; }
 .cmp-controls .fine { flex: 1 1 260px; margin: 0; }
 .seg { display: inline-flex; gap: 2px; margin: 0; padding: 2px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--panel); }
 .seg-option { position: relative; padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--muted);
@@ -1054,8 +1079,11 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .cmp-entry.shared { background: var(--info-soft); }
 .cmp-entry.linked { box-shadow: 0 0 0 2px var(--info); }
 
-.small-dialog { width: min(460px, calc(100vw - 32px)); }
+.small-dialog { width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); }
 .small-dialog form { padding: 20px; }
+/* the buttons stay in view while a short screen scrolls the dialog (Print my picks held sideways) */
+.small-dialog form > .button-row:last-child { position: sticky; bottom: 0; margin: -8px 0 -20px; padding: 8px 0 20px;
+  background: var(--panel); }
 .confirm-dialog h2 { margin: 0 0 8px; font-size: 1.15rem; }
 .confirm-body { margin: 0 0 18px; color: var(--text); line-height: 1.5; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
@@ -1063,20 +1091,39 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-layout { border: 0; margin: 0 0 6px; padding: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 
+/* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */
+.sheet { width: min(560px, 100%); max-width: none; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto auto 0;
+  border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0;
+  padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+.sheet form { padding: 0 16px 12px; }
+.sheet-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 0 8px; background: var(--panel); }
+.sheet-head h2 { margin: 0; font-size: 1.1rem; }
+.sheet-section { padding: 10px 0; border-top: 1px solid var(--line); }
+.sheet-label { margin: 0 0 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.sheet-section .seg { display: flex; }
+.sheet-section .seg-option { flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 44px; }
+.sheet-action { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 0 8px; border: 0;
+  border-radius: var(--radius-sm); background: none; color: var(--text); font-weight: 600; text-align: left; cursor: pointer; }
+.sheet-action:hover:not(:disabled) { background: var(--neutral-soft); }
+.sheet-action .icon { width: 18px; height: 18px; color: var(--accent); }
+.sheet-action.danger, .sheet-action.danger .icon { color: var(--danger); }
+.sheet-action:disabled { opacity: 0.55; cursor: not-allowed; }
+
 /* ---- Pick by rule (pick-rule-dialog.js) ---- */
 /* The rule on the left, what it would do on the right, each scrolling on its own; the heading,
    Apply to and the buttons stay put. Under 800px, one column that scrolls whole. */
 .rules { width: min(1000px, calc(100vw - 32px)); }
 .rules[open] { display: flex; flex-direction: column; overflow: hidden; }
-.rule-bar { display: flex; align-items: center; gap: 8px 12px; padding: 10px 20px; border-bottom: 1px solid var(--line);
+.rule-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 20px; border-bottom: 1px solid var(--line);
   background: var(--panel-2); }
-.rule-bar select { width: auto; min-width: 0; max-width: 24rem; flex: 0 1 auto; padding: 6px 9px; }
+.rule-bar select { width: auto; min-width: 0; max-width: min(24rem, 100%); flex: 0 1 auto; padding: 6px 9px; }
 .rule-label { flex: none; font-weight: 600; }
 .rule-reset { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; }
 .rule-reset .icon { width: 14px; height: 14px; }
-.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
-.rule-form { overflow-y: auto; padding: 2px 20px 18px; }
-.rule-preview { overflow-y: auto; padding: 16px 18px; border-left: 1px solid var(--line); background: var(--panel-2); }
+.rule-layout { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; overscroll-behavior: contain; }
+.rule-form { overflow-y: auto; overscroll-behavior: contain; padding: 2px 20px 18px; }
+.rule-preview { overflow-y: auto; overscroll-behavior: contain; padding: 16px 18px; border-left: 1px solid var(--line); background: var(--panel-2); }
 .rule-preview h3 { margin: 0 0 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .rule-preview h3:not(:first-child) { margin-top: 16px; }
 .rule-words { margin: 0 0 8px; padding-left: 10px; border-left: 3px solid var(--line-strong); font-size: 0.92rem; line-height: 1.45; }
@@ -1113,8 +1160,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .rule-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 .rule-row .check { margin: 6px 0; flex: 0 1 auto; }
 .rule-row.stacked .rule-inputs { flex-basis: 100%; margin: -2px 0 6px 26px; }
-.rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.rule-inputs select { width: auto; padding: 6px 9px; }
+.rule-inputs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.rule-inputs select { width: auto; max-width: 100%; padding: 6px 9px; }
 .rule-amount-wrap { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
 input.rule-amount { width: 7.5em; padding: 6px 9px; }
 input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
@@ -1140,7 +1187,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (max-width: 640px) {
   .rules .details-title p { display: none; }
   .rule-bar { padding: 8px 16px; }
-  .rule-bar select { flex: 1 1 auto; }
+  .rule-bar select { flex: 1 1 0; max-width: 100%; }
   .rule-form { padding: 2px 16px 16px; }
   .rule-preview { padding: 14px 16px; }
   .rule-set { padding: 0 12px 8px; }
@@ -1169,13 +1216,51 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .sidebar:not([data-open="address"]) .side-address, .sidebar:not([data-open="menu"]) :is(.site-nav, .page-sections) { display: none; }
   .side-address { margin-top: 0; padding-bottom: 6px; }
   .side-bottom { margin-top: 0; }
-  .content { padding: 20px 16px calc(var(--footer-h, 52px) + 24px); }
+  .content { padding: 20px 16px calc(var(--footer-h, 52px) + 24px + var(--toast-space, 0px)); }
   .pane-toggle { display: none; }
   .site-footer { left: 0; }
   .site-footer p { padding: 0 16px; }
-  .to-top { right: 16px; }
+  .to-top { right: calc(16px + env(safe-area-inset-right, 0px)); }
   .ballot-tools { margin: 12px 0 4px; }
   .section-chips { display: block; margin: -12px -16px 12px; padding: 8px 16px; }
+
+  /* The strip, slim (ballot-nav.js): the section chips on top, then one line with the race on
+     screen over the progress, Next and More, the bar along the strip's foot. Scrolling down, the
+     strip slides up by the chips' row (--chips-shift); any scroll up brings it back. The race
+     headings don't stick, so they never cover the top of a card. */
+  .progress-strip { row-gap: 6px; padding: 6px 0 9px; transition: transform 0.2s ease; }
+  .progress-strip.chips-away { transform: translateY(calc(-1 * var(--chips-shift, 0px))); }
+  .progress-strip > #jump { order: -1; }
+  .progress-info { flex: 1 1 100%; gap: 8px; }
+  .progress-info .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 0; }
+  .progress-text { flex: 1 1 auto; min-width: 0; min-height: 2.4rem; display: flex; flex-direction: column; justify-content: center; }
+  .strip-race { display: block; margin: 0; font-weight: 700; font-size: 0.9rem; line-height: 1.25;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .strip-race:empty { display: none; }
+  .progress { overflow: hidden; text-overflow: ellipsis; }
+  .strip-race:not(:empty) + .progress { font-size: 0.78rem; font-weight: 500; line-height: 1.25; color: var(--muted); }
+  .progress-info .more-btn { display: inline-flex; flex: none; }
+  /* while the cards load, a moving line along the strip's foot; its words for screen readers only */
+  .cards-loading { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; gap: 0; }
+  .cards-loading > span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .cards-loading .loading-bar { height: 3px; border-radius: 0; }
+  .race-head { position: static; }
+}
+@media (max-width: 960px) and (prefers-reduced-motion: reduce) { .progress-strip { transition: none; } }
+
+/* ---- phones, upright or held sideways ---- */
+
+@media (max-width: 640px), (max-width: 960px) and (max-height: 500px) {
+  /* the footer ends the page instead of staying pinned, so the screen is left to the ballot */
+  html { scroll-padding-bottom: 0; }
+  .site-footer { position: static; }
+  .site-footer p { padding-right: 68px; } /* clear of Back to top */
+  .content { padding-bottom: calc(24px + var(--toast-space, 0px)); }
+  /* clear of the home indicator */
+  .to-top { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .toast { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .details { max-height: calc(100dvh - 16px); margin-top: 8px; }
 }
 
 /* ---- the left pane folded (chrome.js): a rail of icons, each name a tooltip ---- */
@@ -1198,13 +1283,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (max-width: 640px) {
   h1 { font-size: 1.45rem; }
   .panel, .welcome { padding: 16px; }
-  /* the footer ends the page instead of staying pinned, so the screen is left to the ballot */
-  html { scroll-padding-bottom: 0; }
-  .site-footer { position: static; }
-  .site-footer p { padding-right: 68px; } /* clear of Back to top */
-  .content { padding-bottom: 24px; }
-  .to-top { bottom: 16px; }
-  .toast { bottom: 12px; }
   .confirm-dialog .button-row { flex-direction: column; }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   /* the toolbar's buttons a size down, so they take two lines; Options opens from the toolbar's
@@ -1215,12 +1293,12 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .ballot-tools .icon { width: 14px; height: 14px; }
   #view-controls { position: relative; }
   #view-menu { position: static; }
-  /* the strip: the bar, the count (wrapping if need be) and Next on one line, then the section chips */
-  .progress-strip { gap: 8px; padding: 8px 0; }
-  .progress-info { gap: 10px; }
-  .progress-info .bar { min-width: 40px; }
-  .progress { flex: 0 1 auto; min-width: 0; white-space: normal; font-size: 0.85rem; }
+  .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
+  /* Your districts while editing, and any .pair-grid: two columns, each label over its box */
+  .pair-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 10px 12px; line-height: 1.3; }
+  .pair-grid > :not(.sep) { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; white-space: normal; }
+  input.pair-box { width: 100%; height: 44px; margin: 0; }
   /* the race cards: less padding, so each candidate's row has more room */
   .race-head { gap: 10px; padding: 10px 12px; }
   .race.collapsed .race-head { padding-top: 9px; padding-bottom: 9px; }
@@ -1283,6 +1361,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cmp-group, .cmp-bars, .cmp-bar { grid-template-columns: minmax(0, 1fr) max-content max-content; grid-template-columns: subgrid; }
   .cmp-bar { row-gap: 1px; }
   .cmp-bar .cmp-name { grid-column: 1; grid-row: 1; }
+  /* a long name on up to two lines, rather than cut */
+  .cmp-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; overflow-wrap: anywhere; }
   .cmp-bar .cmp-amount { grid-column: 2; grid-row: 1; }
   .cmp-bar .cmp-count { grid-column: 3; grid-row: 1; }
   .cmp-bar .bar { grid-column: 1 / -1; grid-row: 2; }
@@ -1300,6 +1380,40 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .data-table.stack tbody tr:last-child { border-bottom: 0; }
   .data-table.stack th, .data-table.stack td { border: 0; padding: 2px 0; }
   .data-table.stack td::before { content: attr(data-label) ": "; color: var(--muted); font-weight: 600; }
+}
+
+/* ---- touch screens: every control at least 44px tall, as Apple and Android ask, by padding
+   rather than bigger text. Chips and links in a line of text stay their size, with a 44px hit area
+   drawn around them (::after). ---- */
+
+@media (pointer: coarse) {
+  .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .measure-option, .switch, .check, .site-nav a, .jump-list a,
+  .race-toggle, .box-toggle, .map-toggle,
+  input[type="text"], input[type="number"], select { min-height: 44px; }
+  a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
+  .seg-option { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  .toast .link-btn { margin-block: -10px; }
+  .icon-only { min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+  .check { align-items: center; margin: 2px 0; }
+  .check input { margin-top: 0; }
+  .box-toggle { align-items: center; }
+  .jump-list a { align-items: center; }
+  .suggestion { padding-block: 12px; }
+  .mail-voting > summary, .rule-details > summary, .rule-how > summary { padding-block: 10px; }
+  .precinct-prompt .link-btn, .district-warn .link-btn { vertical-align: middle; }
+  input.pair-box { font-size: 16px; min-width: calc(3ch + 24px); }
+  .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
+  .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
+  button.badge-btn, a.badge-link, .cal-link, .ban-remove { position: relative; }
+  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after { content: ""; position: absolute; left: 50%; top: 50%;
+    width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+  /* the strip's section chips: 44px tall, the pill drawn inside at its usual size */
+  .progress-strip .jump-list a, .progress-strip .jump-list a:hover, .progress-strip .jump-list a[aria-current] {
+    position: relative; border-color: transparent; background: none; }
+  .progress-strip .jump-list a::before { content: ""; position: absolute; inset: 6px 0; z-index: -1; border: 1px solid var(--line);
+    border-radius: 999px; }
+  .progress-strip .jump-list a:hover::before { background: var(--neutral-soft); }
+  .progress-strip .jump-list a[aria-current]::before { border-color: var(--accent); background: var(--accent-soft); }
 }
 
 /* ---- print: only the picks sheet ---- */

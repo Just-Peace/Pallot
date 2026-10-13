@@ -1,11 +1,13 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
-// which one is on screen), Simple | Detailed and Options, j and k, and where the strip's parts go on a phone.
+// which one is on screen), Simple | Detailed and Options, j and k, and where the strip's parts go
+// on a phone, with the race on screen, More and the chips that make way while scrolling down.
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
+import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { STILL_LOADING, cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
 import { syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import { bindViewControls, onViewChange, setViewPref, showViewControls, syncSourceNotes, viewPref } from "./view.js";
@@ -18,6 +20,13 @@ const viewControls = $("#view-controls");
 const viewMenu = $("#view-menu");
 const nextButton = $("#next-race");
 const jump = $("#jump");
+const jumpList = $("#jump-list");
+const stripRace = $("#strip-race");
+const VIEW_MODES = [["minimal", "Minimal"], ["simple", "Simple"], ["detailed", "Detailed"]];
+const moreView = h("fieldset", { class: "seg" }, h("legend", { class: "sr-only" }, "How much of the ballot shows"),
+  VIEW_MODES.map(([value, label]) => h("label", { class: "seg-option" }, h("input", { type: "radio", name: "view-mode", value }), label)));
+const moreRule = moreAction("Pick by rule", "filter", () => $("#rule-btn").click());
+const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
 // What puts the ballot back to each view switch when it changes, without a reload.
 const APPLY = {
@@ -60,8 +69,9 @@ export function renderSections() {
   };
   for (const section of ballotSections(page.ballot)) add(section.id, section.title, section.races.map((r) => r.key), section.maybe);
   if (page.ballot.measures.length) add("measures-section", "Propositions", page.ballot.measures.map(measureKey));
-  $("#jump-list").replaceChildren(...items);
+  jumpList.replaceChildren(...items);
   jump.hidden = !items.length;
+  syncChipFades();
 }
 
 // "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
@@ -86,11 +96,12 @@ export function updateProgress() {
     element.textContent = maybe ? (picked ? `${picked} picked` : String(keys.length)) : `${picked}/${keys.length}`;
     element.classList.toggle("complete", !maybe && picked === keys.length);
   }
+  syncChipFades();
 }
 
 // While the cards are coming, the strip's bar says so, and Pick by rule and Print, which need
-// them, wait. ``failed``: they won't come, so the bar goes but the two stay off.
-const needCards = [$("#rule-btn"), $("#print-btn")].map((button) => ({ button, title: button.title }));
+// them, wait, in the toolbar and in More. ``failed``: they won't come, so the bar goes but they stay off.
+const needCards = [$("#rule-btn"), $("#print-btn"), moreRule, morePrint].map((button) => ({ button, title: button.title }));
 
 export function setCardsLoading(waiting, { failed = false } = {}) {
   $("#cards-loading").hidden = !waiting || failed;
@@ -107,6 +118,7 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
 // what the voter opened or folded by hand.
 function applyView() {
   showViewControls(viewControls);
+  showViewControls(moreView);
   for (const [name, apply] of Object.entries(APPLY)) {
     const value = viewPref(name);
     if (name in applied && applied[name] !== value) apply();
@@ -178,13 +190,70 @@ function stepRace(event) {
 // ---- phones ---------------------------------------------------------------------------
 
 // On a phone (or a narrow window) the section chips join the sticky strip, and the toolbar
-// (Simple | Detailed, Options, Pick by rule, Clear picks, Print) moves under the heading, where it scrolls away. So what stays in view is
-// the progress, Next and the sections. With the left pane folded, the chips join the strip too.
+// (Simple | Detailed, Options, Pick by rule, Clear picks, Print) moves under the heading, where it
+// scrolls away. So what stays in view is the race on screen, the progress, Next, More (which holds
+// the toolbar's buttons) and the sections. With the left pane folded, the chips join the strip too.
 function placeForWidth() {
   if (narrow.matches) $(".ballot-head").after(tools);
   else strip.append(tools);
-  if (narrow.matches || isPaneCollapsed()) strip.append(jump); // the chips' row last
+  if (narrow.matches || isPaneCollapsed()) strip.append(jump); // the chips' row last (first on a phone, by the CSS)
   else $(".side-bottom").before(jump);
+  setChipsAway(false);
+  syncChipFades();
+}
+
+// More's sections: how much shows, the toolbar's buttons, and Expand and Collapse all from Options.
+function fillMoreSheet() {
+  bindViewControls(moreView);
+  addMoreSection({ id: "view", label: "How much shows" }, moreView);
+  addMoreSection({ id: "picks", label: "Your picks" }, moreRule, morePrint,
+    moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }));
+  addMoreSection({ id: "races", label: "Races" },
+    moreAction("Expand all", "expand", () => setAllCollapsed(false)),
+    moreAction("Collapse all", "collapse", () => setAllCollapsed(true)));
+  initMoreSheet($("#more-btn"));
+}
+
+// Scrolling down on a phone, the chips' row (at the top of the strip) slides up out of the window,
+// leaving the race, the progress and the buttons; any scroll up brings it back. The strip moves
+// rather than shrinks, so nothing under it shifts. Only once the strip is stuck to the top.
+const SCROLL_STEP = 10; // a scroll shorter than this, a finger's jitter, changes nothing
+let lastScrollY = 0;
+
+function setChipsAway(away) {
+  if (away && !strip.classList.contains("chips-away")) {
+    const info = strip.querySelector(".progress-info");
+    strip.style.setProperty("--chips-shift", `${info.offsetTop - parseFloat(getComputedStyle(strip).paddingTop)}px`);
+  }
+  strip.classList.toggle("chips-away", away);
+}
+
+function chipsOnScroll() {
+  const y = scrollY;
+  if (Math.abs(y - lastScrollY) < SCROLL_STEP) return;
+  const down = y > lastScrollY;
+  lastScrollY = y;
+  const stuck = strip.previousElementSibling.getBoundingClientRect().bottom < 0;
+  setChipsAway(down && stuck && narrow.matches && strip.contains(jump) && !jump.hidden && !jump.contains(document.activeElement));
+}
+
+// The chips' row scrolls sideways without a scrollbar; a fade at an edge says there's more that way.
+function syncChipFades() {
+  const end = jumpList.scrollWidth - jumpList.clientWidth;
+  jumpList.classList.toggle("fade-start", jumpList.scrollLeft > 2);
+  jumpList.classList.toggle("fade-end", jumpList.scrollLeft < end - 2);
+}
+
+// On a phone, where the race headings don't stick, the strip names the race at its foot.
+function markCurrentRace() {
+  const line = strip.getBoundingClientRect().bottom;
+  let name = "";
+  for (const card of narrow.matches ? result.querySelectorAll(".race") : []) {
+    const box = card.getBoundingClientRect();
+    if (box.top > line) break;
+    if (box.bottom > line + 40) name = card.querySelector(".race-name")?.textContent || "";
+  }
+  if (stripRace.textContent !== name) stripRace.textContent = name;
 }
 
 // The bar between the toolbar's two groups shows only while they share a line, so a narrow
@@ -205,9 +274,10 @@ function watchToolDivider() {
 // Marks the section on screen in the section list: the last one whose top has reached the
 // line a jump scrolls to, under the strip (the first until then, the last at the foot of the
 // page), so a section jumped to is the one marked. Where the list is a row of chips (a phone),
-// the row scrolls sideways to show it.
+// the row scrolls sideways to show it. On a phone the strip also names the race on screen.
 export function markCurrentSection() {
   if (!page.ballot || result.hidden) return;
+  markCurrentRace();
   const shown = sectionLinks.filter(({ id }) => document.getElementById(id)?.offsetParent); // not hidden by the filter
   if (!shown.length) return;
   const line = strip.getBoundingClientRect().bottom + SCROLL_GAP + 4; // a little slack for rounding
@@ -263,14 +333,21 @@ export function initNav(context) {
   onPaneToggle(placeForWidth);
   placeForWidth();
   watchToolDivider();
+  fillMoreSheet();
 
   // Links to a section, Next and j/k scroll to just below the strip, however tall it is, and
-  // each race's heading sticks right under it (--strip-h).
+  // each race's heading sticks right under it (--strip-h), wider than a phone.
   trackHeight(strip, "--strip-h", (height) => {
     document.documentElement.style.scrollPaddingTop = `${height + SCROLL_GAP}px`;
   });
 
   const markSoon = onFrame(markCurrentSection);
-  addEventListener("scroll", markSoon, { passive: true });
+  const chipsSoon = onFrame(chipsOnScroll);
+  addEventListener("scroll", () => {
+    markSoon();
+    chipsSoon();
+  }, { passive: true });
   addEventListener("resize", markSoon);
+  jumpList.addEventListener("scroll", onFrame(syncChipFades), { passive: true });
+  new ResizeObserver(onFrame(syncChipFades)).observe(jumpList);
 }
