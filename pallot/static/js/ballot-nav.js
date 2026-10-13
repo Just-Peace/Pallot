@@ -37,6 +37,7 @@ const APPLY = {
     syncBoxes("showFunding");
     syncFunding();
   },
+  openBoxes: () => syncBoxes("openBoxes"),
   showSources: syncSourceNotes,
   hidePicked: () => {
     if (!page.ballot) return;
@@ -115,9 +116,10 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
 
 // After any change of the view settings, here or in another tab: the toolbar's Simple | Detailed
 // and Options show them, and each switch that changed applies to the ballot in place, putting back
-// what the voter opened or folded by hand.
+// what the voter opened or folded by hand. The page carries the mode (data-view-mode), so a phone's
+// candidate rows stay whole in Detailed.
 function applyView() {
-  showViewControls(viewControls);
+  document.documentElement.dataset.viewMode = showViewControls(viewControls);
   showViewControls(moreView);
   for (const [name, apply] of Object.entries(APPLY)) {
     const value = viewPref(name);
