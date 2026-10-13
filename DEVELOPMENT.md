@@ -6,13 +6,14 @@ Pallot is one Python process (FastAPI) serving a plain HTML/JS page from `pallot
 
 ## Commands
 
-`uv sync` installs Pallot with the dev tools (pytest, pytest-xdist, respx), pinned by `uv.lock`.
+`uv sync` installs Pallot with the dev tools (pytest, pytest-xdist, respx, ruff), pinned by `uv.lock`.
 
 ```bash
 uv run pallot --reload                    # restart on code changes
 uv run pytest                              # offline: recorded responses in tests/fixtures, plus trackaipac_cache's, voteforpeace_cache's and tec_cache's own tests
 uv run pytest -n 0 --pdb                   # the same in one process, to use the debugger or see print()
 uv run pytest -m live                      # smoke tests against the real services (the FEC one needs an FEC key)
+uv run ruff check                          # unused imports and variables (F401, F841; [tool.ruff] in pyproject.toml)
 uv run pallot-cache check                  # what data/ keeps, and what's stale (also refresh, prune, hard-refresh, rebuild)
 uv run python scripts/record_fixtures.py   # re-record tests/fixtures from the live APIs (--only ballots|suggest|fec|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|county_precincts|endorsement_feeds|tec|trackaipac|voteforpeace)
 ```
@@ -285,6 +286,16 @@ The modules share their small helpers rather than writing them out again:
 - **Adding a source:** write its builder (an `async def build(ctx: Context) -> dict[str, int]` that makes a lookup's requests through `ctx.cache` with the source's own class, and raises `BundleError` if any failed), add a `Bundle("<source>", build, "daily" or "weekly")` to `registry.BUNDLES`, a `<source>_bundle` field to `Ttls` (or a `lifetime` and its fields, as Texas SOS's) (with `.env.example` and README's "Configuration"), then run `uv run pallot-bundle refresh --only <source>` once and commit `data/`. Settings, the startup seed and `--due` need nothing more.
 - `store.py` imports nothing from Pallot. `registry.py` and the builders import Pallot's sources, and Pallot imports `registry` at startup, so a builder never imports `pallot.services`; `refresh.py` does, and only the command imports it.
 
+## GitHub Actions
+
+`.github/workflows/tests.yml` checks every pull request (into any branch, so a stacked one too) and every push to `develop`. A push that changes only Markdown files skips it. A new push cancels the run it replaces (`concurrency`).
+- **pytest:** `uv sync --locked`, then `uv run pytest`, on Python 3.10 (the oldest `requires-python` allows). `--locked` fails when `pyproject.toml` changed without `uv lock`. The live tests don't run (`-m "not live"` in `addopts`).
+- **ruff:** `uv run ruff check`, for unused imports and variables. Its findings show on the pull request's diff.
+- **docker:** builds the image, without pushing it, only when `Dockerfile`, `compose.yaml`, `.dockerignore`, `pyproject.toml` or `uv.lock` changed. A missing package-data pattern only shows up there.
+- `astral-sh/setup-uv` keeps uv's cache between runs, and the Docker build keeps its layers in the Actions cache.
+
+`.github/workflows/live-tests.yml` runs `uv run pytest -m live`, only when started by hand from the Actions tab (Run workflow), never on a push, since it calls the real services. It uses the `PALLOT_FEC_API_KEY` secret; without it, the FEC's test uses the shared `DEMO_KEY`, which GitHub's runners share too.
+
 ## The daily refresh
 
 `.github/workflows/refresh-caches.yml` refreshes the bundled snapshots every day (09:17 UTC) until 2026-11-15, and can be started by hand from the Actions tab (Run workflow). After that date its first job skips the rest, and the bundles age out on their own (see [bundles](#bundles)); disable the workflow then.
@@ -294,7 +305,7 @@ The modules share their small helpers rather than writing them out again:
   - `uv run pallot-bundle refresh --due --data-dir bundles/data`, with the FEC keys as env for that step only;
   - `uv run trackaipac-cache refresh --data-dir trackaipac_cache/data`, and likewise `voteforpeace-cache` and `tec-cache`.
 - **Failures.** Each step goes on after an error (a failed refresh writes nothing), so the others still run. If anything changed, it runs `uv run pytest`, then adds one commit to `chore/refresh-caches` per run, listing each step's outcome and linking the run, and pushes it (never forced). It doesn't open or merge a pull request: the maintainer opens one from `chore/refresh-caches` into `develop` and merges it. The last step fails the job if any step failed, so the failure shows in Actions.
-- **Secrets** (Settings, Secrets and variables, Actions): `PALLOT_FEC_API_KEY`, `PALLOT_FEC_API_KEY2` and `PALLOT_FEC_API_KEY3` (without one, the FEC's refresh fails). Optional: `PALLOT_REFRESH_TOKEN`, a fine-grained token with Contents read/write on this repo. Pushes made with the default `GITHUB_TOKEN` don't start other workflows, so if the repo gets a CI workflow that should check the refresh's commits, set this token; without it the workflow uses `GITHUB_TOKEN`.
+- **Secrets** (Settings, Secrets and variables, Actions): `PALLOT_FEC_API_KEY`, `PALLOT_FEC_API_KEY2` and `PALLOT_FEC_API_KEY3` (without one, the FEC's refresh fails). Optional: `PALLOT_REFRESH_TOKEN`, a fine-grained token with Contents read/write on this repo. Pushes made with the default `GITHUB_TOKEN` don't start other workflows; the tests still run once the maintainer opens the pull request. Without the token the workflow uses `GITHUB_TOKEN`.
 - **The first time,** run it by hand and read the log: the FEC's builder starts with Texas SOS's candidate lists, and some government sites refuse cloud runners' addresses.
 - **By hand, locally:** the same commands, from the repo's root, then commit the changed `data/` folders.
 - If its push is refused because a workflow file changed on `develop` since the branch was last pushed (`GITHUB_TOKEN` may not update workflows), merge `develop` into `chore/refresh-caches` yourself and push it, or delete the branch once its commits are merged, and run it again.
