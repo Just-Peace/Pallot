@@ -1,7 +1,7 @@
 // The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees in words and race by race
-// what it would change, then applies it (with Undo, and a banner above the races). Opened from the
-// strip for every race, from a race's funnel for that race, or from the endorser bar's Pick them with
-// the bar's rule. ballot.js hands over ``page``.
+// what it would change, then applies it (with Undo, and a banner above the races). Opened from Help
+// me pick's More rules… for every race, or from a race's funnel for that race. ballot.js hands over
+// ``page``.
 
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
@@ -149,12 +149,11 @@ export function syncRuleBanner() {
 
 const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, with room to list the races
 
-// ``raceKey``: the race whose funnel opened it, which is then where the rule applies. ``preset``: a
-// rule to start from instead of the saved one (the endorser bar's Pick them), saved only by Apply.
-export function openRules({ raceKey = null, preset = null } = {}) {
+// ``raceKey``: the race whose funnel opened it, which is then where the rule applies.
+export function openRules({ raceKey = null } = {}) {
   if (!page.ballot || page.loadingCards) return; // its conditions are about the cards
   const options = scopes(page.ballot, raceKey);
-  draw(preset ? structuredClone(preset) : loadRule(), options, options[0]);
+  draw(loadRule(), options, options[0]);
   if (!dialog.open) dialog.showModal();
   $("#rule-scope").focus();
 }
@@ -227,7 +226,7 @@ function draw(rule, options, startScope) {
     dialog.close();
     const undo = () => {
       hideBanner();
-      page.picks.setMany(before);
+      page.picks.setMany(before.picks, before.auto);
       if (folded.length) page.picks.setCollapsed(folded, false);
       page.renderRaces();
     };

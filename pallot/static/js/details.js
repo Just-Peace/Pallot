@@ -26,7 +26,7 @@ export function initDetails(context) {
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
 // ``at`` is the tab to show: "profile", "issues", "endorsements", "money" (the first money source's,
-// for "Follow the money") or a source's (a Funding chip's money source); a tab the candidate hasn't
+// for the Funding focus) or a source's (a Funding chip's money source); a tab the candidate hasn't
 // got shows the first one, Profile or else Issues.
 export function showDetails(race, index, focus = null, at = "profile") {
   const { picks } = page;
