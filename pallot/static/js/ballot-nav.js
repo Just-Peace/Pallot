@@ -8,6 +8,7 @@ import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
+import { initEndorserBar, moreEndorsers, syncEndorserBar } from "./endorser-bar.js";
 import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { STILL_LOADING, cardFor, redrawRace, refillCards, setAllCollapsed } from "./race-cards.js";
@@ -41,9 +42,9 @@ const refill = () => {
   if (page.ballot) refillCards();
 };
 // What puts the ballot back to each view switch when it changes, without a reload; each runs once
-// however many of its switches changed. A switch a focus adds that isn't here (showEndorserBar) is
-// read by its own part of the page, on onViewChange().
+// however many of its switches changed.
 const APPLY = {
+  showEndorserBar: syncEndorserBar,
   showMap: syncMapShown,
   showPolls: () => syncBoxes("showPolls"),
   showEndorsements: syncLines,
@@ -66,7 +67,7 @@ const APPLY = {
 };
 let applied = {}; // the view switches as the page last applied them
 
-let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe, races, mark }]
+let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe, races, mark, matchMark }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
 let currentSection = null; // the id of the section marked as the one on screen
 let lastJumped = null; // the race "Next race to pick" went to last
@@ -74,8 +75,8 @@ let lastJumped = null; // the race "Next race to pick" went to last
 const showPickedButton = h("button", { type: "button", class: "link-btn", on: { click: () => setViewPref("hidePicked", false) } }, "Show them");
 export const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
 
-// The left pane's list of sections, each with how many of its races are picked, and with the
-// pollChips switch a mark on those with polls.
+// The left pane's list of sections, each with how many of its races are picked, with the
+// pollChips switch a mark on those with polls, and with the endorser bar how many races match.
 export function renderSections() {
   sectionCounts = [];
   sectionLinks = [];
@@ -84,8 +85,9 @@ export function renderSections() {
   const add = (id, label, keys, races = [], maybe = false) => {
     const count = h("span", { class: "count" });
     const mark = h("span", { class: "poll-mark", title: "Has polls", hidden: true }, icon("bars"), h("span", { class: "sr-only" }, " (has polls)"));
-    const link = h("a", { href: `#${id}`, class: maybe ? "maybe-link" : null }, h("span", {}, label, mark), count);
-    sectionCounts.push({ element: count, keys, maybe, races, mark });
+    const matchMark = h("span", { class: "match-mark", hidden: true });
+    const link = h("a", { href: `#${id}`, class: maybe ? "maybe-link" : null }, h("span", {}, label, mark, matchMark), count);
+    sectionCounts.push({ element: count, keys, maybe, races, mark, matchMark });
     sectionLinks.push({ id, link });
     items.push(h("li", {}, link));
   };
@@ -101,6 +103,17 @@ export function renderSections() {
 export function syncPollMarks() {
   const on = viewPref("pollChips");
   for (const { races, mark } of sectionCounts) mark.hidden = !(on && races.some(hasPolls));
+}
+
+// The sections' match counts from the endorser bar: ``count(races)``, the races with a match, or
+// null while it highlights nothing.
+function syncMatchMarks(count) {
+  for (const { races, matchMark } of sectionCounts) {
+    const n = count ? count(races) : 0;
+    matchMark.hidden = !n;
+    matchMark.title = n ? `${plural(n, "race")} with a match` : "";
+    matchMark.replaceChildren(...(n ? [icon("ring"), String(n), h("span", { class: "sr-only" }, ` (${plural(n, "race")} with a match)`)] : []));
+  }
 }
 
 // "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
@@ -214,7 +227,7 @@ export function goTo(card, { open = false } = {}) {
 
 // The first race or proposition without a pick, after the one in focus (or the one it went
 // to last), round to the start. The races that may not be on the ballot are skipped, as the
-// progress skips them.
+// progress skips them, and so are those "Only races with a match" hides.
 function nextRace() {
   const { ballot, picks } = page;
   if (!ballot) return;
@@ -222,9 +235,10 @@ function nextRace() {
   const from = keys.indexOf(document.activeElement?.closest(".race")?.dataset.race ?? lastJumped) + 1;
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[(from + i) % keys.length];
-    if (!picks.has(key)) {
+    const card = cardFor(key);
+    if (!picks.has(key) && card && !card.classList.contains("hidden-nomatch")) {
       lastJumped = key;
-      goTo(cardFor(key), { open: true });
+      goTo(card, { open: true });
       return;
     }
   }
@@ -271,7 +285,7 @@ function fillMoreSheet() {
   bindViewControls(moreFocus);
   addMoreSection({ id: "view", label: "How much shows" }, moreView);
   addMoreSection({ id: "focus", label: "Focus", after: "view" }, moreFocus);
-  addMoreSection({ id: "picks", label: "Your picks" }, moreRule, morePrint,
+  addMoreSection({ id: "picks", label: "Your picks" }, moreEndorsers, moreRule, morePrint,
     moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }));
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
@@ -367,6 +381,7 @@ export function markCurrentSection() {
 // Wires the strip, the view controls and the keys; the left pane must be drawn (initChrome).
 export function initNav(context) {
   page = context;
+  initEndorserBar(page, { sectionMarks: syncMatchMarks });
   $("#focus-panel .menu-label").after(focusChips());
   initFocusAsk();
   bindViewControls(viewControls);

@@ -7,6 +7,7 @@ export const LAST_LOOKUP = "pallot.lastLookup.v1";
 export const ADDRESS_CARD = "pallot.addressCard.v1";
 export const SETTINGS_CHANGED = "pallot.settingsChanged.v1";
 export const PICK_RULE = "pallot.pickRule.v1"; // Pick by rule's last rule, for every election
+export const ENDORSER_BAR = "pallot.endorserBar.v1"; // the endorser bar's choices (pick-rules.js), for every election
 export const SOURCES = "pallot.sources.v1"; // the sources the voter turned on or off: id → true or false
 export const BAN_LIST = "pallot.banList.v1"; // the voter's ban list (ban-list.js)
 export const UI = "pallot.ui.v1"; // the view settings (uiPref), several at once with setUiPrefs

@@ -15,7 +15,7 @@ import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines
 import { hideToast, showToast } from "./toast.js";
 import { focusTab, viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules }
+let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules, markEndorsers }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 const fills = new Map(); // race key -> builds what its cards make again, in place
 
@@ -65,6 +65,7 @@ export function refillCards() {
     button.disabled = page.loadingCards;
     button.title = page.loadingCards ? STILL_LOADING : "Pick by rule";
   }
+  page.markEndorsers();
 }
 
 export function setAllCollapsed(collapsed) {
@@ -169,7 +170,7 @@ function raceCard(race) {
   const ruleButton = race.candidates.length > 1
     ? h("button", { type: "button", class: "icon-btn rule-btn", title: page.loadingCards ? STILL_LOADING : "Pick by rule",
       "aria-label": `Pick by rule in ${race.name}`, disabled: page.loadingCards,
-      on: { click: () => page.openRules(race.key) } }, icon("filter"))
+      on: { click: () => page.openRules({ raceKey: race.key }) } }, icon("filter"))
     : null;
   const card = collapsibleCard(race.key, {
     title: race.name, meta: meta(), body: [...notes, money.nodes, body, stances.nodes], tools: [headCompare.nodes, ruleButton],

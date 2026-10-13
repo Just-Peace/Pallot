@@ -18,13 +18,14 @@ import { initChrome, narrow } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openDistricts, renderDistricts } from "./districts-card.js";
+import { syncEndorserBar } from "./endorser-bar.js";
 import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus, stepText } from "./dom.js";
 import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, readVoterCard } from "./entry-card.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
 import { STATES } from "./labels.js";
-import { initRules, openRules } from "./pick-rule-dialog.js";
+import { hideBanner, initRules, openRules, syncRuleBanner } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { initRaceCards, redrawCards, refillCards, renderCards } from "./race-cards.js";
@@ -59,6 +60,7 @@ const page = {
   ballot: null, picks: null, request: null,
   loadingCards: false, // the ballot's cards haven't arrived (or failed to)
   lookup, showDetails, openDistricts, updateProgress, renderRaces, openRules,
+  markEndorsers: syncEndorserBar, // the endorser bar's marks, after the cards are built again
 };
 let pendingLookup = null; // the AbortController of the latest lookup, cancelled by the next one
 
@@ -314,18 +316,21 @@ function render() {
   renderSections();
   welcome.hidden = true;
   askFocus();
+  hideBanner();
   renderCards();
   renderRaces();
   setCardsLoading(page.loadingCards);
 }
 
 // Redraws the races and propositions in place, from the saved picks, with the
-// progress and the filter: after the picks change as a whole (Clear picks, Pick by rule, their
-// Undo, another tab). The rest of the page, an open edit of the districts and a note being typed
-// included, stays as it is.
+// progress, the filters, the endorser bar's marks and the rule's banner: after the picks change as a
+// whole (Clear picks, Pick by rule, their Undo, another tab). The rest of the page, an open edit of
+// the districts and a note being typed included, stays as it is.
 function renderRaces() {
   redrawCards();
   applyHidePicked();
+  syncEndorserBar();
+  syncRuleBanner();
   updateProgress();
   markCurrentSection();
 }
@@ -429,6 +434,7 @@ $("#clear-picks").addEventListener("click", () => {
     return;
   }
   const cleared = page.picks.clear();
+  hideBanner();
   renderRaces();
   showToast("Cleared your picks and notes.", {
     label: "Undo",
@@ -508,6 +514,7 @@ onBanListChanged(() => {
 onPicksChanged(() => {
   if (!page.ballot) return;
   page.picks.reload();
+  if (page.picks.isEmpty()) hideBanner();
   renderRaces();
 });
 

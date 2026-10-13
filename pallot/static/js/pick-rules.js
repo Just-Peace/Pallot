@@ -1,8 +1,9 @@
 // Pick by rule: the voter's rule, what it would do to the picks, and which candidates it
-// matches. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks.
+// matches. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks. The endorser
+// bar (endorser-bar.js) stands for a rule too (barRule), so what it highlights is what Pick them picks.
 //
-// The Pick half is AND across its conditions, OR across the party chips and across the endorsers;
-// Don't pick is OR. A condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
+// The Pick half is AND across its conditions, OR across the party chips, and OR across the endorsers
+// (AND with endorsedAll); Don't pick is OR. A condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
 // something, so "Democrats who spent under $1M" still picks a county race's Democrat. A race with
 // more matches than seats is left for the voter: the rule never guesses, so a tie for "the least"
 // money in a one-seat race is left too.
@@ -11,7 +12,7 @@ import { ballotSections } from "./ballot-shared.js";
 import { isBanned } from "./ban-list.js";
 import { COUNT, DOLLARS_SHORT, either, listed as andList } from "./format.js";
 import { partyName } from "./labels.js";
-import { PICK_RULE, readJson, writeJson } from "./storage.js";
+import { ENDORSER_BAR, PICK_RULE, readJson, writeJson } from "./storage.js";
 
 const TRACKAIPAC = "trackaipac";
 const VOTEFORPEACE = "voteforpeace";
@@ -31,6 +32,7 @@ export const DEFAULT_RULE = {
   parties: [],
   incumbent: "any", // "yes": only incumbents, "no": only challengers
   endorsedBy: [], // any of these endorse them: TrackAIPAC, Vote for Peace (an ally) or an endorsement list (its source id)
+  endorsedAll: false, // every one of endorsedBy that has someone in the race endorses them, rather than any
   money: { on: false, metric: "spent", compare: "under", amount: 1_000_000 }, // compare: "under", "over", "least", "most"
   small: { on: false, amount: 50 }, // small donations are at least this % of what they raised
   texas: { on: false, amount: 50 }, // donors in Texas gave at least this % of their itemized donations
@@ -190,7 +192,7 @@ export function describeRule(rule, parties, has) {
     ? (relative ? vsRace : vsAmount).replace("{cmp}", money.compare).replace("{amount}", DOLLARS_SHORT.format(money.amount))
     : null;
   const clauses = [
-    chosen.length ? `have endorsements from ${either(chosen)}` : null,
+    chosen.length ? `have endorsements from ${rule.endorsedAll ? andList(chosen) : either(chosen)}` : null,
     moneyWords,
     on(rule.small.on && has.small, rule.small.amount) ? `get at least ${share(rule.small.amount)} of their money in small donations` : null,
     on(rule.texas.on && has.texas, rule.texas.amount)
@@ -225,7 +227,11 @@ function judge(race, rule) {
   if (rule.incumbent === "yes") tests.push((c) => c.incumbent);
   if (rule.incumbent === "no") tests.push((c) => !c.incumbent);
   const endorsing = rule.endorsedBy.filter((source) => covers(candidates, source));
-  if (endorsing.length) tests.push((c) => endorsing.some((source) => endorsedBy(c, source)));
+  if (endorsing.length) {
+    tests.push(rule.endorsedAll
+      ? (c) => endorsing.every((source) => endorsedBy(c, source))
+      : (c) => endorsing.some((source) => endorsedBy(c, source)));
+  }
   const { money } = rule;
   const relative = money.compare === "least" || money.compare === "most";
   if (money.on && (relative || known(money.amount)) && candidates.some((c) => figure(c, money.metric) !== undefined)) {
@@ -320,4 +326,89 @@ export function plan(races, rule, picks) {
     takenBack: rows.reduce((sum, row) => sum + row.takenBack.length, 0),
     changed: rows.filter((row) => row.changed).length,
   };
+}
+
+// ---- the endorser bar -----------------------------------------------------------------
+
+// The amber marks the bar can avoid, each Don't pick's condition of the same id, named as its chip is.
+const AVOIDS = [
+  { id: "watchlist", label: "TrackAIPAC watchlist", source: TRACKAIPAC, flag: "watchlist" },
+  { id: "peaceOpposed", label: "Vote for Peace: Opposed", source: VOTEFORPEACE, flag: "opposed" },
+];
+
+// The bar's choices: { endorsers, all, avoid, onlyMatches }, the endorsers whose picks it highlights
+// (endorsedBy's ids), whether a candidate needs all of them, the amber marks it avoids (AVOIDS' ids),
+// and whether races without a match hide. Kept in this browser like the rule; "pallot:bar" fires on
+// document after saveBar().
+export function loadBar() {
+  const saved = readJson(ENDORSER_BAR, {});
+  const bar = saved && typeof saved === "object" ? saved : {};
+  const ids = (value) => (Array.isArray(value) ? value.filter((id) => typeof id === "string") : []);
+  return {
+    endorsers: ids(bar.endorsers),
+    all: bar.all === true,
+    avoid: ids(bar.avoid).filter((id) => AVOIDS.some((a) => a.id === id)),
+    onlyMatches: bar.onlyMatches === true,
+  };
+}
+
+export function saveBar(bar) {
+  writeJson(ENDORSER_BAR, bar);
+  document.dispatchEvent(new Event("pallot:bar"));
+}
+
+// Adds an endorser (``kind`` "endorsers") or an amber mark ("avoid") to the bar.
+export function addToBar(kind, id) {
+  const bar = loadBar();
+  if (!bar[kind].includes(id)) saveBar({ ...bar, [kind]: [...bar[kind], id] });
+}
+
+// What a candidate's chip stands for in the bar, as { kind, id, label }: an endorser's green chip, or
+// an amber chip the bar can avoid; null for any other. ``card``: the chip's source card.
+export function barChoice(card, badge) {
+  if (card.kind !== "endorsement") return null;
+  if (badge.tone === "good") {
+    let id = null;
+    if (card.flags?.includes(ENDORSEMENT)) id = card.source;
+    else if (card.source === TRACKAIPAC && card.flags?.includes("endorsed")) id = TRACKAIPAC;
+    else if (card.source === VOTEFORPEACE && card.flags?.includes("ally")) id = VOTEFORPEACE;
+    return id ? { kind: "endorsers", id, label: card.label } : null;
+  }
+  const avoid = badge.tone === "warn"
+    && AVOIDS.find((a) => a.source === card.source && card.flags?.includes(a.flag) && badge.text.startsWith(a.label));
+  return avoid ? { kind: "avoid", id: avoid.id, label: avoid.label } : null;
+}
+
+// The bar's chips for these races: each endorser that endorses someone here and each amber mark
+// someone has, with how many candidates.
+export function barOptions(races) {
+  const candidates = races.flatMap((race) => race.candidates);
+  const count = (test) => candidates.filter(test).length;
+  return {
+    endorsers: endorsers(candidates).map((e) => ({ ...e, count: count((c) => endorsedBy(c, e.source)) })),
+    avoids: AVOIDS.map((a) => ({ ...a, count: count((c) => listed(c, a.flag, a.source)) })).filter((a) => a.count),
+  };
+}
+
+// The rule the bar stands for: its endorsers in Pick, its marks in Don't pick, and the ban list as
+// Pick by rule starts. ``keepMine``: the saved rule's, for Pick them.
+export function barRule(bar, keepMine = DEFAULT_RULE.keepMine) {
+  const rule = structuredClone(DEFAULT_RULE);
+  rule.endorsedBy = [...bar.endorsers];
+  rule.endorsedAll = bar.all;
+  for (const { id } of AVOIDS) rule[id] = bar.avoid.includes(id);
+  rule.keepMine = keepMine;
+  return rule;
+}
+
+// The bar in one race: who barRule() picks (``matches``, their keys), who it avoids and why
+// (``avoid``), and the chosen endorsers of each candidate (``by``: key -> names, from ``labels``).
+export function barMarks(race, bar, labels) {
+  const { matches, avoid } = judge(race, barRule(bar));
+  const by = new Map();
+  for (const c of race.candidates) {
+    const names = bar.endorsers.filter((source) => endorsedBy(c, source)).map((source) => labels.get(source) || source);
+    if (names.length) by.set(c.key, names);
+  }
+  return { matches: new Set(matches.map((c) => c.key)), avoid, by };
 }
