@@ -369,11 +369,13 @@ const cardLinks = (card) => card.links.length
   ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, extLink(l.url, l.label))))
   : null;
 
-export function cardPanel(card) {
+// ``described``: false in a tab's sections (Profile, Endorsements), named by their source, whose
+// description Settings already gives.
+export function cardPanel(card, { described = true } = {}) {
   return h(
     "div",
     { class: "card-panel" },
-    card.description ? h("p", { class: "muted" }, card.description) : null,
+    described && card.description ? h("p", { class: "muted" }, card.description) : null,
     matchNote(card),
     cardSummary(card),
     cardQuotes(card),
@@ -392,11 +394,11 @@ export function foldSection(name, extra, body) {
     h("div", { class: "section-body" }, body));
 }
 
-// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Ballotpedia's
-// profile, a section each with its whole card.
+// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's and
+// Ballotpedia's profiles, a section each with its whole card but its description.
 export function profilePanel(cards) {
   return h("div", { class: "card-panel profile" },
-    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card))));
+    cards.map((card) => foldSection(card.label, isLikely(card) ? likelyFlag() : null, cardPanel(card, { described: false }))));
 }
 
 // A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
@@ -420,7 +422,7 @@ function chipWords(item, card) {
   return words ? words[0].toUpperCase() + words.slice(1) : item.text;
 }
 
-// Details' Endorsements tab: a section per source with its whole card, all open, green ones (for
+// Details' Endorsements tab: a section per source with its whole card but its description, all open, green ones (for
 // the candidate) first, then amber (against), then the rest. Folded, a section is its name, its
 // "?" and its chips.
 const SIDE_ORDER = { good: 0, warn: 1 };
@@ -431,7 +433,7 @@ export function endorsementsPanel(cards) {
   const section = (card) => foldSection(card.label, [
     isLikely(card) ? likelyFlag() : null,
     card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
-  ], cardPanel(card));
+  ], cardPanel(card, { described: false }));
   return h("div", { class: "card-panel endorsements" },
     h("p", { class: "muted" }, plural(cards.length, "endorsement")),
     sorted.map(section));
