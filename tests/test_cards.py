@@ -65,14 +65,15 @@ def test_trackaipac_notes_link_to_the_site_not_to_pallot():
     ]
 
 
-def test_ballotpedia_profile_badge_links_to_the_profile():
+def test_ballotpedia_profile_links_to_the_profile_once():
     race = BpRace(1, "U.S. Senate Texas", "State", "Texas", "federal", 1, "https://ballotpedia.org/race", ())
     with_survey = BpCandidate(7, "Ken Paxton", "R", "Republican Party", False, False, "On the Ballot",
                               "https://ballotpedia.org/Ken_Paxton", None, True)
     result = ballotpedia_card(with_survey, race, 0.0, None)
-    [badge] = result.badges
-    assert (badge.text, badge.url) == ("Ballotpedia profile", "https://ballotpedia.org/Ken_Paxton")
+    assert result.badges == []
+    assert [(link.label, link.url) for link in result.links] == [
+        ("Ballotpedia profile", "https://ballotpedia.org/Ken_Paxton"), ("This race on Ballotpedia", "https://ballotpedia.org/race")]
     assert any(f.label == "Candidate survey" for f in result.facts)
 
     no_profile = BpCandidate(8, "Someone", None, None, False, False, None, None, None, False)
-    assert ballotpedia_card(no_profile, race, 0.0, None).badges == []
+    assert [link.label for link in ballotpedia_card(no_profile, race, 0.0, None).links] == ["This race on Ballotpedia"]

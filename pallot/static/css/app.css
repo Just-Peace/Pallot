@@ -557,7 +557,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .district.not-up strong { background: var(--neutral-soft); }
 .district.missing strong { background: var(--warn-soft); color: var(--warn); font-weight: 650; }
 .district-note { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); }
-.precinct-prompt + .district-note, .district-warn + .district-note { margin-top: 8px; }
+.district-warn + .district-note { margin-top: 8px; }
 .districts-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 8px; }
 .districts-card .districts-head h2 { margin: 0; }
 .district-actions { display: flex; gap: 2px; margin: -6px -8px -6px 0; }
@@ -642,9 +642,11 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .map-swatch .map-outline.sboe { stroke-dasharray: 6 2 1 2; }
 .map-swatch .map-outline.election_precinct { stroke-dasharray: 4.5 2.5 0.1 2.5 0.1 2.5; }
 [data-theme="dark"] .map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); } /* OpenStreetMap's tiles are light */
-.district-warn, .precinct-prompt { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
+.district-warn { margin: 8px 0 0; padding: 6px 10px; border-radius: var(--radius-sm); font-size: 0.9rem;
   background: var(--warn-soft); color: var(--warn); }
-.precinct-prompt .link-btn, .district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
+.district-warn .link-btn { font-size: inherit; color: inherit; padding: 0; text-decoration: underline; }
+.left-out p { margin: 0 0 4px; }
+.left-out .left-out-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0 0; }
 .precinct-link { margin: 0 0 12px; }
 
 .progress-strip {
@@ -843,8 +845,6 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
   padding: 10px 14px; margin: 12px 0 0; }
 .notice-warn { border-left-color: var(--warn); background: var(--warn-soft); }
 .notice .link-btn { font-size: inherit; padding: 0; text-decoration: underline; }
-.left-out p { margin: 0 0 4px; }
-.left-out .left-out-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0 0; }
 
 .group { margin: 22px 0 8px; }
 .group-title { font-size: 0.95rem; margin: 0 0 10px; }
@@ -1149,13 +1149,12 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .box-toggle:hover .chevron { background: var(--neutral-soft); color: var(--text); }
 .race-money.collapsed { padding-block: 6px; }
 .race-money.collapsed .breakdown-head { margin: 0; }
-/* who the box leaves out for having nothing to show, then its period and date at the foot's right */
-.box-left-out { margin-top: 8px; }
-.box-asof { margin-top: 6px; text-align: right; font-size: 0.76rem; }
 .breakdown-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin: 0 0 6px; }
 .breakdown-head .breakdown-title { margin: 0; }
 /* the box's corner (Compare funding, the source, the polls) stays at the right, also under a long title */
 .breakdown-head > :not(.breakdown-title) { margin-left: auto; }
+/* an open box's period and date, beside its title; the corner stays at the right, and on a phone it wraps under the title */
+.breakdown-head > .box-asof { margin-left: 0; color: var(--muted); font-size: 0.76rem; text-transform: none; letter-spacing: normal; }
 .compare-btn { color: var(--accent); border-color: var(--accent); }
 .compare-btn:hover:not(:disabled) { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--accent-soft); }
 .compare-btn .icon { width: 14px; height: 14px; }
@@ -1597,7 +1596,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .jump-list a { align-items: center; }
   .suggestion { padding-block: 12px; }
   .mail-voting > summary, .rule-details > summary, .rule-how > summary, .entry-fold > summary { padding-block: 10px; }
-  .precinct-prompt .link-btn, .district-warn .link-btn { vertical-align: middle; }
+  .district-warn .link-btn { vertical-align: middle; }
   input.pair-box { font-size: 16px; min-width: calc(3ch + 24px); }
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
