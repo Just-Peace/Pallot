@@ -160,6 +160,9 @@ export function syncFunding() {
 }
 
 
+// " by full name, in the same seat. Party differs."
+const matchWhy = (match) => ` by ${match.method}.${match.note ? ` ${match.note[0].toUpperCase()}${match.note.slice(1)}.` : ""}`;
+
 function matchNote(card) {
   if (!card.match) return null;
   const exact = card.match.confidence === "exact";
@@ -167,8 +170,7 @@ function matchNote(card) {
     "p",
     { class: ["match", exact ? "match-exact" : "match-likely"] },
     h("strong", {}, exact ? "Matched" : "Likely match"),
-    ` by ${card.match.method}.`,
-    card.match.note ? ` ${card.match.note[0].toUpperCase()}${card.match.note.slice(1)}.` : "",
+    matchWhy(card.match),
   );
 }
 
@@ -363,10 +365,11 @@ const cardSummary = (card) => [
     ? h("div", { class: "badge-line panel-funding" }, h("span", { class: "line-title" }, "Funding"),
         h("ul", { class: "badges", "aria-label": "Funding" }, fundingChips(card).map((b) => badge(b))))
     : card.badges.length ? h("ul", { class: "badges" }, card.badges.map((b) => badge(b))) : null,
-  card.facts.length
-    ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? webLink(f.url, f.value) : f.value)]))
-    : null,
+  cardFacts(card),
 ];
+const cardFacts = (card) => card.facts.length
+  ? h("dl", { class: "facts" }, card.facts.map((f) => [h("dt", {}, f.label), h("dd", {}, f.url ? webLink(f.url, f.value) : f.value)]))
+  : null;
 const cardQuotes = (card) => card.quotes.length
   ? h("div", { class: "quotes" }, h("p", { class: "quotes-title" }, `In ${card.label}'s words`), card.quotes.map((q) => h("blockquote", {}, linkedText(q))))
   : null;
@@ -374,8 +377,8 @@ const cardLinks = (card) => card.links.length
   ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, webLink(l.url, l.label))))
   : null;
 
-// ``described``: false in a tab's sections (Profile, Endorsements), named by their source, whose
-// description Settings already gives.
+// ``described``: false in the Profile tab's sections, named by their source, whose description
+// Settings already gives.
 export function cardPanel(card, { described = true } = {}) {
   return h(
     "div",
@@ -392,9 +395,9 @@ export function cardPanel(card, { described = true } = {}) {
 
 // A box on a Details tab that folds to its summary (its name, then ``extra``, such as a "?" or
 // chips) when the voter clicks it, open at first: the Profile, Issues, Endorsements and money tabs
-// are made of them.
-export function foldSection(name, extra, body) {
-  return h("details", { class: "source-section", open: true },
+// are made of them. ``tone`` ("good", "warn") colours its edge.
+export function foldSection(name, extra, body, tone = null) {
+  return h("details", { class: ["source-section", tone && `tone-${tone}`], open: true },
     h("summary", {}, h("span", { class: "source-section-name" }, name), extra),
     h("div", { class: "section-body" }, body));
 }
@@ -427,18 +430,55 @@ function chipWords(item, card) {
   return words ? words[0].toUpperCase() + words.slice(1) : item.text;
 }
 
-// Details' Endorsements tab: a section per source with its whole card but its description, all open, green ones (for
-// the candidate) first, then amber (against), then the rest. Folded, a section is its name, its
-// "?" and its chips.
+// Details' Endorsements tab: a section per source, all open, green ones (for the candidate) first,
+// then amber (against), then the rest, each with its side's colour on its edge. Its title line has
+// the source, its chips (what the source says, open or folded), and at the right how it matched and
+// the day of the source's copy ("Exact match · Oct 8, 2026"), so the body doesn't repeat them: a
+// likely match's reason, the facts (the office, linked to the source's page for the candidate), the
+// quotes and the links. The match isn't a green box there, which would read as one more endorsement.
 const SIDE_ORDER = { good: 0, warn: 1 };
+const SIDE_TONES = ["good", "warn", null];
 const side = (card) => Math.min(2, ...card.badges.map((b) => SIDE_ORDER[b.tone] ?? 2));
+
+function endorsementMeta(card) {
+  const exact = card.match?.confidence === "exact";
+  const parts = [exact ? "Exact match" : null, card.as_of ? formatDate(card.as_of, SHORT_DATE) : null].filter(Boolean);
+  if (!parts.length) return null;
+  return h("span", { class: "section-meta", title: [exact ? `Matched${matchWhy(card.match)}` : null,
+    card.as_of ? `${card.label}'s data as of ${formatDate(card.as_of, SHORT_DATE)}` : null].filter(Boolean).join(" ") },
+    parts.join(" · "), exact ? h("span", { class: "sr-only" }, `: matched${matchWhy(card.match)}`) : null);
+}
+
+// The facts, an Office as a chip linking to the source's page for the candidate (no "Office" label)
+// and the rest as rows, in order: TrackAIPAC's figures follow the listing they're from.
+function endorsementFacts(card) {
+  const blocks = [];
+  for (const fact of card.facts) {
+    if (fact.label === "Office") {
+      blocks.push(h("ul", { class: "badges office-chip" }, badge({ text: fact.value, tone: "neutral", url: fact.url })));
+    } else {
+      if (blocks.at(-1)?.tagName !== "DL") blocks.push(h("dl", { class: "facts" }));
+      blocks.at(-1).append(h("dt", {}, fact.label), h("dd", {}, fact.url ? webLink(fact.url, fact.value) : fact.value));
+    }
+  }
+  return blocks;
+}
+
+function endorsementBody(card) {
+  return h("div", { class: "card-panel" },
+    isLikely(card) ? h("p", { class: "match-line" }, h("strong", {}, "Likely match"), matchWhy(card.match)) : null,
+    endorsementFacts(card),
+    cardQuotes(card),
+    cardLinks(card));
+}
 
 export function endorsementsPanel(cards) {
   const sorted = [...cards].sort((a, b) => side(a) - side(b));
   const section = (card) => foldSection(card.label, [
-    isLikely(card) ? likelyFlag() : null,
     card.badges.map((b) => h("span", { class: ["badge", `tone-${b.tone}`], title: b.text }, chipWords(b, card))),
-  ], cardPanel(card, { described: false }));
+    isLikely(card) ? likelyFlag() : null,
+    endorsementMeta(card),
+  ], endorsementBody(card), SIDE_TONES[side(card)]);
   return h("div", { class: "card-panel endorsements" },
     h("p", { class: "muted" }, plural(cards.length, "endorsement")),
     sorted.map(section));

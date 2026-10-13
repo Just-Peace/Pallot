@@ -107,19 +107,16 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
                 tone = "warn"
         badges.append(Badge(text=text, tone=tone, url=CATEGORY_PAGES[category], hint=hint))
 
-    facts = [Fact(label="Seat on TrackAIPAC", value=person.get("seat") or "not shown")]
+    # One Office per listing, "TX-15 · Watchlist page, Candidate for U.S. House", linking to that
+    # page, with its figures after it. The Congress page's sections are only its states ("Texas").
+    seat = person.get("seat") or "Seat not shown"
+    facts = [] if listings else [Fact(label="Office", value=seat, url=SITE)]
     for item in listings:
         category = item.get("category")
-        where = item.get("section") or item.get("title")
-        facts.append(
-            Fact(
-                label="Listed on",
-                value=f"{CATEGORY_NAMES.get(category, category)} page" + (f" ({where})" if where else ""),
-                url=CATEGORY_PAGES.get(category),
-            )
-        )
-        if item.get("seat_text"):
-            facts.append(Fact(label="Seat as listed", value=item["seat_text"]))
+        where = None if category == "congress" else item.get("section") or item.get("title")
+        page = f"{CATEGORY_NAMES.get(category, category)} page" + (f", {where}" if where else "")
+        facts.append(Fact(label="Office", value=f"{person.get('seat') or item.get('seat_text') or seat} · {page}",
+                          url=CATEGORY_PAGES.get(category)))
         for label, key in (("Israel lobby total", "israel_lobby_total"), ("PAC money", "donations"),
                            ("Independent expenditures", "ie")):
             if item.get(key) is not None:
@@ -133,7 +130,7 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
     lobby = [item["israel_lobby_total"] for item in listings
              if item.get("category") in categories and item.get("israel_lobby_total") is not None]
 
-    links = [Link(label=f"TrackAIPAC {CATEGORY_NAMES[c]} page", url=CATEGORY_PAGES[c]) for c in categories]
+    links = []  # its pages are the Offices' links
     for item in listings:
         if campaign := web_url(item.get("campaign_url")):
             links.append(Link(label="Campaign website (from TrackAIPAC)", url=campaign))

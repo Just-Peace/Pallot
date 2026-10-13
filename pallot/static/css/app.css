@@ -873,14 +873,17 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
 .stances .badges { margin: 0; }
 /* a box on a Details tab (foldSection): a source on Profile or Endorsements, an issue group, a money breakdown;
-   folded, its name and what's beside it (a "?", an endorsement's chips) */
+   its title line is its name and what's beside it (a "?", an endorsement's chips, at the right its match and date) */
 .source-section { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); margin: 0 0 8px; }
 .source-section > summary { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 10px 12px;
   cursor: pointer; font-weight: 650; }
 .source-section > summary::-webkit-details-marker { display: none; }
 .source-section > summary:hover .source-section-name { color: var(--accent); }
 .source-section .likely-flag { margin-left: 0; }
-.source-section[open] > summary .badge { display: none; }
+.source-section.tone-good { border-left: 3px solid var(--good); }
+.source-section.tone-warn { border-left: 3px solid var(--warn); }
+.source-section .section-meta { margin-left: auto; font-size: 0.8rem; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.match-line { margin: 4px 0 8px; font-size: 0.85rem; color: var(--warn); }
 .source-section > .section-body { padding: 0 12px 10px; }
 .stances .badge-link { font-size: 0.85rem; padding: 4px 10px; }
 .details-tabs { padding: 0 20px; }

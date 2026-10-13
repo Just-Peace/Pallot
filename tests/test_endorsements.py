@@ -97,15 +97,13 @@ def test_cards_match_texas_entries_by_seat_and_name():
     assert (talarico.source, talarico.label, talarico.as_of, talarico.flags) == ("examplepac", "Example PAC", "2026-09-20", [FLAG])
     assert [(b.text, b.tone, b.url) for b in talarico.badges] == [
         ("Endorsed by Example PAC", "good", "https://example.org/endorsements/talarico")]
-    assert {f.label: f.value for f in talarico.facts} == {
-        "Endorsed by": "Example Peace Action Committee", "Office on the list": "U.S. Senate",
-        "Party on the list": "Democrat", "List captured": "Sep 20, 2026"}
-    assert talarico.quotes == ["Endorsed for the general election."]
-    assert [(link.label, link.url) for link in talarico.links] == [
-        ("Example PAC's endorsement list", "https://example.org/endorsements")]
+    assert [(f.label, f.value, f.url) for f in talarico.facts] == [
+        ("Office", "U.S. Senate", "https://example.org/endorsements/talarico")]
+    assert talarico.quotes == ["Endorsed for the general election."] and talarico.links == []
     shea = found["sos:1:3:0"]
     assert shea.url == "https://example.org/endorsements" and shea.links == [] and shea.quotes == []
-    assert {f.label: f.value for f in shea.facts}["Office on the list"] == "County Commissioner, District 2"
+    assert [(f.label, f.value, f.url) for f in shea.facts] == [
+        ("Office", "County Commissioner, District 2", "https://example.org/endorsements")]
 
 
 def test_the_file_keeps_every_state_and_the_ballots_state_is_matched():

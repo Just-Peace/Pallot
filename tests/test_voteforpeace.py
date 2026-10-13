@@ -61,8 +61,9 @@ def test_notes_articles_and_the_sources_it_cites():
     )
     result = card(person, EXACT, None)
     facts = {f.label: f.value for f in result.facts}
-    assert facts["Office on Vote for Peace"] == "TX State Representative, District 49"
+    assert result.facts[0].url == result.url and facts["Office"] == "TX State Representative, District 49"
     assert (facts["Sources it cites"], facts["Result"]) == ("DSA, Track AIPAC", "Won")
+    assert not {"Vote for Peace says", "Party on Vote for Peace"} & set(facts)  # the chip and the ballot say those
     assert result.quotes == ["Running unopposed", "Supports an arms embargo.", "Endorsed by: Our Revolution.",
                              "[Interview](https://news.example/a)"]
     assert [link.label for link in result.links] == ["DSA (cited by Vote for Peace)"]

@@ -41,6 +41,20 @@ def test_trackaipac_lists_and_money_for_pick_by_rule():
     assert trackaipac.card(watched, EXACT, None).figures == {"israel_lobby": 0}
 
 
+def test_trackaipac_office_names_its_page_and_links_there():
+    person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"],
+              "listings": [listing("watchlist", 0, section="Candidate for U.S. Senate", seat_text="TX [D]", donations=1000),
+                           listing("congress", section="Texas", seat_text="TX-SEN [D]")]}
+    result = trackaipac.card(person, EXACT, "2026-09-27")
+    assert [(f.label, f.value, f.url) for f in result.facts] == [
+        ("Office", "TX-SEN · Watchlist page, Candidate for U.S. Senate", trackaipac.CATEGORY_PAGES["watchlist"]),
+        ("Israel lobby total", "$0", None), ("PAC money", "$1,000", None),
+        ("Office", "TX-SEN · Congress page", trackaipac.CATEGORY_PAGES["congress"])]
+    assert result.links == []  # its pages are the Offices' links
+    unlisted = trackaipac.card({"name": "Jane Doe", "seat": "TX-10"}, EXACT, None)
+    assert [(f.label, f.value) for f in unlisted.facts] == [("Office", "TX-10")]
+
+
 def test_trackaipac_notes_link_to_the_site_not_to_pallot():
     person = {"name": "James Talarico", "seat": "TX-SEN", "categories": ["watchlist"], "listings": [listing(
         "watchlist", 0, notes=["[This candidate is pro-israel.](/james-talarico)",
