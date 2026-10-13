@@ -1,16 +1,21 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
-// which one is on screen), Simple | Detailed and Options, j and k, and where the strip's parts go
-// on a phone, with the race on screen, More and the chips that make way while scrolling down.
+// which one is on screen), Simple | Detailed, Focus and Options, the "What matters to you?" card,
+// j and k, and where the strip's parts go on a phone, with the race on screen, More and the chips
+// that make way while scrolling down.
 
 import { ballotSections, measureKey } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
 import { syncMapShown } from "./district-map.js";
+import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
-import { STILL_LOADING, cardFor, redrawRace, setAllCollapsed } from "./race-cards.js";
-import { syncBoxes, syncFunding, syncLines } from "./source-cards.js";
-import { bindViewControls, onViewChange, setViewPref, showViewControls, syncSourceNotes, viewPref } from "./view.js";
+import { STILL_LOADING, cardFor, redrawRace, refillCards, setAllCollapsed } from "./race-cards.js";
+import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
+import {
+  bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, onViewChange, setViewPref, showViewControls, syncSourceNotes,
+  viewPref,
+} from "./view.js";
 
 let page = null; // { ballot, picks }
 const result = $("#result");
@@ -18,6 +23,8 @@ const strip = $("#progress-strip");
 const tools = $("#ballot-tools");
 const viewControls = $("#view-controls");
 const viewMenu = $("#view-menu");
+const focusMenu = $("#focus-menu");
+const focusAsk = $("#focus-ask");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const jumpList = $("#jump-list");
@@ -25,10 +32,17 @@ const stripRace = $("#strip-race");
 const VIEW_MODES = [["minimal", "Minimal"], ["simple", "Simple"], ["detailed", "Detailed"]];
 const moreView = h("fieldset", { class: "seg" }, h("legend", { class: "sr-only" }, "How much of the ballot shows"),
   VIEW_MODES.map(([value, label]) => h("label", { class: "seg-option" }, h("input", { type: "radio", name: "view-mode", value }), label)));
+const moreFocus = focusChips();
 const moreRule = moreAction("Pick by rule", "filter", () => $("#rule-btn").click());
 const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
-// What puts the ballot back to each view switch when it changes, without a reload.
+// The rows' and race heads' parts a focus adds, built again in place.
+const refill = () => {
+  if (page.ballot) refillCards();
+};
+// What puts the ballot back to each view switch when it changes, without a reload; each runs once
+// however many of its switches changed. A switch a focus adds that isn't here (showEndorserBar) is
+// read by its own part of the page, on onViewChange().
 const APPLY = {
   showMap: syncMapShown,
   showPolls: () => syncBoxes("showPolls"),
@@ -37,17 +51,22 @@ const APPLY = {
     syncBoxes("showFunding");
     syncFunding();
   },
-  openBoxes: () => syncBoxes("openBoxes"),
+  openMoney: () => syncBoxes("openMoney"),
+  openPolls: () => syncBoxes("openPolls"),
   showSources: syncSourceNotes,
   hidePicked: () => {
     if (!page.ballot) return;
     applyHidePicked();
     markCurrentSection(); // the marked section may have gone
   },
+  fundingFirst: refill,
+  compareInHead: refill,
+  pollChips: [refill, syncPollMarks],
+  stanceLinks: refill,
 };
 let applied = {}; // the view switches as the page last applied them
 
-let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe }]
+let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe, races, mark }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
 let currentSection = null; // the id of the section marked as the one on screen
 let lastJumped = null; // the race "Next race to pick" went to last
@@ -55,24 +74,33 @@ let lastJumped = null; // the race "Next race to pick" went to last
 const showPickedButton = h("button", { type: "button", class: "link-btn", on: { click: () => setViewPref("hidePicked", false) } }, "Show them");
 export const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
 
-// The left pane's list of sections, each with how many of its races are picked.
+// The left pane's list of sections, each with how many of its races are picked, and with the
+// pollChips switch a mark on those with polls.
 export function renderSections() {
   sectionCounts = [];
   sectionLinks = [];
   currentSection = null;
   const items = [];
-  const add = (id, label, keys, maybe = false) => {
+  const add = (id, label, keys, races = [], maybe = false) => {
     const count = h("span", { class: "count" });
-    const link = h("a", { href: `#${id}`, class: maybe ? "maybe-link" : null }, h("span", {}, label), count);
-    sectionCounts.push({ element: count, keys, maybe });
+    const mark = h("span", { class: "poll-mark", title: "Has polls", hidden: true }, icon("bars"), h("span", { class: "sr-only" }, " (has polls)"));
+    const link = h("a", { href: `#${id}`, class: maybe ? "maybe-link" : null }, h("span", {}, label, mark), count);
+    sectionCounts.push({ element: count, keys, maybe, races, mark });
     sectionLinks.push({ id, link });
     items.push(h("li", {}, link));
   };
-  for (const section of ballotSections(page.ballot)) add(section.id, section.title, section.races.map((r) => r.key), section.maybe);
+  for (const section of ballotSections(page.ballot)) add(section.id, section.title, section.races.map((r) => r.key), section.races, section.maybe);
   if (page.ballot.measures.length) add("measures-section", "Propositions", page.ballot.measures.map(measureKey));
   jumpList.replaceChildren(...items);
   jump.hidden = !items.length;
+  syncPollMarks();
   syncChipFades();
+}
+
+// The sections' poll marks, after the pollChips switch changes or the cards come.
+export function syncPollMarks() {
+  const on = viewPref("pollChips");
+  for (const { races, mark } of sectionCounts) mark.hidden = !(on && races.some(hasPolls));
 }
 
 // "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
@@ -125,18 +153,40 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
 
 // ---- view: Simple or Detailed, collapse, only unpicked races, next race, j/k ----------
 
-// After any change of the view settings, here or in another tab: the toolbar's Simple | Detailed
-// and Options show them, and each switch that changed applies to the ballot in place, putting back
-// what the voter opened or folded by hand. The page carries the mode (data-view-mode), so a phone's
-// candidate rows stay whole in Detailed.
+// After any change of the view settings, here or in another tab: the toolbar's Simple | Detailed,
+// Focus and Options, More's and the question's chips show them, and each switch that changed applies
+// to the ballot in place, putting back what the voter opened or folded by hand. The page carries the
+// mode (data-view-mode), so a phone's candidate rows stay whole in Detailed.
 function applyView() {
   document.documentElement.dataset.viewMode = showViewControls(viewControls);
-  showViewControls(moreView);
+  for (const root of [moreView, moreFocus, focusAsk]) showViewControls(root);
+  const count = focuses().length;
+  $("#focus-summary").textContent = count ? `Focus · ${count}` : "Focus";
+  const runs = new Set();
   for (const [name, apply] of Object.entries(APPLY)) {
     const value = viewPref(name);
-    if (name in applied && applied[name] !== value) apply();
+    if (name in applied && applied[name] !== value) [apply].flat().forEach((run) => runs.add(run));
     applied[name] = value;
   }
+  runs.forEach((run) => run());
+}
+
+// "What matters to you?": after a ballot is drawn, until the voter chooses a focus or closes it. Its
+// chips change the ballot at once; it stays until Done or ✕, which leave the choice under Focus.
+export function askFocus() {
+  focusAsk.hidden = focusAsked();
+}
+
+function initFocusAsk() {
+  focusAsk.querySelector(".muted").after(focusChips());
+  bindViewControls(focusAsk);
+  const close = () => {
+    dismissFocusAsk();
+    focusAsk.hidden = true;
+    focusMenu.querySelector("summary").focus({ preventScroll: true });
+  };
+  $("#focus-ask-done").addEventListener("click", close);
+  $("#focus-ask-close").addEventListener("click", close);
 }
 
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
@@ -215,10 +265,12 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections: how much shows, the toolbar's buttons, and Expand and Collapse all from Options.
+// More's sections: how much shows, the focus, the toolbar's buttons, and Expand and Collapse all from Options.
 function fillMoreSheet() {
   bindViewControls(moreView);
+  bindViewControls(moreFocus);
   addMoreSection({ id: "view", label: "How much shows" }, moreView);
+  addMoreSection({ id: "focus", label: "Focus", after: "view" }, moreFocus);
   addMoreSection({ id: "picks", label: "Your picks" }, moreRule, morePrint,
     moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }));
   addMoreSection({ id: "races", label: "Races" },
@@ -315,6 +367,8 @@ export function markCurrentSection() {
 // Wires the strip, the view controls and the keys; the left pane must be drawn (initChrome).
 export function initNav(context) {
   page = context;
+  $("#focus-panel .menu-label").after(focusChips());
+  initFocusAsk();
   bindViewControls(viewControls);
   onViewChange(applyView);
   onReturn(applyView); // back from Settings, a page kept for Back missed its changes
@@ -328,16 +382,18 @@ export function initNav(context) {
     viewMenu.open = false;
   });
 
-  // Options closes like a menu: a click elsewhere, or Esc.
-  document.addEventListener("click", (event) => {
-    if (viewMenu.open && !viewMenu.contains(event.target)) viewMenu.open = false;
-  });
-  viewMenu.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !viewMenu.open) return;
-    event.preventDefault();
-    viewMenu.open = false;
-    viewMenu.querySelector("summary").focus();
-  });
+  // Focus and Options close like menus: a click elsewhere, or Esc.
+  for (const menu of [focusMenu, viewMenu]) {
+    document.addEventListener("click", (event) => {
+      if (menu.open && !menu.contains(event.target)) menu.open = false;
+    });
+    menu.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !menu.open) return;
+      event.preventDefault();
+      menu.open = false;
+      menu.querySelector("summary").focus();
+    });
+  }
 
   nextButton.addEventListener("click", nextRace);
   document.addEventListener("keydown", stepRace);

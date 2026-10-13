@@ -684,6 +684,40 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
   color: var(--muted); }
 .menu-more { margin: 6px 0 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.85rem; }
 
+/* The focus chips (view.js): checkboxes drawn as chips, ticked when chosen, in Focus, More, the
+   "What matters to you?" card and Settings */
+.focus-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.focus-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
+  font-size: 0.88rem; font-weight: 600; color: var(--muted); background: var(--panel); border: 1px solid var(--line-strong);
+  border-radius: 999px; cursor: pointer; }
+.focus-chip input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.focus-chip:hover { background: var(--neutral-soft); }
+.focus-chip:has(input:checked) { color: var(--text); background: var(--accent-soft); border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent); }
+.focus-chip:has(input:checked)::before { content: "✓"; }
+.focus-chip:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+#focus-panel { width: min(300px, calc(100vw - 32px)); }
+#focus-panel .focus-chips { margin: 4px 0 8px; }
+.focus-help { margin: 0 0 8px; }
+.focus-ask { margin: 16px 0 0; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line);
+  border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
+.focus-ask-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.focus-ask h2 { margin: 0; font-size: 1.05rem; }
+.focus-ask > .muted { margin: 2px 0 10px; font-size: 0.9rem; }
+.focus-ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 12px 0 0; }
+.focus-ask-foot .fine { margin: 0; }
+#focus-setting { margin-bottom: 14px; }
+#focus-setting h3 { margin: 0 0 4px; font-size: 0.95rem; }
+#focus-setting .focus-chips { margin: 0 0 4px; }
+.view-switches .switch:has(input:disabled), .menu-panel .check:has(input:disabled) { opacity: 0.6; cursor: not-allowed; }
+/* what a focus adds to the ballot: a poll mark on a section, a candidate's poll share, Compare in
+   a race's head, "See where they stand" under its candidates */
+.poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
+.poll-mark .icon { width: 13px; height: 13px; }
+.pill.poll-pill { background: var(--accent-soft); color: var(--accent); }
+.head-compare { flex: none; margin-top: -2px; gap: 4px; }
+.stance-link { margin: 8px 0 0; }
+
 /* "Only races I haven't picked": a section goes too once all its races are hidden (a maybe
    section stays, for its explanation and its link to the precinct form). */
 .race.hidden-picked { display: none; }
@@ -1337,7 +1371,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .ballot-tools .seg-option { padding: 4px 10px; font-size: 0.8rem; }
   .ballot-tools .icon { width: 14px; height: 14px; }
   #view-controls { position: relative; }
-  #view-menu { position: static; }
+  #view-menu, #focus-menu { position: static; }
+  .head-compare .btn-word { display: none; }
+  .head-compare { padding: 4px 9px; }
   .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
   /* Your districts while editing, and any .pair-grid: two columns, each label over its box */
@@ -1444,7 +1480,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
    drawn around them (::after). ---- */
 
 @media (pointer: coarse) {
-  .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .measure-option, .switch, .check, .site-nav a, .jump-list a,
+  .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .measure-option, .switch, .check, .site-nav a, .jump-list a,
   .race-toggle, .box-toggle, .map-toggle, .entry-tab,
   input[type="text"], input[type="number"], select { min-height: 44px; }
   a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
