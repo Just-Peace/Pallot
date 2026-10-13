@@ -1,7 +1,7 @@
-// Light or dark: the voter's Appearance choice in Settings ("theme" in pallot.ui.v1), or the
+// Light or dark: the voter's Appearance choice, in Settings or View ("theme" in pallot.ui.v1), or the
 // device's while it's "system". A classic script in every page's <head>, so <html> has its
 // data-theme before the first paint; app.css's dark colours key off data-theme="dark". It
-// follows the device, other tabs (storage) and Settings ("pallot:theme" on document).
+// follows the device, other tabs (storage) and appearance.js ("pallot:theme" on document).
 // It also folds the left pane before the first paint when the voter left it folded
 // (paneCollapsed), so it doesn't show open until chrome.js has loaded and draws it.
 
