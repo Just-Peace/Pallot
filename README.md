@@ -249,3 +249,9 @@ Known bugs, planned improvements and features, and UI ideas are [GitHub issues](
 ## Working on Pallot
 
 The commands, the tests, and adding a source: [DEVELOPMENT.md](DEVELOPMENT.md). The rules for a change: [AGENTS.md](AGENTS.md).
+
+## License
+
+Pallot's code is under the [MIT License](LICENSE).
+
+The data that comes with it isn't: each source's data belongs to that source, under its own terms. That covers the snapshots (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`, `bundles/data/`), the SBOE map (`pallot/data/`) and the endorsement lists (`pallot/endorsements/`). [Leaflet](https://leafletjs.com), in `pallot/static/vendor/leaflet/`, keeps its own BSD 2-Clause license.
