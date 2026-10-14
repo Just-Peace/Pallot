@@ -140,3 +140,34 @@ return {{
         "takenBack": [{"key": "a", "reasons": ["no longer endorsed by a chosen endorser"]}], "after": [], "unbacked": 1,
         "still": 0, "own": 0,
     }
+
+
+def test_pick_by_rule_marks_its_endorser_picks_as_the_endorsers_and_unchoosing_takes_them_back():
+    assert _run(f"""
+const r = await import("{RULES}");
+const races = [
+  {{ key: "r1", seats: 1, candidates: [
+    {{ key: "a", name: "Ann Lee", party: "D", cards: [{{ source: "ecu", flags: ["endorsement"] }}] }},
+    {{ key: "b", name: "Bob Ray", party: "R", cards: [] }},
+  ] }},
+  {{ key: "r2", seats: 1, candidates: [{{ key: "c", name: "Cy Moe", party: "D", cards: [] }}] }},
+  {{ key: "r3", seats: 1, candidates: [{{ key: "d", name: "Di Fox", party: "D", cards: [{{ source: "ecu", flags: ["endorsement"] }}] }}] }},
+];
+const stored = {{ picks: {{ r3: ["d"] }}, auto: {{}} }};
+const picks = {{ picked: (k) => stored.picks[k] || [], auto: (k) => stored.auto[k] || [] }};
+const rule = {{ ...structuredClone(r.DEFAULT_RULE), endorsedBy: ["ecu"] }};
+const result = r.plan(races, rule, picks, {{ replace: true }});
+const auto = Object.fromEntries(result.rows.map((row) => [row.race.key, row.auto]));
+for (const row of result.rows) stored.picks[row.race.key] = row.after;
+Object.assign(stored.auto, auto);
+const dropped = r.endorserPlan(races, {{ endorsers: [], avoid: [] }}, picks);
+const party = r.plan(races, {{ ...structuredClone(r.DEFAULT_RULE), parties: ["D"] }}, {{ picked: () => [], auto: () => [] }});
+return {{
+  auto, takenBack: dropped.rows.map((row) => [row.race.key, row.after]),
+  party: party.rows.map((row) => row.auto),
+}};
+""") == {
+        "auto": {"r1": ["a"], "r3": []},
+        "takenBack": [["r1", []]],
+        "party": [[], [], []],
+    }

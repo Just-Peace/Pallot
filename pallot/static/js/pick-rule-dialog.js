@@ -267,12 +267,13 @@ function draw(rule, options, startScope) {
       return;
     }
     const changes = Object.fromEntries(changed.map((row) => [row.race.key, row.after]));
+    const auto = Object.fromEntries(changed.map((row) => [row.race.key, row.auto]));
     const folded = viewPref("collapseOnPick")
       ? changed.filter((row) => row.outcome === "pick" && row.after.length >= row.race.seats && !page.picks.isCollapsed(row.race.key))
         .map((row) => row.race.key)
       : [];
     const { picked, takenBack } = result;
-    const before = page.picks.setMany(changes);
+    const before = page.picks.setMany(changes, auto);
     if (folded.length) page.picks.setCollapsed(folded, true);
     const undo = () => {
       hideBanner();
@@ -394,7 +395,7 @@ function draw(rule, options, startScope) {
             h("li", {}, "Write-ins are picked only with the Write-ins chip."),
             h("li", {}, "More matches than seats, or a tie: left for you."),
             h("li", {}, "Fill in the rest picks only in races with no pick; Replace my picks replaces picks too. Both take back the picks "
-              + "Help me pick made that no endorser you choose still endorses.")))),
+              + "your endorsers made, here or in Help me pick, that no endorser you choose still endorses.")))),
       h("aside", { class: "rule-preview", "aria-label": "What your rule would do" },
         h("h3", {}, "Your rule"),
         noWords, pickWords, skipWords,

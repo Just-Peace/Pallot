@@ -311,6 +311,8 @@ const sameKeys = (a, b) => a.length === b.length && a.every((key) => b.includes(
 // "none": no match, or null when it only takes picks back), the picks ``before`` and ``after``,
 // and the picks it takes back with why: Don't pick's reasons, or UNBACKED for a pick Help me pick's
 // endorsers made (``picks.auto``) that none in endorsedBy endorses, as Help me pick takes it back.
+// ``auto``: the picks after that count as the endorsers', which unchoosing them takes back: those
+// they made already, and the new ones a chosen endorser backs; the rest are the voter's own.
 // It fills in only the races left without a pick (Fill in the rest), or with ``replace`` replaces
 // the picks there too (Replace my picks). ``changed`` counts the races whose picks change.
 export const UNBACKED = "no longer endorsed by a chosen endorser";
@@ -337,7 +339,8 @@ export function plan(races, rule, picks, { replace = false } = {}) {
       }
     }
     if (!outcome && !takenBack.length) continue;
-    rows.push({ race, outcome, before, after, matches, takenBack, changed: !sameKeys(before, after) });
+    const auto = after.filter((key) => (before.includes(key) ? made.includes(key) : backed(race, key, rule.endorsedBy)));
+    rows.push({ race, outcome, before, after, auto, matches, takenBack, changed: !sameKeys(before, after) });
   }
   const count = (outcome) => rows.filter((row) => row.outcome === outcome).length;
   return {
