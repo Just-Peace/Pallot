@@ -4,11 +4,30 @@
 // and a candidate it matches gets a red Banned pill beside their name (labels.js). Nothing is
 // sent to the server.
 
-import { BAN_LIST, readJson, writeJson } from "./storage.js";
+import { BAN_LIST, writeJson } from "./storage.js";
 
-export function banList() {
-  const saved = readJson(BAN_LIST, []);
+let stored = { raw: undefined, entries: [] }; // the list as last read, kept until its stored text changes
+
+function parse(raw) {
+  let saved = null;
+  try {
+    saved = JSON.parse(raw);
+  } catch {
+    // not JSON: an empty list
+  }
   return Array.isArray(saved) ? saved.filter((entry) => typeof entry?.text === "string" && entry.text.trim()) : [];
+}
+
+// The same entries (and their compiled patterns) until the stored list changes, here or in another tab.
+export function banList() {
+  let raw = null;
+  try {
+    raw = localStorage.getItem(BAN_LIST);
+  } catch {
+    // storage blocked: an empty list
+  }
+  if (raw !== stored.raw) stored = { raw, entries: parse(raw) };
+  return [...stored.entries];
 }
 
 // Whether it was stored.
@@ -24,7 +43,16 @@ export function isPattern(text) {
 }
 
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const banPattern = ({ text, plain }) => new RegExp(plain || !isPattern(text) ? escape(text.trim()) : text.trim(), "i");
+const compiled = new WeakMap(); // entry -> its RegExp
+function banPattern(entry) {
+  let pattern = compiled.get(entry);
+  if (!pattern) {
+    const { text, plain } = entry;
+    pattern = new RegExp(plain || !isPattern(text) ? escape(text.trim()) : text.trim(), "i");
+    compiled.set(entry, pattern);
+  }
+  return pattern;
+}
 
 // The entries that match ``name``.
 export function banMatches(name, entries = banList()) {

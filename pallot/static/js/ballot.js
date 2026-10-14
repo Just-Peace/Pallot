@@ -28,7 +28,7 @@ import { STATES } from "./labels.js";
 import { hideBanner, initRules, openRules, syncRuleBanner } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
-import { initRaceCards, redrawCards, refillCards, renderCards } from "./race-cards.js";
+import { initRaceCards, redrawCards, refillBans, refillCards, renderCards } from "./race-cards.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
@@ -481,7 +481,7 @@ onReturn(() => {
 
 // A candidate banned or unbanned in another ballot tab gets or loses their Banned pill here too.
 onBanListChanged(() => {
-  if (page.ballot) refillCards();
+  if (page.ballot) refillBans();
 });
 
 // Picks made in another tab show here too, and a pick made here doesn't undo them.
