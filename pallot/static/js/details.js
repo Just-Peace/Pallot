@@ -25,9 +25,9 @@ export function initDetails(context) {
 
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
-// ``at`` is the tab to show: "profile", "issues", "endorsements", "money" (the first money source's,
-// for the Funding focus) or a source's (a Funding chip's money source); a tab the candidate hasn't
-// got shows the first one, Profile or else Issues.
+// ``at`` is the tab to show: "profile" (the candidate's Profile button), "issues", "endorsements" or
+// a source's (a Funding chip's money source); a tab the candidate hasn't got shows the first one,
+// Profile or else Issues.
 export function showDetails(race, index, focus = null, at = "profile") {
   const { picks } = page;
   const candidate = race.candidates[index];
@@ -77,7 +77,7 @@ export function showDetails(race, index, focus = null, at = "profile") {
       .map((card) => ({ key: card.source, label: card.label, likely: isLikely(card), card })),
     endorsements,
   ].filter(Boolean);
-  const initial = Math.max(0, tabs.findIndex((tab) => (at === "money" ? tab.card?.kind === "money" : tab.key === at)));
+  const initial = Math.max(0, tabs.findIndex((tab) => tab.key === at));
   shown = tabs[initial].key;
   const panelFor = (tab) => {
     if (tab === issues) return stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length);

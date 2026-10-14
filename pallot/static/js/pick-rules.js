@@ -1,9 +1,10 @@
 // Pick by rule: the voter's rule, what it would do to the picks, and which candidates it
 // matches. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks. Help me pick
-// (endorser-bar.js) stands for a rule too (barRule), so what it rings is what its endorsers pick.
+// (endorser-bar.js) shares it: its endorsers are the rule's endorsedBy and its Avoid chips the rule's
+// watchlist and peaceOpposed (loadBar/saveBar), and its marks are a rule of just those (barRule).
 //
-// The Pick half is AND across its conditions, OR across the party chips, and OR across the endorsers
-// (AND with endorsedAll); Don't pick is OR. A condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
+// The Pick half is AND across its conditions, OR across the party chips, and OR across the endorsers;
+// Don't pick is OR. A condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
 // something, so "Democrats who spent under $1M" still picks a county race's Democrat. A race with
 // more matches than seats is left for the voter: the rule never guesses, so a tie for "the least"
 // money in a one-seat race is left too.
@@ -12,7 +13,7 @@ import { ballotSections } from "./ballot-shared.js";
 import { isBanned } from "./ban-list.js";
 import { COUNT, DOLLARS_SHORT, either, listed as andList } from "./format.js";
 import { partyName } from "./labels.js";
-import { ENDORSER_BAR, PICK_RULE, readJson, writeJson } from "./storage.js";
+import { ENDORSER_BAR, PICK_RULE, readJson, removeRaw, writeJson } from "./storage.js";
 
 const TRACKAIPAC = "trackaipac";
 const VOTEFORPEACE = "voteforpeace";
@@ -32,7 +33,6 @@ export const DEFAULT_RULE = {
   parties: [],
   incumbent: "any", // "yes": only incumbents, "no": only challengers
   endorsedBy: [], // any of these endorse them: TrackAIPAC, Vote for Peace (an ally) or an endorsement list (its source id)
-  endorsedAll: false, // every one of endorsedBy that has someone in the race endorses them, rather than any
   money: { on: false, metric: "spent", compare: "under", amount: 1_000_000 }, // compare: "under", "over", "least", "most"
   small: { on: false, amount: 50 }, // small donations are at least this % of what they raised
   texas: { on: false, amount: 50 }, // donors in Texas gave at least this % of their itemized donations
@@ -43,10 +43,16 @@ export const DEFAULT_RULE = {
   lobby: { on: false, amount: 0 },
   selfFunded: { on: false, amount: 50 }, // they gave or lent their campaign over this % of what it raised
   polling: { on: false, amount: 5 },
-  keepMine: true,
+  onlyMatches: false, // Help me pick hides the races without a match
 };
 
-// The saved rule over the defaults, so a rule saved before a condition existed still loads.
+const stringIds = (value) => (Array.isArray(value) ? value.filter((id) => typeof id === "string") : []);
+
+// The saved rule over the defaults, so a rule saved before a condition existed still loads. A saved
+// endorsedAll (All of, no longer offered) is dropped, so it reads as any, and so is keepMine (now
+// the dialog's two buttons, Fill in the rest and Replace my picks). Help me pick's choices, kept apart
+// in pallot.endorserBar.v1 before they were the rule's, move into it once and win, since their picks
+// are the ones on the ballot.
 export function loadRule() {
   const rule = structuredClone(DEFAULT_RULE);
   const saved = readJson(PICK_RULE, {});
@@ -58,6 +64,14 @@ export function loadRule() {
   // A rule saved when TrackAIPAC and Vote for Peace had boxes of their own.
   if (saved?.endorsed) rule.endorsedBy = [...new Set([TRACKAIPAC, ...rule.endorsedBy])];
   if (saved?.peaceAlly) rule.endorsedBy = [...new Set([VOTEFORPEACE, ...rule.endorsedBy])];
+  rule.endorsedBy = stringIds(rule.endorsedBy);
+  const bar = readJson(ENDORSER_BAR, null);
+  if (bar && typeof bar === "object") {
+    rule.endorsedBy = stringIds(bar.endorsers);
+    for (const { id } of AVOIDS) rule[id] = stringIds(bar.avoid).includes(id);
+    rule.onlyMatches = bar.onlyMatches === true;
+    if (writeJson(PICK_RULE, rule)) removeRaw([ENDORSER_BAR]);
+  }
   return rule;
 }
 
@@ -132,18 +146,24 @@ export function ballotParties(races) {
     .sort((a, b) => rank(a.code) - rank(b.code) || a.label.localeCompare(b.label));
 }
 
-// Who endorses someone among these candidates, as { source, label }: TrackAIPAC, Vote for Peace
-// (an ally), then the endorsement lists by label.
+// Who endorses someone among these candidates, as { source, label, count }: TrackAIPAC, Vote for
+// Peace (an ally), then the endorsement lists by label, each with how many candidates it endorses.
 function endorsers(candidates) {
   const found = new Map();
   for (const card of candidates.flatMap((c) => c.cards)) {
     if (card.flags?.includes(ENDORSEMENT)) found.set(card.source, { source: card.source, label: card.label });
   }
   return [
-    candidates.some((c) => endorsedBy(c, TRACKAIPAC)) ? { source: TRACKAIPAC, label: "TrackAIPAC" } : null,
-    candidates.some((c) => endorsedBy(c, VOTEFORPEACE)) ? { source: VOTEFORPEACE, label: "Vote for Peace" } : null,
+    { source: TRACKAIPAC, label: "TrackAIPAC" },
+    { source: VOTEFORPEACE, label: "Vote for Peace" },
     ...[...found.values()].sort((a, b) => a.label.localeCompare(b.label)),
-  ].filter(Boolean);
+  ].map((e) => ({ ...e, count: candidates.filter((c) => endorsedBy(c, e.source)).length })).filter((e) => e.count);
+}
+
+// Whether an endorser in ``sources`` endorses the candidate ``key`` in ``race``.
+function backed(race, key, sources) {
+  const candidate = race.candidates.find((c) => c.key === key);
+  return Boolean(candidate) && sources.some((source) => endorsedBy(candidate, source));
 }
 
 // Which conditions have anything to go on in these races; the dialog hides the rest, and
@@ -192,7 +212,7 @@ export function describeRule(rule, parties, has) {
     ? (relative ? vsRace : vsAmount).replace("{cmp}", money.compare).replace("{amount}", DOLLARS_SHORT.format(money.amount))
     : null;
   const clauses = [
-    chosen.length ? `have endorsements from ${rule.endorsedAll ? andList(chosen) : either(chosen)}` : null,
+    chosen.length ? `have endorsements from ${either(chosen)}` : null,
     moneyWords,
     on(rule.small.on && has.small, rule.small.amount) ? `get at least ${share(rule.small.amount)} of their money in small donations` : null,
     on(rule.texas.on && has.texas, rule.texas.amount)
@@ -227,11 +247,7 @@ function judge(race, rule) {
   if (rule.incumbent === "yes") tests.push((c) => c.incumbent);
   if (rule.incumbent === "no") tests.push((c) => !c.incumbent);
   const endorsing = rule.endorsedBy.filter((source) => covers(candidates, source));
-  if (endorsing.length) {
-    tests.push(rule.endorsedAll
-      ? (c) => endorsing.every((source) => endorsedBy(c, source))
-      : (c) => endorsing.some((source) => endorsedBy(c, source)));
-  }
+  if (endorsing.length) tests.push((c) => endorsing.some((source) => endorsedBy(c, source)));
   const { money } = rule;
   const relative = money.compare === "least" || money.compare === "most";
   if (money.on && (relative || known(money.amount)) && candidates.some((c) => figure(c, money.metric) !== undefined)) {
@@ -291,20 +307,28 @@ function judge(race, rule) {
 const sameKeys = (a, b) => a.length === b.length && a.every((key) => b.includes(key));
 
 // What the rule would do in ``races``: a row per race it touches, with its ``outcome`` ("pick",
-// "same": already picked so, "kept": the voter's pick stays, "many": more matches than seats,
+// "same": already picked so, "kept": a pick there stays, "many": more matches than seats,
 // "none": no match, or null when it only takes picks back), the picks ``before`` and ``after``,
-// and the picks it takes back with why. ``changed`` counts the races whose picks change.
-export function plan(races, rule, picks) {
+// and the picks it takes back with why: Don't pick's reasons, or UNBACKED for a pick Help me pick's
+// endorsers made (``picks.auto``) that none in endorsedBy endorses, as Help me pick takes it back.
+// It fills in only the races left without a pick (Fill in the rest), or with ``replace`` replaces
+// the picks there too (Replace my picks). ``changed`` counts the races whose picks change.
+export const UNBACKED = "no longer endorsed by a chosen endorser";
+
+export function plan(races, rule, picks, { replace = false } = {}) {
   const rows = [];
   for (const race of races) {
     const { active, matches, avoid } = judge(race, rule);
     const before = picks.picked(race.key);
-    const kept = before.filter((key) => !avoid.has(key));
-    const takenBack = before.filter((key) => avoid.has(key)).map((key) => ({ key, reasons: avoid.get(key) }));
+    const made = picks.auto ? picks.auto(race.key) : [];
+    const why = (key) => [...(avoid.get(key) || []),
+      ...(made.includes(key) && !backed(race, key, rule.endorsedBy) ? [UNBACKED] : [])];
+    const kept = before.filter((key) => !why(key).length);
+    const takenBack = before.filter((key) => why(key).length).map((key) => ({ key, reasons: why(key) }));
     let outcome = null;
     let after = kept;
     if (active) {
-      if (rule.keepMine && kept.length) outcome = "kept";
+      if (!replace && kept.length) outcome = "kept";
       else if (!matches.length) outcome = "none";
       else if (matches.length > race.seats) outcome = "many";
       else {
@@ -324,6 +348,7 @@ export function plan(races, rule, picks) {
     many: count("many"),
     none: count("none"),
     takenBack: rows.reduce((sum, row) => sum + row.takenBack.length, 0),
+    unbacked: rows.reduce((sum, row) => sum + row.takenBack.filter(({ reasons }) => reasons.includes(UNBACKED)).length, 0),
     changed: rows.filter((row) => row.changed).length,
   };
 }
@@ -336,24 +361,25 @@ const AVOIDS = [
   { id: "peaceOpposed", label: "Vote for Peace: Opposed", source: VOTEFORPEACE, flag: "opposed" },
 ];
 
-// Help me pick's choices: { endorsers, avoid, onlyMatches }, the endorsers whose picks it rings and
-// picks (endorsedBy's ids, any of them), the amber marks it avoids (AVOIDS' ids), and whether races
-// without a match hide. Kept in this browser like the rule; "pallot:bar" fires on document after
-// saveBar(). A saved "all" (All of, no longer offered) reads as any.
+// Help me pick's choices, read from the saved rule: { endorsers, avoid, onlyMatches }, the endorsers
+// whose picks it rings and picks (the rule's endorsedBy, any of them), the amber marks it avoids
+// (AVOIDS' ids, on in the rule's Don't pick), and whether races without a match hide.
 export function loadBar() {
-  const saved = readJson(ENDORSER_BAR, {});
-  const bar = saved && typeof saved === "object" ? saved : {};
-  const ids = (value) => (Array.isArray(value) ? value.filter((id) => typeof id === "string") : []);
+  const rule = loadRule();
   return {
-    endorsers: ids(bar.endorsers),
-    avoid: ids(bar.avoid).filter((id) => AVOIDS.some((a) => a.id === id)),
-    onlyMatches: bar.onlyMatches === true,
+    endorsers: [...rule.endorsedBy],
+    avoid: AVOIDS.filter((a) => rule[a.id] === true).map((a) => a.id),
+    onlyMatches: rule.onlyMatches === true,
   };
 }
 
+// Saves Help me pick's choices into the rule, leaving its other conditions as they are.
 export function saveBar(bar) {
-  writeJson(ENDORSER_BAR, bar);
-  document.dispatchEvent(new Event("pallot:bar"));
+  const rule = loadRule();
+  rule.endorsedBy = [...bar.endorsers];
+  for (const { id } of AVOIDS) rule[id] = bar.avoid.includes(id);
+  rule.onlyMatches = bar.onlyMatches;
+  saveRule(rule);
 }
 
 // What a candidate's chip stands for in Help me pick, as { kind, id, label }: an endorser's green
@@ -378,7 +404,7 @@ export function barOptions(races) {
   const candidates = races.flatMap((race) => race.candidates);
   const count = (test) => candidates.filter(test).length;
   return {
-    endorsers: endorsers(candidates).map((e) => ({ ...e, count: count((c) => endorsedBy(c, e.source)) })),
+    endorsers: endorsers(candidates),
     avoids: AVOIDS.map((a) => ({ ...a, count: count((c) => listed(c, a.flag, a.source)) })).filter((a) => a.count),
   };
 }
@@ -408,11 +434,7 @@ export function endorserPlan(races, bar, picks, added = null) {
     const before = picks.picked(race.key);
     const made = picks.auto(race.key).filter((key) => before.includes(key));
     const own = before.filter((key) => !made.includes(key));
-    const backed = (key) => {
-      const candidate = race.candidates.find((c) => c.key === key);
-      return Boolean(candidate) && bar.endorsers.some((source) => endorsedBy(candidate, source));
-    };
-    let auto = made.filter(backed);
+    let auto = made.filter((key) => backed(race, key, bar.endorsers));
     let after = [...own, ...auto];
     let outcome = null;
     if (added && race.candidates.some((c) => endorsedBy(c, added))) {

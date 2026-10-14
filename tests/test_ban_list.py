@@ -89,9 +89,9 @@ const race = {{ key: "r1", seats: 1, candidates: [
   {{ key: "b", name: "Bob Jones", party: "D", cards: [] }},
 ] }};
 const picks = {{ picked: () => ["a"] }};
-const rule = {{ ...structuredClone(r.DEFAULT_RULE), parties: ["D"], keepMine: false }};
-const on = r.plan([race], rule, picks).rows[0];
-const off = r.plan([race], {{ ...rule, banned: false }}, picks).rows[0];
+const rule = {{ ...structuredClone(r.DEFAULT_RULE), parties: ["D"] }};
+const on = r.plan([race], rule, picks, {{ replace: true }}).rows[0];
+const off = r.plan([race], {{ ...rule, banned: false }}, picks, {{ replace: true }}).rows[0];
 const has = r.available([race]);
 return {{
   default: r.DEFAULT_RULE.banned, has: has.banned,
@@ -102,4 +102,41 @@ return {{
         "default": True, "has": True,
         "after": ["b"], "takenBack": [{"key": "a", "reasons": ["on your ban list"]}], "offOutcome": "many",
         "words": "Don't pick anyone on your ban list, and take back their picks.",
+    }
+
+
+def test_help_me_pick_shares_the_rule_and_its_old_choices_move_into_it():
+    assert _run(f"""
+const r = await import("{RULES}");
+localStorage.setItem("pallot.pickRule.v1", JSON.stringify({{ endorsedBy: ["ecu"], endorsedAll: true, keepMine: false, parties: ["D"] }}));
+localStorage.setItem("pallot.endorserBar.v1", JSON.stringify({{ endorsers: ["cair"], avoid: ["watchlist"], all: true, onlyMatches: true }}));
+const rule = r.loadRule();
+return {{
+  endorsedBy: rule.endorsedBy, parties: rule.parties, watchlist: rule.watchlist,
+  dropped: ["endorsedAll", "keepMine"].filter((key) => key in rule),
+  oldKept: localStorage.getItem("pallot.endorserBar.v1"), bar: r.loadBar(),
+}};
+""") == {
+        "endorsedBy": ["cair"], "parties": ["D"], "watchlist": True, "dropped": [], "oldKept": None,
+        "bar": {"endorsers": ["cair"], "avoid": ["watchlist"], "onlyMatches": True},
+    }
+
+
+def test_pick_by_rule_takes_back_only_the_endorser_picks_no_chosen_endorser_backs():
+    assert _run(f"""
+const r = await import("{RULES}");
+const race = {{ key: "r1", seats: 1, candidates: [
+  {{ key: "a", name: "Ann Lee", party: "D", cards: [{{ source: "cair", flags: ["endorsement"] }}] }},
+  {{ key: "b", name: "Bob Ray", party: "R", cards: [] }},
+] }};
+const rule = structuredClone(r.DEFAULT_RULE);
+const dropped = r.plan([race], rule, {{ picked: () => ["a"], auto: () => ["a"] }});
+return {{
+  takenBack: dropped.rows[0].takenBack, after: dropped.rows[0].after, unbacked: dropped.unbacked,
+  still: r.plan([race], {{ ...rule, endorsedBy: ["cair"] }}, {{ picked: () => ["a"], auto: () => ["a"] }}).changed,
+  own: r.plan([race], rule, {{ picked: () => ["a"], auto: () => [] }}).rows.length,
+}};
+""") == {
+        "takenBack": [{"key": "a", "reasons": ["no longer endorsed by a chosen endorser"]}], "after": [], "unbacked": 1,
+        "still": 0, "own": 0,
     }

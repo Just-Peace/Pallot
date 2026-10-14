@@ -19,14 +19,14 @@ const MONEY_FAQ = { fec: "fec-money", tec: "tec-money", polls: "polls" };
 // What a card's date means.
 const AS_OF_WORDS = { fec: "reports through", tec: "reports through", polls: "latest poll" };
 
-// The line under a card: "From the FEC, reports through Mar 31, 2026 · Open the FEC · How these
-// figures are put together". The FAQ link, for the money sources and polls, opens a new tab, so
-// the ballot and any open dialog stay put.
 // A link to another website, with the badges' ↗ after its label (none for an email address).
 function webLink(url, label) {
   return extLink(url, url.startsWith("mailto:") ? label : [label, " ", h("span", { class: "badge-arrow", "aria-hidden": "true" }, "↗")]);
 }
 
+// The line under a Compare panel and a race box that doesn't fold: "From the FEC, reports through
+// Mar 31, 2026 · Open the FEC · How these figures are put together". The FAQ link, for the money
+// sources and polls, opens a new tab, so the ballot and any open dialog stay put.
 export function sourceLine(card) {
   const faq = MONEY_FAQ[card.source];
   return h("p", { class: "fine" },
@@ -73,7 +73,8 @@ const chipsOf = (items, chip) => {
 };
 
 // The view switch (view.js) that shows a race box of each kind, and the one that opens it rather
-// than folding it (openBoxes, or a focus); other boxes always show, open. Each box's short heading.
+// than folding it (openBoxes, or a focus), as they do the Funding line; other boxes always show,
+// open. Each box's short heading.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
 const OPENS = { money: "openMoney", polls: "openPolls" };
 const SHORT_TITLES = { money: "Money raised", polls: "Polls" };
@@ -151,12 +152,34 @@ function chipMenu(item, card, first, label, choice) {
   return h("li", {}, button, menu);
 }
 
+// A candidate's line that folds: ``body`` (with an id) under a button, ``label``, that opens it in
+// place. The view switch ``shown`` shows the line; with ``opens`` on, it's open and the button
+// hidden. A "pallot:sync" puts it back to the two switches, opened by hand or not.
+function foldLine(className, body, label, shown, opens) {
+  const show = (open) => {
+    body.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+  };
+  const toggle = h("button", {
+    type: "button", class: "link-btn lines-toggle", "aria-controls": body.id,
+    on: { click: () => show(body.hidden) },
+  }, label);
+  const sync = () => {
+    const open = viewPref(opens);
+    element.hidden = !viewPref(shown);
+    toggle.hidden = open;
+    show(open);
+  };
+  const element = h("div", { class: className, on: { "pallot:sync": sync } }, toggle, body);
+  sync();
+  return element;
+}
+
 // The candidate's Endorsements line, a ul labelled by its heading. A green chip shows just the
 // source's name, since the heading says "Endorsements"; an amber one says what it is ("TrackAIPAC
-// watchlist"), so it doesn't rest on the colour. The showEndorsements view switch shows it; with
-// openEndorsements off, one button counts them ("3 endorsements") and opens them in place, until
-// syncLines(). A chip links to its source's page for the candidate, or opens chipMenu() when Help
-// me pick knows it.
+// watchlist"), so it doesn't rest on the colour. It folds (foldLine) by the showEndorsements and
+// openEndorsements switches, to a count ("3 endorsements"), until syncLines(). A chip links to its
+// source's page for the candidate, or opens chipMenu() when Help me pick knows it.
 export function sourceLines(candidate) {
   const items = greenFirst(candidate.cards.flatMap((card) => sided(card).map((b) => ({ b, card }))), (item) => item.b.tone);
   const chips = chipsOf(items, (b, card, first) => {
@@ -169,55 +192,29 @@ export function sourceLines(candidate) {
   const body = h("div", { class: "cand-lines-body", id }, h("div", { class: "badge-line" },
     h("span", { class: "line-title", id: `${id}-title` }, "Endorsements"),
     h("ul", { class: "badges", "aria-labelledby": `${id}-title` }, chips)));
-  const show = (open) => {
-    body.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-  };
-  const toggle = h("button", {
-    type: "button", class: "link-btn lines-toggle", "aria-controls": id,
-    on: { click: () => show(body.hidden) },
-  }, plural(chips.length, "endorsement"));
-  const sync = () => {
-    const open = viewPref("openEndorsements");
-    element.hidden = !viewPref("showEndorsements");
-    toggle.hidden = open;
-    show(open);
-  };
-  const element = h("div", { class: "cand-lines", on: { "pallot:sync": sync } }, toggle, body);
-  sync();
-  return element;
+  return foldLine("cand-lines", body, plural(chips.length, "endorsement"), "showEndorsements", "openEndorsements");
 }
 
-// Every candidate's lines go back to the showEndorsements and openEndorsements switches, opened by
-// hand or not.
+// Every candidate's lines go back to their view switches, opened by hand or not.
 export function syncLines() {
   for (const element of document.querySelectorAll(".cand-lines")) element.dispatchEvent(new Event("pallot:sync"));
 }
 
 // The candidate's Funding line, after their other lines: each money card's chips (fundingChips),
-// as its tab in Details shows them, with a "?" on the first of a card that only likely matched. The showFunding
-// view switch hides it, with the money boxes, until syncFunding(). A chip opens Details at its money source,
-// ``onOpen(card)``. On a phone, outside Detailed, it shows the first chip and "+3 more", which opens the rest in place.
-// The "?" beside its heading says what the colors mean (fundingHelp).
+// as its tab in Details shows them, with a "?" on the first of a card that only likely matched. It
+// folds (foldLine) as the Endorsements line does, by the showFunding switch (with the money boxes)
+// and openMoney, to a count ("Funding · 4"), until syncFunding(). A chip opens Details at its money
+// source, ``onOpen(card)``. The "?" beside its heading says what the colors mean (fundingHelp).
 export function fundingLine(candidate, onOpen) {
   const cards = candidate.cards.filter((card) => fundingChips(card).length);
   if (!cards.length) return null;
   const id = `funding-${++lineIds}`;
   const chips = chipsOf(cards.flatMap((card) => fundingChips(card).map((b) => ({ b, card }))),
     (b, card, first) => badge(b, card, first, b.text, onOpen, candidate.name));
-  const more = chips.length > 1
-    ? h("li", { class: "more-chips" }, h("button", { type: "button", class: "link-btn", on: { click: () => {
-        element.classList.add("open");
-        chips[1].querySelector("a, button")?.focus();
-      } } }, `+${chips.length - 1} more`))
-    : null;
-  const element = h("div", { class: "cand-lines funding-line", on: { "pallot:sync": () => {
-    element.hidden = !viewPref("showFunding");
-  } } }, h("div", { class: "badge-line" },
-    h("span", { class: "line-title" }, h("span", { id }, "Funding"), fundingHelp()),
-    h("ul", { class: "badges", "aria-labelledby": id }, chips[0], more, chips.slice(1))));
-  element.hidden = !viewPref("showFunding");
-  return element;
+  const body = h("div", { class: "cand-lines-body", id }, h("div", { class: "badge-line" },
+    h("span", { class: "line-title" }, h("span", { id: `${id}-title` }, "Funding"), fundingHelp()),
+    h("ul", { class: "badges", "aria-labelledby": `${id}-title` }, chips)));
+  return foldLine("cand-lines funding-line", body, `Funding · ${chips.length}`, "showFunding", "openMoney");
 }
 
 // A write-in whose row would show nothing but their name: no endorsement either way, and no money
@@ -227,7 +224,7 @@ export function quietWriteIn(race, candidate) {
   return !(race.cards || []).some((card) => card.breakdowns?.[0]?.parts.some((p) => p.candidate_key === candidate.key && p.amount > 0));
 }
 
-// Every candidate's Funding line goes back to the showFunding switch.
+// Every candidate's Funding line goes back to the showFunding and openMoney switches.
 export function syncFunding() {
   for (const element of document.querySelectorAll(".funding-line")) element.dispatchEvent(new Event("pallot:sync"));
 }
@@ -235,17 +232,6 @@ export function syncFunding() {
 
 // " by full name, in the same seat. Party differs."
 const matchWhy = (match) => ` by ${match.method}.${match.note ? ` ${match.note[0].toUpperCase()}${match.note.slice(1)}.` : ""}`;
-
-function matchNote(card) {
-  if (!card.match) return null;
-  const exact = card.match.confidence === "exact";
-  return h(
-    "p",
-    { class: ["match", exact ? "match-exact" : "match-likely"] },
-    h("strong", {}, exact ? "Matched" : "Likely match"),
-    matchWhy(card.match),
-  );
-}
 
 // A word such as "for" or "against", as a small badge in the row's tone.
 export function tagBadge(part) {
@@ -476,7 +462,7 @@ export function raceMoney(race, onCompare = null) {
   });
 }
 
-// A card's badges and facts, as cardPanel() and moneyPanel() show them: a money card's chips on one
+// A card's badges and facts, as a source's tab (sourcePanel) shows them: a money card's chips on one
 // Funding line, in the row's order (fundingChips).
 const cardSummary = (card) => [
   fundingChips(card).length
@@ -495,18 +481,41 @@ const cardLinks = (card) => card.links.length
   ? h("ul", { class: "links" }, card.links.map((l) => h("li", {}, webLink(l.url, l.label))))
   : null;
 
-export function cardPanel(card) {
-  return h(
-    "div",
-    { class: "card-panel" },
+// A source's tab's links, each once: the card's own, its source's page unless one of them is it,
+// and, for a money source or polls, the FAQ's answer on how its figures are put together.
+function sourceLinks(card) {
+  const faq = MONEY_FAQ[card.source];
+  const links = safeUrl(card.url) && !card.links.some((l) => l.url === card.url)
+    ? [{ url: card.url, label: `Open ${card.label}` }, ...card.links] : card.links;
+  const items = [...links.map((l) => h("li", {}, webLink(l.url, l.label))),
+    faq ? h("li", {}, extLink(`faq.html#${faq}`, "How these figures are put together")) : null].filter(Boolean);
+  return items.length ? h("ul", { class: "links" }, items) : null;
+}
+
+// A source's tab in Details (a money source's, or any other drawn by cardPanel), matched as the
+// Profile tab is: its description and a likely match's reason (likelyLine), then its summary (titled
+// ``summaryTitle``) and each breakdown in a section of its own, the first with how it matched and the
+// day of the source's copy (sectionMeta), then its links (sourceLinks).
+function sourcePanel(card, className, summaryTitle) {
+  const summary = cardSummary(card).filter(Boolean);
+  const meta = sectionMeta(card);
+  const head = summary.length ? foldSection(summaryTitle, meta, summary) : null;
+  return h("div", { class: ["card-panel", className] },
     card.description ? h("p", { class: "muted" }, card.description) : null,
-    matchNote(card),
-    cardSummary(card),
+    likelyLine(card),
+    head,
     cardQuotes(card),
-    (card.breakdowns || []).map((b) => breakdownBlock(b)),
-    cardLinks(card),
-    sourceLine(card),
-  );
+    (card.breakdowns || []).map((b, i) => foldSection(b.title, !head && i === 0 ? meta : null, breakdownRows(b))),
+    sourceLinks(card));
+}
+
+export function cardPanel(card) {
+  return sourcePanel(card, null, "Summary");
+}
+
+// A money source's tab (FEC, TEC): its totals, then who gave, as sourcePanel() lays it out.
+export function moneyPanel(card) {
+  return sourcePanel(card, "money", "Totals");
 }
 
 // A box on a Details tab that folds to its summary (its name, then ``extra``, such as a "?" or
@@ -518,9 +527,9 @@ export function foldSection(name, extra, body, tone = null) {
     h("div", { class: "section-body" }, body));
 }
 
-// A Profile or Endorsements section's title line, at the right: how it matched and the day of the
-// source's copy ("Exact match · Oct 8, 2026"), or just the day for a source with no match (Texas
-// SOS). The match's reason is in its tooltip and, for screen readers, after it.
+// A Details section's title line, at the right (every tab's, on its first section): how it matched
+// and the day of the source's copy ("Exact match · Oct 8, 2026"), or just the day for a source with
+// no match (Texas SOS, polls). The match's reason is in its tooltip and, for screen readers, after it.
 function sectionMeta(card) {
   const exact = card.match?.confidence === "exact";
   const parts = [exact ? "Exact match" : null, card.as_of ? formatDate(card.as_of, SHORT_DATE) : null].filter(Boolean);
@@ -547,37 +556,24 @@ export function profilePanel(cards) {
     cards.map((card) => foldSection(card.label, [isLikely(card) ? likelyFlag() : null, sectionMeta(card)], profileBody(card))));
 }
 
-// A money source's tab (FEC, TEC): its description and match, then its totals and each breakdown
-// in a section of its own, then its links and where it comes from.
-export function moneyPanel(card) {
-  const summary = cardSummary(card).filter(Boolean);
-  return h("div", { class: "card-panel money" },
-    card.description ? h("p", { class: "muted" }, card.description) : null,
-    matchNote(card),
-    summary.length ? foldSection("Totals", null, summary) : null,
-    cardQuotes(card),
-    (card.breakdowns || []).map((b) => foldSection(b.title, null, breakdownRows(b))),
-    cardLinks(card),
-    sourceLine(card));
-}
-
 // Details' Polls tab: the candidate's median, large, over one bar in their party's colour, with
-// how it's worked out; then a bar per poll on the same 0-100 scale, the median a line across them,
-// each pollster linking to its poll. The rows name no other candidate but in a margin's "vs".
+// how it's worked out, and the day of the latest poll in its title line (sectionMeta); then a bar
+// per poll on the same 0-100 scale, the median a line across them, each pollster linking to its
+// poll; then the source's links (sourceLinks). The rows name no other candidate but in a margin's "vs".
 export function pollsPanel(card, party) {
   const [each] = card.breakdowns;
   const median = card.figures?.poll;
   const people = { party: () => party || null, likely: () => false };
   return h("div", { class: "card-panel polls" },
-    matchNote(card),
-    median != null ? foldSection("Median", null, [
+    likelyLine(card),
+    median != null ? foldSection("Median", sectionMeta(card), [
       h("div", { class: "poll-median", "data-party": party || null },
         h("strong", { class: "poll-median-value" }, `${median}%`), bar(median / 100)),
       each?.note ? h("p", { class: "fine" }, each.note) : null,
     ]) : null,
     each ? foldSection(each.title, each.count ? h("span", { class: "section-meta" }, plural(each.count, "poll")) : null,
       breakdownRows({ ...each, note: null }, people)) : null,
-    sourceLine(card));
+    sourceLinks(card));
 }
 
 // A chip's words beside its source's name: "Endorsed by CAIR Action" is "Endorsed", "TrackAIPAC

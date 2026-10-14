@@ -32,13 +32,13 @@ export function onThemeChange(callback) {
   });
 }
 
-// One button stepping System → Light → Dark, its icon and name saying which is on.
+// One icon button stepping System → Light → Dark, its icon, name and tooltip saying which is on.
 export function bindThemeToggle(button) {
   const order = Object.keys(THEMES);
   const next = () => order[(order.indexOf(currentTheme()) + 1) % order.length];
   const show = () => {
     const { label, icon: name } = THEMES[currentTheme()];
-    button.replaceChildren(icon(name), label);
+    button.replaceChildren(icon(name));
     button.setAttribute("aria-label", `Appearance: ${label}`);
     button.title = `Appearance: ${label}. Switch to ${THEMES[next()].label}`;
   };

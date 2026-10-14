@@ -1,21 +1,29 @@
 // The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees in words and race by race
-// what it would change, then applies it (with Undo, and a banner above the races). Opened from Help
-// me pick's More rules… for every race, or from a race's funnel for that race. ballot.js hands over
-// ``page``.
+// what it would change, then applies it (with Undo, and a banner above the races), filling in only
+// the races without a pick or replacing the voter's picks too. Its endorser chips and its TrackAIPAC
+// and Vote for Peace rows are Help me pick's choices, saved with the rule. Opened from Help me pick's
+// More rules… for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
 
+import { api } from "./api.js";
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
-import { COUNT, listed, plural } from "./format.js";
+import { COUNT, plural } from "./format.js";
 import { helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import {
-  DEFAULT_RULE, MONEY, WRITE_INS, allRaces, available, ballotParties, describeRule, loadRule, parseAmount, plan, saveRule, scopes,
+  DEFAULT_RULE, MONEY, UNBACKED, WRITE_INS, allRaces, available, ballotParties, describeRule, loadRule, parseAmount, plan, saveRule, scopes,
 } from "./pick-rules.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, renderRaces }
 const dialog = $("#rules");
+
+// The sources a rule's conditions come from, besides the endorsements group's (TrackAIPAC, Vote for
+// Peace and the lists): the money and the polls.
+const SCORECARDS = "scorecards";
+const RULE_SOURCES = ["fec", "tec", "polls"];
+let sourcesOff = Promise.resolve([]); // those the voter has turned off, from /api/sources, asked for as the dialog opens
 
 export function initRules(context) {
   page = context;
@@ -33,11 +41,11 @@ function checkRow(label, checked, onChange, { extra = null, stacked = false } = 
     extra ? h("div", { class: "rule-inputs" }, extra) : null);
 }
 
-// A chip that toggles (a party, an endorsement list). ``party``: its code, for its colour and a
-// swatch ("" for a swatch with no colour); ``count``: room for a number after the label.
-function chip(label, pressed, onToggle, { party = null, count = false } = {}) {
+// A chip that toggles (a party, an endorser). ``party``: its code, for its colour and a swatch (""
+// for a swatch with no colour); ``count``: the number after the label ("" to fill in later).
+function chip(label, pressed, onToggle, { party = null, count = null, title = null } = {}) {
   const button = h("button", {
-    type: "button", class: "rule-chip", "data-party": party || null, "aria-pressed": String(pressed),
+    type: "button", class: "rule-chip", "data-party": party || null, "aria-pressed": String(pressed), title,
     on: {
       click: () => {
         const on = button.getAttribute("aria-pressed") !== "true";
@@ -46,7 +54,7 @@ function chip(label, pressed, onToggle, { party = null, count = false } = {}) {
       },
     },
   }, party !== null ? h("span", { class: "rule-swatch", "aria-hidden": "true" }) : null, label,
-  count ? h("span", { class: "rule-count" }) : null);
+  count !== null ? h("span", { class: "rule-count" }, String(count)) : null);
   return button;
 }
 
@@ -79,10 +87,10 @@ function group(title, ...rows) {
 
 // ---- the preview ----------------------------------------------------------------------
 
-// What the rule would do: a count from plan(), its words, and its colour.
+// What the rule would do: a count from plan(), its words (given the count and plan()'s result), and its colour.
 const TALLIES = [
   ["picked", (n) => `${n === 1 ? "race" : "races"} to pick`, "good"],
-  ["takenBack", (n) => `${n === 1 ? "pick" : "picks"} taken back`, "warn"],
+  ["takenBack", (n, result) => `${n === 1 ? "pick" : "picks"} taken back${result.unbacked === n ? ` (${UNBACKED})` : ""}`, "warn"],
   ["many", () => "left for you, with more matches than seats", ""],
   ["kept", () => "already picked, kept", ""],
   ["same", () => "already picked that way", ""],
@@ -91,7 +99,7 @@ const TALLIES = [
 
 function tallies(result, active) {
   const items = TALLIES.filter(([id]) => result[id]).map(([id, words, tone]) =>
-    h("li", { class: ["rule-tally", tone && `tone-${tone}`] }, h("strong", {}, COUNT.format(result[id])), " ", words(result[id])));
+    h("li", { class: ["rule-tally", tone && `tone-${tone}`] }, h("strong", {}, COUNT.format(result[id])), " ", words(result[id], result)));
   if (items.length) return items;
   return [h("li", { class: "rule-tally muted" }, active ? "Nothing to change in these races." : "Choose a party or a condition.")];
 }
@@ -113,14 +121,15 @@ function raceLine(row) {
 
 // ---- the banner -----------------------------------------------------------------------
 
-// After Apply, one line above the races says the rule in words, with Edit and Undo (the toast's
-// Undo, kept). It goes once the picks are cleared, the rule changes (here or in another tab) or the
-// ballot is drawn again; Undo and ✕ take it away too.
+// After Fill in the rest or Replace my picks, one line above the races says the rule in words, with
+// Edit and Undo (the toast's Undo, kept). It goes once the picks are cleared, the rule changes (here,
+// in Help me pick or in another tab) or the ballot is drawn again; Undo and ✕ take it away too.
 const banner = $("#rule-banner");
 let shownRule = null; // the rule the banner shows, as saved
+const ruleKey = (rule) => JSON.stringify({ ...rule, onlyMatches: null }); // Only races with a match is a view, not the rule
 
 function showBanner(words, undo) {
-  shownRule = JSON.stringify(loadRule());
+  shownRule = ruleKey(loadRule());
   banner.replaceChildren(
     h("p", {}, h("strong", {}, "Picked by your rule: "), [words.pick, words.skip].filter(Boolean).join(" ")),
     h("p", { class: "rule-banner-actions" },
@@ -142,7 +151,18 @@ export function hideBanner() {
 // After the picks change as a whole: the banner goes once the saved rule isn't its own (ballot.js
 // takes it away when the picks are cleared).
 export function syncRuleBanner() {
-  if (shownRule && JSON.stringify(loadRule()) !== shownRule) hideBanner();
+  if (shownRule && ruleKey(loadRule()) !== shownRule) hideBanner();
+}
+
+// "Vote for Peace is off. Turn it on in Settings.", each name linking to its switch there.
+function offLine(sources) {
+  if (!sources.length) return [];
+  const one = sources.length === 1;
+  const toggle = (id) => `settings.html#toggle-${encodeURIComponent(id)}`;
+  const names = sources.flatMap((s, i) => [
+    i ? (i === sources.length - 1 ? " and " : ", ") : "", h("a", { href: toggle(s.id) }, s.label)]);
+  return [...names, one ? " is off. Turn it on in " : " are off. Turn them on in ",
+    h("a", { href: one ? toggle(sources[0].id) : "settings.html#sources-title" }, "Settings"), "."];
 }
 
 // ---- the dialog -----------------------------------------------------------------------
@@ -153,20 +173,29 @@ const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, w
 export function openRules({ raceKey = null } = {}) {
   if (!page.ballot || page.loadingCards) return; // its conditions are about the cards
   const options = scopes(page.ballot, raceKey);
+  sourcesOff = api.get("/api/sources")
+    .then(({ sources }) => sources.filter((s) => s.toggleable && !s.enabled && (s.group === SCORECARDS || RULE_SOURCES.includes(s.id))))
+    .catch(() => []);
   draw(loadRule(), options, options[0]);
   if (!dialog.open) dialog.showModal();
   $("#rule-scope").focus();
 }
 
-// Draws the dialog for ``rule``, which is saved only by Apply. Reset draws
-// it again with the default rule, in the same scope.
+// Draws the dialog for ``rule``, which is saved only by Fill in the rest, Replace my picks or Save
+// choices. Reset draws it again with the default rule (Only races with a match kept), in the same scope.
 function draw(rule, options, startScope) {
   let scope = startScope;
   const everything = allRaces(page.ballot);
   const parties = ballotParties(everything);
-  rule.parties = rule.parties.filter((code) => parties.some((p) => p.code === code)); // no chip to clear the others
+  const onBallot = (code) => parties.some((p) => p.code === code); // no chip to clear the others
+  rule.parties = rule.parties.filter(onBallot);
+  const saved = loadRule();
+  saved.parties = saved.parties.filter(onBallot);
+  const sameSet = (r) => JSON.stringify({ ...r, parties: [...r.parties].sort(), endorsedBy: [...r.endorsedBy].sort() });
+  const unsaved = () => sameSet(rule) !== sameSet(saved);
   const has = available(everything);
-  let result = null;
+  let fill = null;
+  let replace = null;
 
   const noWords = h("p", { class: "rule-words muted" }, "No rule yet: choose a party or a condition.");
   const pickWords = h("p", { class: "rule-words tone-good" });
@@ -175,7 +204,11 @@ function draw(rule, options, startScope) {
   const raceList = h("ul", { class: "rule-races" });
   const raceCount = h("span", { class: "rule-count" });
   const raceDetails = h("details", { class: "rule-details" }, h("summary", {}, "Race by race ", raceCount), raceList);
-  const applyButton = h("button", { type: "button", class: "btn primary", on: { click: apply } });
+  const replaceNote = h("p", { class: "fine" });
+  const fillButton = h("button", { type: "button", class: "btn primary",
+    title: "Picks only in the races where you haven't picked", on: { click: () => apply(fill) } });
+  const replaceButton = h("button", { type: "button", class: "btn",
+    title: "Picks in every race it matches, replacing your own picks there too", on: { click: () => apply(replace) } });
   // An onChange that changes the rule, then the preview.
   const set = (change) => (value) => {
     change(value);
@@ -186,7 +219,7 @@ function draw(rule, options, startScope) {
     party,
     chip: chip(party.label, rule.parties.includes(party.code), set((on) => {
       rule.parties = on ? [...rule.parties, party.code] : rule.parties.filter((code) => code !== party.code);
-    }), { party: party.code === WRITE_INS ? "" : party.code, count: true }),
+    }), { party: party.code === WRITE_INS ? "" : party.code, count: "" }),
   }));
 
   function update() {
@@ -202,30 +235,48 @@ function draw(rule, options, startScope) {
     pickWords.hidden = !words.pick;
     skipWords.hidden = !words.skip;
     noWords.hidden = Boolean(words.pick || words.skip);
-    result = plan(races, rule, page.picks);
-    tallyList.replaceChildren(...tallies(result, result.rows.some((row) => row.outcome)));
-    raceList.replaceChildren(...result.rows.map(raceLine));
-    raceCount.textContent = String(result.rows.length);
-    raceDetails.hidden = !result.rows.length;
-    applyButton.disabled = !result.changed;
-    applyButton.textContent = result.changed ? `Apply to ${plural(result.changed, "race")}` : "Nothing to change";
+    fill = plan(races, rule, page.picks);
+    replace = plan(races, rule, page.picks, { replace: true });
+    tallyList.replaceChildren(...tallies(fill, fill.rows.some((row) => row.outcome)));
+    raceList.replaceChildren(...fill.rows.map(raceLine));
+    raceCount.textContent = String(fill.rows.length);
+    raceDetails.hidden = !fill.rows.length;
+    replaceNote.textContent = replace.changed > fill.changed
+      ? `Replace my picks would change ${plural(replace.changed, "race")}, your own picks included.` : "";
+    replaceNote.hidden = !replaceNote.textContent;
+    const saveOnly = !fill.changed && unsaved();
+    fillButton.disabled = !fill.changed && !saveOnly;
+    fillButton.textContent = saveOnly ? "Save choices" : `Fill in the rest · ${COUNT.format(fill.changed)}`;
+    replaceButton.disabled = !replace.changed;
+    replaceButton.textContent = `Replace my picks · ${COUNT.format(replace.changed)}`;
   }
 
-  // With "Collapse a race when I pick" on, the races it fills fold, as a pick by hand does; Undo opens them again.
-  function apply() {
+  // Saves the rule and makes ``result``'s changes (plan()'s, filling in or replacing). With "Collapse a
+  // race when I pick" on, the races it fills fold, as a pick by hand does; Undo opens them again.
+  function apply(result) {
     const changed = result.rows.filter((row) => row.changed);
+    const previous = loadRule();
+    saveRule(rule);
+    dialog.close();
+    if (!changed.length) {
+      page.renderRaces();
+      showToast("Saved your choices.", { label: "Undo", run: () => {
+        saveRule(previous);
+        page.renderRaces();
+      } });
+      return;
+    }
     const changes = Object.fromEntries(changed.map((row) => [row.race.key, row.after]));
     const folded = viewPref("collapseOnPick")
       ? changed.filter((row) => row.outcome === "pick" && row.after.length >= row.race.seats && !page.picks.isCollapsed(row.race.key))
         .map((row) => row.race.key)
       : [];
     const { picked, takenBack } = result;
-    saveRule(rule);
     const before = page.picks.setMany(changes);
     if (folded.length) page.picks.setCollapsed(folded, true);
-    dialog.close();
     const undo = () => {
       hideBanner();
+      saveRule(previous);
       page.picks.setMany(before.picks, before.auto);
       if (folded.length) page.picks.setCollapsed(folded, false);
       page.renderRaces();
@@ -237,7 +288,7 @@ function draw(rule, options, startScope) {
   }
 
   function reset() {
-    draw(structuredClone(DEFAULT_RULE), options, scope);
+    draw({ ...structuredClone(DEFAULT_RULE), onlyMatches: rule.onlyMatches }, options, scope);
     $("#rule-reset").focus();
   }
 
@@ -283,19 +334,11 @@ function draw(rule, options, startScope) {
             on: { change: set(() => { rule.incumbent = value; }) } }), text)))),
     group("Endorsements",
       has.endorsers.length && [
-        h("div", { class: "rule-chips" }, has.endorsers.map(({ source, label }) =>
+        h("div", { class: "rule-chips" }, has.endorsers.map(({ source, label, count }) =>
           chip(label, rule.endorsedBy.includes(source), set((on) => {
             rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
-          })))),
-        has.endorsers.length > 1
-          ? h("div", { class: "seg rule-combine" }, [["any", "Any of them"], ["all", "All of them"]].map(([value, text]) =>
-            h("label", { class: "seg-option" },
-              h("input", { type: "radio", name: "rule-endorsed", value, checked: (value === "all") === rule.endorsedAll,
-                on: { change: set(() => { rule.endorsedAll = value === "all"; }) } }), text)))
-          : null,
-        h("p", { class: "fine" }, has.endorsers.length > 1
-          ? "Any of them: endorsed by at least one you choose. All of them: by every one you choose that endorses someone in the race."
-          : "Endorsements from the one you choose.",
+          }), { count, title: `${label} endorses ${plural(count, "candidate")} on this ballot` }))),
+        h("p", { class: "fine" }, "Endorsed by any one you choose. These are Help me pick's endorsers too.",
           has.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it marks Ally." : ""),
       ]),
     group("Money",
@@ -322,15 +365,15 @@ function draw(rule, options, startScope) {
     h("p", { class: "rule-hint" }, "Anyone who meets any one of these, even if you picked them yourself."),
     skipRows.length ? skipRows : h("p", { class: "muted" }, "Your ballot has nothing for these to go on."));
 
-  const missing = [
-    !has.trackaipac && "TrackAIPAC", !has.voteforpeace && "Vote for Peace", !moneyOn && "money",
-    moneyOn && !has.small && "small donations", moneyOn && !has.texas && "Texas donors", moneyOn && !has.selfFunded && "self-funding", !has.lobby && "Israel lobby money",
-    !has.polls && "polls",
-  ].filter(Boolean);
+  const offNote = h("p", { class: "fine", hidden: true });
+  sourcesOff.then((sources) => {
+    offNote.replaceChildren(...offLine(sources));
+    offNote.hidden = !sources.length;
+  });
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),
-    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press Apply.")),
+    h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press a button below.")),
   helpLink("pick-by-rule", "Pick by rule"));
   dialog.replaceChildren(
     head,
@@ -341,31 +384,28 @@ function draw(rule, options, startScope) {
       h("div", { class: "rule-form" },
         pickSet,
         skipSet,
-        missing.length ? h("p", { class: "fine" }, `Not offered, since nothing on your ballot has them: ${listed(missing)}.`) : null,
+        offNote,
         h("details", { class: "rule-how" }, h("summary", {}, "How rules work"),
-          h("p", {}, "Pick takes the candidates who meet every condition you turn on, from any party you choose, with endorsements "
-            + "from any or all of the endorsers you choose. Don't pick "
-            + "takes back anyone who meets any one of its conditions, even a pick you made yourself. "
-            + "On your ban list, on at first, shows when someone on your ballot is marked Banned."),
-          h("p", {}, "A condition counts only in races its source covers: money in congressional and state races, TrackAIPAC in "
-            + "congressional races, Vote for Peace in the races where it marks someone, an endorsement list in the races where it "
-            + "endorses someone, polls in U.S. Senate, U.S. House and Governor races. So “Democrats who spent under $1M” "
-            + "still picks a county race's Democrat. “The least” and “the most” compare the candidates in each race. Small "
-            + "donations (under $500) and Texas donors (their share of itemized donations with an address) are known in "
-            + "congressional races with an FEC key, and in state races from the Texas Ethics Commission. Self-funding is known "
-            + "only in congressional races, with an FEC key."),
-          h("p", {}, "Without the Write-ins chip, a rule picks only the names printed on the ballot. If more candidates match than "
-            + "a race has seats, a tie included, it's left for you."))),
+          h("ul", {},
+            h("li", {}, "Pick: candidates who meet every condition you turn on, from any party and any endorser you choose."),
+            h("li", {}, "Don't pick: anyone who meets any one, even your own picks."),
+            h("li", {}, "Each condition counts only where its source has data (money: congressional and state races; "
+              + "polls: U.S. Senate, U.S. House, Governor)."),
+            h("li", {}, "Write-ins are picked only with the Write-ins chip."),
+            h("li", {}, "More matches than seats, or a tie: left for you."),
+            h("li", {}, "Fill in the rest picks only in races with no pick; Replace my picks replaces picks too. Both take back the picks "
+              + "Help me pick made that no endorser you choose still endorses.")))),
       h("aside", { class: "rule-preview", "aria-label": "What your rule would do" },
         h("h3", {}, "Your rule"),
         noWords, pickWords, skipWords,
-        h("h3", {}, "What it would do"),
+        h("h3", {}, "What Fill in the rest would do"),
         tallyList,
-        checkRow("Don't replace picks I've already made", rule.keepMine, set((on) => { rule.keepMine = on; })),
+        replaceNote,
         raceDetails)),
     h("div", { class: "details-foot" },
       h("button", { type: "button", class: "btn ghost", on: { click: () => dialog.close() } }, "Cancel"),
-      applyButton),
+      replaceButton,
+      fillButton),
   );
   openList();
   update();
