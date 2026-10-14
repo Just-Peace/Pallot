@@ -712,8 +712,8 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
   border-top: 1px solid var(--line); }
 .menu-foot .theme-toggle { margin-left: auto; }
 
-/* The focus chips (view.js): checkboxes drawn as chips, ticked when chosen, in View and More; on the
-   "What matters to you?" card and in Settings, a card each with its hint (.focus-option), two a row
+/* The focus chips (view.js): checkboxes drawn as chips, ticked when chosen, in View and More; in the
+   first lookup's "What matters to you?" and in Settings, a card each with its hint (.focus-option), two a row
    on a wide screen */
 .focus-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
 .focus-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px;
@@ -734,17 +734,11 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .focus-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .focus-option-label { font-size: 0.92rem; font-weight: 600; }
 .focus-option-hint { font-size: 0.82rem; line-height: 1.35; color: var(--muted); }
-/* the first-run card, right under the strip and above everything else on the ballot, so nothing above
-   it moves as the voter chooses */
-.focus-ask { margin: 12px 0 0; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line);
-  border-left: 4px solid var(--accent); border-radius: var(--radius-sm); }
-.focus-ask-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+/* "What matters to you?" under "Finding your ballot", while the first lookup runs */
+.focus-ask { margin: 16px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); }
 .focus-ask h2 { margin: 0; font-size: 1.05rem; }
-.focus-ask > .muted { margin: 2px 0 10px; font-size: 0.9rem; }
-.focus-ask-detail { margin: 14px 0 0; }
-.focus-ask-detail h3 { margin: 0 0 6px; font-size: 0.95rem; }
-.focus-ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 12px 0 0; }
-.focus-ask-foot .fine { margin: 0; }
+.loading .focus-ask > .muted { margin: 2px 0 10px; }
+.focus-ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 14px 0 0; }
 #focus-setting { margin-bottom: 14px; }
 #focus-setting h3 { margin: 0 0 4px; font-size: 0.95rem; }
 #focus-setting .focus-chips { margin: 8px 0 4px; }
@@ -832,6 +826,8 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
    strip's line fades in, so a lookup whose cards follow at once doesn't flash it. */
 .loading { max-width: 460px; margin: 16px 0; padding: 16px 18px; background: var(--panel); border: 1px solid var(--line);
   border-radius: var(--radius); box-shadow: var(--shadow); }
+.loading:has(.focus-ask:not([hidden])) { max-width: 600px; }
+.loading.ready .loading-bar::after { width: 100%; transform: none; animation: none; }
 .loading-title { margin: 0 0 10px; font-weight: 600; }
 .loading .muted { margin: 10px 0 0; font-size: 0.9rem; }
 .loading-bar { position: relative; height: 4px; border-radius: 999px; background: var(--neutral-soft); overflow: hidden; }
@@ -1473,7 +1469,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (max-width: 640px) {
   h1 { font-size: 1.45rem; }
   .panel { padding: 16px; }
-  .entry .button-row .btn { flex: 1 1 auto; }
+  .entry .button-row .btn, .focus-ask-foot .btn { flex: 1 1 auto; }
   .confirm-dialog .button-row { flex-direction: column; }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   /* the toolbar's buttons a size down, so they take two lines; View and Help me pick open from the

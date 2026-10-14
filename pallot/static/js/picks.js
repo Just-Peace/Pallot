@@ -154,6 +154,9 @@ export class Picks {
   }
 }
 
+// Whether any election has a pick stored in this browser.
+export const hasAnyPicks = () => Object.values(readJson(PICKS, {})).some((bucket) => Object.keys(bucket?.races || {}).length > 0);
+
 // "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
 // races, and the pick rule with Help me pick's choices. The remembered address stays. Returns what was removed, for Undo.
 export function clearPicksAndNotes() {
