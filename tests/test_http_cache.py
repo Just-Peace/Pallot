@@ -62,6 +62,14 @@ async def test_cache_survives_a_restart(tmp_path):
     assert route.call_count == 1
 
 
+async def test_writes_go_to_the_wal_without_a_sync_each(tmp_path):
+    async with httpx.AsyncClient() as client:
+        cache = HttpCache(tmp_path / "c.sqlite3", client)
+        assert cache._db.execute("PRAGMA journal_mode").fetchone()[0] == "wal"
+        assert cache._db.execute("PRAGMA synchronous").fetchone()[0] == 1  # NORMAL
+        cache.close()
+
+
 async def test_expired_entries_are_fetched_again(tmp_path):
     clock = Clock()
     with respx.mock() as router:

@@ -41,7 +41,8 @@ uv run pallot-bundle stats                # the snapshots' counts, as README's "
 Beyond AGENTS.md's "Every outbound call goes through `HttpCache`":
 - Only answers that succeed are cached, and concurrent identical requests share one fetch.
 - Expired rows stay, as the copy to serve when a source is down. Only transient rows (address suggestions, tiles, "not found" geocodes, expired flags) are ever pruned, after `Ttls.prune_after`, and tiles and suggestions are kept under their size caps.
-- Some sources answer an error with a 200 (ArcGIS servers, a maintenance page). Such a source registers a check with `check_answers`, so a refused answer never replaces a good copy.
+- Some sources answer an error with a 200 (ArcGIS servers, a maintenance page). Such a source registers a check with `check_answers`, so a refused answer never replaces a good copy. The check runs on every `get_json`, cache hits included, on the event loop, so a costly one remembers its verdict per stored copy: `HttpCache` hands back the same object while it keeps that copy in memory (a live endorsement feed parses each copy once, and builds its list from that parse).
+- SQLite runs in WAL mode with `synchronous=NORMAL`: a write isn't synced to disk each time, and a power cut can lose only the last writes, never corrupt the cache.
 - A file too big for the database (the precinct and SBOE maps) goes through `HttpCache.download`: the same pause, throttle and call count, but nothing stored.
 - A source with several keys (the FEC) registers them with `share_keys`: requests rotate over the keys with room, a key the source refuses rests for a while (flagged by a hash, never the key), and inside `offline()` (`pallot-cache refresh`, `pallot-bundle refresh`) each key goes at the slower `refresh_limit`, leaving room for a running Pallot.
 - `/api/ballot` streams two NDJSON lines to the page: the races, then the ballot with its cards. Every `BallotError` is raised before the first line, so it's still an HTTP status.
@@ -145,7 +146,7 @@ To add a feed:
 
 Two kinds come with Pallot (README's "Bundled snapshots" says what's in them):
 - **Snapshot packages** (`trackaipac_cache/`, `voteforpeace_cache/`, `tec_cache/`), copied into `data/` on first run. `pallot-cache hard-refresh` refreshes them; `rebuild --reset-snapshots` goes back to the repo's copy. Each package's own README says how to update the bundled copy (`uv run <package> refresh`). `trackaipac_cache` is a copy of the maintainer's library (`Fahd-Siddiqui/TrackAipacCache`): see AGENTS.md before changing it. TEC's refresh runs in its own process, since it reads a couple of GB of CSV.
-- **Cached answers** (`bundles/`), seeded into the cache at startup, dated when they were last checked, where the cache has no newer copy. A lookup asks live only once a bundled answer is older than its bundle lifetime. Files are one answer per line, sorted, so a diff shows each changed answer; they never hold a key or a header.
+- **Cached answers** (`bundles/`), seeded into the cache at startup, dated when they were last checked, where the cache has no newer copy. A lookup asks live only once a bundled answer is older than its bundle lifetime. Files are one answer per line, sorted, so a diff shows each changed answer; they never hold a key or a header. Once seeded, only each bundle's count and date stay in memory, for Settings' "Came with N answers".
 
 To bundle a source's answers:
 1. Write its builder: an `async def build(ctx: Context) -> dict[str, int]` that makes a lookup's requests through `ctx.cache` with the source's own class, and raises `BundleError` if any failed.

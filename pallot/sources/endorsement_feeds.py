@@ -81,6 +81,7 @@ class EndorsementFeed:
         self.cache = cache
         self.ttl = ttl
         self._built: tuple[float, EndorsementList] | None = None
+        self._parsed: tuple[Any, list[dict[str, Any]], str | None] | None = None
         self._lock = threading.Lock()
         cache.pause_on(feed.source, REFUSALS, ttl.endorsement_feeds_backoff)
         cache.check_answers(feed.source, self._check)
@@ -107,12 +108,24 @@ class EndorsementFeed:
                 continue
         return found
 
-    def _check(self, answer: Any) -> str | None:
+    def _parse(self, answer: Any) -> tuple[list[dict[str, Any]], str | None]:
+        """The answer's candidates and why it's refused (None for a good one), parsed once per
+        stored copy: HttpCache hands back the same object while it keeps that copy in memory, and
+        checks it on every get_json, so only another object (a new copy, or one read again from
+        the database) is parsed again."""
+        memo = self._parsed
+        if memo is not None and memo[0] is answer:
+            return memo[1], memo[2]
         try:
             found = self.entries(answer)
+            why = None if found else "a list with no candidate Pallot can read"
         except (ValueError, TypeError, KeyError, AttributeError) as exc:
-            return f"an answer Pallot can't read ({exc})"
-        return None if found else "a list with no candidate Pallot can read"
+            found, why = [], f"an answer Pallot can't read ({exc})"
+        self._parsed = (answer, found, why)
+        return found, why
+
+    def _check(self, answer: Any) -> str | None:
+        return self._parse(answer)[1]
 
     def _list(self, got: Cached) -> EndorsementList:
         with self._lock:
@@ -121,7 +134,7 @@ class EndorsementFeed:
             found = EndorsementList(
                 source=self.source, label=self.label, organization=self.organization, url=self.url,
                 captured=dt.date.fromtimestamp(got.fetched_at).isoformat(), description=self.description,
-                entries=self.entries(got.value), live=True,
+                entries=self._parse(got.value)[0], live=True,
             )
             self._built = (got.fetched_at, found)
             return found
@@ -204,6 +217,7 @@ class EndorsementFeed:
     def clear(self) -> str:
         with self._lock:
             self._built = None
+            self._parsed = None
         return "The next lookup fetches the list again."
 
 

@@ -287,8 +287,8 @@ class Admin:
         loaded = [bundle for bundle in self.svc.bundles.values() if bundle.source in info.cache_tags]
         if not loaded:
             return None
-        checked = display_date(dt.datetime.fromtimestamp(min(b.checked_at or 0 for b in loaded)).date())
-        count = sum(len(b.answers) for b in loaded)
+        checked = display_date(dt.datetime.fromtimestamp(min(b.checked_at for b in loaded)).date())
+        count = sum(b.answers for b in loaded)
         return f"Came with {count:,} answer{'' if count == 1 else 's'}, checked {checked}."
 
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
