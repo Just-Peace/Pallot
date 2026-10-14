@@ -40,7 +40,7 @@ export const VIEW_MODES = {
 // Besides the stored switches: openMoney (the money boxes and Funding lines), openPolls and
 // openEndorsements open one kind of box or line (else they follow openBoxes), fundingFirst puts
 // the Funding line before Endorsements, compareInHead puts Compare funding in the race's head, pollChips a "47% in polls" pill on each polled candidate and a mark on
-// the sections with polls, and stanceLinks "Profile & issues" and "See where they stand". ``hint`` is
+// the sections with polls, and stanceLinks names the candidate's button "Profile & issues". ``hint`` is
 // its line on the first-run card and in Settings, ``short`` its name in the View menu's summary. The
 // wording never names an issue or a source.
 export const FOCUSES = {
@@ -50,7 +50,7 @@ export const FOCUSES = {
     hint: "Shows who endorses each candidate, open.", on: ["showEndorsements", "openEndorsements"] },
   polls: { label: "Polls", short: "Polls", hint: "Opens the poll boxes and shows each candidate's share.",
     on: ["showPolls", "openPolls", "pollChips"] },
-  stances: { label: "Where they stand", short: "Stances", hint: "Links to where each candidate stands, issue by issue.",
+  stances: { label: "Where they stand", short: "Stances", hint: "Each candidate's button reads Profile & issues.",
     on: ["stanceLinks"] },
 };
 const FOLLOWS = { openMoney: "openBoxes", openPolls: "openBoxes", openEndorsements: "openBoxes" };

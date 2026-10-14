@@ -749,12 +749,11 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 #focus-setting h3 { margin: 0 0 4px; font-size: 0.95rem; }
 #focus-setting .focus-chips { margin: 8px 0 4px; }
 /* what a focus adds to the ballot: a poll mark on a section, a candidate's poll share, Compare in
-   a race's head, "See where they stand" under its candidates */
+   a race's head */
 .poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
 .poll-mark .icon { width: 13px; height: 13px; }
 .pill.poll-pill { background: var(--accent-soft); color: var(--accent); }
 .head-compare { flex: none; margin-top: -2px; gap: 4px; }
-.stance-link { margin: 8px 0 0; }
 
 /* "Only races I haven't picked" and Help me pick's "Only races with a match": a section goes too
    once all its races are hidden (a maybe section stays, for its explanation and its link to the

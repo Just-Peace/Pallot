@@ -158,12 +158,6 @@ function raceCard(race) {
     ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare funding",
       "aria-label": `Compare funding in ${race.name}`, on: { click: compare } }, icon("bars"), h("span", { class: "btn-word" }, "Compare"))
     : null);
-  // With the stanceLinks switch, a line under the candidates opening the first one's Issues.
-  const stances = part(() => viewPref("stanceLinks") && race.candidates.length
-    ? h("p", { class: "stance-link" }, h("button", { type: "button", class: "link-btn", disabled: page.loadingCards,
-      title: page.loadingCards ? STILL_LOADING : null, "aria-label": `See where the candidates for ${race.name} stand`,
-      on: { click: () => page.showDetails(race, 0, null, "issues") } }, "See where they stand"))
-    : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
   // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in);
@@ -174,13 +168,12 @@ function raceCard(race) {
       on: { click: () => page.openRules({ raceKey: race.key }) } }, icon("filter"), h("span", { class: "btn-word" }, "Pick by rule"))
     : null;
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta(), body: [...notes, money.nodes, body, stances.nodes], tools: [headCompare.nodes, ruleButton],
+    title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: [headCompare.nodes, ruleButton],
   });
   fills.set(race.key, () => {
     card.setMeta(meta());
     money.refill();
     headCompare.refill();
-    stances.refill();
     for (const row of rows) row.fill?.();
     quiet.sync();
   });
