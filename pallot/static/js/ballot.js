@@ -188,8 +188,10 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
   setStatus("Looking up your ballot…", "busy");
   if (keepBallot) showToast("Updating your ballot…");
   submitButton.disabled = true;
-  // Only a lookup that isn't cached takes long enough to see this.
-  const loadingShown = keepBallot ? null : setTimeout(() => showLoading(true, { keepEntry: keepForm }), 300);
+  // Only a lookup that isn't cached takes long enough to see this, unless it asks what matters.
+  const asked = askFocus(controller.signal, !keepBallot && !keepForm);
+  if (asked) showLoading(true);
+  const loadingShown = keepBallot || asked ? null : setTimeout(() => showLoading(true, { keepEntry: keepForm }), 300);
   try {
     const answers = api.lines("/api/ballot", request, { signal: controller.signal });
     const first = (await answers.next()).value;
@@ -197,6 +199,12 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     if (!first?.ballot) throw new Error(first?.error || "The lookup stopped before it finished. Try again.");
     let found = first.ballot;
     let rest = first.done ? null : answers.next(); // the line with the cards
+    rest?.catch(() => {}); // read by addCards, maybe once the voter has answered
+    if (asked) {
+      showLoading(true, { ready: true });
+      await asked();
+      if (controller.signal.aborted) return;
+    }
     if (rest) {
       const quick = await Promise.race([rest, wait(QUICK_CARDS_MS)]);
       if (controller.signal.aborted) return;
@@ -218,7 +226,10 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     clearPicks?.reload();
     const cleared = clearPicks?.clear();
     page.picks = new Picks(found.election_date);
+    const fromAsk = loading.contains(document.activeElement);
     render();
+    if (asked) scrollTo({ top: 0 });
+    if (fromAsk) $(".ballot-head h1").focus({ preventScroll: true });
     setStatus("");
     if (cleared) offerUndoClear(clearPicks, cleared);
     else if (keepBallot) hideToast();
@@ -284,7 +295,8 @@ function mergeCards(ballot, complete) {
 }
 
 // "Finding your ballot", in place of the ballot, or of the entry card and the welcome (``keepEntry``:
-// the card stays). Its second line changes as the wait goes on, so a long first lookup never looks stuck.
+// the card stays). Its second line changes as the wait goes on, so a long first lookup never looks
+// stuck. ``ready``: the ballot is in, waiting on "What matters to you?" under it.
 const LOADING_STEPS = [
   [0, "Finding your districts…"],
   [3000, "Reading your county's ballot…"],
@@ -292,9 +304,12 @@ const LOADING_STEPS = [
 ];
 let stopLoadingSteps = null;
 
-function showLoading(show, { keepEntry = false } = {}) {
+function showLoading(show, { keepEntry = false, ready = false } = {}) {
   stopLoadingSteps?.();
-  stopLoadingSteps = show ? stepText($("#loading-step"), LOADING_STEPS) : null;
+  stopLoadingSteps = show && !ready ? stepText($("#loading-step"), LOADING_STEPS) : null;
+  $("#loading-title").textContent = ready ? "Your ballot is ready." : "Finding your ballot…";
+  if (ready) $("#loading-step").textContent = "Show it when you're ready.";
+  loading.classList.toggle("ready", ready);
   loading.hidden = !show;
   jump.hidden = show || !page.ballot; // the sections are the old ballot's
   if (show) {
@@ -319,7 +334,6 @@ function render() {
   renderMessages();
   renderSections();
   showWelcome(false);
-  askFocus();
   hideBanner();
   renderCards();
   renderRaces();
