@@ -298,6 +298,7 @@ class HttpCache:
         self.path = path
         self._db = sqlite3.connect(str(path), check_same_thread=False, isolation_level=None)
         self._db.execute("PRAGMA journal_mode=WAL")
+        self._db.execute("PRAGMA synchronous=NORMAL")
         self._db.execute("PRAGMA secure_delete=ON")
         self._db.executescript(_SCHEMA)
         self._lock = threading.Lock()

@@ -7,6 +7,7 @@ import datetime as dt
 import sys
 import time
 
+import httpx
 from fastapi.testclient import TestClient
 
 from bundles import registry, store
@@ -14,7 +15,7 @@ from bundles.__main__ import main
 from bundles.entry import Bundle, BundleError
 from bundles.refresh import refresh
 from pallot.config import DAY, PROJECT_DIR, Config, Ttls
-from pallot.http_cache import RequestSpec
+from pallot.http_cache import HttpCache, RequestSpec
 
 from .bundling import NOW, notice
 
@@ -70,6 +71,18 @@ def test_settings_says_what_came_with_any_bundled_source(tmp_path, monkeypatch, 
     store.write_meta(tmp_path / "bundles", "polls", {"last_checked": NOW.isoformat()})
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         assert notice(client, "polls").startswith("Came with 1 answer, checked ")
+
+
+def test_seeding_keeps_only_the_count_in_memory(tmp_path):
+    entry = fake("polls", "daily", [])
+    answers = [{"request": {"method": "GET", "url": f"https://polls.test/{n}", "params": None}, "value": [n]} for n in range(3)]
+    store.write_answers(tmp_path / "polls.json", answers)
+    store.write_meta(tmp_path, "polls", {"last_checked": NOW.isoformat()})
+    cache = HttpCache(tmp_path / "c.sqlite3", httpx.AsyncClient())
+    seeded = registry.seed(cache, Ttls(), tmp_path, bundles=(entry,))
+    assert seeded == {"polls": store.Seeded("polls", NOW.timestamp(), 3)}
+    assert cache.peek(RequestSpec("GET", "https://polls.test/2")).value == [2]
+    cache.close()
 
 
 def test_every_bundle_ships_with_pallot_and_has_a_lifetime():

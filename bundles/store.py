@@ -20,9 +20,18 @@ SCHEMA_VERSION = 1
 class Loaded:
     """One bundle's answers, and when they were last checked (epoch seconds)."""
 
-    source: str  # the bundle's name, as loaded; its HttpCache source once seeded (registry.seed)
+    source: str  # the bundle's name
     checked_at: float | None
     answers: list[dict[str, Any]]  # {"request": RequestSpec's fields, "value": the source's answer}
+
+
+@dataclass(frozen=True)
+class Seeded:
+    """A bundle once its answers are in the cache (registry.seed): what Settings says of it, without the answers."""
+
+    source: str  # its HttpCache source
+    checked_at: float
+    answers: int  # how many came with Pallot
 
 
 def read_json(path: Path, default: Any = None) -> Any:

@@ -5,16 +5,24 @@ a token read from the list's page, sent and never kept."""
 
 from __future__ import annotations
 
+import asyncio
+import dataclasses
 import datetime as dt
 import sqlite3
+import time
 
+import httpx
 import pytest
+import respx
 from fastapi.testclient import TestClient
 
 from pallot.admin import SOURCES
-from pallot.http_cache import Unreadable
+from pallot.config import DAY, Ttls
+from pallot.http_cache import HttpCache, Unreadable
 from pallot.models import Candidate, Race
-from pallot.sources.endorsement_feeds import FEEDS, cair_action, emgage, meta_token, muslims_united
+from pallot.sources.endorsement_feeds import (
+    FEEDS, EndorsementFeed, FeedUnavailable, cair_action, emgage, meta_token, muslims_united,
+)
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, EndorsementList, read_entry
 
 from .conftest import FEED_TOKEN, fixture_bytes, get_ballot, last_use, load, switch
@@ -277,6 +285,40 @@ def test_an_answer_it_cant_read_is_refused(client, upstream):
     assert not cards_from(ballot)
     assert "Couldn't load Muslims United PAC's endorsements (a list with no candidate Pallot can read)." in ballot["warnings"]
     assert row(client)["details"] == []
+
+
+def test_a_copy_kept_is_parsed_once_and_a_new_copy_again(tmp_path):
+    reads: list[object] = []
+
+    def counted(answer):
+        reads.append(answer)
+        return muslims_united(answer)
+
+    async def run() -> None:
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client)
+            feed = EndorsementFeed(dataclasses.replace(FEEDS[0], read=counted), cache, Ttls())
+            answer = load(f"endorsement_feeds/{MUPAC}.json")
+            cache.seed(MUPAC, [(feed.spec, answer)], time.time(), DAY)
+            for _ in range(3):
+                await feed.fetch()
+                assert feed.captured and feed.details()
+            assert len(reads) == 1  # every get_json checks the answer, and the list is built from that parse
+
+            fewer = {"incumbents": answer["incumbents"][:2]}
+            cache.seed(MUPAC, [(feed.spec, fewer)], time.time() + 1, DAY)
+            assert (await feed.fetch()).count() == len(muslims_united(fewer)) and len(reads) == 2
+            with cache._lock:
+                cache._forget_all()
+            assert (await feed.fetch()).count() == len(muslims_united(fewer)) and len(reads) == 3  # read again from the database
+
+            cache.seed(MUPAC, [(feed.spec, {"incumbents": [{"title": "renamed fields"}]})], time.time() + 2, DAY)
+            with pytest.raises(FeedUnavailable, match="a list with no candidate Pallot can read"):
+                await feed.fetch()
+            cache.close()
+
+    with respx.mock():
+        asyncio.run(run())
 
 
 def test_turned_off_it_isnt_asked(make_app, upstream):

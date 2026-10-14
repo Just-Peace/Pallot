@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass, field, replace
 from typing import Any, Callable
 
-from bundles.store import Loaded
+from bundles.store import Seeded
 
 from . import counties, enrich
 from .config import Config
@@ -124,7 +124,7 @@ class Services:
     today: Callable[[], dt.date] = dt.date.today
     last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
     last_uses: dict[str, SourceUse] = field(default_factory=dict)
-    bundles: dict[str, Loaded] = field(default_factory=dict)  # the answers that came with Pallot, by bundle (Settings)
+    bundles: dict[str, Seeded] = field(default_factory=dict)  # what came with Pallot, by bundle (Settings)
 
 
 @dataclass
