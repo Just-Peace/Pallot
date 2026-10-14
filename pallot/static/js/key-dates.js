@@ -1,9 +1,10 @@
 // "When to vote" at the top of the ballot: the election's key dates from the Texas SOS
 // (ballot.key_dates), each with a calendar file, then a row of buttons: check your
-// registration, find where to vote, add every date to a calendar. The mail-ballot deadline
+// registration, find where to vote, add every date to a calendar (on one row on a phone, by their
+// short labels). The mail-ballot deadline
 // sits apart, in a closed "Voting by mail?", since most voters can't vote by mail.
 
-import { extLink, h } from "./dom.js";
+import { extLink, h, phoneWords } from "./dom.js";
 import { formatDate } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES } from "./labels.js";
@@ -92,13 +93,13 @@ export function keyDatesCard(ballot) {
   const upcoming = dates && [dates.register_by, dates.early_voting_start, dates.early_voting_end, dates.election_day]
     .some((iso) => iso && daysUntil(iso) >= 0);
   const action = (link, iconName) =>
-    extLink(link.url, [icon(iconName), link.label], { class: "btn ghost small with-icon", title: link.hint });
+    extLink(link.url, [icon(iconName), phoneWords(link.label, link.short || link.label)], { class: "btn ghost small with-icon", title: link.hint });
   const actions = [
     action(state.registration, "user-check"),
     action(state.countyOffices, "pin"),
     upcoming
       ? h("a", { class: "btn ghost small with-icon", href: calendarHref(dates.election_day), download: "" },
-        icon("calendar"), "Add all to calendar")
+        icon("calendar"), phoneWords("Add all to calendar", "Calendar"))
       : null,
   ];
   const more = state.site ? [" More at ", extLink(state.site.url, state.site.label), "."] : [];

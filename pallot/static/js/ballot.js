@@ -12,14 +12,14 @@ import { api } from "./api.js";
 import {
   applyHidePicked, askFocus, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, syncPollMarks, updateProgress,
 } from "./ballot-nav.js";
-import { electionLine } from "./ballot-shared.js";
+import { electionLine, shortElectionLine } from "./ballot-shared.js";
 import { onBanListChanged } from "./ban-list.js";
 import { initChrome, narrow } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
 import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openDistricts, renderDistricts } from "./districts-card.js";
 import { syncEndorserBar } from "./endorser-bar.js";
-import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, setStatus as showStatus, stepText } from "./dom.js";
+import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, phoneWords, setStatus as showStatus, stepText } from "./dom.js";
 import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, readVoterCard } from "./entry-card.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
@@ -354,7 +354,7 @@ function renderHeader() {
   const state = STATES[page.ballot.location.state];
   const site = state?.registration ? null : state?.site;
   $("#ballot-sub").replaceChildren(
-    electionLine(page.ballot),
+    ...phoneWords(electionLine(page.ballot), shortElectionLine(page.ballot)),
     ...(site ? [" · Official info: ", extLink(site.url, site.label)] : []),
   );
 }

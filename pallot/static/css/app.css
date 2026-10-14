@@ -151,6 +151,8 @@ button, input, select, textarea { font: inherit; }
 
 .icon { width: 1.1em; height: 1.1em; flex: none; }
 .with-icon { display: inline-flex; align-items: center; gap: 6px; }
+/* a label in two lengths (phoneWords in dom.js): the short one on a phone, see the end of the file */
+.phone-words { display: none; }
 
 /* ---- app shell: left pane + ballot ---- */
 
@@ -1471,8 +1473,23 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 }
 
 @media (max-width: 640px) {
-  h1 { font-size: 1.45rem; }
+  /* a phone's type scale: titles, subtitles, race names, body and names, controls (buttons, chips,
+     pills) and fine print, which is never under 12px; text boxes stay 16px, or iOS zooms into them */
+  :root { --fs-title: 20px; --fs-sub: 14px; --fs-race: 15px; --fs-body: 15px; --fs-control: 14px; --fs-fine: 12px; --fs-input: 16px; }
+  body { font-size: var(--fs-body); }
+  h1 { font-size: var(--fs-title); }
+  input[type="text"], input[type="number"], select, textarea { font-size: var(--fs-input); }
+  .lede { font-size: var(--fs-sub); }
+  .ballot-head p { font-size: var(--fs-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .phone-words { display: inline; }
+  .wide-words { display: none; }
+  .btn, .btn.small, .icon-btn, .link-btn, .topbar-btn, .focus-chip, .rule-chip, .map-pick, .seg-option, .section-chips a,
+  .badge, .pill { font-size: var(--fs-control); }
+  .party, .line-title, .likely-flag, .badge.share-tag, .suggestions-credit, .line-title .help-link { font-size: var(--fs-fine); }
   .panel { padding: 16px; }
+  /* When to vote's buttons on one row, by their short labels */
+  .key-actions { flex-wrap: nowrap; gap: 6px; }
+  .key-actions .btn { min-width: 0; gap: 4px; padding-inline: 6px; }
   .entry .button-row .btn { flex: 1 1 auto; }
   .confirm-dialog .button-row { flex-direction: column; }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
@@ -1499,34 +1516,49 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
   .race-status { max-width: none; }
   .race.collapsed .race-name { white-space: normal; } /* the pick has a line of its own, so the name wraps rather than being cut */
-  .race-body { padding: 10px 10px 12px; }
+  .race-name { font-size: var(--fs-race); }
+  .race-body { padding: 8px 6px 10px; }
   .race-money { padding: 8px 10px; }
-  .race-money .breakdown-title { font-size: 0.75rem; letter-spacing: 0.04em; }
-  .cand { padding: 8px 10px; }
-  /* a candidate: the radio, the photo and the name on the first line; under them, at the card's
-     edge like the lines below, Profile, with Note, Ban and Search at the right, as wider */
-  .cand-grid { column-gap: 8px; row-gap: 6px; grid-template-columns: 20px auto minmax(0, 1fr) auto;
-    grid-template-areas: "pick photo name name" "profile profile profile actions"; }
-  .cand-grid .avatar { width: 32px; height: 32px; font-size: 0.72rem; }
-  .cand-grid > .cand-actions { justify-content: flex-end; gap: 5px; }
-  /* the buttons, pills and chips a size down, each still at least 22px tall */
-  .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: 0.78rem; }
-  .cand-profile .profile-btn { padding: 4px 11px; font-size: 0.78rem; line-height: inherit; } /* as tall as Note and Ban beside it */
-  /* outside Detailed, a lighter row: Note, Ban and Search behind "…" at the right of Profile,
-     opening on a line of their own */
-  :root:not([data-view-mode="detailed"]) .cand-grid { grid-template-areas: "pick photo name name" "profile profile profile more"; }
-  :root:not([data-view-mode="detailed"]) .cand.actions-open .cand-grid {
-    grid-template-areas: "pick photo name name" "profile profile profile more" "actions actions actions actions"; }
-  :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { grid-area: more; justify-self: end; display: inline-flex;
-    align-items: center; justify-content: center; }
+  .race-money .breakdown-title { font-size: var(--fs-fine); letter-spacing: 0.04em; }
+  /* the candidates, one level of frames less: rows parted by a line instead of each its own card */
+  .cands { gap: 0; }
+  .cand { padding: 10px 2px 10px 10px; border-color: transparent; border-radius: 0; background: none; }
+  .cand + .cand, .writeins-line + .cand { border-top-color: var(--line); }
+  .cand.picked { background: var(--panel-2); }
+  .cand.picked:not(.bar-avoid) { border-color: transparent; }
+  /* a candidate: the radio, the photo, the name and party on the first line; Profile, the folded
+     Endorsements and Funding lines' buttons, and "…" (or, in Detailed, Note, Ban and Search) on the
+     second; under them, the full width, what those open. The row's parts join one wrapping line
+     (display: contents), placed by order; anything else in the row (a tip, the note) comes last. */
+  .cand:not(.write-in) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+  .cand:not(.write-in) :is(.cand-grid, .cand-lines) { display: contents; }
+  .cand:not(.write-in) > * { flex: 1 1 100%; order: 5; min-width: 0; }
+  .cand-grid > .pick-input, .cand-grid .avatar { flex: none; }
+  .cand-grid .cand-text { flex: 1 1 calc(100% - 80px); }
+  .cand > .bar-why { order: 0; margin: 0; }
+  .cand-grid > .cand-profile, .cand .lines-toggle, .cand-grid > .row-more { flex: none; order: 1; }
+  .cand-grid > .cand-actions { flex: 1 1 100%; order: 2; justify-content: flex-end; gap: 5px; }
+  .cand > .tip-row { order: 2; }
+  .cand .cand-lines-body, .cand .lines-toggle + .cand-lines-body { flex: 1 1 100%; order: 3; margin: 0; }
+  .cand > .note { order: 4; margin: 0; }
+  .cand .lines-toggle { font-size: var(--fs-control); }
+  .cand-grid .avatar { width: 32px; height: 32px; font-size: var(--fs-fine); }
+  .cand-name { font-size: var(--fs-body); }
+  .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: var(--fs-control); }
+  .cand-profile .profile-btn { padding: 4px 11px; font-size: var(--fs-control); line-height: inherit; }
+  /* outside Detailed, Note, Ban and Search wait behind "…", at the end of the second line, and open
+     on a line of their own; in Detailed they take its place */
+  :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { display: inline-flex; align-items: center;
+    justify-content: center; margin-left: auto; }
   :root:not([data-view-mode="detailed"]) .cand:not(.actions-open) .cand-grid > .cand-actions { display: none; }
-  .writeins-line { padding: 2px 10px; }
-  .party { padding: 1px 7px; font-size: 0.66rem; }
-  .pill { padding: 1px 7px; font-size: 0.72rem; }
+  :root[data-view-mode="detailed"] .cand-grid > .cand-actions { flex: none; order: 1; margin-left: auto; }
+  .writeins-line { padding: 4px 2px 4px 10px; }
+  .party { padding: 1px 7px; }
+  .pill { padding: 1px 7px; }
   .badges { gap: 5px; }
-  .badge { padding: 2px 7px; font-size: 0.74rem; }
-  .line-title { font-size: 0.76rem; }
-  .badges, .note, .cand-lines, .bar-why { margin-left: 0; }
+  .badge { padding: 2px 7px; }
+  .badges, .note, .bar-why, .cand > .tip-row .tip { margin-left: 0; }
+  .cand > .tip-row .tip { max-width: 100%; }
   .badge-line { flex-direction: column; }
   .facts { grid-template-columns: 1fr; gap: 0 0; }
   .facts dd { margin-bottom: 8px; }
