@@ -335,7 +335,7 @@ Pallot also comes with some sources' answers (`bundles/data/`). For now that's:
 
 At startup, Pallot puts them in its cache, dated when they were last checked, unless the cache has a newer copy. So a lookup asks a source only for what the bundle doesn't have, or once the bundle's answer is older than its bundle lifetime: the FEC's 7 days (`PALLOT_TTL_FEC_BUNDLE`); Texas SOS's elections 3 days, tables 30 days, candidate lists and ballot orders 2 days (`PALLOT_TTL_SOS_ELECTIONS_BUNDLE`, `PALLOT_TTL_SOS_REFERENCE_BUNDLE`, `PALLOT_TTL_SOS_CANDIDATES_BUNDLE`, `PALLOT_TTL_SOS_BALLOT_ORDER_BUNDLE`); the seat holders' 14 days (`PALLOT_TTL_OFFICEHOLDERS_BUNDLE`); Wikidata's 14 days (`PALLOT_TTL_WIKIDATA_BUNDLE`); the district outlines 37 days (`PALLOT_TTL_TIGERWEB_BUNDLE`); the counties' records 14 days (`PALLOT_TTL_COUNTY_PRECINCTS_BUNDLE`); the polls 2 days (`PALLOT_TTL_POLLS_BUNDLE`); the endorsement lists 2 days (`PALLOT_TTL_ENDORSEMENT_FEEDS_BUNDLE`). After that, the live answer is kept for the source's usual lifetime. This matters most on a host whose `data/` starts empty at each restart. The source's row in Settings says how many answers came with Pallot and when they were checked.
 - `uv run pallot-bundle refresh` rebuilds every bundle in the repo; `--only fec` (or `sos`, `sos_ballot_order`, `officeholders`, `wikidata`, `tigerweb`, `county_precincts`, `polls`, `mupac`, `cair`, `emgage`) limits it to the FEC's. `--due` skips a bundle checked more recently than it's worth (daily or weekly; the FEC's, Texas SOS's, the polls and the endorsement lists are daily, the seat holders', Wikidata's, the outlines and the counties' weekly), `--dry-run` says what would change, and `--force` writes even if nothing changed.
-- Until 15 November 2026, a GitHub Action refreshes every snapshot in the repo each day (`pallot-bundle refresh --due`, then TrackAIPAC, Vote for Peace and TEC) and commits the changes to the `chore/refresh-caches` branch, which the maintainer merges into `develop`, so a fresh deploy comes with answers only a few days old (see DEVELOPMENT.md's "The daily refresh").
+- Until 15 November 2026, a GitHub Action refreshes every snapshot in the repo each day (`pallot-bundle refresh --due`, then TrackAIPAC, Vote for Peace and TEC), updates [What the snapshots hold](#what-the-snapshots-hold), and commits the changes to the `chore/refresh-caches` branch, which the maintainer merges into `develop`, so a fresh deploy comes with answers only a few days old (see DEVELOPMENT.md's "The daily refresh").
 - The FEC's takes each upcoming election's federal races and candidates from Texas SOS, then asks the FEC what a lookup would, with your keys (`PALLOT_FEC_API_KEY` to `5`, required) at the gentle pace `pallot-cache` uses: about 470 requests, 5 minutes with 3 keys.
 - Texas SOS's statewide data makes the 9 or so requests a lookup starts with, a few seconds.
 - Texas SOS's ballot orders ask for all 254 counties' in each upcoming election, one request a second (4 to 5 minutes per election), and stop at the first refusal. A county Texas SOS answers with a server error is left out, and asked live; past 10 of them, the refresh fails.
@@ -350,6 +350,29 @@ At startup, Pallot puts them in its cache, dated when they were last checked, un
 
 Pallot also comes with the Texas Legislative Council's State Board of Education map (plan E2106, about 1.9 MB, `pallot/data/plane2106_kml.zip`). At startup, Pallot copies it into `data/` when no map is kept, so lookups never download it. The plan stays until the next redistricting, so the map has no lifetime. Settings says whether the map kept came with Pallot or was downloaded, and when.
 - `pallot-cache hard-refresh --only geocoding` downloads it again from the portal, in case a newer plan is published there. A rebuild puts back the map that came with Pallot before downloading it again.
+
+### What the snapshots hold
+
+Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --readme README.md`), so you can see whether a source is still adding candidates. A change in brackets is since the run before. **Data changed** is when the source's answers last changed, and **Checked** when it was last asked; a check later than the source's cadence (daily or weekly) is marked overdue, which usually means its refresh failed. The same table is on each run's summary page in Actions.
+
+<!-- source-stats:start -->
+| Source | Candidates | Also | Data changed | Checked |
+|---|---|---|---|---|
+| FEC | **93** | 39 races | 2026-10-14 | 2026-10-14 |
+| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-14 | 2026-10-14 |
+| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-11 | 2026-10-12 ⚠ overdue (daily) |
+| Seat holders | — | 39 Texas members of Congress · 178 Texas legislators | 2026-10-08 | 2026-10-08 |
+| Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-13 | 2026-10-13 |
+| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-08 |
+| County precinct records | — | 7 counties | 2026-10-08 | 2026-10-08 |
+| FiftyPlusOne polls | — | 57 Texas Senate polls (+4) · 16 Texas House polls (+1) · 44 Texas Governor polls (+4) | 2026-10-14 | 2026-10-14 |
+| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-14 |
+| CAIR Action | **1,020** (+107) · Texas: 101 (+24) | — | 2026-10-14 | 2026-10-14 |
+| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-14 |
+| TrackAIPAC | **626** (+1) · Texas: 56 · House: 509 (+1) · Other: 1 · Senate: 116 | — | 2026-10-14 | 2026-10-14 |
+| Vote for Peace | **919** (+69) · Texas: 164 · State legislature: 336 (+34) · Federal: 240 (+9) · County: 160 (-3) · Local: 109 (+23) · Statewide: 58 (+7) · Judicial: 9 · Special district: 4 · State: 3 (-1) | — | 2026-10-14 | 2026-10-14 |
+| Texas Ethics Commission | **2,153** | 802,982 contributions (+7) · 8,284 reports (+3) | 2026-10-14 | 2026-10-14 |
+<!-- source-stats:end -->
 
 ## Configuration
 

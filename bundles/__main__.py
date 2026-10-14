@@ -1,14 +1,15 @@
-"""CLI: pallot-bundle refresh [--only BUNDLE …] [--due] [--force] [--dry-run] [--data-dir DIR]"""
+"""CLI: pallot-bundle refresh [--only BUNDLE …] [--due] [--force] [--dry-run] [--data-dir DIR]
+     pallot-bundle stats [--since REF] [--readme PATH]"""
 
 from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 
 def main(argv: list[str] | None = None) -> int:
     from .registry import BUNDLES
-    from .refresh import refresh
 
     parser = argparse.ArgumentParser(prog="pallot-bundle")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -19,7 +20,21 @@ def main(argv: list[str] | None = None) -> int:
     cmd.add_argument("--force", action="store_true", help="write the answers even if nothing changed")
     cmd.add_argument("--dry-run", action="store_true", help="report what would change, write nothing")
     cmd.add_argument("--data-dir", metavar="DIR", help="bundle directory (default: the package's data)")
+    st = sub.add_parser("stats", help="print each bundled snapshot's counts as a Markdown table")
+    st.add_argument("--since", metavar="REF", help="show each figure's change since this git ref (e.g. HEAD)")
+    st.add_argument("--readme", metavar="PATH", type=Path, help="also write the table into this file's source-stats section")
     args = parser.parse_args(argv)
+
+    if args.command == "stats":
+        from .stats import stats, write_readme
+
+        lines = stats(since=args.since)
+        if args.readme:
+            write_readme(args.readme, lines)
+        print("\n".join(lines))
+        return 0
+
+    from .refresh import refresh
 
     outcomes = refresh(args.only or (), due=args.due, force=args.force, dry_run=args.dry_run, data_dir=args.data_dir)
     for outcome in outcomes:
