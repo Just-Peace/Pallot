@@ -275,10 +275,12 @@ def create_app(
     async def ballot(body: BallotRequest, request: Request) -> Any:
         """The ballot. A page that accepts NDJSON gets it in two lines: without cards as soon as the
         races are known (``done: false``), then whole (``done: true``), or ``{"error"}`` instead."""
+        on = chosen(request)
         try:
-            builder = await start_ballot(services(request), body, chosen(request))
+            builder = await start_ballot(services(request), body, on)
         except BallotError as exc:
             raise HTTPException(exc.status, exc.message) from exc
+        builder.ballot.sources_off = admin(request).rule_sources_off(on)
         if NDJSON not in request.headers.get("accept", ""):
             return await builder.finish()
         first = _line(builder.ballot, done=False)  # before finish() adds the cards to the same races

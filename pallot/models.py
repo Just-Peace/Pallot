@@ -327,6 +327,11 @@ class LeftOut(BaseModel):
     shown: bool  # asked for, so they're in Ballot.maybe
 
 
+class SourceRef(BaseModel):
+    id: str
+    label: str
+
+
 class Ballot(BaseModel):
     election_date: str | None
     elections: list[ElectionRef]
@@ -340,6 +345,7 @@ class Ballot(BaseModel):
     warnings: list[str]
     meta: Meta
     left_out: LeftOut | None = None
+    sources_off: list[SourceRef] = []  # the sources Pick by rule's conditions use that this request has off
 
 
 class PrecinctInput(BaseModel):

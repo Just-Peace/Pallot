@@ -4,7 +4,6 @@
 // and Vote for Peace rows are Help me pick's choices, saved with the rule. Opened from Help me pick's
 // More rules… for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
 
-import { api } from "./api.js";
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
 import { COUNT, plural } from "./format.js";
@@ -18,12 +17,6 @@ import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, renderRaces }
 const dialog = $("#rules");
-
-// The sources a rule's conditions come from, besides the endorsements group's (TrackAIPAC, Vote for
-// Peace and the lists): the money and the polls.
-const SCORECARDS = "scorecards";
-const RULE_SOURCES = ["fec", "tec", "polls"];
-let sourcesOff = Promise.resolve([]); // those the voter has turned off, from /api/sources, asked for as the dialog opens
 
 export function initRules(context) {
   page = context;
@@ -173,9 +166,6 @@ const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, w
 export function openRules({ raceKey = null } = {}) {
   if (!page.ballot || page.loadingCards) return; // its conditions are about the cards
   const options = scopes(page.ballot, raceKey);
-  sourcesOff = api.get("/api/sources")
-    .then(({ sources }) => sources.filter((s) => s.toggleable && !s.enabled && (s.group === SCORECARDS || RULE_SOURCES.includes(s.id))))
-    .catch(() => []);
   draw(loadRule(), options, options[0]);
   if (!dialog.open) dialog.showModal();
   $("#rule-scope").focus();
@@ -365,11 +355,8 @@ function draw(rule, options, startScope) {
     h("p", { class: "rule-hint" }, "Anyone who meets any one of these, even if you picked them yourself."),
     skipRows.length ? skipRows : h("p", { class: "muted" }, "Your ballot has nothing for these to go on."));
 
-  const offNote = h("p", { class: "fine", hidden: true });
-  sourcesOff.then((sources) => {
-    offNote.replaceChildren(...offLine(sources));
-    offNote.hidden = !sources.length;
-  });
+  const sourcesOff = page.ballot.sources_off || [];
+  const offNote = h("p", { class: "fine", hidden: !sourcesOff.length }, offLine(sourcesOff));
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
     h("h2", { id: "rules-title" }, "Pick by rule"),

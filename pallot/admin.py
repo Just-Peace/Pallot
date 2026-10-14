@@ -8,7 +8,7 @@ import datetime as dt
 from dataclasses import dataclass
 
 from .ballot import Services
-from .models import CacheStatus, SourceGroupInfo, SourcesOverview, SourceStatus, Tone
+from .models import CacheStatus, SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
     KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
@@ -64,6 +64,7 @@ class SourceInfo:
     refreshable: bool = True  # False: never refreshed in bulk, only fetched as it's viewed (OpenStreetMap's tiles)
     kept: str | None = None  # the Services field of a source kept in files (KeptSource), asked for its row
     frozen: bool = False  # comes with Pallot as captured and is never fetched: nothing to refresh or clear
+    rules: bool = False  # Pick by rule's conditions use it, so its dialog names it while it's off
 
 
 SOURCES = (
@@ -159,6 +160,7 @@ SOURCES = (
         group=SCORECARDS,
         bundled=True,
         kept="trackaipac",
+        rules=True,
     ),
     SourceInfo(
         voteforpeace.SOURCE,
@@ -169,11 +171,13 @@ SOURCES = (
         group=SCORECARDS,
         bundled=True,
         kept="voteforpeace",
+        rules=True,
     ),
     SourceInfo(
         fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
         group=OFFICIAL,
         pause=Pause("every key reached the FEC's rate limit or was refused", "what it already sent still shows"),
+        rules=True,
     ),
     SourceInfo(
         tec.SOURCE,
@@ -184,11 +188,13 @@ SOURCES = (
         group=OFFICIAL,
         bundled=True,
         kept="tec",
+        rules=True,
     ),
     SourceInfo(
         polls.SOURCE, "Polls (FiftyPlusOne)", polls.DESCRIPTION, True, (polls.SOURCE,),
         group=POLLS,
         pause=Pause("FiftyPlusOne refused a request", "polls it already sent still show"),
+        rules=True,
     ),
 )
 
@@ -199,9 +205,9 @@ def list_info(found: EndorsementSource) -> SourceInfo:
     if found.live:
         return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (found.source,),
                           SCORECARDS, pause=Pause(f"{found.organization}'s website refused a request",
-                                      "the list already fetched still shows"))
+                                      "the list already fetched still shows"), rules=True)
     return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (), SCORECARDS,
-                      refreshable=False, frozen=True)
+                      refreshable=False, frozen=True, rules=True)
 
 
 def all_sources(lists: list[EndorsementSource]) -> tuple[SourceInfo, ...]:
@@ -231,6 +237,11 @@ class Admin:
             total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._kept_sources.values()),
             last_lookup=self.svc.last_lookup,
         )
+
+    def rule_sources_off(self, sources: Sources) -> list[SourceRef]:
+        """The sources Pick by rule's conditions use that ``sources`` has off, for its dialog's line."""
+        return [SourceRef(id=info.id, label=info.label) for info in self.sources
+                if info.rules and info.toggleable and not sources.enabled(info.id)]
 
     def _status(self, info: SourceInfo, sources: Sources) -> SourceStatus:
         stats = [self.svc.cache.stats(tag) for tag in info.cache_tags]
