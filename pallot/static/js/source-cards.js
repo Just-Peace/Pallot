@@ -6,7 +6,7 @@
 // card gets its own tab, and a money or poll box folds, with its source in its corner. The row's endorsement chips link to their
 // source, or open a menu that also offers Help me pick; its Funding chips open Details' money tab.
 
-import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
+import { extLink, h, linkedText, phoneWords, safeUrl, slug } from "./dom.js";
 import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
 import { fundingHelp, helpLink, toggleNote } from "./help.js";
 import { icon } from "./icons.js";
@@ -74,10 +74,11 @@ const chipsOf = (items, chip) => {
 
 // The view switch (view.js) that shows a race box of each kind, and the one that opens it rather
 // than folding it (openBoxes, or a focus), as they do the Funding line; other boxes always show,
-// open. Each box's short heading.
+// open. Each box's short heading, and a shorter one on a phone, where the head stays on one line.
 const FOLDS = { money: "showFunding", polls: "showPolls" };
 const OPENS = { money: "openMoney", polls: "openPolls" };
 const SHORT_TITLES = { money: "Money raised", polls: "Polls" };
+const PHONE_TITLES = { money: "Money", polls: "Polls" };
 
 // The "?" on a tab, badge or button whose source only likely matched the candidate.
 function likelyFlag(title = "Likely match") {
@@ -377,7 +378,7 @@ function foldBox(race, card, setting, action, body) {
   const toggle = h("button", {
     type: "button", class: "box-toggle", "aria-controls": id, "aria-label": [title, asOf].filter(Boolean).join(" · "),
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
-  }, h("span", { class: "chevron", "aria-hidden": "true" }), short);
+  }, h("span", { class: "chevron", "aria-hidden": "true" }), phoneWords(short, PHONE_TITLES[card.kind]));
   const foot = [period, asOf].filter(Boolean).join(" · ");
   const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
     h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle),
@@ -436,8 +437,8 @@ export function raceMoney(race, onCompare = null) {
   const [first] = comparable(race);
   let button = null;
   if (onCompare && first) {
-    button = h("button", { type: "button", class: "icon-btn compare-btn with-icon", on: { click: onCompare } },
-      icon("bars"), "Compare funding");
+    button = h("button", { type: "button", class: "icon-btn compare-btn with-icon", "aria-label": `Compare funding in ${race.name}`,
+      on: { click: onCompare } }, icon("bars"), phoneWords("Compare funding", "Compare"));
   }
   return race.cards.map((card) => {
     const people = {

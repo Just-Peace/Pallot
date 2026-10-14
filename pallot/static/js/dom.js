@@ -69,6 +69,12 @@ export function linkedText(text) {
   return parts;
 }
 
+// A label in two lengths, the stylesheet showing ``long`` wider than a phone and ``short`` on one,
+// where the long one would wrap. Only the one shown is read out.
+export function phoneWords(long, short) {
+  return [h("span", { class: "wide-words" }, long), h("span", { class: "phone-words" }, short)];
+}
+
 export function initials(name) {
   const words = name.split(/\s+/).filter((w) => /^[A-Za-z]/.test(w));
   return ((words[0]?.[0] || "") + (words.length > 1 ? words[words.length - 1][0] : "")).toUpperCase();
