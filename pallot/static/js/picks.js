@@ -1,7 +1,7 @@
 // The voter's picks and notes. They stay in this browser (localStorage) and are never
 // sent to the server. If storage is blocked they still work until the page is closed.
 
-import { PICKS, PICK_RULE, SETTINGS_CHANGED, readJson, removeRaw, restoreRaw, storedKeys, writeJson } from "./storage.js";
+import { ENDORSER_BAR, PICKS, PICK_RULE, SETTINGS_CHANGED, readJson, removeRaw, restoreRaw, storedKeys, writeJson } from "./storage.js";
 
 export const WRITE_IN = "write-in"; // the pick key for a name the voter types in
 
@@ -155,10 +155,10 @@ export class Picks {
 }
 
 // "Clear my picks & notes" in Settings: every election's picks, notes, write-ins and collapsed
-// races, and the pick rule. The remembered address stays. Returns what was removed, for Undo.
+// races, and the pick rule with Help me pick's choices. The remembered address stays. Returns what was removed, for Undo.
 export function clearPicksAndNotes() {
   unsaved = {};
-  return removeRaw([PICKS, PICK_RULE]);
+  return removeRaw([PICKS, PICK_RULE, ENDORSER_BAR]);
 }
 
 // "Clear browser data" in Settings: everything Pallot keeps in this browser, the remembered

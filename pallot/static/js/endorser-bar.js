@@ -7,15 +7,16 @@
 // anything is chosen, every race rings who matches, dims the others in a race with a match and
 // outlines the ones to avoid, each row saying why in words; a race's head says "2 match" or "No
 // match", and the section chips how many races match. More rules… opens Pick by rule. The choices
-// stay in this browser (loadBar), and another tab follows them.
+// are Pick by rule's too, kept in its saved rule in this browser (loadBar), and another tab follows them.
 
 import { $, h } from "./dom.js";
 import { listed, plural } from "./format.js";
 import { helpLink } from "./help.js";
 import { icon } from "./icons.js";
 import { moreAction } from "./more-sheet.js";
+import { syncRuleBanner } from "./pick-rule-dialog.js";
 import { allRaces, barMarks, barOptions, endorserPlan, loadBar, saveBar } from "./pick-rules.js";
-import { ENDORSER_BAR } from "./storage.js";
+import { PICK_RULE } from "./storage.js";
 import { showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -37,9 +38,17 @@ function current(options) {
   };
 }
 
+// Saves the choices into the rule, then redraws the controls and the marks; the rule's banner goes,
+// as the rule changed.
+function save(bar) {
+  saveBar(bar);
+  syncRuleBanner();
+  syncEndorserBar();
+}
+
 // Saves ``bar``, the choices with an endorser chosen (``added``) or dropped, and changes the picks as
 // endorserPlan() says, with Undo for both. With "Collapse a race when I pick" on, a race it fills
-// folds, as Pick by rule's Apply does; Undo opens it again. ``words(result)``: the toast.
+// folds, as Pick by rule's does; Undo opens it again. ``words(result)``: the toast.
 function changeEndorsers(bar, { added = null, words }) {
   const before = loadBar();
   const result = endorserPlan(page.ballot ? allRaces(page.ballot) : [], bar, page.picks, added);
@@ -53,12 +62,12 @@ function changeEndorsers(bar, { added = null, words }) {
       Object.fromEntries(rows.map((row) => [row.race.key, row.auto])))
     : null;
   if (folded.length) page.picks.setCollapsed(folded, true);
-  saveBar(bar);
+  save(bar);
   if (changed) page.renderRaces();
   const undo = () => {
     if (changed) page.picks.setMany(changed.picks, changed.auto);
     if (folded.length) page.picks.setCollapsed(folded, false);
-    saveBar(before);
+    save(before);
     if (changed) page.renderRaces();
   };
   showToast(words(result), { label: "Undo", run: undo });
@@ -80,7 +89,7 @@ function choose(kind, id, on, label) {
   const saved = loadBar();
   const others = saved[kind].filter((x) => x !== id);
   const bar = { ...saved, [kind]: on ? [...others, id] : others };
-  if (kind === "avoid") saveBar(bar);
+  if (kind === "avoid") save(bar);
   else changeEndorsers(bar, { added: on ? id : null, words: (result) => (on ? pickedWords(label, result) : droppedWords(label, result)) });
 }
 
@@ -129,7 +138,7 @@ function drawControls(root, choices, options, summary, inSheet) {
         }, { title: `${e.label} endorses ${plural(e.count, "candidate")} on this ballot` })))
       : h("p", { class: "muted" }, page.loadingCards ? "Loading endorsements…" : "No endorser or scorecard endorses anyone on this ballot."),
     options.endorsers.length
-      ? h("p", { class: "fine" }, `Choosing one picks who it endorses, in each race where they don't outnumber the seats and you haven't picked.${allyNote}`)
+      ? h("p", { class: "fine" }, `Picks who they endorse. Your own picks stay.${allyNote}`)
       : null);
   const avoids = options.avoids.length
     ? group("Avoid", `${id}-avoid`,
@@ -140,10 +149,9 @@ function drawControls(root, choices, options, summary, inSheet) {
     : null;
   const only = highlighting
     ? h("label", { class: "check" }, h("input", { type: "checkbox", "data-bar-key": "only", checked: choices.onlyMatches,
-      on: { change: (event) => saveBar({ ...loadBar(), onlyMatches: event.target.checked }) } }), " Only races with a match")
+      on: { change: (event) => save({ ...loadBar(), onlyMatches: event.target.checked }) } }), " Only races with a match")
     : null;
-  const status = h("div", { class: "menu-group" }, h("p", { class: "help-summary", "aria-live": "polite" }, summary), only,
-    h("p", { class: "fine" }, "Kept in this browser."));
+  const status = h("div", { class: "menu-group" }, h("p", { class: "help-summary", "aria-live": "polite" }, summary), only);
   const rulesTitle = page.loadingCards ? "Waits for money, polls and endorsements" : "Pick by party, endorsements, money and polls";
   const openRules = () => {
     menu.open = false;
@@ -249,8 +257,7 @@ export function syncEndorserBar() {
 export function initEndorserBar(context, { sectionMarks }) {
   page = context;
   onSectionMarks = sectionMarks;
-  document.addEventListener("pallot:bar", syncEndorserBar);
   addEventListener("storage", (event) => {
-    if (event.key === null || event.key === ENDORSER_BAR) syncEndorserBar();
+    if (event.key === null || event.key === PICK_RULE) syncEndorserBar();
   });
 }

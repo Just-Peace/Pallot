@@ -822,7 +822,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 .ballot-tools .wait-note { flex: 1 1 100%; margin: 0; }
 .sheet-section .wait-note { margin: 6px 0 0; }
 .sheet-section .focus-chips { margin: 10px 0 4px; }
-/* after Pick by rule's Apply: the rule in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
+/* after Pick by rule picks: the rule in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
 .rule-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; border-left-color: var(--accent); }
 .rule-banner > p { margin: 0; flex: 1 1 20rem; }
 .rule-banner > .rule-banner-actions { flex: none; display: flex; gap: 14px; }
@@ -1320,7 +1320,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .rule-tally strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
 .rule-tally.tone-good strong { color: var(--good); }
 .rule-tally.tone-warn strong { color: var(--warn); }
-.rule-preview .rule-row { margin: 10px 0 0; padding-top: 4px; border-top: 1px solid var(--line); font-size: 0.9rem; }
+.rule-preview > .fine { margin: 8px 0 0; }
 .rule-details > summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; font-weight: 600; margin-top: 4px; }
 .rule-details .rule-count { margin-left: 2px; }
 .rule-races { list-style: none; margin: 6px 0 0; padding: 0; font-size: 0.85rem; }
@@ -1362,11 +1362,11 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 .rule-chip[aria-pressed="true"]::before { content: "✓"; }
 .rule-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--swatch); }
 .rule-count { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
-.rule-combine { margin: 8px 0 0; }
 .rule-form > .fine { margin: 12px 0 0; }
 .rule-how { margin: 12px 0 0; font-size: 0.85rem; color: var(--muted); }
 .rule-how > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
-.rule-how p { margin: 6px 0 0; }
+.rule-how ul { margin: 6px 0 0; padding-left: 18px; }
+.rule-how li + li { margin-top: 4px; }
 @media (max-width: 799px) {
   .rule-layout { display: block; overflow-y: auto; }
   .rule-form, .rule-preview { overflow: visible; }
