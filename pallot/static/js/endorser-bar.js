@@ -1,5 +1,4 @@
-// Help me pick, a drop-down in the toolbar beside View, with the same controls in More's Your picks
-// on a phone: the voter chooses the endorsers and scorecards they trust, each by its source's own
+// Help me pick, a drop-down in the toolbar beside View, with the same controls in More on a phone: the voter chooses the endorsers and scorecards they trust, each by its source's own
 // name, and the amber marks to avoid. Choosing an endorser picks at once, with Undo, in each race it
 // endorses someone in: who any chosen endorser endorses (barMarks in pick-rules.js), unless they
 // outnumber the seats or the voter picked there by hand. Dropping one takes back the picks the
@@ -26,7 +25,7 @@ const menu = $("#help-menu");
 const menuLabel = $("#help-summary");
 const panel = $("#help-panel");
 const sheet = $("#more-sheet");
-export const moreHelp = h("div", { class: "sheet-help" }); // More's copy, in Your picks (ballot-nav.js)
+export const moreHelp = h("div", { class: "sheet-help" }); // More's copy, in its own section (ballot-nav.js)
 
 // The saved choices among this ballot's chips; one from another ballot stays saved, unused here.
 function current(options) {
@@ -167,7 +166,6 @@ function drawControls(root, choices, options, summary, inSheet) {
       clearChoices();
     } } }, inSheet ? "Clear choices" : "Clear");
   root.replaceChildren(...[
-    inSheet ? h("p", { class: "sheet-sub" }, "Help me pick", helpLink("endorsements", "Help me pick")) : null,
     trust,
     avoids,
     status,
