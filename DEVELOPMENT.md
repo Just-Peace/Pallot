@@ -6,12 +6,14 @@ This is not a walkthrough of the code. Don't describe modules, functions, fields
 
 Pallot is one Python process (FastAPI) serving a plain HTML/JS page from `pallot/static/`. There's no frontend build step and no database server: everything it keeps is files in `data/` (the cache is SQLite, `data/cache.sqlite3`).
 
+The pages load their scripts, styles and icon from `/s/<stamp>/`, a hash of the static files taken at startup, and the browser keeps those a year without asking. Every import is relative, so the whole module graph follows the stamp. Keep it that way: a URL starting with `/` in a module or stylesheet skips the stamp (use `new URL("../x", import.meta.url)`). The pages and the files' own addresses are checked before each use. A browser that kept a static file sees an edit to it only after the server restarts; `--reload` restarts on those too.
+
 ## Commands
 
 `uv sync` installs Pallot with the dev tools (pytest, pytest-xdist, respx, ruff), pinned by `uv.lock`.
 
 ```bash
-uv run pallot --reload                    # restart on code changes
+uv run pallot --reload                    # restart on code and static file changes
 uv run pytest                             # offline: recorded responses in tests/fixtures, plus trackaipac_cache's, voteforpeace_cache's and tec_cache's own tests
 uv run pytest -n 0 --pdb                  # the same in one process, to use the debugger or see print()
 uv run pytest -m live                     # smoke tests against the real services (the FEC one needs an FEC key)

@@ -11,7 +11,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from pallot import enrich
-from pallot.api import host_allowed
+from pallot.api import STATIC_DIR, host_allowed, stamped_page, static_stamp
 from pallot.config import DAY
 from pallot.http_cache import HttpCache, RequestSpec
 from pallot.settings import HEADER
@@ -215,12 +215,62 @@ def test_static_pages(client, path):
 
 
 def test_static_files_are_kept_but_checked_before_each_use(client):
-    """After an update, no page mixes modules from the browser's cache with new ones."""
+    """At their own addresses (a page or bookmark from before an update), and the pages themselves."""
+    for path in ("/js/version.js", "/faq.html"):
+        assert client.get(path).headers["cache-control"] == "no-cache", path
     first = client.get("/js/dom.js")
-    assert first.headers["cache-control"] == "no-cache" and first.headers["etag"]
     again = client.get("/js/dom.js", headers={"If-None-Match": first.headers["etag"]})
     assert again.status_code == 304 and again.headers["cache-control"] == "no-cache"
-    assert client.get("/").headers["cache-control"] == "no-cache"
+    page = client.get("/")
+    again = client.get("/", headers={"If-None-Match": page.headers["etag"]})
+    assert again.status_code == 304 and again.headers["cache-control"] == "no-cache"
+
+
+def test_the_pages_load_their_files_from_a_stamped_prefix_kept_a_year(client):
+    """A repeat page view asks for nothing but the page; an update changes the prefix, so no page mixes
+    modules from the browser's cache with new ones."""
+    prefix = client.app.state.static_prefix
+    assert re.fullmatch(r"/s/[0-9a-f]{16}/", prefix)
+    for path in ("js/dom.js", "js/version.js", "css/app.css", "favicon.svg", "vendor/leaflet/leaflet.css"):
+        response = client.get(prefix + path)
+        assert response.status_code == 200 and response.headers["cache-control"] == "public, max-age=31536000, immutable", path
+        assert response.content == client.get(f"/{path}").content
+    stale = client.get("/s/0123456789abcdef/js/dom.js")  # a page loaded before an update
+    assert stale.status_code == 200 and stale.headers["cache-control"] == "no-cache"
+    assert client.get(prefix).status_code == 404 and client.get("/s/").status_code == 404
+
+
+def test_the_pages_name_their_files_under_the_prefix_and_preload_their_modules(client):
+    prefix = client.app.state.static_prefix
+    html = client.get("/").text
+    assert f'<link rel="stylesheet" href="{prefix}vendor/leaflet/leaflet.css">' in html
+    assert f'<script type="module" src="{prefix}js/ballot.js"></script>' in html
+    preloaded = re.findall(r'<link rel="modulepreload" href="([^"]+)">', html)
+    assert {f"{prefix}js/dom.js", f"{prefix}js/version.js", f"{prefix}js/chrome.js"} <= set(preloaded)
+    assert f"{prefix}js/ballot.js" not in preloaded and not any("vendor" in ref for ref in preloaded)  # Leaflet: when the map opens
+    assert html.index("modulepreload") < html.index("</head>") and 'href="#main"' in html  # links to the page left alone
+
+
+def test_the_stamp_changes_with_any_static_file_but_the_pages(tmp_path):
+    (tmp_path / "js").mkdir()
+    (tmp_path / "js" / "a.js").write_text('import { b } from "./b.js";\n')
+    (tmp_path / "js" / "b.js").write_text("export const b = 1;\n")
+    (tmp_path / "index.html").write_text("<p>one</p>")
+    stamp = static_stamp(tmp_path, "v1")
+    assert static_stamp(tmp_path, "v1") == stamp != static_stamp(tmp_path, "v2")
+    (tmp_path / "index.html").write_text("<p>two</p>")
+    assert static_stamp(tmp_path, "v1") == stamp
+    (tmp_path / "js" / "b.js").write_text("export const b = 2;\n")
+    assert static_stamp(tmp_path, "v1") != stamp
+
+
+def test_a_page_is_stamped_and_preloaded():
+    html = ('<head>\r\n  <link rel="icon" href="favicon.svg">\r\n  <link rel="stylesheet" href="https://example.test/a.css">\r\n'
+            '  <script type="module" src="js/ballot.js"></script>\r\n</head><a href="faq.html">FAQ</a>')
+    stamped = stamped_page(html, STATIC_DIR, "/s/x/")
+    assert '<link rel="icon" href="/s/x/favicon.svg">' in stamped and 'href="https://example.test/a.css"' in stamped
+    assert '<script type="module" src="/s/x/js/ballot.js"></script>\r\n  <link rel="modulepreload" href="/s/x/js/' in stamped
+    assert '<a href="faq.html">' in stamped
 
 
 def test_responses_are_gzipped_when_the_browser_asks(client):
@@ -288,11 +338,12 @@ def test_every_page_leaves_its_left_pane_and_footer_to_chrome_js_and_its_files_e
     else:
         assert not aside.strip()
     entry = {"./": "ballot", "settings.html": "settings", "faq.html": "faq"}.get(page, "page")  # settings.js and faq.js import page.js
-    assert re.findall(r'<script type="module" src="js/([\w-]+)\.js"></script>', html) == [entry]
-    assert '<link rel="icon" href="favicon.svg" type="image/svg+xml">' in html
+    prefix = client.app.state.static_prefix
+    assert re.findall(rf'<script type="module" src="{prefix}js/([\w-]+)\.js"></script>', html) == [entry]
+    assert f'<link rel="icon" href="{prefix}favicon.svg" type="image/svg+xml">' in html
     local = {ref.split("#")[0] for ref in re.findall(r'(?:href|src)="([^"#:][^":]*)"', html)}
     for ref in local:
-        assert client.get(f"/{ref}").status_code == 200, ref
+        assert client.get(ref if ref.startswith("/") else f"/{ref}").status_code == 200, ref
 
 
 def test_the_left_pane_links_every_page(client):

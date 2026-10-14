@@ -37,16 +37,24 @@ def _exports(source: str) -> set[str]:
     return names
 
 
+def _scripts(client, pattern: re.Pattern[str]) -> set[str]:
+    """The pages' scripts, by their path under the static prefix ("/js/ballot.js")."""
+    prefix = client.app.state.static_prefix
+    found = {src for page in PAGES for src in pattern.findall(client.get(page).text)}
+    assert all(src.startswith(prefix) for src in found)
+    return {"/" + src.removeprefix(prefix) for src in found}
+
+
 def _modules(client) -> dict[str, str]:
     """Every module reached from the pages' entry scripts: path -> source."""
-    queue = sorted({posixpath.join("/", src) for page in PAGES for src in ENTRY.findall(client.get(page).text)})
+    queue = sorted(_scripts(client, ENTRY))
     assert {"/js/ballot.js", "/js/page.js", "/js/settings.js"} <= set(queue)
     seen: dict[str, str] = {}
     while queue:
         path = queue.pop()
         if path in seen:
             continue
-        response = client.get(path)
+        response = client.get(client.app.state.static_prefix.rstrip("/") + path)
         assert response.status_code == 200, path
         seen[path] = response.text
         for spec in [m[1] for m in IMPORT.findall(response.text)] + DYNAMIC.findall(response.text):
@@ -69,15 +77,14 @@ def test_every_imported_name_is_exported(client):
 def test_every_module_is_reached(client):
     """A module under js/ that no page reaches, or loads as a classic script, is dead code."""
     on_disk = {f"/js/{p.name}" for p in (STATIC_DIR / "js").glob("*.js")}
-    classic = {posixpath.join("/", src) for page in PAGES for src in CLASSIC.findall(client.get(page).text)}
-    assert on_disk - set(_modules(client)) - classic == set()
+    assert on_disk - set(_modules(client)) - _scripts(client, CLASSIC) == set()
 
 
 @pytest.mark.parametrize("page", PAGES)
 def test_theme_is_set_before_the_stylesheet(client, page):
     """theme.js sets light or dark before the first paint, so the page never flashes the other one."""
     html = client.get(page).text
-    assert '<script src="js/theme.js"></script>' in html
+    assert f'<script src="{client.app.state.static_prefix}js/theme.js"></script>' in html
     assert html.index("js/theme.js") < html.index("css/app.css") < html.index("</head>")
 
 

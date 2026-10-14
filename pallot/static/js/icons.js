@@ -69,7 +69,7 @@ export function logo() {
   });
 
   el.innerHTML = `
-    <image href="/favicon.svg" width="32" height="32"/>
+    <image href="${new URL("../favicon.svg", import.meta.url)}" width="32" height="32"/>
   `;
 
   return el;

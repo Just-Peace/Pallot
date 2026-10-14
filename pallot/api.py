@@ -5,11 +5,16 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime as dt
+import hashlib
 import ipaddress
 import json
+import os
+import posixpath
+import re
 import sqlite3
 import traceback
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, AsyncIterator, Callable, Collection, Mapping
 from urllib.parse import urlsplit
@@ -18,6 +23,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.datastructures import Headers
 from starlette.types import Scope
 
 from . import __version__, ics
@@ -39,6 +45,11 @@ from .version import short_commit
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
 NDJSON = "application/x-ndjson"
+IMMUTABLE = "public, max-age=31536000, immutable"
+VERSION_JS = os.path.join("js", "version.js")
+_LOCAL_REF = re.compile(r'(<(?:script|link)\b[^>]*?\s(?:src|href)=")(?![\w+.-]*:|/|#)([^"]+)"')
+_ENTRY = re.compile(r'^([ \t]*)<script type="module" src="([^"]+)"></script>(\r?\n)', re.M)
+_IMPORT = re.compile(r'^import\s[^"]*?"(\.{1,2}/[^"]+)"', re.M)
 
 
 def _line(ballot: Ballot, *, done: bool) -> bytes:
@@ -107,13 +118,103 @@ async def keep_pruning(svc: Services, every: float | None = None) -> None:
             await asyncio.to_thread(prune, svc.cache, svc.config, vacuum=False)
 
 
+def static_stamp(directory: Path, *extra: str) -> str:
+    """A hash of every static file but the pages themselves (and of ``extra``), worked out once at startup:
+    the prefix the pages load their files under changes whenever one of them does."""
+    digest = hashlib.sha256()
+    for path in sorted(p for p in directory.rglob("*") if p.is_file() and not (p.parent == directory and p.suffix == ".html")):
+        data = path.read_bytes()
+        digest.update(f"{path.relative_to(directory).as_posix()}\0{len(data)}\0".encode() + data)
+    for text in extra:
+        digest.update(text.encode())
+    return digest.hexdigest()[:16]
+
+
+def _imports(directory: Path, module: str) -> list[str]:
+    """Every module ``module`` (a path under ``directory``) imports statically, directly or not."""
+    found: list[str] = []
+    queue = [module]
+    while queue:
+        current = queue.pop(0)
+        if not (directory / current).is_file():  # js/version.js, made by the server
+            continue
+        for spec in _IMPORT.findall((directory / current).read_text(encoding="utf-8")):
+            target = posixpath.normpath(posixpath.join(posixpath.dirname(current), spec))
+            if target != module and target not in found:
+                found.append(target)
+                queue.append(target)
+    return found
+
+
+def stamped_page(html: str, directory: Path, prefix: str) -> str:
+    """A page whose scripts, stylesheets and icon load from under ``prefix``, with every module its entry
+    script imports preloaded, so a first visit asks for them all at once rather than level by level."""
+    def preload(entry: re.Match[str]) -> str:
+        indent, src, newline = entry.groups()
+        return entry[0] + "".join(f'{indent}<link rel="modulepreload" href="{prefix}{path}">{newline}'
+                                  for path in _imports(directory, src))
+
+    return _LOCAL_REF.sub(lambda ref: f'{ref[1]}{prefix}{ref[2]}"', _ENTRY.sub(preload, html))
+
+
+@dataclass(frozen=True)
+class Page:
+    body: bytes
+    etag: str
+
+
+def stamped_pages(directory: Path, prefix: str) -> dict[Path, Page]:
+    """Each page as served, worked out once at startup: its full path -> its body and ETag."""
+    pages = {}
+    for path in directory.glob("*.html"):
+        body = stamped_page(path.read_text(encoding="utf-8"), directory, prefix).encode()
+        pages[path.resolve()] = Page(body, f'"{hashlib.sha256(body).hexdigest()[:16]}"')
+    return pages
+
+
 class RevalidatedFiles(StaticFiles):
-    """The frontend's files, which the browser keeps but checks with their ETag before each use
-    (a short 304 when unchanged), so after an update no page mixes old modules with new ones."""
+    """The frontend's files at their own addresses, which the browser keeps but checks with their ETag
+    before each use (a short 304 when unchanged). The pages, served this way, load their files from
+    StampedFiles; the rest stays here for pages and bookmarks from before the update."""
+
+    def __init__(self, *, directory: Path, version_js: str, pages: Mapping[Path, Page] | None = None,
+                 html: bool = False) -> None:
+        super().__init__(directory=directory, html=html)
+        self.version_js, self.pages = version_js, pages or {}
 
     async def get_response(self, path: str, scope: Scope) -> Response:
-        response = await super().get_response(path, scope)
-        response.headers.setdefault("Cache-Control", "no-cache")
+        if path == VERSION_JS:
+            return Response(self.version_js, media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+        return await super().get_response(path, scope)
+
+    def file_response(self, full_path: Any, stat_result: os.stat_result, scope: Scope, status_code: int = 200) -> Response:
+        page = self.pages.get(Path(full_path).resolve())
+        if page is None:
+            response = super().file_response(full_path, stat_result, scope, status_code)
+            response.headers.setdefault("Cache-Control", "no-cache")
+            return response
+        headers = {"Cache-Control": "no-cache", "ETag": page.etag}
+        if self.is_not_modified(Headers(headers), Headers(scope=scope)):
+            return Response(status_code=304, headers=headers)
+        return Response(page.body, status_code, headers, media_type="text/html")
+
+
+class StampedFiles(RevalidatedFiles):
+    """/s/<stamp>/...: the same files under a prefix that changes with them, so the browser keeps them
+    a year without asking. Every import is relative, so a page's whole module graph comes from one
+    stamp and no page mixes old modules with new ones. Another stamp (a page loaded before an update)
+    still gets today's files, checked before each use."""
+
+    def __init__(self, *, stamp: str, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.stamp = stamp
+
+    async def get_response(self, path: str, scope: Scope) -> Response:
+        parts = Path(path).parts
+        if len(parts) < 2:
+            raise HTTPException(404)
+        response = await super().get_response(os.path.join(*parts[1:]), scope)
+        response.headers["Cache-Control"] = IMMUTABLE if parts[0] == self.stamp else "no-cache"
         return response
 
 
@@ -319,14 +420,13 @@ def create_app(
             for found in svc.endorsements
         ]
 
+    # The running version and commit, as a module the footer imports, so the page never fetches them.
     version_js = f"export const VERSION = {json.dumps(__version__)};\nexport const COMMIT = {json.dumps(short_commit())};\n"
-
-    @app.get("/js/version.js")
-    def version_module() -> Response:
-        """The running version and commit, as a module the footer imports, so the page never fetches them."""
-        return Response(version_js, media_type="text/javascript", headers={"Cache-Control": "no-cache"})
-
-    app.mount("/", RevalidatedFiles(directory=STATIC_DIR, html=True), name="static")
+    stamp = static_stamp(STATIC_DIR, version_js)
+    app.state.static_prefix = prefix = f"/s/{stamp}/"
+    app.mount("/s", StampedFiles(directory=STATIC_DIR, version_js=version_js, stamp=stamp), name="stamped")
+    app.mount("/", RevalidatedFiles(directory=STATIC_DIR, version_js=version_js, html=True,
+                                    pages=stamped_pages(STATIC_DIR, prefix)), name="static")
     return app
 
 
