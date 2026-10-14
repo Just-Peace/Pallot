@@ -54,6 +54,10 @@ _RANK = {code: i for i, code in enumerate(_POPULATIONS)}
 class PollsUnavailable(Exception):
     """FiftyPlusOne couldn't be asked (refused, paused, down) and nothing was cached."""
 
+    def __init__(self, message: str, paused: bool = False):
+        super().__init__(message)
+        self.paused = paused
+
 
 class Polls:
     def __init__(self, cache: HttpCache, ttl: Ttls, today: Callable[[], dt.date] = dt.date.today):
@@ -68,7 +72,7 @@ class Polls:
             got = await self.cache.get_json(SOURCE, RequestSpec("GET", API, params=params, headers=HEADERS), ttl=self.ttl.polls)
         except UpstreamError as exc:
             if exc.until:
-                raise PollsUnavailable(f"paused until {display_time(exc.until)} after FiftyPlusOne refused a request") from exc
+                raise PollsUnavailable(f"paused until {display_time(exc.until)} after FiftyPlusOne refused a request", paused=True) from exc
             raise PollsUnavailable(str(exc).removeprefix(f"{SOURCE}: ")) from exc
         return list((got.value or {}).get("data") or [])
 
@@ -279,6 +283,7 @@ async def cards(polls: Polls, races: list[Race], day: dt.date | None) -> CardSet
             raise got
         else:
             lists[kind] = got
+    failures.sort(key=lambda f: f.paused)  # a list asked while another's refusal paused the rest names that refusal
     if failures and not lists:
         raise failures[0]
     if failures:
