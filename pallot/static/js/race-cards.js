@@ -13,7 +13,7 @@ import { WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
 import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
-import { focusTab, viewPref } from "./view.js";
+import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules, markEndorsers }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
@@ -353,7 +353,7 @@ function candidateRow(race, candidate) {
     const waiting = page.loadingCards;
     return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
       title: waiting ? STILL_LOADING : `${candidate.name}'s profile: ${sources ? `${plural(sources, "source")} and issues` : "issues"}`,
-      on: { click: () => page.showDetails(race, index(), null, focusTab()) } },
+      on: { click: () => page.showDetails(race, index()) } },
       viewPref("stanceLinks") ? "Profile & issues" : "Profile");
   };
   // What the cards make, in the order fill() builds it again. The Endorsements line comes before

@@ -15,7 +15,7 @@ export const VIEW_DEFAULTS = {
   showPolls: true, // each race's poll box
   showEndorsements: true, // the candidates' Endorsements line
   showFunding: true, // each race's money box, and the candidates' Funding line
-  openBoxes: false, // the money and poll boxes and the Endorsements lines open at first, rather than folded to one line
+  openBoxes: false, // the money and poll boxes and the Endorsements and Funding lines open at first, rather than folded to one line
   showSources: false, // where When to vote's dates and Your districts come from, behind a link at first
   collapseOnPick: true, // a race folds to one line once it's picked
   hidePicked: false, // only the races not picked yet
@@ -37,20 +37,20 @@ export const VIEW_MODES = {
 
 // What matters to the voter, any number at once, kept with the view settings ("focuses"): each
 // turns on its switches, so what shows is the mode's with the union of what the chosen ones open.
-// Besides the stored switches: openMoney, openPolls and openEndorsements open one kind of box or
-// line (else they follow openBoxes), fundingFirst puts the Funding line before Endorsements,
-// compareInHead puts Compare funding in the race's head, pollChips a "47% in polls" pill on each polled candidate and a mark on
+// Besides the stored switches: openMoney (the money boxes and Funding lines), openPolls and
+// openEndorsements open one kind of box or line (else they follow openBoxes), fundingFirst puts
+// the Funding line before Endorsements, compareInHead puts Compare funding in the race's head, pollChips a "47% in polls" pill on each polled candidate and a mark on
 // the sections with polls, and stanceLinks "Profile & issues" and "See where they stand". ``hint`` is
 // its line on the first-run card and in Settings, ``short`` its name in the View menu's summary. The
 // wording never names an issue or a source.
 export const FOCUSES = {
-  money: { label: "Funding", short: "Funding", hint: "Opens the money boxes and puts Funding first.",
+  money: { label: "Funding", short: "Funding", hint: "Opens the money boxes and Funding chips, and puts Funding first.",
     on: ["showFunding", "openMoney", "fundingFirst", "compareInHead"] },
   endorsements: { label: "Endorsements", short: "Endorsements",
-    hint: "Shows who endorses each candidate; Details opens on Endorsements.", on: ["showEndorsements", "openEndorsements"] },
+    hint: "Shows who endorses each candidate, open.", on: ["showEndorsements", "openEndorsements"] },
   polls: { label: "Polls", short: "Polls", hint: "Opens the poll boxes and shows each candidate's share.",
     on: ["showPolls", "openPolls", "pollChips"] },
-  stances: { label: "Where they stand", short: "Stances", hint: "Links to where each candidate stands; Details opens on Issues.",
+  stances: { label: "Where they stand", short: "Stances", hint: "Links to where each candidate stands, issue by issue.",
     on: ["stanceLinks"] },
 };
 const FOLLOWS = { openMoney: "openBoxes", openPolls: "openBoxes", openEndorsements: "openBoxes" };
@@ -73,15 +73,6 @@ export function viewPref(name) {
   if (name in FOLLOWS) return viewPref(FOLLOWS[name]);
   if (FOCUS_ONLY.has(name)) return false;
   return storedPref(name);
-}
-
-// The Details tab the candidate's button opens on, for the chosen focus: Issues for "Where they
-// stand", the money tab for Funding, the Endorsements tab for Endorsements, else Profile.
-export function focusTab() {
-  const chosen = focuses();
-  if (chosen.includes("stances")) return "issues";
-  if (chosen.includes("money")) return "money";
-  return chosen.includes("endorsements") ? "endorsements" : "profile";
 }
 
 const changed = () => document.dispatchEvent(new Event("pallot:view"));

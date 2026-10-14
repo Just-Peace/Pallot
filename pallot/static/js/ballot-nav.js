@@ -54,7 +54,7 @@ const APPLY = {
     syncBoxes("showFunding");
     syncFunding();
   },
-  openMoney: () => syncBoxes("openMoney"),
+  openMoney: [() => syncBoxes("openMoney"), syncFunding],
   openPolls: () => syncBoxes("openPolls"),
   showSources: syncSourceNotes,
   hidePicked: () => {
@@ -178,8 +178,12 @@ const anyPicked = () => [...page.ballot.races.map((r) => r.key), ...page.ballot.
 const TIPS = [
   {
     id: "funding", when: () => viewPref("showFunding") && wants("money"),
-    target: () => [...result.querySelectorAll(".funding-line .badge-open")], after: (chip) => chip.closest(".funding-line"),
-    text: () => `${coarse.matches ? "Tap" : "Click"} a Funding chip to see who gave.`,
+    target: () => [...result.querySelectorAll(".funding-line .badge-open, .funding-line .lines-toggle")],
+    after: (chip) => chip.closest(".funding-line"),
+    text: () => {
+      const verb = coarse.matches ? "Tap" : "Click";
+      return `${verb} a Funding chip to see who gave${viewPref("openMoney") ? "" : ` (${verb.toLowerCase()} Funding to show them)`}.`;
+    },
   },
   {
     id: "profile", when: () => wants("stances"),
