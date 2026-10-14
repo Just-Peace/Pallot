@@ -15152,16 +15152,16 @@
           "donate_url": null,
           "donations": 139134,
           "election_date": null,
-          "ie": 204593,
+          "ie": 5841660,
           "incumbent": false,
-          "israel_lobby_total": 343727,
+          "israel_lobby_total": 5980794,
           "lines": [
             "Candidate for U.S. Senate",
             "MI [R]",
-            "Israel Lobby Total: $343,727",
+            "Israel Lobby Total: $5,980,794",
             "Donations: $139,134",
-            "IE: $204,593",
-            "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, YJL"
+            "IE: $5,841,660",
+            "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, TFM, YJL"
           ],
           "name": "Mike Rogers",
           "notes": [],
@@ -15173,6 +15173,7 @@
             "FIPAC",
             "LAFAS",
             "RJC",
+            "TFM",
             "YJL"
           ],
           "party": "R",
@@ -32545,5 +32546,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-12"
+  "snapshot": "2026-10-14"
 }
