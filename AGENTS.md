@@ -3,12 +3,12 @@
 Rules for coding agents (and people) changing Pallot. Read these first:
 
 - [README.md](README.md) for what Pallot does;
-- [DEVELOPMENT.md](DEVELOPMENT.md) for how it works inside;
+- [DEVELOPMENT.md](DEVELOPMENT.md) for the commands, the test setup, what the sources do, and the checklists for adding a source, bundle or endorsement list;
 - [GitHub issues](https://github.com/Just-Peace/Pallot/issues) for known bugs and what's planned (`gh issue list`).
 
 ## Workflow
 
-1. **Start from an issue.** Find the feature or fix with `gh issue list` (and `--label bug`, `improvement`, …). Read it with `gh issue view <N>`. If there's none, open one first (see [Issues](#issues)). Every piece of work has an issue, so every pull request closes one.
+1. **Start from an issue.** Find the feature or fix with `gh issue list` (filter by type with `--search "type:Bug"`, or by area with `--label ui-ux`). Read it with `gh issue view <N>`. If there's none, open one first (see [Issues](#issues)). Every piece of work has an issue, so every pull request closes one.
 2. **Branch off** `develop`**.** Name the branch `feat/<topic>`, `fix/<topic>`, `docs/<topic>` or `refactor/<topic>`. Never commit to `develop` directly.
 3. Ensure optimal user experience UI/UX
 4. **Finish the whole change before committing:**
@@ -27,12 +27,17 @@ Rules for coding agents (and people) changing Pallot. Read these first:
 
 ## Issues
 
-Every piece of work is a GitHub issue, labelled with its section.
+Every piece of work is a GitHub issue, with one type and any area labels.
 
-- Label it with its section: `bug`, `improvement`, `tooling`, `enhancement` (Features), `ui-ux`, `review` or `spot-check`. Add `deferred` when it's put off, and say why in the issue.
+- **Type** (every issue has one):
+  - `Bug`: something works wrong.
+  - `Feature`: something new for the voter, or a new source.
+  - `Task`: refactors, tooling, reviews, releases and docs.
+- **Area labels**, as many as fit: `ui-ux`, `mobile`, `accessibility`, `performance`, `source`, `tooling`, `documentation`, `review` (spot checks included), `investigate`. Add `deferred` when it's put off, and say why in the issue.
+- Duplicates and won't-fix are closed with GitHub's close reasons ("duplicate", "not planned"), not labels.
 - The title says what's wrong or what's wanted. The body says what it is and where it is (`file:line`), and suggests a fix.
-- Open one with `gh issue create --title … --label … --body-file …`.
-- `gh issue list --label bug` lists a section's open ones.
+- Open one with `gh issue create --title … --label … --body-file …`, then set its type (this machine's `gh` has no `--type`): `gh api -X PATCH repos/Just-Peace/Pallot/issues/<N> -f type=Bug`.
+- `gh issue list --search "type:Bug"` lists a type's open ones, `gh issue list --label mobile` an area's.
 
 
 
@@ -55,15 +60,17 @@ Update the docs in the same commit as the change.
 
 | What changed                                                              | Update                                                                                                                                   |
 | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Anything the voter sees or does                                           | `README.md` ("Using it", "Where the data comes from", "Caching", "Settings")                                                             |
-| Internals, commands, layout, a source's quirks                            | `DEVELOPMENT.md`                                                                                                                         |
+| A feature the voter sees                                                  | usually nothing: the FAQ if it raises a question. `README.md`'s "Using it" only for a new feature big enough for its short tour          |
+| What a self-hoster runs, configures or keeps                              | `README.md` ("Quick start", "Caching", "Keeping the cache", "Configuration", "Docker")                                                   |
+| A command, the test setup, or what an outside source does                 | `DEVELOPMENT.md`                                                                                                                         |
+| The steps for adding a source, bundle, endorsement list or feed           | `DEVELOPMENT.md`'s checklist for it                                                                                                     |
 | Something a voter might ask about, especially how a figure is worked out  | `pallot/static/faq.html`                                                                                                                |
 | A source's row in Settings (label, description, notices) or in `pallot-cache` | `SOURCES` in `pallot/admin.py` (a pause's wording is its `Pause`; a source kept in files words its notice, staleness, refresh and clear in its `KeptSource` methods), and `pallot/static/settings.html` if the page's text changes |
 | Which sources start on | `pallot/sources.toml`, and README's "Which sources start on" |
 | A page, or a link in the left pane                                        | `PAGES` in `pallot/static/js/chrome.js`, which draws the left pane and the footer on every page                                         |
 | A new source, or what's sent to or kept from one                          | the tables in `pallot/static/privacy.html` and `pallot/static/about.html`; the sources named in About's "What it does" (`about.html`)            |
 | A new endorsement list                                                    | only its file, `pallot/endorsements/<source>.json` (DEVELOPMENT.md's "Endorsement lists"): the pages name the lists from it |
-| A source's answers bundled with Pallot | a `Bundle` in `bundles/registry.py`, its builder, `Ttls.<source>_bundle` (DEVELOPMENT.md's "bundles"), and README's "Bundled snapshots" |
+| A source's answers bundled with Pallot | a `Bundle` in `bundles/registry.py`, its builder, `Ttls.<source>_bundle` (DEVELOPMENT.md's "Bundled snapshots"), and a line in README's "Bundled snapshots" |
 | A new environment variable or cache lifetime                              | `.env.example`, `Ttls` or `Config` in `pallot/config.py`, and README's "Configuration"                                                  |
 | Something found along the way                                             | a GitHub issue (see [Things you notice along the way](#things-you-notice-along-the-way))                                                 |
 
@@ -71,6 +78,7 @@ Update the docs in the same commit as the change.
 How to write them:
 
 - Plain, short sentences about what the voter sees.
+- Never walk through the code in a doc: no modules, functions, fields, file trees or UI internals. The code says them, and they go stale with the next feature. The why of a function goes in its docstring.
 - Shell commands for Linux (bash), run with `uv`.
 - Never paste a key or anything from `.env`.
 
@@ -127,13 +135,13 @@ How to write them:
 - GitHub Actions checks every pull request (`.github/workflows/tests.yml`):
   - the whole suite, `uv run pytest`, offline against the recorded responses in `tests/fixtures/`;
   - ruff, for unused imports and variables;
-  - the Docker build, when `Dockerfile`, `compose.yaml`, `pyproject.toml` or `uv.lock` changed.
+  - the Docker build, when `Dockerfile`, `compose.yaml`, `.dockerignore`, `pyproject.toml` or `uv.lock` changed.
   - A change to Markdown files only skips them.
 - Locally, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. Leave the whole suite to GitHub.
 - Run `uv run ruff check` before committing code. `uv run ruff check --fix` removes what it finds.
 - After pushing, check the pull request with `gh pr checks <N>`, and fix what fails. A pull request is ready to merge only when its checks are green.
 - Add tests for new behaviour, mocking HTTP with `respx`.
-  - Re-record fixtures with `uv run python scripts/record_fixtures.py --only ballots|suggest|fec|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|tec|trackaipac|voteforpeace`.
+  - Re-record fixtures with `uv run python scripts/record_fixtures.py --only <source>` (DEVELOPMENT.md's "Commands" lists them).
 - `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address. The maintainer can also start the Live tests workflow from the Actions tab.
 - For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
 - For a UI change, run `uv run pallot` and look at what changed:
