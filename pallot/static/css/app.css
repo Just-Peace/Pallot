@@ -710,7 +710,7 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
   color: var(--muted); }
 .menu-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 8px; padding-top: 8px;
   border-top: 1px solid var(--line); }
-.menu-foot .help-link { margin-left: auto; }
+.menu-foot .theme-toggle { margin-left: auto; }
 
 /* The focus chips (view.js): checkboxes drawn as chips, ticked when chosen, in View and More; on the
    "What matters to you?" card and in Settings, a card each with its hint (.focus-option), two a row
