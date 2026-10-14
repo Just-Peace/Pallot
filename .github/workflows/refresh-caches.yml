@@ -85,9 +85,13 @@ jobs:
         continue-on-error: true
         run: uv run tec-cache refresh --data-dir tec_cache/data
 
+      - id: stats
+        continue-on-error: true
+        run: uv run pallot-bundle stats --since HEAD --readme README.md >> "$GITHUB_STEP_SUMMARY"
+
       - id: changes
         run: |
-          git add -A bundles/data trackaipac_cache/data voteforpeace_cache/data tec_cache/data
+          git add -A bundles/data trackaipac_cache/data voteforpeace_cache/data tec_cache/data README.md
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No snapshot changed."
@@ -109,6 +113,7 @@ jobs:
             - `trackaipac-cache refresh`: ${{ steps.trackaipac.outcome }}
             - `voteforpeace-cache refresh`: ${{ steps.voteforpeace.outcome }}
             - `tec-cache refresh`: ${{ steps.tec.outcome }}
+            - `pallot-bundle stats`: ${{ steps.stats.outcome }}
             - `pytest`: ${{ steps.tests.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -122,6 +127,7 @@ jobs:
             steps.trackaipac.outcome == 'failure' && 'trackaipac-cache ' || '' }}${{
             steps.voteforpeace.outcome == 'failure' && 'voteforpeace-cache ' || '' }}${{
             steps.tec.outcome == 'failure' && 'tec-cache ' || '' }}${{
+            steps.stats.outcome == 'failure' && 'pallot-bundle-stats ' || '' }}${{
             steps.tests.outcome == 'failure' && 'pytest ' || '' }}
         run: |
           if [ -n "$FAILED" ]; then
