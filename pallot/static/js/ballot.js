@@ -310,6 +310,7 @@ function render() {
   showLoading(false);
   renderAddress();
   renderHeader();
+  renderApproximate();
   renderKeyDates();
   renderDistricts();
   syncMap(page.ballot);
@@ -357,6 +358,18 @@ function renderHeader() {
     electionLine(page.ballot),
     ...(site ? [" · Official info: ", extLink(site.url, site.label)] : []),
   );
+}
+
+// An address only placed approximately (a street or a postcode) may be on someone else's ballot,
+// so it's said first, above everything else.
+function renderApproximate() {
+  const { approximate, matched_address: matched } = page.ballot.location;
+  const notice = $("#approximate");
+  notice.hidden = !approximate;
+  notice.textContent = approximate
+    ? `Pallot could only place this address approximately${matched ? ` (${matched})` : ""}, so this may not be your ballot. `
+      + "Check \"Your districts\" below against your voter registration certificate, or look up by your voter card."
+    : "";
 }
 
 function renderKeyDates() {

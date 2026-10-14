@@ -460,8 +460,18 @@ def test_nominatim_fallback_is_marked_approximate(client):
     switch(client, "ballotpedia", False)
     ballot = get_ballot(client, "mopac")
     assert ballot["location"]["geocoder"] == "nominatim" and ballot["location"]["approximate"]
-    assert any("approximately" in w for w in ballot["warnings"])
-    assert ballot["location"]["county"] == "Travis"
+    assert ballot["location"]["matched_address"] and ballot["location"]["county"] == "Travis"
+
+
+@pytest.mark.parametrize("addresstype", ["state", "county"])
+def test_a_made_up_address_nominatim_only_places_in_a_state_or_county_is_not_found(client, upstream, addresstype):
+    upstream.nominatim_answer = [{"lat": "31.26", "lon": "-98.54", "display_name": "Texas, United States",
+                                  "addresstype": addresstype}]
+    response = client.post("/api/ballot", json={"address": "asdf qwer zxcv, TX"})
+    assert response.status_code == 422
+    assert response.json()["detail"] == ("Pallot couldn't find that address. Check the street, city and ZIP code, or "
+                                         "look up by your voter card.")
+    assert upstream.count("coordinates") == 0
 
 
 @pytest.fixture
@@ -510,7 +520,15 @@ def test_a_rough_google_match_is_marked_approximate(google_client, upstream):
     }]}
     ballot = get_ballot(google_client, NEW_STREET)
     assert ballot["location"]["geocoder"] == "google" and ballot["location"]["approximate"]
-    assert any("approximately" in w for w in ballot["warnings"])
+
+
+def test_google_placing_only_the_state_is_not_found(google_client, upstream):
+    upstream.google_answer = {"results": [{
+        "formattedAddress": "Texas, USA", "granularity": "APPROXIMATE", "types": ["administrative_area_level_1", "political"],
+        "location": {"latitude": 31.97, "longitude": -99.9},
+    }]}
+    response = google_client.post("/api/ballot", json={"address": NEW_STREET})
+    assert response.status_code == 422 and "couldn't find that address" in response.json()["detail"]
 
 
 def test_google_finding_nothing_is_the_usual_not_found(google_client, upstream):

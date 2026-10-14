@@ -184,7 +184,8 @@ async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, 
                 geocoder = "google"
                 point = await svc.google.locate(address)
             if point is None:
-                raise BallotError(422, "Pallot couldn't find that address. Include the street, city and ZIP code.")
+                raise BallotError(422, "Pallot couldn't find that address. Check the street, city and ZIP code, or "
+                                       "look up by your voter card.")
             place = await svc.census.at(point.lat, point.lon)
             if place is None:
                 raise BallotError(422, "That address doesn't seem to be in the United States.")
@@ -437,11 +438,6 @@ class _Builder:
         card: CardPlace | None = None
         if self.request.address:
             place, location = await locate(self.svc, self.request.address, self.sources)
-            if location.approximate:
-                self.warnings.append(
-                    f"Pallot could only place this address approximately ({location.matched_address}), "
-                    "so double-check \"Your districts\" at the top of your ballot."
-                )
             county_name, county_fips, points = place.county, place.county_fips, [(place.lat, place.lon)]
         else:
             card = await locate_precinct(self.svc, self.request.county or "", self.request.precinct or "", self.sources)

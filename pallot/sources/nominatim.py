@@ -19,8 +19,11 @@ REFUSALS = (403, 429)  # answers that pause Nominatim for Ttls.geocode_backoff; 
 # Result types that are an area or a street rather than the address itself.
 _APPROXIMATE = {
     "road", "postcode", "suburb", "neighbourhood", "quarter", "city_district", "city", "town",
-    "village", "hamlet", "municipality", "county", "state",
+    "village", "hamlet", "municipality",
 }
+# Result types too coarse to place a voter at all: a made-up address can come back as "Texas",
+# whose middle is some county's, so these count as no match.
+_TOO_COARSE = {"county", "state", "region", "country"}
 
 
 @dataclass(frozen=True)
@@ -47,6 +50,8 @@ class Nominatim:
         if not got.value:
             return None
         hit = got.value[0]
+        if hit.get("addresstype") in _TOO_COARSE:
+            return None
         return Point(
             lat=float(hit["lat"]),
             lon=float(hit["lon"]),

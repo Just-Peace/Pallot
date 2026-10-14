@@ -30,6 +30,8 @@ KEY_NOTE = (
 
 # Granularities that name the building itself; anything coarser is an area or a street.
 _EXACT = {"ROOFTOP", "RANGE_INTERPOLATED", "PREMISE", "SUB_PREMISE"}
+# Place types too coarse to place a voter at all (a state or county), so counted as no match.
+_TOO_COARSE = {"administrative_area_level_1", "administrative_area_level_2", "country"}
 
 
 class Google:
@@ -51,7 +53,7 @@ class Google:
             return None
         hit = results[0]
         where = hit.get("location") or {}
-        if "latitude" not in where or "longitude" not in where:
+        if "latitude" not in where or "longitude" not in where or _TOO_COARSE & set(hit.get("types") or ()):
             return None
         return Point(
             lat=float(where["latitude"]),
