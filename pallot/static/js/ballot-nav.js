@@ -13,7 +13,7 @@ import { initEndorserBar, moreHelp } from "./endorser-bar.js";
 import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
-import { STILL_LOADING, cardFor, redrawRace, refillCards, setAllCollapsed } from "./race-cards.js";
+import { STILL_LOADING, cardFor, redrawRace, refillPart, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import {
   FOCUSES, VIEW_MODES, bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, migrateView, modeChoice, onViewChange,
@@ -39,9 +39,9 @@ const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: tr
 const progressInfo = strip.querySelector(".progress-info");
 const coarse = matchMedia("(pointer: coarse)");
 const SCROLL_GAP = 12; // what a jump leaves between the strip and the section it scrolls to
-// The rows' and race heads' parts a focus adds, built again in place.
-const refill = () => {
-  if (page.ballot) refillCards();
+// The part of the rows or race heads a focus switch changes, built again in place.
+const refill = (name) => () => {
+  if (page.ballot) refillPart(name);
 };
 // What puts the ballot back to each view switch when it changes, without a reload; each runs once
 // however many of its switches changed.
@@ -62,10 +62,10 @@ const APPLY = {
     applyHidePicked();
     markCurrentSection(); // the marked section may have gone
   },
-  fundingFirst: refill,
-  compareInHead: refill,
-  pollChips: [refill, syncPollMarks],
-  stanceLinks: refill,
+  fundingFirst: refill("lines"),
+  compareInHead: refill("headCompare"),
+  pollChips: [refill("pills"), syncPollMarks],
+  stanceLinks: refill("profile"),
 };
 let applied = {}; // the view switches as the page last applied them
 

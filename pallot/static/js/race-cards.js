@@ -3,7 +3,7 @@
 // Picking here saves to ``page.picks``; ballot.js hands over the context (initRaceCards).
 
 import { ballotSections, measureKey, pickLabels } from "./ballot-shared.js";
-import { banName, isBanned, restoreBans, unbanName } from "./ban-list.js";
+import { banMatches, banName, isBanned, restoreBans, unbanName } from "./ban-list.js";
 import { openCompare } from "./compare.js";
 import { $, autosave, extLink, h, initials, safeUrl, slug } from "./dom.js";
 import { plural } from "./format.js";
@@ -18,6 +18,8 @@ import { viewPref } from "./view.js";
 let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules, markEndorsers }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 const fills = new Map(); // race key -> builds what its cards make again, in place
+const parts = []; // every race head's and candidate row's parts (part()) by name, for refillPart()
+const banFills = []; // every candidate row's refillBans()
 
 export const STILL_LOADING = "Available once everything has loaded";
 
@@ -29,6 +31,8 @@ export function initRaceCards(context) {
 export function renderCards() {
   redraw.clear();
   fills.clear();
+  parts.length = 0;
+  banFills.length = 0;
   const sections = ballotSections(page.ballot);
   $("#groups").replaceChildren(...sections.filter((s) => !s.maybe).map((section) =>
     h("section", { class: "group", id: section.id, "aria-labelledby": `${section.id}-title` },
@@ -66,6 +70,20 @@ export function refillCards() {
     button.title = page.loadingCards ? STILL_LOADING : "Pick by rule";
   }
   page.markEndorsers();
+}
+
+// One part of every race head and candidate row, after the focus switch it follows changes:
+// lines (fundingFirst), profile (stanceLinks), headCompare (compareInHead), pills (pollChips).
+export function refillPart(name) {
+  for (const named of parts) named[name]?.refill();
+}
+
+// The rows whose ban list matches changed (Ban, Unban, another tab), and only those: an Unban
+// that takes off a pattern can unban others too. Help me pick's marks avoid the banned, so they follow.
+export function refillBans() {
+  let changed = false;
+  for (const refill of banFills) changed = refill() || changed;
+  if (changed) page.markEndorsers();
 }
 
 export function setAllCollapsed(collapsed) {
@@ -170,6 +188,11 @@ function raceCard(race) {
   const card = collapsibleCard(race.key, {
     title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: [headCompare.nodes, ruleButton],
   });
+  parts.push({ headCompare });
+  for (const candRow of candRows) {
+    parts.push(candRow.parts);
+    banFills.push(candRow.refillBans);
+  }
   fills.set(race.key, () => {
     card.setMeta(meta());
     money.refill();
@@ -269,7 +292,7 @@ export function searchLink(race, candidate, className, label) {
 // the ballot's rows and runs ``after`` (Details' head).
 export function toggleBan(candidate, after = null) {
   const changed = () => {
-    refillCards();
+    refillBans();
     after?.();
   };
   if (!isBanned(candidate)) {
@@ -359,9 +382,23 @@ function candidateRow(race, candidate) {
     return viewPref("fundingFirst") ? both.reverse() : both;
   });
   const ban = part(() => banButton(candidate));
+  const named = { profile, photo, pills, lines, ban };
+  let bans = null; // the ban list entries that matched when the row was last drawn
+  const showBans = () => {
+    bans = banState(candidate);
+    row.classList.toggle("banned", Boolean(bans));
+  };
   const fill = () => {
-    [profile, photo, pills, lines, ban].forEach((p) => p.refill());
-    row.classList.toggle("banned", isBanned(candidate));
+    Object.values(named).forEach((p) => p.refill());
+    showBans();
+  };
+  // The Banned pill, Ban button and dimming, once the entries that match changed. Whether they did.
+  const refillBans = () => {
+    if (banState(candidate) === bans) return false;
+    pills.refill();
+    ban.refill();
+    showBans();
+    return true;
   };
   // On a phone, outside Detailed, Note, Ban and Search wait behind "…", which opens them in place.
   const moreButton = h("button", {
@@ -389,9 +426,12 @@ function candidateRow(race, candidate) {
     lines.nodes,
     noteBox,
   );
-  row.classList.toggle("banned", isBanned(candidate));
-  return { candidate, row, sync, fill };
+  showBans();
+  return { candidate, row, sync, fill, parts: named, refillBans };
 }
+
+// The texts of the ban list entries that match ``candidate``, joined: empty when they aren't banned.
+const banState = (candidate) => banMatches(candidate.name).map((entry) => entry.text).join("\n");
 
 // What ``build()`` makes (a node, a list of them or nothing), behind a marker so ``refill()`` can
 // build it again in the same place, leaving the rest of the card (a note being typed) alone.

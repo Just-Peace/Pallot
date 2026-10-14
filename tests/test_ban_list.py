@@ -77,6 +77,16 @@ return [odd, m.banList()];
 """) == [[], [{"text": "Doe"}]]
 
 
+def test_the_list_is_read_again_only_once_its_stored_text_changes():
+    assert _run("""
+m.setBanList([{ text: "smith" }]);
+const [first] = m.banList();
+const same = m.banList()[0] === first;
+localStorage.setItem("pallot.banList.v1", JSON.stringify([{ text: "jones" }]));
+return { same, after: m.banList().map((e) => e.text), matches: m.banMatches("Ann Jones").length };
+""") == {"same": True, "after": ["jones"], "matches": 1}
+
+
 RULES = (STATIC_DIR / "js" / "pick-rules.js").as_uri()
 
 
