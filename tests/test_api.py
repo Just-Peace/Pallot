@@ -123,6 +123,17 @@ def test_ballotpedia_and_vote_for_peace_start_off(client):
                    for card in c["cards"])
 
 
+@pytest.mark.shipped_defaults
+def test_the_ballot_names_the_sources_pick_by_rule_uses_that_are_off(client):
+    switch(client, "suggestions", False)
+    first, done = stream_ballot(client)
+    assert [s["id"] for s in first["ballot"]["sources_off"]] == ["voteforpeace"]
+    assert done["ballot"]["sources_off"] == [{"id": "voteforpeace", "label": "Vote for Peace"}]
+    switch(client, "voteforpeace", True)
+    switch(client, "polls", False)
+    assert [s["id"] for s in get_ballot(client)["sources_off"]] == ["polls"]
+
+
 def test_sources_are_grouped(client):
     overview = client.get("/api/sources").json()
     assert [(g["id"], g["title"], g["toggle_all"]) for g in overview["groups"]] == [
