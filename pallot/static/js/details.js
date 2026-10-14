@@ -1,7 +1,8 @@
 // Details: a candidate's Profile (Texas SOS, then Ballotpedia), their Issues (stances.js), a tab per
 // other source, and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
 // each tab made of folding sections, in a dialog whose head has Search, Ban and Pick beside ‹ › ✕. ‹ and ›
-// step through the race's other candidates, staying on the tab that's shown.
+// step through the race's other candidates, staying on the tab that's shown. On a phone, ‹, Pick and ›
+// sit in a bar at the bottom, in reach of a thumb, and a swipe sideways steps too.
 
 import { isBanned } from "./ban-list.js";
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
@@ -11,16 +12,22 @@ import { avatar, candidateQuery, choose, searchLink, toggleBan } from "./race-ca
 import { searchWord } from "./search.js";
 import { cardPanel, endorsementsPanel, isLikely, moneyPanel, pollsPanel, profilePanel, renderTabs } from "./source-cards.js";
 import { stancesPanel } from "./stances.js";
+import { onSwipe } from "./swipe.js";
 
 let page = null; // { picks }
 const details = $("#details");
 const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Wikidata, Ballotpedia
 let shown = "profile"; // the tab shown, which ‹ and › keep
+let current = null; // { race, index }: the candidate shown, for a swipe
 
 export function initDetails(context) {
   page = context;
   closeOnBackdrop(details);
   details.addEventListener("scroll", syncCompact, { passive: true });
+  onSwipe(details, (way) => {
+    const { race, index } = current || {};
+    if (race?.candidates[index + way]) showDetails(race, index + way, null, shown);
+  });
 }
 
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
@@ -31,22 +38,24 @@ export function initDetails(context) {
 export function showDetails(race, index, focus = null, at = "profile") {
   const { picks } = page;
   const candidate = race.candidates[index];
+  current = { race, index };
   const pickOrUndo = () => {
     choose(race, candidate.key, !picks.isPicked(race.key, candidate.key));
-    syncPickButton();
+    syncPickButtons();
   };
-  const pickButton = h("button", { type: "button", class: "btn small primary with-icon", on: { click: pickOrUndo } });
-  const syncPickButton = () => {
+  const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
+  const pickButtons = [0, 1].map(() => h("button", { type: "button", class: "btn small primary with-icon", disabled: multiFull, on: { click: pickOrUndo } }));
+  const syncPickButtons = () => {
     const on = picks.isPicked(race.key, candidate.key);
     const name = on ? `Unpick ${candidate.name}` : `Pick ${candidate.name}`;
-    pickButton.replaceChildren(icon(on ? "reset" : "check"), word(on ? "Unpick" : "Pick"));
-    pickButton.setAttribute("aria-label", name);
-    pickButton.title = name;
-    pickButton.classList.toggle("ghost", on);
+    for (const button of pickButtons) {
+      button.replaceChildren(icon(on ? "reset" : "check"), word(on ? "Unpick" : "Pick"));
+      button.setAttribute("aria-label", name);
+      button.title = name;
+      button.classList.toggle("ghost", on);
+    }
   };
-  syncPickButton();
-  const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
-  pickButton.disabled = multiFull;
+  syncPickButtons();
 
   const pills = h("p", { class: "cand-sub" }, candidatePills(candidate, race));
   const nameHead = h("h2", { id: "details-name", "data-party": candidate.party || null }, candidate.name);
@@ -90,35 +99,39 @@ export function showDetails(race, index, focus = null, at = "profile") {
   renderTabs(tabBox, tabs, `d-${slug(candidate.key)}`, panelFor, { initial, onSelect: (i) => { shown = tabs[i].key; } });
 
   const count = race.candidates.length;
-  const step = (offset, label, symbol) => {
+  const step = (offset, label, className, ...content) => {
     const other = race.candidates[index + offset];
     return h("button", {
-      type: "button", class: "icon-btn step", disabled: !other,
+      type: "button", class: className, disabled: !other,
       "aria-label": other ? `${label} candidate: ${other.name}` : `No ${label.toLowerCase()} candidate`,
       title: other ? other.name : null, on: { click: () => showDetails(race, index + offset, label.toLowerCase(), shown) },
-    }, symbol);
+    }, content);
   };
-  const steps = count > 1 ? { previous: step(-1, "Previous", "‹"), next: step(1, "Next", "›") } : {};
+  const steps = count > 1 ? {
+    previous: [step(-1, "Previous", "icon-btn step", "‹"), step(-1, "Previous", "btn small ghost", "‹ ", word("Previous"))],
+    next: [step(1, "Next", "icon-btn step", "›"), step(1, "Next", "btn small ghost", word("Next"), " ›")],
+  } : { previous: [], next: [] };
+  const bar = h("div", { class: "details-bar" }, steps.previous[1], pickButtons[1], steps.next[1]);
 
   const search = searchLink(race, candidate, "btn small ghost with-icon", [icon("search"), word(`${searchWord()} ↗`)]);
   const { head, close } = dialogHead(details, [
     avatar(candidate, "large"),
     h("div", { class: "details-title" },
       nameHead,
-      h("p", { class: "muted" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
+      h("p", { class: "muted details-race" }, race.name, count > 1 ? ` · ${index + 1} of ${count}` : ""),
       pills),
-    h("div", { class: "details-actions" }, search, banButton, pickButton),
-  ], steps.previous, steps.next);
+    h("div", { class: "details-actions" }, search, banButton, pickButtons[0]),
+  ], steps.previous[0], steps.next[0]);
   details.classList.remove("compact");
-  details.replaceChildren(head, tabBox);
+  details.replaceChildren(head, tabBox, bar);
   if (!details.open) details.showModal();
   details.scrollTop = 0;
-  const pressed = steps[focus];
-  (pressed && !pressed.disabled ? pressed : close).focus();
+  const pressed = (steps[focus] || []).find((button) => button.offsetParent && !button.disabled);
+  (pressed || close).focus();
 }
 
-// A head button's word; once the head shrinks on a phone, Search's and Ban's hide, leaving their
-// icons, and the button's accessible name and tooltip say the rest.
+// A button's word; on a phone, Search's and Ban's hide, leaving their icons, and the button's
+// accessible name and tooltip say the rest.
 const word = (text) => h("span", { class: "btn-word" }, text);
 
 // The head shrinks to the photo, the name and the buttons' icons once the voter scrolls down, and

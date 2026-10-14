@@ -1090,8 +1090,7 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .details-tabs > .tabs { position: sticky; top: var(--head-h, 0px); z-index: 2; background: var(--panel); }
 .details-foot { position: sticky; bottom: 0; z-index: 2; background: var(--panel); }
 /* Details' head (details.js) has Search and Pick beside ‹ › ✕ and the name in its party's colour.
-   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons; on a phone, Search
-   and Ban keep only their icons, and Pick its word. */
+   Scrolled down (.compact), it shrinks to a small photo, the name and the buttons. */
 .cand-details .details-head { transition: padding 0.15s; }
 .cand-details .details-head .avatar { transition: width 0.15s, height 0.15s, font-size 0.15s; }
 .details-actions { display: flex; gap: 6px; flex: none; }
@@ -1106,8 +1105,20 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .compact .details-actions .btn { padding: 6px 8px; }
 .compact .icon-btn.step { padding: 2px 11px 6px; }
 @media (prefers-reduced-motion: reduce) { .cand-details .details-head, .cand-details .details-head .avatar { transition: none; } }
+/* a swipe sideways steps through the candidates (swipe.js), so the browser keeps only vertical scrolling
+   and zooming; the tab row, which scrolls sideways, keeps its own */
+.cand-details { touch-action: pan-y pinch-zoom; }
+/* ‹ Previous, Pick and Next ›, at the bottom on a phone */
+.details-bar { display: none; }
 
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 0 -20px; padding: 0 20px; overflow-x: auto; }
+/* a fade at an edge of the tab row with more tabs past it (renderTabs) */
+.tabs::before, .tabs::after { content: ""; position: sticky; flex: none; width: 32px; pointer-events: none; opacity: 0;
+  transition: opacity 0.15s; }
+.tabs::before { left: 0; margin-right: -36px; background: linear-gradient(to right, var(--panel), transparent); }
+.tabs::after { right: 0; margin-left: -36px; background: linear-gradient(to left, var(--panel), transparent); }
+.tabs.more-before::before, .tabs.more-after::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .tabs::before, .tabs::after { transition: none; } }
 .tab { font-weight: 600; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
   padding: 10px 12px 8px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
@@ -1541,21 +1552,30 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .details-head .avatar.large { width: 48px; height: 48px; font-size: 1rem; }
   .details-title h2 { font-size: 1.15rem; }
   .details-tabs { padding: 0 16px; }
-  /* Details' Search and Pick get a line of their own under the name, until the head shrinks */
-  .cand-details .details-head { flex-wrap: wrap; }
-  .cand-details .details-title { flex-basis: 0; }
-  .cand-details:not(.compact) .details-actions { order: 3; flex-basis: 100%; }
-  .cand-details:not(.compact) .details-actions .btn { flex: 1 1 0; justify-content: center; }
-  .compact .details-head { gap: 6px; padding: 8px 16px; flex-wrap: nowrap; }
-  .compact .details-actions, .compact .details-nav { gap: 3px; }
-  /* the name gets what the five buttons leave, on up to two lines */
+  /* Details on a phone: the whole screen, its head the photo, the name, then the race and the pills,
+     with Search and Ban as icons beside ✕; ‹ Previous, Pick and Next › in a bar at the bottom */
+  .cand-details[open] { display: flex; flex-direction: column; height: calc(100dvh - 16px); }
+  .cand-details > * { flex-shrink: 0; }
+  .cand-details .details-tabs { flex-grow: 1; }
+  .cand-details .details-head { gap: 10px; padding: 10px 12px 8px 16px; }
+  .cand-details .details-head .avatar.large { width: 40px; height: 40px; font-size: 0.9rem; }
+  .cand-details .details-title { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
+  .cand-details .details-title h2 { flex-basis: 100%; margin: 0; font-size: 1.05rem; line-height: 1.2; }
+  .cand-details .details-title .details-race { margin: 0; font-size: 0.8rem; }
+  .cand-details .details-title .cand-sub { margin: 0; gap: 4px; }
+  .cand-details .details-actions, .cand-details .details-nav { gap: 2px; }
+  .cand-details .details-actions .btn { padding: 6px 8px; }
+  .cand-details .details-actions .btn-word { display: none; }
+  .cand-details .details-actions .btn.primary, .cand-details .details-nav .step { display: none; }
+  .cand-details .icon-btn.close { padding: 4px 8px; }
+  .details-bar { display: flex; gap: 8px; position: sticky; bottom: 0; z-index: 3; background: var(--panel);
+    border-top: 1px solid var(--line); padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); }
+  .details-bar .btn { flex: 1 1 0; justify-content: center; min-height: 44px; }
+  /* scrolled down, the name gets what the buttons leave, on up to two lines */
+  .compact .details-head { gap: 6px; padding: 6px 12px 6px 16px; }
   .compact .details-head .avatar.large { width: 24px; height: 24px; font-size: 0.6rem; }
   .compact .details-title h2 { font-size: 0.95rem; line-height: 1.15; white-space: normal; display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-  .compact .details-actions .btn { padding: 6px 7px; }
-  .compact .details-actions .btn:not(.primary) .btn-word { display: none; }
-  .compact .icon-btn.step { padding: 2px 8px 6px; }
-  .compact .icon-btn.close { padding: 4px 8px; }
   .cmp-controls { padding: 10px 16px; }
   /* a candidate's chip wraps between whole parts, and its name never breaks */
   .cmp-chip { flex-wrap: wrap; row-gap: 0; border-radius: var(--radius-sm); }
@@ -1607,8 +1627,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
   .icon-btn.row-more { min-width: 44px; }
-  button.badge-btn, a.badge-link, .cal-link, .ban-remove, .help-link, button.pill-btn { position: relative; }
-  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after, .help-link::after, button.pill-btn::after { content: "";
+  button.badge-btn, a.badge-link, .cal-link, .ban-remove, .help-link, button.pill-btn, .tab .likely-flag { position: relative; }
+  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after, .help-link::after, button.pill-btn::after,
+  .tab .likely-flag::after { content: "";
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* the strip's section chips: 44px tall, the pill drawn inside at its usual size */
   .progress-strip .jump-list a, .progress-strip .jump-list a:hover, .progress-strip .jump-list a[aria-current] {

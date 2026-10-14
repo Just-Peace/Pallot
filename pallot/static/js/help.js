@@ -19,8 +19,13 @@ export function helpLink(anchor, topic) {
 // The one note over the page, made the first time it's needed; it goes into an open dialog when its
 // button is in one, since the rest of the page is inert then. Scrolling closes it.
 let note = null;
-let noteFor = null; // the button it was last opened from
+let noteFor = null; // the button (or a tab's "?") it was last opened from
 let closedAt = 0;
+
+// Only a noteButton says whether its note is open; a tab's "?" is hidden from screen readers.
+const expanded = (anchor, open) => {
+  if (anchor?.hasAttribute("aria-expanded")) anchor.setAttribute("aria-expanded", String(open));
+};
 
 function noteBox() {
   if (note) return note;
@@ -30,7 +35,7 @@ function noteBox() {
       document.addEventListener("scroll", hideNote, { capture: true, once: true, passive: true });
       return;
     }
-    noteFor?.setAttribute("aria-expanded", "false");
+    expanded(noteFor, false);
     closedAt = performance.now();
   });
   return note;
@@ -48,8 +53,9 @@ function placeNote(button) {
   note.style.left = `${Math.max(8, Math.min(box.left, innerWidth - note.offsetWidth - 8))}px`;
 }
 
-// The click that closed the note by landing on its own button doesn't open it again.
-function toggleNote(button, content) {
+// The click that closed the note by landing on its own button doesn't open it again. ``button`` is
+// what it opens beside: a noteButton, or a tab's "?" (renderTabs), tapped inside its tab.
+export function toggleNote(button, content) {
   if (!popovers()) {
     showToast(h("span", {}, content()));
     return;
@@ -61,12 +67,12 @@ function toggleNote(button, content) {
     return;
   }
   hideNote();
-  noteFor?.setAttribute("aria-expanded", "false");
+  expanded(noteFor, false);
   noteFor = button;
   (button.closest("dialog[open]") || document.body).append(box);
   box.replaceChildren(h("div", { class: "pop-note-body", "aria-live": "polite" }, content()));
   box.showPopover();
-  button.setAttribute("aria-expanded", "true");
+  expanded(button, true);
   placeNote(button);
 }
 
