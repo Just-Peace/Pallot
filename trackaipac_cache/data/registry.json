@@ -1028,6 +1028,13 @@
     "party": "R",
     "state": "FL"
   },
+  "fl-mike-klein": {
+    "chamber": "house",
+    "district": "03",
+    "name": "Mike Klein",
+    "party": "I",
+    "state": "FL"
+  },
   "fl-neal-dunn": {
     "chamber": "house",
     "district": "02",

@@ -3,11 +3,11 @@
  "sources": {
   "cair": {
    "answers": 1,
-   "answers_hash": "d332846ccacd406c4e6537fe5426e3aea77de9e6af1a6524928a5c6648579a00",
-   "candidates": 913,
-   "last_checked": "2026-10-11T15:37:29+00:00",
-   "last_refresh": "2026-10-11T15:37:29+00:00",
-   "texas": 77
+   "answers_hash": "7489eec06489938230bfe8e1eeb3bbee07a72ac45e0b433718c067838b177a77",
+   "candidates": 1020,
+   "last_checked": "2026-10-14T14:29:41+00:00",
+   "last_refresh": "2026-10-14T14:29:41+00:00",
+   "texas": 101
   },
   "county_precincts": {
    "answers": 25,
@@ -21,23 +21,23 @@
    "answers": 1,
    "answers_hash": "d2e3fc500aafeb8fa556966918705e346d4aae5a96cd33e920f51488061e8394",
    "candidates": 39,
-   "last_checked": "2026-10-11T15:37:29+00:00",
+   "last_checked": "2026-10-14T14:29:41+00:00",
    "last_refresh": "2026-10-08T20:47:28+00:00",
    "texas": 3
   },
   "fec": {
    "answers": 469,
-   "answers_hash": "0954283983e4cc5e673a8bc7aedd9a2ccc5fc4586fe2c4776aabe0b0213cbfac",
+   "answers_hash": "f9a71c262c12063f6452574fd91edcbc0d27a40b367f3dc5f565daa93247c238",
    "candidates": 93,
-   "last_checked": "2026-10-11T15:37:29+00:00",
-   "last_refresh": "2026-10-11T15:37:29+00:00",
+   "last_checked": "2026-10-14T14:29:41+00:00",
+   "last_refresh": "2026-10-14T14:29:41+00:00",
    "races": 39
   },
   "mupac": {
    "answers": 1,
    "answers_hash": "068dfea88b2198fd0f62fc44bfaa55c1738d918823bd0048f1efe97dea54ca82",
    "candidates": 26,
-   "last_checked": "2026-10-11T15:37:29+00:00",
+   "last_checked": "2026-10-14T14:29:41+00:00",
    "last_refresh": "2026-10-08T20:47:28+00:00",
    "texas": 3
   },
@@ -51,27 +51,27 @@
   },
   "polls": {
    "answers": 4,
-   "answers_hash": "0c01530d2113107f1ed38a2b8fb2b88ee5f05c9bb6ea8b0db37256ea43e7748a",
-   "governor": 40,
-   "house": 15,
-   "last_checked": "2026-10-11T15:37:29+00:00",
-   "last_refresh": "2026-10-11T15:37:29+00:00",
-   "senate": 53
+   "answers_hash": "af66a61c84c09c5a0e1d72fb9c74a4b01abb389795125c6c3dd91bbcbe319352",
+   "governor": 44,
+   "house": 16,
+   "last_checked": "2026-10-14T14:29:41+00:00",
+   "last_refresh": "2026-10-14T14:29:41+00:00",
+   "senate": 57
   },
   "sos": {
    "answers": 9,
    "answers_hash": "27470e241117589aafa633487bdb566ffe8e1f2b365f3390aa8c765ee90ab3d1",
    "candidates": 3971,
    "elections": 3,
-   "last_checked": "2026-10-11T15:37:29+00:00",
-   "last_refresh": "2026-10-11T15:37:29+00:00"
+   "last_checked": "2026-10-14T14:29:41+00:00",
+   "last_refresh": "2026-10-14T14:29:41+00:00"
   },
   "sos_ballot_order": {
    "answers": 254,
    "answers_hash": "2d7ec4b29217c18ab3874acf5bbc3cefc8e3dafc7ac127fd06c013e3f4aee45f",
    "ballot_orders": 254,
    "elections": 3,
-   "last_checked": "2026-10-11T15:37:29+00:00",
+   "last_checked": "2026-10-12T18:59:24+00:00",
    "last_refresh": "2026-10-11T15:37:29+00:00",
    "server_errors": 0
   },

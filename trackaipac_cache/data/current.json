@@ -7458,6 +7458,52 @@
       "state": "FL"
     },
     {
+      "candidate_id": "fl-mike-klein",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "03",
+      "listings": [
+        {
+          "campaign_url": "https://mikeklein4congress.com/",
+          "candidate_id": "fl-mike-klein",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "03",
+          "donate_url": "https://mikeklein4congress.com/",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://mikeklein4congress.com/)",
+            "FL-03 [I]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Mike](https://mikeklein4congress.com/)"
+          ],
+          "name": "Mike Klein",
+          "notes": [
+            "General Election"
+          ],
+          "pacs": [],
+          "party": "I",
+          "seat": "FL-03",
+          "seat_text": "FL-03 [I]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Mike Klein",
+      "party": "I",
+      "seat": "FL-03",
+      "state": "FL"
+    },
+    {
       "candidate_id": "fl-neal-dunn",
       "categories": [
         "congress"
@@ -15106,16 +15152,16 @@
           "donate_url": null,
           "donations": 139134,
           "election_date": null,
-          "ie": 204593,
+          "ie": 5841660,
           "incumbent": false,
-          "israel_lobby_total": 343727,
+          "israel_lobby_total": 5980794,
           "lines": [
             "Candidate for U.S. Senate",
             "MI [R]",
-            "Israel Lobby Total: $343,727",
+            "Israel Lobby Total: $5,980,794",
             "Donations: $139,134",
-            "IE: $204,593",
-            "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, YJL"
+            "IE: $5,841,660",
+            "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, TFM, YJL"
           ],
           "name": "Mike Rogers",
           "notes": [],
@@ -15127,6 +15173,7 @@
             "FIPAC",
             "LAFAS",
             "RJC",
+            "TFM",
             "YJL"
           ],
           "party": "R",
@@ -32499,5 +32546,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-11"
+  "snapshot": "2026-10-14"
 }
