@@ -194,7 +194,7 @@ button, input, select, textarea { font: inherit; }
   background: var(--bg); border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; }
 .site-footer p { max-width: var(--content-max); margin: 0 auto; padding: 0 32px; } /* lined up with the content */
 
-/* Back to top (chrome.js): once you've scrolled a screen, above the footer */
+/* Back to top (chrome.js): once you've scrolled a screen, above the footer; on a phone, only while scrolling up */
 .to-top { position: fixed; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(var(--footer-h, 0px) + 16px); z-index: 7; display: grid; place-items: center;
   width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--panel);
   color: var(--accent); box-shadow: var(--shadow-pop); cursor: pointer;
