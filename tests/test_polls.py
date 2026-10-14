@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import datetime as dt
+
 import httpx
 import pytest
 import respx
@@ -117,6 +119,22 @@ async def test_pages_are_read_until_one_comes_back_short(tmp_path):
     assert sorted(row["poll_id"] for row in found) == ["10000", "9999"]
     assert [call.request.url.params["offset"] for call in route.calls] == ["0", "500"]
     assert all("Mozilla" in call.request.headers["user-agent"] for call in route.calls)
+
+
+class _Refused:
+    """Polls whose Governor list was asked after the Senate list's refusal paused the rest."""
+
+    async def polls(self, kind):
+        if kind == polls.SENATE:
+            raise polls.PollsUnavailable("HTTP 403")
+        raise polls.PollsUnavailable("paused until Oct 1, 2026, 1:00 PM after FiftyPlusOne refused a request", paused=True)
+
+
+@pytest.mark.anyio
+async def test_the_refusal_is_named_whichever_list_failed_first():
+    governor = Race(key="gov", name="Governor", group="state", source="sos", candidates=[])
+    with pytest.raises(polls.PollsUnavailable, match="HTTP 403"):
+        await polls.cards(_Refused(), [SENATE, governor], dt.date(2026, 10, 1))
 
 
 @pytest.mark.anyio
