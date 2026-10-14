@@ -698,7 +698,7 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .menu-panel .check { font-size: 0.9rem; }
 .menu-panel .seg { margin: 4px 0 0; }
 #view-panel { width: min(320px, calc(100vw - 32px)); max-width: none; }
-/* Help me pick's panel (endorser-bar.js), and its copy in More's Your picks (.sheet-help), whose
+/* Help me pick's panel (endorser-bar.js), and its copy in More (.sheet-help), whose
    buttons are the sheet's own size; an Avoid chip amber once chosen */
 #help-panel { width: min(360px, calc(100vw - 32px)); max-width: none; }
 :is(#help-panel, .sheet-help) .rule-chips { margin: 4px 0 2px; }
@@ -708,7 +708,6 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .rule-chip.bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
 .sheet-help { padding: 0 0 6px; }
 .sheet-help .rule-chip { min-height: 40px; }
-.sheet-sub { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-weight: 700; }
 .sheet-help-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
 .sheet-help-foot .sheet-action { flex: 1 1 auto; width: auto; }
 .sheet-help-foot .btn { min-height: 40px; }
@@ -1315,6 +1314,9 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .sheet-action .icon { width: 18px; height: 18px; color: var(--accent); }
 .sheet-action.danger, .sheet-action.danger .icon { color: var(--danger); }
 .sheet-action:disabled { opacity: 0.55; cursor: not-allowed; }
+.sheet-section > .check { align-items: center; min-height: 44px; margin: 0; padding: 0 8px; }
+.sheet-section .menu-foot { margin-bottom: 0; }
+.sheet-section .menu-foot :is(.btn, .theme-toggle) { min-height: 44px; min-width: 44px; }
 
 /* ---- Pick by rule (pick-rule-dialog.js) ---- */
 /* The rule on the left, what it would do on the right, each scrolling on its own; the heading,
@@ -1432,6 +1434,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .site-footer p { padding: 0 16px; }
   .to-top { right: calc(16px + env(safe-area-inset-right, 0px)); }
   .ballot-tools { margin: 12px 0 4px; }
+  /* only Print stays in the toolbar; View, Help me pick and Clear picks are in More */
+  .ballot-tools :is(#view-controls, .tool-divider, #help-menu, #clear-picks) { display: none; }
   .section-chips { display: block; margin: -12px -16px 12px; padding: 8px 16px; }
 
   /* The strip, slim (ballot-nav.js): the section chips on top, then one line with the race on
@@ -1496,14 +1500,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .entry .button-row .btn { flex: 1 1 auto; }
   .confirm-dialog .button-row { flex-direction: column; }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
-  /* the toolbar's buttons a size down, so they take two lines; View and Help me pick open from the
-     toolbar's left edge, where they always fit on the screen */
-  .ballot-tools, .ballot-tools .tool-group { gap: 6px; }
-  .progress-strip .btn.small, .ballot-tools .btn.small { padding: 5px 9px; font-size: 0.8rem; }
-  .ballot-tools .seg-option { padding: 4px 10px; font-size: 0.8rem; }
-  .ballot-tools .icon { width: 14px; height: 14px; }
-  #view-controls, .ballot-tools { position: relative; }
-  #view-menu, #help-menu { position: static; }
+  .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
+  #print-btn { min-height: 40px; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
   .head-compare .btn-word, .rule-btn .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
