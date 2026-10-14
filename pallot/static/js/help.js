@@ -101,12 +101,20 @@ export function forgetTips() {
   writeJson(TIPS, []);
 }
 
+// A card that content-visibility skips is off screen: reading its geometry would make the browser
+// lay it out, every skipped card at each pass.
+const skipped = (element) => element.checkVisibility?.({ contentVisibilityAuto: true }) === false;
+
 // Wholly in the window, and not hidden.
 function onScreen(element) {
-  if (!element?.isConnected || !element.getClientRects().length) return false;
+  if (!element.getClientRects().length) return false;
   const box = element.getBoundingClientRect();
   return box.top >= 0 && box.bottom <= innerHeight;
 }
+
+// A card only stops being skipped at the frame after it nears the window, so a pass that skipped a
+// target looks again two frames later, once, in case a jump brought it into view without more scrolling.
+let recheck = 0;
 
 // Shows the first of ``tips`` not seen yet whose ``when()`` holds and whose ``target()`` (an element
 // or a list, the first on screen counting) is in the window, after ``after(target)`` (else the
@@ -114,7 +122,7 @@ function onScreen(element) {
 // show the next one whose target is on screen. If the page drew it away before, only it may come
 // back while it still could; once it can't (seen, its ``when()`` false, or its target gone or
 // hidden), the others may show.
-export function showTip(tips, next) {
+export function showTip(tips, next, again = true) {
   if (shown?.box.isConnected) return;
   const done = seen();
   if (shown) {
@@ -122,13 +130,24 @@ export function showTip(tips, next) {
     const drawn = (el) => el?.isConnected && el.getClientRects().length > 0;
     if (!tip || done.has(tip.id) || !tip.when() || ![tip.target()].flat().some(drawn)) shown = null;
   }
+  let waiting = false;
   for (const tip of shown ? tips.filter((t) => t.id === shown.id) : tips) {
     if (done.has(tip.id) || !tip.when()) continue;
-    const target = [tip.target()].flat().find(onScreen);
-    if (target) {
-      drawTip(tip, target, next);
-      return;
+    for (const target of [tip.target()].flat()) {
+      if (!target?.isConnected) continue;
+      if (skipped(target)) {
+        waiting = true;
+      } else if (onScreen(target)) {
+        drawTip(tip, target, next);
+        return;
+      }
     }
+  }
+  if (waiting && again && !recheck) {
+    recheck = requestAnimationFrame(() => requestAnimationFrame(() => {
+      recheck = 0;
+      showTip(tips, next, false);
+    }));
   }
 }
 
