@@ -54,10 +54,24 @@ export class Picks {
     return this.picked(raceKey).includes(candidateKey);
   }
 
+  // A pick by hand: the race's picks Help me pick's endorsers made stay theirs only while still picked.
   set(raceKey, candidateKeys) {
     if (candidateKeys.length) this.data.races[raceKey] = candidateKeys;
     else delete this.data.races[raceKey];
+    this.setAuto(raceKey, this.auto(raceKey).filter((key) => candidateKeys.includes(key)));
     saveBucket(this.key, this.data);
+  }
+
+  // The picks in a race that Help me pick's endorsers made, which dropping them takes back; any
+  // other pick there is the voter's own.
+  auto(raceKey) {
+    return this.data.auto?.[raceKey] || [];
+  }
+
+  setAuto(raceKey, candidateKeys) {
+    this.data.auto ||= {};
+    if (candidateKeys.length) this.data.auto[raceKey] = candidateKeys;
+    else delete this.data.auto[raceKey];
   }
 
   note(candidateKey) {
@@ -87,13 +101,17 @@ export class Picks {
     saveBucket(this.key, this.data);
   }
 
-  // Sets several races' picks with one save (Pick by rule), and returns what they were, for Undo.
-  setMany(changes) {
-    const before = {};
+  // Sets several races' picks with one save (Pick by rule, Help me pick), and returns what they were,
+  // for Undo, as { picks, auto }. ``auto``: each race's picks Help me pick's endorsers made (else
+  // those still picked stay theirs).
+  setMany(changes, auto = null) {
+    const before = { picks: {}, auto: {} };
     for (const [raceKey, keys] of Object.entries(changes)) {
-      before[raceKey] = this.picked(raceKey);
+      before.picks[raceKey] = this.picked(raceKey);
+      before.auto[raceKey] = this.auto(raceKey);
       if (keys.length) this.data.races[raceKey] = keys;
       else delete this.data.races[raceKey];
+      this.setAuto(raceKey, auto ? auto[raceKey] || [] : this.auto(raceKey).filter((key) => keys.includes(key)));
     }
     saveBucket(this.key, this.data);
     return before;
@@ -115,17 +133,18 @@ export class Picks {
 
   // Clears the picks, notes and write-ins (not the collapsed races), and returns them for restore().
   clear() {
-    const { races, notes, writeIns = {} } = this.data;
+    const { races, notes, writeIns = {}, auto = {} } = this.data;
     this.data.races = {};
     this.data.notes = {};
     this.data.writeIns = {};
+    this.data.auto = {};
     saveBucket(this.key, this.data);
-    return { races, notes, writeIns };
+    return { races, notes, writeIns, auto };
   }
 
   // Puts back what clear() returned: "Undo" after "Clear picks".
-  restore({ races, notes, writeIns }) {
-    Object.assign(this.data, { races, notes, writeIns });
+  restore({ races, notes, writeIns, auto = {} }) {
+    Object.assign(this.data, { races, notes, writeIns, auto });
     saveBucket(this.key, this.data);
   }
 

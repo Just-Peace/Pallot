@@ -9,6 +9,7 @@
 import "./page.js";
 import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
+import { applyTheme, currentTheme, onThemeChange, setTheme } from "./appearance.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
 import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
@@ -218,19 +219,16 @@ function initSearchEngine() {
   });
 }
 
-// Appearance: theme.js, in every page's <head>, applies it here at once and in other tabs.
+// Appearance (appearance.js): it applies here at once and in other tabs, and the choice follows a
+// change made from the ballot's View menu in another tab.
 const themeChoice = $("#theme");
 
 function showTheme() {
-  const theme = ["light", "dark"].includes(uiPref("theme")) ? uiPref("theme") : "system";
-  themeChoice.querySelector(`input[value="${theme}"]`).checked = true;
-  document.dispatchEvent(new Event("pallot:theme"));
+  themeChoice.querySelector(`input[value="${currentTheme()}"]`).checked = true;
 }
 
-themeChoice.addEventListener("change", (event) => {
-  setUiPref("theme", event.target.value);
-  showTheme();
-});
+themeChoice.addEventListener("change", (event) => setTheme(event.target.value));
+onThemeChange(showTheme);
 
 // Ballot view: the focuses, each with its hint, Minimal, Simple, Detailed (none when the switches are
 // mixed) and the switches, none locked: turning off one a focus turns on drops it (setViewPref). An
@@ -251,10 +249,10 @@ function showView() {
 bindViewControls(viewSection);
 onViewChange(showView);
 
-// Tips: "Show tips again" forgets the ones dismissed, so the ballot shows them again, one a visit.
+// Tips: "Show tips again" forgets the ones dismissed, so the ballot shows them again, one at a time.
 $("#tips-again").addEventListener("click", () => {
   forgetTips();
-  setStatus($("#tips-status"), "The ballot will show its tips again, one a visit.", "ok");
+  setStatus($("#tips-status"), "The ballot will show its tips again, one at a time.", "ok");
 });
 
 // Ban list (ban-list.js): the names banned from Details and the names or patterns typed here, a
@@ -327,7 +325,7 @@ function clearInBrowser(clear, message, nothing) {
 // ballot view and the search engine (load() redraws the sources' switches).
 function showBrowserData() {
   showRememberedAddress();
-  showTheme();
+  applyTheme();
   showView();
   searchSelect.value = currentEngine().id;
   showBanList();
@@ -357,7 +355,7 @@ $("#clear-browser-data").addEventListener("click", async () => {
 // have paused a source, so ask the server again. Another tab may have changed the appearance or
 // the switches.
 onReturn(() => {
-  showTheme();
+  applyTheme();
   showView();
   showBanList();
   load();
