@@ -105,9 +105,13 @@ export function migrateView() {
   setUiPrefs({ ...PRESETS.minimal, focuses: chosen.filter((id) => id !== "simple"), modeChosen: undefined });
 }
 
-// "minimal", "simple", "detailed", or "custom" when the stored switches match neither.
+// The switches a card's own fold sets (the map's heading): a mode sets them, but opening or folding
+// the card isn't a change of the whole view.
+const FOLDS = new Set(["showMap"]);
+
+// "minimal", "simple", "detailed", or "custom" when the stored switches match neither, folds aside.
 export function viewMode() {
-  const matches = (preset) => Object.entries(preset).every(([name, value]) => storedPref(name) === value);
+  const matches = (preset) => Object.entries(preset).every(([name, value]) => FOLDS.has(name) || storedPref(name) === value);
   return Object.keys(PRESETS).find((mode) => matches(PRESETS[mode])) || "custom";
 }
 

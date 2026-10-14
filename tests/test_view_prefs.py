@@ -1,5 +1,5 @@
-"""The view settings and picks kept in the voter's browser (view.js, picks.js): whether "What matters
-to you?" still has to be asked. Run in Node, which loads the modules as the browser does, with a
+"""The view settings and picks kept in the voter's browser (view.js, picks.js): the view's mode, and
+whether "What matters to you?" still has to be asked. Run in Node, which loads the modules as the browser does, with a
 stand-in for localStorage."""
 
 from __future__ import annotations
@@ -23,6 +23,7 @@ globalThis.localStorage = {
   setItem: (key, value) => store.set(key, String(value)),
   removeItem: (key) => store.delete(key),
 };
+globalThis.document = { dispatchEvent() {} };
 """
 
 
@@ -42,6 +43,20 @@ const noteOnly = picks.hasAnyPicks();
 p.set("r1", ["c1"]);
 return [before, noteOnly, picks.hasAnyPicks()];
 """) == [False, False, True]
+
+
+def test_opening_the_map_keeps_the_mode_and_another_switch_makes_it_custom():
+    assert _run("""
+const modes = [view.viewMode()];
+view.setViewPref("showMap", true);
+modes.push(view.viewMode());
+view.setViewMode("detailed");
+view.setViewPref("showMap", false);
+modes.push(view.viewMode(), view.viewPref("showMap"));
+view.setViewPref("showPolls", false);
+modes.push(view.viewMode());
+return modes;
+""") ==["simple", "simple", "detailed", False, "custom"]
 
 
 def test_the_question_counts_as_asked_once_dismissed():
