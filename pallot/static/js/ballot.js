@@ -4,7 +4,8 @@
 // ballot, then the progress strip and the races, each one collapsible.
 //
 // This module looks the ballot up, draws it and starts the page. Its parts are their own
-// modules, each handed ``page``: the districts card (districts-card.js), the race cards
+// modules, each handed ``page``: the districts card (districts-card.js), with When to vote folded
+// into a line beside it on a phone (ballot-top.js), the race cards
 // (race-cards.js), Details (details.js), and the strip, sections and the view controls (ballot-nav.js).
 
 import { lookupLabel, rememberedCard, showAddress } from "./address.js";
@@ -13,6 +14,7 @@ import {
   applyHidePicked, askFocus, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, syncPollMarks, updateProgress,
 } from "./ballot-nav.js";
 import { electionLine } from "./ballot-shared.js";
+import { initBallotTop, renderBallotTop } from "./ballot-top.js";
 import { onBanListChanged } from "./ban-list.js";
 import { initChrome, narrow } from "./chrome.js";
 import { initDetails, showDetails } from "./details.js";
@@ -327,6 +329,7 @@ function render() {
   renderHeader();
   renderKeyDates();
   renderDistricts();
+  renderBallotTop(page.ballot, page.request);
   syncMap(page.ballot);
   renderMessages();
   renderSections();
@@ -439,6 +442,7 @@ initRaceCards(page);
 initDetails(page);
 initRules(page);
 initDistrictsCard(page);
+initBallotTop();
 initNav(page);
 
 // A new address or precinct starts a new ballot, and so does switching between the address and the
