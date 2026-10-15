@@ -23,6 +23,9 @@ FROM python:3.13-slim
 RUN useradd --create-home --uid 1000 pallot && mkdir /data && chown pallot:pallot /data
 COPY --from=build /app/.venv /app/.venv
 ENV PATH=/app/.venv/bin:$PATH PALLOT_DATA_DIR=/data PYTHONUNBUFFERED=1
+# glibc keeps a lookup's freed memory in each worker thread's arena; two arenas hold the
+# resident size down without slowing lookups
+ENV MALLOC_ARENA_MAX=2
 USER pallot
 EXPOSE 8000
 # 0.0.0.0 inside the container, or the published port can't reach it; which host
