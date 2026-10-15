@@ -327,7 +327,7 @@ function render() {
 
 // Redraws the races and propositions in place, from the saved picks, with the
 // progress, the filters, Help me pick's marks and the rule's banner: after the picks change as a
-// whole (Clear picks, Pick by rule, their Undo, another tab). The rest of the page, an open edit of
+// whole (Clear picks, More conditions, their Undo, another tab). The rest of the page, an open edit of
 // the districts and a note being typed included, stays as it is.
 function renderRaces() {
   redrawCards();
@@ -492,7 +492,7 @@ onReturn(() => {
   if (settingsStamp() !== settingsSeen) location.reload();
 });
 
-// A candidate banned or unbanned in another ballot tab gets or loses their Banned pill here too.
+// A candidate added to or taken off the Avoid list in another tab gets or loses their Avoiding pill here too.
 onBanListChanged(() => {
   if (page.ballot) refillBans();
 });

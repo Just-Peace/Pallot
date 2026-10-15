@@ -65,12 +65,12 @@ The FAQ (linked from every page) explains the figures and the features in detail
 - **Your districts** shows your districts and precincts, as on your voter registration certificate. You can correct any number from your certificate. A **map** shows their outlines over OpenStreetMap.
 - **Each candidate** has their endorsements, a **Funding** summary (small donors, Texas donors, outside spending), polls where there are any, a note, a web search, and **Profile**: their filing, Wikidata and Ballotpedia profiles, issue searches, and a tab per source. **Compare funding** puts a race's candidates side by side.
 - **View** chooses how much detail to show (Minimal, Simple, Detailed) and what matters to you (Funding, Endorsements, Polls, Where they stand).
-- **Help me pick** picks the candidates of the endorsers you trust, and marks the ones to avoid. **Pick by rule** picks across the ballot by party, endorsements, money or polls. Neither ever guesses in a race with more matches than seats.
-- **Ban list:** candidates you never want to vote for, by name or pattern.
+- **Help me pick**: **Trust** picks the candidates of the endorsers you trust, and **Avoid** marks the ones you won't vote for, from watchlists or your own list. **More conditions** picks across the ballot, or in one race, by party, endorsements, money or polls. It never guesses in a race with more matches than seats.
+- **Avoid** on a candidate adds them to your own list, which you can also fill by name or pattern in Settings. Trust never picks them.
 - **Print my picks** as a full page or a wallet card. Your address isn't printed.
 - On a phone, the left pane becomes a top bar, and the ballot's buttons are under **More**.
 
-Your picks, notes, write-ins, pick rule, ban list and settings are kept in your browser's `localStorage`, never on the server.
+Your picks, notes, write-ins, Help me pick choices, the people you avoid and your settings are kept in your browser's `localStorage`, never on the server.
 
 ## Where the data comes from
 
@@ -121,7 +121,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 
 ## Settings
 
-The **Settings** page has **Ballot view**, **Web search**, **Ban list**, **Sources**, **Appearance** and **Clear data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
+The **Settings** page has **Ballot view**, **Web search**, **People you avoid**, **Sources**, **Appearance** and **Clear data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
 
 - **Sources** lists every source in groups, with a switch for each (except the address lookup), what the server has saved for it, how old its data is, whether it's paused, and how the last lookup used it. Your switches travel with each request, so the server builds your ballot with them. A source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on)).
 - **Clear data** clears your picks and notes, or everything Pallot keeps in this browser, each with **Undo**.

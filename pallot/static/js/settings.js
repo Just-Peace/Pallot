@@ -1,4 +1,4 @@
-// The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the ban list; the sources, under the groups the
+// The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the people the voter avoids; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
 // what the server has saved from each and how the last lookup used it; the appearance; and Clear data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
@@ -255,7 +255,7 @@ $("#tips-again").addEventListener("click", () => {
   setStatus($("#tips-status"), "The ballot will show its tips again, one at a time.", "ok");
 });
 
-// Ban list (ban-list.js): the names banned from Details and the names or patterns typed here, a
+// People you avoid (ban-list.js): the names added with Avoid and the names or patterns typed here, a
 // chip each with a remove button. A change is marked, so an open ballot reloads with it.
 const banForm = $("#ban-form");
 const banEntry = $("#ban-entry");
@@ -267,9 +267,9 @@ function showBanList() {
   $("#ban-entries").replaceChildren(...entries.map(({ text }) => h("li", { class: "ban-chip" },
     h("span", {}, text),
     h("button", {
-      type: "button", class: "ban-remove", title: `Remove “${text}”`, "aria-label": `Remove ${text} from your ban list`,
+      type: "button", class: "ban-remove", title: `Remove “${text}”`, "aria-label": `Remove ${text} from your Avoid list`,
       on: { click: () => {
-        saveBanList(banList().filter((e) => e.text !== text), `Removed “${text}” from your ban list.`);
+        saveBanList(banList().filter((e) => e.text !== text), `Removed “${text}” from your Avoid list.`);
         banEntry.focus();
       } },
     }, "×"))));
@@ -277,7 +277,7 @@ function showBanList() {
 
 function saveBanList(entries, message) {
   if (!setBanList(entries)) {
-    setStatus(banStatus, "This browser didn't let Pallot save your ban list.", "error");
+    setStatus(banStatus, "This browser didn't let Pallot save your Avoid list.", "error");
     return;
   }
   markSettingsChanged();
@@ -291,11 +291,11 @@ banForm.addEventListener("submit", (event) => {
   if (!entry) return;
   const entries = banList();
   if (entries.some((e) => e.text.toLowerCase() === entry.toLowerCase())) {
-    setStatus(banStatus, `“${entry}” is already on your ban list.`, "info");
+    setStatus(banStatus, `“${entry}” is already on your Avoid list.`, "info");
     return;
   }
   const plain = !isPattern(entry);
-  saveBanList([...entries, { text: entry, plain }], `Added “${entry}” to your ban list.`);
+  saveBanList([...entries, { text: entry, plain }], `Added “${entry}” to your Avoid list.`);
   banEntry.value = "";
   banEntry.focus();
 });
@@ -334,17 +334,17 @@ function showBrowserData() {
 $("#clear-my-picks").addEventListener("click", async () => {
   const sure = await confirmDialog({
     title: "Clear your picks and notes?",
-    body: "Your picks, notes, write-ins and pick rule will be removed. Your address and settings stay.",
+    body: "Your picks, notes, write-ins and Help me pick choices will be removed. Your address and settings stay.",
     confirm: "Clear picks",
     danger: true,
   });
-  if (sure) clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and pick rule were removed from this browser.", "There were no picks or notes to clear.");
+  if (sure) clearInBrowser(clearPicksAndNotes, "Your picks, notes, write-ins and Help me pick choices were removed from this browser.", "There were no picks or notes to clear.");
 });
 
 $("#clear-browser-data").addEventListener("click", async () => {
   const sure = await confirmDialog({
     title: "Clear everything Pallot keeps in this browser?",
-    body: "Your picks, notes, address, appearance, search engine, sources, view and ban list will be removed.",
+    body: "Your picks, notes, address, appearance, search engine, sources, view and the people you avoid will be removed.",
     confirm: "Clear everything",
     danger: true,
   });

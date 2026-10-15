@@ -81,7 +81,7 @@ Each source contributes `SourceCard`s; the page draws them by `kind` (`money`, `
 2. A field on `Services` in `ballot.py`, created in `open_services()` (`services.py`), which the server and `pallot-cache` share.
 3. A job in `enrich.py`, and its place in `CARD_ORDER` (where its tab goes in Details). A `cards()` without I/O runs through `asyncio.to_thread`.
 4. An entry in `SOURCES` in `admin.py` so it appears in Settings and `pallot-cache`, under its `group`, and a line in `pallot/sources.toml` if it can be turned off. A source kept in files rather than cache rows names its `Services` field in `SourceInfo.kept` and implements `KeptSource` (`sources/__init__.py`).
-5. For Pick by rule, `figures` and `flags` on its candidate cards. Sources that mean the same thing share an id (the FEC's and TEC's `raised`). `pick-rules.js` names the ids it knows.
+5. For Help me pick's More conditions, `figures` and `flags` on its candidate cards. Sources that mean the same thing share an id (the FEC's and TEC's `raised`). `pick-rules.js` names the ids it knows.
 6. For a money source, its Funding chips come from `highlights()` in `sources/highlights.py`.
 7. Its throttle in `MIN_INTERVAL` (`services.py`), its pause (`pause_on`), and its lifetimes in `Ttls`.
 8. Fixtures in `record_fixtures.py`, served by `conftest.py`'s `Upstream`, and tests with `respx`.
@@ -89,7 +89,7 @@ Each source contributes `SourceCard`s; the page draws them by `kind` (`money`, `
 
 ## Endorsement lists
 
-A frozen, one-time copy of an organization's list: one JSON file in `pallot/endorsements/`, found at startup. Each file becomes its own source (a switch, a card, a Pick by rule chip, a row on About and the FAQ) with no code naming it. Every state is kept; a lookup matches only its own state.
+A frozen, one-time copy of an organization's list: one JSON file in `pallot/endorsements/`, found at startup. Each file becomes its own source (a switch, a card, a Help me pick Trust chip, a row on About and the FAQ) with no code naming it. Every state is kept; a lookup matches only its own state.
 
 The file, `pallot/endorsements/<source>.json` (`parse()` checks it and refuses unknown fields):
 

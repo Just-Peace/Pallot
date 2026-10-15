@@ -458,7 +458,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .data-action p { margin: 0; font-size: 0.85rem; color: var(--muted); }
 .data-action .btn { flex: none; }
 
-/* Ban list (settings.js): an input with Add, then a red chip per entry with its remove button */
+/* People you avoid (settings.js): an input with Add, then a red chip per entry with its remove button */
 .ban-form { display: flex; gap: 8px; max-width: 480px; }
 .ban-form input { flex: 1 1 auto; min-width: 0; }
 .ban-form .btn { flex: none; }
@@ -681,8 +681,8 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .strip-race, .progress-info .more-btn { display: none; }
 
 /* View and Help me pick: a <details> whose panel drops down over the ballot, in groups (How much
-   detail, What matters to you, Races; Endorsers you trust, Avoid) and a foot (Settings and the
-   appearance toggle, or More rules… and Clear, and a "?"). A dot on View while picked races are
+   detail, What matters to you, Races; Trust, Avoid) and a foot (Settings and the
+   appearance toggle, or More conditions… and Clear, and a "?"). A dot on View while picked races are
    hidden, on Help me pick while races without a match are. */
 .ballot-tools { align-items: center; }
 .tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -706,6 +706,10 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 :is(#help-panel, .sheet-help) .menu-group > .check { margin: 8px 0 0; }
 .help-summary { margin: 0; font-size: 0.9rem; font-weight: 600; }
 .rule-chip.bar-chip-avoid[aria-pressed="true"] { background: var(--warn-soft); border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
+/* the voter's own Avoid list: always on, red like its Avoiding pill, a link to Settings */
+.rule-chip.bar-chip-own { color: var(--danger); background: var(--danger-soft); border-color: var(--danger); text-decoration: none; }
+.rule-chip.bar-chip-own .icon { width: 13px; height: 13px; }
+.help-intro { margin: 0 0 8px; }
 .sheet-help { padding: 0 0 6px; }
 .sheet-help .rule-chip { min-height: 40px; }
 .sheet-help-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
@@ -829,7 +833,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 .ballot-tools .wait-note { flex: 1 1 100%; margin: 0; }
 .sheet-section .wait-note { margin: 6px 0 0; }
 .sheet-section .focus-chips { margin: 10px 0 4px; }
-/* after Pick by rule picks: the rule in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
+/* after More conditions picks: the conditions in words, Edit, Undo and ✕ (pick-rule-dialog.js) */
 .rule-banner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; border-left-color: var(--accent); }
 .rule-banner > p { margin: 0; flex: 1 1 20rem; }
 .rule-banner > .rule-banner-actions { flex: none; display: flex; gap: 14px; }
@@ -976,7 +980,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 .cand-grid .cand-sub { margin: 0; }
 .cand-grid > .cand-profile { grid-area: profile; justify-self: start; }
 .cand-grid > .cand-actions { grid-area: actions; margin-left: 0; }
-/* a phone's "…" for Note, Ban and Search (candidateRow), only outside Detailed */
+/* a phone's "…" for Note, Avoid and Search (candidateRow), only outside Detailed */
 .icon-btn.row-more { display: none; padding: 2px 12px; font-size: 1rem; line-height: 1.2; }
 /* the write-ins with nothing to show, on one line at the end of the race (quietWriteIns) */
 .writeins-line { display: flex; align-items: baseline; gap: 4px 10px; padding: 4px 12px; font-size: 0.88rem; }
@@ -999,7 +1003,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 .party-G { background: var(--party-g); color: var(--on-solid); box-shadow: none; }
 .pill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-weight: 600; font-size: 0.75rem;
   background: var(--neutral-soft); color: var(--muted); }
-/* A candidate on the voter's ban list (ban-list.js): an outlined pill with the ban icon, unlike the
+/* A candidate on the voter's own Avoid list (ban-list.js): an outlined pill with the ban icon, unlike the
    filled party pills, and the name struck through in red */
 .pill.pill-banned { display: inline-flex; align-items: center; gap: 3px; background: transparent; color: var(--danger);
   box-shadow: inset 0 0 0 1.5px var(--danger); }
@@ -1318,7 +1322,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .sheet-section .menu-foot { margin-bottom: 0; }
 .sheet-section .menu-foot :is(.btn, .theme-toggle) { min-height: 44px; min-width: 44px; }
 
-/* ---- Pick by rule (pick-rule-dialog.js) ---- */
+/* ---- More conditions (pick-rule-dialog.js) ---- */
 /* The rule on the left, what it would do on the right, each scrolling on its own; the heading,
    Apply to and the buttons stay put. Under 800px, one column that scrolls whole. */
 .rules { width: min(1000px, calc(100vw - 32px)); }
@@ -1407,8 +1411,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .rules .details-foot .btn { flex: 1 1 auto; justify-content: center; padding-inline: 12px; font-size: 0.9rem; }
   .rules .details-foot .btn.primary { order: -1; flex-basis: 100%; }
 }
-.rule-btn { flex: none; display: inline-flex; align-items: center; gap: 5px; margin-top: -2px; padding: 5px 8px; }
-.rule-btn .icon { width: 14px; height: 14px; }
 
 /* ---- narrower screens: the left pane becomes a top bar, the address and the pages behind
    its two buttons (topbar.js); on the ballot the section chips join the sticky strip ---- */
@@ -1503,7 +1505,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
   #print-btn { min-height: 40px; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
-  .head-compare .btn-word, .rule-btn .btn-word { display: none; }
+  .head-compare .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
   .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
@@ -1529,15 +1531,15 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-money .breakdown-title { font-size: 0.75rem; letter-spacing: 0.04em; }
   .cand { padding: 8px 10px; }
   /* a candidate: the radio, the photo and the name on the first line; under them, at the card's
-     edge like the lines below, Profile, with Note, Ban and Search at the right, as wider */
+     edge like the lines below, Profile, with Note, Avoid and Search at the right, as wider */
   .cand-grid { column-gap: 8px; row-gap: 6px; grid-template-columns: 20px auto minmax(0, 1fr) auto;
     grid-template-areas: "pick photo name name" "profile profile profile actions"; }
   .cand-grid .avatar { width: 32px; height: 32px; font-size: 0.72rem; }
   .cand-grid > .cand-actions { justify-content: flex-end; gap: 5px; }
   /* the buttons, pills and chips a size down, each still at least 22px tall */
   .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: 0.78rem; }
-  .cand-profile .profile-btn { padding: 4px 11px; font-size: 0.78rem; line-height: inherit; } /* as tall as Note and Ban beside it */
-  /* outside Detailed, a lighter row: Note, Ban and Search behind "…" at the right of Profile,
+  .cand-profile .profile-btn { padding: 4px 11px; font-size: 0.78rem; line-height: inherit; } /* as tall as Note and Avoid beside it */
+  /* outside Detailed, a lighter row: Note, Avoid and Search behind "…" at the right of Profile,
      opening on a line of their own */
   :root:not([data-view-mode="detailed"]) .cand-grid { grid-template-areas: "pick photo name name" "profile profile profile more"; }
   :root:not([data-view-mode="detailed"]) .cand.actions-open .cand-grid {
@@ -1567,7 +1569,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .details-title h2 { font-size: 1.15rem; }
   .details-tabs { padding: 0 16px; }
   /* Details on a phone: the whole screen, its head the photo, the name, then the race and the pills,
-     with Search and Ban as icons beside ✕; ‹ Previous, Pick and Next › in a bar at the bottom */
+     with Search and Avoid as icons beside ✕; ‹ Previous, Pick and Next › in a bar at the bottom */
   .cand-details[open] { display: flex; flex-direction: column; height: calc(100dvh - 16px); }
   .cand-details > * { flex-shrink: 0; }
   .cand-details .details-tabs { flex-grow: 1; }

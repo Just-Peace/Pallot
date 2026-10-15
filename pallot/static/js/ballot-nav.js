@@ -157,7 +157,7 @@ function syncClearPicks() {
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
 // Print, which needs them, waits, in the toolbar and in More, a line under it saying why (Help me
-// pick's More rules… waits too). ``failed``: they won't come, so the bar goes but they stay off.
+// pick's More conditions… waits too). ``failed``: they won't come, so the bar goes but they stay off.
 const needCards = [$("#print-btn"), morePrint].map((button) => ({ button, title: button.title }));
 const cardsLoading = $("#cards-loading");
 const CARDS_STEPS = [
@@ -204,7 +204,7 @@ const TIPS = [
   {
     id: "rule", when: () => wants("endorsements"), target: () => $(narrow.matches ? "#more-btn" : "#endorser-btn"),
     after: () => (narrow.matches ? progressInfo : tools),
-    text: () => `Help me pick${narrow.matches ? ", in More," : ""} picks who the endorsers you trust endorse, and outlines who to avoid.`,
+    text: () => `Help me pick${narrow.matches ? ", in More," : ""}: Trust endorsers to pick who they endorse, and Avoid to mark who you won't vote for.`,
   },
   {
     id: "next", when: () => anyPicked() && !nextButton.disabled, target: () => nextButton, after: () => progressInfo,

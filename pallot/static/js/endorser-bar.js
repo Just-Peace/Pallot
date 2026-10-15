@@ -1,12 +1,15 @@
-// Help me pick, a drop-down in the toolbar beside View, with the same controls in More on a phone: the voter chooses the endorsers and scorecards they trust, each by its source's own
-// name, and the amber marks to avoid. Choosing an endorser picks at once, with Undo, in each race it
-// endorses someone in: who any chosen endorser endorses (barMarks in pick-rules.js), unless they
-// outnumber the seats or the voter picked there by hand. Dropping one takes back the picks the
-// endorsers made (picks.auto) that none still chosen endorses. An Avoid chip only outlines. While
-// anything is chosen, every race rings who matches, dims the others in a race with a match and
+// Help me pick, a drop-down in the toolbar beside View, with the same controls in More on a phone:
+// under Trust, the endorsers and scorecards the voter trusts, each by its source's own name; under
+// Avoid, the amber watchlists, and the voter's own Avoid list (ban-list.js), always avoided, as a chip
+// linking to it in Settings. Choosing an endorser picks at once, with Undo, in each race it endorses
+// someone in: who any chosen endorser endorses (barMarks in pick-rules.js), never anyone avoided,
+// unless they outnumber the seats or the voter picked there by hand. Dropping one takes back the
+// picks the endorsers made (picks.auto) that none still chosen endorses. An Avoid chip only outlines.
+// While anything is chosen, every race rings who matches, dims the others in a race with a match and
 // outlines the ones to avoid, each row saying why in words; a race's head says "2 match" or "No
-// match", and the section chips how many races match. More rules… opens Pick by rule. The choices
-// are Pick by rule's too, kept in its saved rule in this browser (loadBar), and another tab follows them.
+// match", and the section chips how many races match. More conditions… opens the rule's dialog
+// (pick-rule-dialog.js), whose choices these are too, kept in its saved rule in this browser
+// (loadBar), and another tab follows them.
 
 import { $, h } from "./dom.js";
 import { listed, plural } from "./format.js";
@@ -47,7 +50,7 @@ function save(bar) {
 
 // Saves ``bar``, the choices with an endorser chosen (``added``) or dropped, and changes the picks as
 // endorserPlan() says, with Undo for both. With "Collapse a race when I pick" on, a race it fills
-// folds, as Pick by rule's does; Undo opens it again. ``words(result)``: the toast.
+// folds, as More conditions' does; Undo opens it again. ``words(result)``: the toast.
 function changeEndorsers(bar, { added = null, words }) {
   const before = loadBar();
   const result = endorserPlan(page.ballot ? allRaces(page.ballot) : [], bar, page.picks, added);
@@ -118,7 +121,7 @@ function chip(key, label, count, pressed, onToggle, { avoid = false, title }) {
 }
 
 // Draws the controls in ``root``: the drop-down's panel, or More's copy (``inSheet``), where choosing
-// an endorser, Clear and More rules… close the sheet, so the ballot and the toast's Undo show.
+// an endorser, Clear and More conditions… close the sheet, so the ballot and the toast's Undo show.
 function drawControls(root, choices, options, summary, inSheet) {
   const focused = root.contains(document.activeElement) ? document.activeElement.dataset.barKey : null;
   const id = inSheet ? "more-help" : "help";
@@ -128,7 +131,8 @@ function drawControls(root, choices, options, summary, inSheet) {
   const group = (label, labelId, ...children) =>
     h("div", { class: "menu-group" }, h("p", { class: "menu-label", id: labelId }, label), children);
   const allyNote = options.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it marks Ally." : "";
-  const trust = group("Endorsers you trust", `${id}-trust`,
+  const intro = h("p", { class: "fine help-intro" }, "Trust picks who they endorse. Avoid only marks; nothing is picked or taken back.");
+  const trust = group("Trust", `${id}-trust`,
     options.endorsers.length
       ? h("div", { class: "rule-chips", role: "group", "aria-labelledby": `${id}-trust` },
         options.endorsers.map((e) => chip(`e:${e.source}`, e.label, e.count, choices.endorsers.includes(e.source), (on) => {
@@ -137,35 +141,44 @@ function drawControls(root, choices, options, summary, inSheet) {
         }, { title: `${e.label} endorses ${plural(e.count, "candidate")} on this ballot` })))
       : h("p", { class: "muted" }, page.loadingCards ? "Loading endorsements…" : "No endorser or scorecard endorses anyone on this ballot."),
     options.endorsers.length
-      ? h("p", { class: "fine" }, `Picks who they endorse. Your own picks stay.${allyNote}`)
+      ? h("p", { class: "fine" }, `Your own picks stay.${allyNote}`)
       : null);
-  const avoids = options.avoids.length
-    ? group("Avoid", `${id}-avoid`,
-      h("div", { class: "rule-chips", role: "group", "aria-labelledby": `${id}-avoid` },
-        options.avoids.map((a) => chip(`a:${a.id}`, a.label, a.count, choices.avoid.includes(a.id),
-          (on) => choose("avoid", a.id, on, a.label), { avoid: true, title: `${plural(a.count, "candidate")} on this ballot` }))),
-      h("p", { class: "fine" }, "Outlined in amber. Nothing is picked or taken back."))
+  // The voter's own list is always avoided, so its chip isn't a choice: it links to the list in Settings.
+  const own = options.own
+    ? h("a", { class: "rule-chip bar-chip-own", href: "settings.html#ban-title", "data-bar-key": "own",
+      title: `${plural(options.own, "candidate")} on this ballot. Trust never picks them. Change the list in Settings.` },
+    icon("ban"), "People I've marked", h("span", { class: "rule-count" }, String(options.own)))
     : null;
+  const avoids = group("Avoid", `${id}-avoid`,
+    options.avoids.length || own
+      ? h("div", { class: "rule-chips", role: "group", "aria-labelledby": `${id}-avoid` },
+        options.avoids.map((a) => chip(`a:${a.id}`, a.label, a.count, choices.avoid.includes(a.id),
+          (on) => choose("avoid", a.id, on, a.label), { avoid: true, title: `${plural(a.count, "candidate")} on this ballot` })),
+        own)
+      : null,
+    h("p", { class: "fine" }, "Trust never picks who you avoid. Avoid on a candidate adds them to your own list."));
   const only = highlighting
     ? h("label", { class: "check" }, h("input", { type: "checkbox", "data-bar-key": "only", checked: choices.onlyMatches,
       on: { change: (event) => save({ ...loadBar(), onlyMatches: event.target.checked }) } }), " Only races with a match")
     : null;
   const status = h("div", { class: "menu-group" }, h("p", { class: "help-summary", "aria-live": "polite" }, summary), only);
-  const rulesTitle = page.loadingCards ? "Waits for money, polls and endorsements" : "Pick by party, endorsements, money and polls";
+  const rulesTitle = page.loadingCards ? "Waits for money, polls and endorsements"
+    : "Pick by party, money, polls or incumbents, in every race or one";
   const openRules = () => {
     menu.open = false;
     page.openRules();
   };
   const moreRules = inSheet
-    ? moreAction("More rules…", "filter", openRules, { "data-bar-key": "rules", disabled: page.loadingCards, title: rulesTitle })
+    ? moreAction("More conditions…", "filter", openRules, { "data-bar-key": "rules", disabled: page.loadingCards, title: rulesTitle })
     : h("button", { type: "button", class: "btn ghost small with-icon", "data-bar-key": "rules", disabled: page.loadingCards,
-      title: rulesTitle, on: { click: openRules } }, icon("filter"), "More rules…");
+      title: rulesTitle, on: { click: openRules } }, icon("filter"), "More conditions…");
   const clear = h("button", { type: "button", class: "btn ghost small", "data-bar-key": "clear", disabled: !active,
     title: "Clears these choices and takes back the picks the endorsers made", on: { click: () => {
       done();
       clearChoices();
     } } }, inSheet ? "Clear choices" : "Clear");
   root.replaceChildren(...[
+    intro,
     trust,
     avoids,
     status,
@@ -247,7 +260,7 @@ export function syncEndorserBar() {
   const summary = highlighting
     ? `${matched} of ${plural(total, "race")} ${matched === 1 ? "has" : "have"} a match.${avoided ? ` ${plural(avoided, "candidate")} to avoid.` : ""}`
     : choices.avoid.length ? `${plural(avoided, "candidate")} to avoid, outlined.`
-      : "Choose an endorser to pick who it endorses, or a mark to avoid.";
+      : "Choose who you trust, or who to avoid.";
   drawControls(panel, choices, options, summary, false);
   drawControls(moreHelp, choices, options, summary, true);
 }
