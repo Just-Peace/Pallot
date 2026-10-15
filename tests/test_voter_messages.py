@@ -8,6 +8,8 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 
+from pallot.limits import Rate, RateLimits
+
 from .conftest import ADDRESSES
 
 LEAKS = ("PALLOT_", ".env", "DEMO_KEY", "restart", "HTTP 5", "Error)")
@@ -80,3 +82,21 @@ def test_a_lookup_nothing_answers_says_so_plainly(make_app, upstream, caplog):
     assert found["wrong host"] == {"detail": "Pallot isn't available at this address."}
     assert not {route: leaks(answer) for route, answer in found.items() if leaks(answer)}
     assert "HTTP 500" in caplog.text
+
+
+def test_refusals_say_so_plainly(make_app):
+    with TestClient(make_app(max_lookups=1, rate_limits=RateLimits(ballot=Rate(1, 3600)))) as client:
+        lookups = client.app.state.lookups
+        client.portal.call(lookups.acquire)  # another voter's lookup
+        busy = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
+        client.portal.call(lookups.release)
+        found = {
+            "busy": busy,
+            "too many": client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}),
+            "another site": client.post("/api/ballot", json={}, headers={"Sec-Fetch-Site": "cross-site"}),
+            "not a page": client.get("/api/sources", headers={"Sec-Fetch-Site": "none"}),
+        }
+    assert {route: answer.status_code for route, answer in found.items()} == {
+        "busy": 503, "too many": 429, "another site": 403, "not a page": 403}
+    details = {route: answer.json() for route, answer in found.items()}
+    assert not {route: leaks(answer) for route, answer in details.items() if leaks(answer)}
