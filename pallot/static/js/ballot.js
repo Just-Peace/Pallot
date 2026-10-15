@@ -32,7 +32,7 @@ import { initRaceCards, redrawCards, refillBans, refillCards, renderCards } from
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
-import { openPanel } from "./topbar.js";
+import { onEnterAddress, openPanel } from "./topbar.js";
 
 initChrome();
 
@@ -101,6 +101,7 @@ function showEntry(show, { focus = show } = {}) {
 }
 
 $("#change-address").addEventListener("click", () => showEntry(true));
+onEnterAddress(() => showEntry(true)); // the phone's top bar, before any address: the cursor in the address box
 cancelButton.addEventListener("click", () => showEntry(false));
 narrow.addEventListener("change", () => {
   if (!entry.hidden) showEntry(true, { focus: false });
