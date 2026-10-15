@@ -1652,9 +1652,21 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .data-table.stack td::before { content: attr(data-label) ": "; color: var(--muted); font-weight: 600; }
 }
 
+/* ---- touch screens and phones: what sits in a line of text ("?", a chip, a pill's reason, the
+   calendar icons, "How to apply", the footer's links) keeps its size, with a 44px hit area drawn
+   around it (::after); the calendar icons stand apart from their date ---- */
+
+@media (pointer: coarse), (max-width: 640px) {
+  button.badge-btn, a.badge-link, .cal-link, .ban-remove, .help-link, button.pill-btn, .tab .likely-flag, .mail-voting p a, .site-footer a { position: relative; }
+  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after, .help-link::after, button.pill-btn::after,
+  .tab .likely-flag::after, .mail-voting p a::after, .site-footer a::after { content: "";
+    position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+  .cal-link { margin-left: 6px; margin-right: 2px; }
+  .site-footer p { line-height: 2; }
+}
+
 /* ---- touch screens: every control at least 44px tall, as Apple and Android ask, by padding
-   rather than bigger text. Chips and links in a line of text stay their size, with a 44px hit area
-   drawn around them (::after). ---- */
+   rather than bigger text ---- */
 
 @media (pointer: coarse) {
   .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .measure-option, .switch, .check, .site-nav a, .jump-list a,
@@ -1676,10 +1688,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
   .icon-btn.row-more { min-width: 44px; }
-  button.badge-btn, a.badge-link, .cal-link, .ban-remove, .help-link, button.pill-btn, .tab .likely-flag { position: relative; }
-  button.badge-btn::after, a.badge-link::after, .cal-link::after, .ban-remove::after, .help-link::after, button.pill-btn::after,
-  .tab .likely-flag::after { content: "";
-    position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* the strip's section chips: 44px tall, the pill drawn inside at its usual size */
   .progress-strip .jump-list a, .progress-strip .jump-list a:hover, .progress-strip .jump-list a[aria-current] {
     position: relative; border-color: transparent; background: none; }
