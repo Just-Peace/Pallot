@@ -9,7 +9,7 @@
 // starts on.
 
 import { api } from "./api.js";
-import { $, h, pairBox } from "./dom.js";
+import { $, h } from "./dom.js";
 import { DISTRICTS, STATES } from "./labels.js";
 
 const ENTRIES = {
@@ -73,10 +73,14 @@ export function placeEntry(panel = null) {
   else target.prepend(card);
 }
 
+// Each district a field the size of County and Precinct's, on the same grid: optional, not minor.
 function drawVoterCardBoxes() {
   const highest = STATES.TX?.districtCounts || {};
   $("#vc-districts").replaceChildren(...Object.entries(DISTRICTS).map(([kind, { short }]) =>
-    pairBox(short, { id: `vc-${kind}`, name: kind, max: highest[kind] ? String(highest[kind]) : null })));
+    h("div", { class: "field" },
+      h("label", { for: `vc-${kind}` }, short),
+      h("input", { type: "number", inputmode: "numeric", min: "1", id: `vc-${kind}`, name: kind,
+        max: highest[kind] ? String(highest[kind]) : null }))));
 }
 
 // "Where do I find these?", a small link by the districts' heading: shows or hides the card's sketch under them.

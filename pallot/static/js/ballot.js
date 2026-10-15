@@ -310,7 +310,7 @@ function showLoading(show, { keepEntry = false, ready = false } = {}) {
   stopLoadingSteps?.();
   stopLoadingSteps = show && !ready ? stepText($("#loading-step"), LOADING_STEPS) : null;
   $("#loading-title").textContent = ready ? "Your ballot is ready." : "Finding your ballot…";
-  if (ready) $("#loading-step").textContent = "Show it when you're ready.";
+  $("#loading-step").hidden = ready;
   loading.classList.toggle("ready", ready);
   loading.hidden = !show;
   jump.hidden = show || !page.ballot; // the sections are the old ballot's
