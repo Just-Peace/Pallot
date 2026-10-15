@@ -16,7 +16,7 @@ import { openPanel } from "./topbar.js";
 // the page scrolls: the last whose top has reached the line a jump scrolls to (the last at the
 // foot of the page), or the one just jumped to while it's in view, until the voter scrolls, since
 // a short section near the end never reaches that line. On a phone the list is in the Menu panel, which a jump
-// closes; in the folded rail it's hidden. A page with a <nav class="section-chips"> (Settings) also
+// closes; in the folded rail it's hidden. A page with a <nav class="section-chips"> (Settings, the FAQ) also
 // gets the list there, as a row of chips that stays in view where the pane's list is hidden.
 function listSections() {
   const sidebar = document.querySelector(".sidebar");

@@ -224,7 +224,7 @@ button, input, select, textarea { font: inherit; }
 .field.small { min-width: 150px; flex: 1 1 150px; }
 label { font-weight: 600; font-size: 0.9rem; }
 
-input[type="text"], input[type="number"], select, textarea {
+input[type="text"], input[type="search"], input[type="number"], select, textarea {
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line-strong);
@@ -383,6 +383,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .data-table tbody tr:last-child > * { border-bottom: 0; }
 
 .faq-tools { margin-top: 12px; }
+.faq-search { max-width: 480px; margin-top: 14px; }
+.faq-search .status { margin: 6px 0 0; }
+.faq-group[hidden], .faq[hidden] { display: none; }
 .faq-group { margin-bottom: 24px; }
 .faq { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 8px; }
 .faq > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 16px; font-weight: 650; }
@@ -436,7 +439,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .source-group .status { margin: 8px 0 0; }
 .source-group .source-list { margin: 12px 0 16px; }
 
-/* Settings' sections as a row of chips (page.js), where the left pane's list is hidden: on a
+/* A page's sections (Settings, the FAQ) as a row of chips (page.js), where the left pane's list is hidden: on a
    phone, or with the pane folded. It stays at the top of the window as the page scrolls. */
 .section-chips { display: none; position: sticky; top: 0; z-index: 5; margin: -8px -32px 12px; padding: 8px 32px;
   background: var(--bg); border-bottom: 1px solid var(--line); }
@@ -1626,7 +1629,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (pointer: coarse) {
   .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .measure-option, .switch, .check, .site-nav a, .jump-list a,
   .race-toggle, .box-toggle, .map-toggle, .entry-tab, .chip-menu > a, .chip-menu > .link-btn,
-  input[type="text"], input[type="number"], select { min-height: 44px; }
+  input[type="text"], input[type="search"], input[type="number"], select { min-height: 44px; }
   a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
   .seg-option { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
   .toast .link-btn { margin-block: -10px; }
