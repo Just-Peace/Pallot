@@ -275,11 +275,11 @@ class Tec(BundledSnapshot):
         return out.decode("utf-8", "replace").strip()
 
     def notice(self) -> tuple[str, Tone] | None:
-        """A failed refresh, or no snapshot at all."""
+        """A failed update, or no snapshot at all."""
         if failed := super().notice():
             return failed
         if not self.document().get("snapshot"):
-            return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
+            return "Pallot has no Texas Ethics Commission data yet, so no candidate shows its money.", "warn"
         return None
 
     def counts(self) -> list[str]:

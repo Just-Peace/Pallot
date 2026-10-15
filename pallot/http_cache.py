@@ -155,6 +155,7 @@ class _Keys:
     rest_on: dict[int, float]  # status -> how long a key answered with it rests
     limit: tuple[int, float] | None  # at most this many requests per key in any window of these seconds
     refresh_limit: tuple[int, float] | None  # the same, while refresh() runs
+    names: tuple[str, ...] = ()  # each key's name for the server log (the variable it's in), never the key
     turn: int = 0  # where the next request starts looking for an open key
     sent: dict[int, deque[float]] = field(default_factory=dict)  # key's position -> when its last requests went
 
@@ -475,6 +476,7 @@ class HttpCache:
     def share_keys(
         self, source: str, header: str, keys: Sequence[str], rest_on: Mapping[int, float],
         limit: tuple[int, float] | None = None, refresh_limit: tuple[int, float] | None = None,
+        names: Sequence[str] = (),
     ) -> None:
         """Send ``source``'s requests (get_json's and refresh's) with ``keys`` in ``header``, each
         key in turn. With ``limit`` (count, seconds), a key sends at most that many requests in any
@@ -482,8 +484,9 @@ class HttpCache:
         every key's window is full. ``refresh_limit`` replaces it inside offline() (refresh's,
         and a bundled snapshot's requests), which nobody waits on. A key answered with a status in ``rest_on`` rests for its seconds and the
         request goes again with the next open key; the source is paused only while every key
-        rests. Like ``source_headers``, the keys are never stored."""
-        self._keys[source] = _Keys(header, tuple(keys), dict(rest_on), limit, refresh_limit)
+        rests. Like ``source_headers``, the keys are never stored; a key that starts resting is
+        logged by its name in ``names`` (the variable it's in)."""
+        self._keys[source] = _Keys(header, tuple(keys), dict(rest_on), limit, refresh_limit, tuple(names))
 
     def key_rests(self, source: str) -> list[KeyRest | None]:
         """For each of ``source``'s keys, in order: why and until when it rests, or None while it's open."""
@@ -638,6 +641,10 @@ class HttpCache:
             response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=sent)
             if keys and response.status_code in keys.rest_on:
                 self.set_flag(_key_flag(source, key, response.status_code), source, keys.rest_on[response.status_code])
+                at = keys.keys.index(key)
+                log.warning("%s answered HTTP %d to %s, which rests for %.0f minutes.", source, response.status_code,
+                            keys.names[at] if at < len(keys.names) else f"key {at + 1}",
+                            keys.rest_on[response.status_code] / 60)
                 if None in self.key_rests(source):
                     continue
             response.raise_for_status()

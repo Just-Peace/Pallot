@@ -1,4 +1,4 @@
-// JSON calls to the Pallot backend, with FastAPI's error detail surfaced as the message. Each
+// JSON calls to the Pallot backend, with the server's one-sentence error detail as the message. Each
 // carries the voter's choice of sources (kept in this browser), so the server uses theirs.
 
 import { sourceChoices } from "./storage.js";
@@ -6,6 +6,7 @@ import { sourceChoices } from "./storage.js";
 const SOURCES_HEADER = "X-Pallot-Sources";
 
 const UNREACHABLE = "Can't reach the Pallot server. Is it still running?";
+const FAILED = "Pallot couldn't answer that. Try again in a minute.";
 
 // ``signal`` (an AbortController's) cancels the call; the AbortError is passed on as it is.
 async function send(method, url, body, { signal, accept } = {}) {
@@ -33,10 +34,7 @@ async function readJson(response) {
   });
   if (!response.ok) {
     const detail = data?.detail;
-    const message = Array.isArray(detail)
-      ? detail.map((d) => d.msg).join("; ")
-      : detail || `Request failed (${response.status})`;
-    throw new Error(message);
+    throw new Error(typeof detail === "string" && detail ? detail : FAILED);
   }
   return data;
 }

@@ -53,7 +53,7 @@ Pallot needs no keys to run. To break down congressional candidates' money (wher
 2. Put it in `.env` as `PALLOT_FEC_API_KEY=...`. The FEC lets each key make 60 calls a minute, and Pallot paces itself to stay under that. For more, add up to four more keys as `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5`: Pallot uses them in turn.
 3. Restart Pallot: `docker compose up -d`, or Ctrl+C and `uv run pallot` again.
 
-Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals and runs out after a few requests. The other settings are under [Configuration](#configuration).
+Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals and runs out after a few requests. Pallot says so in its log at startup. Its log also names a key the FEC refuses, and `pallot-cache check` lists the keys in use and any resting. Voters never see your keys or their names. The other settings are under [Configuration](#configuration).
 
 ## Using it
 
@@ -115,6 +115,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 - Each source's answers have a lifetime: from a day (ballot data, polls, key dates) to 30 days (geocodes, district outlines). OpenStreetMap's tiles are kept at least 7 days, as its policy asks. `.env.example` lists every lifetime, each overridable with `PALLOT_TTL_<NAME>` in seconds.
 - Once an answer is past its lifetime, the next lookup asks again. If that fails, the old copy is shown with a "data as of" note, and the request isn't retried for 15 minutes. An error a source sends as if it were an answer counts as a failure too, so it never replaces a good copy.
 - If a source refuses a request, Pallot stops asking it for an hour (2 minutes for an FEC key at its rate limit, while your other keys carry on). What it already has still shows.
+- When a source fails, the ballot names it and says what still works. Why it failed goes to the server's log, never to the page.
 - The snapshots that come with Pallot (see [Bundled snapshots](#bundled-snapshots)) mean lookups never contact TrackAIPAC, Vote for Peace or the Texas Ethics Commission, and ask the other bundled sources only once the bundled copy is a few days old.
 - Address suggestions, street map tiles and addresses that weren't found are deleted once they've been expired for 30 days. Tiles and suggestions are kept under 512 MB and 64 MB, and each address lookup's answers (the Census's, OpenStreetMap's, Google's and Ballotpedia's) under 128 MB, the oldest going first. Everything else stays as the copy to show when a source is down.
 - `pallot-cache` asks the FEC more slowly than a lookup does, leaving room for a running Pallot, and doesn't ask a paused source.
@@ -223,10 +224,10 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 |---|---|
 | `PALLOT_DATA_DIR` | `data/` in the project (cache, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data, and your `sources.toml` if you add one; git-ignored) |
 | `PALLOT_FEC_API_KEY`, `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). The extra keys are optional: Pallot uses all of them in turn, and skips one the FEC has rate limited or refused. They are only sent to the FEC, in a header, and Pallot never writes them anywhere (a resting key is noted by a short hash of it) |
-| `PALLOT_GOOGLE_API_KEY` | none, so Google is never asked. A [Google Geocoding API key](https://developers.google.com/maps/documentation/geocoding/get-api-key), to find addresses the Census and OpenStreetMap can't. It's only sent to Google, in a header, and Pallot never writes it anywhere. Google bills by the request, though Pallot asks only for an address both others missed, keeps the answer for 30 days, and asks at most `PALLOT_GOOGLE_DAILY_MAX` times a day |
+| `PALLOT_GOOGLE_API_KEY` | none, so Google is never asked and Settings leaves it out. A [Google Geocoding API key](https://developers.google.com/maps/documentation/geocoding/get-api-key), to find addresses the Census and OpenStreetMap can't. It's only sent to Google, in a header, and Pallot never writes it anywhere. Google bills by the request, though Pallot asks only for an address both others missed, and keeps the answer for 30 days |
 | `PALLOT_USER_AGENT` | `Pallot/0.1 (personal ballot helper; +https://github.com/Just-Peace/Pallot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `PALLOT_HTTP_TIMEOUT` | `30` seconds |
-| `PALLOT_ALLOWED_HOSTS` | none: Pallot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
+| `PALLOT_ALLOWED_HOSTS` | none: Pallot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding; the log names the one refused |
 | `PALLOT_TTL_*` | cache lifetimes, in seconds: `.env.example` lists each one with its default, including how long a source is left alone after refusing a request and how long the answers that came with Pallot are used (see [Caching](#caching) and [Bundled snapshots](#bundled-snapshots)). `PALLOT_TTL_TILES` can't go under 7 days, as OpenStreetMap asks |
 | `PALLOT_TILES_MAX_MB` | `512`: the most the street map's tiles take in the cache; past it, the oldest are deleted when Pallot prunes |
 | `PALLOT_SUGGEST_MAX_MB` | `64`: the same for the address suggestions |

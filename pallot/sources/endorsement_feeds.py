@@ -60,7 +60,7 @@ class FeedUnavailable(Exception):
 
     @property
     def warning(self) -> str:
-        return f"Couldn't load {self.label}'s endorsements ({self})."
+        return f"{self.label}'s website isn't answering right now, so its endorsements aren't shown."
 
 
 class EndorsementFeed:

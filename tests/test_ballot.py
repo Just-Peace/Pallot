@@ -544,8 +544,10 @@ def test_a_google_refusal_pauses_it_and_the_key_is_never_kept(google_client, ups
         assert not [r for r in db.execute("SELECT * FROM responses") if GOOGLE_KEY in repr(r)]
 
 
-def test_settings_says_google_needs_a_key(client):
-    assert "PALLOT_GOOGLE_API_KEY" in source_row(client, "google")["notice"]
+def test_settings_leaves_google_out_without_a_key(make_app, caplog):
+    with TestClient(make_app()) as client:
+        assert "google" not in [s["id"] for s in client.get("/api/sources").json()["sources"]]
+    assert "No Google key is set in PALLOT_GOOGLE_API_KEY" in caplog.text
 
 
 def test_settings_has_no_google_notice_with_a_key(google_client):
@@ -560,7 +562,7 @@ def test_a_census_refusal_pauses_it_and_addresses_already_looked_up_still_work(c
     get_ballot(client)
     upstream.refusing["geocoding.geo.census.gov"] = 429
     first = client.post("/api/ballot", json={"address": ADDRESSES["ut"]})
-    assert first.status_code == 502 and "isn't responding" in first.json()["detail"]
+    assert first.status_code == 502 and "isn't answering right now" in first.json()["detail"]
     again = client.post("/api/ballot", json={"address": ADDRESSES["harris"]})
     assert again.status_code == 502 and again.json()["detail"].startswith("The address lookup is paused until ")
     assert upstream.count("geocoding.geo.census.gov") == 2  # the Capitol, then the refusal; not asked again

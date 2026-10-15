@@ -22,10 +22,6 @@ REFUSALS = (403, 429)  # a key Google refuses or a quota used up: pause for Ttls
 DESCRIPTION = (
     "Finds addresses the Census and OpenStreetMap can't, such as new streets, by asking Google only when both fail."
 )
-KEY_NOTE = (
-    "No key is set, so this isn't used. Set PALLOT_GOOGLE_API_KEY to a "
-    f"[Google Geocoding API key]({KEY_SIGNUP}) and restart Pallot."
-)
 
 # Granularities that name the building itself; anything coarser is an area or a street.
 _EXACT = {"ROOFTOP", "RANGE_INTERPOLATED", "PREMISE", "SUB_PREMISE"}

@@ -59,12 +59,12 @@ def test_a_source_kept_off_shows_nothing(client, upstream):
 def test_a_refusal_pauses_it_and_the_ballot_still_loads(client, upstream):
     upstream.officeholders_status = 403
     ballot = get_ballot(client)
-    assert "Couldn't load who holds each seat (HTTP 403)." in ballot["warnings"]
+    assert "The lists of seat holders aren't answering right now, so who holds each seat isn't shown." in ballot["warnings"]
     assert not find_race(ballot, "U.S. Senator")["holder"]
     asked = upstream.count("unitedstates.github.io")
     again = get_ballot(client)
     assert upstream.count("unitedstates.github.io") == asked  # paused: not asked again
-    assert any("paused until" in w for w in again["warnings"])
+    assert again["warnings"] == ballot["warnings"]  # paused: the same sentence, without asking
     status = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "officeholders")
     assert status["notice"].startswith("Paused until") and status["notice_tone"] == "warn"
 

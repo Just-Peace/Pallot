@@ -22,7 +22,7 @@ from .ballot import Services
 from .config import load_config
 from .http_cache import SavedRequest
 from .services import open_services, prune
-from .sources import RefreshFailed
+from .sources import RefreshFailed, fec, google
 from .text import display_size, display_time
 
 COMMANDS = {
@@ -102,11 +102,22 @@ class Maintenance:
                 lines.append(came)
         if paused := self.admin.paused(info):
             lines.append(paused)
+        lines += self._keys(info)
         if kept := self.admin.kept(info):
             lines += [f"{fact.label}: {fact.value}" for fact in kept.details()]
             if why := kept.stale():
                 lines.append(f"Stale: {why}.")
         return lines
+
+    def _keys(self, info: SourceInfo) -> list[str]:
+        """The keys a source is asked with, and any resting, by their variables: the host's to fix,
+        so never on a page."""
+        if info.id == fec.SOURCE:
+            return [f"Keys: {', '.join(self.svc.fec.key_names)}.",
+                    *([f"{trouble[0].upper()}{trouble[1:]}."] if (trouble := self.svc.fec.key_trouble()) else [])]
+        if info.id == google.SOURCE and not self.svc.google.keyed:
+            return ["No key in PALLOT_GOOGLE_API_KEY, so it's never asked."]
+        return []
 
     # -- refresh ------------------------------------------------------------------------------
 

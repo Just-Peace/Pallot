@@ -35,13 +35,12 @@ def test_elections_list(client):
 
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
-    assert [s["id"] for s in overview["sources"]] == ["geocoding", "google", "election_precincts", "county_precincts",
+    assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts",
                                                        "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "wikidata",
                                                        "ballotpedia", "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
                                                        "mupac", "fec", "tec", "polls"]
-    (geocoding, google, precincts, county, outlines, tiles, suggestions, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
-     fec, tec, polls) = overview["sources"]
-    assert (google["toggleable"], google["enabled"]) == (True, True) and "PALLOT_GOOGLE_API_KEY" in google["notice"]
+    (geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
+     fec, tec, polls) = overview["sources"]  # no Google key: its row is left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
     assert "Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton" in county["description"]
@@ -140,7 +139,7 @@ def test_sources_are_grouped(client):
         ("scorecards", "Third-party endorsements", True)]
     grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
     assert grouped == {
-        "address": ["geocoding", "google", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
+        "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
         "official": ["sos", "key_dates", "fec", "tec"],
         "ballot": ["wikidata", "ballotpedia", "officeholders"],
         "polls": ["polls"],
@@ -212,11 +211,12 @@ def test_every_answer_carries_the_security_headers(client):
     assert refused.status_code == 403 and refused.headers["x-frame-options"] == "DENY"
 
 
-def test_only_localhost_ip_addresses_and_allowed_names_are_answered(client):
+def test_only_localhost_ip_addresses_and_allowed_names_are_answered(client, caplog):
     for host in ("localhost:8000", "127.0.0.1:8000", "192.168.1.20:8000", "[::1]:8000"):
         assert client.get("/api/sources", headers={"Host": host}).status_code == 200, host
     response = client.get("/", headers={"Host": "rebind.evil.example:8000"})  # DNS rebinding
-    assert response.status_code == 400 and "PALLOT_ALLOWED_HOSTS" in response.json()["detail"]
+    assert response.status_code == 400 and response.json()["detail"] == "Pallot isn't available at this address."
+    assert "rebind.evil.example" in caplog.text and "PALLOT_ALLOWED_HOSTS" in caplog.text
     assert host_allowed("nas.local:8000", ("nas.local",)) and host_allowed("anything.example", ("*",))
     assert not host_allowed("nas.local", ()) and not host_allowed("", ()) and not host_allowed("[::1", ())
 
@@ -238,7 +238,7 @@ def test_sboe_portal_down_is_asked_once_until_its_wait_is_over(client, upstream,
     assert upstream.count("plane2106_kml.zip") == 1 and logged_calls() == 0
     geocoding = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "geocoding")
     assert geocoding["notice_tone"] == "warn"
-    assert geocoding["notice"].startswith("The last download of the State Board of Education map failed (HTTP 500)")
+    assert geocoding["notice"].startswith("The last download of the State Board of Education map failed; ")
     upstream.down.clear()
     status, printed = make_app.cache_command("refresh", "geocoding")  # stale: no map kept
     assert status == 0 and "Re-downloaded the State Board of Education map." in printed

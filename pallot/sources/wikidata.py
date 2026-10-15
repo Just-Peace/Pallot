@@ -12,6 +12,7 @@ last) name with no party against it is kept (trusted), so the photo is used for 
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -26,6 +27,8 @@ from ..text import display_date, display_time, iso_utc
 from . import CardSet
 from .ballotpedia import BpBallot
 from .seats import match_entries
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "wikidata"
 LABEL = "Wikidata"
@@ -323,7 +326,8 @@ async def cards(
         details = await wd.details([entry["qid"] for entry, _ in found.values()])
     except WikidataUnavailable as exc:
         details = {}
-        out.warnings.append(f"Wikidata profiles are missing their photos and links ({exc}).")
+        log.warning("wikidata: %s", exc)
+        out.warnings.append("Wikidata isn't answering right now, so its profiles have no photos or links.")
     for key, (entry, match) in found.items():
         out.candidates[key] = card(entry["person"], match, details.get(entry["qid"]), fetched_at, ballotpedia)
     return out
