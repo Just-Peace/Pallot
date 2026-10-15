@@ -1,7 +1,9 @@
 // Address suggestions under the address box as the voter types. They come from Ballotpedia's
 // address search (Esri data) through the Pallot server, which caches them. A WAI-ARIA combobox:
-// ↑/↓ move through the list, Enter or a click picks, Esc closes. Picking only fills the
-// box; the voter still presses "Show my ballot". With suggestions off in Settings the box is
+// ↑/↓ move through the list, Enter or a click picks, Esc closes. Picking with the keyboard or a
+// mouse only fills the box; the voter still presses "Show my ballot". On a touch screen, tapping a
+// suggestion looks the ballot up straight away, and the box moves to the top of the screen when
+// it's focused, so the list opens above the keyboard. With suggestions off in Settings the box is
 // left as it was, with the browser's own address autofill.
 
 import { api } from "./api.js";
@@ -9,6 +11,7 @@ import { h } from "./dom.js";
 
 const MIN_LENGTH = 5; // the server doesn't ask Ballotpedia about less
 const WAIT_MS = 300; // after the last keystroke
+const KEYBOARD_MS = 350; // a phone's keyboard opening, and the browser's own scroll to the box, before ours
 
 export async function attachSuggestions(input) {
   try {
@@ -32,6 +35,8 @@ export async function attachSuggestions(input) {
   let active = -1;
   let timer = null;
   let pending = null; // the AbortController of the call in flight
+  let tapped = false; // the last press on a suggestion was a finger or a pen
+  const touchScreen = matchMedia("(pointer: coarse)");
 
   function setActive(index) {
     active = index;
@@ -48,9 +53,15 @@ export async function attachSuggestions(input) {
     input.setAttribute("aria-expanded", "false");
   }
 
-  function pick(index) {
+  // ``lookUp``: a tap, which sends the form at once, the keyboard closed; otherwise the cursor stays in the box.
+  function pick(index, { lookUp = false } = {}) {
     input.value = options[index].label;
     close();
+    if (lookUp && input.form) {
+      input.blur();
+      input.form.requestSubmit();
+      return;
+    }
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
   }
@@ -63,10 +74,16 @@ export async function attachSuggestions(input) {
     options = suggestions.map((suggestion, i) => {
       const element = h("li", { id: `${list.id}-${i}`, class: "suggestion", role: "option", "aria-selected": "false" },
         suggestion.label);
-      // pointerdown, not click: the box keeps its focus, so blur doesn't close the list first.
+      // A mouse picks on pointerdown, not click, and the default is stopped so the box keeps its
+      // focus and blur doesn't close the list first. A finger picks on click, so a drag that
+      // scrolls the list picks nothing.
       element.addEventListener("pointerdown", (event) => {
         event.preventDefault();
-        pick(i);
+        tapped = event.pointerType !== "mouse";
+        if (!tapped) pick(i);
+      });
+      element.addEventListener("click", () => {
+        if (tapped && options[i]?.element === element) pick(i, { lookUp: true });
       });
       return { element, label: suggestion.label };
     });
@@ -122,7 +139,23 @@ export async function attachSuggestions(input) {
     }
   });
 
-  input.addEventListener("blur", close);
+  // On a touch screen the box's field goes to the top of the screen, so the list under it opens
+  // above the keyboard; html.lift-address gives the page room below to scroll that far.
+  let lifting = null;
+  input.addEventListener("focus", () => {
+    if (!touchScreen.matches) return;
+    document.documentElement.classList.add("lift-address");
+    clearTimeout(lifting);
+    lifting = setTimeout(() => {
+      if (document.activeElement === input) (input.closest(".field") || input).scrollIntoView({ block: "start" });
+    }, KEYBOARD_MS);
+  });
+
+  input.addEventListener("blur", () => {
+    clearTimeout(lifting);
+    document.documentElement.classList.remove("lift-address");
+    close();
+  });
   input.form?.addEventListener("submit", () => {
     clearTimeout(timer);
     pending?.abort();
