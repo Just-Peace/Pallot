@@ -114,6 +114,20 @@ export function keyDatesCard(ballot) {
   ];
 }
 
+// The card in a line, for a phone (ballot-top.js): "Early voting Oct 19–30 · Election Day Nov 3",
+// early voting only until it's over.
+export function keyDatesSummary(ballot) {
+  const dates = ballot.key_dates;
+  if (!dates) return "Registration and where to vote";
+  const start = dates.early_voting_start || dates.early_voting_end;
+  const end = dates.early_voting_end || start;
+  const early = end && daysUntil(end) >= 0
+    ? `Early voting ${formatDate(start, SHORT_DAY)}${start === end ? ""
+      : start.slice(0, 7) === end.slice(0, 7) ? `–${Number(end.slice(8))}` : ` – ${formatDate(end, SHORT_DAY)}`}`
+    : null;
+  return [early, `Election Day ${formatDate(dates.election_day, SHORT_DAY)}`].filter(Boolean).join(" · ");
+}
+
 // "Early voting: Mon, Oct 19 – Fri, Oct 30" for the printed sheet (``short``: "Early voting
 // Oct 19 – Oct 30", for the wallet card), or null.
 export function earlyVotingText(ballot, { short = false } = {}) {

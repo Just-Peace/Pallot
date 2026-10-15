@@ -4,6 +4,7 @@
 // the looked-up ones.
 
 import { goTo } from "./ballot-nav.js";
+import { openTopCard } from "./ballot-top.js";
 import { $, h, pairBox } from "./dom.js";
 import { listed } from "./format.js";
 import { icon } from "./icons.js";
@@ -245,6 +246,7 @@ function setEditing(on) {
 // Opens the boxes, at the first empty one of ``kinds`` (by default the precincts): the left-out
 // note's Enter it, and the link above the races that wait on the precincts.
 export function openDistricts(kinds = PRECINCT_KINDS) {
+  openTopCard("districts-card", true);
   if (!editing) {
     editing = true;
     renderDistricts();

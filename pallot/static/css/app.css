@@ -535,6 +535,14 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .key-dates, .districts-card { display: flex; flex-direction: column; flex: 1 1 340px; }
 .key-dates h2, .districts-card h2, .district-map h2 { font-size: 0.78rem; margin: 0 0 8px; }
 .key-dates .source-note, .districts-card .source-note { margin-top: auto; padding-top: 10px; }
+/* on a phone (see the end of the file), a line each for When to vote and Your districts, opening its card */
+.top-summary { display: none; }
+.top-line { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 44px; padding: 8px 0; border: 0; background: none;
+  color: var(--text); font: inherit; font-size: 0.92rem; line-height: 1.35; text-align: left; cursor: pointer; }
+.top-line + .top-line { border-top: 1px solid var(--line); }
+.top-line .chevron { flex: none; margin-left: -4px; }
+.top-line-text { min-width: 0; }
+.top-line strong { font-weight: 650; }
 .source-note .fine { margin: 0; }
 .source-note .fine:focus { outline: none; }
 .link-btn.source-more { font-size: 0.82rem; }
@@ -935,6 +943,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
   border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
   transition: transform 0.15s; }
 .race.collapsed .chevron::before, .district-map.collapsed .chevron::before, .race-money.collapsed .chevron::before,
+.top-line[aria-expanded="false"] .chevron::before,
 .faq:not([open]) > summary::before,
 .source-group:not([open]) > summary::before {
   transform: translateX(-2px) rotate(-45deg); }
@@ -1511,6 +1520,12 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .key-actions .btn { min-width: 0; gap: 4px; padding-inline: 6px; }
   .entry .button-row .btn, .focus-ask-foot .btn { flex: 1 1 auto; }
   .confirm-dialog .button-row { flex-direction: column; }
+  /* When to vote and Your districts folded into a line each (ballot-top.js); a line opens its card */
+  .ballot-top { gap: 10px; }
+  .top-summary { display: block; flex: 1 1 100%; padding: 2px 14px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); }
+  .ballot-top > :is(.key-dates, .districts-card):not(.open) { display: none; }
+  .top-line:hover .chevron { background: var(--neutral-soft); color: var(--text); }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   /* the toolbar's buttons a size down, so they take two lines; View and Help me pick open from the
      toolbar's left edge, where they always fit on the screen */
