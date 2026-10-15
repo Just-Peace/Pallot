@@ -273,6 +273,7 @@ class Upstream:
         self.fec_sent: list[str | None] = []  # the X-Api-Key of each request to the FEC, in order
         self.fec_limited: set[str] = set()  # keys the FEC answers 429 to
         self.fec_refused: set[str] = set()  # keys the FEC answers 403 to
+        self.nominatim_answer: list[dict[str, Any]] | None = None  # Nominatim's answer for any address (default: MoPac's for it, else none)
         self.google_keys: list[str | None] = []  # the X-Goog-Api-Key each request to Google carried
         self.google_answer: dict[str, Any] | None = None  # Google's answer for NEW_STREET (default: the MoPac point, a rooftop)
         self.suggestions_status: int | None = None  # e.g. 429 when Ballotpedia's address search throttles us
@@ -338,6 +339,8 @@ class Upstream:
                 return httpx.Response(200, json={"result": {"geographies": match["geographies"]}})
             return _file("census_coords_mopac.json")
         if url.host == "nominatim.openstreetmap.org":
+            if self.nominatim_answer is not None:
+                return httpx.Response(200, json=self.nominatim_answer)
             return _file("nominatim_mopac.json") if self._addresses.get(params["q"]) == "mopac" else httpx.Response(200, json=[])
         if url.host == "geocode.googleapis.com":
             self.google_keys.append(request.headers.get("x-goog-api-key"))
