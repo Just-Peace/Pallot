@@ -7,6 +7,7 @@ export const WRITE_IN = "write-in"; // the pick key for a name the voter types i
 
 // Each election's picks that storage refused, so they last until the page is closed.
 let unsaved = {};
+const savedListeners = [];
 
 // Saves one election's picks over what's stored now, so picks another tab saved meanwhile,
 // for other elections, aren't overwritten.
@@ -15,6 +16,12 @@ function saveBucket(electionKey, data) {
   all[electionKey] = data;
   if (writeJson(PICKS, all)) delete unsaved[electionKey];
   else unsaved[electionKey] = data;
+  savedListeners.forEach((listener) => listener());
+}
+
+// Runs ``listener`` after every change of the picks in this tab: a pick, a note, a write-in.
+export function onPicksSaved(listener) {
+  savedListeners.push(listener);
 }
 
 // Runs ``redraw`` when another tab changes the picks (a pick, Clear in Settings).

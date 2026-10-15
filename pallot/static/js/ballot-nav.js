@@ -13,6 +13,7 @@ import { initEndorserBar, moreHelp } from "./endorser-bar.js";
 import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
+import { onPicksSaved } from "./picks.js";
 import { STILL_LOADING, cardFor, redrawRace, refillPart, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import {
@@ -35,6 +36,7 @@ const stripRace = $("#strip-race");
 const moreView = modeChoice();
 const moreFocus = focusChips();
 const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
+const clearButtons = [$("#clear-picks"), moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger", hidden: true })];
 const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: true }, $("#wait-note").textContent)];
 const progressInfo = strip.querySelector(".progress-info");
 const coarse = matchMedia("(pointer: coarse)");
@@ -141,7 +143,14 @@ export function updateProgress() {
     element.classList.toggle("complete", !maybe && picked === keys.length);
   }
   syncChipFades();
+  syncClearPicks();
   maybeTip();
+}
+
+// Clear picks, in the toolbar and in More, shows only while there's a pick, note or write-in to clear.
+function syncClearPicks() {
+  const empty = !page?.picks || page.picks.isEmpty();
+  for (const button of clearButtons) button.hidden = empty;
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
@@ -351,7 +360,7 @@ function fillMoreSheet() {
   bindViewControls(moreFocus);
   addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
   addMoreSection({ id: "picks", label: "Your picks" }, moreHelp, morePrint,
-    moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger" }), waitNotes[1]);
+    clearButtons[1], waitNotes[1]);
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
     moreAction("Collapse all", "collapse", () => setAllCollapsed(true)));
@@ -447,6 +456,7 @@ export function markCurrentSection() {
 export function initNav(context) {
   page = context;
   migrateView();
+  onPicksSaved(syncClearPicks);
   initEndorserBar(page, { sectionMarks: syncMatchMarks });
   $("#view-detail").append(modeChoice());
   $("#view-focus").append(focusChips());

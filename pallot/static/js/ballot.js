@@ -413,14 +413,13 @@ window.addEventListener("beforeprint", () => {
   buildPrintSheet(page.ballot, page.picks, { includeNotes: $("#print-notes").checked && !wallet, includeBlank: $("#print-blank").checked, wallet });
 });
 
-// Clears at once, and offers to put everything back.
-$("#clear-picks").addEventListener("click", () => {
-  if (!page.ballot) return;
-  if (page.picks.isEmpty()) {
-    showToast("No picks or notes to clear.");
-    return;
-  }
+// Clears at once, and offers to put everything back. The button then hides (ballot-nav.js), so
+// the keyboard's focus moves on to Print.
+$("#clear-picks").addEventListener("click", (event) => {
+  if (!page.ballot || page.picks.isEmpty()) return;
+  const focused = document.activeElement === event.currentTarget;
   const cleared = page.picks.clear();
+  if (focused) $("#print-btn").focus();
   hideBanner();
   renderRaces();
   showToast("Cleared your picks and notes.", {
