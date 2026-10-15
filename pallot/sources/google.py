@@ -18,7 +18,6 @@ SOURCE = "google"
 URL = "https://geocode.googleapis.com/v4beta/geocode/address"
 KEY_HEADER = "X-Goog-Api-Key"
 KEY_SIGNUP = "https://developers.google.com/maps/documentation/geocoding/get-api-key"
-REFUSALS = (403, 429)  # a key Google refuses or a quota used up: pause for Ttls.geocode_backoff
 DESCRIPTION = (
     "Finds addresses the Census and OpenStreetMap can't, such as new streets, by asking Google only when both fail."
 )
@@ -34,7 +33,7 @@ class Google:
         self.cache = cache
         self.ttl = ttl
         self.keyed = bool(api_key)
-        cache.pause_on(SOURCE, REFUSALS, ttl.geocode_backoff)
+        cache.pause_on(SOURCE, ttl.geocode_backoff)
         if daily_max:
             cache.cap_daily(SOURCE, daily_max)
 

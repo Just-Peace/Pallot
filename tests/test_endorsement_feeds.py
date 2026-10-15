@@ -18,10 +18,10 @@ from fastapi.testclient import TestClient
 
 from pallot.admin import SOURCES
 from pallot.config import DAY, Ttls
-from pallot.http_cache import HttpCache, Unreadable
+from pallot.http_cache import HttpCache, Unreadable, UpstreamError
 from pallot.models import Candidate, Race
 from pallot.sources.endorsement_feeds import (
-    FEEDS, EndorsementFeed, FeedUnavailable, cair_action, emgage, meta_token, muslims_united,
+    FEEDS, EndorsementFeed, cair_action, emgage, meta_token, muslims_united,
 )
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, EndorsementList, read_entry
 
@@ -310,7 +310,7 @@ def test_a_copy_kept_is_parsed_once_and_a_new_copy_again(tmp_path):
             assert (await feed.fetch()).count() == len(muslims_united(fewer)) and len(reads) == 3  # read again from the database
 
             cache.seed(MUPAC, [(feed.spec, {"incumbents": [{"title": "renamed fields"}]})], time.time() + 2, DAY)
-            with pytest.raises(FeedUnavailable, match="a list with no candidate Pallot can read"):
+            with pytest.raises(UpstreamError, match="a list with no candidate Pallot can read"):
                 await feed.fetch()
             cache.close()
 

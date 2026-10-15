@@ -24,7 +24,6 @@ from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import FIRST_LAST, FULL, NameIndex
 from ..models import Race, SeatHolder
 from ..offices import OfficeScope
-from ..text import display_time
 from . import CardSet, SeatInfo
 from .ballotpedia import BpBallot
 from .tec import bp_seat, tec_seat
@@ -38,7 +37,6 @@ DESCRIPTION = (
 )
 CONGRESS = "https://unitedstates.github.io/congress-legislators/legislators-current.json"
 LEGISLATURE = "https://data.openstates.org/people/current/tx.csv"
-REFUSALS = (403, 429)  # answers that pause both files for Ttls.officeholders_backoff
 STATE = "TX"
 # Texas redrew its U.S. House map in 2025: a term that began before the first Congress elected
 # under it was won under the district's old lines.
@@ -46,10 +44,6 @@ REDRAWN = dt.date(2027, 1, 3)
 _CHAMBERS = {"upper": "STATESEN", "lower": "STATEREP"}
 _PARTIES = (("REPUBLICAN", "R", "Republican"), ("DEMOCRAT", "D", "Democrat"), ("LIBERTARIAN", "L", "Libertarian"),
             ("GREEN", "G", "Green"), ("INDEPENDENT", "I", "Independent"))
-
-
-class OfficeholdersUnavailable(Exception):
-    """Neither list could be fetched (refused, paused, down) and nothing was cached."""
 
 
 @dataclass
@@ -117,16 +111,11 @@ class Officeholders:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        cache.pause_on(SOURCE, REFUSALS, ttl.officeholders_backoff)
+        cache.pause_on(SOURCE, ttl.officeholders_backoff)
 
     async def _get(self, url: str, *, text: bool) -> Any:
         spec = RequestSpec("GET", url)
-        try:
-            got = await (self.cache.get_text if text else self.cache.get_json)(SOURCE, spec, ttl=self.ttl.officeholders)
-        except UpstreamError as exc:
-            if exc.until:
-                raise OfficeholdersUnavailable(f"paused until {display_time(exc.until)} after a list was refused") from exc
-            raise OfficeholdersUnavailable(str(exc).removeprefix(f"{SOURCE}: ")) from exc
+        got = await (self.cache.get_text if text else self.cache.get_json)(SOURCE, spec, ttl=self.ttl.officeholders)
         return got.value
 
     async def congress(self) -> list[Holder]:
@@ -190,7 +179,7 @@ async def cards(
     bp_ballot: BpBallot | None, day: dt.date | None,
 ) -> CardSet:
     """Each covered race's seat (CardSet.seats) and the candidates who hold it (incumbents). A
-    list is fetched only when the ballot has a race it covers. Raises OfficeholdersUnavailable
+    list is fetched only when the ballot has a race it covers. Raises UpstreamError
     if a list was needed and none could be had."""
     out = CardSet()
     seats = {race.key: seat for race in races if (seat := _seat_of(race, scopes.get(race.key), bp_ballot, county))}
@@ -198,18 +187,18 @@ async def cards(
         return out
     wanted = {"congress": any("-" in s for s in seats.values()), "legislature": any(":" in s for s in seats.values())}
     got: dict[str, list[Holder]] = {}
-    failures: list[OfficeholdersUnavailable] = []
+    failures: list[UpstreamError] = []
     for name, wants in wanted.items():
         if not wants:
             continue
         try:
             got[name] = await (svc.congress() if name == "congress" else svc.legislature())
-        except OfficeholdersUnavailable as exc:
+        except UpstreamError as exc:
             failures.append(exc)
     if failures and not got:
         raise failures[0]
     if failures:
-        log.warning("officeholders: %s", failures[0])
+        log.warning("%s", failures[0])
         out.warnings.append("A list of seat holders isn't answering right now, so some seats' holders aren't shown.")
     by_seat: dict[str, list[Holder]] = {}
     for holders in got.values():

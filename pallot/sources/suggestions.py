@@ -26,7 +26,6 @@ URL = "https://api4.ballotpedia.org/address_autocomplete"
 DESCRIPTION = (
     "Suggests Texas addresses as you type, from Ballotpedia's address search (unofficial endpoint, personal use)."
 )
-REFUSALS = (401, 403, 429)  # answers that pause suggestions for Ttls.suggest_backoff
 MIN_LENGTH = 5
 MAX_SUGGESTIONS = 5
 
@@ -66,7 +65,7 @@ class Suggestions:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        cache.pause_on(SOURCE, REFUSALS, ttl.suggest_backoff)
+        cache.pause_on(SOURCE, ttl.suggest_backoff, also=(401,))
 
     async def suggest(self, text: str) -> list[AddressSuggestion]:
         """Up to five addresses for ``text``; nothing is sent unless it looks like the start

@@ -223,7 +223,7 @@ class SboeMap:
         self._outlines: dict[tuple[int, float], list[Ring]] = {}
         self._lock = asyncio.Lock()
         self._downloading = False
-        cache.pause_on(SOURCE, REFUSALS, ttl.election_precincts_backoff)
+        cache.pause_on(SOURCE, ttl.election_precincts_backoff)
 
     async def district_at(self, lat: float, lon: float) -> int | None:
         return await asyncio.to_thread(locate, await self._load(), lat, lon)

@@ -8,8 +8,8 @@ from __future__ import annotations
 from typing import Awaitable, Callable
 
 from pallot.config import Ttls
-from pallot.http_cache import RequestSpec
-from pallot.sources.endorsement_feeds import FEEDS, EndorsementFeed, Feed, FeedUnavailable
+from pallot.http_cache import RequestSpec, UpstreamError
+from pallot.sources.endorsement_feeds import FEEDS, EndorsementFeed, Feed
 
 from .entry import Bundle, BundleError, Context
 
@@ -21,7 +21,7 @@ def builder(feed: Feed) -> Callable[[Context], Awaitable[dict[str, int]]]:
         """The feed's whole list; counts its Texas candidates and all of them."""
         try:
             found = await EndorsementFeed(feed, ctx.cache, ctx.config.ttl).fetch()
-        except FeedUnavailable as exc:
+        except UpstreamError as exc:
             raise BundleError(f"couldn't load {feed.organization}'s list: {exc}") from exc
         return {"texas": found.count("TX"), "candidates": found.count()}
 

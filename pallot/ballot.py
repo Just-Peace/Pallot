@@ -38,7 +38,7 @@ from .sources import election_precincts as election_precincts_source
 from .sources import google as google_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
-from .sources.ballotpedia import Ballotpedia, BallotpediaUnavailable, BpBallot, BpRace
+from .sources.ballotpedia import Ballotpedia, BpBallot, BpRace
 from .sources.census import TEXAS_FIPS, Census, Place
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
@@ -376,11 +376,6 @@ def _sort_key(row: dict[str, Any], name: str) -> tuple[int, int, int, str]:
     )
 
 
-async def build_ballot(svc: Services, request: BallotRequest, sources: Sources | None = None) -> Ballot:
-    """The ballot for ``request``, with the sources the voter has on (by default, Pallot's defaults)."""
-    return await (await start_ballot(svc, request, sources)).finish()
-
-
 async def start_ballot(svc: Services, request: BallotRequest, sources: Sources | None = None) -> _Builder:
     """A builder whose ``ballot`` has its races but no cards yet; ``finish()`` adds them. Every
     BallotError is raised here, before any card is asked for."""
@@ -401,14 +396,6 @@ class _Builder:
         self.sources = sources
         self.use_sos = sources.enabled("sos")
         self.use_bp = sources.enabled("ballotpedia")
-        self.use_tap = sources.enabled("trackaipac")
-        self.use_vfp = sources.enabled("voteforpeace")
-        self.lists = [found for found in svc.endorsements if sources.enabled(found.source)]
-        self.use_fec = sources.enabled("fec")
-        self.use_tec = sources.enabled("tec")
-        self.use_polls = sources.enabled("polls")
-        self.use_officeholders = sources.enabled("officeholders")
-        self.use_wikidata = sources.enabled("wikidata")
         self.use_key_dates = sources.enabled(key_dates_source.SOURCE)
         self.use_election_precincts = sources.enabled(election_precincts_source.SOURCE)
         self.use_county_precincts = self.use_election_precincts and sources.enabled(county_precincts_source.SOURCE)
@@ -425,7 +412,7 @@ class _Builder:
         self.where = "precinct" if request.voter_card else "address"
         self.ballot: Ballot  # set by races(), for finish()
         self.every_race: list[Race] = []
-        self.enrich_args: dict[str, Any] = {}
+        self.context = enrich.Context()
 
     async def races(self) -> Ballot:
         """The ballot without cards, kept in ``self.ballot`` for ``finish()``."""
@@ -510,26 +497,17 @@ class _Builder:
                 race.notes = _notes(own)
         ballot_day = day or (bp_ballot.day if bp_ballot else None)
         found = next((d for d in deadlines or () if d.day == ballot_day), None)
-        self.enrich_args = dict(
+        self.context = enrich.Context(
             elections={e.id: e for e, _ in sos_data.orders} if sos_data else {},
             ballot_rows=self.ballot_rows,
-            bp_ballot=bp_ballot,
             sos_lookups=sos_data.lookups if sos_data else None,
-            use_trackaipac=self.use_tap,
-            use_voteforpeace=self.use_vfp,
-            endorsements=self.lists,
-            use_fec=self.use_fec,
-            use_tec=self.use_tec,
-            use_polls=self.use_polls,
-            use_officeholders=self.use_officeholders,
-            use_wikidata=self.use_wikidata,
-            use_ballotpedia=self.use_bp,
+            bp_ballot=bp_ballot,
+            counterparts=bp_counterparts,
             day=ballot_day,
             scopes=self.scopes,
             county=location.county,
             city=location.city,
             state=location.state,
-            bp_counterparts=bp_counterparts,
         )
         self.every_race = every_race
 
@@ -558,7 +536,7 @@ class _Builder:
 
     async def finish(self) -> Ballot:
         """Adds every source's cards to ``self.ballot`` (in place), and logs what the lookup cost."""
-        outcome = await enrich.run(self.svc, self.every_race, **self.enrich_args)
+        outcome = await enrich.run(self.svc, self.every_race, self.sources, self.context)
         self.warnings += outcome.warnings
         self.notes += outcome.notes
         self.ballot.notes = self.notes
@@ -738,9 +716,9 @@ class _Builder:
         try:
             for lat, lon in points:
                 ballots.append(await self.svc.ballotpedia.ballot(lat, lon, day))
-        except BallotpediaUnavailable as exc:
-            log.warning("ballotpedia: %s", str(exc).removeprefix("ballotpedia: "))
-            self.warnings.append("Ballotpedia isn't answering right now, so city and school races aren't shown.")
+        except UpstreamError as exc:
+            log.warning("%s", exc)
+            self.warnings.append(enrich.UNAVAILABLE[ballotpedia_source.SOURCE])
             return None
         ballot, partial = ballotpedia_source.common(ballots)
         if not (ballot.races or partial) and day:

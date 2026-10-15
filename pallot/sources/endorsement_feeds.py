@@ -24,13 +24,11 @@ from ..config import Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, Unreadable, UpstreamError
 from ..models import Fact, Race, Tone
 from ..offices import OfficeScope
-from ..text import display_time
 from . import CardSet, RefreshFailed
 from .ballotpedia import BpBallot
 from .endorsements import BadList, EndorsementList, read_entry
 from .seats import entry_seats
 
-REFUSALS = (403, 429)  # answers that pause a feed for Ttls.endorsement_feeds_backoff
 _SLUG = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
 
@@ -51,18 +49,6 @@ class Feed:
     token: Callable[[str], dict[str, str]] | None = None  # headers read from ``url``'s page, fetched just before ``api``
 
 
-class FeedUnavailable(Exception):
-    """The feed couldn't be fetched (refused, paused, down) and nothing was kept."""
-
-    def __init__(self, label: str, reason: str):
-        super().__init__(reason)
-        self.label = label
-
-    @property
-    def warning(self) -> str:
-        return f"{self.label}'s website isn't answering right now, so its endorsements aren't shown."
-
-
 class EndorsementFeed:
     """A Feed on the ballot and in Settings (a KeptSource whose responses are its HttpCache rows,
     under its source id). The parsed list is kept per stored copy (its ``fetched_at``)."""
@@ -77,7 +63,7 @@ class EndorsementFeed:
         self._built: tuple[float, EndorsementList] | None = None
         self._parsed: tuple[Any, list[dict[str, Any]], str | None] | None = None
         self._lock = threading.Lock()
-        cache.pause_on(feed.source, REFUSALS, ttl.endorsement_feeds_backoff)
+        cache.pause_on(feed.source, ttl.endorsement_feeds_backoff)
         cache.check_answers(feed.source, self._check)
         if feed.token:
             cache.headers_from_page(feed.source, RequestSpec("GET", feed.url), feed.token)
@@ -87,6 +73,11 @@ class EndorsementFeed:
     organization = property(lambda self: self.feed.organization)
     url = property(lambda self: self.feed.url)
     description = property(lambda self: self.feed.description)
+
+    @property
+    def unavailable(self) -> str:
+        """What the voter reads when the feed's UpstreamError leaves its cards out."""
+        return f"{self.label}'s website isn't answering right now, so its endorsements aren't shown."
 
     @property
     def spec(self) -> RequestSpec:
@@ -147,13 +138,7 @@ class EndorsementFeed:
         return kept.captured if kept else None
 
     async def fetch(self) -> EndorsementList:
-        try:
-            got = await self.cache.get_json(self.source, self.spec, ttl=self.ttl.endorsement_feeds)
-        except UpstreamError as exc:
-            if exc.until:
-                raise FeedUnavailable(self.label, f"paused until {display_time(exc.until)} after "
-                                                  f"{self.organization}'s website refused a request") from exc
-            raise FeedUnavailable(self.label, str(exc).removeprefix(f"{self.source}: ")) from exc
+        got = await self.cache.get_json(self.source, self.spec, ttl=self.ttl.endorsement_feeds)
         return await asyncio.to_thread(self._list, got)
 
     async def lookup(
@@ -202,8 +187,8 @@ class EndorsementFeed:
         if self.cache.peek(self.spec) is None:
             try:
                 await self.fetch()
-            except FeedUnavailable as exc:
-                raise RefreshFailed(f"Couldn't fetch {self.label}'s list ({exc}).") from exc
+            except UpstreamError as exc:
+                raise RefreshFailed(f"Couldn't fetch {self.label}'s list ({str(exc).removeprefix(f'{self.source}: ')}).") from exc
         kept = self._kept()
         if kept is None:
             raise RefreshFailed(f"{self.label}'s list kept can't be read.")

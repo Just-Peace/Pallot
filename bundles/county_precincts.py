@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 
-from pallot.http_cache import RequestSpec, UpstreamError
+from pallot.http_cache import REFUSALS, RequestSpec, UpstreamError
 from pallot.sources import arcgis_error
 from pallot.sources import county_precincts as cp
 from pallot.sources.election_precincts import ElectionPrecincts
@@ -29,7 +29,7 @@ async def build(ctx: Context) -> dict[str, int]:
         try:
             await svc.records(county)
         except UpstreamError as exc:
-            if exc.status in cp.REFUSALS or exc.until:
+            if exc.status in REFUSALS or exc.until:
                 raise BundleError(f"{exc}; every county's server is paused, so the others weren't asked") from exc
             left_out.append(f"{county.name} ({exc})")
         except (ValueError, OSError) as exc:

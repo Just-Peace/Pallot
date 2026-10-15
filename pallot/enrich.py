@@ -1,8 +1,8 @@
 """Attach every enabled source's cards to the ballot's candidates and races.
 
 Each source builds SourceCards keyed by candidate (the money sources and polls also build
-one per race, comparing its candidates); a new source only needs its own cards() added here. The
-frontend renders any card the same way, in the order they're attached: CARD_ORDER is the order
+one per race, comparing its candidates); a new source only needs its cards() added to JOBS. The
+frontend renders any card the same way, in the order they're attached: JOBS' order is the order
 of the tabs in Details and of the badges on a candidate's row, with the endorsement lists last.
 """
 
@@ -12,15 +12,17 @@ import asyncio
 import datetime as dt
 import logging
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Awaitable, Sequence
+from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
+from .http_cache import UpstreamError
 from .models import Race, SourceCard
 from .offices import OfficeScope
+from .settings import Sources
 from .sources import (
     CardSet, SeatInfo, ballotpedia, fec, officeholders, polls, sos, tec, trackaipac, voteforpeace, wikidata,
 )
 from .sources.ballotpedia import BpBallot, BpRace
-from .sources.endorsement_feeds import EndorsementSource, FeedUnavailable
+from .sources.endorsement_feeds import EndorsementFeed
 from .sources.sos import Election, Lookups
 
 if TYPE_CHECKING:
@@ -28,17 +30,31 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("uvicorn.error")
 
-CARD_ORDER = (
-    fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, wikidata.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE,
-    voteforpeace.SOURCE, officeholders.SOURCE,
-)
-UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
-    fec.SOURCE: (fec.FecUnavailable, "The FEC isn't answering right now, so campaign money for federal races isn't shown."),
-    polls.SOURCE: (polls.PollsUnavailable, "FiftyPlusOne isn't answering right now, so polls aren't shown."),
-    officeholders.SOURCE: (officeholders.OfficeholdersUnavailable,
-                           "The lists of seat holders aren't answering right now, so who holds each seat isn't shown."),
-    wikidata.SOURCE: (wikidata.WikidataUnavailable, "Wikidata isn't answering right now, so its profiles aren't shown."),
+UNAVAILABLE = {  # what the voter reads when a source's UpstreamError leaves its cards out
+    fec.SOURCE: "The FEC isn't answering right now, so campaign money for federal races isn't shown.",
+    polls.SOURCE: "FiftyPlusOne isn't answering right now, so polls aren't shown.",
+    officeholders.SOURCE: "The lists of seat holders aren't answering right now, so who holds each seat isn't shown.",
+    wikidata.SOURCE: "Wikidata isn't answering right now, so its profiles aren't shown.",
+    ballotpedia.SOURCE: "Ballotpedia isn't answering right now, so city and school races aren't shown.",
 }
+
+
+@dataclass
+class Context:
+    """What the ballot found that the sources' cards need. ``sos_lookups`` is None when the ballot
+    didn't come from Texas SOS; ``counterparts`` gives each race's own race on Ballotpedia's
+    ballot (ballotpedia.counterparts)."""
+
+    elections: dict[int, Election] = field(default_factory=dict)
+    ballot_rows: dict[str, dict[str, Any]] = field(default_factory=dict)
+    sos_lookups: Lookups | None = None
+    bp_ballot: BpBallot | None = None
+    counterparts: dict[str, BpRace] = field(default_factory=dict)
+    day: dt.date | None = None
+    scopes: dict[str, OfficeScope] = field(default_factory=dict)
+    county: str | None = None
+    city: str | None = None
+    state: str | None = None
 
 
 @dataclass
@@ -53,73 +69,57 @@ async def _candidate_cards(found: Awaitable[dict[str, SourceCard]]) -> CardSet:
     return CardSet(candidates=await found)
 
 
-async def run(
-    svc: Services,
-    races: list[Race],
-    *,
-    elections: dict[int, Election],
-    ballot_rows: dict[str, dict[str, Any]],
-    bp_ballot: BpBallot | None,
-    sos_lookups: Lookups | None,
-    use_trackaipac: bool,
-    use_voteforpeace: bool = False,
-    endorsements: Sequence[EndorsementSource] = (),
-    use_fec: bool = False,
-    use_tec: bool = False,
-    use_polls: bool = False,
-    use_officeholders: bool = False,
-    use_wikidata: bool = False,
-    use_ballotpedia: bool = False,
-    day: dt.date | None = None,
-    scopes: dict[str, OfficeScope] | None = None,
-    county: str | None = None,
-    city: str | None = None,
-    state: str | None = None,
-    bp_counterparts: dict[str, BpRace] | None = None,
-) -> Outcome:
-    """Add cards in place; say what failed. ``sos_lookups`` is None when the ballot didn't
-    come from Texas SOS; ``bp_counterparts`` gives each race's own race on Ballotpedia's
-    ballot (ballotpedia.counterparts). Every source is asked at once (the ones without I/O
-    in a thread), and nothing touches the races until they've all answered."""
+def _sos(svc: Services, races: list[Race], ctx: Context, _sources: Sources) -> Awaitable[CardSet] | None:
+    if not (ctx.sos_lookups and ctx.elections):
+        return None
     candidates = [c for race in races for c in race.candidates]
+    return _candidate_cards(sos.cards(svc.sos, ctx.elections, candidates, ctx.ballot_rows, ctx.sos_lookups))
+
+
+def _ballotpedia(_svc: Services, races: list[Race], ctx: Context, _sources: Sources) -> Awaitable[CardSet] | None:
+    if ctx.bp_ballot is None:
+        return None
+    return asyncio.to_thread(ballotpedia.cards, ctx.bp_ballot, races, ctx.counterparts)
+
+
+Job = Callable[["Services", list[Race], Context, Sources], "Awaitable[CardSet] | None"]
+JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
+    fec.SOURCE: lambda svc, races, ctx, _: fec.cards(svc.fec, races, ctx.day),
+    tec.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(tec.cards, svc.tec, races, ctx.scopes, ctx.county, ctx.bp_ballot),
+    sos.SOURCE: _sos,
+    polls.SOURCE: lambda svc, races, ctx, _: polls.cards(svc.polls, races, ctx.day),
+    wikidata.SOURCE: lambda svc, races, ctx, sources: wikidata.cards(
+        svc.wikidata, races, ctx.scopes, ctx.county, ctx.bp_ballot, sources.enabled(ballotpedia.SOURCE)),
+    ballotpedia.SOURCE: _ballotpedia,
+    trackaipac.SOURCE: lambda svc, races, _ctx, _: asyncio.to_thread(
+        lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races))),
+    voteforpeace.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
+        voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.city),
+    officeholders.SOURCE: lambda svc, races, ctx, _: officeholders.cards(
+        svc.officeholders, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.day),
+}
+
+
+async def run(svc: Services, races: list[Race], sources: Sources, ctx: Context) -> Outcome:
+    """Add cards in place; say what failed. Every source the voter has on is asked at once (the
+    ones without I/O in a thread), and nothing touches the races until they've all answered."""
     jobs: dict[str, Awaitable[CardSet]] = {}
-    if sos_lookups and elections:
-        jobs[sos.SOURCE] = _candidate_cards(sos.cards(svc.sos, elections, candidates, ballot_rows, sos_lookups))
-    if bp_ballot is not None:
-        jobs[ballotpedia.SOURCE] = asyncio.to_thread(ballotpedia.cards, bp_ballot, races, bp_counterparts)
-    if use_trackaipac:
-        jobs[trackaipac.SOURCE] = asyncio.to_thread(lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races)))
-    if use_voteforpeace:
-        jobs[voteforpeace.SOURCE] = asyncio.to_thread(
-            voteforpeace.cards, svc.voteforpeace, races, scopes or {}, county, bp_ballot, city
-        )
-    for found in endorsements:
-        jobs[found.source] = found.lookup(races, scopes or {}, county, bp_ballot, state or "TX", city)
-    if use_fec:
-        jobs[fec.SOURCE] = fec.cards(svc.fec, races, day)
-    if use_tec:
-        jobs[tec.SOURCE] = asyncio.to_thread(tec.cards, svc.tec, races, scopes or {}, county, bp_ballot)
-    if use_polls:
-        jobs[polls.SOURCE] = polls.cards(svc.polls, races, day)
-    if use_officeholders:
-        jobs[officeholders.SOURCE] = officeholders.cards(svc.officeholders, races, scopes or {}, county, bp_ballot, day)
-    if use_wikidata:
-        jobs[wikidata.SOURCE] = wikidata.cards(svc.wikidata, races, scopes or {}, county, bp_ballot, use_ballotpedia)
+    for source, job in JOBS.items():
+        if sources.enabled(source) and (asked := job(svc, races, ctx, sources)) is not None:
+            jobs[source] = asked
+    lists = [found for found in svc.endorsements if sources.enabled(found.source)]
+    for found in lists:
+        jobs[found.source] = found.lookup(races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.state or "TX", ctx.city)
+    unavailable = {**UNAVAILABLE, **{f.source: f.unavailable for f in lists if isinstance(f, EndorsementFeed)}}
     answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 
     outcome = Outcome()
     seats: dict[str, SeatInfo] = {}
-    for source in (*CARD_ORDER, *(found.source for found in endorsements)):
-        if source not in answers:
-            continue
-        cards = answers[source]
-        if source in UNAVAILABLE and isinstance(cards, UNAVAILABLE[source][0]):
-            log.warning("%s: %s", source, str(cards).removeprefix(f"{source}: "))
-            outcome.warnings.append(UNAVAILABLE[source][1])
-            continue
-        if isinstance(cards, FeedUnavailable):
-            log.warning("%s: %s", source, str(cards).removeprefix(f"{source}: "))
-            outcome.warnings.append(cards.warning)
+    candidates = [c for race in races for c in race.candidates]
+    for source, cards in answers.items():
+        if isinstance(cards, UpstreamError) and source in unavailable:
+            log.warning("%s", cards)
+            outcome.warnings.append(unavailable[source])
             continue
         if isinstance(cards, BaseException):
             raise cards
