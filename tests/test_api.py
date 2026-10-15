@@ -349,6 +349,17 @@ def test_the_left_pane_links_every_page(client):
     assert set(PAGES) <= set(re.findall(r'href: "([^"]+)"', chrome))
 
 
+@pytest.mark.parametrize("page", ["settings.html", "faq.html"])
+def test_long_pages_have_section_chips_for_a_phone(client, page):
+    """page.js draws the sections as chips in a page's <nav class="section-chips">."""
+    assert '<nav class="section-chips" aria-label=' in client.get(f"/{page}").text
+
+
+def test_the_faq_has_a_search_box(client):
+    html = client.get("/faq.html").text
+    assert '<input type="search" id="faq-query"' in html and 'id="faq-search-status" role="status"' in html
+
+
 @pytest.mark.parametrize("page", [p for p in PAGES if p != "./"])
 def test_every_other_page_has_sections_for_the_left_pane(client, page):
     """page.js lists each <section> in <main> by the heading it's labelled by."""
