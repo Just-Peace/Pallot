@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import ctypes
 import datetime as dt
 import hashlib
 import ipaddress
@@ -12,6 +13,7 @@ import os
 import posixpath
 import re
 import sqlite3
+import sys
 import traceback
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -93,7 +95,7 @@ async def warm_up(svc: Services) -> None:
     """Read, in the background at startup, what the first lookup would otherwise read: the
     precinct map's index, the SBOE map, and the TEC's, TrackAIPAC's and Vote for Peace's name indexes. Only files
     already kept, for sources on by default; nothing is fetched. A lookup meanwhile waits on the
-    same locks, and a failure is left for the lookup to report."""
+    same locks, and a failure is left for the lookup to report. Then the heap freed by startup goes back to the OS."""
     jobs = [svc.sboe.warm()]
     if svc.sources.enabled("election_precincts"):
         jobs.append(asyncio.to_thread(svc.election_precincts.warm))
@@ -104,6 +106,19 @@ async def warm_up(svc: Services) -> None:
     if svc.sources.enabled("voteforpeace"):
         jobs.append(asyncio.to_thread(svc.voteforpeace.name_index, "TX"))
     await asyncio.gather(*jobs, return_exceptions=True)
+    trim_heap()
+
+
+def trim_heap() -> None:
+    """Give back to the OS the heap glibc keeps once startup's parsing is done (the bundles and
+    the name indexes, about 50 MB it would otherwise hold for good). Linux with glibc only:
+    elsewhere, or where libc.so.6 can't be loaded (musl), nothing."""
+    if not sys.platform.startswith("linux"):
+        return
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except (OSError, AttributeError):
+        pass
 
 
 async def keep_pruning(svc: Services, every: float | None = None) -> None:
