@@ -1,4 +1,4 @@
-"""bundles: refreshing only what's due, the command, Settings' notice and what ships with Pallot.
+"""bundles: refreshing only what's due, the command, what pallot-cache says came with Pallot, and what ships with it.
 Each source's builder is tested in its own test_bundle_<source>.py."""
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from bundles.refresh import refresh
 from pallot.config import DAY, PROJECT_DIR, Config, Ttls
 from pallot.http_cache import HttpCache, RequestSpec
 
-from .bundling import NOW, notice
+from .bundling import NOW, came_with
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -64,13 +64,14 @@ def test_the_command_reports_each_source_and_fails_when_one_did(tmp_path, monkey
     assert "daily: skipped, checked " in capsys.readouterr().out and built == ["daily", "broken"]
 
 
-def test_settings_says_what_came_with_any_bundled_source(tmp_path, monkeypatch, make_app):
+def test_pallot_cache_says_what_came_with_any_bundled_source(tmp_path, monkeypatch, make_app):
     monkeypatch.setattr(registry, "BUNDLES", (fake("polls", "daily", []),))
     store.write_answers(tmp_path / "bundles" / "polls.json", [{"request": {"method": "GET", "url": "https://polls.test/",
                                                                            "params": None}, "value": []}])
     store.write_meta(tmp_path / "bundles", "polls", {"last_checked": NOW.isoformat()})
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
-        assert notice(client, "polls").startswith("Came with 1 answer, checked ")
+        assert came_with(client, "polls").startswith("Came with 1 answer, checked ")
+    assert "\n  Came with 1 answer, checked " in make_app.cache_command("check", "polls", bundles=tmp_path / "bundles")[1]
 
 
 def test_seeding_keeps_only_the_count_in_memory(tmp_path):

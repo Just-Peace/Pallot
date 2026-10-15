@@ -47,7 +47,7 @@ def test_suggest_route(client, upstream):
     assert again == first and upstream.count("address_autocomplete") == 1  # the same text, cached
 
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "suggestions")
-    assert row["enabled"] and row["cache"]["entries"] == 1
+    assert row["enabled"] and row["updated"] and client.app.state.svc.cache.stats("suggestions").entries == 1
     assert upstream.count("myvote") == 0  # the ballot's endpoint wasn't asked
 
 

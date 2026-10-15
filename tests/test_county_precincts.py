@@ -322,7 +322,7 @@ def test_maps_on_the_ballot(client, upstream, monkeypatch):
 def test_pallot_cache_refreshes_and_rebuilds_the_countys_records(client, make_app, upstream):
     get_ballot(client)
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == cp.SOURCE)
-    assert row["cache"]["entries"] == 3 and row["notice"] is None
+    assert client.app.state.svc.cache.stats(cp.SOURCE).entries == 3 and row["notice"] is None and row["updated"]
     refreshed = make_app.cache_command("hard-refresh", cp.SOURCE)
     assert refreshed == (0, "Commissioner & JP precincts (counties): Refreshed 3 saved responses.")
     assert upstream.count("traviscountytx") == 6

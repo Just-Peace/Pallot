@@ -44,6 +44,7 @@ def lifetimes(tmp_path: Path, name: str) -> set[float]:
     return {entry(name).ttl(Ttls(), RequestSpec(**a["request"])) for a in answers(tmp_path, name)}
 
 
-def notice(client: TestClient, source: str) -> str:
-    """The source's notice in Settings."""
-    return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == source)["notice"]
+def came_with(client: TestClient, source: str) -> str | None:
+    """What pallot-cache check says came with Pallot for the source ("Came with N answers, checked …")."""
+    admin = client.app.state.admin
+    return admin.bundled(next(info for info in admin.sources if info.id == source))

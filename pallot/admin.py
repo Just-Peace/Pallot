@@ -1,6 +1,6 @@
-"""What the Settings page shows about each source: on or off for this voter, what the server
-keeps, and how the last lookup used it. Refreshing and clearing what the server keeps is
-pallot-cache's (maintain.py), run on the host, never the page's."""
+"""What the Settings page shows about each source: on or off for this voter, what it holds and
+how old it is, and a pause or failure the voter should know of. What the server keeps, and
+refreshing and clearing it, is pallot-cache's (maintain.py), run on the host, never the page's."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import datetime as dt
 from dataclasses import dataclass
 
 from .ballot import Services
-from .models import CacheStatus, SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
+from .models import SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
     KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
@@ -38,16 +38,14 @@ class SourceGroup:
 
 ADDRESS, OFFICIAL, BALLOT, POLLS, SCORECARDS = "address", "official", "ballot", "polls", "scorecards"
 GROUPS = (
-    SourceGroup(ADDRESS, "Address lookup & maps", "Find your districts and precincts from your address, draw them on "
-                "a map, and suggest addresses as you type."),
-    SourceGroup(OFFICIAL, "Official ballot data", "Government sources: the state's ballot and election dates, and the "
-                "campaign money reported to the FEC and the Texas Ethics Commission."),
-    SourceGroup(BALLOT, "Third-party ballot data", "Not official, but it fills in what the state doesn't publish: local "
-                "races, notes on a race, candidate profiles and who holds each seat."),
-    SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them, gathered by an independent site."),
-    SourceGroup(SCORECARDS, "Third-party endorsements", "Organizations that endorse or warn against "
-                "candidates, most of them on Palestinian rights, U.S. military aid to Israel and pro-Israel lobby money. "
-                "Each adds badges to the candidates it covers.", toggle_all=True),
+    SourceGroup(ADDRESS, "Address lookup & maps", "Your districts and precincts from your address, and their map."),
+    SourceGroup(OFFICIAL, "Official ballot data", "The state's ballot and dates, and campaign money reported to the "
+                "FEC and the Texas Ethics Commission."),
+    SourceGroup(BALLOT, "Third-party ballot data", "Local races, candidate profiles and seat holders the state doesn't "
+                "publish."),
+    SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them."),
+    SourceGroup(SCORECARDS, "Third-party endorsements", "Organizations that endorse or warn against candidates, most "
+                "on Palestinian rights and pro-Israel lobby money.", toggle_all=True),
 )
 
 
@@ -71,8 +69,8 @@ SOURCES = (
     SourceInfo(
         "geocoding",
         "Address lookup & districts",
-        "US Census geocoder (county and districts), OpenStreetMap Nominatim when the Census can't match an "
-        "address, and the Texas Legislative Council's State Board of Education map.",
+        "Your county and districts from your address, from the US Census, OpenStreetMap and the Texas Legislative "
+        "Council.",
         False,
         ("census", "nominatim"),
         group=ADDRESS,
@@ -201,12 +199,14 @@ SOURCES = (
 
 def list_info(found: EndorsementSource) -> SourceInfo:
     """An endorsement list's row: its own switch, and nothing to refresh or clear; a live feed's
-    also has its cached copy (under its id), and a pause."""
+    also has its cached copy (under its id), and a pause. Its description is one short sentence;
+    the list's own is on the pages that name the lists."""
+    description = f"The candidates {found.organization} endorses."
     if found.live:
-        return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (found.source,),
+        return SourceInfo(found.source, f"{found.label} endorsements", description, True, (found.source,),
                           SCORECARDS, pause=Pause(f"{found.organization}'s website refused a request",
                                       "the list already fetched still shows"), rules=True)
-    return SourceInfo(found.source, f"{found.label} endorsements", found.description, True, (), SCORECARDS,
+    return SourceInfo(found.source, f"{found.label} endorsements", description, True, (), SCORECARDS,
                       refreshable=False, frozen=True, rules=True)
 
 
@@ -234,7 +234,6 @@ class Admin:
             groups=[SourceGroupInfo(id=g.id, title=g.title, description=g.description, toggle_all=g.toggle_all)
                     for g in GROUPS],
             sources=[self._status(info, sources) for info in self.sources],
-            total_bytes=self.svc.cache.file_bytes() + sum(kept.size() for kept in self._kept_sources.values()),
             last_lookup=self.svc.last_lookup,
         )
 
@@ -244,16 +243,6 @@ class Admin:
                 if info.rules and info.toggleable and not sources.enabled(info.id)]
 
     def _status(self, info: SourceInfo, sources: Sources) -> SourceStatus:
-        stats = [self.svc.cache.stats(tag) for tag in info.cache_tags]
-        oldest = [s.oldest for s in stats if s.oldest is not None]
-        newest = [s.newest for s in stats if s.newest is not None]
-        cache = CacheStatus(
-            entries=sum(s.entries for s in stats),
-            bytes=sum(s.bytes for s in stats),
-            expired=sum(s.expired for s in stats),
-            oldest=iso_utc(min(oldest)) if oldest else None,
-            newest=iso_utc(max(newest)) if newest else None,
-        )
         notice, tone = self._notice(info)
         kept = self.kept(info)
         return SourceStatus(
@@ -262,16 +251,23 @@ class Admin:
             description=info.description,
             group=info.group,
             toggleable=info.toggleable,
-            bundled=info.bundled,
             enabled=sources.enabled(info.id) if info.toggleable else True,
             busy=kept is not None and kept.busy,
-            cache=cache,
-            details=kept.details() if kept else [],
+            counts=kept.counts() if kept else [],
+            updated=self.updated(info),
             frozen=info.frozen,
             notice=notice,
             notice_tone=tone,
             last_use=self.svc.last_uses.get(info.id),
         )
+
+    def updated(self, info: SourceInfo) -> str | None:
+        """When the source's data dates from: what it keeps in files says, or else its newest saved answer."""
+        kept = self.kept(info)
+        if kept and (dated := kept.updated()):
+            return dated
+        newest = [s.newest for s in (self.svc.cache.stats(tag) for tag in info.cache_tags) if s.newest is not None]
+        return iso_utc(max(newest)) if newest else None
 
     def paused(self, info: SourceInfo) -> str | None:
         """ "Paused until …" while the source is paused after refusing a request."""
@@ -283,7 +279,8 @@ class Admin:
         return f"Paused until {display_time(until)} after {info.pause.after}; {info.pause.kept}."
 
     def bundled(self, info: SourceInfo) -> str | None:
-        """ "Came with N answers, checked <date>." for a source whose answers come with Pallot (bundles/)."""
+        """ "Came with N answers, checked <date>." for a source whose answers come with Pallot (bundles/),
+        for pallot-cache check."""
         loaded = [bundle for bundle in self.svc.bundles.values() if bundle.source in info.cache_tags]
         if not loaded:
             return None
@@ -292,14 +289,10 @@ class Admin:
         return f"Came with {count:,} answer{'' if count == 1 else 's'}, checked {checked}."
 
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
-        """One line under the source's description: what it's missing, or where its data stands,
-        then what came with Pallot."""
+        """A short line under the source's description, only when the voter should know: a pause, a
+        failure, a download under way, or a missing key."""
         if info.id == fec.SOURCE:
             return self._fec_notice(info)
-        notice, tone = self._state(info)
-        return " ".join(filter(None, (notice, self.bundled(info)))) or None, tone
-
-    def _state(self, info: SourceInfo) -> tuple[str | None, Tone]:
         paused = self.paused(info)
         if info.id == google.SOURCE:
             return (paused, "warn") if paused else ((None, "info") if self.svc.google.keyed else (google.KEY_NOTE, "warn"))
@@ -309,7 +302,7 @@ class Admin:
         return (kept.notice() if kept else None) or (None, "info")
 
     def _fec_notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
-        """Which keys the FEC is asked with, and why any rest: paused once every key does."""
+        """Why any key rests (paused once every key does), and the shared DEMO_KEY's limits."""
         svc = self.svc.fec
         trouble = svc.key_trouble()
         rests = self.svc.cache.key_rests(fec.SOURCE)
@@ -321,10 +314,6 @@ class Admin:
                      f"{trouble}.")
         else:
             state = None
-        snapshot = self.bundled(info)
         if not svc.keyed:
-            return " ".join(filter(None, (state, snapshot, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
-        if state:
-            return " ".join(filter(None, (state, snapshot))), "warn"
-        keys = "Using your api.data.gov key." if len(rests) == 1 else f"Using your {len(rests)} api.data.gov keys in turn."
-        return " ".join(filter(None, (snapshot, keys))), "info"
+            return " ".join(filter(None, (state, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
+        return (state, "warn") if state else (None, "info")

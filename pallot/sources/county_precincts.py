@@ -118,12 +118,8 @@ COUNTIES = {county.fips: county for county in (
                           "JP / Constable"), "JP_C")),
 )}
 DESCRIPTION = (
-    "Your commissioner and justice of the peace precincts, from your election precinct and your county's own records: "
-    "the lists of their election precincts that Harris, Dallas, Tarrant, Travis and Fort Bend counties publish (Fort "
-    "Bend's has commissioner precincts only), and Bexar and Denton counties' maps of their commissioner and JP "
-    "precincts. They come with Pallot; once that copy is two weeks old, a county's list or maps are downloaded whole, "
-    "at most once a week, when you look up an address there; "
-    "your address is never sent. Needs \"Election precincts\" on."
+    "Your commissioner and justice of the peace precincts, from the records of Harris, Dallas, Tarrant, Travis, "
+    "Fort Bend, Bexar and Denton counties; needs \"Election precincts\" on."
 )
 
 

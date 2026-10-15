@@ -153,6 +153,12 @@ class BundledSnapshot:
             return f"The last refresh failed and nothing changed: {self.last_error}", "warn"
         return None
 
+    def counts(self) -> list[str]:
+        raise NotImplementedError
+
+    def updated(self) -> str | None:
+        return self.snapshot_date()
+
     def size(self) -> int:
         return sum(p.stat().st_size for p in self.data_dir.rglob("*") if p.is_file()) if self.data_dir.exists() else 0
 

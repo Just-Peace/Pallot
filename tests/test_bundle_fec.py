@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from bundles import store
 from pallot.config import Config
 
-from .bundling import NOW, answers, build, notice
+from .bundling import NOW, answers, build, came_with
 from .conftest import FEC_KEY, get_ballot
 
 
@@ -56,7 +56,7 @@ def test_a_lookup_asks_the_fec_nothing_the_bundle_has(tmp_path, upstream, make_a
     asked = upstream.count("open.fec.gov")
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        said = notice(client, "fec")
+        said = came_with(client, "fec")
     senate = next(r for r in ballot["races"] if r["name"] == "U.S. Senator")
     assert senate["cards"] and upstream.count("open.fec.gov") == asked
     assert said.startswith(f"Came with {len(answers(tmp_path, 'fec')):,} answers, checked ")

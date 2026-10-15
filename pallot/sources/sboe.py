@@ -335,6 +335,12 @@ class SboeMap:
             return f"The last download of the State Board of Education map failed ({self.last_error}); {then}.", "warn"
         return None
 
+    def counts(self) -> list[str]:
+        return []
+
+    def updated(self) -> str | None:
+        return None  # the address lookup's row goes by its geocoders' answers
+
     def details(self) -> list[Fact]:
         if not self.path.exists():
             return [Fact(label="SBOE map", value="fetched on the first lookup")]

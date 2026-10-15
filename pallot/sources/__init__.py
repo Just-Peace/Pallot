@@ -52,7 +52,7 @@ class RefreshFailed(Exception):
 
 class KeptSource(Protocol):
     """A source kept in files rather than HttpCache rows (the SBOE and precinct maps, the
-    bundled snapshots). Settings asks it for its row's state (admin.py), and pallot-cache
+    bundled snapshots). Settings asks it for its row's fine print (admin.py), and pallot-cache
     (maintain.py) to check, refresh and clear it, so a new one only needs its SourceInfo."""
 
     @property
@@ -60,9 +60,16 @@ class KeptSource(Protocol):
         """A download running in this process (Settings says so)."""
 
     def notice(self) -> tuple[str, Tone] | None:
-        """One line for Settings: a download under way, a failure, or where its data stands."""
+        """One short line for Settings, only when the voter should know: a download under way, or a failure."""
 
-    def details(self) -> list[Fact]: ...
+    def counts(self) -> list[str]:
+        """What it holds, for its fine print in Settings ("101 Texas candidates")."""
+
+    def updated(self) -> str | None:
+        """When its data dates from (ISO date or time), for "updated …" in Settings; None to go by its cache rows."""
+
+    def details(self) -> list[Fact]:
+        """What pallot-cache check prints for it."""
 
     def size(self) -> int:
         """Bytes on disk."""

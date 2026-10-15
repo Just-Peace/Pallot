@@ -97,10 +97,10 @@ The file, `pallot/endorsements/<source>.json` (`parse()` checks it and refuses u
 |---|---|---|
 | `source` | yes | the file's name without `.json`: lowercase letters, digits and `_`, starting with a letter, and not another source's id (`jvpaction`) |
 | `label` | yes | the short name on badges, tabs and Settings (`JVP Action`) |
-| `organization` | yes | its full name (`Jewish Voice for Peace Action`) |
+| `organization` | yes | its full name (`Jewish Voice for Peace Action`), also in its Settings line ("The candidates … endorses.") |
 | `url` | yes | the http(s) page the list was copied from |
 | `captured` | yes | the day it was copied, `YYYY-MM-DD` |
-| `description` | yes | one sentence for Settings and the Details tab |
+| `description` | yes | one sentence for the Details tab and the pages that name the lists |
 | `candidates` | yes | at least one entry: |
 | `candidates[].name` | yes | as the list writes it |
 | `candidates[].state` | yes | two-letter postal code (`TX`); keep every state the list has |
@@ -127,7 +127,7 @@ A list Pallot fetches from the organization's public JSON (`sources/endorsement_
 | `organization` | its full name |
 | `url` | the page people read the list on, the cards' link when an entry has no page of its own |
 | `api` | the public JSON endpoint, asked with a GET |
-| `description` | one sentence for Settings and the Details tab, saying nothing about the voter is sent |
+| `description` | one sentence for the Details tab and the pages that name the lists, saying nothing about the voter is sent |
 | `read` | the adapter: the endpoint's JSON to candidates in an endorsement file's shape, raising `ValueError` for an answer it can't read |
 | `headers` | any headers the endpoint needs, or `None`; never a key |
 | `token` | `None`, or a reader of `url`'s page that returns the headers to send `api`, for a token the site rotates |
@@ -148,7 +148,7 @@ To add a feed:
 
 Two kinds come with Pallot (README's "Bundled snapshots" says what's in them):
 - **Snapshot packages** (`trackaipac_cache/`, `voteforpeace_cache/`, `tec_cache/`), copied into `data/` on first run. `pallot-cache hard-refresh` refreshes them; `rebuild --reset-snapshots` goes back to the repo's copy. Each package's own README says how to update the bundled copy (`uv run <package> refresh`). `trackaipac_cache` is a copy of the maintainer's library (`Fahd-Siddiqui/TrackAipacCache`): see AGENTS.md before changing it. TEC's refresh runs in its own process, since it reads a couple of GB of CSV.
-- **Cached answers** (`bundles/`), seeded into the cache at startup, dated when they were last checked, where the cache has no newer copy. A lookup asks live only once a bundled answer is older than its bundle lifetime. Files are one answer per line, sorted, so a diff shows each changed answer; they never hold a key or a header. Once seeded, only each bundle's count and date stay in memory, for Settings' "Came with N answers".
+- **Cached answers** (`bundles/`), seeded into the cache at startup, dated when they were last checked, where the cache has no newer copy. A lookup asks live only once a bundled answer is older than its bundle lifetime. Files are one answer per line, sorted, so a diff shows each changed answer; they never hold a key or a header. Once seeded, only each bundle's count and date stay in memory, for `pallot-cache check`'s "Came with N answers".
 
 To bundle a source's answers:
 1. Write its builder: an `async def build(ctx: Context) -> dict[str, int]` that makes a lookup's requests through `ctx.cache` with the source's own class, and raises `BundleError` if any failed.

@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from pallot.config import DAY
 
-from .bundling import build, entry, lifetimes, notice
+from .bundling import build, came_with, entry, lifetimes
 
 
 def test_a_lookup_with_the_outlines_bundled_asks_tigerweb_nothing(tmp_path, upstream, make_app):
@@ -18,7 +18,7 @@ def test_a_lookup_with_the_outlines_bundled_asks_tigerweb_nothing(tmp_path, upst
     asked = upstream.count("tigerweb")
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         got = client.get("/api/district-outlines", params={"cd": 10, "sd": 14, "hd": 49}).json()
-        said = notice(client, "tigerweb")
+        said = came_with(client, "tigerweb")
     assert [(o["kind"], o["number"]) for o in got["outlines"]] == [("cd", 10), ("sd", 14), ("hd", 49)]
     assert got["meta"]["external_calls"] == 0 and upstream.count("tigerweb") == asked
     assert said.startswith("Came with 5 answers, checked ")

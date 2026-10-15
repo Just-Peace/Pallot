@@ -29,6 +29,18 @@ function listSections() {
   });
   if (!sidebar || entries.length < 2) return;
   let jumped = null;
+  let shown = null;
+  // The row of chips scrolls sideways on a phone: the current one is brought into it, without
+  // scrolling the page.
+  const showChip = (entry) => {
+    if (!chips || entry === shown) return;
+    const chip = entry.links[1];
+    const row = chip.closest("ul");
+    if (!row || row.scrollWidth <= row.clientWidth) return;
+    shown = entry;
+    const [box, rowBox] = [chip.getBoundingClientRect(), row.getBoundingClientRect()];
+    row.scrollBy({ left: box.left - rowBox.left - (rowBox.width - box.width) / 2, behavior: "smooth" });
+  };
   const mark = () => {
     const html = document.documentElement;
     const line = (parseFloat(getComputedStyle(html).scrollPaddingTop) || 0) + 4;
@@ -43,6 +55,7 @@ function listSections() {
         else link.removeAttribute("aria-current");
       }
     }
+    showChip(current);
   };
   for (const entry of entries) {
     for (const link of entry.links) {

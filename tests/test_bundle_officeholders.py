@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from pallot.config import DAY
 
-from .bundling import answers, build, entry, lifetimes, notice
+from .bundling import answers, build, came_with, entry, lifetimes
 from .conftest import get_ballot
 
 
@@ -22,7 +22,7 @@ def test_a_lookup_with_the_seat_holders_bundled_asks_neither_list(tmp_path, upst
     asked = holder_calls(upstream)
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        said = notice(client, "officeholders")
+        said = came_with(client, "officeholders")
     assert next(r for r in ballot["races"] if r["name"] == "U.S. Senator")["holder"]["name"] == "John Cornyn"
     assert next(r for r in ballot["races"] if r["name"] == "State Representative District 49")["holder"]
     assert holder_calls(upstream) == asked

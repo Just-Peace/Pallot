@@ -416,29 +416,23 @@ class SuggestResult(BaseModel):
     suggestions: list[AddressSuggestion]
 
 
-class CacheStatus(BaseModel):
-    entries: int
-    bytes: int
-    expired: int
-    oldest: str | None
-    newest: str | None
-
-
 class SourceStatus(BaseModel):
+    """A source's row in Settings: its switch, one sentence, and one line of fine print. What the
+    server keeps for it is pallot-cache check's, on the host."""
+
     id: str
     label: str
     description: str
     group: str  # the id of the SourceGroupInfo it's drawn under
     toggleable: bool
-    bundled: bool  # comes with a bundled snapshot, which its details date, rather than cached responses
     enabled: bool  # for this voter: their choice in this browser, or else Pallot's default
     busy: bool  # a download running (the precinct map, for a lookup)
-    cache: CacheStatus
-    details: list[Fact]
-    frozen: bool = False  # comes with Pallot as captured, never fetched, nothing saved (an endorsement list)
-    notice: str | None = None  # one line shown under the description, e.g. what the source is missing
+    counts: list[str] = []  # what it holds: "101 Texas candidates", "1,020 in 27 states"
+    updated: str | None = None  # ISO date or time its data dates from
+    frozen: bool = False  # comes with Pallot as captured, never fetched (an endorsement list): "captured", not "updated"
+    notice: str | None = None  # a short line only when the voter should know: a pause, a failure, a missing key
     notice_tone: Tone = "info"
-    last_use: SourceUse | None = None  # in the last lookup
+    last_use: SourceUse | None = None  # in the last lookup: Settings says when it didn't answer
 
 
 class SourceGroupInfo(BaseModel):
@@ -453,7 +447,6 @@ class SourceGroupInfo(BaseModel):
 class SourcesOverview(BaseModel):
     groups: list[SourceGroupInfo]  # in the order Settings draws them
     sources: list[SourceStatus]
-    total_bytes: int
     last_lookup: LastLookup | None = None
 
 

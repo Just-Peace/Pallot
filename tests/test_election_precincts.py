@@ -515,10 +515,9 @@ def test_settings_shows_the_map_and_pallot_cache_refreshes_and_rebuilds_it(clien
     get_ballot(client)
     row = precincts_row(client)
     size = len(election_precincts_zip())
-    kept, listed = (f["value"] for f in row["details"])
-    assert kept.startswith(f"“{LABEL}”, downloaded ") and kept.endswith(" KB")
-    assert listed == f"“{LABEL}” · {size / 1024:.0f} KB" and row["busy"] is False
-    assert client.get("/api/sources").json()["total_bytes"] > size
+    assert row["updated"] and row["counts"] == [] and row["busy"] is False
+    checked = make_app.cache_command("check", ep.SOURCE)[1]
+    assert f"Map kept: “{LABEL}”, downloaded " in checked and f"Newest on the portal: “{LABEL}” · {size / 1024:.0f} KB" in checked
 
     assert make_app.cache_command("refresh", ep.SOURCE) == (0, f"{row['label']}: nothing past its lifetime.")
     refreshed = make_app.cache_command("hard-refresh", ep.SOURCE)[1]

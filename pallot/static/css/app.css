@@ -417,12 +417,10 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .source-row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .source-name { font-weight: 650; font-size: 0.92rem; }
 .source-name-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.source-desc { font-size: 0.78rem; color: var(--muted); margin: 6px 0 4px; }
-.source-notice, .source-cache, .source-last { font-size: 0.78rem; color: var(--muted); margin: 4px 0; }
-.source-notice.tone-warn, .source-last.tone-warn { color: var(--warn); }
-.source-facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 4px 0; font-size: 0.78rem; }
-.source-facts dt { color: var(--muted); }
-.source-facts dd { margin: 0; overflow-wrap: anywhere; }
+.source-desc { font-size: 0.82rem; color: var(--muted); margin: 4px 0 0; }
+.source-fine { font-size: 0.74rem; color: var(--muted); margin: 4px 0 0; font-variant-numeric: tabular-nums; }
+.source-notice { font-size: 0.78rem; color: var(--muted); margin: 4px 0 0; }
+.source-notice.tone-warn { color: var(--warn); }
 .source-state { display: contents; }
 
 /* The sources' groups (settings.js): a heading that folds the group, with how many are on, then
@@ -1608,8 +1606,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .tabs { margin: 0 -16px; padding: 0 16px; }
   .faq-body { padding-left: 16px; }
   .data-action { flex-direction: column; align-items: flex-start; }
-  /* Settings' chips keep their words on one line, and go onto a second line if they need one */
-  .section-chips ul { flex-wrap: wrap; gap: 4px; }
+  /* the section chips stay one row, which scrolls sideways, edge to edge */
+  .section-chips ul { gap: 4px; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .section-chips ul::-webkit-scrollbar { display: none; }
   .section-chips a { padding: 4px 10px; font-size: 0.8rem; white-space: nowrap; }
   /* three-column tables become one block per row, each cell labelled */
   .data-table.stack thead { display: none; }

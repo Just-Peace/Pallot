@@ -30,9 +30,7 @@ from .seats import match_entries
 SOURCE = "wikidata"
 LABEL = "Wikidata"
 DESCRIPTION = (
-    "Profiles of Texas officeholders, past and present, from Wikidata, the free knowledge base behind Wikipedia: "
-    "a photo, the offices they've held, and links to their Wikidata item, Wikipedia article and website. "
-    "Pallot fetches the whole list of Texas officeholders, so nothing about you is sent."
+    "Photos, offices held and links for Texas officeholders, from Wikidata, the knowledge base behind Wikipedia."
 )
 ENDPOINT = "https://query.wikidata.org/sparql"
 ITEM = "https://www.wikidata.org/wiki/"

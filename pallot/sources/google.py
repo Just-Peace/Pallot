@@ -20,8 +20,7 @@ KEY_HEADER = "X-Goog-Api-Key"
 KEY_SIGNUP = "https://developers.google.com/maps/documentation/geocoding/get-api-key"
 REFUSALS = (403, 429)  # a key Google refuses or a quota used up: pause for Ttls.geocode_backoff
 DESCRIPTION = (
-    "Finds addresses the Census geocoder and OpenStreetMap can't, such as streets too new for either. Your address "
-    "is sent to Google only when both of them found nothing, and only if the server has a Google Geocoding API key."
+    "Finds addresses the Census and OpenStreetMap can't, such as new streets, by asking Google only when both fail."
 )
 KEY_NOTE = (
     "No key is set, so this isn't used. Set PALLOT_GOOGLE_API_KEY to a "

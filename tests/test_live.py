@@ -152,10 +152,10 @@ def test_street_map_tile_live(tmp_path):
     with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
         first = client.get("/api/tiles/12/935/1686.png")
         again = client.get("/api/tiles/12/935/1686.png")
-        cached = client.get("/api/sources").json()["sources"]
+        cached = client.app.state.svc.cache.stats("osm_tiles").entries
     assert first.status_code == 200, first.text
     assert first.content.startswith(b"\x89PNG") and again.content == first.content
-    assert next(s for s in cached if s["id"] == "osm_tiles")["cache"]["entries"] == 1
+    assert cached == 1
 
 
 @pytest.mark.anyio

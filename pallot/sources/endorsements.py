@@ -74,9 +74,15 @@ class EndorsementList:
 
     # -- Settings (KeptSource) ----------------------------------------------------------------
 
-    def notice(self) -> tuple[str, Tone]:
-        return (f"A frozen list from [{self.organization}]({self.url}), captured on {display_date(self.captured)}. "
-                "It came with Pallot, and Pallot never fetches it."), "info"
+    def notice(self) -> tuple[str, Tone] | None:
+        return None
+
+    def counts(self) -> list[str]:
+        states = self.states()
+        return [f"{self.count('TX'):,} Texas candidates", f"{self.count():,} in {states} {'state' if states == 1 else 'states'}"]
+
+    def updated(self) -> str | None:
+        return self.captured
 
     def details(self) -> list[Fact]:
         return [

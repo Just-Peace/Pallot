@@ -15,7 +15,7 @@ from pallot.config import DAY, PROJECT_DIR, Ttls
 from pallot.http_cache import RequestSpec
 from pallot.services import MIN_INTERVAL
 
-from .bundling import NOW, answers, build, entry, lifetimes, notice
+from .bundling import NOW, answers, build, came_with, entry, lifetimes
 from .conftest import get_ballot
 
 
@@ -54,7 +54,7 @@ def test_a_lookup_asks_texas_sos_only_for_the_county_ballot_order(tmp_path, upst
     upstream.calls.clear()
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        said = notice(client, "sos")
+        said = came_with(client, "sos")
     assert ballot["races"] and goelect_calls(upstream)
     assert goelect_calls(upstream) == goelect_calls(upstream, "getCandidateBallotOrder")
     assert said.startswith("Came with ")
@@ -111,7 +111,7 @@ def test_a_lookup_with_both_sos_bundles_asks_texas_sos_nothing(tmp_path, upstrea
     upstream.calls.clear()
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        said = notice(client, "sos")
+        said = came_with(client, "sos")
     assert ballot["races"] and not goelect_calls(upstream)
     bundled = len(answers(tmp_path, "sos")) + len(answers(tmp_path, "sos_ballot_order"))
     assert said.startswith(f"Came with {bundled:,} answers, checked ")

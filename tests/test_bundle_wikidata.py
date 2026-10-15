@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from bundles import wikidata as wikidata_bundle
 from pallot.config import DAY
 
-from .bundling import answers, build, entry, lifetimes, notice
+from .bundling import answers, build, came_with, entry, lifetimes
 from .conftest import find_race, get_ballot
 
 
@@ -20,7 +20,7 @@ def test_a_lookup_with_the_list_bundled_asks_only_for_the_details(tmp_path, upst
     asked = upstream.count("query.wikidata.org")
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        said = notice(client, "wikidata")
+        said = came_with(client, "wikidata")
     abbott = next(c for c in find_race(ballot, "Governor")["candidates"] if c["name"] == "Greg Abbott")
     assert any(card["source"] == "wikidata" for card in abbott["cards"])
     assert upstream.count("query.wikidata.org") == asked + 1  # the details only

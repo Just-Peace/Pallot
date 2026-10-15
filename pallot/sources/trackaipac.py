@@ -80,6 +80,9 @@ class TrackAipac(BundledSnapshot):
 
         return self._index(state, build)
 
+    def counts(self) -> list[str]:
+        return [f"{len(self.people('TX')):,} Texas entries", f"{len(self.people()):,} in all"]
+
     def details(self) -> list[Fact]:
         meta = self.meta()
         return [
