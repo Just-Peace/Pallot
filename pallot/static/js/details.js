@@ -1,6 +1,6 @@
 // Details: a candidate's Profile (Texas SOS, then Ballotpedia), their Issues (stances.js), a tab per
 // other source, and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
-// each tab made of folding sections, in a dialog whose head has Search, Ban and Pick beside ‹ › ✕. ‹ and ›
+// each tab made of folding sections, in a dialog whose head has Search, Avoid and Pick beside ‹ › ✕. ‹ and ›
 // step through the race's other candidates, staying on the tab that's shown. On a phone, ‹, Pick and ›
 // sit in a bar at the bottom, in reach of a thumb, and a swipe sideways steps too.
 
@@ -8,7 +8,7 @@ import { isBanned } from "./ban-list.js";
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
 import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
-import { avatar, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
+import { avatar, avoidWords, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
 import { searchWord } from "./search.js";
 import { cardPanel, endorsementsPanel, isLikely, moneyPanel, pollsPanel, profilePanel, renderTabs } from "./source-cards.js";
 import { stancesPanel } from "./stances.js";
@@ -62,10 +62,10 @@ export function showDetails(race, index, focus = null, at = "profile") {
   const banButton = h("button", { type: "button", class: "btn small ghost with-icon", on: { click: () => toggleBan(candidate, syncBan) } });
   const syncBan = () => {
     const on = isBanned(candidate);
-    const name = on ? `Take ${candidate.name} off your ban list` : `Add ${candidate.name} to your ban list`;
-    banButton.replaceChildren(icon("ban"), word(on ? "Unban" : "Ban"));
-    banButton.setAttribute("aria-label", name);
-    banButton.title = name;
+    const { word: text, label } = avoidWords(candidate, on);
+    banButton.replaceChildren(icon("ban"), word(text));
+    banButton.setAttribute("aria-label", label);
+    banButton.title = label;
     banButton.classList.toggle("is-banned", on);
     pills.replaceChildren(...candidatePills(candidate, race).filter(Boolean));
     nameHead.classList.toggle("is-banned", on);
@@ -130,7 +130,7 @@ export function showDetails(race, index, focus = null, at = "profile") {
   (pressed || close).focus();
 }
 
-// A button's word; on a phone, Search's and Ban's hide, leaving their icons, and the button's
+// A button's word; on a phone, Search's and Avoid's hide, leaving their icons, and the button's
 // accessible name and tooltip say the rest.
 const word = (text) => h("span", { class: "btn-word" }, text);
 

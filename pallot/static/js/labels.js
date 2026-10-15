@@ -76,14 +76,14 @@ export function partyName(candidate) {
 const reasonPill = (className, label, why) => noteButton({ class: ["pill pill-btn", className], title: why }, [
   label, h("span", { class: "sr-only" }, ` (${why})`)], () => why);
 
-// The red pill of a candidate on the voter's ban list; its note says what matched.
+// The red Avoiding pill of a candidate on the voter's own Avoid list; its note says what matched.
 function bannedPill(candidate) {
   const matched = banMatches(candidate.name);
   if (!matched.length) return null;
-  return reasonPill("pill-banned", [icon("ban"), "Banned"], `On your ban list: matches ${matched.map((entry) => `“${entry.text}”`).join(", ")}`);
+  return reasonPill("pill-banned", [icon("ban"), "Avoiding"], `On your Avoid list: matches ${matched.map((entry) => `“${entry.text}”`).join(", ")}`);
 }
 
-// The pills under a candidate's name: Banned (bannedPill), their party, Party holds seat (its note
+// The pills under a candidate's name: Avoiding (bannedPill), their party, Party holds seat (its note
 // names the race's holder), Incumbent, Write-in.
 export function candidatePills(candidate, race = null) {
   const party = partyName(candidate);

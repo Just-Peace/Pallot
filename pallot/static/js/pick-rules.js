@@ -1,7 +1,8 @@
-// Pick by rule: the voter's rule, what it would do to the picks, and which candidates it
-// matches. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks. Help me pick
-// (endorser-bar.js) shares it: its endorsers are the rule's endorsedBy and its Avoid chips the rule's
-// watchlist and peaceOpposed (loadBar/saveBar), and its marks are a rule of just those (barRule).
+// More conditions (the rule): the voter's conditions, what they would do to the picks, and which
+// candidates they match. pick-rule-dialog.js draws it. The rule stays in this browser, like the picks.
+// Help me pick (endorser-bar.js) shares it: its Trust chips are the rule's endorsedBy and its Avoid
+// chips the rule's watchlist and peaceOpposed (loadBar/saveBar), and its marks are a rule of just
+// those, with the voter's own Avoid list always skipped (barRule).
 //
 // The Pick half is AND across its conditions, OR across the party chips, and OR across the endorsers;
 // Don't pick is OR. A condition from a source (TrackAIPAC, Vote for Peace, an endorsement list, money, polls) counts only in races where that source has
@@ -15,6 +16,7 @@ import { COUNT, DOLLARS_SHORT, either, listed as andList } from "./format.js";
 import { partyName } from "./labels.js";
 import { ENDORSER_BAR, PICK_RULE, readJson, removeRaw, writeJson } from "./storage.js";
 
+const OWN_AVOID = "on your Avoid list"; // Don't pick's reason for someone on the voter's own list
 const TRACKAIPAC = "trackaipac";
 const VOTEFORPEACE = "voteforpeace";
 const ENDORSEMENT = "endorsement"; // the flag on an endorsement list's cards, whose source is the list's id
@@ -37,7 +39,7 @@ export const DEFAULT_RULE = {
   small: { on: false, amount: 50 }, // small donations are at least this % of what they raised
   texas: { on: false, amount: 50 }, // donors in Texas gave at least this % of their itemized donations
   leads: false,
-  banned: true, // on the voter's ban list (ban-list.js)
+  banned: true, // on the voter's own Avoid list (ban-list.js)
   watchlist: false,
   peaceOpposed: false, // Vote for Peace marks them Opposed
   lobby: { on: false, amount: 0 },
@@ -115,15 +117,17 @@ export function parseAmount(text) {
 // Every race on the ballot, the ones that may not be on it included, in ballot order.
 export const allRaces = (ballot) => ballotSections(ballot).flatMap((section) => section.races);
 
-// Where a rule can apply: every race, a section, or the race it was opened from.
-export function scopes(ballot, raceKey = null) {
+// Where a rule can apply: every race, a section, or one race with a choice to make (``single``,
+// the dialog's "This race only" group).
+export function scopes(ballot) {
   const sections = ballotSections(ballot);
-  const out = [];
-  const race = raceKey && sections.flatMap((s) => s.races).find((r) => r.key === raceKey);
-  if (race) out.push({ id: `race:${race.key}`, label: `This race: ${race.name}`, races: [race] });
-  out.push({ id: "all", label: "Every race", races: sections.flatMap((s) => s.races) });
-  for (const section of sections) out.push({ id: section.id, label: section.title, races: section.races });
-  return out;
+  const races = sections.flatMap((s) => s.races);
+  return [
+    { id: "all", label: "Every race", races },
+    ...sections.map((section) => ({ id: section.id, label: section.title, races: section.races })),
+    ...races.filter((race) => race.candidates.length > 1)
+      .map((race) => ({ id: `race:${race.key}`, label: race.name, races: [race], single: true })),
+  ];
 }
 
 // The parties on these races, Republican, Democratic, Libertarian, Green and Independent first,
@@ -225,7 +229,7 @@ export function describeRule(rule, parties, has) {
 
   const lobby = rule.lobby.amount > 0 ? `with over ${DOLLARS_SHORT.format(rule.lobby.amount)} of Israel lobby money` : "with any Israel lobby money";
   const avoid = [
-    rule.banned && has.banned ? "on your ban list" : null,
+    rule.banned && has.banned ? OWN_AVOID : null,
     rule.watchlist && has.trackaipac ? "on TrackAIPAC's watchlist" : null,
     rule.peaceOpposed && has.voteforpeace ? "opposed by Vote for Peace" : null,
     on(rule.lobby.on && has.lobby, rule.lobby.amount) ? lobby : null,
@@ -280,7 +284,7 @@ function judge(race, rule) {
   const avoid = new Map();
   for (const c of candidates) {
     const reasons = [];
-    if (rule.banned && isBanned(c)) reasons.push("on your ban list");
+    if (rule.banned && isBanned(c)) reasons.push(OWN_AVOID);
     if (rule.watchlist && listed(c, "watchlist")) reasons.push("on TrackAIPAC's watchlist");
     if (rule.peaceOpposed && listed(c, "opposed", VOTEFORPEACE)) reasons.push("opposed by Vote for Peace");
     const lobby = figure(c, "israel_lobby");
@@ -402,18 +406,19 @@ export function barChoice(card, badge) {
 }
 
 // Help me pick's chips for these races: each endorser that endorses someone here and each amber
-// mark someone has, with how many candidates.
+// mark someone has, with how many candidates, and how many here are on the voter's own Avoid list (``own``).
 export function barOptions(races) {
   const candidates = races.flatMap((race) => race.candidates);
   const count = (test) => candidates.filter(test).length;
   return {
     endorsers: endorsers(candidates),
     avoids: AVOIDS.map((a) => ({ ...a, count: count((c) => listed(c, a.flag, a.source)) })).filter((a) => a.count),
+    own: count(isBanned),
   };
 }
 
 // The rule Help me pick stands for: its endorsers in Pick (any of them), its marks in Don't pick, and
-// the ban list as Pick by rule starts.
+// the voter's own Avoid list, always, so Trust never picks anyone on it.
 function barRule(bar) {
   const rule = structuredClone(DEFAULT_RULE);
   rule.endorsedBy = [...bar.endorsers];
@@ -462,10 +467,16 @@ export function endorserPlan(races, bar, picks, added = null) {
   };
 }
 
-// Help me pick in one race: who barRule() picks (``matches``, their keys), who it avoids and why
-// (``avoid``), and the chosen endorsers of each candidate (``by``: key -> names, from ``labels``).
+// Help me pick in one race: who barRule() picks (``matches``, their keys), who its amber marks avoid
+// and why (``avoid``; the voter's own list has its red Avoiding pill instead), and the chosen
+// endorsers of each candidate (``by``: key -> names, from ``labels``).
 export function barMarks(race, bar, labels) {
-  const { matches, avoid } = judge(race, barRule(bar));
+  const { matches, avoid: skipped } = judge(race, barRule(bar));
+  const avoid = new Map();
+  for (const [key, reasons] of skipped) {
+    const marks = reasons.filter((reason) => reason !== OWN_AVOID);
+    if (marks.length) avoid.set(key, marks);
+  }
   const by = new Map();
   for (const c of race.candidates) {
     const names = bar.endorsers.filter((source) => endorsedBy(c, source)).map((source) => labels.get(source) || source);

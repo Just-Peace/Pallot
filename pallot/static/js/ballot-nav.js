@@ -37,6 +37,8 @@ const jumpList = $("#jump-list");
 const stripRace = $("#strip-race");
 const moreView = modeChoice();
 const moreFocus = focusChips();
+const moreHidePicked = h("label", { class: "check" }, h("input", { type: "checkbox", "data-view": "hidePicked" }), " Only races I haven't picked");
+const moreTheme = h("button", { type: "button", class: "icon-only theme-toggle" });
 const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
 const clearButtons = [$("#clear-picks"), moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger", hidden: true })];
 const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: true }, $("#wait-note").textContent)];
@@ -164,7 +166,7 @@ function syncClearPicks() {
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
 // Print, which needs them, waits, in the toolbar and in More, a line under it saying why (Help me
-// pick's More rules… waits too). ``failed``: they won't come, so the bar goes but they stay off.
+// pick's More conditions… waits too). ``failed``: they won't come, so the bar goes but they stay off.
 const needCards = [$("#print-btn"), morePrint].map((button) => ({ button, title: button.title }));
 const cardsLoading = $("#cards-loading");
 const CARDS_STEPS = [
@@ -214,8 +216,9 @@ const TIPS = [
     text: () => `${viewPref("stanceLinks") ? "Profile & issues" : "Profile"} shows where each candidate stands, issue by issue.`,
   },
   {
-    id: "rule", when: () => wants("endorsements"), target: () => $("#endorser-btn"), after: () => tools,
-    text: () => "Help me pick picks who the endorsers you trust endorse, and outlines who to avoid.",
+    id: "rule", when: () => wants("endorsements"), target: () => $(narrow.matches ? "#more-btn" : "#endorser-btn"),
+    after: () => (narrow.matches ? progressInfo : tools),
+    text: () => `Help me pick${narrow.matches ? ", in More," : ""}: Trust endorsers to pick who they endorse, and Avoid to mark who you won't vote for.`,
   },
   {
     id: "next", when: () => anyPicked() && !nextButton.disabled, target: () => nextButton, after: () => progressInfo,
@@ -255,7 +258,7 @@ function viewLabel(mode) {
 function applyView() {
   const mode = showViewControls(viewControls);
   document.documentElement.dataset.viewMode = mode;
-  for (const root of [moreView, moreFocus, focusAsk]) showViewControls(root);
+  for (const root of [moreView, moreFocus, moreHidePicked, focusAsk]) showViewControls(root);
   viewSummary.textContent = viewLabel(mode);
   const runs = new Set();
   for (const [name, apply] of Object.entries(APPLY)) {
@@ -384,10 +387,10 @@ function stepRace(event) {
 
 // ---- phones ---------------------------------------------------------------------------
 
-// On a phone (or a narrow window) the section chips join the sticky strip, and the toolbar
-// (View, Help me pick, Clear picks, Print) moves under the heading, where it
-// scrolls away. So what stays in view is the race on screen, the progress, Next, More (which holds
-// the toolbar's buttons) and the sections. With the left pane folded, the chips join the strip too.
+// On a phone (or a narrow window) the section chips join the sticky strip, and the toolbar moves
+// under the heading, where it scrolls away, showing only Print (the CSS): View, Help me pick and
+// Clear picks are More's. So what stays in view is the race on screen, the progress, Next, More and
+// the sections. With the left pane folded, the chips join the strip too.
 function placeForWidth() {
   if (narrow.matches) $(".ballot-head").after(tools);
   else strip.append(tools);
@@ -397,17 +400,22 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections: View's detail (with its "?") and focuses, Help me pick's controls and the
-// toolbar's buttons (with the line saying why Print waits), and Expand and Collapse all from View.
+// More's sections, in the order a voter reaches for them: Print and Clear picks (with the line saying
+// why Print waits), Help me pick's controls, and the View menu's: detail and focuses (each with its
+// "?"), Settings and the appearance, then Expand and Collapse all and Only races I haven't picked. On
+// a phone the toolbar has only Print, so More is where these live.
 function fillMoreSheet() {
-  bindViewControls(moreView);
-  bindViewControls(moreFocus);
-  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
-  addMoreSection({ id: "picks", label: "Your picks" }, moreHelp, morePrint,
-    clearButtons[1], waitNotes[1]);
+  for (const root of [moreView, moreFocus, moreHidePicked]) bindViewControls(root);
+  bindThemeToggle(moreTheme);
+  addMoreSection({ id: "picks", label: "Your picks" }, morePrint, clearButtons[1], waitNotes[1]);
+  addMoreSection({ id: "help", label: ["Help me pick ", helpLink("endorsements", "Help me pick")] }, moreHelp);
+  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus,
+    h("div", { class: "menu-foot" },
+      h("a", { class: "btn ghost small with-icon", href: "settings.html#view-title" }, icon("settings"), "Settings"), moreTheme));
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
-    moreAction("Collapse all", "collapse", () => setAllCollapsed(true)));
+    moreAction("Collapse all", "collapse", () => setAllCollapsed(true)),
+    moreHidePicked);
   initMoreSheet($("#more-btn"));
 }
 
