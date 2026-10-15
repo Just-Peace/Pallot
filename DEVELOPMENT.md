@@ -35,7 +35,8 @@ uv run pallot-bundle stats                # the snapshots' counts, as README's "
 - **pallot-cache beside the app.** `make_app.cache_command("refresh", "sos")` runs `maintain.run` on the test's data folder, as the command does beside a running server, and returns the exit status and what it printed.
 - **Made-up maps.** `conftest.py` makes the SBOE map and the precinct map (a shapefile in EPSG:3081 with the real `.prj`). Every exact fixture address's two points fall in one precinct; the rest cover the awkward shapes (a precinct in two pieces, a hole another fills, overlaps, a shared edge). Only the live test downloads the real 45 MB map. `record_fixtures.py --only election_precincts` records the portal's index, never the map.
 - **Made-up county lists.** `Upstream.arcgis` serves Travis's and Harris's servers from recorded service lists, with the lists themselves made up from the made-up map's precincts, since a county's list must match the map exactly.
-- **No bundles, no SBOE map** unless a test asks (`make_app(bundles=…)`, `make_app(sboe_bundled=…)`).
+- **No bundles, no SBOE map** unless a test asks (`make_app(bundles=…)`, `make_app(sboe_bundled=…)`). Any other `Config` field goes in by name too (`make_app(rate_limits=…)`).
+- **Rate limits.** TestClient's client isn't an IP address, so the default limits apply to every test, and leave room for them. A test of the limits sets tight ones, and wraps the app in uvicorn's `ProxyHeadersMiddleware` to ask as different visitors through `X-Forwarded-For`.
 - **Google** has no recorded fixture (it needs a key): `Upstream` answers it with made-up results.
 - **Front end.** `tests/test_frontend_modules.py` follows each page's imports: every module must be served and every imported name exported, since a wrong import name blanks a page without failing anything else. Tests of the JS logic run it in Node and are skipped where `node` isn't installed; GitHub's runners have it.
 
@@ -43,7 +44,8 @@ uv run pallot-bundle stats                # the snapshots' counts, as README's "
 
 Beyond AGENTS.md's "Every outbound call goes through `HttpCache`":
 - Only answers that succeed are cached, and concurrent identical requests share one fetch.
-- Expired rows stay, as the copy to serve when a source is down. Only transient rows (address suggestions, tiles, "not found" geocodes, expired flags) are ever pruned, after `Ttls.prune_after`, and tiles and suggestions are kept under their size caps.
+- Expired rows stay, as the copy to serve when a source is down. Only transient rows (address suggestions, tiles, "not found" geocodes, expired flags) are ever pruned, after `Ttls.prune_after`, and tiles, suggestions and each per-address source (the geocoders, Ballotpedia) are kept under their size caps, oldest first.
+- A source that costs money (Google) is held to so many requests a day with `cap_daily`, then paused until midnight UTC. Each request sent is a flag that expires then, so the count survives a restart.
 - Some sources answer an error with a 200 (ArcGIS servers, a maintenance page). Such a source registers a check with `check_answers`, so a refused answer never replaces a good copy. The check runs on every `get_json`, cache hits included, on the event loop, so a costly one remembers its verdict per stored copy: `HttpCache` hands back the same object while it keeps that copy in memory (a live endorsement feed parses each copy once, and builds its list from that parse).
 - SQLite runs in WAL mode with `synchronous=NORMAL`: a write isn't synced to disk each time, and a power cut can lose only the last writes, never corrupt the cache.
 - A file too big for the database (the precinct and SBOE maps) goes through `HttpCache.download`: the same pause, throttle and call count, but nothing stored.

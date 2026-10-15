@@ -34,6 +34,7 @@ from .ballot import BallotError, Services, election_dates, start_ballot
 from .config import Config, load_config
 from .counties import COUNTIES
 from .http_cache import UpstreamError
+from .limits import ClientLimits
 from .models import (
     Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, EntryConfig, SourcesOverview, SuggestResult,
 )
@@ -90,6 +91,14 @@ def host_allowed(host: str, allowed: Collection[str]) -> bool:
     except ValueError:
         return False
     return True
+
+
+def wait_words(seconds: int) -> str:
+    """30 -> "30 seconds", 61 -> "2 minutes": how long a voter is asked to wait."""
+    if seconds < 60:
+        return f"{seconds} second{'' if seconds == 1 else 's'}"
+    minutes = -(-seconds // 60)
+    return f"{minutes} minute{'' if minutes == 1 else 's'}"
 
 
 def from_another_site(request: Request) -> bool:
@@ -301,6 +310,7 @@ def create_app(
             app.state.warm_up = warming = asyncio.create_task(warm_up(svc))
             pruning = asyncio.create_task(keep_pruning(svc))
             app.state.finishing = finishing = set()  # streamed ballots still adding their cards
+            app.state.lookups = asyncio.Semaphore(config.max_lookups)  # held until a ballot's cards are added
             try:
                 yield
             finally:
@@ -322,6 +332,20 @@ def create_app(
         """The sources this voter has on: their choices, kept in their browser and sent in a header
         by every call the page makes, on top of the defaults."""
         return services(request).sources.chosen(request.headers.get(HEADER))
+
+    limits = ClientLimits(config.rate_limits)
+
+    @app.middleware("http")
+    async def rate_limit(request: Request, call_next: Callable[[Request], Any]) -> Response:
+        """Each client gets so many ballots, suggestions, outlines and tiles an hour (limits.py), so
+        no one can run up the host's bills or get a source to refuse everyone."""
+        wait = limits.wait(request.method, request.url.path, request.client.host if request.client else None)
+        if wait:
+            return JSONResponse(
+                {"detail": f"Too many requests from your connection. Please wait {wait_words(wait)} and try again."},
+                status_code=429, headers={"Retry-After": str(wait)},
+            )
+        return await call_next(request)
 
     @app.middleware("http")
     async def own_pages_only(request: Request, call_next: Callable[[Request], Any]) -> Response:
@@ -431,18 +455,31 @@ def create_app(
         """The ballot. A page that accepts NDJSON gets it in two lines: without cards as soon as the
         races are known (``done: false``), then whole (``done: true``), or ``{"error"}`` instead."""
         on = chosen(request)
+        lookups: asyncio.Semaphore = request.app.state.lookups
+        if lookups.locked():
+            raise HTTPException(503, "Pallot is busy with other lookups. Please try again in a few seconds.",
+                                headers={"Retry-After": "5"})
+        await lookups.acquire()
+        held = True
         try:
-            builder = await start_ballot(services(request), body, on)
-        except BallotError as exc:
-            raise HTTPException(exc.status, exc.message) from exc
-        builder.ballot.sources_off = admin(request).rule_sources_off(on)
-        if NDJSON not in request.headers.get("accept", ""):
-            return await builder.finish()
-        first = _line(builder.ballot, done=False)  # before finish() adds the cards to the same races
-        # Started here, so its calls count in this lookup's CallStats; it runs on if the voter leaves.
-        finishing = asyncio.create_task(builder.finish())
-        request.app.state.finishing.add(finishing)
-        finishing.add_done_callback(request.app.state.finishing.discard)
+            try:
+                builder = await start_ballot(services(request), body, on)
+            except BallotError as exc:
+                raise HTTPException(exc.status, exc.message) from exc
+            builder.ballot.sources_off = admin(request).rule_sources_off(on)
+            if NDJSON not in request.headers.get("accept", ""):
+                return await builder.finish()
+            first = _line(builder.ballot, done=False)  # before finish() adds the cards to the same races
+            # Started here, so its calls count in this lookup's CallStats; it runs on if the voter leaves,
+            # holding its place among the lookups until it's done.
+            finishing = asyncio.create_task(builder.finish())
+            request.app.state.finishing.add(finishing)
+            finishing.add_done_callback(request.app.state.finishing.discard)
+            finishing.add_done_callback(lambda _: lookups.release())
+            held = False
+        finally:
+            if held:
+                lookups.release()
 
         async def lines() -> AsyncIterator[bytes]:
             yield first

@@ -18,7 +18,8 @@ its answers (check_answers), and an answer it refuses is handled like a failed r
 never replaces a good copy; with none, it's kept for ``retry_after`` and raised as
 UpstreamError meanwhile. A source can also be paused as a whole when it answers with certain
 statuses (Ballotpedia refusing us): while paused, whatever is stored is
-served and nothing is fetched, not even by refresh().
+served and nothing is fetched, not even by refresh(). A source that costs money can be held
+to so many requests a day (cap_daily), then paused until the day turns.
 
 A source with several API keys (share_keys) sends its requests with each key in turn. A key
 the source refuses or rate limits rests for a while, and the request goes again with the next;
@@ -45,6 +46,7 @@ import logging
 import sqlite3
 import threading
 import time
+import uuid
 from collections import OrderedDict, deque
 from dataclasses import dataclass, field, replace
 from pathlib import Path
@@ -132,6 +134,10 @@ class Unreadable(ValueError):
 
 class KeysResting(ValueError):
     """Every key of a source rests, so a request can't be sent."""
+
+
+class DailyLimit(ValueError):
+    """A source has sent its requests for the day (HttpCache.cap_daily)."""
 
 
 @dataclass(frozen=True)
@@ -269,6 +275,10 @@ def _pause_flag(source: str) -> str:
     return f"paused:{source}"
 
 
+def _sent_flag(source: str) -> str:
+    return f"sent:{source}:"
+
+
 def _key_hash(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()[:12]
 
@@ -316,6 +326,7 @@ class HttpCache:
         self._keys: dict[str, _Keys] = {}
         self._checks: dict[str, Callable[[Any], str | None]] = {}
         self._pages: dict[str, tuple[RequestSpec, Callable[[str], dict[str, str]]]] = {}
+        self._daily: dict[str, int] = {}
 
     def close(self) -> None:
         self._db.close()
@@ -436,6 +447,30 @@ class HttpCache:
     def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
         """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
         self._pause_on[source] = (frozenset(statuses), seconds)
+
+    def cap_daily(self, source: str, most: int) -> None:
+        """Send at most ``most`` of ``source``'s requests a day (UTC), then pause it until the day
+        turns. Each request sent is a flag that expires then, so the count survives a restart."""
+        self._daily[source] = most
+
+    def _spend_daily(self, source: str) -> None:
+        """Count one request of a capped source, pausing it at its cap; DailyLimit once past it."""
+        most = self._daily.get(source)
+        if most is None:
+            return
+        now = self._clock()
+        left = (now // 86400 + 1) * 86400 - now
+        with self._lock:
+            sent = self._db.execute(
+                "SELECT COUNT(*) FROM flags WHERE source = ? AND name LIKE ? AND expires_at > ?",
+                (source, f"{_sent_flag(source)}%", now),
+            ).fetchone()[0]
+        if sent >= most:
+            self.set_flag(_pause_flag(source), source, left)
+            raise DailyLimit(f"{source} has sent its {most} requests for today")
+        self.set_flag(f"{_sent_flag(source)}{uuid.uuid4().hex}", source, left)
+        if sent + 1 >= most:
+            self.set_flag(_pause_flag(source), source, left)
 
     def share_keys(
         self, source: str, header: str, keys: Sequence[str], rest_on: Mapping[int, float],
@@ -596,6 +631,7 @@ class HttpCache:
                 if wait > 0:
                     await asyncio.sleep(wait)
                 sent = {**(headers or {}), keys.header: key}
+            self._spend_daily(source)
             stats = current_calls()
             if stats:
                 stats.external_calls += 1

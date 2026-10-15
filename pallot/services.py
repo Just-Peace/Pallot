@@ -19,7 +19,7 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
+from .sources import ballotpedia, census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
 from .sources.ballotpedia import Ballotpedia
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
@@ -47,16 +47,18 @@ MIN_INTERVAL = {
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
+ADDRESSES = (census.SOURCE, nominatim.SOURCE, google.SOURCE, ballotpedia.SOURCE)  # an answer per address, capped
 
 
 def prune(cache: HttpCache, config: Config, *, vacuum: bool = True) -> int:
     """Delete what's no use even as a fallback (expired suggestions and tiles, addresses that
-    weren't found, expired flags), and keep the street map's tiles and the address suggestions
-    under their caps, dropping the oldest first. Every other source's answers stay, as the copy
-    to show when it's down. Returns the rows deleted."""
+    weren't found, expired flags), and keep the street map's tiles, the address suggestions and
+    each per-address source's answers under their caps, dropping the oldest first. Every other
+    source's answers stay, as the copy to show when it's down. Returns the rows deleted."""
     return cache.prune(
         TRANSIENT, MISSES, config.ttl.prune_after,
-        caps={osm_tiles.SOURCE: config.tiles_max_bytes, suggestions.SOURCE: config.suggest_max_bytes},
+        caps={osm_tiles.SOURCE: config.tiles_max_bytes, suggestions.SOURCE: config.suggest_max_bytes,
+              **{source: config.addresses_max_bytes for source in ADDRESSES}},
         vacuum=vacuum,
     )
 
@@ -108,7 +110,7 @@ async def open_services(
                 cache=cache,
                 census=Census(cache, config.ttl),
                 nominatim=Nominatim(cache, config.ttl),
-                google=Google(cache, config.ttl, config.google_api_key),
+                google=Google(cache, config.ttl, config.google_api_key, config.google_daily_max),
                 suggestions=Suggestions(cache, config.ttl),
                 sboe=SboeMap(cache, config.ttl, config.sboe_path, sboe_bundled or sboe.BUNDLED),
                 election_precincts=election_precincts,

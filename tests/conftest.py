@@ -575,8 +575,8 @@ def fec_unpaced(monkeypatch):
 @pytest.fixture
 def make_app(tmp_path, upstream):
     """make_app(data_dir=None, refresh=None, tec_refresh=None, voteforpeace_refresh=None, fec_key=FEC_KEY,
-    endorsements_dir=FIXTURES / "endorsements", google_key="", fec_extra_keys=(), bundles=None, sboe_bundled=None)
-    -> a new app; call again on the same dir to 'restart'. It answers to TestClient's host name, testserver. No bundled
+    endorsements_dir=FIXTURES / "endorsements", google_key="", fec_extra_keys=(), bundles=None, sboe_bundled=None,
+    **settings) -> a new app, with any other Config field in ``settings``; call again on the same dir to 'restart'. It answers to TestClient's host name, testserver. No bundled
     answers are loaded unless ``bundles`` names a folder of them, and no SBOE map comes with it unless ``sboe_bundled``
     names one, so the first lookup downloads the made-up one."""
     refreshed: list[Path] = []
@@ -596,10 +596,10 @@ def make_app(tmp_path, upstream):
     def options(data_dir: Path | None = None, refresh=None, tec_refresh=None, voteforpeace_refresh=None,
                 fec_key: str = FEC_KEY, endorsements_dir: Path = FIXTURES / "endorsements",
                 google_key: str = "", fec_extra_keys: tuple[str, ...] = (),
-                bundles: Path | None = None, sboe_bundled: Path | None = None) -> dict[str, Any]:
+                bundles: Path | None = None, sboe_bundled: Path | None = None, **settings: Any) -> dict[str, Any]:
         return dict(
             config=Config(data_dir=data_dir or tmp_path / "data", fec_api_key=fec_key, fec_extra_keys=fec_extra_keys,
-                          google_api_key=google_key, allowed_hosts=("testserver",)),
+                          google_api_key=google_key, allowed_hosts=("testserver",), **settings),
             today=lambda: TODAY,
             trackaipac_bundled=FIXTURES / "trackaipac",
             trackaipac_refresh=refresh or fake_refresh,

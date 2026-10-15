@@ -16,7 +16,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--reload", action="store_true", help="restart on code changes (development)")
     args = parser.parse_args(argv)
     watch = {"reload_includes": ["*.py", "*.js", "*.css", "*.html", "*.svg"]} if args.reload else {}
-    uvicorn.run("pallot.api:app", host=args.host, port=args.port, reload=args.reload, server_header=False, **watch)
+    uvicorn.run("pallot.api:app", host=args.host, port=args.port, reload=args.reload, server_header=False,
+                forwarded_allow_ips=load_config().trusted_proxies, **watch)
 
 
 if __name__ == "__main__":

@@ -80,7 +80,7 @@ SOURCES = (
     SourceInfo(
         google.SOURCE, "Address lookup fallback (Google)", google.DESCRIPTION, True, (google.SOURCE,),
         group=ADDRESS,
-        pause=Pause("Google refused an address lookup", "addresses it already found still work"),
+        pause=Pause("Google refused an address lookup or today's lookups ran out", "addresses it already found still work"),
         refreshable=False,
     ),
     SourceInfo(

@@ -34,11 +34,13 @@ _TOO_COARSE = {"administrative_area_level_1", "administrative_area_level_2", "co
 
 
 class Google:
-    def __init__(self, cache: HttpCache, ttl: Ttls, api_key: str):
+    def __init__(self, cache: HttpCache, ttl: Ttls, api_key: str, daily_max: int = 0):
         self.cache = cache
         self.ttl = ttl
         self.keyed = bool(api_key)
         cache.pause_on(SOURCE, REFUSALS, ttl.geocode_backoff)
+        if daily_max:
+            cache.cap_daily(SOURCE, daily_max)
 
     async def locate(self, address: str) -> Point | None:
         spec = RequestSpec(

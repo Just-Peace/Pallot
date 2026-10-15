@@ -8,6 +8,8 @@ from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Literal, Mapping
 
+from .limits import RateLimits, parse_rate
+
 HOUR = 3600
 DAY = 24 * HOUR
 
@@ -90,10 +92,19 @@ class Config:
     # Names Pallot answers to besides localhost and IP addresses, such as a LAN name or a
     # reverse proxy's domain ("*": any). Other names are refused, against DNS rebinding.
     allowed_hosts: tuple[str, ...] = ()
+    # The proxies whose X-Forwarded-For names the client (uvicorn's forwarded_allow_ips): IPs or
+    # networks, comma-separated, or "*". The rate limits count each client by that address.
+    trusted_proxies: str = "127.0.0.1"
+    # How often one client may ask for a ballot, suggestions, outlines and tiles (limits.py).
+    rate_limits: RateLimits = field(default_factory=RateLimits)
+    max_lookups: int = 8  # ballots being looked up at once, streamed ones still adding their cards included
+    google_daily_max: int = 300  # Google requests a day (UTC), 0 for no limit: Google bills by the request
     # The most the street map's tiles and the address suggestions keep in the cache; the oldest
     # go first past it (services.prune, at startup and every few hours).
     tiles_max_bytes: int = 512 << 20
     suggest_max_bytes: int = 64 << 20
+    # The same for each per-address source: the geocoders' and Ballotpedia's answers.
+    addresses_max_bytes: int = 128 << 20
     host: str = "127.0.0.1"
     port: int = 8000  # `uv run pallot`'s default port; the Docker image always listens on 8000
     prune_every: int = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
@@ -183,8 +194,16 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         allowed_hosts=tuple(
             name.strip().lower() for name in (env.get("PALLOT_ALLOWED_HOSTS") or "").split(",") if name.strip()
         ),
+        trusted_proxies=(env.get("PALLOT_TRUSTED_PROXIES") or "").strip() or Config.trusted_proxies,
+        rate_limits=RateLimits(**{
+            name: parse_rate(env[key]) for name in ("ballot", "suggest", "outlines", "tiles")
+            if (key := f"PALLOT_LIMIT_{name.upper()}") in env and env[key].strip()
+        }),
+        max_lookups=max(1, int(env.get("PALLOT_MAX_LOOKUPS") or Config.max_lookups)),
+        google_daily_max=int(env.get("PALLOT_GOOGLE_DAILY_MAX") or Config.google_daily_max),
         tiles_max_bytes=_megabytes(env.get("PALLOT_TILES_MAX_MB")) or Config.tiles_max_bytes,
         suggest_max_bytes=_megabytes(env.get("PALLOT_SUGGEST_MAX_MB")) or Config.suggest_max_bytes,
+        addresses_max_bytes=_megabytes(env.get("PALLOT_ADDRESSES_MAX_MB")) or Config.addresses_max_bytes,
         host=env.get("PALLOT_HOST") or Config.host,
         port=int(env.get("PALLOT_PORT") or Config.port),
         prune_every=int(env.get("PALLOT_PRUNE_EVERY") or Config.prune_every),
