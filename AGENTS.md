@@ -53,6 +53,20 @@ While working on a feature, you may stumble on a bug, something odd, or an idea 
 
 
 
+## UX reviews
+
+- Phone first: iPhone 393×852, Galaxy S 360×780. Then desktop. Light and dark.
+- Walk the voter's whole journey, from a first visit to the printed sheet and every page.
+- Measure, don't eyeball: where the first race starts, row heights, page height, what wraps.
+- Look for: rows that could share a line, wrapped labels, duplicate controls, one idea with several names, text about the screen instead of what the voter gets, server details shown to voters.
+- One small type scale; nothing under 12px; text boxes 16px.
+- 44px hit areas; nothing floating over a control; main actions within thumb reach.
+- Keyboard and screen reader: focus returns, names read right.
+- Party colours on picks are intended.
+- Report findings first. Open issues only for the ones the maintainer agrees to.
+
+
+
 ## Docs to update
 
 Update the docs in the same commit as the change.
@@ -146,7 +160,7 @@ How to write them:
 - For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
 - For a UI change, run `uv run pallot` and look at what changed:
   - the ballot, Details, Compare, Settings and the print preview;
-  - at desktop and phone widths;
+  - at phone widths first, then desktop (see [UX reviews](#ux-reviews));
   - in light and dark mode.
 - For a Docker change, build the image and test it against a copy of `data/`, never the live one. Don't run the container and `uv run pallot` on the same `data/` at once, because they'd share one SQLite file.
 - Never commit `data/`, `.env` or a key. `docker compose config` prints `.env`, the FEC key included.
