@@ -18,13 +18,20 @@ function whenLine(ballot) {
   return [earlyVotingText(ballot), hours && `Polls open ${hours} on Election Day`].filter(Boolean).join(" · ");
 }
 
-// The races to print, per section: those picked, and with ``includeBlank`` the rest (except
-// the ones that may not be on the ballot).
-function printedSections(ballot, picks, includeBlank) {
+// Every note in a race, picked or not, each with its candidate's name: "Ann Lee: check her stance
+// on housing".
+export function raceNotes(race, picks) {
+  return race.candidates.filter((c) => picks.note(c.key).trim()).map((c) => `${c.name}: ${picks.note(c.key).trim()}`);
+}
+
+// The races to print, per section: those picked, with ``includeNotes`` those with a note, and
+// with ``includeBlank`` the rest (except the ones that may not be on the ballot).
+export function printedSections(ballot, picks, { includeBlank = false, includeNotes = false } = {}) {
   return ballotSections(ballot)
     .map((section) => ({
       ...section,
-      races: section.races.filter((race) => picks.has(race.key) || (includeBlank && !section.maybe)),
+      races: section.races.filter((race) => picks.has(race.key) || (includeNotes && raceNotes(race, picks).length)
+        || (includeBlank && !section.maybe)),
     }))
     .filter((section) => section.races.length);
 }
@@ -41,7 +48,7 @@ const voteText = (vote) => (vote === "for" ? "For" : "Against");
 // the election day and early voting, then a line per race with the pick. No notes: they
 // don't fit.
 function walletCard(ballot, picks, includeBlank) {
-  const blocks = printedSections(ballot, picks, includeBlank).map(({ title, races }) => [
+  const blocks = printedSections(ballot, picks, { includeBlank }).map(({ title, races }) => [
     h("h2", {}, title),
     races.map((race) => {
       const keys = picks.picked(race.key);
@@ -73,17 +80,17 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
   const headers = ["Race", "My pick", ...(includeNotes ? ["Note"] : [])];
   let rows = 0;
 
-  const tables = printedSections(ballot, picks, includeBlank).map(({ title, races, maybe }) => {
+  const tables = printedSections(ballot, picks, { includeBlank, includeNotes }).map(({ title, races, maybe }) => {
     const body = races.map((race) => {
       const keys = picks.picked(race.key);
       rows += 1;
-      const notes = includeNotes ? keys.map((k) => picks.note(k)).filter(Boolean).join(" / ") : "";
+      const notes = includeNotes ? raceNotes(race, picks) : [];
       return h(
         "tr",
         {},
         h("td", {}, race.name, race.unexpired ? " (unexpired term)" : ""),
         h("td", { class: keys.length ? "" : "blank" }, keys.length ? pickText(race, keys, picks) : ""),
-        includeNotes ? h("td", {}, notes) : null,
+        includeNotes ? h("td", {}, notes.map((note, i) => [i ? h("br") : null, note])) : null,
       );
     });
     return h(
