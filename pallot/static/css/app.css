@@ -501,16 +501,16 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .field-row { display: flex; flex-wrap: wrap; gap: 12px; }
 .field-row > .field { flex: 1 1 180px; }
 .req { color: var(--accent); }
-/* the voter card's county, wide, and precinct (at most 8 characters), narrow, on one row */
-.card-place { flex-wrap: nowrap; }
-.card-place > .card-county { flex: 1 1 0; }
-.card-place > .card-precinct { flex: 0 1 7.5rem; }
+/* the voter card's boxes, county, precinct and the districts, all one size on one grid: three to a row, two on a phone */
+.card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.card-grid input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+.card-grid input[type="number"]::-webkit-inner-spin-button, .card-grid input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .entry-districts { min-width: 0; }
 .entry-districts-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; }
 .entry-districts-title { margin: 0; font-weight: 600; font-size: 0.9rem; }
 .entry-districts-head .link-btn { padding: 0; font-weight: 600; }
 .entry-districts > .fine { margin-top: 2px; }
-.entry-districts .pair-grid { margin-top: 8px; }
+.entry-districts .card-grid { margin-top: 8px; }
 .vc-sketch { display: block; width: 100%; max-width: 320px; height: auto; margin: 10px 0 4px; font-family: inherit; }
 .vc-card { fill: var(--panel-2); stroke: var(--line-strong); }
 .vc-mark { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
@@ -1544,9 +1544,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .pair-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 10px 12px; line-height: 1.3; }
   .pair-grid > :not(.sep) { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; white-space: normal; }
   input.pair-box { width: 100%; height: 44px; margin: 0; }
-  /* the voter card's six district boxes: three to a row */
-  .entry-districts .pair-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; }
-  .entry-districts .pair-label { font-size: 0.82rem; }
+  .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
   /* Show my ballot stays at the foot of the screen while the form is on it */
   .entry .button-row { position: sticky; bottom: 0; z-index: 2; margin: 0 -16px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid var(--line); background: var(--panel); }

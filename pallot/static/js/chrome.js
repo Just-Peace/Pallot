@@ -103,12 +103,23 @@ function renderSidebar(sidebar) {
 // The running version as `git describe` writes it (v1.1.1-g1a2b3c4): in the footer, and in any
 // element marked data-version (About's credits).
 const VERSION_LABEL = COMMIT ? `v${VERSION}-g${COMMIT}` : `v${VERSION}`;
-const CONTACT = "admin@just-peace.org";
+const REPO = "https://github.com/Just-Peace/Pallot";
+
+// The contact address, kept out of the page and in pieces in the source, so scrapers don't find it:
+// put together only when the link is clicked. Any page's element marked data-contact gets the same.
+function contactLink(link = h("a", {}, "Contact")) {
+  link.href = "about.html#credits";
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    location.href = ["mailto:", ["admin", "just-peace.org"].join("@")].join("");
+  });
+  return link;
+}
 
 function renderFooter(app) {
   const footer = h("footer", { class: "site-footer" },
     h("p", {}, "Pallot is an unofficial helper: always check your county's official sample ballot. · ",
-      h("a", { href: "about.html#sources" }, "Sources"), " · ", extLink(`mailto:${CONTACT}`, CONTACT), ` · ${VERSION_LABEL}`));
+      extLink(REPO, "GitHub"), " · ", contactLink(), ` · ${VERSION_LABEL}`));
   app.after(footer);
   trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
 }
@@ -145,5 +156,6 @@ export function initChrome() {
   const app = document.querySelector(".app");
   if (app) renderFooter(app);
   for (const el of document.querySelectorAll("[data-version]")) el.textContent = VERSION_LABEL;
+  for (const el of document.querySelectorAll("a[data-contact]")) contactLink(el);
   renderToTop();
 }
