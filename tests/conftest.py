@@ -15,6 +15,7 @@ import datetime as dt
 import functools
 import io
 import json
+import logging
 import re
 import struct
 import zipfile
@@ -658,9 +659,17 @@ def stream_ballot(client: TestClient, address: str = "capitol", **extra: Any) ->
     return [json.loads(line) for line in response.text.splitlines()]
 
 
-def last_use(client: TestClient, source_id: str) -> dict[str, Any] | None:
-    """How the last lookup used a source, as the Settings page shows it."""
-    return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == source_id)["last_use"]
+@pytest.fixture
+def logged_calls(caplog):
+    """The external calls in the server's log line for the latest lookup (or the latest ``what``)."""
+    caplog.set_level(logging.INFO, logger="uvicorn.error")
+
+    def latest(what: str = "lookup") -> int:
+        lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith(f"{what}: ")]
+        assert lines, f"no {what} logged"
+        return int(lines[-1].removeprefix(f"{what}: ").split()[0])
+
+    return latest
 
 
 def find_race(ballot: dict[str, Any], name: str, *, maybe: bool = False) -> dict[str, Any] | None:

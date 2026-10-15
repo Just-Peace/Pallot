@@ -25,7 +25,7 @@ def warmed(client: TestClient) -> FastAPI:
     return app
 
 
-def test_warm_up_reads_what_is_kept_without_external_calls(make_app, upstream):
+def test_warm_up_reads_what_is_kept_without_external_calls(make_app, upstream, logged_calls):
     with TestClient(make_app()) as client:
         get_ballot(client)
     calls = len(upstream.calls)
@@ -35,7 +35,8 @@ def test_warm_up_reads_what_is_kept_without_external_calls(make_app, upstream):
         assert svc.sboe._districts is not None and svc.election_precincts._index is not None
         assert {"filers", "outside"} <= svc.tec._indexes.keys() and "TX" in svc.trackaipac._indexes
         assert "TX" in svc.voteforpeace._indexes
-        assert get_ballot(client)["meta"]["external_calls"] == 0
+        get_ballot(client)
+        assert logged_calls() == 0
     assert len(upstream.calls) == calls
 
 
@@ -102,7 +103,7 @@ def test_trim_heap_does_nothing_off_linux(monkeypatch, platform):
     api.trim_heap()
 
 
-def test_a_lookup_during_the_warm_up_reads_each_map_once(make_app, upstream, monkeypatch):
+def test_a_lookup_during_the_warm_up_reads_each_map_once(make_app, upstream, monkeypatch, logged_calls):
     from pallot.sources import election_precincts, sboe
 
     with TestClient(make_app()) as client:
@@ -121,6 +122,7 @@ def test_a_lookup_during_the_warm_up_reads_each_map_once(make_app, upstream, mon
     monkeypatch.setattr(election_precincts, "read_index", counted_index)
     monkeypatch.setattr(sboe, "parse_zip", counted_zip)
     with TestClient(make_app()) as client:
-        assert get_ballot(client)["meta"]["external_calls"] == 0
+        get_ballot(client)
+        assert logged_calls() == 0
         warmed(client)
     assert reads == {"index": 1, "sboe": 1}

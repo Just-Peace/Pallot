@@ -19,7 +19,7 @@ from pallot.http_cache import HttpCache, RequestSpec
 from pallot.settings import HEADER
 from pallot.text import display_time
 
-from .conftest import ADDRESSES, get_ballot, last_use, load, stream_ballot, switch
+from .conftest import ADDRESSES, get_ballot, stream_ballot, switch
 
 ISO_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(T|$)")  # what the voter shouldn't have to read
 
@@ -55,9 +55,9 @@ def test_sources_overview(client):
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
     assert tiles["enabled"] is True and example["enabled"] is True
     assert peace["label"] == "Vote for Peace" and peace["counts"] == ["164 Texas candidates", "166 in all"]
-    assert set(overview) == {"groups", "sources", "last_lookup"}  # nothing to refresh or clear, and no server stats
+    assert set(overview) == {"groups", "sources"}  # nothing to refresh or clear, and no server stats
     assert not {"refresh_confirm", "clear_confirm", "cache", "details", "bundled"} & set(sos)
-    assert overview["last_lookup"] is None and sos["last_use"] is None and sos["updated"] is None
+    assert sos["updated"] is None
     assert tracker["counts"][0].endswith(" Texas entries") and re.fullmatch(r"\d{4}-\d{2}-\d{2}", tracker["updated"])
     assert fec["notice"] is None  # a key of its own: nothing the voter needs to know
     assert tec["notice"] is None and tec["counts"][0].endswith(" candidates and officeholders")
@@ -77,19 +77,17 @@ def test_times_are_shown_as_people_write_them():
     assert display_time(None) is None and display_time("never") is None
 
 
-def test_settings_shows_the_last_lookup(client):
+def test_a_lookup_is_logged_without_its_address_and_shown_to_no_one(client, logged_calls, caplog):
+    first = get_ballot(client)
+    assert logged_calls() > 0 and "meta" not in first
     get_ballot(client)
-    first = {s["id"]: s for s in client.get("/api/sources").json()["sources"]}
-    assert first["sos"]["last_use"]["calls"] > 0 and ISO_TIME.search(first["sos"]["updated"])
-    get_ballot(client)
+    assert logged_calls() == 0 and "cache hits" in caplog.text and ADDRESSES["capitol"] not in caplog.text
     overview = client.get("/api/sources").json()
-    assert overview["last_lookup"]["external_calls"] == 0 and overview["last_lookup"]["cache_hits"] > 0
-    rows = {s["id"]: s for s in overview["sources"]}
-    assert rows["sos"]["last_use"]["status"] == "used" and rows["sos"]["last_use"]["calls"] == 0
-    assert rows["trackaipac"]["last_use"]["as_of"] == load("trackaipac/current.json")["snapshot"]
+    assert ISO_TIME.search(next(s for s in overview["sources"] if s["id"] == "sos")["updated"])
+    assert not [s for s in overview["sources"] if {"last_use", "last_lookup"} & set(s)]
 
 
-def test_switches_are_the_voters_own(client, tmp_path):
+def test_switches_are_the_voters_own(client, upstream, tmp_path):
     another_browser = {HEADER: "{}"}
     switch(client, "ballotpedia", False)
     switch(client, "geocoding", False)  # can't be turned off: ignored
@@ -97,11 +95,11 @@ def test_switches_are_the_voters_own(client, tmp_path):
     mine = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
     assert mine["ballotpedia"] is False and mine["geocoding"] is True
     get_ballot(client)
-    assert last_use(client, "ballotpedia")["status"] == "off"
+    assert upstream.count("api4.ballotpedia.org") == 0
     theirs = {s["id"]: s["enabled"] for s in client.get("/api/sources", headers=another_browser).json()["sources"]}
     assert theirs["ballotpedia"] is True  # another browser keeps the defaults
     client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers=another_browser)
-    assert last_use(client, "ballotpedia")["status"] == "used"
+    assert upstream.count("api4.ballotpedia.org") > 0
     assert not (tmp_path / "data" / "settings.json").exists()  # nothing is kept on the server
 
 
@@ -112,12 +110,12 @@ def test_a_header_that_cant_be_read_leaves_the_defaults(client):
 
 
 @pytest.mark.shipped_defaults
-def test_ballotpedia_and_vote_for_peace_start_off(client):
+def test_ballotpedia_and_vote_for_peace_start_off(client, upstream):
     enabled = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
     assert enabled["ballotpedia"] is False and enabled["voteforpeace"] is False
     assert all(on for source, on in enabled.items() if source not in {"ballotpedia", "voteforpeace"})
     ballot = get_ballot(client)
-    assert last_use(client, "ballotpedia")["status"] == "off"
+    assert upstream.count("api4.ballotpedia.org") == 0
     assert not any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
     assert not any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
                    for card in c["cards"])
@@ -231,13 +229,13 @@ def test_settings_cant_refresh_or_clear_what_the_server_keeps(client):
     assert client.app.state.svc.cache.stats("sos").entries > 0
 
 
-def test_sboe_portal_down_is_asked_once_until_its_wait_is_over(client, upstream, make_app):
+def test_sboe_portal_down_is_asked_once_until_its_wait_is_over(client, upstream, make_app, logged_calls):
     switch(client, "election_precincts", False)  # it asks the same portal
     upstream.down.add("data.capitol.texas.gov")
     first = get_ballot(client)
     assert first["districts"]["sboe"] is None and any("State Board of Education map" in w for w in first["warnings"])
-    second = get_ballot(client)
-    assert upstream.count("plane2106_kml.zip") == 1 and second["meta"]["external_calls"] == 0
+    get_ballot(client)
+    assert upstream.count("plane2106_kml.zip") == 1 and logged_calls() == 0
     geocoding = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "geocoding")
     assert geocoding["notice_tone"] == "warn"
     assert geocoding["notice"].startswith("The last download of the State Board of Education map failed (HTTP 500)")
@@ -252,7 +250,6 @@ def test_voteforpeace_off_leaves_its_cards_out(client):
     ballot = get_ballot(client)
     assert not [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]
                 if card["source"] == "voteforpeace"]
-    assert last_use(client, "voteforpeace")["status"] == "off"
 
 
 PAGES = ["./", "settings.html", "faq.html", "about.html", "privacy.html"]
@@ -338,18 +335,17 @@ def cards(ballot):
     return [card for race in races for card in race["cards"] + [c for cand in race["candidates"] for c in cand["cards"]]]
 
 
-def test_the_page_gets_the_races_first_then_the_cards(client):
+def test_the_page_gets_the_races_first_then_the_cards(client, logged_calls):
     first, last = stream_ballot(client)
     assert first["done"] is False and last["done"] is True
     assert first["ballot"]["races"] and not cards(first["ballot"])
     assert [r["key"] for r in first["ballot"]["races"]] == [r["key"] for r in last["ballot"]["races"]]
     assert cards(last["ballot"]) and first["ballot"]["districts"] == last["ballot"]["districts"]
-    assert client.get("/api/sources").json()["last_lookup"]["external_calls"] == last["ballot"]["meta"]["external_calls"] > 0
+    assert logged_calls() > 0
     plain = get_ballot(client)
-    assert plain["meta"]["external_calls"] == 0
-    assert {**plain, "meta": None} == {**last["ballot"], "meta": None}
-    again = stream_ballot(client)
-    assert again[-1]["ballot"]["meta"]["external_calls"] == 0
+    assert logged_calls() == 0 and plain == last["ballot"]
+    stream_ballot(client)
+    assert logged_calls() == 0
 
 
 def test_a_streamed_lookup_that_fails_is_still_an_error_status(client):

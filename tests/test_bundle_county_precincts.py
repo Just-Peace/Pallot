@@ -8,7 +8,7 @@ from pallot.config import DAY
 from pallot.sources import county_precincts as cp
 
 from .bundling import build, entry, lifetimes
-from .conftest import HARRIS, TRAVIS, get_ballot, last_use
+from .conftest import HARRIS, TRAVIS, get_ballot
 
 DALLAS = 113
 COUNTY_HOSTS = ("traviscountytx", "services.arcgis.com", "services3.arcgis.com")  # Travis's, Harris's, Dallas's
@@ -33,7 +33,6 @@ def test_a_lookup_with_the_county_records_bundled_asks_the_county_nothing(tmp_pa
     asked = upstream.count("traviscountytx")
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        assert last_use(client, cp.SOURCE)["calls"] == 0
     assert (ballot["districts"]["commissioner"], ballot["districts"]["jp"]) == (2, 5)
     assert upstream.count("traviscountytx") == asked
 

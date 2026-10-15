@@ -293,7 +293,7 @@ function mergeCards(ballot, complete) {
       }
     }
   }
-  Object.assign(ballot, { warnings: complete.warnings, notes: complete.notes, meta: complete.meta });
+  Object.assign(ballot, { warnings: complete.warnings, notes: complete.notes });
 }
 
 // "Finding your ballot", in place of the ballot, or of the entry card and the welcome (``keepEntry``:

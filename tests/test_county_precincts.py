@@ -11,14 +11,14 @@ import httpx
 import pytest
 
 from pallot.config import Ttls
-from pallot.http_cache import HttpCache, UpstreamError, track_calls
+from pallot.http_cache import HttpCache, UpstreamError
 from pallot.sources import county_precincts as cp
 from pallot.sources.county_precincts import Areas, County, CountyPrecincts, Layer, Table, number, pick, services_root
 from pallot.sources.election_precincts import ElectionPrecincts
 
 from .conftest import (
     switch,
-    ANDERSON, HARRIS, PROJECTION, TRAVIS, TRAVIS_LIST, TRAVIS_QUERY, box, census_points, get_ballot, last_use, middle,
+    ANDERSON, HARRIS, PROJECTION, TRAVIS, TRAVIS_LIST, TRAVIS_QUERY, box, census_points, get_ballot, middle,
     travis_rows,
 )
 
@@ -175,9 +175,8 @@ async def test_an_error_answer_serves_the_good_list_kept(tmp_path, upstream):
         await county.at(TRAVIS, ("0300",))
         clock.now += Ttls().county_precincts + 1
         travis[TRAVIS_QUERY] = {"error": {"code": 500, "message": "Unable to complete operation.", "details": []}}
-        stats = track_calls()
         assert (await county.at(TRAVIS, ("0300",))).numbers == {"commissioner": 2, "jp": 5}
-        assert stats.stale_sources == {cp.SOURCE}
+        assert upstream.count(TRAVIS_QUERY) == 2  # asked, and refused: the good copy
         clock.now += Ttls().retry_after - 60
         assert (await county.at(TRAVIS, ("0300",))).numbers == {"commissioner": 2, "jp": 5}
         assert upstream.count(TRAVIS_QUERY) == 2  # within retry_after: not asked again
@@ -279,20 +278,20 @@ async def test_a_map_that_isnt_right_is_refused_whole(tmp_path, upstream, featur
 # -- through the ballot and Settings ---------------------------------------------------------------
 
 
-def test_a_repeat_lookup_asks_the_county_nothing(client, upstream):
+def test_a_repeat_lookup_asks_the_county_nothing(client, upstream, logged_calls):
     first = get_ballot(client)
     assert (first["districts"]["commissioner"], first["districts"]["jp"]) == (2, 5)
-    assert last_use(client, cp.SOURCE)["status"] == "used" and last_use(client, cp.SOURCE)["calls"] == 3
+    assert upstream.count("traviscountytx") == 3
     again = get_ballot(client)
-    assert again["districts"] == first["districts"] and again["meta"]["external_calls"] == 0
-    assert last_use(client, cp.SOURCE)["calls"] == 0 and upstream.count("traviscountytx") == 3
+    assert again["districts"] == first["districts"] and logged_calls() == 0
+    assert upstream.count("traviscountytx") == 3
 
 
 def test_without_election_precincts_the_county_isnt_asked(client, upstream):
     switch(client, "election_precincts", False)
     d = get_ballot(client)["districts"]
     assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"}
-    assert upstream.count("traviscountytx") == 0 and last_use(client, cp.SOURCE)["status"] == "off"
+    assert upstream.count("traviscountytx") == 0
 
 
 def test_a_county_that_cant_be_read_is_a_note(client, upstream):
@@ -301,7 +300,6 @@ def test_a_county_that_cant_be_read_is_a_note(client, upstream):
     assert ("Couldn't read Travis County's records of its election precincts, so they don't give your commissioner and "
             "JP precincts this time.") in ballot["notes"]
     assert ballot["districts"]["precinct_sources"]["jp"] == "ballotpedia" and ballot["districts"]["county_source"] is None
-    assert last_use(client, cp.SOURCE)["status"] == "error"
 
 
 def test_maps_on_the_ballot(client, upstream, monkeypatch):

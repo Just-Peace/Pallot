@@ -11,11 +11,11 @@ import respx
 
 from pallot import ics
 from pallot.config import Ttls
-from pallot.http_cache import HttpCache, RequestSpec, UpstreamError, track_calls
+from pallot.http_cache import HttpCache, RequestSpec, UpstreamError
 from pallot.sources import key_dates
 from pallot.sources.key_dates import Deadlines, parse
 
-from .conftest import FIXTURES, get_ballot, last_use, switch
+from .conftest import FIXTURES, get_ballot, switch
 
 D = dt.date
 NOV_3 = Deadlines(D(2026, 11, 3), "Uniform Election Date", register_by=D(2026, 10, 5), mail_apply_by=D(2026, 10, 23),
@@ -153,8 +153,7 @@ async def test_a_page_with_no_election_table_keeps_the_old_page(tmp_path):
             source = key_dates.KeyDatesPage(cache, Ttls())
             assert await source.on(D(2026, 11, 3)) == NOV_3
             clock.now += Ttls().key_dates + 1
-            stats = track_calls()
-            assert await source.on(D(2026, 11, 3)) == NOV_3 and stats.stale_sources == {key_dates.SOURCE}
+            assert await source.on(D(2026, 11, 3)) == NOV_3 and route.call_count == 2
             report = await cache.refresh(key_dates.SOURCE)
             assert report.failed == 1 and report.errors == (f"{key_dates.URL}: the page lists no elections",)
             assert await source.on(D(2026, 11, 3)) == NOV_3
@@ -182,21 +181,22 @@ def test_the_check_refuses_only_a_page_without_elections():
 # -- through the API ------------------------------------------------------------------------
 
 
-def test_the_ballot_has_its_elections_key_dates(client, upstream):
+def test_the_ballot_has_its_elections_key_dates(client, upstream, logged_calls):
     ballot = get_ballot(client)
     assert ballot["key_dates"] == {
         "election": "Uniform Election Date", "election_day": "2026-11-03", "register_by": "2026-10-05",
         "mail_apply_by": "2026-10-23", "early_voting_start": "2026-10-19", "early_voting_end": "2026-10-30",
         "source_url": key_dates.URL,
     }
-    assert upstream.count("sos.state.tx.us") == 1 and last_use(client, key_dates.SOURCE)["status"] == "used"
-    assert get_ballot(client)["meta"]["external_calls"] == 0 and upstream.count("sos.state.tx.us") == 1
+    assert upstream.count("sos.state.tx.us") == 1
+    get_ballot(client)
+    assert logged_calls() == 0 and upstream.count("sos.state.tx.us") == 1
 
 
 def test_key_dates_off(client, upstream):
     switch(client, "key_dates", False)
     assert get_ballot(client)["key_dates"] is None
-    assert upstream.count("sos.state.tx.us") == 0 and last_use(client, key_dates.SOURCE)["status"] == "off"
+    assert upstream.count("sos.state.tx.us") == 0
 
 
 def test_a_refusal_pauses_key_dates_and_the_ballot_still_loads(client, upstream):
@@ -204,7 +204,6 @@ def test_a_refusal_pauses_key_dates_and_the_ballot_still_loads(client, upstream)
     ballot = get_ballot(client)
     assert ballot["key_dates"] is None and ballot["races"]
     assert any(note.startswith("Couldn't load the key dates") for note in ballot["notes"])
-    assert last_use(client, key_dates.SOURCE)["status"] == "error"
     get_ballot(client)
     assert upstream.count("sos.state.tx.us") == 1  # paused: not asked again
     status = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == key_dates.SOURCE)

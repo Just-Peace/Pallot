@@ -12,7 +12,7 @@ import { api } from "./api.js";
 import { applyTheme, currentTheme, onThemeChange, setTheme } from "./appearance.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
 import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
-import { COUNT, SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
+import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
@@ -21,7 +21,6 @@ import { showToast } from "./toast.js";
 import { bindViewControls, focusChips, migrateView, onViewChange, showViewControls } from "./view.js";
 
 const groupList = $("#source-groups");
-const summary = $("#sources-summary");
 const searchSelect = $("#search-engine");
 const searchStatus = $("#search-status");
 const sourcesStatus = $("#sources-status");
@@ -40,13 +39,9 @@ function finePrint(source) {
 }
 
 // A short line only when the voter should know: a pause, a failure or a missing key (the
-// server's notice), or else a last lookup the source didn't answer.
+// server's notice).
 function alertLine(source) {
-  if (source.notice) return { text: source.notice, tone: source.notice_tone || "info" };
-  const use = source.last_use;
-  if (use?.status === "error") return { text: "Didn't answer the last lookup.", tone: "warn" };
-  if (use?.status === "stale") return { text: `Didn't answer the last lookup, so it used the copy saved ${relativeTime(use.as_of)}.`, tone: "warn" };
-  return null;
+  return source.notice ? { text: source.notice, tone: source.notice_tone || "info" } : null;
 }
 
 // A source's row is drawn once and then updated in place (update below), so a change or the
@@ -146,16 +141,7 @@ function sourceGroup(group) {
   return { list, status, update };
 }
 
-// The last lookup on this server, in one line: how many requests it sent to the sources.
-function renderSummary(overview) {
-  const last = overview.last_lookup;
-  summary.hidden = !last;
-  if (last) summary.textContent = `Last lookup ${relativeTime(last.at)}: ${plural(last.external_calls, "request")} to the sources, `
-    + `${COUNT.format(last.cache_hits)} answered from saved copies.`;
-}
-
 function render(overview) {
-  renderSummary(overview);
   for (const group of overview.groups) {
     if (!groups.has(group.id)) groups.set(group.id, sourceGroup(group));
   }

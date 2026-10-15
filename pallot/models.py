@@ -278,30 +278,6 @@ class KeyDates(BaseModel):
     source_url: str
 
 
-class SourceUse(BaseModel):
-    """How one lookup used a source ("stale": it served a copy it couldn't refresh)."""
-
-    id: str
-    label: str
-    status: Literal["used", "off", "error", "stale", "unused"]
-    as_of: str | None = None  # the oldest data it served
-    calls: int = 0  # external requests it made (0: everything came from the cache)
-    message: str | None = None
-
-
-class Meta(BaseModel):
-    external_calls: int
-    cache_hits: int
-    elapsed_ms: int
-
-
-class LastLookup(Meta):
-    """The latest ballot lookup since Pallot started, for the Settings page."""
-
-    at: str
-    found_by: Literal["address", "voter_card"] = "address"
-
-
 class Outline(BaseModel):
     """One district's shape for the map: rings of (lon, lat), outer rings and holes alike."""
 
@@ -314,7 +290,6 @@ class DistrictOutlines(BaseModel):
     outlines: list[Outline]  # in the order asked: U.S. House, State Senate, State House, SBOE, election precinct
     notes: list[str]  # outlines that are off or couldn't be had
     street_map: bool  # whether the street map (/api/tiles) is on
-    meta: Meta
 
 
 class LeftOut(BaseModel):
@@ -343,7 +318,6 @@ class Ballot(BaseModel):
     measures: list[Measure]
     notes: list[str]
     warnings: list[str]
-    meta: Meta
     left_out: LeftOut | None = None
     sources_off: list[SourceRef] = []  # the sources Pick by rule's conditions use that this request has off
 
@@ -432,7 +406,6 @@ class SourceStatus(BaseModel):
     frozen: bool = False  # comes with Pallot as captured, never fetched (an endorsement list): "captured", not "updated"
     notice: str | None = None  # a short line only when the voter should know: a pause, a failure, a missing key
     notice_tone: Tone = "info"
-    last_use: SourceUse | None = None  # in the last lookup: Settings says when it didn't answer
 
 
 class SourceGroupInfo(BaseModel):
@@ -447,7 +420,6 @@ class SourceGroupInfo(BaseModel):
 class SourcesOverview(BaseModel):
     groups: list[SourceGroupInfo]  # in the order Settings draws them
     sources: list[SourceStatus]
-    last_lookup: LastLookup | None = None
 
 
 class EndorsementListInfo(BaseModel):

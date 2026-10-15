@@ -49,7 +49,7 @@ async def test_sources_are_asked_at_once_and_cards_keep_their_order(monkeypatch)
     race = senate()
     outcome = await run([race])
     assert [card.source for card in race.candidates[0].cards] == [fec.SOURCE, polls.SOURCE]
-    assert (outcome.errors, outcome.warnings) == ({}, [])
+    assert outcome.warnings == []
 
 
 async def test_a_source_that_cant_answer_is_a_warning(monkeypatch):
@@ -64,7 +64,6 @@ async def test_a_source_that_cant_answer_is_a_warning(monkeypatch):
     race = senate()
     outcome = await run([race])
     assert [card.source for card in race.candidates[0].cards] == [fec.SOURCE]
-    assert outcome.errors == {polls.SOURCE: "HTTP 403"}
     assert outcome.warnings == ["Couldn't load polls from FiftyPlusOne (HTTP 403)."]
 
 

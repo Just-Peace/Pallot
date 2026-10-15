@@ -25,7 +25,7 @@ from pallot.sources.election_precincts import ElectionPrecincts, Lambert, StillD
 from .conftest import (
     switch,
     ANDERSON, HARRIS, HOLE, LINE, OVERLAP, PRJ, PROJECTION, TRAVIS, TWO_PIECES, census_points, election_precincts_zip,
-    get_ballot, last_use, load, middle, nudge, precincts_index, precincts_zip,
+    get_ballot, load, middle, nudge, precincts_index, precincts_zip,
 )
 
 LABEL = "2026 Primary Election Voting Precincts"
@@ -451,14 +451,13 @@ def precincts_row(client) -> dict:
     return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == ep.SOURCE)
 
 
-def test_a_repeat_lookup_asks_the_portal_nothing(client, upstream):
+def test_a_repeat_lookup_asks_the_portal_nothing(client, upstream, logged_calls):
     first = get_ballot(client)
     assert first["districts"]["election_precinct"]["name"] == "300"
     assert upstream.count("package_show") == 1 and zips(upstream) == 1
-    assert last_use(client, ep.SOURCE)["status"] == "used" and last_use(client, ep.SOURCE)["calls"] == 2
     again = get_ballot(client)
     assert again["districts"]["election_precinct"] == first["districts"]["election_precinct"]
-    assert again["meta"]["external_calls"] == 0 and last_use(client, ep.SOURCE)["calls"] == 0
+    assert logged_calls() == 0 and upstream.count("package_show") == 1 and zips(upstream) == 1
 
 
 def test_an_approximate_address_gets_no_precinct(client, upstream):
@@ -473,7 +472,7 @@ def test_switched_off_the_portal_is_not_asked(client, upstream):
     switch(client, ep.SOURCE, False)
     ballot = get_ballot(client)
     assert ballot["districts"]["election_precinct"] is None and not [n for n in ballot["notes"] if "precinct map" in n]
-    assert upstream.count("package_show") == 0 and last_use(client, ep.SOURCE)["status"] == "off"
+    assert upstream.count("package_show") == 0 and zips(upstream) == 0
 
 
 def test_the_first_lookup_says_when_the_map_is_still_downloading(client, upstream):
@@ -490,7 +489,6 @@ def test_the_portal_down_with_no_map_is_a_warning(client, upstream):
     assert ballot["districts"]["election_precinct"] is None and ballot["districts"]["sboe"] == 5
     assert "Couldn't load the Texas Legislative Council's precinct map, so your election precinct isn't shown; it's on " \
            "your voter registration certificate." in ballot["warnings"]
-    assert last_use(client, ep.SOURCE)["status"] == "error"
 
 
 def test_a_map_that_cant_be_unpacked_is_a_warning_not_a_failed_ballot(client, upstream):
@@ -511,7 +509,8 @@ def test_a_refusal_pauses_the_portal(client, upstream):
     assert row["notice"].startswith("Paused until") and "Texas Legislative Council's portal refused" in row["notice"]
 
 
-def test_settings_shows_the_map_and_pallot_cache_refreshes_and_rebuilds_it(client, make_app, upstream, tmp_path):
+def test_settings_shows_the_map_and_pallot_cache_refreshes_and_rebuilds_it(client, make_app, upstream, tmp_path,
+                                                                          logged_calls):
     get_ballot(client)
     row = precincts_row(client)
     size = len(election_precincts_zip())
@@ -529,7 +528,8 @@ def test_settings_shows_the_map_and_pallot_cache_refreshes_and_rebuilds_it(clien
     assert rebuilt.endswith(f"Downloaded the precinct map “{LABEL}” ({size / 1_048_576:.1f} MB).") and zips(upstream) == 2
     assert len(list((tmp_path / "data" / "election_precincts").iterdir())) == 4  # map.json and the shapefile
     assert get_ballot(client)["districts"]["election_precinct"]["name"] == "300"
-    assert get_ballot(client)["meta"]["external_calls"] == 0
+    get_ballot(client)
+    assert logged_calls() == 0
 
 
 def test_soft_refresh_downloads_a_newer_map_which_the_running_server_reads(client, make_app, upstream, tmp_path):

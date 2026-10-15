@@ -101,18 +101,18 @@ async def test_an_error_answered_with_a_200_is_asked_again_after_retry_after(tmp
 # -- through the API ------------------------------------------------------------------------
 
 
-def test_the_capitols_outlines_are_asked_once(client, upstream):
+def test_the_capitols_outlines_are_asked_once(client, upstream, logged_calls):
     got = outlines(client, **CAPITOL)
     assert [(o["kind"], o["number"]) for o in got["outlines"]] == list(CAPITOL.items())
     assert got["notes"] == []
     lat, lon = capitol_point()
     assert all(inside(o["rings"], lat, lon) for o in got["outlines"])
     assert upstream.count("tigerweb") == 4  # the layer list, then one request per district
-    assert got["meta"]["external_calls"] == 5  # and the SBOE map, downloaded on first use
+    assert logged_calls("district outlines") == 5  # and the SBOE map, downloaded on first use
 
     again = outlines(client, **CAPITOL)
     assert again["outlines"] == got["outlines"]
-    assert again["meta"]["external_calls"] == 0 and upstream.count("tigerweb") == 4
+    assert logged_calls("district outlines") == 0 and upstream.count("tigerweb") == 4
 
 
 def test_only_what_is_asked(client, upstream):
@@ -206,13 +206,13 @@ def test_pallot_cache_refreshes_and_rebuilds_outlines(client, make_app, upstream
 PRECINCT = {"election_precinct": "0300", "county": 453}
 
 
-def test_the_election_precinct_is_drawn_from_the_map_the_ballot_downloaded(client, upstream):
+def test_the_election_precinct_is_drawn_from_the_map_the_ballot_downloaded(client, upstream, logged_calls):
     get_ballot(client)
     got = outlines(client, **CAPITOL, **PRECINCT)
     assert [(o["kind"], o["number"]) for o in got["outlines"]][-2:] == [("sboe", 5), ("election_precinct", "300")]
     assert got["notes"] == [] and inside(got["outlines"][-1]["rings"], *capitol_point())
     again = outlines(client, **PRECINCT)
-    assert again["outlines"] == got["outlines"][-1:] and again["meta"]["external_calls"] == 0
+    assert again["outlines"] == got["outlines"][-1:] and logged_calls("district outlines") == 0
 
 
 def test_the_election_precinct_is_never_downloaded_for_the_map(client, upstream):

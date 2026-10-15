@@ -6,14 +6,14 @@ from pallot.models import Candidate, Race
 from pallot.sources import officeholders
 from pallot.sources.officeholders import Holder, congress_holders, legislature_holders, seat_info
 
-from .conftest import fixture_bytes, find_race, get_ballot, last_use, load, switch
+from .conftest import fixture_bytes, find_race, get_ballot, load, switch
 
 
 def people(race):
     return {c["name"]: c for c in race["candidates"]}
 
 
-def test_the_capitol_ballot_says_who_holds_each_seat(client, upstream):
+def test_the_capitol_ballot_says_who_holds_each_seat(client, upstream, logged_calls):
     ballot = get_ballot(client)
     senate = find_race(ballot, "U.S. Senator")
     assert senate["open_seat"] and senate["holder"] == {
@@ -31,10 +31,10 @@ def test_the_capitol_ballot_says_who_holds_each_seat(client, upstream):
     assert people(rep)["Montserrat Garibay"]["party_holds_seat"]
     assert not [r for r in ballot["races"] if r["group"] in ("state", "judicial", "county", "local") and r["holder"]]
     assert upstream.count("unitedstates.github.io") == 1 and upstream.count("data.openstates.org") == 1
-    assert last_use(client, "officeholders")["status"] == "used"
 
     get_ballot(client)
-    assert get_ballot(client)["meta"]["external_calls"] == 0
+    get_ballot(client)
+    assert logged_calls() == 0
 
 
 def test_a_holder_on_the_ballot_is_the_incumbent(client, upstream):
@@ -54,7 +54,6 @@ def test_a_source_kept_off_shows_nothing(client, upstream):
     assert not [r for r in ballot["races"] if r["holder"] or r["open_seat"]]
     assert not [c for r in ballot["races"] for c in r["candidates"] if c["party_holds_seat"]]
     assert upstream.count("unitedstates.github.io") == 0 and upstream.count("data.openstates.org") == 0
-    assert last_use(client, "officeholders")["status"] == "off"
 
 
 def test_a_refusal_pauses_it_and_the_ballot_still_loads(client, upstream):

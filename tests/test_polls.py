@@ -13,7 +13,7 @@ from pallot.http_cache import HttpCache
 from pallot.models import Candidate, Race
 from pallot.sources import polls
 
-from .conftest import find_race, get_ballot, last_use, switch
+from .conftest import find_race, get_ballot, switch
 
 SENATE = Race(key="sen", name="U.S. Senator", group="federal", seat="TX-SEN", source="sos", candidates=[
     Candidate(key="paxton", name="Ken Paxton", party="R"),
@@ -173,7 +173,6 @@ def test_capitol_ballot_polls(client, upstream):
 
     assert upstream.count("fiftyplusone.news") == 3  # one page each of the Senate, House and Governor lists
     assert all("Mozilla" in agent for agent in upstream.polls_agents)
-    assert last_use(client, "polls")["status"] == "used"
 
 
 def test_polls_are_asked_once_a_day(client, upstream):
@@ -187,7 +186,6 @@ def test_a_refusal_pauses_polls_and_the_ballot_still_loads(client, upstream):
     ballot = get_ballot(client)
     assert "Couldn't load polls from FiftyPlusOne (HTTP 403)." in ballot["warnings"]
     assert not [c for c in find_race(ballot, "U.S. Senator")["cards"] if c["source"] == "polls"]
-    assert last_use(client, "polls")["status"] == "error"
     asked = upstream.count("fiftyplusone.news")
     again = get_ballot(client)
     assert upstream.count("fiftyplusone.news") == asked  # paused: not asked again
@@ -201,4 +199,3 @@ def test_polls_off(client, upstream):
     ballot = get_ballot(client)
     assert upstream.count("fiftyplusone.news") == 0
     assert not [c for c in find_race(ballot, "U.S. Senator")["cards"] if c["source"] == "polls"]
-    assert last_use(client, "polls")["status"] == "off"

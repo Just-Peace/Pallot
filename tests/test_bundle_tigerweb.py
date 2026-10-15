@@ -20,7 +20,7 @@ def test_a_lookup_with_the_outlines_bundled_asks_tigerweb_nothing(tmp_path, upst
         got = client.get("/api/district-outlines", params={"cd": 10, "sd": 14, "hd": 49}).json()
         said = came_with(client, "tigerweb")
     assert [(o["kind"], o["number"]) for o in got["outlines"]] == [("cd", 10), ("sd", 14), ("hd", 49)]
-    assert got["meta"]["external_calls"] == 0 and upstream.count("tigerweb") == asked
+    assert upstream.count("tigerweb") == asked
     assert said.startswith("Came with 5 answers, checked ")
 
 

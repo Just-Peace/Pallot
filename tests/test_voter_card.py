@@ -8,7 +8,7 @@ import json
 from pallot import counties
 from pallot.sources.ballotpedia import BpBallot, BpRace, common
 
-from .conftest import TRAVIS_LIST, TRAVIS_QUERY, find_race, get_ballot, last_use, load, switch, travis_rows
+from .conftest import TRAVIS_LIST, TRAVIS_QUERY, find_race, get_ballot, load, switch, travis_rows
 
 CARD = {"county": "Travis", "precinct": 300}
 
@@ -50,15 +50,13 @@ def test_a_voter_card_gives_the_same_ballot_as_the_address(client, upstream):
     assert (location["county"], location["city"]) == ("Travis", "Austin")
 
 
-def test_a_second_lookup_of_the_same_precinct_makes_no_calls(client, upstream):
+def test_a_second_lookup_of_the_same_precinct_makes_no_calls(client, upstream, logged_calls):
     capitol_everywhere(upstream)
     first = card_ballot(client)
     calls = len(upstream.calls)
-    again = card_ballot(client, precinct="0300")  # as the map writes it
-    assert first["meta"]["external_calls"] > 0 and again["meta"]["external_calls"] == 0 and len(upstream.calls) == calls
-    last = client.get("/api/sources").json()["last_lookup"]
-    assert last["found_by"] == "voter_card"
-    assert last_use(client, "geocoding")["message"] == "Voter card: precinct map + US Census"
+    assert logged_calls() > 0 and first["location"]["source"] == "voter_card"
+    card_ballot(client, precinct="0300")  # as the map writes it
+    assert logged_calls() == 0 and len(upstream.calls) == calls
 
 
 def test_races_on_only_part_of_the_precinct_are_left_out(client, upstream):

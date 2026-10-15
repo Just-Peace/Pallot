@@ -234,7 +234,6 @@ class Admin:
             groups=[SourceGroupInfo(id=g.id, title=g.title, description=g.description, toggle_all=g.toggle_all)
                     for g in GROUPS],
             sources=[self._status(info, sources) for info in self.sources],
-            last_lookup=self.svc.last_lookup,
         )
 
     def rule_sources_off(self, sources: Sources) -> list[SourceRef]:
@@ -258,7 +257,6 @@ class Admin:
             frozen=info.frozen,
             notice=notice,
             notice_tone=tone,
-            last_use=self.svc.last_uses.get(info.id),
         )
 
     def updated(self, info: SourceInfo) -> str | None:

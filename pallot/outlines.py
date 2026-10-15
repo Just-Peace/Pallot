@@ -10,12 +10,11 @@ A missing outline is a note, never a failed request: the map draws what it has.
 from __future__ import annotations
 
 import asyncio
-import time
 import zipfile
 
 from .ballot import Services
 from .http_cache import UpstreamError, track_calls
-from .models import DistrictOutlines, Meta, Outline
+from .models import DistrictOutlines, Outline
 from .settings import Sources
 from .sources import election_precincts, osm_tiles, tigerweb
 from .sources.sboe import Ring
@@ -30,7 +29,6 @@ async def district_outlines(
     """The districts in ``wanted`` (kind -> number), then the election precinct (county FIPS, the
     map's code for it), with the sources the voter has on (by default, Pallot's defaults)."""
     calls = track_calls()
-    started = time.monotonic()
     sources = sources or svc.sources
     use_tigerweb = sources.enabled(tigerweb.SOURCE)
     notes: list[str] = []
@@ -78,13 +76,10 @@ async def district_outlines(
         county, code = precinct
         drawn.append((("election_precinct", election_precincts.display_name(code)), await election_precinct(county, code)))
     notes += [note for _, (_, note) in drawn if note]
-    return DistrictOutlines(
+    outlines = DistrictOutlines(
         outlines=[Outline(kind=kind, number=number, rings=rings) for (kind, number), (rings, _) in drawn if rings],
         notes=notes,
         street_map=sources.enabled(osm_tiles.SOURCE),
-        meta=Meta(
-            external_calls=calls.external_calls,
-            cache_hits=calls.cache_hits,
-            elapsed_ms=int((time.monotonic() - started) * 1000),
-        ),
     )
+    calls.log("district outlines")
+    return outlines

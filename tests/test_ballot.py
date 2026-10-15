@@ -12,7 +12,7 @@ from pallot.sources.sos import still_running
 
 from .conftest import (
     switch,
-    ADDRESSES, GOOGLE_KEY, NEW_STREET, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, last_use, load, travis_rows,
+    ADDRESSES, GOOGLE_KEY, NEW_STREET, TRAVIS_LIST, TRAVIS_QUERY, candidate_names, find_race, get_ballot, load, travis_rows,
 )
 
 
@@ -82,12 +82,6 @@ def test_capitol_ballot(client):
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
     assert paxton["photo_url"]  # from Ballotpedia
 
-    statuses = {s["id"]: (s["last_use"] or {}).get("status") for s in client.get("/api/sources").json()["sources"]}
-    assert statuses == {"geocoding": "used", "google": "unused", "tigerweb": None, "osm_tiles": None, "suggestions": None, "sos": "used",
-                        "key_dates": "used", "wikidata": "used", "ballotpedia": "used", "trackaipac": "used", "voteforpeace": "used", "examplepac": "used", "mupac": "used", "cair": "used", "emgage": "used", "fec": "used",
-                        "tec": statuses["tec"], "polls": "used", "officeholders": "used", "election_precincts": "used",
-                        "county_precincts": "used"}
-    # (suggestions are asked for while typing, the map after)
     assert ballot["warnings"] == [] and not [note for note in ballot["notes"] if "precinct" in note]
 
 
@@ -172,17 +166,17 @@ def test_federal_race_comparison(client):
     assert not any(e["note"] for e in outside) and "None of this went to the campaigns" in sections["Outside spending"]["note"]
 
 
-def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, upstream):
+def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, upstream, logged_calls):
     with TestClient(make_app()) as client:
-        first = get_ballot(client)
+        get_ballot(client)
         calls_after_first = len(upstream.calls)
-        again = get_ballot(client)
-    assert first["meta"]["external_calls"] > 0
-    assert again["meta"]["external_calls"] == 0 and len(upstream.calls) == calls_after_first
+        assert logged_calls() > 0
+        get_ballot(client)
+    assert logged_calls() == 0 and len(upstream.calls) == calls_after_first
 
     with TestClient(make_app()) as client:  # same data dir
-        after_restart = get_ballot(client)
-    assert after_restart["meta"]["external_calls"] == 0
+        get_ballot(client)
+    assert logged_calls() == 0
     assert len(upstream.calls) == calls_after_first
 
 
@@ -306,7 +300,6 @@ def test_ballotpedia_off(client):
     maybe = {s["id"]: [r["name"] for r in s["races"]] for s in ballot["maybe"]}
     assert find_race(ballot, "Justice of the Peace Precinct 5")  # the county's list still places it
     assert "precinct" not in maybe and "special" not in maybe
-    assert last_use(client, "ballotpedia")["status"] == "off"
     senate = find_race(ballot, "U.S. Senator")
     assert sources_of(senate["candidates"][0]) == ["fec", "sos", "polls", "wikidata", "trackaipac"]
 
@@ -420,7 +413,7 @@ def test_without_the_countys_list_ballotpedia_gives_the_precincts(client, upstre
     assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, None)
     assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"} and d["county_source"] is None
     assert {r["name"] for r in ballot["maybe"][0]["races"]} == {"County Commissioner Precinct 2", "County Commissioner Precinct 4"}
-    assert upstream.count("traviscountytx") == 0 and last_use(client, "county_precincts")["status"] == "off"
+    assert upstream.count("traviscountytx") == 0
 
 
 def test_a_note_when_the_county_and_ballotpedia_differ(client, upstream):
@@ -614,7 +607,6 @@ def test_ballotpedia_refusal_degrades_gracefully(client, upstream):
     ballot = get_ballot(client)
     assert find_race(ballot, "U.S. Senator")
     assert not find_race(ballot, "Austin City Council District 9")
-    assert last_use(client, "ballotpedia")["status"] == "error"
     assert any("Ballotpedia" in w for w in ballot["warnings"])
 
 
@@ -625,7 +617,7 @@ def test_state_site_down_with_nothing_cached(client, upstream):
     assert response.status_code == 502
 
 
-def test_state_site_down_later_serves_the_cached_copy(make_app, upstream, tmp_path):
+def test_state_site_down_later_serves_the_cached_copy(make_app, upstream, tmp_path, logged_calls):
     config_dir = tmp_path / "data"
     with TestClient(make_app(config_dir)) as client:
         get_ballot(client)
@@ -639,10 +631,8 @@ def test_state_site_down_later_serves_the_cached_copy(make_app, upstream, tmp_pa
         ballot = get_ballot(client)
         asked = upstream.count("goelect")
         get_ballot(client)  # the failed requests aren't retried yet: their old copies serve again
-        assert upstream.count("goelect") == asked
-        sos = last_use(client, "sos")
+        assert upstream.count("goelect") == asked and logged_calls() == 0
     assert find_race(ballot, "U.S. Senator")
-    assert sos["status"] == "stale" and sos["calls"] == 0
 
 
 def test_a_ballot_reads_each_state_list_once(client, monkeypatch):
