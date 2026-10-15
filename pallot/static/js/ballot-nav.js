@@ -218,7 +218,7 @@ const TIPS = [
   {
     id: "rule", when: () => wants("endorsements"), target: () => $(narrow.matches ? "#more-btn" : "#endorser-btn"),
     after: () => (narrow.matches ? progressInfo : tools),
-    text: () => `Help me pick${narrow.matches ? ", in More," : ""}: Trust endorsers to pick who they endorse, and Avoid to mark who you won't vote for.`,
+    text: () => `Help me pick${narrow.matches ? " (in More)" : ""}: Trust endorsers to pick who they endorse, and Avoid to mark who you won't vote for.`,
   },
   {
     id: "next", when: () => anyPicked() && !nextButton.disabled, target: () => nextButton, after: () => progressInfo,
