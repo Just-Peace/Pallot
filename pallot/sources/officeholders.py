@@ -15,6 +15,7 @@ from __future__ import annotations
 import csv
 import datetime as dt
 import io
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -27,6 +28,8 @@ from ..text import display_time
 from . import CardSet, SeatInfo
 from .ballotpedia import BpBallot
 from .tec import bp_seat, tec_seat
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "officeholders"
 LABEL = "Seat holders"
@@ -206,7 +209,8 @@ async def cards(
     if failures and not got:
         raise failures[0]
     if failures:
-        out.warnings.append(f"Some seats' holders aren't shown ({failures[0]}).")
+        log.warning("officeholders: %s", failures[0])
+        out.warnings.append("A list of seat holders isn't answering right now, so some seats' holders aren't shown.")
     by_seat: dict[str, list[Holder]] = {}
     for holders in got.values():
         for holder in holders:

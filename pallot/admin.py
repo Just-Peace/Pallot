@@ -174,7 +174,7 @@ SOURCES = (
     SourceInfo(
         fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
         group=OFFICIAL,
-        pause=Pause("every key reached the FEC's rate limit or was refused", "what it already sent still shows"),
+        pause=Pause("the FEC refused requests", "what it already sent still shows"),
         rules=True,
     ),
     SourceInfo(
@@ -229,11 +229,13 @@ class Admin:
         return self._kept_sources.get(info.id)
 
     def overview(self, sources: Sources) -> SourcesOverview:
-        """Every source's row, on or off as ``sources`` (this voter's choices) has it."""
+        """Every source's row, on or off as ``sources`` (this voter's choices) has it; Google's only
+        with a key, since without one it's never asked."""
         return SourcesOverview(
             groups=[SourceGroupInfo(id=g.id, title=g.title, description=g.description, toggle_all=g.toggle_all)
                     for g in GROUPS],
-            sources=[self._status(info, sources) for info in self.sources],
+            sources=[self._status(info, sources) for info in self.sources
+                     if info.id != google.SOURCE or self.svc.google.keyed],
         )
 
     def rule_sources_off(self, sources: Sources) -> list[SourceRef]:
@@ -288,30 +290,9 @@ class Admin:
 
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
         """A short line under the source's description, only when the voter should know: a pause, a
-        failure, a download under way, or a missing key."""
-        if info.id == fec.SOURCE:
-            return self._fec_notice(info)
-        paused = self.paused(info)
-        if info.id == google.SOURCE:
-            return (paused, "warn") if paused else ((None, "info") if self.svc.google.keyed else (google.KEY_NOTE, "warn"))
-        if paused:
+        failure or a download under way, never its cause or the host's setup (those are the server
+        log's and pallot-cache check's)."""
+        if paused := self.paused(info):
             return paused, "warn"
         kept = self.kept(info)
         return (kept.notice() if kept else None) or (None, "info")
-
-    def _fec_notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
-        """Why any key rests (paused once every key does), and the shared DEMO_KEY's limits."""
-        svc = self.svc.fec
-        trouble = svc.key_trouble()
-        rests = self.svc.cache.key_rests(fec.SOURCE)
-        if until := self.svc.cache.paused_until(fec.SOURCE):
-            state = f"Paused until {display_time(until)}: {trouble}; {info.pause.kept}."
-        elif trouble:
-            soonest = min(rest.until for rest in rests if rest)
-            state = (f"Using {rests.count(None)} of your {len(rests)} api.data.gov keys until {display_time(soonest)}: "
-                     f"{trouble}.")
-        else:
-            state = None
-        if not svc.keyed:
-            return " ".join(filter(None, (state, f"Using the shared DEMO_KEY. {fec.KEY_NOTE}"))), "warn"
-        return (state, "warn") if state else (None, "info")

@@ -106,10 +106,10 @@ def test_a_source_kept_off_shows_nothing(client, upstream):
 def test_a_refusal_pauses_it_and_the_ballot_still_loads(client, upstream):
     upstream.wikidata_status = 429
     ballot = get_ballot(client)
-    assert "Couldn't load Wikidata profiles (HTTP 429)." in ballot["warnings"]
+    assert "Wikidata isn't answering right now, so its profiles aren't shown." in ballot["warnings"]
     asked = upstream.count("query.wikidata.org")
     again = get_ballot(client)
     assert upstream.count("query.wikidata.org") == asked
-    assert any("paused until" in w for w in again["warnings"])
+    assert again["warnings"] == ballot["warnings"]  # paused: the same sentence, without asking
     status = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == wikidata.SOURCE)
     assert status["notice"].startswith("Paused until") and status["notice_tone"] == "warn"

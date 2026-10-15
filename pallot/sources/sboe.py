@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import filecmp
 import io
+import logging
 import math
 import os
 import re
@@ -27,6 +28,8 @@ from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..models import Fact, Tone
 from ..text import display_size, display_time
 from . import RefreshFailed
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "sboe"
 PLAN = "PLANE2106"
@@ -308,6 +311,7 @@ class SboeMap:
         """Remember why, and keep lookups from downloading again for a while (a refusal pauses
         the portal instead)."""
         self.last_error = error
+        log.warning("%s: the download failed: %s", SOURCE, error)
         if not refused:
             self.cache.set_flag(FAILED_FLAG, SOURCE, self.ttl.retry_after)
 
@@ -332,7 +336,7 @@ class SboeMap:
                     f"won't ask it again until {display_time(paused)}; {then}."), "warn"
         if self.last_error:
             then = "the map kept still shows" if kept else self._missing()
-            return f"The last download of the State Board of Education map failed ({self.last_error}); {then}.", "warn"
+            return f"The last download of the State Board of Education map failed; {then}.", "warn"
         return None
 
     def counts(self) -> list[str]:

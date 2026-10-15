@@ -64,7 +64,7 @@ async def test_a_source_that_cant_answer_is_a_warning(monkeypatch):
     race = senate()
     outcome = await run([race])
     assert [card.source for card in race.candidates[0].cards] == [fec.SOURCE]
-    assert outcome.warnings == ["Couldn't load polls from FiftyPlusOne (HTTP 403)."]
+    assert outcome.warnings == ["FiftyPlusOne isn't answering right now, so polls aren't shown."]
 
 
 async def test_an_unexpected_error_still_fails_the_lookup(monkeypatch):

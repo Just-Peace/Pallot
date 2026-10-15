@@ -142,7 +142,7 @@ async def test_a_failed_download_isnt_asked_again_by_lookups_for_a_while(tmp_pat
             assert route.call_count == 1
             notice, tone = sboe.notice()
             assert tone == "warn" and notice.startswith(
-                "The last download of the State Board of Education map failed (HTTP 500); lookups try again after "
+                "The last download of the State Board of Education map failed; lookups try again after "
             )
             sboe.clear()  # Clear in Settings lets the next lookup ask at once
             route.mock(return_value=httpx.Response(200, content=sboe_zip()))
@@ -179,7 +179,7 @@ async def test_refresh_replaces_the_map_or_keeps_the_old_one(tmp_path):
                 await sboe.refresh()
             assert await sboe.district_at(*CAPITOL) == 5 and route.call_count == 2
             assert sboe.notice() == (
-                "The last download of the State Board of Education map failed (HTTP 500); the map kept still shows.", "warn"
+                "The last download of the State Board of Education map failed; the map kept still shows.", "warn"
             )
             assert sboe.details()[0].value.startswith("downloaded ")
 

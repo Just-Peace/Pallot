@@ -9,6 +9,7 @@ import datetime as dt
 import hashlib
 import ipaddress
 import json
+import logging
 import os
 import posixpath
 import re
@@ -18,10 +19,11 @@ import traceback
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, AsyncIterator, Callable, Collection, Mapping
+from typing import Any, AsyncIterator, Callable, Collection, Mapping, Sequence
 from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -41,9 +43,11 @@ from .models import (
 from .outlines import district_outlines
 from .services import MIN_INTERVAL, open_services, prune
 from .settings import HEADER, Sources
-from .sources import osm_tiles, suggestions
+from .sources import fec, google, osm_tiles, suggestions
 from .sources.endorsements import ENDORSEMENTS_DIR
 from .version import short_commit
+
+log = logging.getLogger("uvicorn.error")
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
@@ -64,6 +68,16 @@ VERSION_JS = os.path.join("js", "version.js")
 _LOCAL_REF = re.compile(r'(<(?:script|link)\b[^>]*?\s(?:src|href)=")(?![\w+.-]*:|/|#)([^"]+)"')
 _ENTRY = re.compile(r'^([ \t]*)<script type="module" src="([^"]+)"></script>(\r?\n)', re.M)
 _IMPORT = re.compile(r'^import\s[^"]*?"(\.{1,2}/[^"]+)"', re.M)
+# What a voter is told when the page sends what Pallot can't take, by the field: one plain sentence, not Pydantic's.
+INVALID_FIELDS = {
+    "address": "Enter your street address, with the city or ZIP code.",
+    "county": "Enter your county as it's written on your voter registration certificate.",
+    "precinct": "Enter the precinct number on your voter registration certificate.",
+    "precincts": "Check the commissioner, JP and constable precinct numbers you entered.",
+    "districts": "Check the district numbers you entered.",
+}
+ADDRESS_OR_CARD = "Enter an address, or your county and precinct number."
+INVALID = "Pallot couldn't read that request. Reload the page and try again."
 
 
 def _line(ballot: Ballot, *, done: bool) -> bytes:
@@ -145,6 +159,30 @@ async def warm_up(svc: Services) -> None:
         jobs.append(asyncio.to_thread(svc.voteforpeace.name_index, "TX"))
     await asyncio.gather(*jobs, return_exceptions=True)
     trim_heap()
+
+
+def log_setup(svc: Services) -> None:
+    """What the host should fix in its setup, said once at startup in the server log, never on a page."""
+    if not svc.fec.keyed:
+        log.warning("No FEC key is set in PALLOT_FEC_API_KEY, so Pallot uses the shared DEMO_KEY: federal races show "
+                    "FEC totals only, and its rate limit is shared by the whole IP address. A free key: %s",
+                    fec.KEY_SIGNUP)
+    if trouble := svc.fec.key_trouble():
+        log.warning("FEC: %s.", trouble)
+    if not svc.google.keyed:
+        log.warning("No Google key is set in PALLOT_GOOGLE_API_KEY, so addresses the Census and OpenStreetMap can't "
+                    "place aren't found, and Settings leaves Google out. A key: %s", google.KEY_SIGNUP)
+
+
+def invalid_request(errors: Sequence[Mapping[str, Any]]) -> str:
+    """The sentence a 422 answers with: the first field the voter can fix, or the request as a whole."""
+    for error in errors:
+        where = [part for part in error.get("loc", ()) if part != "body"]
+        if not where:
+            return ADDRESS_OR_CARD
+        if where[0] in INVALID_FIELDS:
+            return INVALID_FIELDS[where[0]]
+    return INVALID
 
 
 def trim_heap() -> None:
@@ -307,6 +345,7 @@ def create_app(
             await asyncio.to_thread(prune, svc.cache, config)
             app.state.svc = svc
             app.state.admin = Admin(svc)
+            log_setup(svc)
             app.state.warm_up = warming = asyncio.create_task(warm_up(svc))
             pruning = asyncio.create_task(keep_pruning(svc))
             app.state.finishing = finishing = set()  # streamed ballots still adding their cards
@@ -321,6 +360,10 @@ def create_app(
 
     app = FastAPI(title="Pallot", version=__version__, lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)
+
+    @app.exception_handler(RequestValidationError)
+    async def plain_422(_request: Request, exc: RequestValidationError) -> JSONResponse:
+        return JSONResponse({"detail": invalid_request(exc.errors())}, status_code=422)
 
     def services(request: Request) -> Services:
         return request.app.state.svc
@@ -352,11 +395,9 @@ def create_app(
         """Pallot has no login, so only its own pages may ask for a ballot from the voter's browser, or use its API."""
         host = request.headers.get("host", "")
         if not host_allowed(host, config.allowed_hosts):
-            return JSONResponse(
-                {"detail": f"Pallot doesn't answer to the name {_hostname(host) or '(none)'}. "
-                           "To use it, add it to PALLOT_ALLOWED_HOSTS."},
-                status_code=400,
-            )
+            log.warning("Refused a request for the name %s: to answer to it, add it to PALLOT_ALLOWED_HOSTS.",
+                        _hostname(host) or "(none)")
+            return JSONResponse({"detail": "Pallot isn't available at this address."}, status_code=400)
         if request.method not in SAFE_METHODS and from_another_site(request):
             return JSONResponse({"detail": "Refused: this request came from another website."}, status_code=403)
         if request.url.path.startswith("/api/") and not from_own_page(request):
@@ -385,7 +426,8 @@ def create_app(
         try:
             dates = await election_dates(svc.sos)
         except UpstreamError as exc:
-            raise HTTPException(502, f"Texas SOS isn't responding ({exc}).") from exc
+            log.warning("%s", exc)
+            raise HTTPException(502, "Texas SOS isn't answering right now. Try again in a minute.") from exc
         return dates
 
     @app.get("/api/key-dates.ics")
@@ -397,7 +439,9 @@ def create_app(
         try:
             found = await svc.key_dates.on(date)
         except UpstreamError as exc:
-            raise HTTPException(502, f"The Texas Secretary of State's website isn't responding ({exc}).") from exc
+            log.warning("%s", exc)
+            raise HTTPException(502, "The Texas Secretary of State's website isn't answering right now. Try again in a "
+                                     "minute.") from exc
         body = found and ics.calendar(found, today=svc.today(), stamp=dt.datetime.now(dt.timezone.utc), only=event)
         if not body:
             raise HTTPException(404, "The Texas Secretary of State lists no such date for this election.")
@@ -434,7 +478,8 @@ def create_app(
         try:
             body = await svc.tiles.tile(z, x, y)
         except UpstreamError as exc:
-            raise HTTPException(502, f"OpenStreetMap's tile server isn't responding ({exc}).") from exc
+            log.warning("%s", exc)
+            raise HTTPException(502, "OpenStreetMap's tile server isn't answering right now.") from exc
         return Response(body, media_type="image/png", headers={"Cache-Control": "private, max-age=86400"})
 
     @app.get("/api/suggest", response_model=SuggestResult)

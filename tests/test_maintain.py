@@ -47,6 +47,16 @@ def test_check_lists_what_is_kept_and_what_is_stale_without_asking_anyone(client
     assert make_app.cache_command("check", "sos")[1].startswith("Texas Secretary of State (Texas SOS) [sos]\n")
 
 
+def test_check_names_the_keys_by_their_variables(make_app, upstream):
+    upstream.fec_refused = {"second-key"}
+    with TestClient(make_app(fec_extra_keys=("second-key",))) as keyed:
+        get_ballot(keyed)
+    printed = make_app.cache_command("check", "fec", "google", fec_extra_keys=("second-key",))[1]
+    assert "  Keys: PALLOT_FEC_API_KEY, PALLOT_FEC_API_KEY2.\n  The FEC refused PALLOT_FEC_API_KEY2; check it in .env" in printed
+    assert "  No key in PALLOT_GOOGLE_API_KEY, so it's never asked." in printed
+    assert "  Keys: the shared DEMO_KEY." in make_app.cache_command("check", "fec", fec_key="DEMO_KEY")[1]
+
+
 def test_an_unknown_source_is_refused(make_app, capsys):
     status, printed = make_app.cache_command("refresh", "nope")
     assert status == 2 and printed == "" and "Unknown source nope. The sources are: geocoding," in capsys.readouterr().err

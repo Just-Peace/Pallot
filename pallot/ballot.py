@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import logging
 import zipfile
 from collections import Counter
 from dataclasses import dataclass, field, replace
@@ -58,6 +59,8 @@ from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
 from .text import display_office, display_person, display_time
+
+log = logging.getLogger("uvicorn.error")
 
 MAYBE_SECTIONS = {
     "precinct": (
@@ -188,7 +191,8 @@ async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, 
         if exc.until:
             raise BallotError(502, f"The address lookup is paused until {display_time(exc.until)} after refusing a "
                                    "request. Addresses already looked up still work.") from exc
-        raise BallotError(502, f"The address lookup service isn't responding ({exc}). Try again in a minute.") from exc
+        log.warning("%s", exc)
+        raise BallotError(502, "The address lookup isn't answering right now. Try again in a minute.") from exc
     if place.state_fips != TEXAS_FIPS:
         raise BallotError(422, "Pallot only covers Texas addresses for now.")
     location = Location(
@@ -264,7 +268,8 @@ async def locate_precinct(svc: Services, county: str, precinct: str, sources: So
         card.note = (f"Pallot finds your districts on its precinct map, which is still downloading ({exc.size / 1_048_576:.0f} "
                      f"MB, the first time only), {fallback} Reload the page in a minute.")
         return card
-    except (UpstreamError, OSError, ValueError, zipfile.BadZipFile):
+    except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
+        log.warning("%s: %s", election_precincts_source.SOURCE, str(exc).removeprefix(f"{election_precincts_source.SOURCE}: "))
         card.warning = f"Couldn't load the Texas Legislative Council's precinct map, {fallback}"
         return card
     if on_map is None:
@@ -284,7 +289,8 @@ async def locate_precinct(svc: Services, county: str, precinct: str, sources: So
         if exc.until:
             raise BallotError(502, f"The US Census is paused until {display_time(exc.until)} after refusing a request. "
                                    "Precincts already looked up still work.") from exc
-        raise BallotError(502, f"The US Census isn't responding ({exc}). Try again in a minute.") from exc
+        log.warning("%s", exc)
+        raise BallotError(502, "The US Census isn't answering right now. Try again in a minute.") from exc
     places = [p for p in places if p.state_fips == TEXAS_FIPS and p.county_fips == card.county_fips]
     if not places:
         card.warning = f"The US Census doesn't place precinct {found.name} in {name} County, {fallback}"
@@ -457,7 +463,8 @@ class _Builder:
                 raise BallotError(502, f"Texas SOS is paused until {display_time(until)} after refusing a request, "
                                        f"and nothing is cached yet for this {self.where}.")
             if self.sos_error:
-                raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.sos_error}).")
+                raise BallotError(502, f"Texas SOS isn't answering right now, and nothing is kept yet for this {self.where}. "
+                                       "Try again in a minute.")
             raise BallotError(404, " ".join(self.warnings) or f"No ballot data found for this {self.where}.")
         if self.use_sos and sos_data is None:
             self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
@@ -569,6 +576,7 @@ class _Builder:
             upcoming = await self.svc.sos.upcoming()
         except UpstreamError as exc:
             self.sos_error = str(exc)
+            log.warning("%s", exc)
             return [], requested
         if not upcoming:
             self.warnings.append("Texas SOS doesn't list any upcoming elections.")
@@ -597,6 +605,7 @@ class _Builder:
             orders = await asyncio.gather(*(self._rows(e, county_id, county) for e in elections))
         except UpstreamError as exc:
             self.sos_error = str(exc)
+            log.warning("%s", exc)
             return None
         return SosData(set(listed), lookups, list(zip(elections, orders)))
 
@@ -687,7 +696,8 @@ class _Builder:
             self.notes.append(f"Your election precinct will show once its map has downloaded ({exc.size / 1_048_576:.0f} "
                               "MB, the first time only). Reload the page in a minute.")
             return None, ()
-        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile):
+        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
+            log.warning("%s: %s", election_precincts_source.SOURCE, str(exc).removeprefix(f"{election_precincts_source.SOURCE}: "))
             self.warnings.append("Couldn't load the Texas Legislative Council's precinct map, so your election precinct "
                                  "isn't shown; it's on your voter registration certificate.")
             return None, ()
@@ -712,7 +722,8 @@ class _Builder:
         """What the county's records say for those precincts; None, with a note, when they can't be read."""
         try:
             return await self.svc.county_precincts.at(int(fips or 0), codes)
-        except (UpstreamError, OSError, ValueError):
+        except (UpstreamError, OSError, ValueError) as exc:
+            log.warning("%s: %s", county_precincts_source.SOURCE, str(exc).removeprefix(f"{county_precincts_source.SOURCE}: "))
             self.notes.append(f"Couldn't read {name or 'your'} County's records of its election precincts, so they "
                               "don't give your commissioner and JP precincts this time.")
             return None
@@ -728,7 +739,8 @@ class _Builder:
             for lat, lon in points:
                 ballots.append(await self.svc.ballotpedia.ballot(lat, lon, day))
         except BallotpediaUnavailable as exc:
-            self.warnings.append(f"Ballotpedia isn't available ({exc}), so city and school races aren't shown.")
+            log.warning("ballotpedia: %s", str(exc).removeprefix("ballotpedia: "))
+            self.warnings.append("Ballotpedia isn't answering right now, so city and school races aren't shown.")
             return None
         ballot, partial = ballotpedia_source.common(ballots)
         if not (ballot.races or partial) and day:
@@ -738,7 +750,8 @@ class _Builder:
     async def _key_dates(self) -> list[Deadlines]:
         try:
             return await self.svc.key_dates.deadlines()
-        except UpstreamError:
+        except UpstreamError as exc:
+            log.warning("%s", exc)
             self.notes.append("Couldn't load the key dates (registration, early voting) from the Texas Secretary of "
                               "State; see VoteTexas.gov.")
             return []

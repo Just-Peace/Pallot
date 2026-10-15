@@ -150,7 +150,7 @@ class BundledSnapshot:
 
     def notice(self) -> tuple[str, Tone] | None:
         if self.last_error:
-            return f"The last refresh failed and nothing changed: {self.last_error}", "warn"
+            return "The last update failed, so the snapshot kept still shows.", "warn"
         return None
 
     def counts(self) -> list[str]:

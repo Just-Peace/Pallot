@@ -259,27 +259,28 @@ def test_hard_refresh_fetches_a_list_never_fetched(make_app, upstream):
     assert upstream.count(FEED_HOST) == 1
 
 
-def test_a_refusal_pauses_it_and_the_ballot_goes_on(client, upstream):
+def test_a_refusal_pauses_it_and_the_ballot_goes_on(client, upstream, caplog):
     upstream.feed_status = 429
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot) and ballot["races"]
-    assert [w for w in ballot["warnings"] if w.startswith("Couldn't load Muslims United PAC's endorsements (")]
+    assert "Muslims United PAC's website isn't answering right now, so its endorsements aren't shown." in ballot["warnings"] and "mupac: HTTP 429" in caplog.text
     assert upstream.count(FEED_HOST) == 1
 
     again = get_ballot(client, "ut")
     assert upstream.count(FEED_HOST) == 1  # paused: not asked again
-    assert any("paused until" in w and "Muslims United PAC's website refused a request" in w for w in again["warnings"])
+    assert "Muslims United PAC's website isn't answering right now, so its endorsements aren't shown." in again["warnings"]
     notice = row(client)["notice"]
     assert notice.startswith("Paused until ") and notice.endswith(
         "after Muslims United PAC's website refused a request; the list already fetched still shows.")
     assert row(client)["notice_tone"] == "warn"
 
 
-def test_an_answer_it_cant_read_is_refused(client, upstream):
+def test_an_answer_it_cant_read_is_refused(client, upstream, caplog):
     upstream.feed_answers[MUPAC] = {"incumbents": [{"title": "renamed fields"}], "total": 1}
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot)
-    assert "Couldn't load Muslims United PAC's endorsements (a list with no candidate Pallot can read)." in ballot["warnings"]
+    assert "Muslims United PAC's website isn't answering right now, so its endorsements aren't shown." in ballot["warnings"]
+    assert "a list with no candidate Pallot can read" in caplog.text
     assert row(client)["counts"] == []
 
 
@@ -410,11 +411,12 @@ def test_emgage_refresh_asks_for_a_new_token(client, make_app, upstream):
     assert (upstream.count(EMGAGE_PAGE), upstream.count(EMGAGE_API), upstream.feed_tokens) == (2, 2, [FEED_TOKEN] * 2)
 
 
-def test_emgage_page_without_a_token(client, upstream):
+def test_emgage_page_without_a_token(client, upstream, caplog):
     upstream.feed_pages[EMGAGE] = "<html><head><title>Maintenance</title></head></html>"
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot, EMGAGE)
-    assert "Couldn't load Emgage PAC's endorsements (its page has no RequestVerificationToken to send)." in ballot["warnings"]
+    assert "Emgage PAC's website isn't answering right now, so its endorsements aren't shown." in ballot["warnings"]
+    assert "its page has no RequestVerificationToken to send" in caplog.text
     assert upstream.count(EMGAGE_API) == 0
 
 
@@ -426,11 +428,11 @@ def test_emgage_a_refusal_on_either_step_pauses_it(client, upstream, step):
         upstream.feed_status = 429
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot, EMGAGE)
-    assert [w for w in ballot["warnings"] if w.startswith("Couldn't load Emgage PAC's endorsements (HTTP 4")]
+    assert "Emgage PAC's website isn't answering right now, so its endorsements aren't shown." in ballot["warnings"]
     asked = upstream.count("candidates.emgagepac.org")
     assert asked == (1 if step == "page" else 2)
 
     again = get_ballot(client, "ut")
     assert upstream.count("candidates.emgagepac.org") == asked  # paused: neither step is asked again
-    assert any("paused until" in w and "Emgage PAC's website refused a request" in w for w in again["warnings"])
+    assert "Emgage PAC's website isn't answering right now, so its endorsements aren't shown." in again["warnings"]
     assert row(client, EMGAGE)["notice"].startswith("Paused until ")

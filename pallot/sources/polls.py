@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import logging
 import re
 import statistics
 from dataclasses import dataclass
@@ -26,6 +27,8 @@ from ..matching import NameIndex, last_name
 from ..models import Breakdown, Candidate, Race, Share, SourceCard
 from ..text import display_date, display_time, web_url
 from . import CardSet
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "polls"
 LABEL = "Polls"
@@ -285,7 +288,8 @@ async def cards(polls: Polls, races: list[Race], day: dt.date | None) -> CardSet
     if failures and not lists:
         raise failures[0]
     if failures:
-        out.warnings.append(f"Some polls couldn't be loaded from FiftyPlusOne ({failures[0]}).")
+        log.warning("polls: %s", failures[0])
+        out.warnings.append("FiftyPlusOne isn't answering right now, so some races' polls aren't shown.")
 
     for race in races:
         kind = wanted.get(race.key)

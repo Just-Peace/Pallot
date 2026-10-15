@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import logging
 from dataclasses import dataclass
 from typing import Any, Callable, Mapping
 
@@ -30,6 +31,8 @@ from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Shar
 from ..text import display_date, display_office, display_org, display_person, display_time, money, money_short
 from . import CardSet, compare
 from .highlights import highlights
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "fec"
 LABEL = "FEC"
@@ -47,10 +50,6 @@ KEY_LIMIT = (55, 60.0)
 REFRESH_LIMIT = (1, 2.0)
 HOUSE_DISCLOSURES = "https://disclosures-clerk.house.gov/FinancialDisclosure"
 SENATE_DISCLOSURES = "https://efdsearch.senate.gov/search/"
-KEY_NOTE = (
-    "Federal races show FEC totals only. For where each candidate's money comes from, set PALLOT_FEC_API_KEY "
-    f"to a [free key from the OpenFEC developers page]({KEY_SIGNUP}) and restart Pallot."
-)
 
 _PARTIES = (("DEMOCRAT", "D"), ("REPUBLICAN", "R"), ("LIBERTARIAN", "L"), ("GREEN", "G"), ("INDEPENDENT", "I"))
 _SIZES = {0: "$200 and under", 200: "$200.01–$499.99", 500: "$500–$999.99", 1000: "$1,000–$1,999.99", 2000: "$2,000 and over"}
@@ -132,13 +131,14 @@ class Fec:
         self.today = today
         self._gate = asyncio.Semaphore(4)
         cache.share_keys(SOURCE, "X-Api-Key", tuple(api_keys.values()), {429: ttl.fec_backoff, 403: ttl.fec_refused_backoff},
-                         limit=KEY_LIMIT, refresh_limit=REFRESH_LIMIT)
+                         limit=KEY_LIMIT, refresh_limit=REFRESH_LIMIT, names=self.key_names)
 
     def lifetime(self, day: dt.date | None) -> float:
         return self.ttl.past_election if day and day < self.today() else self.ttl.fec
 
     def key_trouble(self) -> str | None:
-        """Which keys rest and why, naming their variables; None while every key is open."""
+        """Which keys rest and why, naming their variables, for the server log and pallot-cache check (never a
+        page); None while every key is open."""
         rests = list(zip(self.key_names, self.cache.key_rests(SOURCE)))
         limited = [name for name, rest in rests if rest and rest.status == 429]
         refused = [name for name, rest in rests if rest and rest.status == 403]
@@ -570,7 +570,8 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
     if failures and not lists:
         raise failures[0]
     if failures:
-        out.warnings.append(f"Some federal races have no FEC data ({failures[0]}).")
+        log.warning("fec: %s", failures[0])
+        out.warnings.append("The FEC isn't answering right now, so some federal races have no campaign money.")
 
     matched: list[tuple[str, str, dict[str, Any], Match]] = []  # candidate key, seat, FEC row, match
     compared: list[tuple[Race, dict[str, dict[str, Any]]]] = []  # races with anyone found, and their rows
@@ -606,6 +607,4 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
         out.races[race.key] = race_card(race, found_rows, cycle, details)
     for key, seat, row, match in matched:
         out.candidates[key] = card(row, match, details.get(row["candidate_id"]), seat=seat, cycle=cycle)
-    if matched and not fec.keyed:
-        out.notes.append(KEY_NOTE)
     return out

@@ -18,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import json
+import logging
 import math
 import re
 import shutil
@@ -39,6 +40,8 @@ from ..models import Fact, Tone
 from ..text import display_size, display_time, iso_utc
 from . import RefreshFailed
 from .sboe import Ring, _inside, _offset, simplify
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "election_precincts"
 LABEL = "Election precincts"
@@ -630,7 +633,7 @@ class ElectionPrecincts:
             return "Downloading the precinct map…", "info"
         if self.last_error:
             kept = "the map kept still shows" if self.stored() else "lookups try again later"
-            return f"The last download of the precinct map failed ({self.last_error}); {kept}.", "warn"
+            return f"The last download of the precinct map failed; {kept}.", "warn"
         return None
 
     def counts(self) -> list[str]:
@@ -755,6 +758,7 @@ class ElectionPrecincts:
             known = isinstance(exc, (UpstreamError, OSError, ValueError, zipfile.BadZipFile))
             error = exc if known else ValueError(f"the map couldn't be unpacked ({type(exc).__name__}: {exc})")
             self.last_error = str(error).removeprefix(f"{SOURCE}: ")
+            log.warning("%s: the download of %s failed: %s", SOURCE, resource.url, self.last_error)
             refused = isinstance(exc, UpstreamError) and (exc.until or exc.status in REFUSALS)
             if not refused:  # a refusal pauses the whole source instead
                 wait = self.ttl.election_precincts if self.stored() else self.ttl.retry_after

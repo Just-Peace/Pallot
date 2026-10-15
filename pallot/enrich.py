@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Awaitable, Sequence
 
@@ -25,15 +26,18 @@ from .sources.sos import Election, Lookups
 if TYPE_CHECKING:
     from .ballot import Services
 
+log = logging.getLogger("uvicorn.error")
+
 CARD_ORDER = (
     fec.SOURCE, tec.SOURCE, sos.SOURCE, polls.SOURCE, wikidata.SOURCE, ballotpedia.SOURCE, trackaipac.SOURCE,
     voteforpeace.SOURCE, officeholders.SOURCE,
 )
 UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
-    fec.SOURCE: (fec.FecUnavailable, "Couldn't load FEC campaign finance ({})."),
-    polls.SOURCE: (polls.PollsUnavailable, "Couldn't load polls from FiftyPlusOne ({})."),
-    officeholders.SOURCE: (officeholders.OfficeholdersUnavailable, "Couldn't load who holds each seat ({})."),
-    wikidata.SOURCE: (wikidata.WikidataUnavailable, "Couldn't load Wikidata profiles ({})."),
+    fec.SOURCE: (fec.FecUnavailable, "The FEC isn't answering right now, so campaign money for federal races isn't shown."),
+    polls.SOURCE: (polls.PollsUnavailable, "FiftyPlusOne isn't answering right now, so polls aren't shown."),
+    officeholders.SOURCE: (officeholders.OfficeholdersUnavailable,
+                           "The lists of seat holders aren't answering right now, so who holds each seat isn't shown."),
+    wikidata.SOURCE: (wikidata.WikidataUnavailable, "Wikidata isn't answering right now, so its profiles aren't shown."),
 }
 
 
@@ -110,9 +114,11 @@ async def run(
             continue
         cards = answers[source]
         if source in UNAVAILABLE and isinstance(cards, UNAVAILABLE[source][0]):
-            outcome.warnings.append(UNAVAILABLE[source][1].format(cards))
+            log.warning("%s: %s", source, str(cards).removeprefix(f"{source}: "))
+            outcome.warnings.append(UNAVAILABLE[source][1])
             continue
         if isinstance(cards, FeedUnavailable):
+            log.warning("%s: %s", source, str(cards).removeprefix(f"{source}: "))
             outcome.warnings.append(cards.warning)
             continue
         if isinstance(cards, BaseException):

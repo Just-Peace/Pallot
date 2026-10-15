@@ -184,12 +184,12 @@ def test_polls_are_asked_once_a_day(client, upstream):
 def test_a_refusal_pauses_polls_and_the_ballot_still_loads(client, upstream):
     upstream.polls_status = 403
     ballot = get_ballot(client)
-    assert "Couldn't load polls from FiftyPlusOne (HTTP 403)." in ballot["warnings"]
+    assert "FiftyPlusOne isn't answering right now, so polls aren't shown." in ballot["warnings"]
     assert not [c for c in find_race(ballot, "U.S. Senator")["cards"] if c["source"] == "polls"]
     asked = upstream.count("fiftyplusone.news")
     again = get_ballot(client)
     assert upstream.count("fiftyplusone.news") == asked  # paused: not asked again
-    assert any("paused until" in w for w in again["warnings"])
+    assert again["warnings"] == ballot["warnings"]  # paused: the same sentence, without asking
     status = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "polls")
     assert status["notice"].startswith("Paused until") and status["notice_tone"] == "warn"
 
