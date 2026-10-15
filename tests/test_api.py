@@ -8,9 +8,11 @@ import time
 
 import httpx
 import pytest
+import uvicorn
 from fastapi.testclient import TestClient
 
 from pallot import enrich
+from pallot.__main__ import main
 from pallot.api import STATIC_DIR, host_allowed, stamped_page, static_stamp
 from pallot.config import DAY
 from pallot.http_cache import HttpCache, RequestSpec
@@ -160,7 +162,56 @@ def test_other_websites_cant_ask_for_a_ballot(client):
         assert response.status_code == 403 and "another website" in response.json()["detail"], headers
     own_page = {"Sec-Fetch-Site": "same-origin", "Origin": "http://testserver"}
     assert client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers=own_page).status_code == 200
-    assert client.get("/api/sources", headers={"Sec-Fetch-Site": "cross-site"}).status_code == 200  # CORS hides the answer
+
+
+def test_only_pallots_own_pages_can_use_the_api(client):
+    refused = "Refused: Pallot's API only answers Pallot's own pages."
+    for site in ("cross-site", "same-site", "none"):
+        for path in ("/api/sources", "/api/suggest?q=", "/api/district-outlines?cd=25", "/api/tiles/12/940/1686.png"):
+            response = client.get(path, headers={"Sec-Fetch-Site": site})
+            assert response.status_code == 403 and response.json()["detail"] == refused, (path, site)
+    del client.headers[HEADER]  # a link, a form, an <img>, or a script that doesn't send what api.js does
+    for path in ("/api/sources", "/api/config", "/api/endorsements", "/api/elections"):
+        assert client.get(path).status_code == 403, path
+    assert client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}).status_code == 403
+    assert client.get("/api/sources", headers={HEADER: "{}"}).status_code == 200
+    del client.headers["Sec-Fetch-Site"]  # the Docker image over plain HTTP, where browsers send no Sec-Fetch-Site
+    assert client.get("/api/sources", headers={HEADER: "{}"}).status_code == 200
+    assert client.get("/api/sources").status_code == 403
+
+
+def test_the_maps_tiles_and_the_calendar_file_pass_without_the_pages_header(client):
+    del client.headers[HEADER]
+    assert client.get("/api/tiles/12/940/1686.png").status_code == 200  # Leaflet's <img>, same origin
+    del client.headers["Sec-Fetch-Site"]  # plain HTTP: the referrer decides
+    assert client.get("/api/tiles/12/940/1686.png", headers={"Referer": "http://testserver/"}).status_code == 200
+    assert client.get("/api/tiles/12/940/1686.png", headers={"Referer": "https://evil.example/"}).status_code == 403
+    assert client.get("/api/tiles/12/940/1686.png").status_code == 403
+    for headers in ({}, {"Sec-Fetch-Site": "none"}, {"Sec-Fetch-Site": "same-origin"}):  # a bookmark, an email, the page
+        assert client.get("/api/key-dates.ics?date=2026-11-03", headers=headers).status_code != 403, headers
+    assert client.get("/api/key-dates.ics?date=2026-11-03", headers={"Sec-Fetch-Site": "cross-site"}).status_code == 403
+
+
+def test_no_developer_pages_or_server_name(client, monkeypatch):
+    for path in ("/docs", "/redoc", "/openapi.json", "/docs/oauth2-redirect"):
+        assert client.get(path).status_code == 404, path
+    started: list[dict] = []
+    monkeypatch.setattr(uvicorn, "run", lambda *args, **kwargs: started.append(kwargs))
+    main([])  # how `uv run pallot` and the Docker image start it
+    assert started[0]["server_header"] is False
+
+
+def test_every_answer_carries_the_security_headers(client):
+    for path in ("/", "/settings.html", "/css/app.css", client.app.state.static_prefix + "js/api.js", "/api/config",
+                 "/api/nowhere", "/nowhere.html"):
+        headers = client.get(path).headers
+        assert headers["content-security-policy"].startswith("default-src 'self'; script-src 'self'"), path
+        assert "frame-ancestors 'none'" in headers["content-security-policy"], path
+        assert headers["x-content-type-options"] == "nosniff", path
+        assert headers["referrer-policy"] == "strict-origin-when-cross-origin", path
+        assert headers["x-frame-options"] == "DENY", path
+    refused = client.get("/api/config", headers={"Sec-Fetch-Site": "cross-site"})
+    assert refused.status_code == 403 and refused.headers["x-frame-options"] == "DENY"
 
 
 def test_only_localhost_ip_addresses_and_allowed_names_are_answered(client):

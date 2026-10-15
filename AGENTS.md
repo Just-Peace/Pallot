@@ -138,7 +138,9 @@ How to write them:
   - The Texas Legislative Council's precinct map (about 45 MB) is downloaded only when its portal's index lists a newer one, one download at a time, never in a loop. A map that fails isn't started again by a lookup until the index lists a changed one, or for a week (15 minutes while none is kept). Tests make the map up (`conftest.py`); only the live test downloads the real one.
 - **Match across sources by name, with seat and party as corroboration** (`pallot/matching.py`). Label every match exact or likely, and leave an ambiguous one unmatched rather than guessing.
 - **Picks, notes and write-ins stay in the browser** (`localStorage`). Never send them to the server. Anything new sent to a third party goes in `privacy.html`.
-- **Pallot has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names and requests other sites start.
+- **Pallot has no login.** Keep `uv run pallot` bound to `127.0.0.1`; only the Docker image binds `0.0.0.0`. Keep the middleware in `api.py` that refuses unknown `Host` names, requests other sites start, and `/api/*` calls that aren't from Pallot's own pages, and the one that adds the security headers.
+  - Every page call goes through `api.js`, which always sends `X-Pallot-Sources`. Only the street map's tiles and the calendar file are asked without it.
+  - The pages' Content-Security-Policy allows no inline script or style: give an element a `style` through `h()`, which sets it through the CSSOM. A new image host goes in its `img-src`.
 - **Don't reinstall** `trackaipac_cache` **from its own repo.** It's a copy of the maintainer's library, and edits here aren't synced back.
 - **Bundled snapshots** (`trackaipac_cache/data/`, `voteforpeace_cache/data/`, `tec_cache/data/`, `bundles/data/`) are updated with their own commands (`uv run trackaipac-cache refresh`, `uv run voteforpeace-cache refresh`, `uv run tec-cache refresh`, `uv run pallot-bundle refresh`). Never edit them by hand.
 

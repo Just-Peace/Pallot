@@ -239,6 +239,7 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 - `compose.yaml` mounts `data/` (or the folder `PALLOT_DATA_DIR` names) at `/data`, so Docker and `uv run pallot` share the cache, `sources.toml`, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.
 - It's published on every network interface. To keep it to this machine, change the `ports` line in `compose.yaml` to `"127.0.0.1:8000:8000"`. `PALLOT_PORT` in `.env` changes the port.
 - To open it by a name rather than an address (`http://nas.local:8000`, or through a reverse proxy), add the name to `PALLOT_ALLOWED_HOSTS` in `.env`. A reverse proxy must pass the original `Host` header on.
+- Pallot's API answers only Pallot's own pages in a browser. Another website, or a script such as `curl`, gets an error.
 - The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `PALLOT_UID` and `PALLOT_GID` in `.env`.
 - `.env` is passed in when the container starts, never built into the image.
 

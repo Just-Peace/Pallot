@@ -46,6 +46,17 @@ from .version import short_commit
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+SECURITY_HEADERS = {
+    "Content-Security-Policy": "; ".join((
+        "default-src 'self'", "script-src 'self'", "style-src 'self'",
+        "img-src 'self' data: https://commons.wikimedia.org https://upload.wikimedia.org"
+        " https://ballotpedia-api4.s3.amazonaws.com https://s3.amazonaws.com/ballotpedia-api4/",
+        "connect-src 'self'", "frame-ancestors 'none'", "base-uri 'none'", "form-action 'self'", "object-src 'none'",
+    )),
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-Frame-Options": "DENY",
+}
 NDJSON = "application/x-ndjson"
 IMMUTABLE = "public, max-age=31536000, immutable"
 VERSION_JS = os.path.join("js", "version.js")
@@ -89,6 +100,24 @@ def from_another_site(request: Request) -> bool:
         return True
     origin = request.headers.get("origin")
     return origin is not None and urlsplit(origin).netloc.lower() != request.headers.get("host", "").lower()
+
+
+def from_own_page(request: Request) -> bool:
+    """A call to /api/* made by Pallot's own pages. Browsers send ``Sec-Fetch-Site`` only over HTTPS
+    and to localhost, so when it's missing (the Docker image reached over plain HTTP) the rest is the
+    test. JSON calls carry the header api.js always sends, which no link, form or ``<img>`` can add and
+    a cross-site fetch() can't without a CORS preflight Pallot never grants. The street map's tiles are
+    ``<img>``s, so they need the same origin, or this site as the referrer. The calendar file is a
+    link, also opened from outside (a bookmark, an email): only another site's page is refused."""
+    site, path = request.headers.get("sec-fetch-site"), request.url.path
+    if path == "/api/key-dates.ics":
+        return site in (None, "same-origin", "none")
+    if path.startswith("/api/tiles/"):
+        if site is not None:
+            return site == "same-origin"
+        referrer = request.headers.get("referer")
+        return referrer is not None and urlsplit(referrer).netloc.lower() == request.headers.get("host", "").lower()
+    return site in (None, "same-origin") and HEADER in request.headers
 
 
 async def warm_up(svc: Services) -> None:
@@ -280,7 +309,7 @@ def create_app(
                     with contextlib.suppress(asyncio.CancelledError):
                         await task
 
-    app = FastAPI(title="Pallot", version=__version__, lifespan=lifespan)
+    app = FastAPI(title="Pallot", version=__version__, lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)
 
     def services(request: Request) -> Services:
@@ -296,7 +325,7 @@ def create_app(
 
     @app.middleware("http")
     async def own_pages_only(request: Request, call_next: Callable[[Request], Any]) -> Response:
-        """Pallot has no login, so only its own pages may ask for a ballot from the voter's browser."""
+        """Pallot has no login, so only its own pages may ask for a ballot from the voter's browser, or use its API."""
         host = request.headers.get("host", "")
         if not host_allowed(host, config.allowed_hosts):
             return JSONResponse(
@@ -306,7 +335,17 @@ def create_app(
             )
         if request.method not in SAFE_METHODS and from_another_site(request):
             return JSONResponse({"detail": "Refused: this request came from another website."}, status_code=403)
+        if request.url.path.startswith("/api/") and not from_own_page(request):
+            return JSONResponse({"detail": "Refused: Pallot's API only answers Pallot's own pages."}, status_code=403)
         return await call_next(request)
+
+    @app.middleware("http")
+    async def security_headers(request: Request, call_next: Callable[[Request], Any]) -> Response:
+        """On every answer: no other site may frame Pallot, load what isn't Pallot's or the candidates' photos,
+        or read a file as another type; links out send only Pallot's origin."""
+        response = await call_next(request)
+        response.headers.update(SECURITY_HEADERS)
+        return response
 
     @app.get("/api/config", response_model=EntryConfig)
     def entry_config() -> EntryConfig:
