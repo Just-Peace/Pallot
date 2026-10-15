@@ -16,6 +16,8 @@ import { COMMIT, VERSION } from "./version.js";
 
 // Phones and narrow windows: app.css's breakpoint, where the pane becomes the top bar.
 export const narrow = matchMedia("(max-width: 960px)");
+// Phones, upright or held sideways: app.css's breakpoint where the footer stops being pinned.
+const phone = matchMedia("(max-width: 640px), (max-width: 960px) and (max-height: 500px)");
 
 const BALLOT = { href: "./", icon: "ballot", label: "Your ballot" };
 const PAGES = [
@@ -111,6 +113,8 @@ function renderFooter(app) {
   trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
 }
 
+// Back to top, once you've scrolled a screen. On a phone, where it would sit over a button at the
+// bottom right (Pick by rule, a candidate's "…"), only while scrolling up: scrolling down hides it.
 function renderToTop() {
   const top = () => {
     window.scrollTo({ top: 0 }); // smooth, unless reduced motion (the html's scroll-behavior)
@@ -119,7 +123,15 @@ function renderToTop() {
   const button = h("button", { type: "button", class: "to-top", "aria-label": "Back to top", title: "Back to top", on: { click: top } },
     icon("arrow-up"));
   document.body.append(button);
-  const sync = () => button.classList.toggle("shown", scrollY > innerHeight);
+  let lastY = scrollY;
+  let up = false;
+  const sync = () => {
+    if (Math.abs(scrollY - lastY) > 4) {
+      up = scrollY < lastY;
+      lastY = scrollY;
+    }
+    button.classList.toggle("shown", scrollY > innerHeight && (up || !phone.matches || button.matches(":focus-visible")));
+  };
   addEventListener("scroll", onFrame(sync), { passive: true });
   sync();
 }
