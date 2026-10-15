@@ -15,7 +15,7 @@ import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
-let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, openRules, markEndorsers }
+let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, markEndorsers }
 const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
 const fills = new Map(); // race key -> builds what its cards make again, in place
 const parts = []; // every race head's and candidate row's parts (part()) by name, for refillPart()
@@ -65,10 +65,6 @@ export function redrawCards() {
 // ``page.ballot``; the picks, notes and folding stay as they are.
 export function refillCards() {
   for (const fill of fills.values()) fill();
-  for (const button of document.querySelectorAll("#result .rule-btn")) {
-    button.disabled = page.loadingCards;
-    button.title = page.loadingCards ? STILL_LOADING : "Pick by rule";
-  }
   page.markEndorsers();
 }
 
@@ -78,8 +74,8 @@ export function refillPart(name) {
   for (const named of parts) named[name]?.refill();
 }
 
-// The rows whose ban list matches changed (Ban, Unban, another tab), and only those: an Unban
-// that takes off a pattern can unban others too. Help me pick's marks avoid the banned, so they follow.
+// The rows whose Avoid list matches changed (Avoid, another tab), and only those: taking off a
+// pattern can free others too. Help me pick's marks skip the avoided, so they follow.
 export function refillBans() {
   let changed = false;
   for (const refill of banFills) changed = refill() || changed;
@@ -100,7 +96,7 @@ export function cardFor(key) {
 // A card whose heading is a button that shows or hides its body. The heading stays under the
 // strip while its card scrolls by. Collapsed, it's one line: the race on the left, the pick
 // ("✓ James Talarico") on the right; the pick shows expanded too, once there is one. ✕ Clear,
-// next to it, takes the pick back, with Undo. ``tools``: more buttons after it (a race's funnel).
+// next to it, takes the pick back, with Undo. ``tools``: more buttons after it (Compare).
 function collapsibleCard(key, { title, meta, body, tools = null }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
@@ -178,15 +174,8 @@ function raceCard(race) {
     : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
-  // Pick by rule for this race, when there's a choice to make (once the cards it decides by are in);
-  // its words show wider than a phone.
-  const ruleButton = race.candidates.length > 1
-    ? h("button", { type: "button", class: "icon-btn rule-btn with-icon", title: page.loadingCards ? STILL_LOADING : "Pick by rule",
-      "aria-label": `Pick by rule in ${race.name}`, disabled: page.loadingCards,
-      on: { click: () => page.openRules({ raceKey: race.key }) } }, icon("filter"), h("span", { class: "btn-word" }, "Pick by rule"))
-    : null;
   const card = collapsibleCard(race.key, {
-    title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: [headCompare.nodes, ruleButton],
+    title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: [headCompare.nodes],
   });
   parts.push({ headCompare });
   for (const candRow of candRows) {
@@ -287,9 +276,9 @@ export function searchLink(race, candidate, className, label) {
   });
 }
 
-// Ban adds the candidate's name to the ban list (ban-list.js) as plain text; Unban takes off every
-// entry that matches them, a pattern typed in Settings included. Either offers Undo, then refills
-// the ballot's rows and runs ``after`` (Details' head).
+// Avoid adds the candidate's name to the voter's own Avoid list (ban-list.js) as plain text; pressed
+// again (Avoiding), it takes off every entry that matches them, a pattern typed in Settings included.
+// Either offers Undo, then refills the ballot's rows and runs ``after`` (Details' head).
 export function toggleBan(candidate, after = null) {
   const changed = () => {
     refillBans();
@@ -297,9 +286,9 @@ export function toggleBan(candidate, after = null) {
   };
   if (!isBanned(candidate)) {
     if (banName(candidate.name)) {
-      showToast(`${candidate.name} is on your ban list.`, { label: "Undo", run: () => { unbanName(candidate.name); changed(); } });
+      showToast(`${candidate.name} is on your Avoid list.`, { label: "Undo", run: () => { unbanName(candidate.name); changed(); } });
     } else {
-      showToast("This browser didn't let Pallot save your ban list.");
+      showToast("This browser didn't let Pallot save your Avoid list.");
     }
     changed();
     return;
@@ -307,21 +296,29 @@ export function toggleBan(candidate, after = null) {
   const removed = unbanName(candidate.name);
   const patterns = removed.filter((entry) => entry.text.toLowerCase() !== candidate.name.toLowerCase());
   showToast(patterns.length
-    ? `Removed ${patterns.map((entry) => `“${entry.text}”`).join(", ")} from your ban list, which may unban others too.`
-    : `${candidate.name} is off your ban list.`,
+    ? `Removed ${patterns.map((entry) => `“${entry.text}”`).join(", ")} from your Avoid list, which may take others off too.`
+    : `${candidate.name} is off your Avoid list.`,
   { label: "Undo", run: () => { restoreBans(removed); changed(); } });
   changed();
 }
 
-// The row's Ban (Unban once banned), beside Note and Search.
+// The words of Avoid, on a row or in Details: Avoid, or Avoiding once they're on the list, whose
+// press takes them off.
+export function avoidWords(candidate, on) {
+  return on
+    ? { word: "Avoiding", label: `Avoiding ${candidate.name}: take them off your Avoid list` }
+    : { word: "Avoid", label: `Avoid ${candidate.name}: add them to your Avoid list` };
+}
+
+// The row's Avoid (Avoiding once on the list), beside Note and Search.
 function banButton(candidate) {
   const on = isBanned(candidate);
-  const name = on ? `Take ${candidate.name} off your ban list` : `Add ${candidate.name} to your ban list`;
-  return h("button", { type: "button", class: ["icon-btn ban-btn with-icon", on && "is-banned"], title: name, "aria-label": name,
+  const { word, label } = avoidWords(candidate, on);
+  return h("button", { type: "button", class: ["icon-btn ban-btn with-icon", on && "is-banned"], title: label, "aria-label": label,
     on: { click: () => {
       toggleBan(candidate);
       $(`#result .cand[data-cand="${CSS.escape(candidate.key)}"] .ban-btn`)?.focus(); // the refill drew a new one
-    } } }, icon("ban"), on ? "Unban" : "Ban");
+    } } }, icon("ban"), word);
 }
 
 // A candidate's row, and ``sync``, which puts its saved note in the note box.
@@ -392,7 +389,7 @@ function candidateRow(race, candidate) {
     Object.values(named).forEach((p) => p.refill());
     showBans();
   };
-  // The Banned pill, Ban button and dimming, once the entries that match changed. Whether they did.
+  // The Avoiding pill, Avoid button and dimming, once the entries that match changed. Whether they did.
   const refillBans = () => {
     if (banState(candidate) === bans) return false;
     pills.refill();
@@ -400,10 +397,10 @@ function candidateRow(race, candidate) {
     showBans();
     return true;
   };
-  // On a phone, outside Detailed, Note, Ban and Search wait behind "…", which opens them in place.
+  // On a phone, outside Detailed, Note, Avoid and Search wait behind "…", which opens them in place.
   const moreButton = h("button", {
     type: "button", class: "icon-btn row-more", "aria-expanded": "false", "aria-controls": `actions-${id}`,
-    title: "Note, ban and search", "aria-label": `More for ${candidate.name}: note, ban and search`,
+    title: "Note, avoid and search", "aria-label": `More for ${candidate.name}: note, avoid and search`,
     on: { click: () => moreButton.setAttribute("aria-expanded", String(row.classList.toggle("actions-open"))) },
   }, "…");
 
@@ -430,7 +427,7 @@ function candidateRow(race, candidate) {
   return { candidate, row, sync, fill, parts: named, refillBans };
 }
 
-// The texts of the ban list entries that match ``candidate``, joined: empty when they aren't banned.
+// The texts of the Avoid list entries that match ``candidate``, joined: empty when they aren't on it.
 const banState = (candidate) => banMatches(candidate.name).map((entry) => entry.text).join("\n");
 
 // What ``build()`` makes (a node, a list of them or nothing), behind a marker so ``refill()`` can

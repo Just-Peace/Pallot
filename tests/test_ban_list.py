@@ -1,5 +1,6 @@
-"""The ban list (ban-list.js), kept in the voter's browser: what its entries match, and banning and
-unbanning a candidate from Details. Run in Node, which loads the module as the browser does, with
+"""The voter's own Avoid list (ban-list.js, the ban list in the code), kept in the voter's browser:
+what its entries match, adding and taking off a candidate from Details, and Help me pick never
+picking anyone on it. Run in Node, which loads the module as the browser does, with
 a stand-in for localStorage."""
 
 from __future__ import annotations
@@ -110,8 +111,8 @@ return {{
 }};
 """) == {
         "default": True, "has": True,
-        "after": ["b"], "takenBack": [{"key": "a", "reasons": ["on your ban list"]}], "offOutcome": "many",
-        "words": "Don't pick anyone on your ban list, and take back their picks.",
+        "after": ["b"], "takenBack": [{"key": "a", "reasons": ["on your Avoid list"]}], "offOutcome": "many",
+        "words": "Don't pick anyone on your Avoid list, and take back their picks.",
     }
 
 
@@ -181,3 +182,31 @@ return {{
         "takenBack": [["r1", []]],
         "party": [[], [], []],
     }
+
+def test_trust_never_picks_anyone_on_the_avoid_list_and_marks_them_with_its_own_chip():
+    assert _run(f"""
+const r = await import("{RULES}");
+m.setBanList([{{ text: "smith" }}]);
+const race = {{ key: "r1", seats: 1, candidates: [
+  {{ key: "a", name: "Ann Smith", party: "D", cards: [{{ source: "cair", flags: ["endorsement"] }}] }},
+  {{ key: "b", name: "Bob Jones", party: "R", cards: [] }},
+] }};
+const picks = {{ picked: () => [], auto: () => [] }};
+const bar = {{ endorsers: ["cair"], avoid: [] }};
+const plan = r.endorserPlan([race], bar, picks, "cair");
+const marks = r.barMarks(race, bar, new Map([["cair", "CAIR"]]));
+return {{
+  rows: plan.rows.length, own: r.barOptions([race]).own,
+  matches: [...marks.matches], avoid: [...marks.avoid.keys()], by: Object.fromEntries(marks.by),
+}};
+""") == {"rows": 0, "own": 1, "matches": [], "avoid": [], "by": {"a": ["CAIR"]}}
+
+
+def test_more_conditions_offers_each_race_with_a_choice_on_its_own():
+    assert _run(f"""
+const r = await import("{RULES}");
+const one = {{ key: "r1", name: "Judge", candidates: [{{ key: "a" }}] }};
+const two = {{ key: "r2", name: "Sheriff", candidates: [{{ key: "b" }}, {{ key: "c" }}] }};
+const ballot = {{ races: [], maybe: [{{ id: "jp", title: "JP", races: [one, two] }}] }};
+return r.scopes(ballot).map((s) => [s.id, s.label, s.single || false]);
+""") == [["all", "Every race", False], ["maybe-jp", "JP", False], ["race:r2", "Sheriff", True]]

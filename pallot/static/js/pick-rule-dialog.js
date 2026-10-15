@@ -1,8 +1,9 @@
-// The Pick by rule dialog: the voter sets a rule (pick-rules.js), sees in words and race by race
-// what it would change, then applies it (with Undo, and a banner above the races), filling in only
-// the races without a pick or replacing the voter's picks too. Its endorser chips and its TrackAIPAC
-// and Vote for Peace rows are Help me pick's choices, saved with the rule. Opened from Help me pick's
-// More rules… for every race, or from a race's funnel for that race. ballot.js hands over ``page``.
+// The More conditions dialog: the voter sets conditions (the rule, pick-rules.js), sees in words and
+// race by race what they would change, then applies them (with Undo, and a banner above the races),
+// filling in only the races without a pick or replacing the voter's picks too. Its endorser chips and
+// its TrackAIPAC and Vote for Peace rows are Help me pick's Trust and Avoid choices, saved with the
+// rule. Opened from Help me pick's More conditions…; Apply to chooses every race, a section or one
+// race. ballot.js hands over ``page``.
 
 import { pickLabels } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
@@ -124,7 +125,7 @@ const ruleKey = (rule) => JSON.stringify({ ...rule, onlyMatches: null }); // Onl
 function showBanner(words, undo) {
   shownRule = ruleKey(loadRule());
   banner.replaceChildren(
-    h("p", {}, h("strong", {}, "Picked by your rule: "), [words.pick, words.skip].filter(Boolean).join(" ")),
+    h("p", {}, h("strong", {}, "Picked by your conditions: "), [words.pick, words.skip].filter(Boolean).join(" ")),
     h("p", { class: "rule-banner-actions" },
       h("button", { type: "button", class: "link-btn", on: { click: () => openRules() } }, "Edit"),
       h("button", { type: "button", class: "link-btn", on: { click: () => {
@@ -162,10 +163,9 @@ function offLine(sources) {
 
 const WIDE = matchMedia("(min-width: 800px)"); // the preview beside the rule, with room to list the races
 
-// ``raceKey``: the race whose funnel opened it, which is then where the rule applies.
-export function openRules({ raceKey = null } = {}) {
+export function openRules() {
   if (!page.ballot || page.loadingCards) return; // its conditions are about the cards
-  const options = scopes(page.ballot, raceKey);
+  const options = scopes(page.ballot);
   draw(loadRule(), options, options[0]);
   if (!dialog.open) dialog.showModal();
   $("#rule-scope").focus();
@@ -187,7 +187,7 @@ function draw(rule, options, startScope) {
   let fill = null;
   let replace = null;
 
-  const noWords = h("p", { class: "rule-words muted" }, "No rule yet: choose a party or a condition.");
+  const noWords = h("p", { class: "rule-words muted" }, "No conditions yet: choose a party or a condition.");
   const pickWords = h("p", { class: "rule-words tone-good" });
   const skipWords = h("p", { class: "rule-words tone-warn" });
   const tallyList = h("ul", { class: "rule-tallies", "aria-live": "polite" });
@@ -275,7 +275,7 @@ function draw(rule, options, startScope) {
     showBanner(describeRule(rule, parties, has), undo);
     page.renderRaces();
     const did = [picked ? `picked ${plural(picked, "race")}` : null, takenBack ? `took back ${plural(takenBack, "pick")}` : null];
-    showToast(`Your rule ${did.filter(Boolean).join(" and ")}.`, { label: "Undo", run: undo });
+    showToast(`Your conditions ${did.filter(Boolean).join(" and ")}.`, { label: "Undo", run: undo });
   }
 
   function reset() {
@@ -286,11 +286,13 @@ function draw(rule, options, startScope) {
   const openList = () => {
     raceDetails.open = scope.races.length === 1 || WIDE.matches;
   };
+  const scopeOption = (o) => h("option", { value: o.id, selected: o === scope }, o.label);
   const scopeSelect = h("select", { id: "rule-scope", on: { change: (event) => {
     scope = options.find((o) => o.id === event.target.value);
     openList();
     update();
-  } } }, options.map((o) => h("option", { value: o.id, selected: o === scope }, o.label)));
+  } } }, options.filter((o) => !o.single).map(scopeOption),
+  options.some((o) => o.single) ? h("optgroup", { label: "This race only" }, options.filter((o) => o.single).map(scopeOption)) : null);
 
   const moneyOn = Object.values(has.money).some(Boolean);
   const moneyAmount = amountBox(rule.money.amount, set((amount) => { rule.money.amount = amount; }), { label: "Amount in dollars" });
@@ -329,7 +331,7 @@ function draw(rule, options, startScope) {
           chip(label, rule.endorsedBy.includes(source), set((on) => {
             rule.endorsedBy = [...rule.endorsedBy.filter((id) => id !== source), ...(on ? [source] : [])];
           }), { count, title: `${label} endorses ${plural(count, "candidate")} on this ballot` }))),
-        h("p", { class: "fine" }, "Endorsed by any one you choose. These are Help me pick's endorsers too.",
+        h("p", { class: "fine" }, "Endorsed by any one you choose. These are who you Trust in Help me pick too.",
           has.endorsers.some((e) => e.source === "voteforpeace") ? " Vote for Peace counts the candidates it marks Ally." : ""),
       ]),
     group("Money",
@@ -341,7 +343,7 @@ function draw(rule, options, startScope) {
     group("Polls", has.polls && checkRow("They lead the polls", rule.leads, set((on) => { rule.leads = on; }))));
 
   const skipRows = [
-    has.banned && checkRow("On your ban list", rule.banned, set((on) => { rule.banned = on; })),
+    has.banned && checkRow("On your Avoid list", rule.banned, set((on) => { rule.banned = on; })),
     has.trackaipac && checkRow("On TrackAIPAC's watchlist", rule.watchlist, set((on) => { rule.watchlist = on; })),
     has.voteforpeace && checkRow("Vote for Peace opposes them", rule.peaceOpposed, set((on) => { rule.peaceOpposed = on; })),
     has.lobby && checkRow("Israel lobby money over", rule.lobby.on, set((on) => { rule.lobby.on = on; }),
@@ -360,9 +362,9 @@ function draw(rule, options, startScope) {
   const offNote = h("p", { class: "fine", hidden: !sourcesOff.length }, offLine(sourcesOff));
 
   const { head } = dialogHead(dialog, h("div", { class: "details-title" },
-    h("h2", { id: "rules-title" }, "Pick by rule"),
+    h("h2", { id: "rules-title" }, "More conditions"),
     h("p", { class: "muted" }, "Choose who to pick and who to skip. Nothing changes until you press a button below.")),
-  helpLink("pick-by-rule", "Pick by rule"));
+  helpLink("pick-by-rule", "More conditions"));
   dialog.replaceChildren(
     head,
     h("div", { class: "rule-bar" },
@@ -373,7 +375,7 @@ function draw(rule, options, startScope) {
         pickSet,
         skipSet,
         offNote,
-        h("details", { class: "rule-how" }, h("summary", {}, "How rules work"),
+        h("details", { class: "rule-how" }, h("summary", {}, "How conditions work"),
           h("ul", {},
             h("li", {}, "Pick: candidates who meet every condition you turn on, from any party and any endorser you choose."),
             h("li", {}, "Don't pick: anyone who meets any one, even your own picks."),
@@ -383,8 +385,8 @@ function draw(rule, options, startScope) {
             h("li", {}, "More matches than seats, or a tie: left for you."),
             h("li", {}, "Fill in the rest picks only in races with no pick; Replace my picks replaces picks too. Both take back the picks "
               + "your endorsers made, here or in Help me pick, that no endorser you choose still endorses.")))),
-      h("aside", { class: "rule-preview", "aria-label": "What your rule would do" },
-        h("h3", {}, "Your rule"),
+      h("aside", { class: "rule-preview", "aria-label": "What your conditions would do" },
+        h("h3", {}, "Your conditions"),
         noWords, pickWords, skipWords,
         h("h3", {}, "What Fill in the rest would do"),
         tallyList,

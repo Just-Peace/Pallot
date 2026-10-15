@@ -6,10 +6,10 @@ export const PICKS = "pallot.picks.v1";
 export const LAST_LOOKUP = "pallot.lastLookup.v1";
 export const ADDRESS_CARD = "pallot.addressCard.v1";
 export const SETTINGS_CHANGED = "pallot.settingsChanged.v1";
-export const PICK_RULE = "pallot.pickRule.v1"; // Pick by rule's rule and Help me pick's choices (pick-rules.js), for every election
+export const PICK_RULE = "pallot.pickRule.v1"; // More conditions' rule and Help me pick's Trust and Avoid choices (pick-rules.js), for every election
 export const ENDORSER_BAR = "pallot.endorserBar.v1"; // Help me pick's choices before they joined the rule: loadRule() moves them
 export const SOURCES = "pallot.sources.v1"; // the sources the voter turned on or off: id → true or false
-export const BAN_LIST = "pallot.banList.v1"; // the voter's ban list (ban-list.js)
+export const BAN_LIST = "pallot.banList.v1"; // the voter's own Avoid list (ban-list.js), under its old name so no list is lost
 export const UI = "pallot.ui.v1"; // the view settings (uiPref), several at once with setUiPrefs
 export const TIPS = "pallot.tips.v1"; // the ids of the first-run tips the voter has dismissed (help.js)
 

@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Pallot · Settings</title>
-  <meta name="description" content="Choose how Pallot looks, how much of the ballot shows, its web search engine and sources, keep your ban list, and clear what this browser keeps.">
+  <meta name="description" content="Choose how Pallot looks, how much of the ballot shows, its web search engine and sources, keep the people you avoid, and clear what this browser keeps.">
+
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
@@ -92,16 +93,16 @@
       </section>
 
       <section class="panel" aria-labelledby="ban-title">
-        <h2 id="ban-title">Ban list</h2>
-        <p class="panel-intro">Candidates you don't want to vote for are marked <strong>Banned</strong> on your ballot. Add someone with <strong>Ban</strong> on the ballot, or type a name here. Kept only in this browser. <a href="faq.html#ban-list">How it works</a></p>
+        <h2 id="ban-title">People you avoid</h2>
+        <p class="panel-intro">Candidates you don't want to vote for are marked <strong>Avoiding</strong> on your ballot, and Help me pick's Trust never picks them. Add someone with <strong>Avoid</strong> on the ballot, or type a name here. Kept only in this browser. <a href="faq.html#ban-list">How it works</a></p>
         <form id="ban-form" class="ban-form">
-          <label for="ban-entry" class="sr-only">Name to ban</label>
+          <label for="ban-entry" class="sr-only">Name to avoid</label>
           <input type="text" id="ban-entry" autocomplete="off" spellcheck="false" placeholder="A name, or part of one">
           <button class="btn small" type="submit">Add</button>
         </form>
         <p id="ban-status" class="status" role="status" aria-live="polite"></p>
-        <p id="ban-empty" class="fine">Your ban list is empty.</p>
-        <ul id="ban-entries" class="ban-entries" aria-label="Your ban list"></ul>
+        <p id="ban-empty" class="fine">You aren't avoiding anyone yet.</p>
+        <ul id="ban-entries" class="ban-entries" aria-label="People you avoid"></ul>
       </section>
 
       <section class="panel" aria-labelledby="sources-title">
@@ -132,14 +133,14 @@
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear my picks &amp; notes</h3>
-              <p>Removes your picks, notes, write-ins and pick rule. Keeps your address and your choices. Pallot asks first, and Undo puts them back for a few seconds.</p>
+              <p>Removes your picks, notes, write-ins and Help me pick choices. Keeps your address and your choices. Pallot asks first, and Undo puts them back for a few seconds.</p>
             </div>
             <button class="btn small danger" id="clear-my-picks" type="button">Clear picks &amp; notes</button>
           </li>
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear browser data</h3>
-              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources, view choices and ban list. Your sources go back to Pallot's defaults. Pallot asks first, and Undo puts it back for a few seconds.</p>
+              <p>Removes everything Pallot keeps in this browser: your picks and notes, address, appearance, search engine, sources, view choices and the people you avoid. Your sources go back to Pallot's defaults. Pallot asks first, and Undo puts it back for a few seconds.</p>
             </div>
             <button class="btn small danger" id="clear-browser-data" type="button">Clear browser data</button>
           </li>

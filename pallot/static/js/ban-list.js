@@ -1,8 +1,9 @@
-// The voter's ban list, kept only in this browser (BAN_LIST): entries of { text, plain }. A name
-// banned from Details is plain text; an entry typed in Settings is a regular expression (plain
-// text when it isn't a valid one). Either matches any part of a candidate's name, ignoring case,
-// and a candidate it matches gets a red Banned pill beside their name (labels.js). Nothing is
-// sent to the server.
+// The voter's own Avoid list ("People you avoid" in Settings; the ban list in the code and in
+// storage, whose key and shape stay so no list is lost), kept only in this browser (BAN_LIST):
+// entries of { text, plain }. A name added with Avoid on the ballot or in Details is plain text; an
+// entry typed in Settings is a regular expression (plain text when it isn't a valid one). Either
+// matches any part of a candidate's name, ignoring case, and a candidate it matches gets a red
+// Avoiding pill beside their name (labels.js); Help me pick's Trust never picks them. Nothing is sent to the server.
 
 import { BAN_LIST, writeJson } from "./storage.js";
 
