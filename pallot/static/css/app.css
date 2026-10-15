@@ -495,9 +495,15 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .entry-fields { display: grid; gap: 12px; min-width: 0; margin: 0; padding: 0; border: 0; }
 .field-row { display: flex; flex-wrap: wrap; gap: 12px; }
 .field-row > .field { flex: 1 1 180px; }
-.entry-fold > summary { width: max-content; max-width: 100%; color: var(--accent); font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-.entry-districts { min-width: 0; margin: 0; padding: 0; border: 0; }
-.entry-districts > legend { padding: 0; font-weight: 600; font-size: 0.9rem; }
+.req { color: var(--accent); }
+/* the voter card's county, wide, and precinct (at most 8 characters), narrow, on one row */
+.card-place { flex-wrap: nowrap; }
+.card-place > .card-county { flex: 1 1 0; }
+.card-place > .card-precinct { flex: 0 1 7.5rem; }
+.entry-districts { min-width: 0; }
+.entry-districts-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; }
+.entry-districts-title { margin: 0; font-weight: 600; font-size: 0.9rem; }
+.entry-districts-head .link-btn { padding: 0; font-weight: 600; }
 .entry-districts > .fine { margin-top: 2px; }
 .entry-districts .pair-grid { margin-top: 8px; }
 .vc-sketch { display: block; width: 100%; max-width: 320px; height: auto; margin: 10px 0 4px; font-family: inherit; }
@@ -1505,6 +1511,13 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .pair-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 10px 12px; line-height: 1.3; }
   .pair-grid > :not(.sep) { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; white-space: normal; }
   input.pair-box { width: 100%; height: 44px; margin: 0; }
+  /* the voter card's six district boxes: three to a row */
+  .entry-districts .pair-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; }
+  .entry-districts .pair-label { font-size: 0.82rem; }
+  /* Show my ballot stays at the foot of the screen while the form is on it */
+  .entry .button-row { position: sticky; bottom: 0; z-index: 2; margin: 0 -16px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--line); background: var(--panel); }
+  .entry :is(input, select) { scroll-margin-bottom: 84px; }
   /* the race cards: less padding, so each candidate's row has more room */
   .race-head { gap: 10px; padding: 10px 12px; }
   .race.collapsed .race-head { padding-top: 9px; padding-bottom: 9px; }
@@ -1622,7 +1635,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .box-toggle { align-items: center; }
   .jump-list a { align-items: center; }
   .suggestion { padding-block: 12px; }
-  .mail-voting > summary, .rule-details > summary, .rule-how > summary, .entry-fold > summary { padding-block: 10px; }
+  .mail-voting > summary, .rule-details > summary, .rule-how > summary { padding-block: 10px; }
+  .entry-districts-head .link-btn { margin-block: -12px; } /* a full-size target, without pushing the boxes down */
   .district-warn .link-btn { vertical-align: middle; }
   input.pair-box { font-size: 16px; min-width: calc(3ch + 24px); }
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }

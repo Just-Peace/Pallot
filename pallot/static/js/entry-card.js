@@ -79,6 +79,16 @@ function drawVoterCardBoxes() {
     pairBox(short, { id: `vc-${kind}`, name: kind, max: highest[kind] ? String(highest[kind]) : null })));
 }
 
+// "Where do I find these?", a small link by the districts' heading: shows or hides the card's sketch under them.
+function initWhere() {
+  const button = $("#vc-where");
+  const panel = $("#vc-where-panel");
+  button.addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    button.setAttribute("aria-expanded", String(!panel.hidden));
+  });
+}
+
 function initTabs() {
   const order = Object.keys(ENTRIES);
   for (const [name, { tab, panel }] of Object.entries(ENTRIES)) {
@@ -119,4 +129,5 @@ export async function loadEntryConfig({ startOn = () => null, typed = () => fals
 }
 
 drawVoterCardBoxes();
+initWhere();
 selectEntry("address");
