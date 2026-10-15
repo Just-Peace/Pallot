@@ -116,7 +116,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 - Once an answer is past its lifetime, the next lookup asks again. If that fails, the old copy is shown with a "data as of" note, and the request isn't retried for 15 minutes. An error a source sends as if it were an answer counts as a failure too, so it never replaces a good copy.
 - If a source refuses a request, Pallot stops asking it for an hour (2 minutes for an FEC key at its rate limit, while your other keys carry on). What it already has still shows.
 - The snapshots that come with Pallot (see [Bundled snapshots](#bundled-snapshots)) mean lookups never contact TrackAIPAC, Vote for Peace or the Texas Ethics Commission, and ask the other bundled sources only once the bundled copy is a few days old.
-- Address suggestions, street map tiles and addresses that weren't found are deleted once they've been expired for 30 days, and tiles and suggestions are kept under 512 MB and 64 MB. Everything else stays as the copy to show when a source is down.
+- Address suggestions, street map tiles and addresses that weren't found are deleted once they've been expired for 30 days. Tiles and suggestions are kept under 512 MB and 64 MB, and each address lookup's answers (the Census's, OpenStreetMap's, Google's and Ballotpedia's) under 128 MB, the oldest going first. Everything else stays as the copy to show when a source is down.
 - `pallot-cache` asks the FEC more slowly than a lookup does, leaving room for a running Pallot, and doesn't ask a paused source.
 
 ## Settings
@@ -157,7 +157,7 @@ docker compose exec pallot pallot-cache check      # the same, in the container
 
 - **check** changes nothing and asks no one: for each source, its saved responses, their size, how many are stale, when they were fetched, whether it's paused, how many answers came with Pallot, its maps or snapshot, and whether a map is missing or the portal lists a newer one.
 - **refresh** asks again only for the responses past their lifetime, downloads the precinct map when none is kept or when the portal lists a newer one (about 45 MB). The snapshots have no lifetime, so it leaves them.
-- **prune** deletes expired address suggestions and street map tiles, addresses that weren't found, and the oldest tiles and suggestions past their caps, then shrinks the file. Pallot does the same when it starts, and every 6 hours without shrinking the file. It never deletes another source's copies, which stay to show when a source is down.
+- **prune** deletes expired address suggestions and street map tiles, addresses that weren't found, and the oldest tiles, suggestions and address lookups past their caps, then shrinks the file. Pallot does the same when it starts, and every 6 hours without shrinking the file. It never deletes another source's copies, which stay to show when a source is down.
 - **hard-refresh** asks again for every saved response, re-downloads the SBOE map (so a host picks up a newer plan), checks for a newer precinct map, and refreshes TrackAIPAC, Vote for Peace and the Texas Ethics Commission (see [Bundled snapshots](#bundled-snapshots); TEC's may download about 1 GB).
 - **rebuild** deletes every saved response, pause and map, then fetches them all again, as hard-refresh does. The snapshots aren't deleted, only refreshed; `--reset-snapshots` puts them back as they came with Pallot first. `--delete-only` deletes and fetches nothing again: the next lookups fetch what they need, which is how to erase the addresses Pallot saved (`--only geocoding suggestions ballotpedia`). It asks first, unless you add `--yes`.
 - The street map's tiles and the address suggestions are never fetched in bulk: they're only fetched as someone looks at the map or types an address, as OpenStreetMap's tile policy asks.
@@ -223,13 +223,18 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 |---|---|
 | `PALLOT_DATA_DIR` | `data/` in the project (cache, SBOE and precinct maps, TrackAIPAC, Vote for Peace and TEC data, and your `sources.toml` if you add one; git-ignored) |
 | `PALLOT_FEC_API_KEY`, `PALLOT_FEC_API_KEY2` to `PALLOT_FEC_API_KEY5` | `DEMO_KEY`, which only allows race totals and runs out after a few requests. Get a free key from the [OpenFEC developers page](https://api.open.fec.gov/developers/). The extra keys are optional: Pallot uses all of them in turn, and skips one the FEC has rate limited or refused. They are only sent to the FEC, in a header, and Pallot never writes them anywhere (a resting key is noted by a short hash of it) |
-| `PALLOT_GOOGLE_API_KEY` | none, so Google is never asked. A [Google Geocoding API key](https://developers.google.com/maps/documentation/geocoding/get-api-key), to find addresses the Census and OpenStreetMap can't. It's only sent to Google, in a header, and Pallot never writes it anywhere. Google bills by the request, though Pallot asks only for an address both others missed, and keeps the answer for 30 days |
+| `PALLOT_GOOGLE_API_KEY` | none, so Google is never asked. A [Google Geocoding API key](https://developers.google.com/maps/documentation/geocoding/get-api-key), to find addresses the Census and OpenStreetMap can't. It's only sent to Google, in a header, and Pallot never writes it anywhere. Google bills by the request, though Pallot asks only for an address both others missed, keeps the answer for 30 days, and asks at most `PALLOT_GOOGLE_DAILY_MAX` times a day |
 | `PALLOT_USER_AGENT` | `Pallot/0.1 (personal ballot helper; +https://github.com/Just-Peace/Pallot)`. Nominatim and OpenStreetMap's tile server require one that names the app and how to reach whoever runs it; add your email if you like |
 | `PALLOT_HTTP_TIMEOUT` | `30` seconds |
 | `PALLOT_ALLOWED_HOSTS` | none: Pallot answers to `localhost` and IP addresses only. List any other names you open it by, comma-separated (for example `nas.local`, or a reverse proxy's domain), or `*` for any. Other names get an error, which protects Settings from DNS rebinding |
 | `PALLOT_TTL_*` | cache lifetimes, in seconds: `.env.example` lists each one with its default, including how long a source is left alone after refusing a request and how long the answers that came with Pallot are used (see [Caching](#caching) and [Bundled snapshots](#bundled-snapshots)). `PALLOT_TTL_TILES` can't go under 7 days, as OpenStreetMap asks |
 | `PALLOT_TILES_MAX_MB` | `512`: the most the street map's tiles take in the cache; past it, the oldest are deleted when Pallot prunes |
 | `PALLOT_SUGGEST_MAX_MB` | `64`: the same for the address suggestions |
+| `PALLOT_ADDRESSES_MAX_MB` | `128`: the same for each address lookup's answers: the Census's, OpenStreetMap's, Google's and Ballotpedia's, each up to this much |
+| `PALLOT_GOOGLE_DAILY_MAX` | `300`: the most Google is asked in a day (UTC), about 9,000 a month. Past it, Google is paused until midnight UTC, and Settings says so. `0` for no limit |
+| `PALLOT_LIMIT_BALLOT`, `PALLOT_LIMIT_SUGGEST`, `PALLOT_LIMIT_OUTLINES`, `PALLOT_LIMIT_TILES` | `30/hour`, `600/hour`, `60/hour`, `2000/hour`: how often one internet address may look up a ballot, get address suggestions, the district map's outlines, and street map tiles. A count over a period, such as `10/min` or `500/10min`; `off` for no limit. Past it, Pallot answers "Too many requests" with how long to wait. Pallot's own machine (`127.0.0.1`) is never limited (see [Running it publicly](#running-it-publicly)) |
+| `PALLOT_MAX_LOOKUPS` | `8`: how many ballots Pallot looks up at once, counting those still adding money, polls and endorsements after the voter left. Past it, a lookup is asked to try again in a few seconds |
+| `PALLOT_TRUSTED_PROXIES` | `127.0.0.1`: the reverse proxies whose `X-Forwarded-For` header says who the visitor is, comma-separated IP addresses or networks (`10.0.0.0/8`), or `*` for any. The limits count each visitor by that address (see [Running it publicly](#running-it-publicly)) |
 | `PALLOT_PRUNE_EVERY` | `21600` seconds (6 hours): how often a running Pallot prunes the street map's tiles and the address suggestions |
 | `PALLOT_PORT` | `8000`: the port `uv run pallot` listens on (`--port` wins), and in Docker the port published on the host |
 | `PALLOT_DEFAULT_ENTRY` | `address`: the entry card's tab on a first visit. `voter_card` starts on **My voter card** (County and Precinct number) instead; a voter's last lookup still picks its own tab |
@@ -242,6 +247,17 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 - Pallot's API answers only Pallot's own pages in a browser. Another website, or a script such as `curl`, gets an error.
 - The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `PALLOT_UID` and `PALLOT_GID` in `.env`.
 - `.env` is passed in when the container starts, never built into the image.
+
+### Running it publicly
+
+Pallot has no login, so anyone who can reach it can look up ballots, and each new address makes Pallot ask the sources, with your FEC and Google keys. These settings keep one visitor from running up your Google bill, using up your FEC keys, or getting a source to refuse everyone:
+
+- **The rate limits** (`PALLOT_LIMIT_BALLOT` and the rest) count each internet address. The defaults leave room for a household, and a script stops at a few dozen lookups an hour.
+- **Behind a reverse proxy**, every request comes from the proxy, so set `PALLOT_TRUSTED_PROXIES` to its address, or the limits count all your visitors as one. On a host that's only reached through its own proxy (Render, Fly.io), `*` is fine. Anywhere else, never use `*`: a visitor could then claim any address and dodge the limits.
+- A proxy on the same machine can stay at the default, `127.0.0.1`. Without one, a visitor on `127.0.0.1` is someone on the machine itself, and isn't limited.
+- **`PALLOT_GOOGLE_DAILY_MAX`** caps what Google can cost in a day, and **`PALLOT_MAX_LOOKUPS`** how many lookups run at once.
+- **`PALLOT_ALLOWED_HOSTS`** must list the name visitors open Pallot by.
+- To keep Ballotpedia's unofficial endpoints off for everyone, see [Which sources start on](#which-sources-start-on).
 
 ## Not built yet
 
