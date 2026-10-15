@@ -34,19 +34,19 @@ def precinct_map_dir(tmp_path_factory) -> Path:
     return tmp_path_factory.mktemp("election_precincts")
 
 
-def test_capitol_ballot_live(tmp_path):
+def test_capitol_ballot_live(tmp_path, logged_calls):
     with TestClient(create_app(Config(data_dir=tmp_path / "data", fec_api_key=FEC_KEY, allowed_hosts=("testserver",)))) as client:
         switch(client, "election_precincts", False)  # its own test downloads the map, once
         response = client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"})
         assert response.status_code == 200, response.text
         ballot = response.json()
-        again = client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"}).json()
+        client.post("/api/ballot", json={"address": "1100 Congress Ave, Austin, TX 78701"})
 
     d = ballot["districts"]
     assert (d["cd"], d["hd"], d["sboe"]) == (10, 49, 5)
     names = [r["name"] for r in ballot["races"]]
     assert "U.S. Senator" in names and "U.S. Representative District 10" in names
-    assert again["meta"]["external_calls"] == 0
+    assert logged_calls("district outlines") == 0
 
 
 @pytest.mark.skipif(FEC_KEY == DEMO_KEY, reason="needs PALLOT_FEC_API_KEY (DEMO_KEY runs out fast)")
@@ -133,17 +133,17 @@ def test_key_dates_live():
     assert any(d.early_start and d.early_end and d.mail_apply_by for d in found)
 
 
-def test_district_outlines_live(tmp_path):
+def test_district_outlines_live(tmp_path, logged_calls):
     """TIGERweb still names its layers as the geocoder does, and the Capitol's districts come back
     as rings around it; asked again, from the cache."""
     with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
         params = {"cd": 10, "sd": 14, "hd": 49, "sboe": 5}
         got = client.get("/api/district-outlines", params=params).json()
-        again = client.get("/api/district-outlines", params=params).json()
+        client.get("/api/district-outlines", params=params)
     assert [o["kind"] for o in got["outlines"]] == ["cd", "sd", "hd", "sboe"] and got["notes"] == []
     lat, lon = 30.27644, -97.73975  # the Capitol, as the Census places it
     assert all(sum(_inside(lon, lat, ring) for ring in o["rings"]) % 2 for o in got["outlines"])
-    assert again["meta"]["external_calls"] == 0
+    assert logged_calls() == 0
 
 
 def test_street_map_tile_live(tmp_path):

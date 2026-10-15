@@ -12,7 +12,7 @@ from pallot.matching import NameIndex, last_first, match_person
 from pallot.sources import fec
 from pallot.text import display_org, money, money_short
 
-from .conftest import FEC_KEY, find_race, get_ballot, last_use, load, switch
+from .conftest import FEC_KEY, find_race, get_ballot, load, switch
 
 
 def test_names_written_last_name_first():
@@ -104,7 +104,6 @@ def test_hourly_limit_pauses_the_fec_and_keeps_the_ballot(make_app, upstream):
         ballot = get_ballot(client)
         assert find_race(ballot, "U.S. Senator")["candidates"]
         assert any("FEC" in w for w in ballot["warnings"])
-        assert last_use(client, "fec")["status"] == "error"
         asked = upstream.count("open.fec.gov")
         upstream.fec_status = None
         again = get_ballot(client)  # paused: nothing cached, so no FEC cards, and no new request
@@ -217,4 +216,3 @@ def test_fec_off(client):
     switch(client, "fec", False)
     ballot = get_ballot(client)
     assert [card["source"] for card in find_race(ballot, "U.S. Senator")["cards"]] == ["polls"]
-    assert last_use(client, "fec")["status"] == "off"

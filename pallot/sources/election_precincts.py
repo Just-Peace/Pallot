@@ -34,7 +34,7 @@ from urllib.parse import urlsplit
 
 from ..config import Ttls
 from ..fsutil import write_text_atomic
-from ..http_cache import HttpCache, RequestSpec, UpstreamError, current_calls
+from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..models import Fact, Tone
 from ..text import display_size, display_time, iso_utc
 from . import RefreshFailed
@@ -425,10 +425,7 @@ class ElectionPrecincts:
         census block's internal point (lat, lon). Without a block point, the address's alone.
         Raises StillDownloading while the first map downloads, UpstreamError when the portal
         can't be asked and no map is kept, and OSError or ValueError when the map can't be read."""
-        stored = await self._ready()
-        stats = current_calls()
-        if stats:
-            stats.used(SOURCE, stored.downloaded_at)
+        await self._ready()
         return await asyncio.to_thread(self._locate, county, point, block)
 
     async def card(self, county: int, name: str) -> tuple[Found, list[tuple[float, float]]] | None:
@@ -437,9 +434,6 @@ class ElectionPrecincts:
         when it's too narrow (none when it's too small); None when the map has no such precinct.
         Raises as at()."""
         stored = await self._ready()
-        stats = current_calls()
-        if stats:
-            stats.used(SOURCE, stored.downloaded_at)
         wanted = display_name(name.strip().upper())
         code = next((c for c in sorted(await self.codes(county)) if display_name(c).upper() == wanted), None)
         if code is None:

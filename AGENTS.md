@@ -157,7 +157,7 @@ How to write them:
 - Add tests for new behaviour, mocking HTTP with `respx`.
   - Re-record fixtures with `uv run python scripts/record_fixtures.py --only <source>` (DEVELOPMENT.md's "Commands" lists them).
 - `uv run pytest -m live` only when you change how a source is called. It hits the real services, and with `DEMO_KEY` the FEC's rate limit is shared with the whole IP address. The maintainer can also start the Live tests workflow from the Actions tab.
-- For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the ballot's `meta.external_calls`, or the "Last lookup" line in Settings).
+- For a change to a source, look the same address up twice. The second lookup must make 0 external calls (the server's log line for it: `lookup: 0 external calls, …`; the map's is `district outlines: …`).
 - For a UI change, run `uv run pallot` and look at what changed:
   - the ballot, Details, Compare, Settings and the print preview;
   - at phone widths first, then desktop (see [UX reviews](#ux-reviews));

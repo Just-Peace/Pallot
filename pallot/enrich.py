@@ -39,11 +39,10 @@ UNAVAILABLE: dict[str, tuple[type[Exception], str]] = {
 
 @dataclass
 class Outcome:
-    """What enrichment adds besides the cards: lines for the ballot, and which sources failed."""
+    """What enrichment adds besides the cards: lines for the ballot."""
 
     warnings: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
-    errors: dict[str, str] = field(default_factory=dict)  # source id -> why it failed
 
 
 async def _candidate_cards(found: Awaitable[dict[str, SourceCard]]) -> CardSet:
@@ -111,11 +110,9 @@ async def run(
             continue
         cards = answers[source]
         if source in UNAVAILABLE and isinstance(cards, UNAVAILABLE[source][0]):
-            outcome.errors[source] = str(cards)
             outcome.warnings.append(UNAVAILABLE[source][1].format(cards))
             continue
         if isinstance(cards, FeedUnavailable):
-            outcome.errors[source] = str(cards)
             outcome.warnings.append(cards.warning)
             continue
         if isinstance(cards, BaseException):

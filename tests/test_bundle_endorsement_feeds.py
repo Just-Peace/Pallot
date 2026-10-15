@@ -10,7 +10,7 @@ from bundles import store
 from pallot.config import DAY
 
 from .bundling import build_all, came_with, entry, lifetimes
-from .conftest import FEED_TOKEN, get_ballot, last_use, switch
+from .conftest import FEED_TOKEN, get_ballot, switch
 
 FEEDS = ("mupac", "cair", "emgage")
 FEED_HOSTS = {"mupac": "muslimsunitedpac.com", "cair": "cairactionguide.org", "emgage": "candidates.emgagepac.org"}
@@ -29,7 +29,6 @@ def test_a_lookup_with_the_feeds_bundled_asks_their_sites_nothing(tmp_path, upst
         assert entry(source).cadence == "daily" and lifetimes(tmp_path, source) == {2 * DAY}
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client, "ut")
-        assert all(last_use(client, source)["calls"] == 0 for source in FEEDS)
         said = came_with(client, "emgage")
     assert all("Greg Casar" in feed_cards(ballot, source) for source in FEEDS)
     assert {source: upstream.count(host) for source, host in FEED_HOSTS.items()} == asked
@@ -53,7 +52,6 @@ def test_a_bundled_feed_switched_off_stays_off_the_ballot(tmp_path, upstream, ma
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         switch(client, "mupac", False)
         ballot = get_ballot(client, "ut")
-        assert last_use(client, "mupac")["status"] == "off"
     assert not feed_cards(ballot, "mupac") and "Greg Casar" in feed_cards(ballot, "cair")
     assert upstream.count(FEED_HOSTS["mupac"]) == asked
 

@@ -52,7 +52,7 @@ def test_an_unknown_source_is_refused(make_app, capsys):
     assert status == 2 and printed == "" and "Unknown source nope. The sources are: geocoding," in capsys.readouterr().err
 
 
-def test_soft_refresh_asks_again_only_what_is_stale(client, make_app, upstream, tmp_path):
+def test_soft_refresh_asks_again_only_what_is_stale(client, make_app, upstream, tmp_path, logged_calls):
     get_ballot(client)
     status, printed = make_app.cache_command("refresh")
     assert status == 0 and "Texas Secretary of State (Texas SOS): nothing past its lifetime." in printed
@@ -63,7 +63,8 @@ def test_soft_refresh_asks_again_only_what_is_stale(client, make_app, upstream, 
     assert status == 0 and printed == f"Texas Secretary of State (Texas SOS): Refreshed {expired} saved responses."
     assert upstream.count("goelect") == asked + expired
     assert client.app.state.svc.cache.stats("sos").expired == 0
-    assert get_ballot(client)["meta"]["external_calls"] == 0  # the running server reads the new copies
+    get_ballot(client)
+    assert logged_calls() == 0  # the running server reads the new copies
 
 
 def test_hard_refresh_asks_everything_again_and_refreshes_the_snapshots(client, make_app, upstream):
@@ -100,7 +101,7 @@ def test_a_failed_snapshot_refresh_changes_nothing(client, make_app):
     assert client.app.state.svc.trackaipac.document()["snapshot"] == load("trackaipac/current.json")["snapshot"]
 
 
-def test_rebuild_deletes_everything_and_fetches_it_again(client, make_app, upstream, tmp_path):
+def test_rebuild_deletes_everything_and_fetches_it_again(client, make_app, upstream, tmp_path, logged_calls):
     get_ballot(client)
     client.get("/api/tiles/12/940/1686.png")
     before = entries(client, "sos")
@@ -114,7 +115,8 @@ def test_rebuild_deletes_everything_and_fetches_it_again(client, make_app, upstr
     assert json.loads(current.read_text())["snapshot"] == "refreshed"  # a snapshot isn't deleted
     assert (tmp_path / "data" / "plane2106_kml.zip").exists()
     assert client.app.state.svc.election_precincts.stored() is not None
-    assert get_ballot(client)["meta"]["external_calls"] == 0
+    get_ballot(client)
+    assert logged_calls() == 0
 
 
 def test_rebuild_can_reset_the_snapshots_and_one_source_alone(client, make_app, tmp_path):

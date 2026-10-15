@@ -41,6 +41,7 @@ import contextlib
 import contextvars
 import hashlib
 import json
+import logging
 import sqlite3
 import threading
 import time
@@ -52,6 +53,8 @@ from typing import Any, Callable, Collection, Iterable, Iterator, Mapping, Seque
 import httpx
 
 from .text import iso_utc
+
+log = logging.getLogger("uvicorn.error")  # uvicorn prints this one, in `pallot` and in Docker
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS responses (
@@ -163,20 +166,16 @@ class UpstreamError(Exception):
 
 @dataclass
 class CallStats:
-    """What one API request cost: cache hits, external calls, data age per source."""
+    """What one API request cost, for its line in the server's log."""
 
     external_calls: int = 0
     cache_hits: int = 0
-    calls: dict[str, int] = field(default_factory=dict)  # source -> external calls
-    stale_sources: set[str] = field(default_factory=set)
-    oldest: dict[str, float] = field(default_factory=dict)  # source -> oldest fetched_at used
+    started: float = field(default_factory=time.monotonic)
 
-    def called(self, source: str) -> None:
-        self.external_calls += 1
-        self.calls[source] = self.calls.get(source, 0) + 1
-
-    def used(self, source: str, fetched_at: float) -> None:
-        self.oldest[source] = min(fetched_at, self.oldest.get(source, fetched_at))
+    def log(self, what: str) -> None:
+        """One line per lookup, with no address: a repeat of the same lookup shows 0 external calls."""
+        elapsed = int((time.monotonic() - self.started) * 1000)
+        log.info("%s: %d external calls, %d cache hits, %d ms", what, self.external_calls, self.cache_hits, elapsed)
 
 
 _call_stats: contextvars.ContextVar[CallStats | None] = contextvars.ContextVar("pallot_call_stats", default=None)
@@ -389,7 +388,7 @@ class HttpCache:
             await self._throttle(source)
             stats = current_calls()
             if stats:
-                stats.called(source)
+                stats.external_calls += 1
             async with self._client.stream(
                 spec.method, spec.url, params=spec.params, json=spec.json, headers=headers
             ) as response:
@@ -560,9 +559,6 @@ class HttpCache:
                 raise UpstreamError(source, why)
             return kept
         await asyncio.to_thread(self._store, spec, source, value, now, ttl, empty_ttl, empty_at)
-        stats = current_calls()
-        if stats:
-            stats.used(source, now)
         return Cached(value, now)
 
     async def _fall_back(self, source: str, spec: RequestSpec) -> Cached | None:
@@ -573,10 +569,6 @@ class HttpCache:
             return None
         if self._retry_after:
             self.set_flag(_retry_flag(spec.key), source, self._retry_after)
-        stats = current_calls()
-        if stats:
-            stats.stale_sources.add(source)
-            stats.used(source, stored.fetched_at)
         return Cached(stored.value, stored.fetched_at, stale=True)
 
     async def _request(self, source: str, spec: RequestSpec) -> Any:
@@ -606,7 +598,7 @@ class HttpCache:
                 sent = {**(headers or {}), keys.header: key}
             stats = current_calls()
             if stats:
-                stats.called(source)
+                stats.external_calls += 1
             response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=sent)
             if keys and response.status_code in keys.rest_on:
                 self.set_flag(_key_flag(source, key, response.status_code), source, keys.rest_on[response.status_code])
@@ -630,9 +622,6 @@ class HttpCache:
         stats = current_calls()
         if stats:
             stats.cache_hits += 1
-            stats.used(source, cached.fetched_at)
-            if cached.stale:
-                stats.stale_sources.add(source)
         return cached
 
     # -- storage -----------------------------------------------------------------

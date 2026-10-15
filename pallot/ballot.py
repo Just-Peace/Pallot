@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
-import time
 import zipfile
 from collections import Counter
 from dataclasses import dataclass, field, replace
@@ -28,7 +27,7 @@ from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .matching import NameIndex
 from .models import (
     GROUPS, Ballot, BallotRequest, Candidate, CountySource, Districts, ElectionDate, ElectionPrecinct, ElectionRef,
-    KeyDates, LastLookup, LeftOut, Location, MaybeSection, Measure, Meta, PrecinctSource, Race, RaceNote, SourceUse,
+    KeyDates, LeftOut, Location, MaybeSection, Measure, PrecinctSource, Race, RaceNote,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Sources
@@ -58,7 +57,7 @@ from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
-from .text import display_office, display_person, display_time, iso_utc
+from .text import display_office, display_person, display_time
 
 MAYBE_SECTIONS = {
     "precinct": (
@@ -84,9 +83,6 @@ MAYBE_SECTIONS = {
 }
 LEFT_OUT = ("precinct", "unconfirmed", "partial")  # the sections a ballot leaves out unless it's asked for them
 WAITING_ORDER = (*DISTRICT_KINDS, "commissioner", "jp", "precinct_other", "partial")
-
-
-GEOCODED_BY = {"census": "US Census", "nominatim": "OpenStreetMap + US Census", "google": "Google + US Census"}
 
 
 class BallotError(Exception):
@@ -122,8 +118,6 @@ class Services:
     tigerweb: Tigerweb
     tiles: Tiles
     today: Callable[[], dt.date] = dt.date.today
-    last_lookup: LastLookup | None = None  # the latest ballot, and how it used each source (Settings shows both)
-    last_uses: dict[str, SourceUse] = field(default_factory=dict)
     bundles: dict[str, Seeded] = field(default_factory=dict)  # what came with Pallot, by bundle (Settings)
 
 
@@ -226,7 +220,6 @@ class CardPlace:
     points: list[tuple[float, float]] = field(default_factory=list)  # (lat, lon)
     note: str | None = None
     warning: str | None = None
-    error: str | None = None  # the precinct map's, for Settings
 
 
 def _shared(places: list[Place]) -> Place:
@@ -271,8 +264,7 @@ async def locate_precinct(svc: Services, county: str, precinct: str, sources: So
         card.note = (f"Pallot finds your districts on its precinct map, which is still downloading ({exc.size / 1_048_576:.0f} "
                      f"MB, the first time only), {fallback} Reload the page in a minute.")
         return card
-    except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
-        card.error = str(exc).removeprefix(f"{election_precincts_source.SOURCE}: ")
+    except (UpstreamError, OSError, ValueError, zipfile.BadZipFile):
         card.warning = f"Couldn't load the Texas Legislative Council's precinct map, {fallback}"
         return card
     if on_map is None:
@@ -401,7 +393,6 @@ class _Builder:
         self.request = request
         self.calls = calls
         self.sources = sources
-        self.started = time.monotonic()
         self.use_sos = sources.enabled("sos")
         self.use_bp = sources.enabled("ballotpedia")
         self.use_tap = sources.enabled("trackaipac")
@@ -417,7 +408,7 @@ class _Builder:
         self.use_county_precincts = self.use_election_precincts and sources.enabled(county_precincts_source.SOURCE)
         self.notes: list[str] = []
         self.warnings: list[str] = []
-        self.errors: dict[str, str] = {}
+        self.sos_error: str | None = None  # why Texas SOS didn't answer, for the error when there's no ballot
         self.ballot_rows: dict[str, dict[str, Any]] = {}  # candidate key -> its SOS row
         self.scopes: dict[str, OfficeScope] = {}  # SOS race key -> what its office covers
         self.included: set[tuple[str, int | None]] = set()  # (kind, number) of SOS races kept
@@ -428,7 +419,6 @@ class _Builder:
         self.where = "precinct" if request.voter_card else "address"
         self.ballot: Ballot  # set by races(), for finish()
         self.every_race: list[Race] = []
-        self.location: Location
         self.enrich_args: dict[str, Any] = {}
 
     async def races(self) -> Ballot:
@@ -445,8 +435,6 @@ class _Builder:
             county_name, county_fips = card.county, card.county_fips
             self.notes += [card.note] if card.note else []
             self.warnings += [card.warning] if card.warning else []
-            if card.error:
-                self.errors[election_precincts_source.SOURCE] = card.error
 
         elections, day = await self._elections()
         if card:
@@ -465,11 +453,11 @@ class _Builder:
         bp_ballot, bp_partial = bp_found or (None, ())
         election_precinct, county = found_precincts or (None, None)
         if sos_data is None and not (bp_ballot and bp_ballot.races):
-            if "sos" in self.errors and (until := self.svc.cache.paused_until("sos")):
+            if self.sos_error and (until := self.svc.cache.paused_until("sos")):
                 raise BallotError(502, f"Texas SOS is paused until {display_time(until)} after refusing a request, "
                                        f"and nothing is cached yet for this {self.where}.")
-            if "sos" in self.errors:
-                raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.errors['sos']}).")
+            if self.sos_error:
+                raise BallotError(502, f"Texas SOS isn't responding and nothing is cached yet ({self.sos_error}).")
             raise BallotError(404, " ".join(self.warnings) or f"No ballot data found for this {self.where}.")
         if self.use_sos and sos_data is None:
             self.warnings.append("Texas SOS data isn't available, so this ballot comes from Ballotpedia only.")
@@ -537,7 +525,6 @@ class _Builder:
             bp_counterparts=bp_counterparts,
         )
         self.every_race = every_race
-        self.location = location
 
         if sos_data:
             used = {race.election_id for race in every_race}
@@ -558,31 +545,19 @@ class _Builder:
             ],
             notes=list(self.notes),
             warnings=list(self.warnings),
-            meta=self._meta(),
             left_out=self._left_out(shown),
         )
         return self.ballot
 
     async def finish(self) -> Ballot:
-        """Adds every source's cards to ``self.ballot`` (in place) and records the lookup for Settings."""
+        """Adds every source's cards to ``self.ballot`` (in place), and logs what the lookup cost."""
         outcome = await enrich.run(self.svc, self.every_race, **self.enrich_args)
         self.warnings += outcome.warnings
         self.notes += outcome.notes
-        self.errors.update(outcome.errors)
-        meta = self._meta()
         self.ballot.notes = self.notes
         self.ballot.warnings = self.warnings
-        self.ballot.meta = meta
-        self.svc.last_lookup = LastLookup(at=iso_utc(time.time()), found_by=self.location.source, **meta.model_dump())
-        self.svc.last_uses = {use.id: use for use in self._sources(self.location)}
+        self.calls.log("lookup")
         return self.ballot
-
-    def _meta(self) -> Meta:
-        return Meta(
-            external_calls=self.calls.external_calls,
-            cache_hits=self.calls.cache_hits,
-            elapsed_ms=int((time.monotonic() - self.started) * 1000),
-        )
 
     # -- gathering -----------------------------------------------------------------
 
@@ -593,7 +568,7 @@ class _Builder:
         try:
             upcoming = await self.svc.sos.upcoming()
         except UpstreamError as exc:
-            self.errors["sos"] = str(exc)
+            self.sos_error = str(exc)
             return [], requested
         if not upcoming:
             self.warnings.append("Texas SOS doesn't list any upcoming elections.")
@@ -621,7 +596,7 @@ class _Builder:
                 return None
             orders = await asyncio.gather(*(self._rows(e, county_id, county) for e in elections))
         except UpstreamError as exc:
-            self.errors["sos"] = str(exc)
+            self.sos_error = str(exc)
             return None
         return SosData(set(listed), lookups, list(zip(elections, orders)))
 
@@ -712,8 +687,7 @@ class _Builder:
             self.notes.append(f"Your election precinct will show once its map has downloaded ({exc.size / 1_048_576:.0f} "
                               "MB, the first time only). Reload the page in a minute.")
             return None, ()
-        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile) as exc:
-            self.errors[election_precincts_source.SOURCE] = str(exc).removeprefix(f"{election_precincts_source.SOURCE}: ")
+        except (UpstreamError, OSError, ValueError, zipfile.BadZipFile):
             self.warnings.append("Couldn't load the Texas Legislative Council's precinct map, so your election precinct "
                                  "isn't shown; it's on your voter registration certificate.")
             return None, ()
@@ -738,8 +712,7 @@ class _Builder:
         """What the county's records say for those precincts; None, with a note, when they can't be read."""
         try:
             return await self.svc.county_precincts.at(int(fips or 0), codes)
-        except (UpstreamError, OSError, ValueError) as exc:
-            self.errors[county_precincts_source.SOURCE] = str(exc).removeprefix(f"{county_precincts_source.SOURCE}: ")
+        except (UpstreamError, OSError, ValueError):
             self.notes.append(f"Couldn't read {name or 'your'} County's records of its election precincts, so they "
                               "don't give your commissioner and JP precincts this time.")
             return None
@@ -755,7 +728,6 @@ class _Builder:
             for lat, lon in points:
                 ballots.append(await self.svc.ballotpedia.ballot(lat, lon, day))
         except BallotpediaUnavailable as exc:
-            self.errors["ballotpedia"] = str(exc)
             self.warnings.append(f"Ballotpedia isn't available ({exc}), so city and school races aren't shown.")
             return None
         ballot, partial = ballotpedia_source.common(ballots)
@@ -766,8 +738,7 @@ class _Builder:
     async def _key_dates(self) -> list[Deadlines]:
         try:
             return await self.svc.key_dates.deadlines()
-        except UpstreamError as exc:
-            self.errors[key_dates_source.SOURCE] = str(exc).removeprefix(f"{key_dates_source.SOURCE}: ")
+        except UpstreamError:
             self.notes.append("Couldn't load the key dates (registration, early voting) from the Texas Secretary of "
                               "State; see VoteTexas.gov.")
             return []
@@ -933,66 +904,3 @@ class _Builder:
                         f"Couldn't find the {KIND_LABELS[kind]} District {number} race on your county's ballot. "
                         "Double-check with your county elections office."
                     )
-
-    def _sources(self, location: Location) -> list[SourceUse]:
-        """How this lookup used each source, for the Settings page."""
-
-        def status(source_id: str, label: str, on: bool, tags: tuple[str, ...]) -> SourceUse:
-            if not on:
-                return SourceUse(id=source_id, label=label, status="off")
-            calls = sum(self.calls.calls.get(t, 0) for t in tags)
-            if source_id in self.errors:
-                return SourceUse(id=source_id, label=label, status="error", calls=calls, message=self.errors[source_id])
-            used = [self.calls.oldest[t] for t in tags if t in self.calls.oldest]
-            if not used:
-                return SourceUse(id=source_id, label=label, status="unused", calls=calls)
-            stale = any(t in self.calls.stale_sources for t in tags)
-            return SourceUse(
-                id=source_id, label=label, status="stale" if stale else "used", as_of=iso_utc(min(used)), calls=calls
-            )
-
-        def endorsements(found: EndorsementSource) -> SourceUse:
-            on = any(found.source == used.source for used in self.lists)
-            if found.live:
-                return status(found.source, found.label, on, (found.source,))
-            if not on:
-                return SourceUse(id=found.source, label=found.label, status="off")
-            return SourceUse(id=found.source, label=found.label, status="used", as_of=found.captured)
-
-        def snapshot(source_id: str, label: str, on: bool, document: Callable[[], dict[str, Any]]) -> SourceUse:
-            if not on:
-                return SourceUse(id=source_id, label=label, status="off")
-            taken = document().get("snapshot")
-            return SourceUse(
-                id=source_id,
-                label=label,
-                status="used" if taken else "unused",
-                as_of=taken,
-                message=None if taken else f"no {label} data yet",
-            )
-
-        geocoding = status("geocoding", "Address lookup", True, ("census", "nominatim", "sboe"))
-        if location.geocoder:
-            geocoding.message = GEOCODED_BY[location.geocoder]
-        else:
-            geocoding.message = "Voter card: precinct map + US Census" if location.lat is not None else "Voter card: county only"
-        return [
-            geocoding,
-            status(google_source.SOURCE, "Google geocoding", self.sources.enabled(google_source.SOURCE),
-                   (google_source.SOURCE,)),
-            status("sos", "Texas SOS", self.use_sos, ("sos",)),
-            status(key_dates_source.SOURCE, key_dates_source.LABEL, self.use_key_dates, (key_dates_source.SOURCE,)),
-            status("wikidata", "Wikidata", self.use_wikidata, ("wikidata",)),
-            status("ballotpedia", "Ballotpedia", self.use_bp, ("ballotpedia",)),
-            snapshot("trackaipac", "TrackAIPAC", self.use_tap, self.svc.trackaipac.document),
-            snapshot("voteforpeace", "Vote for Peace", self.use_vfp, self.svc.voteforpeace.document),
-            *(endorsements(found) for found in self.svc.endorsements),
-            status("fec", "FEC", self.use_fec, ("fec",)),
-            snapshot("tec", "Texas Ethics Commission", self.use_tec, self.svc.tec.document),
-            status("polls", "Polls", self.use_polls, ("polls",)),
-            status("officeholders", "Seat holders", self.use_officeholders, ("officeholders",)),
-            status(election_precincts_source.SOURCE, election_precincts_source.LABEL, self.use_election_precincts,
-                   (election_precincts_source.SOURCE,)),
-            status(county_precincts_source.SOURCE, county_precincts_source.LABEL, self.use_county_precincts,
-                   (county_precincts_source.SOURCE,)),
-        ]

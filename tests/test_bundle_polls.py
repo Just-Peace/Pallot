@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from pallot.config import DAY
 
 from .bundling import build, entry, lifetimes
-from .conftest import get_ballot, last_use
+from .conftest import get_ballot
 
 
 def test_a_lookup_with_the_polls_bundled_asks_fiftyplusone_nothing(tmp_path, upstream, make_app):
@@ -17,7 +17,6 @@ def test_a_lookup_with_the_polls_bundled_asks_fiftyplusone_nothing(tmp_path, ups
     assert entry("polls").cadence == "daily" and lifetimes(tmp_path, "polls") == {2 * DAY}
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client)
-        assert last_use(client, "polls")["calls"] == 0
     senate = next(r for r in ballot["races"] if r["name"] == "U.S. Senator")
     assert any(c["source"] == "polls" for c in senate["cards"])
     assert upstream.count("fiftyplusone.news") == 3

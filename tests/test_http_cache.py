@@ -139,10 +139,8 @@ async def test_failed_refresh_serves_the_old_copy(tmp_path):
             cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
             await cache.get_json("demo", SPEC, ttl=60)
             clock.now += 120
-            stats = track_calls()
             got = await cache.get_json("demo", SPEC, ttl=60)
     assert got.value == {"v": "old"} and got.stale
-    assert stats.stale_sources == {"demo"}
 
 
 async def test_a_failed_request_is_not_retried_for_a_while(tmp_path):
@@ -160,7 +158,7 @@ async def test_a_failed_request_is_not_retried_for_a_while(tmp_path):
             stats = track_calls()
             again = await cache.get_json("demo", SPEC, ttl=60)  # within retry_after: not asked
             assert again.value == {"v": "old"} and again.stale
-            assert stats.external_calls == 0 and stats.stale_sources == {"demo"}
+            assert stats.external_calls == 0
             clock.now += 101
             assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": "new"}
     assert route.call_count == 3
@@ -373,9 +371,8 @@ async def test_an_answer_its_check_refuses_never_replaces_a_good_copy(tmp_path):
             cache.check_answers("demo", refuse_errors)
             await cache.get_json("demo", SPEC, ttl=60)
             clock.now += 120
-            stats = track_calls()
             got = await cache.get_json("demo", SPEC, ttl=60)  # the error: the good copy, marked stale
-            assert got.value == {"v": "old"} and got.stale and stats.stale_sources == {"demo"}
+            assert got.value == {"v": "old"} and got.stale
             assert cache.peek(SPEC).value == {"v": "old"}
             clock.now += 200
             assert (await cache.get_json("demo", SPEC, ttl=60)).stale  # within retry_after: not asked

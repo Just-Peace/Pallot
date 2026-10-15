@@ -141,21 +141,20 @@ def test_a_city_office_matches_in_the_voters_city(tmp_path):
     assert example.cards(council, {}, "Travis").candidates["bp:9:0"].match.confidence == "likely"
 
 
-def test_the_ballot_settings_and_the_pages_list(client, upstream):
+def test_the_ballot_settings_and_the_pages_list(client, upstream, logged_calls):
     ballot = get_ballot(client)
     senate = next(r for r in ballot["races"] if r["name"] == "U.S. Senator")
     card = next(c for c in senate["candidates"][1]["cards"] if c["source"] == "examplepac")
     assert card["badges"][0]["text"] == "Endorsed by Example PAC" and card["flags"] == [FLAG]
     assert card["kind"] == "endorsement"
     calls = len(upstream.calls)
-    assert get_ballot(client)["meta"]["external_calls"] == 0 and len(upstream.calls) == calls
+    get_ballot(client)
+    assert logged_calls() == 0 and len(upstream.calls) == calls
 
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "examplepac")
     assert (row["label"], row["toggleable"], row["enabled"], row["frozen"], row["notice"]) == (
         "Example PAC endorsements", True, True, True, None)
     assert (row["counts"], row["updated"]) == (["5 Texas candidates", "7 in 3 states"], "2026-09-20")
-    assert row["last_use"] == {"id": "examplepac", "label": "Example PAC", "status": "used", "as_of": "2026-09-20",
-                               "calls": 0, "message": None}
 
     assert [found for found in client.get("/api/endorsements").json() if not found["live"]] == [{
         "source": "examplepac", "label": "Example PAC", "organization": "Example Peace Action Committee",
@@ -170,7 +169,7 @@ def test_turned_off_it_adds_no_cards(make_app, tmp_path):
         ballot = get_ballot(client)
         assert not [c for r in ballot["races"] for p in r["candidates"] for c in p["cards"] if c["source"] == "examplepac"]
         row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "examplepac")
-        assert row["enabled"] is False and row["last_use"]["status"] == "off"
+        assert row["enabled"] is False
         assert next(found for found in client.get("/api/endorsements").json() if found["source"] == "examplepac")[
             "enabled"] is False
     with TestClient(make_app(endorsements_dir=tmp_path / "none")) as client:  # its file gone: its switch is ignored

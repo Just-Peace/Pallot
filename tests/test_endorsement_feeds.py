@@ -25,7 +25,7 @@ from pallot.sources.endorsement_feeds import (
 )
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, EndorsementList, read_entry
 
-from .conftest import FEED_TOKEN, fixture_bytes, get_ballot, last_use, load, switch
+from .conftest import FEED_TOKEN, fixture_bytes, get_ballot, load, switch
 
 MUPAC = "mupac"
 FEED_HOST = "muslimsunitedpac.com"
@@ -190,7 +190,7 @@ def test_entries_match_as_a_frozen_lists_do():
     assert green.url == "https://muslimsunitedpac.com/endorsements/al-green-tx" and green.flags == [FLAG]
 
 
-def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
+def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream, logged_calls):
     assert (row(client)["notice"], row(client)["counts"], row(client)["updated"]) == (None, [], None)  # not fetched yet
     ballot = get_ballot(client, "ut")
     casar = cards_from(ballot)["Greg Casar"]
@@ -202,10 +202,9 @@ def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
     assert {f["label"]: f["value"] for f in casar["facts"]}["Office"] == "U.S. House, District 37"
     assert casar["quotes"][0].startswith("As Chair of the Congressional Progressive Caucus")
     assert upstream.count(FEED_HOST) == 1
-    assert last_use(client, MUPAC)["status"] == "used" and last_use(client, MUPAC)["calls"] == 1
 
-    again = get_ballot(client, "ut")
-    assert again["meta"]["external_calls"] == 0 and upstream.count(FEED_HOST) == 1
+    get_ballot(client, "ut")
+    assert logged_calls() == 0 and upstream.count(FEED_HOST) == 1
     get_ballot(client)  # another address, another state's ballot races: the same copy
     assert upstream.count(FEED_HOST) == 1
 
@@ -216,7 +215,7 @@ def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
         "description": FEEDS[0].description, "live": True, "enabled": True}
 
 
-def test_cair_matches_texas_candidates(client, upstream):
+def test_cair_matches_texas_candidates(client, upstream, logged_calls):
     ballot = get_ballot(client, "ut")
     casar = cards_from(ballot, CAIR)["Greg Casar"]
     assert (casar["label"], casar["match"]["confidence"], casar["flags"], casar["quotes"]) == (
@@ -229,7 +228,8 @@ def test_cair_matches_texas_candidates(client, upstream):
     plummer = cards_from(get_ballot(client, "harris"), CAIR)["Letitia Plummer"]  # a county office, by its county
     assert plummer["match"]["confidence"] == "exact"
     assert {f["label"]: f["value"] for f in plummer["facts"]}["Office"] == "Harris County Judge"
-    assert get_ballot(client, "ut")["meta"]["external_calls"] == 0 and upstream.count(CAIR_HOST) == 1
+    get_ballot(client, "ut")
+    assert logged_calls() == 0 and upstream.count(CAIR_HOST) == 1
     assert row(client, CAIR)["counts"] == ["17 Texas candidates", "591 in 27 states"]
 
 
@@ -264,7 +264,6 @@ def test_a_refusal_pauses_it_and_the_ballot_goes_on(client, upstream):
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot) and ballot["races"]
     assert [w for w in ballot["warnings"] if w.startswith("Couldn't load Muslims United PAC's endorsements (")]
-    assert last_use(client, MUPAC)["status"] == "error"
     assert upstream.count(FEED_HOST) == 1
 
     again = get_ballot(client, "ut")
@@ -323,7 +322,7 @@ def test_turned_off_it_isnt_asked(make_app, upstream):
         switch(client, MUPAC, False)
         ballot = get_ballot(client, "ut")
         assert not cards_from(ballot) and upstream.count(FEED_HOST) == 0
-        assert row(client)["enabled"] is False and last_use(client, MUPAC)["status"] == "off"
+        assert row(client)["enabled"] is False
         assert next(f for f in client.get("/api/endorsements").json() if f["source"] == MUPAC)["enabled"] is False
 
 
@@ -385,17 +384,16 @@ def test_emgage_matches_texas_seats():
     assert cards["sos:1:22:0"].url == FEEDS[1].url  # no page of its own: the list's
 
 
-def test_emgage_sends_the_token_and_keeps_it_nowhere(client, upstream, tmp_path):
+def test_emgage_sends_the_token_and_keeps_it_nowhere(client, upstream, tmp_path, logged_calls):
     ballot = get_ballot(client, "ut")
     casar = cards_from(ballot, EMGAGE)["Greg Casar"]
     assert (casar["label"], casar["match"]["confidence"], [b["text"] for b in casar["badges"]]) == (
         "Emgage PAC", "likely", ["Endorsed by Emgage PAC"])
     assert cards_from(ballot, EMGAGE)["James Talarico"]["match"]["confidence"] == "exact"
     assert (upstream.count(EMGAGE_PAGE), upstream.count(EMGAGE_API), upstream.feed_tokens) == (1, 1, [FEED_TOKEN])
-    assert last_use(client, EMGAGE)["calls"] == 2
 
-    again = get_ballot(client, "ut")
-    assert again["meta"]["external_calls"] == 0 and upstream.count(EMGAGE_PAGE) == 1  # no page for a token either
+    get_ballot(client, "ut")
+    assert logged_calls() == 0 and upstream.count(EMGAGE_PAGE) == 1  # no page for a token either
 
     with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
         rows = db.execute("SELECT key, request, value FROM responses WHERE source = ?", (EMGAGE,)).fetchall()
@@ -417,7 +415,7 @@ def test_emgage_page_without_a_token(client, upstream):
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot, EMGAGE)
     assert "Couldn't load Emgage PAC's endorsements (its page has no RequestVerificationToken to send)." in ballot["warnings"]
-    assert upstream.count(EMGAGE_API) == 0 and last_use(client, EMGAGE)["status"] == "error"
+    assert upstream.count(EMGAGE_API) == 0
 
 
 @pytest.mark.parametrize("step", ["page", "list"])

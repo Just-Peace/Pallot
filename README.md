@@ -110,7 +110,7 @@ Candidates are matched across sources by name, with seat and party as corroborat
 
 ## Caching
 
-Pallot saves every answer it gets in `data/`, so looking up the same address (or the same voter card's precinct) again makes **zero** external calls, even after a restart. Settings shows how many requests the last lookup sent, and `pallot-cache check` what the server keeps for each source.
+Pallot saves every answer it gets in `data/`, so looking up the same address (or the same voter card's precinct) again makes **zero** external calls, even after a restart. The server's log has one line per lookup with how many requests it sent (`lookup: 0 external calls, 41 cache hits, 180 ms`), with no address, and `pallot-cache check` shows what the server keeps for each source.
 
 - Each source's answers have a lifetime: from a day (ballot data, polls, key dates) to 30 days (geocodes, district outlines). OpenStreetMap's tiles are kept at least 7 days, as its policy asks. `.env.example` lists every lifetime, each overridable with `PALLOT_TTL_<NAME>` in seconds.
 - Once an answer is past its lifetime, the next lookup asks again. If that fails, the old copy is shown with a "data as of" note, and the request isn't retried for 15 minutes. An error a source sends as if it were an answer counts as a failure too, so it never replaces a good copy.
@@ -123,7 +123,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 
 The **Settings** page has **Ballot view**, **Web search**, **People you avoid**, **Sources**, **Appearance** and **Clear data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
 
-- **Sources** lists every source in groups, with a switch for each (except the address lookup), a line on what it holds and how old it is, and a warning when it's paused or didn't answer the last lookup. Your switches travel with each request, so the server builds your ballot with them. A source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on)).
+- **Sources** lists every source in groups, with a switch for each (except the address lookup), a line on what it holds and how old it is, and a warning when it's paused or can't be used. Your switches travel with each request, so the server builds your ballot with them. A source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on)).
 - **Clear data** clears your picks and notes, or everything Pallot keeps in this browser, each with **Undo**.
 
 Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).

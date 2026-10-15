@@ -4,7 +4,7 @@ from pallot.models import Match
 from pallot.sources import wikidata
 from pallot.sources.wikidata import details_from, people_from, photo_url, seat_of, trusted
 
-from .conftest import find_race, get_ballot, last_use, load, switch
+from .conftest import find_race, get_ballot, load, switch
 
 
 def person(race, name):
@@ -56,7 +56,6 @@ def test_an_exact_match_gets_its_photo_and_stable_links(client, upstream):
     assert facts["Party"] == "Republican Party" and facts["Texas offices held"].startswith("Governor of Texas (2015–)")
     sources = [c["source"] for c in abbott["cards"]]
     assert sources.index(wikidata.SOURCE) < sources.index("ballotpedia")  # before Ballotpedia on the Profile tab
-    assert last_use(client, wikidata.SOURCE)["status"] == "used"
 
 
 def test_someone_running_for_another_office_is_likely_and_still_has_their_photo(client, upstream):
@@ -90,11 +89,11 @@ def test_the_card_is_short_and_links_ballotpedia_only_while_it_is_on(client, ups
     assert "Ballotpedia" not in {link["label"] for link in card["links"]}
 
 
-def test_a_second_lookup_asks_nothing(client, upstream):
+def test_a_second_lookup_asks_nothing(client, upstream, logged_calls):
     get_ballot(client)
     assert upstream.count("query.wikidata.org") == 2  # the list, then the matched people's details
-    assert get_ballot(client)["meta"]["external_calls"] == 0
-    assert upstream.count("query.wikidata.org") == 2
+    get_ballot(client)
+    assert logged_calls() == 0 and upstream.count("query.wikidata.org") == 2
 
 
 def test_a_source_kept_off_shows_nothing(client, upstream):
@@ -102,7 +101,6 @@ def test_a_source_kept_off_shows_nothing(client, upstream):
     ballot = get_ballot(client)
     assert not [c for r in ballot["races"] for c in r["candidates"] if card_of(c)]
     assert upstream.count("query.wikidata.org") == 0
-    assert last_use(client, wikidata.SOURCE)["status"] == "off"
 
 
 def test_a_refusal_pauses_it_and_the_ballot_still_loads(client, upstream):
