@@ -249,6 +249,7 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 - Pallot's API answers only Pallot's own pages in a browser. Another website, or a script such as `curl`, gets an error.
 - The container runs as user and group 1000, which must be able to write `data/`. That's why the quick start creates it: otherwise Docker creates it owned by root. If your ids differ (`id -u`, `id -g`), set `PALLOT_UID` and `PALLOT_GID` in `.env`.
 - `.env` is passed in when the container starts, never built into the image.
+- The image sets `MALLOC_ARENA_MAX=2`, which keeps Pallot's memory use about 20 MB lower without slowing lookups. Set it yourself when running `uv run pallot` on Linux to get the same.
 
 ### Running it publicly
 
