@@ -11,6 +11,8 @@ function build(el, props, children) {
     } else if (key === "class") {
       const names = [value].flat().filter(Boolean).join(" ");
       if (names) el.setAttribute("class", names);
+    } else if (key === "style") {
+      el.style.cssText = value;
     } else {
       el.setAttribute(key, value === true ? "" : value);
     }

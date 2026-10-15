@@ -549,6 +549,21 @@ def sources_on(request, monkeypatch):
         monkeypatch.setitem(settings.DEFAULT_SOURCES, "voteforpeace", True)
 
 
+PAGE_HEADERS = {"Sec-Fetch-Site": "same-origin", HEADER: "{}"}
+
+
+@pytest.fixture(autouse=True)
+def as_pallots_pages(monkeypatch):
+    """Every TestClient asks as Pallot's own pages do, which is all /api/* answers; a test of
+    anything else sets or deletes these headers."""
+    init = TestClient.__init__
+
+    def page_init(self, *args: Any, headers: dict[str, str] | None = None, **kwargs: Any) -> None:
+        init(self, *args, headers={**PAGE_HEADERS, **(headers or {})}, **kwargs)
+
+    monkeypatch.setattr(TestClient, "__init__", page_init)
+
+
 @pytest.fixture(autouse=True)
 def fec_unpaced(monkeypatch):
     """The FEC's keys aren't paced in tests, which would wait in real time; test_http_cache paces its own."""

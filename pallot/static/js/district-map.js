@@ -193,7 +193,7 @@ function draw() {
     const rings = outline.rings.map((ring) => ring.map(([lon, lat]) => [lat, lon]));
     // the halo, wider than the line, keeps it readable over the streets and is what the pointer hits
     const halo = L.polygon(rings, { className: "map-halo", fill: false })
-      .bindTooltip(districtName(outline.kind, outline.number), { sticky: true })
+      .bindTooltip(h("span", {}, districtName(outline.kind, outline.number)), { sticky: true })
       .on("click", () => pickDistrict(outline.kind));
     const line = L.polygon(rings, { className: `map-outline ${outline.kind}`, fill: false, interactive: false });
     halo.addTo(map);
@@ -268,8 +268,8 @@ function placePin() {
   } else {
     pin = L.circleMarker([lat, lon], { radius: 7, className: "map-pin" }).addTo(map);
   }
-  pin.unbindTooltip().bindTooltip(source === "voter_card" ? "A point in your precinct"
-    : approximate ? "Your address (approximate)" : "Your address");
+  pin.unbindTooltip().bindTooltip(h("span", {}, source === "voter_card" ? "A point in your precinct"
+    : approximate ? "Your address (approximate)" : "Your address"));
   pin.bringToFront();
 }
 
