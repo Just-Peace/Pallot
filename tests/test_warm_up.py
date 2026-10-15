@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import asyncio
 
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from pallot import settings
+from pallot import api, settings
 
 from .conftest import get_ballot
 
@@ -57,6 +58,48 @@ def test_warm_up_skips_sources_off_by_default(make_app, upstream, monkeypatch):
         assert svc.election_precincts._index is None
         assert svc.tec._indexes == {} and svc.trackaipac._indexes == {} and svc.voteforpeace._indexes == {}
         assert svc.sboe._districts is not None  # the ballot can't do without it, so it has no switch
+
+
+def test_warm_up_ends_by_trimming_the_heap(make_app, upstream, monkeypatch):
+    trims = []
+    monkeypatch.setattr(api, "trim_heap", lambda: trims.append(1))
+    with TestClient(make_app()) as client:
+        warmed(client)
+    assert trims == [1]
+
+
+class FakeLibc:
+    def __init__(self, calls: list[int]) -> None:
+        self.calls = calls
+
+    def malloc_trim(self, pad: int) -> int:
+        self.calls.append(pad)
+        return 1
+
+
+def test_trim_heap_asks_glibc_on_linux(monkeypatch):
+    calls: list[int] = []
+    monkeypatch.setattr(api.sys, "platform", "linux")
+    monkeypatch.setattr(api.ctypes, "CDLL", lambda name: FakeLibc(calls) if name == "libc.so.6" else None)
+    api.trim_heap()
+    assert calls == [0]
+
+
+@pytest.mark.parametrize("error", [OSError("no libc.so.6"), AttributeError("malloc_trim")])
+def test_trim_heap_does_nothing_without_glibc(monkeypatch, error):
+    def cdll(name):
+        raise error
+
+    monkeypatch.setattr(api.sys, "platform", "linux")
+    monkeypatch.setattr(api.ctypes, "CDLL", cdll)
+    api.trim_heap()
+
+
+@pytest.mark.parametrize("platform", ["win32", "darwin"])
+def test_trim_heap_does_nothing_off_linux(monkeypatch, platform):
+    monkeypatch.setattr(api.sys, "platform", platform)
+    monkeypatch.setattr(api.ctypes, "CDLL", lambda name: pytest.fail("loaded libc off Linux"))
+    api.trim_heap()
 
 
 def test_a_lookup_during_the_warm_up_reads_each_map_once(make_app, upstream, monkeypatch):
