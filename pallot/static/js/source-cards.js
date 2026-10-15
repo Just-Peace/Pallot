@@ -8,7 +8,7 @@
 
 import { extLink, h, linkedText, safeUrl, slug } from "./dom.js";
 import { DOLLARS, DOLLARS_SHORT, SHORT_DATE, formatDate, percent, plural } from "./format.js";
-import { fundingHelp, helpLink } from "./help.js";
+import { fundingHelp, helpLink, toggleNote } from "./help.js";
 import { icon } from "./icons.js";
 import { chooseInHelp } from "./endorser-bar.js";
 import { barChoice } from "./pick-rules.js";
@@ -628,6 +628,30 @@ export function endorsementsPanel(cards) {
     sorted.map(section));
 }
 
+// A tab's "?": its name says "likely match" to a screen reader, and a tap on the "?" opens a note
+// saying why (a button can't sit inside the tab, nor beside it in the tab row). A tab of one card
+// gives its match's reason; one gathering several (Profile, Endorsements) points to its sections.
+function tabFlag(card) {
+  const one = [card.card, card].find((c) => c?.match);
+  const why = isLikely(one) ? `Likely match${matchWhy(one.match)} Check it's the same person.`
+    : "Likely match: a source on this tab may not be this candidate. Its section says why.";
+  const flag = h("span", { class: "likely-flag", "aria-hidden": "true" }, "?");
+  flag.note = () => [h("p", {}, why), h("p", {}, extLink("faq.html#matches", "Exact and likely matches"))];
+  return [h("span", { class: "sr-only" }, ", likely match"), flag];
+}
+
+// The tab row scrolls sideways when its tabs don't fit (on a phone), and fades at an edge with more
+// tabs past it, so a cut-off tab reads as "scroll for more".
+function fadeEdges(tablist) {
+  const sync = () => {
+    const end = tablist.scrollWidth - tablist.clientWidth;
+    tablist.classList.toggle("more-before", tablist.scrollLeft > 1);
+    tablist.classList.toggle("more-after", tablist.scrollLeft < end - 1);
+  };
+  tablist.addEventListener("scroll", sync, { passive: true });
+  new ResizeObserver(sync).observe(tablist);
+}
+
 // WAI-ARIA tabs: one per card, arrow keys move between them. ``panelFor`` draws a card's panel.
 // A tab's "?" is its card's ``likely``, or its match. ``initial`` is the tab shown first, and
 // ``onSelect(index)`` hears each one picked after.
@@ -642,27 +666,31 @@ export function renderTabs(container, cards, idPrefix, panelFor = cardPanel, { i
       "button",
       { class: "tab", type: "button", role: "tab", id: tabId, "aria-controls": panelId, "aria-selected": String(i === initial), tabindex: i === initial ? "0" : "-1" },
       card.label,
-      (card.likely ?? isLikely(card)) ? likelyFlag() : null,
+      (card.likely ?? isLikely(card)) ? tabFlag(card) : null,
     );
     const panel = h("div", { class: "tab-panel", role: "tabpanel", id: panelId, "aria-labelledby": tabId, tabindex: "0", hidden: i !== initial }, panelFor(card));
     tabs.push(tab);
     panels.push(panel);
   });
 
-  function select(index, focus = true) {
+  // A tap on a "?" leaves the row where it is: scrolling it would close the note it opens.
+  function select(index, focus = true, scroll = true) {
     tabs.forEach((tab, i) => {
       tab.setAttribute("aria-selected", String(i === index));
       tab.tabIndex = i === index ? 0 : -1;
       panels[i].hidden = i !== index;
     });
-    tabs[index].scrollIntoView({ block: "nearest", inline: "nearest" }); // the row scrolls sideways on a phone
+    if (scroll) tabs[index].scrollIntoView({ block: "nearest", inline: "nearest" }); // the row scrolls sideways on a phone
     if (focus) tabs[index].focus();
     onSelect?.(index);
   }
 
   tablist.addEventListener("click", (event) => {
     const index = tabs.indexOf(event.target.closest('[role="tab"]'));
-    if (index >= 0) select(index, false);
+    if (index < 0) return;
+    const flag = event.target.closest(".likely-flag");
+    select(index, false, !flag);
+    if (flag) toggleNote(flag, flag.note);
   });
   tablist.addEventListener("keydown", (event) => {
     const current = tabs.indexOf(document.activeElement);
@@ -675,4 +703,5 @@ export function renderTabs(container, cards, idPrefix, panelFor = cardPanel, { i
 
   tablist.append(...tabs);
   container.replaceChildren(tablist, ...panels);
+  fadeEdges(tablist);
 }
