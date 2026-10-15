@@ -240,6 +240,8 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 | `PALLOT_PORT` | `8000`: the port `uv run pallot` listens on (`--port` wins), and in Docker the port published on the host |
 | `PALLOT_DEFAULT_ENTRY` | `address`: the entry card's tab on a first visit. `voter_card` starts on **My voter card** (County and Precinct number) instead; a voter's last lookup still picks its own tab |
 
+A value Pallot can't read, such as a port that isn't a whole number or a limit that isn't a rate, stops `pallot` and `pallot-cache` from starting, with one line naming the variable and its value.
+
 ### Docker
 
 - `compose.yaml` mounts `data/` (or the folder `PALLOT_DATA_DIR` names) at `/data`, so Docker and `uv run pallot` share the cache, `sources.toml`, TrackAIPAC, Vote for Peace and TEC data, and nothing is fetched twice. Don't run both at once, because they'd share one SQLite file.

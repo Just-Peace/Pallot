@@ -57,4 +57,4 @@ filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecate
 extend-exclude = ["pallot/static", "*/data"]
 
 [tool.ruff.lint]
-select = ["F401", "F841"]  # unused imports and variables: AGENTS.md's "Leave it clean"
+select = ["F", "E9"]  # pyflakes (unused imports and variables, undefined names: AGENTS.md's "Leave it clean") and syntax errors

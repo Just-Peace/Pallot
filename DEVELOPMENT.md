@@ -17,7 +17,7 @@ uv run pallot --reload                    # restart on code and static file chan
 uv run pytest                             # offline: recorded responses in tests/fixtures, plus trackaipac_cache's, voteforpeace_cache's and tec_cache's own tests
 uv run pytest -n 0 --pdb                  # the same in one process, to use the debugger or see print()
 uv run pytest -m live                     # smoke tests against the real services (the FEC one needs an FEC key)
-uv run ruff check                         # unused imports and variables (F401, F841)
+uv run ruff check                         # pyflakes (unused imports and variables, undefined names) and syntax errors
 uv run pallot-cache check                 # what data/ keeps, and what's stale (also refresh, prune, hard-refresh, rebuild)
 uv run python scripts/record_fixtures.py  # re-record tests/fixtures from the live APIs (--only ballots|suggest|fec|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|county_precincts|endorsement_feeds|tec|trackaipac|voteforpeace)
 uv run pallot-bundle refresh              # rebuild the bundled answers in bundles/data (--only, --due, --dry-run, --force)

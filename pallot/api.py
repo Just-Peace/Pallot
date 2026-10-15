@@ -564,6 +564,3 @@ def create_app(
     app.mount("/", RevalidatedFiles(directory=STATIC_DIR, version_js=version_js, html=True,
                                     pages=stamped_pages(STATIC_DIR, prefix)), name="static")
     return app
-
-
-app = create_app()
