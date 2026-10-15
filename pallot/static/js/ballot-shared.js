@@ -1,11 +1,12 @@
 // What the ballot page and the print sheet both work out from a ballot: its sections in order,
-// a proposition's pick key, the labels of a race's picks, and the election line.
+// a proposition's pick key, the labels of a race's picks, and the election line (long and short).
 
 import { formatDate } from "./format.js";
 import { GROUP_LABELS, GROUP_ORDER, partyName } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 
 const ELECTION_DAY = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
+const SHORT_DAY = { month: "short", day: "numeric" };
 const PARTY_LETTERS = new Set(["R", "D", "L", "G"]); // the wallet card's "(D)"; other parties spelled out
 
 // The race sections in ballot order: the groups ("group-federal"), then the sections whose races
@@ -47,4 +48,13 @@ export function electionLine(ballot, { day = false } = {}) {
   const date = ballot.election_date
     && (day ? `Election Day: ${formatDate(ballot.election_date, ELECTION_DAY)}` : formatDate(ballot.election_date));
   return [date, ballot.elections.map((e) => e.name).join(" + ")].filter(Boolean).join(" · ");
+}
+
+const MONTHS = /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b/gi;
+
+// "Nov 3 · General Election", the election line on a phone, on one line: the date without its
+// year, and each election's name without the year and month the date already gives.
+export function shortElectionLine(ballot) {
+  const names = ballot.elections.map((e) => e.name.replace(/\b\d{4}\b/g, "").replace(MONTHS, "").replace(/\s+/g, " ").trim() || e.name);
+  return [ballot.election_date && formatDate(ballot.election_date, SHORT_DAY), names.join(" + ")].filter(Boolean).join(" · ");
 }
