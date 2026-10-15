@@ -1,5 +1,5 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
-// which one is on screen), the View menu, the "What matters to you?" card, j and k, where the
+// which one is on screen), the View menu, "What matters to you?" while the first lookup runs, j and k, where the
 // strip's parts go on a phone, with the race on screen, More and the chips that make way while
 // scrolling down, and the first-run tips.
 
@@ -13,9 +13,10 @@ import { initEndorserBar, moreHelp } from "./endorser-bar.js";
 import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
-import { onPicksSaved } from "./picks.js";
+import { hasAnyPicks, onPicksSaved } from "./picks.js";
 import { STILL_LOADING, cardFor, redrawRace, refillPart, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
+import { setUiPrefs, uiPref } from "./storage.js";
 import {
   FOCUSES, VIEW_MODES, bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, migrateView, modeChoice, onViewChange,
   setViewPref, showViewControls, syncSourceNotes, viewPref,
@@ -29,6 +30,7 @@ const viewControls = $("#view-controls");
 const viewMenu = $("#view-menu");
 const viewSummary = $("#view-summary");
 const focusAsk = $("#focus-ask");
+const focusShow = $("#focus-ask-show");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const jumpList = $("#jump-list");
@@ -193,6 +195,11 @@ const wants = (focus) => !focuses().length || focuses().includes(focus);
 const anyPicked = () => [...page.ballot.races.map((r) => r.key), ...page.ballot.measures.map(measureKey)].some((key) => page.picks.has(key));
 const TIPS = [
   {
+    id: "view", when: () => uiPref("focusSkipped") === true && !focuses().length,
+    target: () => $(narrow.matches ? "#more-btn" : "#view-menu > summary"), after: () => (narrow.matches ? progressInfo : tools),
+    text: () => (narrow.matches ? "Change what matters to you under More, in View." : "Change what matters to you here, under View."),
+  },
+  {
     id: "funding", when: () => viewPref("showFunding") && wants("money"),
     target: () => [...result.querySelectorAll(".funding-line .badge-open, .funding-line .lines-toggle")],
     after: (chip) => chip.closest(".funding-line"),
@@ -223,11 +230,10 @@ const TIPS = [
   },
 ];
 
-// A tip, once the ballot and its cards are in, with nothing over them: not while "What matters to
-// you?" asks, nor with a dialog open. It runs again after "Got it" and as the voter scrolls, so the
-// next tip shows once what it's about is in the window.
+// A tip, once the ballot and its cards are in, with no dialog over them. It runs again after "Got
+// it" and as the voter scrolls, so the next tip shows once what it's about is in the window.
 function maybeTip() {
-  if (!page?.ballot || page.loadingCards || result.hidden || !focusAsk.hidden || document.querySelector("dialog[open]")) return;
+  if (!page?.ballot || page.loadingCards || result.hidden || document.querySelector("dialog[open]")) return;
   showTip(TIPS, maybeTip);
 }
 
@@ -261,26 +267,56 @@ function applyView() {
   maybeTip();
 }
 
-// "What matters to you?": a card at the top of the ballot, right under the strip, so nothing above it
-// moves as the ballot changes under it. It shows after a ballot is drawn, until the voter chooses a
-// focus or closes it. Its focuses and detail change the ballot at once; it stays until Done or ✕,
-// which leave the choice under View.
-export function askFocus() {
-  focusAsk.hidden = focusAsked();
+// "What matters to you?", asked once per browser on the "Finding your ballot" screen, the first
+// lookup's dead time. A voter who already has picks, or changed anything under View, counts as
+// answered. Returns null when it isn't asked (``wanted`` false: a lookup that keeps the ballot or the
+// entry card), else ``ready()``, for when the ballot is in: Show my ballot turns on (nothing else on
+// the screen changes under the voter), and it resolves once they press it, at once if they skipped
+// meanwhile, or when ``signal`` cancels the lookup. A lookup that failed leaves its question to the next.
+let asking = null; // { ready, skipped, resolve }
+
+export function askFocus(signal, wanted) {
+  if (asking) endAsk(asking);
+  if (!wanted || focusAsked() || hasAnyPicks()) return null;
+  let resolve;
+  const answered = new Promise((done) => { resolve = done; });
+  const ask = { ready: false, skipped: false, resolve };
+  asking = ask;
+  showViewControls(focusAsk);
+  focusShow.disabled = true;
+  focusAsk.hidden = false;
+  signal.addEventListener("abort", () => endAsk(ask), { once: true });
+  return () => {
+    ask.ready = true;
+    if (ask.skipped) endAsk(ask);
+    else if (asking === ask) focusShow.disabled = false;
+    return answered;
+  };
 }
 
+function endAsk(ask) {
+  if (asking === ask) {
+    asking = null;
+    focusAsk.hidden = true;
+  }
+  ask.resolve();
+}
+
+// Skip hides the question and leaves "Finding your ballot" to show the ballot as it comes.
 function initFocusAsk() {
   focusAsk.querySelector(".muted").after(focusChips({ hints: true }));
-  focusAsk.querySelector(".focus-ask-detail").append(modeChoice());
   bindViewControls(focusAsk);
-  const close = () => {
+  focusShow.addEventListener("click", () => {
     dismissFocusAsk();
-    focusAsk.hidden = true;
-    viewMenu.querySelector("summary").focus({ preventScroll: true });
-    maybeTip();
-  };
-  $("#focus-ask-done").addEventListener("click", close);
-  $("#focus-ask-close").addEventListener("click", close);
+    if (asking) endAsk(asking);
+  });
+  $("#focus-ask-skip").addEventListener("click", () => {
+    setUiPrefs({ focusAsked: true, focusSkipped: true });
+    if (!asking) return;
+    asking.skipped = true;
+    if (asking.ready) endAsk(asking);
+    else focusAsk.hidden = true;
+  });
 }
 
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays

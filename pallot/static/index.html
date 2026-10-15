@@ -115,15 +115,25 @@
         </ul>
       </section>
 
-      <section id="loading" class="loading" role="status" hidden>
-        <p class="loading-title">Finding your ballot…</p>
-        <div class="loading-bar" aria-hidden="true"></div>
-        <p class="muted" id="loading-step"></p>
+      <section id="loading" class="loading" hidden>
+        <div class="loading-status" role="status">
+          <p class="loading-title" id="loading-title">Finding your ballot…</p>
+          <div class="loading-bar" aria-hidden="true"></div>
+          <p class="muted" id="loading-step"></p>
+        </div>
+        <section class="focus-ask" id="focus-ask" aria-labelledby="focus-ask-title" hidden>
+          <h2 id="focus-ask-title">While we look: what matters to you?</h2>
+          <p class="muted">Choose any, or none. Change it any time under View.</p>
+          <div class="focus-ask-foot">
+            <button class="btn primary" type="button" id="focus-ask-show" disabled>Show my ballot</button>
+            <button class="link-btn" type="button" id="focus-ask-skip">Skip, show it as it comes</button>
+          </div>
+        </section>
       </section>
 
       <section id="result" hidden>
         <header class="ballot-head">
-          <h1>Your ballot</h1>
+          <h1 tabindex="-1">Your ballot</h1>
           <p class="muted" id="ballot-sub"></p>
         </header>
         <p class="notice notice-warn" id="approximate" hidden></p>
@@ -180,21 +190,11 @@
             <div class="loading-bar" aria-hidden="true"></div>
           </div>
         </div>
-        <section class="focus-ask" id="focus-ask" aria-labelledby="focus-ask-title" hidden>
-          <div class="focus-ask-head">
-            <h2 id="focus-ask-title" tabindex="-1">What matters to you?</h2>
-            <button class="icon-btn close" type="button" id="focus-ask-close" aria-label="Close without choosing">✕</button>
-          </div>
-          <p class="muted">Choose any, or none. The ballot below changes as you choose.</p>
-          <form class="focus-ask-detail">
-            <h3>How much detail?</h3>
-          </form>
-          <div class="focus-ask-foot">
-            <button class="btn primary small" type="button" id="focus-ask-done">Done</button>
-            <p class="fine">Change it any time under View.</p>
-          </div>
-        </section>
         <div class="ballot-top">
+          <div class="top-summary" id="top-summary" hidden>
+            <button class="top-line" type="button" aria-controls="key-dates" aria-expanded="false"></button>
+            <button class="top-line" type="button" aria-controls="districts-card" aria-expanded="false"></button>
+          </div>
           <section class="key-dates" id="key-dates" aria-labelledby="key-dates-title" hidden></section>
           <section class="districts-card" id="districts-card" aria-labelledby="districts-card-title" hidden></section>
           <section class="district-map" id="district-map" aria-labelledby="district-map-title" hidden></section>

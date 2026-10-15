@@ -41,7 +41,7 @@ export const VIEW_MODES = {
 // openEndorsements open one kind of box or line (else they follow openBoxes), fundingFirst puts
 // the Funding line before Endorsements, compareInHead puts Compare funding in the race's head, pollChips a "47% in polls" pill on each polled candidate and a mark on
 // the sections with polls, and stanceLinks names the candidate's button "Profile & issues". ``hint`` is
-// its line on the first-run card and in Settings, ``short`` its name in the View menu's summary. The
+// its line in the first lookup's question and in Settings, ``short`` its name in the View menu's summary. The
 // wording never names an issue or a source.
 export const FOCUSES = {
   money: { label: "Funding", short: "Funding", hint: "Opens the money boxes and Funding chips, and puts Funding first.",
@@ -87,10 +87,9 @@ export function setViewPref(name, value) {
   changed();
 }
 
-// Choosing or dropping a focus also answers the ballot's question (focusAsked).
 export function setFocus(id, on) {
   const others = focuses().filter((f) => f !== id);
-  setUiPrefs({ focuses: on ? [...others, id] : others, focusAsked: true });
+  setUiPrefs({ focuses: on ? [...others, id] : others });
   changed();
 }
 
@@ -106,9 +105,13 @@ export function migrateView() {
   setUiPrefs({ ...PRESETS.minimal, focuses: chosen.filter((id) => id !== "simple"), modeChosen: undefined });
 }
 
-// "minimal", "simple", "detailed", or "custom" when the stored switches match neither.
+// The switches a card's own fold sets (the map's heading): a mode sets them, but opening or folding
+// the card isn't a change of the whole view.
+const FOLDS = new Set(["showMap"]);
+
+// "minimal", "simple", "detailed", or "custom" when the stored switches match neither, folds aside.
 export function viewMode() {
-  const matches = (preset) => Object.entries(preset).every(([name, value]) => storedPref(name) === value);
+  const matches = (preset) => Object.entries(preset).every(([name, value]) => FOLDS.has(name) || storedPref(name) === value);
   return Object.keys(PRESETS).find((mode) => matches(PRESETS[mode])) || "custom";
 }
 
@@ -186,9 +189,11 @@ export function showViewControls(root = document) {
   return mode;
 }
 
+// Any change here answers "What matters to you?" (focusAsked).
 export function bindViewControls(root) {
   root.addEventListener("change", (event) => {
     const input = event.target;
+    if (input.name === "view-mode" || input.name === "focus" || input.dataset.view) dismissFocusAsk();
     if (input.name === "view-mode") setViewMode(input.value);
     else if (input.name === "focus") setFocus(input.value, input.checked);
     else if (input.dataset.view) setViewPref(input.dataset.view, input.checked);
