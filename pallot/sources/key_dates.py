@@ -27,7 +27,6 @@ DESCRIPTION = (
 URL = "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
 REGISTRATION_URL = "https://goelect.txelections.civixapps.com/ivis-mvp-ui/#/login"  # My Voter Portal
 MAIL_APPLY_URL = "https://www.sos.state.tx.us/elections/voter/reqabbm.shtml"
-REFUSALS = (403, 429)  # answers that pause the page for Ttls.key_dates_backoff
 
 _DATE = re.compile(r"(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day,\s+([A-Z][a-z]+)\s+(\d{1,2}),\s+(\d{4})")
 
@@ -146,7 +145,7 @@ class KeyDatesPage:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        cache.pause_on(SOURCE, REFUSALS, ttl.key_dates_backoff)
+        cache.pause_on(SOURCE, ttl.key_dates_backoff)
         cache.check_answers(SOURCE, no_elections)
 
     async def deadlines(self) -> list[Deadlines]:

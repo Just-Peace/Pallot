@@ -6,6 +6,7 @@ import asyncio
 import time
 from typing import Any
 
+from pallot.http_cache import UpstreamError
 from pallot.models import Candidate, Race
 from pallot.offices import classify
 from pallot.sources import fec
@@ -27,7 +28,7 @@ class _Counted(fec.Fec):
     async def _get(self, path: str, params: dict[str, str], ttl: float) -> Any:
         try:
             return await super()._get(path, params, ttl)
-        except fec.FecUnavailable as exc:
+        except UpstreamError as exc:
             self.failed.append(f"{path}: {exc}")
             raise
 
@@ -74,7 +75,7 @@ async def build(ctx: Context) -> dict[str, int]:
         for election, races in ballots:
             try:
                 await fec.cards(money, races, election.day)
-            except fec.FecUnavailable:
+            except UpstreamError:
                 pass  # its calls are in money.failed
         if not money.failed:
             break

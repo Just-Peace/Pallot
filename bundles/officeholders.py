@@ -3,7 +3,8 @@ members (public domain) and Open States' Texas legislators (CC0)."""
 
 from __future__ import annotations
 
-from pallot.sources.officeholders import Officeholders, OfficeholdersUnavailable
+from pallot.http_cache import UpstreamError
+from pallot.sources.officeholders import Officeholders
 
 from .entry import BundleError, Context
 
@@ -14,7 +15,7 @@ async def build(ctx: Context) -> dict[str, int]:
     try:
         congress = await svc.congress()
         legislature = await svc.legislature()
-    except OfficeholdersUnavailable as exc:
+    except UpstreamError as exc:
         raise BundleError(f"couldn't load a list of seat holders: {exc}") from exc
     if not congress or not legislature:
         raise BundleError("a list of seat holders has no Texas seats")

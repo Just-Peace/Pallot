@@ -172,6 +172,9 @@ class UpstreamError(Exception):
         self.until = until
 
 
+REFUSALS = frozenset({403, 429})  # answers that pause a source (pause_on)
+
+
 @dataclass
 class CallStats:
     """What one API request cost, for its line in the server's log."""
@@ -447,9 +450,9 @@ class HttpCache:
         stored = self._load(spec)
         return Cached(stored.value, stored.fetched_at) if stored else None
 
-    def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
-        """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
-        self._pause_on[source] = (frozenset(statuses), seconds)
+    def pause_on(self, source: str, seconds: float, also: Collection[int] = ()) -> None:
+        """Stop asking ``source`` for ``seconds`` once it refuses a request: REFUSALS, and ``also``."""
+        self._pause_on[source] = (REFUSALS | frozenset(also), seconds)
 
     def cap_daily(self, source: str, most: int) -> None:
         """Send at most ``most`` of ``source``'s requests a day (UTC), then pause it until the day

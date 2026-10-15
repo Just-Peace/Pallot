@@ -28,7 +28,6 @@ from .sboe import Ring
 
 SOURCE = "county_precincts"
 LABEL = "Commissioner & JP precincts"
-REFUSALS = (403, 429)  # answers that pause every county's server for Ttls.county_precincts_backoff
 INSET_M = 50.0  # metres from the precinct's edges: against Dallas's and Harris's lists, 3 wrong at 10 m, none at 25
 PAGE = 1000  # rows asked for at a time
 MOST_PAGES = 20
@@ -264,7 +263,7 @@ class CountyPrecincts:
         self.precincts = precincts
         self.counties = counties
         self._parsed: dict[tuple[int, str], tuple[tuple[str, ...], Any]] = {}  # (county, what) -> (copies read, parsed)
-        cache.pause_on(SOURCE, REFUSALS, ttl.county_precincts_backoff)
+        cache.pause_on(SOURCE, ttl.county_precincts_backoff)
         cache.check_answers(SOURCE, arcgis_error)
 
     async def at(self, county_fips: int, codes: tuple[str, ...]) -> Found | None:

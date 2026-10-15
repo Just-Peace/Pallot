@@ -19,10 +19,10 @@ from dataclasses import dataclass
 from typing import Any, Callable, Iterable
 
 from ..config import Ttls
-from ..http_cache import HttpCache, RequestSpec, UpstreamError
+from ..http_cache import HttpCache, RequestSpec
 from ..matching import NameIndex, match_person, match_unique
 from ..models import Fact, Link, Match, Race, SourceCard
-from ..text import display_time, iso_utc, parse_date
+from ..text import iso_utc, parse_date
 from . import CardSet
 
 SOURCE = "ballotpedia"
@@ -33,7 +33,6 @@ DESCRIPTION = (
 )
 URL = "https://api4.ballotpedia.org/myvote_redistricting_with_historical"
 ORIGIN = "https://sblv3.ballotpedia.org"
-REFUSALS = (401, 403, 429)  # answers that pause Ballotpedia for Ttls.ballotpedia_backoff
 
 PARTY_CODES = {
     "Republican Party": "R",
@@ -54,10 +53,6 @@ _LINK = re.compile(r"<a\b([^>]*)>(.*?)</a>", re.IGNORECASE | re.DOTALL)
 _HREF = re.compile(r"""\bhref\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 _TAG = re.compile(r"<[^>]+>")
 _CLICK_HERE = re.compile(r"^\s*(click here|learn more|read more)\b", re.IGNORECASE)
-
-
-class BallotpediaUnavailable(Exception):
-    """Ballotpedia refused or failed, or we're pausing after it refused."""
 
 
 @dataclass(frozen=True)
@@ -304,7 +299,7 @@ class Ballotpedia:
         self.cache = cache
         self.ttl = ttl
         self.today = today
-        cache.pause_on(SOURCE, REFUSALS, ttl.ballotpedia_backoff)
+        cache.pause_on(SOURCE, ttl.ballotpedia_backoff, also=(401,))
 
     async def ballot(self, lat: float, lon: float, day: dt.date | None = None) -> BpBallot:
         """The sample ballot at this point (from cache, also while paused if we have it)."""
@@ -314,12 +309,7 @@ class Ballotpedia:
             params={"long": f"{lon:.5f}", "lat": f"{lat:.5f}", "include_volunteer": "true"},
             headers={"Origin": ORIGIN, "Accept": "application/json"},
         )
-        try:
-            got = await self.cache.get_json(SOURCE, spec, ttl=self.ttl.ballotpedia)
-        except UpstreamError as exc:
-            if exc.until:
-                raise BallotpediaUnavailable(f"paused until {display_time(exc.until)} after Ballotpedia refused a request") from exc
-            raise BallotpediaUnavailable(str(exc)) from exc
+        got = await self.cache.get_json(SOURCE, spec, ttl=self.ttl.ballotpedia)
         return parse(got.value, day, got.fetched_at, self.today())
 
 

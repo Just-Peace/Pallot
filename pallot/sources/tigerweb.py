@@ -22,7 +22,6 @@ DESCRIPTION = (
     "Outlines of your U.S. House, State Senate and State House districts for the map, from the US Census's TIGERweb."
 )
 SERVICE = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer"
-REFUSALS = (403, 429)  # answers that pause TIGERweb for Ttls.outlines_backoff
 SIMPLIFY_DEG = 0.0005  # about 50 m: shared boundaries still meet when zoomed to a State House district
 
 # kind -> the end of its layer's name, and the width of the district number in its GEOID
@@ -78,7 +77,7 @@ class Tigerweb:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        cache.pause_on(SOURCE, REFUSALS, ttl.outlines_backoff)
+        cache.pause_on(SOURCE, ttl.outlines_backoff)
         cache.check_answers(SOURCE, arcgis_error)
 
     async def outline(self, kind: str, number: int) -> list[Ring] | None:

@@ -23,7 +23,7 @@ from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import FIRST_LAST, FULL, NameIndex
 from ..models import Fact, Link, Match, Race, SourceCard
 from ..offices import OfficeScope
-from ..text import display_date, display_time, iso_utc
+from ..text import display_date, iso_utc
 from . import CardSet
 from .ballotpedia import BpBallot
 from .seats import match_entries
@@ -37,7 +37,6 @@ DESCRIPTION = (
 )
 ENDPOINT = "https://query.wikidata.org/sparql"
 ITEM = "https://www.wikidata.org/wiki/"
-REFUSALS = (403, 429)  # answers that pause it for Ttls.wikidata_backoff
 CHUNK = 50  # people per DETAILS query, which keeps its URL short
 PHOTO_WIDTH = 300
 PEOPLE = """SELECT DISTINCT ?p ?label ?pos ?posL ?dL ?start ?end ?party WHERE {
@@ -77,10 +76,6 @@ SITE_ROLES = {"Q130304960": "Campaign website", "Q120942996": "Government websit
 PARTIES = {"Q29552": "D", "Q29468": "R", "Q558334": "L"}
 _QID = re.compile(r"^Q\d+$")
 _CONGRESS = re.compile(r"^Texas's (\d+)(?:st|nd|rd|th) congressional district$")
-
-
-class WikidataUnavailable(Exception):
-    """The list of Texas officeholders couldn't be fetched (refused, paused, down) and none was cached."""
 
 
 @dataclass
@@ -234,15 +229,10 @@ class Wikidata:
         self.cache = cache
         self.ttl = ttl
         self._parsed: tuple[float, list[Person], NameIndex] | None = None
-        cache.pause_on(SOURCE, REFUSALS, ttl.wikidata_backoff)
+        cache.pause_on(SOURCE, ttl.wikidata_backoff)
 
     async def _get(self, spec: RequestSpec) -> Any:
-        try:
-            return await self.cache.get_json(SOURCE, spec, ttl=self.ttl.wikidata)
-        except UpstreamError as exc:
-            if exc.until:
-                raise WikidataUnavailable(f"paused until {display_time(exc.until)} after Wikidata refused a request") from exc
-            raise WikidataUnavailable(str(exc).removeprefix(f"{SOURCE}: ")) from exc
+        return await self.cache.get_json(SOURCE, spec, ttl=self.ttl.wikidata)
 
     async def people(self) -> tuple[list[Person], NameIndex, float]:
         """Every Texas officeholder Wikidata has, indexed by name, read once per stored copy."""
@@ -309,7 +299,7 @@ async def cards(
 ) -> CardSet:
     """A card for each candidate found among Texas's officeholders on Wikidata (only the matches
     trusted() keeps). ``ballotpedia``: Ballotpedia is on, so the card may link to it. Raises
-    WikidataUnavailable when the list can't be had; without the matched people's details, the cards
+    UpstreamError when the list can't be had; without the matched people's details, the cards
     keep the item's link and offices, with a warning."""
     _, index, fetched_at = await wd.people()
     parties = {c.key: c.party for race in races for c in race.candidates}
@@ -324,9 +314,9 @@ async def cards(
         return out
     try:
         details = await wd.details([entry["qid"] for entry, _ in found.values()])
-    except WikidataUnavailable as exc:
+    except UpstreamError as exc:
         details = {}
-        log.warning("wikidata: %s", exc)
+        log.warning("%s", exc)
         out.warnings.append("Wikidata isn't answering right now, so its profiles have no photos or links.")
     for key, (entry, match) in found.items():
         out.candidates[key] = card(entry["person"], match, details.get(entry["qid"]), fetched_at, ballotpedia)

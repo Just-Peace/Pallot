@@ -9,7 +9,7 @@ import pytest
 import respx
 
 from pallot.config import Ttls
-from pallot.http_cache import HttpCache
+from pallot.http_cache import HttpCache, UpstreamError
 from pallot.models import Candidate, Race
 from pallot.sources import polls
 
@@ -126,14 +126,14 @@ class _Refused:
 
     async def polls(self, kind):
         if kind == polls.SENATE:
-            raise polls.PollsUnavailable("HTTP 403")
-        raise polls.PollsUnavailable("paused until Oct 1, 2026, 1:00 PM after FiftyPlusOne refused a request", paused=True)
+            raise UpstreamError(polls.SOURCE, "HTTP 403", 403)
+        raise UpstreamError(polls.SOURCE, "paused until 2026-10-01T18:00Z", until=1790877600.0)
 
 
 @pytest.mark.anyio
 async def test_the_refusal_is_named_whichever_list_failed_first():
     governor = Race(key="gov", name="Governor", group="state", source="sos", candidates=[])
-    with pytest.raises(polls.PollsUnavailable, match="HTTP 403"):
+    with pytest.raises(UpstreamError, match="HTTP 403"):
         await polls.cards(_Refused(), [SENATE, governor], dt.date(2026, 10, 1))
 
 
