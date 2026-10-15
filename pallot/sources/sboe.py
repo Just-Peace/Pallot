@@ -19,7 +19,10 @@ import re
 import shutil
 import xml.etree.ElementTree as ET
 import zipfile
+from array import array
+from collections.abc import Iterator
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -45,14 +48,15 @@ FAILED_FLAG = f"failed:{SOURCE}"
 DISTRICT_COUNT = 15
 TOLERANCE_M = 200  # geocoders can land a few meters off; accept the nearest district within this
 
-Ring = list[tuple[float, float]]  # (lon, lat)
+Ring = list[tuple[float, float]]  # (lon, lat), as the outlines are returned
+Packed = array  # array('d') of lon, lat, lon, lat…: a ring as the map keeps it, 16 bytes a point instead of 112
 BBox = tuple[float, float, float, float]  # min lon, min lat, max lon, max lat
 
 
 @dataclass(frozen=True)
 class Polygon:
-    outer: Ring
-    holes: tuple[Ring, ...]
+    outer: Packed
+    holes: tuple[Packed, ...]
     bbox: BBox
 
 
@@ -66,19 +70,24 @@ def _local(tag: str) -> str:
     return tag.rsplit("}", 1)[-1]
 
 
-def _ring(element: ET.Element | None) -> Ring:
+def _ring(element: ET.Element | None) -> Packed:
+    points = array("d")
     if element is None or not element.text:
-        return []
-    points = []
+        return points
     for chunk in element.text.split():
         lon, lat, *_ = chunk.split(",")
-        points.append((float(lon), float(lat)))
+        points.append(float(lon))
+        points.append(float(lat))
     return points
 
 
-def _bbox(ring: Ring) -> BBox:
-    lons = [p[0] for p in ring]
-    lats = [p[1] for p in ring]
+def _points(ring: Packed) -> Iterator[tuple[float, float]]:
+    coords = iter(ring)
+    return zip(coords, coords)
+
+
+def _bbox(ring: Packed) -> BBox:
+    lons, lats = ring[0::2], ring[1::2]
     return min(lons), min(lats), max(lons), max(lats)
 
 
@@ -95,8 +104,8 @@ def parse_kml(data: bytes) -> list[District]:
             continue
         polygons = []
         for polygon in (el for el in placemark.iter() if _local(el.tag) == "Polygon"):
-            outer: Ring = []
-            holes: list[Ring] = []
+            outer = array("d")
+            holes: list[Packed] = []
             for boundary in polygon:
                 coords = next((el for el in boundary.iter() if _local(el.tag) == "coordinates"), None)
                 if _local(boundary.tag) == "outerBoundaryIs":
@@ -125,24 +134,24 @@ def read_download(path: Path) -> list[District]:
     return districts
 
 
-def _inside(lon: float, lat: float, ring: Ring) -> bool:
+def _inside(lon: float, lat: float, ring: Ring | Packed) -> bool:
     inside = False
-    j = len(ring) - 1
-    for i in range(len(ring)):
-        xi, yi = ring[i]
-        xj, yj = ring[j]
+    if not ring:
+        return inside
+    points, (xj, yj) = (_points(ring), ring[-2:]) if isinstance(ring, array) else (iter(ring), ring[-1])
+    for xi, yi in points:
         if (yi > lat) != (yj > lat) and lon < (xj - xi) * (lat - yi) / (yj - yi) + xi:
             inside = not inside
-        j = i
+        xj, yj = xi, yi
     return inside
 
 
-def _distance_m(lat: float, lon: float, ring: Ring) -> float:
+def _distance_m(lat: float, lon: float, ring: Packed) -> float:
     """Meters from the point to the ring's edge (local flat-earth approximation)."""
     kx = 111_320 * math.cos(math.radians(lat))
     ky = 110_540
     best = math.inf
-    for (x1, y1), (x2, y2) in zip(ring, ring[1:]):
+    for (x1, y1), (x2, y2) in pairwise(_points(ring)):
         ax, ay = (x1 - lon) * kx, (y1 - lat) * ky
         bx, by = (x2 - lon) * kx, (y2 - lat) * ky
         dx, dy = bx - ax, by - ay
@@ -184,7 +193,8 @@ def simplify(ring: Ring, tolerance: float) -> Ring:
 
 def outline(district: District, tolerance: float) -> list[Ring]:
     """The district's outer rings and holes, simplified; rings that shrink below a triangle go."""
-    found = (simplify(ring, tolerance) for poly in district.polygons for ring in (poly.outer, *poly.holes))
+    rings = (ring for poly in district.polygons for ring in (poly.outer, *poly.holes))
+    found = (simplify(list(_points(ring)), tolerance) for ring in rings)
     return [ring for ring in found if len(ring) >= 4]
 
 

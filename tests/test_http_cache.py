@@ -638,16 +638,31 @@ async def test_images_are_not_kept_in_memory(tmp_path):
 async def test_memory_keeps_the_most_recent_values_up_to_its_size(tmp_path):
     specs = [RequestSpec("GET", URL, params={"q": str(n)}) for n in range(3)]
     with respx.mock() as router:
-        router.get(URL).mock(return_value=httpx.Response(200, json="x" * 98))  # 100 bytes stored
+        router.get(URL).mock(return_value=httpx.Response(200, json="x" * 98))  # 100 bytes stored, 300 decoded
         async with httpx.AsyncClient() as client:
-            cache = HttpCache(tmp_path / "c.sqlite3", client, memory_bytes=250)
+            cache = HttpCache(tmp_path / "c.sqlite3", client, memory_bytes=750)
             for spec in specs:
                 await cache.get_json("demo", spec, ttl=60)
-            assert list(cache._memory) == [specs[1].key, specs[2].key] and cache._memory_used == 200
+            assert list(cache._memory) == [specs[1].key, specs[2].key] and cache._memory_used == 600
             await cache.get_json("demo", specs[0], ttl=60)  # read from the database, and kept again
-            assert list(cache._memory) == [specs[2].key, specs[0].key] and cache._memory_used == 200
+            assert list(cache._memory) == [specs[2].key, specs[0].key] and cache._memory_used == 600
             cache.clear("demo")
             assert not cache._memory and cache._memory_used == 0
-            big = HttpCache(tmp_path / "c.sqlite3", client, memory_bytes=50)
+            big = HttpCache(tmp_path / "c.sqlite3", client, memory_bytes=250)
             await big.get_json("demo", specs[0], ttl=60)
     assert not big._memory  # larger than the whole budget
+
+
+async def test_seeded_answers_stay_out_of_memory_until_asked_for(tmp_path):
+    clock = Clock()
+    with respx.mock() as router:
+        router.get(URL).mock(return_value=httpx.Response(200, json={"v": "live"}))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
+            await cache.get_json("demo", SPEC, ttl=60)
+            assert list(cache._memory) == [SPEC.key]
+            clock.now += 10
+            assert cache.seed("demo", [(SPEC, {"v": "bundled"})], clock.now, ttl=60) == 1
+            assert not cache._memory and cache._memory_used == 0  # the older copy goes too
+            assert (await cache.get_json("demo", SPEC, ttl=60)).value == {"v": "bundled"}
+    assert list(cache._memory) == [SPEC.key]
