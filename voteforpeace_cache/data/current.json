@@ -1815,6 +1815,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "2efa9246-db24-410e-9b4a-1b71f26f5409",
+      "district": "6",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oceanside",
+      "level": "local",
+      "name": "Joey Aszterbaum",
+      "notes": null,
+      "office_title": "MiraCosta Board of Trustees, Oceanside",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "joey-aszterbaum",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/joey-aszterbaum"
+    },
+    {
+      "articles": [],
       "candidate_id": "1c488bea-9026-49c7-823e-9c9c90971691",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -2716,6 +2745,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "89f931bb-eb56-42f3-82d1-9f09058017dd",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Vista",
+      "level": "local",
+      "name": "Corinna Contreras",
+      "notes": null,
+      "office_title": "City Council Member, Vista",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "corinna-contreras",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/corinna-contreras"
+    },
+    {
+      "articles": [],
       "candidate_id": "19d7659a-6198-4f8a-b4dc-c14354730d67",
       "district": "46",
       "election_date": "Nov 3, 2026",
@@ -2771,6 +2829,35 @@
       "slug": "jim-costa",
       "state": "CA",
       "url": "https://voteforpeace.info/california/jim-costa"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0c46ab6f-972a-42e8-95a7-84b6c95d10c0",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Nicole Crosby",
+      "notes": null,
+      "office_title": "City Council Member, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "nicole-crosby",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/nicole-crosby"
     },
     {
       "articles": [],
@@ -2917,6 +3004,35 @@
       "slug": "nubia-diaz",
       "state": "CA",
       "url": "https://voteforpeace.info/california/nubia-diaz"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b48007eb-727d-4cd5-8e6b-39d0168b756d",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Escondido",
+      "level": "local",
+      "name": "Anthony Dimartino",
+      "notes": null,
+      "office_title": "City Council Member, Escondido",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "anthony-dimartino",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/anthony-dimartino"
     },
     {
       "articles": [],
@@ -3181,6 +3297,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "a9d6de94-77e6-439e-a165-ddb9dc53e79a",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Henry Foster III",
+      "notes": null,
+      "office_title": "City Council Member, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "henry-foster-iii",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/henry-foster-iii"
+    },
+    {
+      "articles": [],
       "candidate_id": "b1a06d12-c417-485c-b344-63f42e09bdfa",
       "district": "6",
       "election_date": "Nov 3, 2026",
@@ -3356,6 +3501,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "f2f4b4ce-f9d0-4c34-b040-631ceae339ef",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oceanside",
+      "level": "local",
+      "name": "Emily Gonzales",
+      "notes": null,
+      "office_title": "City Council Member, Oceanside",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "emily-gonzales",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/emily-gonzales"
+    },
+    {
+      "articles": [],
       "candidate_id": "0cf160cc-c811-4926-942d-e0657be9c04f",
       "district": "34",
       "election_date": "Nov 3, 2026",
@@ -3446,7 +3620,7 @@
       "level": "local",
       "name": "Hayden Gore",
       "notes": null,
-      "office_title": "Unified School District, San Diego",
+      "office_title": "SDUSD Board of Trustees, San Diego",
       "party": null,
       "rating": "vote",
       "section": "California",
@@ -3511,6 +3685,35 @@
       "slug": "eric-guerra",
       "state": "CA",
       "url": "https://voteforpeace.info/california/eric-guerra"
+    },
+    {
+      "articles": [],
+      "candidate_id": "a88c16ed-f4af-4f2f-b4bd-e644a3747c12",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Mary Gwin",
+      "notes": null,
+      "office_title": "Grossmont-Cuyamaca Community College District Board of Trustees, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "mary-gwin",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/mary-gwin"
     },
     {
       "articles": [],
@@ -3896,6 +4099,12 @@
         {
           "link": null,
           "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
           "organization": "AROC Action",
           "type": "endorsed"
         }
@@ -3934,6 +4143,35 @@
       "slug": "eric-jones",
       "state": "CA",
       "url": "https://voteforpeace.info/california/eric-jones"
+    },
+    {
+      "articles": [],
+      "candidate_id": "75346dd4-0278-476b-b781-8e8cae8e8fdc",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oceanside",
+      "level": "local",
+      "name": "Eric Joyce",
+      "notes": null,
+      "office_title": "City Council Member, Oceanside",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "eric-joyce",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/eric-joyce"
     },
     {
       "articles": [],
@@ -4315,6 +4553,64 @@
     },
     {
       "articles": [],
+      "candidate_id": "5ff2cdf9-ed1d-42ad-ab8c-8ef49c8d3fe1",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Oceanside",
+      "level": "local",
+      "name": "Kayla Lauriano",
+      "notes": null,
+      "office_title": "Tri-City Healthcare District, Oceanside",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "kayla-lauriano",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/kayla-lauriano"
+    },
+    {
+      "articles": [],
+      "candidate_id": "9ab4c1bd-0aa1-44fc-8f9d-5bde3c64550c",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Imperial Beach",
+      "level": "local",
+      "name": "Matthew Lebya-Gonzalez",
+      "notes": null,
+      "office_title": "Mayor, Imperial Beach",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "matthew-lebya-gonzalez",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/matthew-lebya-gonzalez"
+    },
+    {
+      "articles": [],
       "candidate_id": "46174312-4413-4e20-bdaf-0058fea8d827",
       "district": "24",
       "election_date": "Nov 3, 2026",
@@ -4394,6 +4690,35 @@
       "slug": "barbara-lee",
       "state": "CA",
       "url": "https://voteforpeace.info/california/barbara-lee"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0f6827e6-14bb-4543-911b-f109fef3c4b1",
+      "district": "6",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Kent Lee",
+      "notes": null,
+      "office_title": "City Council Member, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "kent-lee",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/kent-lee"
     },
     {
       "articles": [],
@@ -4537,6 +4862,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "b9f67801-5570-4ad1-926c-307f7fb8e88d",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Jenne Littrell",
+      "notes": null,
+      "office_title": "Grossmont Union High School District Board of Trustees, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "jenne-littrell",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jenne-littrell"
+    },
+    {
+      "articles": [],
       "candidate_id": "c44a3213-6ead-4c0b-9ce9-b0efc3fc22eb",
       "district": "18",
       "election_date": "Nov 3, 2026",
@@ -4634,6 +4988,35 @@
       "slug": "jesse-lopez",
       "state": "CA",
       "url": "https://voteforpeace.info/california/jesse-lopez"
+    },
+    {
+      "articles": [],
+      "candidate_id": "23808be5-7b85-441c-90ed-e6801ee280fd",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Imperial Beach",
+      "level": "local",
+      "name": "Jose Lopez Eguino",
+      "notes": null,
+      "office_title": "City Council Member, Imperial Beach",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "jose-lopez-eguino",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jose-lopez-eguino"
     },
     {
       "articles": [],
@@ -5008,6 +5391,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "ec052697-4b3f-4d20-b3e0-53522bd51388",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Pete Mergens",
+      "notes": null,
+      "office_title": "Grossmont Union High School District Board of Trustees, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "pete-mergens",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/pete-mergens"
+    },
+    {
+      "articles": [],
       "candidate_id": "70d4e5d2-8c7b-4c1a-a610-a0152b8fbcd0",
       "district": "7",
       "election_date": "Nov 3, 2026",
@@ -5066,6 +5478,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "b338c99c-b751-4f2f-bf15-0f0a0da0af8e",
+      "district": "C",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Craig Milgrim",
+      "notes": null,
+      "office_title": "San Diego Community College, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "craig-milgrim",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/craig-milgrim"
+    },
+    {
+      "articles": [],
       "candidate_id": "cb19c03a-58ad-477b-b0ad-e6e98c64697f",
       "district": "47",
       "election_date": "Nov 3, 2026",
@@ -5101,6 +5542,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "820d8294-a34b-449f-b9c1-b85b7f5e1f64",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "county",
+      "name": "Monica Montgomery Steppe",
+      "notes": null,
+      "office_title": "Board of Supervisors, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "monica-montgomery-steppe",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/monica-montgomery-steppe"
+    },
+    {
+      "articles": [],
       "candidate_id": "9738b844-ad58-4d02-ade6-6da278bb7734",
       "district": "37",
       "election_date": "Nov 3, 2026",
@@ -5127,6 +5597,35 @@
       "slug": "samantha-mota",
       "state": "CA",
       "url": "https://voteforpeace.info/california/samantha-mota"
+    },
+    {
+      "articles": [],
+      "candidate_id": "02103fe3-67d7-492a-bcc5-77cb2585a9bf",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Steve Mull",
+      "notes": null,
+      "office_title": "Grossmont Union High School District Board of Trustees, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "steve-mull",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/steve-mull"
     },
     {
       "articles": [],
@@ -5165,7 +5664,14 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": "San Diego",
       "level": "county",
@@ -6330,6 +6836,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "4ffbcb51-4e88-45f2-97db-802d20bca3b4",
+      "district": "A",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "San Diego",
+      "level": "local",
+      "name": "Maria Senour",
+      "notes": null,
+      "office_title": "San Diego Community College District, San Diego",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "maria-senour",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/maria-senour"
+    },
+    {
+      "articles": [],
       "candidate_id": "e3d57490-0cb1-4756-a0e7-01e3fbd0fe86",
       "district": "79",
       "election_date": "Nov 3, 2026",
@@ -6371,11 +6906,40 @@
     },
     {
       "articles": [],
+      "candidate_id": "19baec21-0b4f-4ddf-b766-d078d4c354cd",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Sonja Shaw",
+      "notes": null,
+      "office_title": "Superintendent of Public Instruction",
+      "party": null,
+      "rating": "reject",
+      "section": "California",
+      "slug": "sonja-shaw",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/sonja-shaw"
+    },
+    {
+      "articles": [],
       "candidate_id": "4395c22b-e6d6-4505-b6fb-bea1573c703a",
       "district": "5",
-      "election_date": null,
-      "election_label": "Won General",
-      "election_result": "won",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
       "election_stage": "general",
       "endorsements": [
         {
@@ -7116,6 +7680,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "cba3b3f2-bdee-4dd9-a9da-54ab69ab244f",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Escondido",
+      "level": "local",
+      "name": "Vanessa Valenzuela",
+      "notes": null,
+      "office_title": "City Council Member, Escondido",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "vanessa-valenzuela",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/vanessa-valenzuela"
+    },
+    {
+      "articles": [],
       "candidate_id": "a949cd9f-7887-416f-8fa8-95b52199682c",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -7300,6 +7893,35 @@
       "slug": "benjamin-vazquez",
       "state": "CA",
       "url": "https://voteforpeace.info/california/benjamin-vazquez"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f470adb1-2ffa-4004-9f79-37a9272f0342",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Escondido",
+      "level": "local",
+      "name": "Elias Velazquez",
+      "notes": null,
+      "office_title": "Mayor, Escondido",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "elias-velazquez",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/elias-velazquez"
     },
     {
       "articles": [],
@@ -7584,6 +8206,35 @@
       "slug": "scott-wiener",
       "state": "CA",
       "url": "https://voteforpeace.info/california/scott-wiener"
+    },
+    {
+      "articles": [],
+      "candidate_id": "49d2b1e2-22cf-4468-916d-4bfe13d30cb3",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Vista",
+      "level": "local",
+      "name": "Kenneth Zuniga",
+      "notes": null,
+      "office_title": "Mayor, Vista",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "kenneth-zuniga",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/kenneth-zuniga"
     },
     {
       "articles": [],
@@ -10141,7 +10792,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Jon Ossoff",
-      "notes": "This candidate has been identified as a recipient of funding from AIPAC and affiliated lobbying organizations. However, in his most recent vote in on SJ 32, he voted to block additional bombs and bulldozers to Israel, joining 40 senators. Based on this recent shift towards military aid, he is seen by local coalitions as more favorable to opponents.\nEndorsed by Siyasa",
+      "notes": "This candidate has been identified as a recipient of funding from AIPAC and affiliated lobbying organizations. However, in his most recent vote in on SJ 32, he voted to block additional bombs and bulldozers to Israel, joining 40 senators. Based on this recent shift towards military aid, he is seen by local coalitions as more favorable to opponents.\nEndorsed by Peach State Muslims.",
       "office_title": "U.S. Senator",
       "party": "Democrat",
       "rating": "vote",
@@ -10188,7 +10839,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Ruwa Romman",
-      "notes": "Current Georgia State Representative Ruwa Romman has taken a consistent stance against militarism both at home and abroad. She was one of the first elected officials to oppose Cop City and the militarization of police around Metro Atlanta.\nOn the international stage, she has been a vocal critic of unconditional U.S. military aid, particularly regarding the conflict in Gaza and is against legislation that codifies the IHRA definition.\nEndorsed by Siyasa.",
+      "notes": "Current Georgia State Representative Ruwa Romman has taken a consistent stance against militarism both at home and abroad. She was one of the first elected officials to oppose Cop City and the militarization of police around Metro Atlanta.\nOn the international stage, she has been a vocal critic of unconditional U.S. military aid, particularly regarding the conflict in Gaza and is against legislation that codifies the IHRA definition.\nEndorsed by Peach State Muslims.",
       "office_title": "State Senator",
       "party": "Democrat",
       "rating": "vote",
@@ -10606,6 +11257,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "71e461d4-ea19-4f9d-8477-7f81928050e0",
+      "district": "7",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "DeKalb",
+      "level": "county",
+      "name": "Ledona Bolton",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, DeKalb",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "ledona-bolton",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/ledona-bolton"
+    },
+    {
+      "articles": [],
       "candidate_id": "0d3da7fe-d0fb-44a5-8c60-131cf6c339ba",
       "district": "73",
       "election_date": "May 19, 2026",
@@ -10634,15 +11307,22 @@
       "election_label": "Primary: May 19, 2026",
       "election_result": "pending",
       "election_stage": "primary",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": "Georgia",
       "level": "statewide",
       "name": "Keisha Bottoms",
-      "notes": "Endorsed by Siyasa",
+      "notes": "Endorsed by Peach State Muslims.",
       "office_title": "Governor",
       "party": "Democrat",
-      "rating": "neutral",
+      "rating": "vote",
       "section": "Georgia",
       "slug": "keisha-bottoms",
       "state": "GA",
@@ -10898,6 +11578,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "4d184d0d-767b-4100-ab22-25398c8eb01b",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fayette",
+      "level": "county",
+      "name": "Regina Daigre",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Board of Education, Fayette",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "regina-daigre",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/regina-daigre"
+    },
+    {
+      "articles": [],
       "candidate_id": "ee6fd56e-d841-48cb-94e2-48a6f09adbf7",
       "district": "108",
       "election_date": "May 19, 2026",
@@ -11129,6 +11831,28 @@
       "slug": "james-duffie",
       "state": "GA",
       "url": "https://voteforpeace.info/georgia/james-duffie"
+    },
+    {
+      "articles": [],
+      "candidate_id": "7923b503-dd3f-4126-ad6f-d57b93b2bdbc",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Sheila Edwards",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "Public Service Commissioner",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "sheila-edwards",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/sheila-edwards"
     },
     {
       "articles": [],
@@ -11481,6 +12205,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "d752df67-a071-40a2-b40c-a47b839c0b7a",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Peter Hubbard",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "Public Service Commissioner",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "peter-hubbard",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/peter-hubbard"
+    },
+    {
+      "articles": [],
       "candidate_id": "fa6a295b-e21f-4ce6-b236-06ae0f6834ef",
       "district": "90",
       "election_date": "Nov 3, 2026",
@@ -11513,6 +12259,28 @@
       "slug": "bentley-hudgins",
       "state": "GA",
       "url": "https://voteforpeace.info/georgia/bentley-hudgins"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b99d690f-2bcc-4ef7-be92-50f07e6388a3",
+      "district": null,
+      "election_date": "May 19, 2026",
+      "election_label": "Primary: May 19, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fulton",
+      "level": "county",
+      "name": "Mo Ivory",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, Fulton",
+      "party": "Democrat",
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "mo-ivory",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/mo-ivory"
     },
     {
       "articles": [],
@@ -11649,7 +12417,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Hank Johnson",
-      "notes": "Supports an arms embargo; received a \"C\" on the USCPR Action Congress Scorecard on Palestinian rights.\nEndorsed by Siyasa",
+      "notes": "Supports an arms embargo; received a \"C\" on the USCPR Action Congress Scorecard on Palestinian rights.\nEndorsed by Peach State Muslims.",
       "office_title": "U.S. Representative",
       "party": "Democrat",
       "rating": "vote",
@@ -11740,6 +12508,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "733d11a9-7148-42aa-9ba4-eb6dd25b3a91",
+      "district": "3",
+      "election_date": "May 19, 2026",
+      "election_label": "Primary: May 19, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "DeKalb",
+      "level": "county",
+      "name": "Keyanna Jones Moore",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, DeKalb",
+      "party": "Democrat",
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "keyanna-jones-moore",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/keyanna-jones-moore"
+    },
+    {
+      "articles": [],
       "candidate_id": "2c9a2733-2bca-4853-86c5-24ec5b1a4820",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -11751,7 +12541,7 @@
       "jurisdiction": null,
       "level": "statewide",
       "name": "Katherine Juhan-Arnold",
-      "notes": "Endorsed by Siyasa.",
+      "notes": "Endorsed by Peach State Muslims.",
       "office_title": "Agriculture Commissioner",
       "party": "Democrat",
       "rating": "neutral",
@@ -11921,6 +12711,63 @@
     },
     {
       "articles": [],
+      "candidate_id": "c84a5b13-ebbd-4a55-8902-67006ac10037",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "DeKalb",
+      "level": "county",
+      "name": "Michelle Long Spears",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, DeKalb",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "michelle-long-spears",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/michelle-long-spears"
+    },
+    {
+      "articles": [],
+      "candidate_id": "34f81fd6-eccf-47e8-86a1-db5112bdbd2d",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": "https://workingfamilies.org/candidates/",
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Lead Locally",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Fulton",
+      "level": "county",
+      "name": "Rohit Malhotra",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, Fulton",
+      "party": null,
+      "rating": "vote",
+      "section": "Georgia",
+      "slug": "rohit-malhotra",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/rohit-malhotra"
+    },
+    {
+      "articles": [],
       "candidate_id": "8b252e3b-9477-4db4-9988-28ccf6edee54",
       "district": "40",
       "election_date": "Nov 3, 2026",
@@ -12051,6 +12898,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "2a0ba9de-35db-4dfb-8f88-4f248a376700",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fulton",
+      "level": "county",
+      "name": "Jodi Merriday",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, Fulton",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "jodi-merriday",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/jodi-merriday"
+    },
+    {
+      "articles": [],
       "candidate_id": "0c342e59-02cd-416d-9e6f-02d9c147f6e9",
       "district": "9",
       "election_date": "Nov 3, 2026",
@@ -12075,7 +12944,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Nikki Merritt",
-      "notes": "Candidate has a record of voting against bills that would classify criticism of Israel's military actions as antisemitism under Georgia law.\nEndorsed by Siyasa.",
+      "notes": "Candidate has a record of voting against bills that would classify criticism of Israel's military actions as antisemitism under Georgia law.\nEndorsed by Peach State Muslims.",
       "office_title": "State Senator",
       "party": "Democrat",
       "rating": "vote",
@@ -12083,6 +12952,28 @@
       "slug": "nikki-merritt",
       "state": "GA",
       "url": "https://voteforpeace.info/georgia/nikki-merritt"
+    },
+    {
+      "articles": [],
+      "candidate_id": "6406ffeb-ee7f-49f0-a31e-5c9408d07605",
+      "district": null,
+      "election_date": "May 19, 2026",
+      "election_label": "Primary: May 19, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Tanya Miller",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "Attorney General",
+      "party": "Democrat",
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "tanya-miller",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/tanya-miller"
     },
     {
       "articles": [],
@@ -12327,6 +13218,50 @@
     },
     {
       "articles": [],
+      "candidate_id": "9a59ef6a-c55f-4cef-9868-27864f1ea893",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Nikki Porcher",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "Labor Commissioner",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "nikki-porcher",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/nikki-porcher"
+    },
+    {
+      "articles": [],
+      "candidate_id": "d09e7ab7-f427-493f-be44-7d683a871cf1",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Lydia Powell",
+      "notes": null,
+      "office_title": "State School Superintendent",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "lydia-powell",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/lydia-powell"
+    },
+    {
+      "articles": [],
       "candidate_id": "c94a9ebb-0d9a-4633-8463-069463e6c8a1",
       "district": "5",
       "election_date": "Nov 3, 2026",
@@ -12345,7 +13280,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Sheikh Rahman",
-      "notes": "Candidate has a record of voting against bills that would classify criticism of Israel's military actions as antisemitism under Georgia law.\nEndorsed by Siyasa.",
+      "notes": "Candidate has a record of voting against bills that would classify criticism of Israel's military actions as antisemitism under Georgia law.\nEndorsed by Peach State Muslims.",
       "office_title": "State Senator",
       "party": "Democrat",
       "rating": "vote",
@@ -12411,7 +13346,7 @@
       "jurisdiction": null,
       "level": "statewide",
       "name": "Penny Brown Reynolds",
-      "notes": "Endorsed by Siyasa.",
+      "notes": "Endorsed by Peach State Muslims.",
       "office_title": "Secretary of State",
       "party": "Democrat",
       "rating": "neutral",
@@ -12441,6 +13376,28 @@
       "slug": "gordon-rolle",
       "state": "GA",
       "url": "https://voteforpeace.info/georgia/gordon-rolle"
+    },
+    {
+      "articles": [],
+      "candidate_id": "90849b2f-da58-4a14-b600-da332eb0ceeb",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fayette",
+      "level": "county",
+      "name": "Charles Rousseau",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, Fayette",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "charles-rousseau",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/charles-rousseau"
     },
     {
       "articles": [],
@@ -12656,6 +13613,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "b16a8666-2aba-4c60-87ef-01f2b1134930",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Keisha Sean Waites",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "Insurance Commissioner",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "keisha-sean-waites",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/keisha-sean-waites"
+    },
+    {
+      "articles": [],
       "candidate_id": "4eac2680-83f9-40d4-ac02-a7a12854e107",
       "district": "7",
       "election_date": "May 19, 2026",
@@ -12704,6 +13683,28 @@
       "slug": "jyot-singh",
       "state": "GA",
       "url": "https://voteforpeace.info/georgia/jyot-singh"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c3eb7c9e-7407-47de-b029-080cb433102f",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fayette",
+      "level": "county",
+      "name": "Ashley Smith",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Board of Education, Fayette",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "ashley-smith",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/ashley-smith"
     },
     {
       "articles": [],
@@ -12951,6 +13952,50 @@
       "slug": "nikema-williams",
       "state": "GA",
       "url": "https://voteforpeace.info/georgia/nikema-williams"
+    },
+    {
+      "articles": [],
+      "candidate_id": "91fb68b3-6a79-47df-85c7-c9468029aa08",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fulton",
+      "level": "county",
+      "name": "Helen Willis",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, Fulton",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "helen-willis",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/helen-willis"
+    },
+    {
+      "articles": [],
+      "candidate_id": "32d15707-1d82-49b8-96d3-21626fe287f5",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Fayette",
+      "level": "county",
+      "name": "Chandra Wright",
+      "notes": "Endorsed by Peach State Muslims.",
+      "office_title": "County Commissioner, Fayette",
+      "party": null,
+      "rating": "neutral",
+      "section": "Georgia",
+      "slug": "chandra-wright",
+      "state": "GA",
+      "url": "https://voteforpeace.info/georgia/chandra-wright"
     },
     {
       "articles": [],
@@ -28256,5 +29301,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-14"
+  "snapshot": "2026-10-15"
 }

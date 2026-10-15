@@ -6727,6 +6727,52 @@
       "state": "FL"
     },
     {
+      "candidate_id": "fl-eric-yonce",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "06",
+      "listings": [
+        {
+          "campaign_url": "https://www.yonceforcongress.com/",
+          "candidate_id": "fl-eric-yonce",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "06",
+          "donate_url": "https://secure.actblue.com/donate/eric-rejects-aipac?refcode=website-endorsement",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://www.yonceforcongress.com/)",
+            "FL-06 [D]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Eric](https://secure.actblue.com/donate/eric-rejects-aipac?refcode=website-endorsement)"
+          ],
+          "name": "Eric Yonce",
+          "notes": [
+            "General Election"
+          ],
+          "pacs": [],
+          "party": "D",
+          "seat": "FL-06",
+          "seat_text": "FL-06 [D]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Eric Yonce",
+      "party": "D",
+      "seat": "FL-06",
+      "state": "FL"
+    },
+    {
       "candidate_id": "fl-frederica-wilson",
       "categories": [
         "congress"
@@ -32546,5 +32592,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-14"
+  "snapshot": "2026-10-15"
 }
