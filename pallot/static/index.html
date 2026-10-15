@@ -227,6 +227,10 @@
   <dialog id="print-dialog" class="small-dialog" aria-labelledby="print-title">
     <form method="dialog">
       <h2 id="print-title">Print my picks</h2>
+      <div id="print-unpicked" class="notice notice-warn print-unpicked" hidden>
+        <p id="print-unpicked-text"></p>
+        <button class="btn small" type="button" id="print-next">Next race to pick</button>
+      </div>
       <fieldset class="print-layout">
         <legend>Layout</legend>
         <label class="check"><input type="radio" name="print-layout" value="page" checked> Full page</label>

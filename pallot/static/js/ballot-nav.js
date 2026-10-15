@@ -120,21 +120,28 @@ function syncMatchMarks(count) {
   }
 }
 
-// "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts. The races
-// that may not be on the ballot aren't counted.
-export function updateProgress() {
+// How far the picking has gone: ``parts``, ["5 of 12 races", "1 of 2 propositions"], and
+// whether anything is ``left`` to pick. The races that may not be on the ballot aren't counted.
+export function pickProgress() {
   const { ballot, picks } = page;
   const raceKeys = ballot.races.map((r) => r.key);
   const measureKeys = ballot.measures.map(measureKey);
-  const done = picks.countPicked(raceKeys);
-  const decided = picks.countPicked(measureKeys);
-  $("#progress").textContent = [
-    `${done} of ${plural(raceKeys.length, "race")}`,
-    measureKeys.length ? `${decided} of ${plural(measureKeys.length, "proposition")}` : null,
-  ].filter(Boolean).join(" · ");
+  const races = picks.countPicked(raceKeys);
+  const measures = picks.countPicked(measureKeys);
+  const parts = [
+    `${races} of ${plural(raceKeys.length, "race")}`,
+    measureKeys.length ? `${measures} of ${plural(measureKeys.length, "proposition")}` : null,
+  ].filter(Boolean);
   const total = raceKeys.length + measureKeys.length;
-  $("#progress-bar").style.width = `${total ? Math.round(((done + decided) / total) * 100) : 0}%`;
-  const left = done + decided < total;
+  return { parts, share: total ? (races + measures) / total : 0, left: races + measures < total };
+}
+
+// "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts.
+export function updateProgress() {
+  const { picks } = page;
+  const { parts, share, left } = pickProgress();
+  $("#progress").textContent = parts.join(" · ");
+  $("#progress-bar").style.width = `${Math.round(share * 100)}%`;
   nextButton.disabled = !left;
   nextButton.textContent = left ? "Next race to pick" : "All picked ✓";
   for (const { element, keys, maybe } of sectionCounts) {
@@ -301,8 +308,9 @@ export function goTo(card, { open = false } = {}) {
 
 // The first race or proposition without a pick, after the one in focus (or the one it went
 // to last), round to the start. The races that may not be on the ballot are skipped, as the
-// progress skips them, and so are those "Only races with a match" hides.
-function nextRace() {
+// progress skips them, and so are those "Only races with a match" hides. Next on the strip, and
+// in Print my picks.
+export function nextRace() {
   const { ballot, picks } = page;
   if (!ballot) return;
   const keys = [...ballot.races.map((r) => r.key), ...ballot.measures.map(measureKey)];

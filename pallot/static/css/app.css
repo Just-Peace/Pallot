@@ -1298,6 +1298,8 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; margin: 10px 0; }
 .check input { margin-top: 4px; accent-color: var(--accent); }
 .print-layout { border: 0; margin: 0 0 6px; padding: 0; }
+.print-unpicked { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
+.print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 
 /* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */

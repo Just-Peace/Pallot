@@ -10,7 +10,8 @@
 import { lookupLabel, rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import {
-  applyHidePicked, askFocus, hidingNote, initNav, markCurrentSection, renderSections, setCardsLoading, syncPollMarks, updateProgress,
+  applyHidePicked, askFocus, hidingNote, initNav, markCurrentSection, nextRace, pickProgress, renderSections, setCardsLoading, syncPollMarks,
+  updateProgress,
 } from "./ballot-nav.js";
 import { electionLine, shortElectionLine } from "./ballot-shared.js";
 import { onBanListChanged } from "./ban-list.js";
@@ -397,8 +398,21 @@ const walletChoice = $("#print-wallet");
 for (const radio of printDialog.querySelectorAll('input[name="print-layout"]')) {
   radio.addEventListener("change", () => { $("#print-notes").disabled = walletChoice.checked; }); // notes don't fit
 }
+// With races left to pick, the dialog says how many are picked, offers the next one to pick, and
+// ticks "Include races I haven't picked", so a nearly empty sheet isn't taken to the polls.
 $("#print-btn").addEventListener("click", () => {
-  if (!page.loadingCards) printDialog.showModal();
+  if (page.loadingCards || !page.ballot) return;
+  const { parts, left } = pickProgress();
+  $("#print-unpicked").hidden = !left;
+  if (left) {
+    $("#print-unpicked-text").textContent = `You've picked ${parts.join(" and ")}.`;
+    $("#print-blank").checked = true;
+  }
+  printDialog.showModal();
+});
+$("#print-next").addEventListener("click", () => {
+  printDialog.close("next");
+  nextRace();
 });
 printDialog.addEventListener("close", () => {
   if (printDialog.returnValue === "print" && page.ballot) setTimeout(() => window.print(), 50);
