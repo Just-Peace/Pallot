@@ -150,7 +150,7 @@ How to write them:
 
 - GitHub Actions checks every pull request (`.github/workflows/tests.yml`):
   - the whole suite, `uv run pytest`, offline against the recorded responses in `tests/fixtures/`;
-  - ruff, for unused imports and variables;
+  - ruff, for unused imports and variables, undefined names and syntax errors;
   - the Docker build, when `Dockerfile`, `compose.yaml`, `.dockerignore`, `pyproject.toml` or `uv.lock` changed.
   - A change to Markdown files only skips them.
 - Locally, run just the tests for what you touched, for example `uv run pytest tests/test_fec.py`. Leave the whole suite to GitHub.

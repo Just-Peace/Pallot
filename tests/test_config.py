@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from pallot.config import DAY, DEMO_KEY, load_config, read_env_file
+import pytest
+
+from pallot import maintain
+from pallot.__main__ import main
+from pallot.config import DAY, DEMO_KEY, BadConfig, load_config, read_env_file
 
 
 def test_env_file_values_with_the_environment_winning(tmp_path, monkeypatch):
@@ -72,3 +76,37 @@ def test_the_default_entry_is_the_address_unless_set_to_the_voter_card():
     assert load_config({"PALLOT_DEFAULT_ENTRY": "voter_card"}).default_entry == "voter_card"
     assert load_config({"PALLOT_DEFAULT_ENTRY": "Voter-Card"}).default_entry == "voter_card"
     assert load_config({"PALLOT_DEFAULT_ENTRY": "zip"}).default_entry == "address"
+
+
+@pytest.mark.parametrize("name, value, why", [
+    ("PALLOT_PORT", "80OO", "PALLOT_PORT must be a whole number, not '80OO'"),
+    ("PALLOT_TTL_FEC", "7d", "PALLOT_TTL_FEC must be a whole number of seconds, not '7d'"),
+    ("PALLOT_HTTP_TIMEOUT", "30s", "PALLOT_HTTP_TIMEOUT must be a number of seconds, not '30s'"),
+    ("PALLOT_HTTP_TIMEOUT", "inf", "PALLOT_HTTP_TIMEOUT must be a number of seconds, not 'inf'"),
+    ("PALLOT_MAX_LOOKUPS", "eight", "PALLOT_MAX_LOOKUPS must be a whole number, not 'eight'"),
+    ("PALLOT_GOOGLE_DAILY_MAX", "1.5", "PALLOT_GOOGLE_DAILY_MAX must be a whole number, not '1.5'"),
+    ("PALLOT_PRUNE_EVERY", "6h", "PALLOT_PRUNE_EVERY must be a whole number of seconds, not '6h'"),
+    ("PALLOT_TILES_MAX_MB", "1GB", "PALLOT_TILES_MAX_MB must be a number of megabytes, not '1GB'"),
+    ("PALLOT_SUGGEST_MAX_MB", "nan", "PALLOT_SUGGEST_MAX_MB must be a number of megabytes, not 'nan'"),
+    ("PALLOT_ADDRESSES_MAX_MB", "lots", "PALLOT_ADDRESSES_MAX_MB must be a number of megabytes, not 'lots'"),
+    ("PALLOT_LIMIT_BALLOT", "lots", "PALLOT_LIMIT_BALLOT must be a rate like 30/hour or 600/10min, or off, not 'lots'"),
+])
+def test_a_malformed_setting_names_its_variable_and_value(name, value, why):
+    with pytest.raises(BadConfig) as raised:
+        load_config({name: value})
+    assert str(raised.value) == why
+
+
+def test_blank_settings_keep_their_defaults():
+    blank = {name: " " for name in ("PALLOT_PORT", "PALLOT_TTL_FEC", "PALLOT_HTTP_TIMEOUT", "PALLOT_TILES_MAX_MB",
+                                    "PALLOT_LIMIT_BALLOT")}
+    assert load_config(blank) == load_config({})
+
+
+@pytest.mark.parametrize("command", [lambda: main([]), lambda: maintain.main(["check"])])
+def test_pallot_and_pallot_cache_stop_with_one_line_on_a_bad_setting(command, monkeypatch, capsys):
+    monkeypatch.setenv("PALLOT_PORT", "80OO")
+    with pytest.raises(SystemExit) as stopped:
+        raise SystemExit(command())
+    assert stopped.value.code == 2
+    assert capsys.readouterr().err == "PALLOT_PORT must be a whole number, not '80OO'\n"

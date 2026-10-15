@@ -3,12 +3,13 @@ timeouts, cache lifetimes, the FEC and Google keys."""
 
 from __future__ import annotations
 
+import math
 import os
 from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Literal, Mapping
 
-from .limits import RateLimits, parse_rate
+from .limits import Rate, RateLimits, parse_rate
 
 HOUR = 3600
 DAY = 24 * HOUR
@@ -17,6 +18,11 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE = PROJECT_DIR / ".env"
 FEC_KEY_NAMES = ("PALLOT_FEC_API_KEY", *(f"PALLOT_FEC_API_KEY{n}" for n in range(2, 6)))
 DEMO_KEY = "DEMO_KEY"  # api.data.gov's shared key: a few requests an hour, per IP address
+
+
+class BadConfig(ValueError):
+    """A setting Pallot can't read, naming the variable and its value: `pallot` and `pallot-cache`
+    print it as one line and stop."""
 
 
 @dataclass(frozen=True)
@@ -182,14 +188,15 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
     if env is None:
         env = {**(read_env_file(env_file) if env_file else {}), **os.environ}
     overrides = {
-        f.name: int(env[key]) for f in fields(Ttls) if (key := f"PALLOT_TTL_{f.name.upper()}") in env
+        f.name: _int(env, key, "a whole number of seconds")
+        for f in fields(Ttls) if (env.get(key := f"PALLOT_TTL_{f.name.upper()}") or "").strip()
     }
     if "tiles" in overrides:
         overrides["tiles"] = max(overrides["tiles"], 7 * DAY)
     return Config(
         data_dir=Path(env["PALLOT_DATA_DIR"]) if env.get("PALLOT_DATA_DIR") else Config.data_dir,
         user_agent=env.get("PALLOT_USER_AGENT") or Config.user_agent,
-        http_timeout=float(env.get("PALLOT_HTTP_TIMEOUT") or Config.http_timeout),
+        http_timeout=_float(env, "PALLOT_HTTP_TIMEOUT", "a number of seconds", default=Config.http_timeout),
         ttl=Ttls(**overrides),
         fec_api_key=(env.get("PALLOT_FEC_API_KEY") or "").strip() or DEMO_KEY,
         fec_extra_keys=tuple((env.get(name) or "").strip() for name in FEC_KEY_NAMES[1:]),
@@ -199,18 +206,18 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         ),
         trusted_proxies=(env.get("PALLOT_TRUSTED_PROXIES") or "").strip() or Config.trusted_proxies,
         rate_limits=RateLimits(**{
-            name: parse_rate(env[key]) for name in ("ballot", "suggest", "outlines", "tiles")
-            if (key := f"PALLOT_LIMIT_{name.upper()}") in env and env[key].strip()
+            name: _rate(env, key) for name in ("ballot", "suggest", "outlines", "tiles")
+            if (env.get(key := f"PALLOT_LIMIT_{name.upper()}") or "").strip()
         }),
-        max_lookups=max(1, int(env.get("PALLOT_MAX_LOOKUPS") or Config.max_lookups)),
-        google_daily_max=int(env.get("PALLOT_GOOGLE_DAILY_MAX") or Config.google_daily_max),
-        tiles_max_bytes=_megabytes(env.get("PALLOT_TILES_MAX_MB")) or Config.tiles_max_bytes,
-        suggest_max_bytes=_megabytes(env.get("PALLOT_SUGGEST_MAX_MB")) or Config.suggest_max_bytes,
-        addresses_max_bytes=_megabytes(env.get("PALLOT_ADDRESSES_MAX_MB")) or Config.addresses_max_bytes,
-        cache_memory_bytes=_megabytes(env.get("PALLOT_CACHE_MEMORY_MB")) or Config.cache_memory_bytes,
+        max_lookups=max(1, _int(env, "PALLOT_MAX_LOOKUPS", default=Config.max_lookups)),
+        google_daily_max=_int(env, "PALLOT_GOOGLE_DAILY_MAX", default=Config.google_daily_max),
+        tiles_max_bytes=_megabytes(env, "PALLOT_TILES_MAX_MB") or Config.tiles_max_bytes,
+        suggest_max_bytes=_megabytes(env, "PALLOT_SUGGEST_MAX_MB") or Config.suggest_max_bytes,
+        addresses_max_bytes=_megabytes(env, "PALLOT_ADDRESSES_MAX_MB") or Config.addresses_max_bytes,
+        cache_memory_bytes=_megabytes(env, "PALLOT_CACHE_MEMORY_MB") or Config.cache_memory_bytes,
         host=env.get("PALLOT_HOST") or Config.host,
-        port=int(env.get("PALLOT_PORT") or Config.port),
-        prune_every=int(env.get("PALLOT_PRUNE_EVERY") or Config.prune_every),
+        port=_int(env, "PALLOT_PORT", default=Config.port),
+        prune_every=_int(env, "PALLOT_PRUNE_EVERY", "a whole number of seconds", default=Config.prune_every),
         default_entry=_entry(env.get("PALLOT_DEFAULT_ENTRY")),
     )
 
@@ -220,5 +227,39 @@ def _entry(value: str | None) -> Literal["address", "voter_card"]:
     return "voter_card" if (value or "").strip().lower().replace("-", "_") in ("voter_card", "card") else "address"
 
 
-def _megabytes(value: str | None) -> int | None:
-    return int(float(value) * (1 << 20)) if value else None
+def _int(env: Mapping[str, str], name: str, what: str = "a whole number", *, default: int = 0) -> int:
+    """``name``'s whole number, ``default`` when it's unset or blank; BadConfig otherwise."""
+    value = (env.get(name) or "").strip()
+    if not value:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        raise BadConfig(f"{name} must be {what}, not {env[name]!r}") from None
+
+
+def _float(env: Mapping[str, str], name: str, what: str = "a number", *, default: float = 0.0) -> float:
+    """``name``'s number (finite), ``default`` when it's unset or blank; BadConfig otherwise."""
+    value = (env.get(name) or "").strip()
+    if not value:
+        return default
+    try:
+        number = float(value)
+    except ValueError:
+        number = math.nan
+    if not math.isfinite(number):
+        raise BadConfig(f"{name} must be {what}, not {env[name]!r}")
+    return number
+
+
+def _megabytes(env: Mapping[str, str], name: str) -> int:
+    """``name``'s size in megabytes, as bytes; 0 when it's unset or blank."""
+    return int(_float(env, name, "a number of megabytes") * (1 << 20))
+
+
+def _rate(env: Mapping[str, str], name: str) -> Rate | None:
+    """``name``'s rate (limits.parse_rate), with BadConfig naming the variable."""
+    try:
+        return parse_rate(env[name])
+    except ValueError:
+        raise BadConfig(f"{name} must be a rate like 30/hour or 600/10min, or off, not {env[name]!r}") from None

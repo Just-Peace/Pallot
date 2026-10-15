@@ -19,7 +19,7 @@ from typing import Any, Callable, Collection
 
 from .admin import Admin, SourceInfo
 from .ballot import Services
-from .config import load_config
+from .config import BadConfig, load_config
 from .http_cache import SavedRequest
 from .services import open_services, prune
 from .sources import RefreshFailed, fec, google
@@ -245,6 +245,11 @@ def main(argv: list[str] | None = None) -> int:
                              help="delete, and fetch nothing again: the next lookups fetch what they need (to erase "
                                   "the addresses saved, say)")
     args = parser.parse_args(argv)
+    try:
+        config = load_config()
+    except BadConfig as exc:
+        print(exc, file=sys.stderr)
+        return 2
     if args.command == "rebuild" and not args.yes:
         scope = ", ".join(args.only) if args.only else "every source"
         then = "" if args.delete_only else " and fetch it all again"
@@ -253,7 +258,7 @@ def main(argv: list[str] | None = None) -> int:
             print("Nothing was deleted.")
             return 1
     return asyncio.run(run(args.command, getattr(args, "only", []), reset_snapshots=getattr(args, "reset_snapshots", False),
-                           delete_only=getattr(args, "delete_only", False)))
+                           delete_only=getattr(args, "delete_only", False), config=config))
 
 
 if __name__ == "__main__":
