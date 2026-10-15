@@ -31,9 +31,7 @@ SOURCE = "polls"
 LABEL = "Polls"
 SITE_LABEL = "FiftyPlusOne"
 DESCRIPTION = (
-    "Public polls of Texas's races for U.S. Senate, U.S. House and Governor, from FiftyPlusOne (fiftyplusone.news). "
-    "Its nationwide poll lists come with Pallot, with its permission; once that copy is two days old, "
-    "Pallot downloads them again, so nothing about you is sent."
+    "Public polls of Texas's U.S. Senate, U.S. House and Governor races, from FiftyPlusOne (fiftyplusone.news)."
 )
 API = "https://fiftyplusone.news/api/polls"
 SITE = "https://fiftyplusone.news"

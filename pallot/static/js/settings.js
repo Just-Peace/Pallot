@@ -1,6 +1,6 @@
 // The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the ban list; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
-// what the server has saved from each and how the last lookup used it; the appearance; and Clear data, which clears what
+// each with one line of what it holds and how old it is; the appearance; and Clear data, which clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
 // from here. Changes that affect the ballot are marked with markSettingsChanged(), so an open
 // ballot page reloads when the voter goes back to it. It imports page.js first, which draws the
@@ -12,7 +12,7 @@ import { api } from "./api.js";
 import { applyTheme, currentTheme, onThemeChange, setTheme } from "./appearance.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
 import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
-import { SHORT_DATE, formatBytes, formatDate, plural, relativeTime } from "./format.js";
+import { COUNT, SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { ENGINES, currentEngine, setEngine } from "./search.js";
@@ -29,42 +29,24 @@ let pollTimer = null; // re-checks the sources while a map downloads for a looku
 const groups = new Map(); // group id → { list, status, update }
 const rows = new Map(); // source id → { row, update }
 
-// What the source has saved on the server: "12 saved responses · 3.1 MB · 2 expired · fetched
-// 4 days ago to an hour ago". Snapshot sources describe theirs in their details instead, and a
-// frozen list saves nothing.
-function cacheLine(source) {
-  if (source.bundled || source.frozen) return null;
-  const { entries, bytes, expired, oldest, newest } = source.cache;
-  if (!entries) return h("p", { class: "source-cache" }, "Nothing saved yet.");
-  const [from, to] = [relativeTime(oldest), relativeTime(newest)];
-  const span = from === to ? from : `${from} to ${to}`;
-  return h("p", { class: "source-cache" },
-    [plural(entries, "saved response"), formatBytes(bytes), expired ? `${expired} expired` : null, `fetched ${span}`]
-      .filter(Boolean).join(" · "));
+// One line of fine print: what the source holds and how old it is ("101 Texas candidates ·
+// 1,020 in 27 states · updated 7 hours ago"). What the server keeps is pallot-cache's, on the host.
+function finePrint(source) {
+  const when = source.updated;
+  const age = !when ? null
+    : `${source.frozen ? "captured" : "updated"} ${/^\d{4}-\d{2}-\d{2}$/.test(when) ? formatDate(when, SHORT_DATE) : relativeTime(when)}`;
+  const parts = [...source.counts, age].filter(Boolean);
+  return parts.length ? parts.join(" · ") : null;
 }
 
-// How the last ballot lookup used the source: how many requests it made, and how old the data was.
-function lastUseLine(source) {
+// A short line only when the voter should know: a pause, a failure or a missing key (the
+// server's notice), or else a last lookup the source didn't answer.
+function alertLine(source) {
+  if (source.notice) return { text: source.notice, tone: source.notice_tone || "info" };
   const use = source.last_use;
-  if (!use || use.status === "off") return null;
-  const dated = source.bundled || source.frozen;
-  const age = use.as_of ? (dated ? formatDate(use.as_of, SHORT_DATE) : relativeTime(use.as_of)) : null;
-  const text = {
-    used: dated
-      ? `used the ${source.frozen ? "list captured on" : "snapshot of"} ${age}`
-      : [use.message, use.calls ? plural(use.calls, "request") : "no requests", age ? `data from ${age}` : null]
-        .filter(Boolean).join(" · "),
-    stale: `no answer, so it used the copy saved ${age}`,
-    error: `failed (${use.message})`,
-    unused: use.message || "not needed",
-  }[use.status];
-  const warn = use.status === "stale" || use.status === "error";
-  return h("p", { class: ["source-last", warn && "tone-warn"] }, `Last lookup: ${text}`);
-}
-
-function detailList(source) {
-  if (!source.details.length) return null;
-  return h("dl", { class: "source-facts" }, source.details.map((f) => [h("dt", {}, f.label), h("dd", {}, f.value)]));
+  if (use?.status === "error") return { text: "Didn't answer the last lookup.", tone: "warn" };
+  if (use?.status === "stale") return { text: `Didn't answer the last lookup, so it used the copy saved ${relativeTime(use.as_of)}.`, tone: "warn" };
+  return null;
 }
 
 // A source's row is drawn once and then updated in place (update below), so a change or the
@@ -98,11 +80,11 @@ function sourceRow(initial, status) {
     source = next;
     row.classList.toggle("is-off", !source.enabled);
     if (toggle) toggle.checked = source.enabled;
+    const fine = finePrint(source);
+    const alert = alertLine(source);
     state.replaceChildren(...[
-      source.notice ? h("p", { class: ["source-notice", `tone-${source.notice_tone || "info"}`] }, linkedText(source.notice)) : null,
-      cacheLine(source),
-      detailList(source),
-      lastUseLine(source),
+      fine ? h("p", { class: "source-fine" }, fine) : null,
+      alert ? h("p", { class: ["source-notice", `tone-${alert.tone}`] }, linkedText(alert.text)) : null,
     ].filter(Boolean));
   }
 
@@ -164,14 +146,12 @@ function sourceGroup(group) {
   return { list, status, update };
 }
 
+// The last lookup on this server, in one line: how many requests it sent to the sources.
 function renderSummary(overview) {
   const last = overview.last_lookup;
-  const lookup = last
-    ? `Last lookup ${relativeTime(last.at)}, ${last.found_by === "voter_card" ? "by voter card" : "by address"}: `
-      + `${plural(last.external_calls, "request")} to the sources, `
-      + `${last.cache_hits} answered from the saved copies, ${last.elapsed_ms} ms.`
-    : "No ballot looked up since Pallot started.";
-  summary.textContent = `${lookup} Everything the server has saved takes ${formatBytes(overview.total_bytes)}.`;
+  summary.hidden = !last;
+  if (last) summary.textContent = `Last lookup ${relativeTime(last.at)}: ${plural(last.external_calls, "request")} to the sources, `
+    + `${COUNT.format(last.cache_hits)} answered from saved copies.`;
 }
 
 function render(overview) {
@@ -239,9 +219,9 @@ $("#focus-setting .fine").after(focusChips({ hints: true }));
 function showView() {
   const mode = showViewControls(viewSection);
   $("#view-mode-note").textContent = {
-    minimal: "Minimal shows only the ballot and its candidates, with no money or poll boxes. Simple adds funding, polls and endorsements. Detailed opens everything.",
-    simple: "Simple folds the money and poll boxes to one line each, the map, and where the dates and districts come from, and keeps candidate rows light on a phone. Minimal hides the boxes; Detailed opens everything.",
-    detailed: "Detailed opens everything, the money and poll boxes included, and shows each candidate's whole row on a phone. Simple folds the boxes; Minimal hides them.",
+    minimal: "Just the races and their candidates.",
+    simple: "Funding, polls and endorsements, each folded to one line.",
+    detailed: "Everything, opened.",
     custom: "Your own mix, below.",
   }[mode];
 }

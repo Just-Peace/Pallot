@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import Any, Callable, Union
 
-from ..config import DAY, HOUR, Ttls
+from ..config import Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, Unreadable, UpstreamError
 from ..models import Fact, Race, Tone
 from ..offices import OfficeScope
@@ -61,12 +61,6 @@ class FeedUnavailable(Exception):
     @property
     def warning(self) -> str:
         return f"Couldn't load {self.label}'s endorsements ({self})."
-
-
-def _lifetime(seconds: float) -> str:
-    """604800 -> "7 days", 3600 -> "1 hour"."""
-    count, unit = (seconds / DAY, "day") if seconds >= DAY else (seconds / HOUR, "hour")
-    return f"{count:g} {unit}{'' if count == 1 else 's'}"
 
 
 class EndorsementFeed:
@@ -177,14 +171,15 @@ class EndorsementFeed:
 
     # -- Settings (KeptSource) ----------------------------------------------------------------
 
-    def notice(self) -> tuple[str, Tone]:
-        got = self.cache.peek(self.spec)
-        if got is None:
-            return (f"Not fetched yet: the first lookup with it on fetches [{self.organization}'s list]({self.url}) "
-                    "from its website."), "info"
-        lifetime = next((saved.ttl for saved in self.cache.saved(self.source)), self.ttl.endorsement_feeds)
-        return (f"Fetched from [{self.organization}'s website]({self.url}) on {display_time(got.fetched_at)}; "
-                f"a lookup fetches it again once it's {_lifetime(lifetime)} old."), "info"
+    def notice(self) -> tuple[str, Tone] | None:
+        return None  # a refusal pauses it, which Settings words from its SourceInfo
+
+    def counts(self) -> list[str]:
+        kept = self._kept()
+        return kept.counts() if kept else []
+
+    def updated(self) -> str | None:
+        return None  # its cache row's date
 
     def details(self) -> list[Fact]:
         kept = self._kept()

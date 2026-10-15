@@ -142,14 +142,14 @@ def test_paused_fec_still_serves_what_it_has(make_app, upstream, tmp_path):
     assert senate["cards"] and not any("FEC" in w for w in ballot["warnings"])
 
 
-def fec_notice(client) -> str:
+def fec_notice(client) -> str | None:
     return next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "fec")["notice"]
 
 
 def test_requests_take_each_key_in_turn(make_app, upstream):
     with TestClient(make_app(fec_extra_keys=("", "third-key", FEC_KEY))) as client:  # a blank and a repeat are skipped
         get_ballot(client)
-        assert fec_notice(client) == "Using your 2 api.data.gov keys in turn."
+        assert fec_notice(client) is None  # every key working: nothing for the voter to know
     sent = upstream.fec_sent
     assert set(sent) == {FEC_KEY, "third-key"} and abs(sent.count(FEC_KEY) - sent.count("third-key")) <= 1
 

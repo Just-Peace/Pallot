@@ -191,7 +191,7 @@ def test_entries_match_as_a_frozen_lists_do():
 
 
 def test_the_ballot_fetches_it_once_and_keeps_it(client, upstream):
-    assert row(client)["notice"].startswith("Not fetched yet: the first lookup with it on fetches")
+    assert (row(client)["notice"], row(client)["counts"], row(client)["updated"]) == (None, [], None)  # not fetched yet
     ballot = get_ballot(client, "ut")
     casar = cards_from(ballot)["Greg Casar"]
     today = dt.date.today()
@@ -230,19 +230,16 @@ def test_cair_matches_texas_candidates(client, upstream):
     assert plummer["match"]["confidence"] == "exact"
     assert {f["label"]: f["value"] for f in plummer["facts"]}["Office"] == "Harris County Judge"
     assert get_ballot(client, "ut")["meta"]["external_calls"] == 0 and upstream.count(CAIR_HOST) == 1
-    assert [(f["label"], f["value"]) for f in row(client, CAIR)["details"]] == [
-        ("Texas candidates", "17"), ("All candidates", "591 in 27 states")]
+    assert row(client, CAIR)["counts"] == ["17 Texas candidates", "591 in 27 states"]
 
 
 def test_its_settings_row_and_pallot_cache_refreshes_and_rebuilds_it(client, make_app, upstream):
     get_ballot(client, "ut")
     found = row(client)
-    assert (found["label"], found["toggleable"], found["enabled"], found["frozen"], found["bundled"],
-            found["cache"]["entries"]) == ("Muslims United PAC endorsements", True, True, False, False, 1)
-    assert found["notice"].startswith("Fetched from [Muslims United PAC's website](https://muslimsunitedpac.com/endorsements) on ")
-    assert found["notice"].endswith("; a lookup fetches it again once it's 7 days old.")
-    assert [(f["label"], f["value"]) for f in found["details"]] == [
-        ("Texas candidates", "3"), ("All candidates", "26 in 18 states")]
+    assert (found["label"], found["toggleable"], found["enabled"], found["frozen"], found["notice"]) == (
+        "Muslims United PAC endorsements", True, True, False, None)
+    assert found["counts"] == ["3 Texas candidates", "26 in 18 states"] and found["updated"]
+    assert client.app.state.svc.cache.stats(MUPAC).entries == 1
 
     refreshed = make_app.cache_command("hard-refresh", MUPAC)
     assert refreshed == (0, "Muslims United PAC endorsements: Refreshed 1 saved response. 3 of its 26 candidates are in Texas.")
@@ -284,7 +281,7 @@ def test_an_answer_it_cant_read_is_refused(client, upstream):
     ballot = get_ballot(client, "ut")
     assert not cards_from(ballot)
     assert "Couldn't load Muslims United PAC's endorsements (a list with no candidate Pallot can read)." in ballot["warnings"]
-    assert row(client)["details"] == []
+    assert row(client)["counts"] == []
 
 
 def test_a_copy_kept_is_parsed_once_and_a_new_copy_again(tmp_path):

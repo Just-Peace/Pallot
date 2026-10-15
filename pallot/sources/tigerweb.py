@@ -19,8 +19,7 @@ from .sboe import Ring
 
 SOURCE = "tigerweb"
 DESCRIPTION = (
-    "Outlines of your U.S. House, State Senate and State House districts, for the map under \"Your districts\", from "
-    "the US Census's TIGERweb. Asked once your ballot is shown, with each district's number, never your address."
+    "Outlines of your U.S. House, State Senate and State House districts for the map, from the US Census's TIGERweb."
 )
 SERVICE = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer"
 REFUSALS = (403, 429)  # answers that pause TIGERweb for Ttls.outlines_backoff

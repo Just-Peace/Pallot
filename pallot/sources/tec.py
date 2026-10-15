@@ -275,14 +275,18 @@ class Tec(BundledSnapshot):
         return out.decode("utf-8", "replace").strip()
 
     def notice(self) -> tuple[str, Tone] | None:
-        """A failed refresh, or how old the snapshot is."""
+        """A failed refresh, or no snapshot at all."""
         if failed := super().notice():
             return failed
-        document = self.document()
-        if not document.get("snapshot"):
+        if not self.document().get("snapshot"):
             return "No snapshot yet: refresh to download one from the Texas Ethics Commission.", "warn"
+        return None
+
+    def counts(self) -> list[str]:
+        document = self.document()
         since = display_date((document.get("window") or {}).get("start"))
-        return f"Snapshot of {display_date(self.snapshot_date())}: money raised since {since}.", "info"
+        return [f"{len(document.get('filers') or []):,} candidates and officeholders",
+                *([f"money raised since {since}"] if since else [])]
 
     def details(self) -> list[Fact]:
         document, meta = self.document(), self.meta()

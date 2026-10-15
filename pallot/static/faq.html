@@ -19,11 +19,18 @@
       <header class="page-head">
         <h1>Frequently asked questions</h1>
         <p class="lede">How Pallot finds your ballot and the dates to vote, where its information comes from, how the money figures are put together, and where your picks are kept.</p>
+        <div class="faq-search" role="search">
+          <label for="faq-query" class="sr-only">Search the questions</label>
+          <input type="search" id="faq-query" placeholder="Search the questions" autocomplete="off" spellcheck="false" enterkeyhint="search">
+          <p class="status" id="faq-search-status" role="status" aria-live="polite"></p>
+        </div>
         <div class="button-row faq-tools">
           <button class="btn ghost small" id="expand-all" type="button">Expand all</button>
           <button class="btn ghost small" id="collapse-all" type="button">Collapse all</button>
         </div>
       </header>
+
+      <nav class="section-chips" aria-label="FAQ sections"></nav>
 
       <section class="faq-group" aria-labelledby="ballot">
         <h2 class="group-title" id="ballot">Finding your ballot</h2>
@@ -497,7 +504,7 @@
         <details class="faq" id="fec-key">
           <summary>Why does the FEC tab show only totals?</summary>
           <div class="faq-body">
-            <p>Pallot is using the FEC's shared demonstration key, which allows only a few requests an hour, so the breakdowns are left out until we set our own. Settings says which key is in use.</p>
+            <p>Pallot is using the FEC's shared demonstration key, which allows only a few requests an hour, so the breakdowns are left out until we set our own. Settings says so under the FEC.</p>
           </div>
         </details>
 

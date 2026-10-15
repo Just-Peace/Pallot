@@ -36,16 +36,15 @@ from ..config import Ttls
 from ..fsutil import write_text_atomic
 from ..http_cache import HttpCache, RequestSpec, UpstreamError, current_calls
 from ..models import Fact, Tone
-from ..text import display_size, display_time
+from ..text import display_size, display_time, iso_utc
 from . import RefreshFailed
 from .sboe import Ring, _inside, _offset, simplify
 
 SOURCE = "election_precincts"
 LABEL = "Election precincts"
 DESCRIPTION = (
-    "Your election precinct, the \"Pct\" on your voter registration certificate, and its outline on the map, from "
-    "the Texas Legislative Council's map of every county's election precincts. The newest map is downloaded once, and "
-    "again only when the Council publishes a newer one. Your address is never sent."
+    "Your election precinct and its outline on the map, from the Texas Legislative Council's precinct map, "
+    "without sending your address."
 )
 INDEX_URL = "https://data.capitol.texas.gov/api/3/action/package_show"
 DATASET = "precincts"
@@ -639,6 +638,12 @@ class ElectionPrecincts:
             kept = "the map kept still shows" if self.stored() else "lookups try again later"
             return f"The last download of the precinct map failed ({self.last_error}); {kept}.", "warn"
         return None
+
+    def counts(self) -> list[str]:
+        return []
+
+    def updated(self) -> str | None:
+        return iso_utc(self.downloaded_at())
 
     def details(self) -> list[Fact]:
         stored, listed = self.stored(), self.newest_listed()

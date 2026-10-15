@@ -16,7 +16,7 @@ import { openPanel } from "./topbar.js";
 // the page scrolls: the last whose top has reached the line a jump scrolls to (the last at the
 // foot of the page), or the one just jumped to while it's in view, until the voter scrolls, since
 // a short section near the end never reaches that line. On a phone the list is in the Menu panel, which a jump
-// closes; in the folded rail it's hidden. A page with a <nav class="section-chips"> (Settings) also
+// closes; in the folded rail it's hidden. A page with a <nav class="section-chips"> (Settings, the FAQ) also
 // gets the list there, as a row of chips that stays in view where the pane's list is hidden.
 function listSections() {
   const sidebar = document.querySelector(".sidebar");
@@ -29,6 +29,18 @@ function listSections() {
   });
   if (!sidebar || entries.length < 2) return;
   let jumped = null;
+  let shown = null;
+  // The row of chips scrolls sideways on a phone: the current one is brought into it, without
+  // scrolling the page.
+  const showChip = (entry) => {
+    if (!chips || entry === shown) return;
+    const chip = entry.links[1];
+    const row = chip.closest("ul");
+    if (!row || row.scrollWidth <= row.clientWidth) return;
+    shown = entry;
+    const [box, rowBox] = [chip.getBoundingClientRect(), row.getBoundingClientRect()];
+    row.scrollBy({ left: box.left - rowBox.left - (rowBox.width - box.width) / 2, behavior: "smooth" });
+  };
   const mark = () => {
     const html = document.documentElement;
     const line = (parseFloat(getComputedStyle(html).scrollPaddingTop) || 0) + 4;
@@ -43,6 +55,7 @@ function listSections() {
         else link.removeAttribute("aria-current");
       }
     }
+    showChip(current);
   };
   for (const entry of entries) {
     for (const link of entry.links) {

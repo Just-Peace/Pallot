@@ -1,4 +1,4 @@
-// Turning values into the words and figures the voter reads: dates, money, counts, sizes and lists.
+// Turning values into the words and figures the voter reads: dates, money, counts and lists.
 
 export const SHORT_DATE = { month: "short", day: "numeric", year: "numeric" };
 export const DOLLARS = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
@@ -27,12 +27,6 @@ export function relativeTime(iso) {
     value = Math.round(value / size);
   }
   return iso;
-}
-
-export function formatBytes(bytes) {
-  if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
-  if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${bytes} B`;
 }
 
 export function percent(share) {

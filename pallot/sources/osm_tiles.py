@@ -17,8 +17,7 @@ from ..http_cache import HttpCache, RequestSpec
 
 SOURCE = "osm_tiles"
 DESCRIPTION = (
-    "The street map under your districts' outlines, from OpenStreetMap. The server asks for the map tiles of the "
-    "area you look at, which shows roughly where your address is, and keeps each one for 7 days."
+    "The street map under your districts' outlines, from OpenStreetMap."
 )
 URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 REFUSALS = (403, 418, 429)  # answers that pause the tiles for Ttls.tiles_backoff

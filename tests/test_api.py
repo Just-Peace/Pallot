@@ -42,30 +42,29 @@ def test_sources_overview(client):
     assert (google["toggleable"], google["enabled"]) == (True, True) and "PALLOT_GOOGLE_API_KEY" in google["notice"]
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
-    assert "Harris, Dallas, Tarrant, Travis and Fort Bend" in county["description"]
-    assert (precincts["label"], precincts["toggleable"], precincts["enabled"], precincts["busy"], precincts["notice"]) == (
-        "Election precincts (Texas Legislative Council)", True, True, False, None)
-    assert [(f["label"], f["value"]) for f in precincts["details"]] == [
-        ("Map kept", "downloaded on the first lookup"), ("Newest on the portal", "not asked yet")]
+    assert "Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton" in county["description"]
+    assert not [s["id"] for s in overview["sources"] if re.search(r"[a-z)]\. [A-Z]", s["description"])]  # one sentence each
+    assert (precincts["label"], precincts["toggleable"], precincts["enabled"], precincts["busy"], precincts["notice"],
+            precincts["counts"], precincts["updated"]) == (
+        "Election precincts (Texas Legislative Council)", True, True, False, None, [], None)
     assert [s["id"] for s in overview["sources"] if s["frozen"]] == ["examplepac"]
     assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
     assert (outlines["label"], outlines["enabled"]) == ("District map (US Census TIGERweb)", True)
     assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
     assert tiles["enabled"] is True and example["enabled"] is True
-    assert tracker["bundled"] and peace["bundled"] and tec["bundled"] and not sos["bundled"]
-    assert peace["label"] == "Vote for Peace"
-    assert [(f["label"], f["value"]) for f in peace["details"]][3:] == [("Texas candidates", "164"), ("All candidates", "166")]
-    assert set(overview) == {"groups", "sources", "total_bytes", "last_lookup"}  # nothing to refresh or clear
-    assert not {"refresh_confirm", "clear_confirm", "refresh_label", "clear_label"} & set(sos)
-    assert overview["last_lookup"] is None and sos["last_use"] is None
-    assert {"Snapshot", "Texas entries"} <= {f["label"] for f in tracker["details"]}
-    assert fec["notice"] == "Using your api.data.gov key." and fec["notice_tone"] == "info"
-    assert tec["notice"] and {"Snapshot", "Money raised since"} <= {f["label"] for f in tec["details"]}
+    assert peace["label"] == "Vote for Peace" and peace["counts"] == ["164 Texas candidates", "166 in all"]
+    assert set(overview) == {"groups", "sources", "last_lookup"}  # nothing to refresh or clear, and no server stats
+    assert not {"refresh_confirm", "clear_confirm", "cache", "details", "bundled"} & set(sos)
+    assert overview["last_lookup"] is None and sos["last_use"] is None and sos["updated"] is None
+    assert tracker["counts"][0].endswith(" Texas entries") and re.fullmatch(r"\d{4}-\d{2}-\d{2}", tracker["updated"])
+    assert fec["notice"] is None  # a key of its own: nothing the voter needs to know
+    assert tec["notice"] is None and tec["counts"][0].endswith(" candidates and officeholders")
+    assert tec["counts"][1].startswith("money raised since ")
     assert (polls["label"], polls["toggleable"], polls["notice"]) == ("Polls (FiftyPlusOne)", True, None)
     assert (holders["label"], holders["toggleable"], holders["enabled"], holders["group"]) == (
         "Seat holders (congress-legislators, Open States)", True, True, "ballot")
     assert (wiki["label"], wiki["toggleable"], wiki["enabled"], wiki["group"]) == ("Wikidata", True, True, "ballot")
-    shown = [s["notice"] or "" for s in overview["sources"]] + [f["value"] for s in overview["sources"] for f in s["details"]]
+    shown = [s["notice"] or "" for s in overview["sources"]] + [c for s in overview["sources"] for c in s["counts"]]
     assert not [text for text in shown if ISO_TIME.search(text)]
 
 
@@ -79,14 +78,13 @@ def test_times_are_shown_as_people_write_them():
 def test_settings_shows_the_last_lookup(client):
     get_ballot(client)
     first = {s["id"]: s for s in client.get("/api/sources").json()["sources"]}
-    assert first["sos"]["last_use"]["calls"] > 0 and first["sos"]["cache"]["entries"] > 0
+    assert first["sos"]["last_use"]["calls"] > 0 and ISO_TIME.search(first["sos"]["updated"])
     get_ballot(client)
     overview = client.get("/api/sources").json()
     assert overview["last_lookup"]["external_calls"] == 0 and overview["last_lookup"]["cache_hits"] > 0
     rows = {s["id"]: s for s in overview["sources"]}
     assert rows["sos"]["last_use"]["status"] == "used" and rows["sos"]["last_use"]["calls"] == 0
     assert rows["trackaipac"]["last_use"]["as_of"] == load("trackaipac/current.json")["snapshot"]
-    assert overview["total_bytes"] > 0
 
 
 def test_switches_are_the_voters_own(client, tmp_path):
@@ -179,7 +177,7 @@ def test_settings_cant_refresh_or_clear_what_the_server_keeps(client):
     for path in ("/api/sources/sos/refresh", "/api/sources/sos/clear", "/api/cache/clear"):
         assert client.post(path).status_code in (404, 405), path
     assert client.put("/api/sources/sos", json={"enabled": False}).status_code in (404, 405)
-    assert next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "sos")["cache"]["entries"] > 0
+    assert client.app.state.svc.cache.stats("sos").entries > 0
 
 
 def test_sboe_portal_down_is_asked_once_until_its_wait_is_over(client, upstream, make_app):
@@ -351,6 +349,17 @@ def test_the_left_pane_links_every_page(client):
     assert set(PAGES) <= set(re.findall(r'href: "([^"]+)"', chrome))
 
 
+@pytest.mark.parametrize("page", ["settings.html", "faq.html"])
+def test_long_pages_have_section_chips_for_a_phone(client, page):
+    """page.js draws the sections as chips in a page's <nav class="section-chips">."""
+    assert '<nav class="section-chips" aria-label=' in client.get(f"/{page}").text
+
+
+def test_the_faq_has_a_search_box(client):
+    html = client.get("/faq.html").text
+    assert '<input type="search" id="faq-query"' in html and 'id="faq-search-status" role="status"' in html
+
+
 @pytest.mark.parametrize("page", [p for p in PAGES if p != "./"])
 def test_every_other_page_has_sections_for_the_left_pane(client, page):
     """page.js lists each <section> in <main> by the heading it's labelled by."""
@@ -379,8 +388,8 @@ def test_startup_deletes_old_suggestions_and_addresses_not_found(make_app, tmp_p
                      30 * DAY, DAY, ("result", "addressMatches"))
     cache.close()
     with TestClient(make_app()) as client:
-        rows = {s["id"]: s["cache"]["entries"] for s in client.get("/api/sources").json()["sources"]}
-    assert (rows["suggestions"], rows["osm_tiles"], rows["geocoding"]) == (0, 0, 1)  # the address found stays, as a fallback
+        kept = {tag: client.app.state.svc.cache.stats(tag).entries for tag in ("suggestions", "osm_tiles", "census")}
+    assert kept == {"suggestions": 0, "osm_tiles": 0, "census": 1}  # the address found stays, as a fallback
 
 
 def test_the_footer_shows_the_running_version(client):

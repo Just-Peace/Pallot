@@ -22,8 +22,7 @@ from ..http_cache import HttpCache, RequestSpec
 SOURCE = "key_dates"
 LABEL = "Key dates"
 DESCRIPTION = (
-    "The last day to register, early voting and the mail-ballot deadline of each Texas election, from the Texas "
-    "Secretary of State's Important Election Dates page. Pallot reads the whole page, so nothing about you is sent."
+    "The registration, early voting and mail-ballot deadlines of each Texas election, from the Texas Secretary of State."
 )
 URL = "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
 REGISTRATION_URL = "https://goelect.txelections.civixapps.com/ivis-mvp-ui/#/login"  # My Voter Portal

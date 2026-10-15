@@ -24,8 +24,7 @@ from .ballotpedia import ORIGIN
 SOURCE = "suggestions"
 URL = "https://api4.ballotpedia.org/address_autocomplete"
 DESCRIPTION = (
-    "Suggests Texas addresses as you type in the address box, from Ballotpedia's address search (unofficial "
-    "endpoint, personal use). What you type is sent once it's a house number and a few letters of the street."
+    "Suggests Texas addresses as you type, from Ballotpedia's address search (unofficial endpoint, personal use)."
 )
 REFUSALS = (401, 403, 429)  # answers that pause suggestions for Ttls.suggest_backoff
 MIN_LENGTH = 5

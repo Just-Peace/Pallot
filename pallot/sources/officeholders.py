@@ -31,8 +31,7 @@ from .tec import bp_seat, tec_seat
 SOURCE = "officeholders"
 LABEL = "Seat holders"
 DESCRIPTION = (
-    "Who holds each U.S. Senate, U.S. House and Texas Legislature seat now, and their party, from the "
-    "congress-legislators project and Open States. Pallot downloads both whole lists, so nothing about you is sent."
+    "Who holds each U.S. Congress and Texas Legislature seat now, from congress-legislators and Open States."
 )
 CONGRESS = "https://unitedstates.github.io/congress-legislators/legislators-current.json"
 LEGISLATURE = "https://data.openstates.org/people/current/tx.csv"

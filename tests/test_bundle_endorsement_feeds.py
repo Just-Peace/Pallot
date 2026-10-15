@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from bundles import store
 from pallot.config import DAY
 
-from .bundling import build_all, entry, lifetimes, notice
+from .bundling import build_all, came_with, entry, lifetimes
 from .conftest import FEED_TOKEN, get_ballot, last_use, switch
 
 FEEDS = ("mupac", "cair", "emgage")
@@ -30,10 +30,10 @@ def test_a_lookup_with_the_feeds_bundled_asks_their_sites_nothing(tmp_path, upst
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client, "ut")
         assert all(last_use(client, source)["calls"] == 0 for source in FEEDS)
-        said = notice(client, "emgage")
+        said = came_with(client, "emgage")
     assert all("Greg Casar" in feed_cards(ballot, source) for source in FEEDS)
     assert {source: upstream.count(host) for source, host in FEED_HOSTS.items()} == asked
-    assert "a lookup fetches it again once it's 2 days old. Came with 1 answer, checked " in said
+    assert said.startswith("Came with 1 answer, checked ")
 
 
 def test_emgages_bundle_keeps_neither_its_page_nor_its_token(tmp_path, upstream):

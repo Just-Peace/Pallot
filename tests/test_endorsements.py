@@ -151,12 +151,9 @@ def test_the_ballot_settings_and_the_pages_list(client, upstream):
     assert get_ballot(client)["meta"]["external_calls"] == 0 and len(upstream.calls) == calls
 
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "examplepac")
-    assert (row["label"], row["toggleable"], row["enabled"], row["frozen"], row["bundled"]) == (
-        "Example PAC endorsements", True, True, True, False)
-    assert row["notice"] == ("A frozen list from [Example Peace Action Committee](https://example.org/endorsements), "
-                             "captured on Sep 20, 2026. It came with Pallot, and Pallot never fetches it.")
-    assert [(f["label"], f["value"]) for f in row["details"]] == [
-        ("Captured", "Sep 20, 2026"), ("Texas candidates", "5"), ("All candidates", "7 in 3 states")]
+    assert (row["label"], row["toggleable"], row["enabled"], row["frozen"], row["notice"]) == (
+        "Example PAC endorsements", True, True, True, None)
+    assert (row["counts"], row["updated"]) == (["5 Texas candidates", "7 in 3 states"], "2026-09-20")
     assert row["last_use"] == {"id": "examplepac", "label": "Example PAC", "status": "used", "as_of": "2026-09-20",
                                "calls": 0, "message": None}
 

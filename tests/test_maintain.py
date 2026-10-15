@@ -22,8 +22,9 @@ from pallot.services import prune
 from .conftest import get_ballot, load
 
 
-def rows(client: TestClient) -> dict[str, dict]:
-    return {s["id"]: s for s in client.get("/api/sources").json()["sources"]}
+def entries(client: TestClient, source: str) -> int:
+    """How many responses the running server keeps for an HttpCache source."""
+    return client.app.state.svc.cache.stats(source).entries
 
 
 def expire(data_dir, source: str) -> int:
@@ -61,13 +62,13 @@ def test_soft_refresh_asks_again_only_what_is_stale(client, make_app, upstream, 
     status, printed = make_app.cache_command("refresh", "sos")
     assert status == 0 and printed == f"Texas Secretary of State (Texas SOS): Refreshed {expired} saved responses."
     assert upstream.count("goelect") == asked + expired
-    assert rows(client)["sos"]["cache"]["expired"] == 0
+    assert client.app.state.svc.cache.stats("sos").expired == 0
     assert get_ballot(client)["meta"]["external_calls"] == 0  # the running server reads the new copies
 
 
 def test_hard_refresh_asks_everything_again_and_refreshes_the_snapshots(client, make_app, upstream):
     get_ballot(client)
-    sos = rows(client)["sos"]["cache"]["entries"]
+    sos = entries(client, "sos")
     asked = upstream.count("goelect")
     status, printed = make_app.cache_command("hard-refresh")
     assert status == 0
@@ -102,15 +103,14 @@ def test_a_failed_snapshot_refresh_changes_nothing(client, make_app):
 def test_rebuild_deletes_everything_and_fetches_it_again(client, make_app, upstream, tmp_path):
     get_ballot(client)
     client.get("/api/tiles/12/940/1686.png")
-    before = rows(client)
+    before = entries(client, "sos")
     current = tmp_path / "data" / "trackaipac" / "current.json"
     current.write_text(json.dumps({"snapshot": "refreshed", "candidates": []}))
     status, printed = make_app.cache_command("rebuild")
     assert status == 0 and printed.startswith("Deleted ")
     assert "Address lookup & districts, Election precincts (Texas Legislative Council)" in printed
-    after = rows(client)
-    assert after["sos"]["cache"]["entries"] == before["sos"]["cache"]["entries"]
-    assert after["osm_tiles"]["cache"]["entries"] == 0  # only fetched as it's viewed
+    assert entries(client, "sos") == before
+    assert entries(client, "osm_tiles") == 0  # only fetched as it's viewed
     assert json.loads(current.read_text())["snapshot"] == "refreshed"  # a snapshot isn't deleted
     assert (tmp_path / "data" / "plane2106_kml.zip").exists()
     assert client.app.state.svc.election_precincts.stored() is not None
@@ -121,12 +121,12 @@ def test_rebuild_can_reset_the_snapshots_and_one_source_alone(client, make_app, 
     get_ballot(client)
     current = tmp_path / "data" / "trackaipac" / "current.json"
     current.write_text(json.dumps({"snapshot": "edited", "candidates": []}))
-    fec = rows(client)["fec"]["cache"]["entries"]
+    fec = entries(client, "fec")
     status, printed = make_app.cache_command("rebuild", "trackaipac", "sos", reset_snapshots=True)
     assert status == 0 and printed.startswith("Deleted ")
     assert "TrackAIPAC: updated" in printed and "FEC" not in printed
     assert client.app.state.svc.trackaipac.document()["snapshot"] == load("trackaipac/current.json")["snapshot"]
-    assert rows(client)["fec"]["cache"]["entries"] == fec
+    assert entries(client, "fec") == fec
 
 
 def test_rebuild_can_delete_the_saved_addresses_without_sending_them_again(client, make_app, upstream, tmp_path):
@@ -135,7 +135,7 @@ def test_rebuild_can_delete_the_saved_addresses_without_sending_them_again(clien
     status, printed = make_app.cache_command("rebuild", "geocoding", "suggestions", delete_only=True)
     assert status == 0 and printed == ("Deleted 1 saved response, and what Address lookup & districts kept in files.")
     assert upstream.count("geocoding.geo.census.gov") == asked
-    assert rows(client)["geocoding"]["cache"]["entries"] == 0
+    assert entries(client, "census") == entries(client, "nominatim") == 0
     assert not (tmp_path / "data" / "plane2106_kml.zip").exists()
     with sqlite3.connect(tmp_path / "data" / "cache.sqlite3") as db:
         assert not db.execute("SELECT 1 FROM responses WHERE request LIKE '%1100%Congress%'").fetchall()

@@ -83,7 +83,7 @@ def test_a_refusal_pauses_the_tiles(client, upstream, status):
 def test_tiles_are_deleted_but_never_refreshed(client, make_app, upstream):
     get_tile(client, *tile_at(12, *capitol_point()))
     row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == osm_tiles.SOURCE)
-    assert (row["label"], row["cache"]["entries"]) == ("Street map (OpenStreetMap)", 1)
+    assert row["label"] == "Street map (OpenStreetMap)" and client.app.state.svc.cache.stats(osm_tiles.SOURCE).entries == 1
     assert make_app.cache_command("hard-refresh", osm_tiles.SOURCE) == (0, "")
     assert upstream.count("tile.openstreetmap.org") == 1
     assert make_app.cache_command("rebuild", osm_tiles.SOURCE) == (0, "Deleted 1 saved response.")

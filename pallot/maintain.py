@@ -98,6 +98,8 @@ class Maintenance:
                 lines.append("Nothing saved.")
             if not info.refreshable:
                 lines.append("Only fetched as it's used: pruned, never refreshed.")
+            if came := self.admin.bundled(info):
+                lines.append(came)
         if paused := self.admin.paused(info):
             lines.append(paused)
         if kept := self.admin.kept(info):
