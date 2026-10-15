@@ -25,7 +25,7 @@ from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, last_name
 from ..models import Breakdown, Candidate, Race, Share, SourceCard
-from ..text import display_date, display_time, web_url
+from ..text import display_date, web_url
 from . import CardSet
 
 log = logging.getLogger("uvicorn.error")
@@ -43,7 +43,6 @@ HEADERS = {  # the site answers 403 to anything that doesn't look like a browser
     "Chrome/153.0.0.0 Safari/537.36",
     "accept-language": "en-US,en;q=0.8",
 }
-REFUSALS = (403, 429)  # answers that pause FiftyPlusOne for Ttls.polls_backoff
 PAGE = 500  # the most the API sends at once, whatever limit is asked for
 STATE = "Texas"
 SENATE, HOUSE, GOVERNOR = KINDS = ("senate_general", "house_general", "governor_general")
@@ -52,29 +51,16 @@ _POPULATIONS = {"lv": "likely voters", "rv": "registered voters", "v": "voters",
 _RANK = {code: i for i, code in enumerate(_POPULATIONS)}
 
 
-class PollsUnavailable(Exception):
-    """FiftyPlusOne couldn't be asked (refused, paused, down) and nothing was cached."""
-
-    def __init__(self, message: str, paused: bool = False):
-        super().__init__(message)
-        self.paused = paused
-
-
 class Polls:
     def __init__(self, cache: HttpCache, ttl: Ttls, today: Callable[[], dt.date] = dt.date.today):
         self.cache = cache
         self.ttl = ttl
         self.today = today
-        cache.pause_on(SOURCE, REFUSALS, ttl.polls_backoff)
+        cache.pause_on(SOURCE, ttl.polls_backoff)
 
     async def _page(self, kind: str, offset: int) -> list[dict[str, Any]]:
         params = {"offset": str(offset), "limit": str(PAGE), "filterValue": kind, "sortBy": "created_at", "dir": "DESC"}
-        try:
-            got = await self.cache.get_json(SOURCE, RequestSpec("GET", API, params=params, headers=HEADERS), ttl=self.ttl.polls)
-        except UpstreamError as exc:
-            if exc.until:
-                raise PollsUnavailable(f"paused until {display_time(exc.until)} after FiftyPlusOne refused a request", paused=True) from exc
-            raise PollsUnavailable(str(exc).removeprefix(f"{SOURCE}: ")) from exc
+        got = await self.cache.get_json(SOURCE, RequestSpec("GET", API, params=params, headers=HEADERS), ttl=self.ttl.polls)
         return list((got.value or {}).get("data") or [])
 
     async def polls(self, kind: str) -> list[dict[str, Any]]:
@@ -268,7 +254,7 @@ def candidate_card(candidate: Candidate, race: Race, kept: list[Reading], median
 
 async def cards(polls: Polls, races: list[Race], day: dt.date | None) -> CardSet:
     """A poll bar for each race FiftyPlusOne has polls of, and a Polls tab for its
-    candidates. Raises PollsUnavailable if none of the lists could be loaded."""
+    candidates. Raises UpstreamError if none of the lists could be loaded."""
     out = CardSet()
     wanted = {race.key: kind for race in races if (kind := kind_of(race))}
     if not wanted:
@@ -276,19 +262,19 @@ async def cards(polls: Polls, races: list[Race], day: dt.date | None) -> CardSet
     cycle = (day or polls.today()).year
     kinds = sorted(set(wanted.values()))
     lists: dict[str, list[dict[str, Any]]] = {}
-    failures: list[PollsUnavailable] = []
+    failures: list[UpstreamError] = []
     for kind, got in zip(kinds, await asyncio.gather(*(polls.polls(k) for k in kinds), return_exceptions=True)):
-        if isinstance(got, PollsUnavailable):
+        if isinstance(got, UpstreamError):
             failures.append(got)
         elif isinstance(got, BaseException):
             raise got
         else:
             lists[kind] = got
-    failures.sort(key=lambda f: f.paused)  # a list asked while another's refusal paused the rest names that refusal
+    failures.sort(key=lambda f: f.until is not None)  # a list asked while another's refusal paused the rest names that refusal
     if failures and not lists:
         raise failures[0]
     if failures:
-        log.warning("polls: %s", failures[0])
+        log.warning("%s", failures[0])
         out.warnings.append("FiftyPlusOne isn't answering right now, so some races' polls aren't shown.")
 
     for race in races:

@@ -82,11 +82,11 @@ Each source contributes `SourceCard`s; the page draws them by `kind` (`money`, `
 
 1. A module in `pallot/sources/` that fetches through `HttpCache` and builds cards.
 2. A field on `Services` in `ballot.py`, created in `open_services()` (`services.py`), which the server and `pallot-cache` share.
-3. A job in `enrich.py`, and its place in `CARD_ORDER` (where its tab goes in Details). A `cards()` without I/O runs through `asyncio.to_thread`. When it fails, the voter gets one fixed sentence naming the source and what still works; the error itself goes to the server log, as do key names and anything the host should fix.
+3. Its `cards()` in `JOBS` in `enrich.py`, placed where its tab goes in Details. It's asked only while the voter has the source on, with what the ballot found (`Context`). A `cards()` without I/O runs through `asyncio.to_thread`. When it fails, it lets `UpstreamError` through: the voter gets its one fixed sentence in `UNAVAILABLE`, naming the source and what still works; the error itself goes to the server log, as do key names and anything the host should fix.
 4. An entry in `SOURCES` in `admin.py` so it appears in Settings and `pallot-cache`, under its `group`, and a line in `pallot/sources.toml` if it can be turned off. A source kept in files rather than cache rows names its `Services` field in `SourceInfo.kept` and implements `KeptSource` (`sources/__init__.py`).
 5. For Help me pick's More conditions, `figures` and `flags` on its candidate cards. Sources that mean the same thing share an id (the FEC's and TEC's `raised`). `pick-rules.js` names the ids it knows.
 6. For a money source, its Funding chips come from `highlights()` in `sources/highlights.py`.
-7. Its throttle in `MIN_INTERVAL` (`services.py`), its pause (`pause_on`), and its lifetimes in `Ttls`.
+7. Its throttle in `MIN_INTERVAL` (`services.py`), its pause (`pause_on`, which pauses on 403 and 429; pass only any other status it refuses with), and its lifetimes in `Ttls`.
 8. Fixtures in `record_fixtures.py`, served by `conftest.py`'s `Upstream`, and tests with `respx`.
 9. Rows in `static/privacy.html` and `static/about.html`, and an answer in `static/faq.html` if it raises a question.
 

@@ -35,7 +35,7 @@ from urllib.parse import urlsplit
 
 from ..config import Ttls
 from ..fsutil import write_text_atomic
-from ..http_cache import HttpCache, RequestSpec, UpstreamError
+from ..http_cache import REFUSALS, HttpCache, RequestSpec, UpstreamError
 from ..models import Fact, Tone
 from ..text import display_size, display_time, iso_utc
 from . import RefreshFailed
@@ -52,7 +52,6 @@ DESCRIPTION = (
 INDEX_URL = "https://data.capitol.texas.gov/api/3/action/package_show"
 DATASET = "precincts"
 HOST = urlsplit(INDEX_URL).hostname
-REFUSALS = (403, 429)  # answers that pause the portal for Ttls.election_precincts_backoff
 SIMPLIFY_DEG = 0.00005  # about 5 m: a precinct is a few streets across, drawn at street level
 FIRST_WAIT = 20.0  # seconds the first lookup waits for the first map, beside the other sources
 FIELDS = ("CNTY", "PREC")  # the county's FIPS code, and its name for the precinct ("0300")
@@ -417,7 +416,7 @@ class ElectionPrecincts:
         self._outlines: dict[tuple[int, str], list[Ring]] = {}
         self._interiors: dict[tuple[int, str, float], list[tuple[float, float]]] = {}
         self._task: asyncio.Future[None] | None = None
-        cache.pause_on(SOURCE, REFUSALS, ttl.election_precincts_backoff)
+        cache.pause_on(SOURCE, ttl.election_precincts_backoff)
         if tidy:
             self._tidy()
 

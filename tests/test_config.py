@@ -60,6 +60,11 @@ def test_the_transient_caches_caps_are_in_megabytes():
     assert (load_config({}).tiles_max_bytes, load_config({}).suggest_max_bytes) == (512 << 20, 64 << 20)
 
 
+def test_the_in_memory_cache_cap_is_in_megabytes():
+    assert load_config({"PALLOT_CACHE_MEMORY_MB": "16"}).cache_memory_bytes == 16 << 20
+    assert load_config({}).cache_memory_bytes == 64 << 20
+
+
 def test_port_and_prune_interval_come_from_the_environment():
     assert (load_config({}).port, load_config({}).prune_every) == (8000, 6 * 3600)
     config = load_config({"PALLOT_PORT": "9000", "PALLOT_PRUNE_EVERY": "600"})

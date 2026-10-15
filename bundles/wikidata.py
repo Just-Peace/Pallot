@@ -3,7 +3,8 @@ matched people's details are asked per ballot, so they aren't in it."""
 
 from __future__ import annotations
 
-from pallot.sources.wikidata import Wikidata, WikidataUnavailable
+from pallot.http_cache import UpstreamError
+from pallot.sources.wikidata import Wikidata
 
 from .entry import BundleError, Context
 
@@ -14,7 +15,7 @@ async def build(ctx: Context) -> dict[str, int]:
     """The list; counts the people and those with a seat Pallot has races for."""
     try:
         people, _, _ = await Wikidata(ctx.cache, ctx.config.ttl).people()
-    except WikidataUnavailable as exc:
+    except UpstreamError as exc:
         raise BundleError(f"couldn't load Wikidata's Texas officeholders: {exc}") from exc
     if len(people) < MIN_PEOPLE:
         raise BundleError(f"Wikidata listed only {len(people)} Texas officeholders")

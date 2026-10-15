@@ -3,6 +3,7 @@
 // their ballot with them. If storage is blocked, reads give the fallback and writes are dropped.
 
 export const PICKS = "pallot.picks.v1";
+export const COLLAPSED = "pallot.collapsed.v1"; // the races the voter folded, by election: election → race → true
 export const LAST_LOOKUP = "pallot.lastLookup.v1";
 export const ADDRESS_CARD = "pallot.addressCard.v1";
 export const SETTINGS_CHANGED = "pallot.settingsChanged.v1";

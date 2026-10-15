@@ -61,10 +61,6 @@ _NOT_EMPLOYERS = {
 }
 
 
-class FecUnavailable(Exception):
-    """The FEC couldn't be asked (rate limit, refused key, down) and nothing was cached."""
-
-
 def cycle_of(day: dt.date) -> int:
     """The FEC's two-year period, named for its even year: 2026 covers 2025–26."""
     return day.year + day.year % 2
@@ -156,10 +152,10 @@ class Fec:
             try:
                 return await self.cache.get_json(SOURCE, spec, ttl=ttl)
             except UpstreamError as exc:
-                if exc.until:  # every key rests, and nothing is cached for this request
-                    why = self.key_trouble() or "every key rests"
-                    raise FecUnavailable(f"paused until {display_time(exc.until)}: {why}") from exc
-                raise FecUnavailable(str(exc)) from exc
+                if not exc.until:
+                    raise
+                why = self.key_trouble() or "every key rests"  # every key rests, and nothing is cached for this request
+                raise UpstreamError(SOURCE, f"paused until {display_time(exc.until)}: {why}", exc.status, exc.until) from exc
 
     async def race(self, seat: str, cycle: int, ttl: float) -> list[dict[str, Any]]:
         """Everyone who filed for this seat this cycle (primary losers too), with totals."""
@@ -190,7 +186,7 @@ class Fec:
             )
         parts: dict[str, Any] = {}
         for name, got in zip(calls, await asyncio.gather(*calls.values(), return_exceptions=True)):
-            if isinstance(got, FecUnavailable):
+            if isinstance(got, UpstreamError):
                 continue  # that part is left out; the rest of the card still shows
             if isinstance(got, BaseException):
                 raise got
@@ -550,7 +546,7 @@ def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: 
 
 async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
     """Cards for candidates in congressional races that the FEC lists for that seat, and a
-    money comparison for each such race. Raises FecUnavailable if no race could be loaded."""
+    money comparison for each such race. Raises UpstreamError if no race could be loaded."""
     federal = [race for race in races if race.seat]
     out = CardSet()
     if not federal:
@@ -559,9 +555,9 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
     cycle, ttl = cycle_of(day), fec.lifetime(day)
     seats = sorted({race.seat for race in federal if race.seat})
     lists: dict[str, list[dict[str, Any]]] = {}
-    failures: list[FecUnavailable] = []
+    failures: list[UpstreamError] = []
     for seat, got in zip(seats, await asyncio.gather(*(fec.race(s, cycle, ttl) for s in seats), return_exceptions=True)):
-        if isinstance(got, FecUnavailable):
+        if isinstance(got, UpstreamError):
             failures.append(got)
         elif isinstance(got, BaseException):
             raise got
@@ -570,7 +566,7 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
     if failures and not lists:
         raise failures[0]
     if failures:
-        log.warning("fec: %s", failures[0])
+        log.warning("%s", failures[0])
         out.warnings.append("The FEC isn't answering right now, so some federal races have no campaign money.")
 
     matched: list[tuple[str, str, dict[str, Any], Match]] = []  # candidate key, seat, FEC row, match

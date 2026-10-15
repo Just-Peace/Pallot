@@ -9,7 +9,9 @@ from types import SimpleNamespace
 import pytest
 
 from pallot import enrich
+from pallot.http_cache import UpstreamError
 from pallot.models import Candidate, Race, SourceCard
+from pallot.settings import Sources
 from pallot.sources import CardSet, fec, polls
 
 pytestmark = pytest.mark.anyio
@@ -26,10 +28,8 @@ def cards_from(source: str, races: list[Race]) -> CardSet:
 
 
 async def run(races: list[Race]) -> enrich.Outcome:
-    return await enrich.run(
-        SimpleNamespace(fec=None, polls=None), races, elections={}, ballot_rows={}, bp_ballot=None, sos_lookups=None,
-        use_trackaipac=False, use_fec=True, use_polls=True,
-    )
+    sources = Sources({source: source in (fec.SOURCE, polls.SOURCE) for source in enrich.JOBS})
+    return await enrich.run(SimpleNamespace(fec=None, polls=None, endorsements=[]), races, sources, enrich.Context())
 
 
 async def test_sources_are_asked_at_once_and_cards_keep_their_order(monkeypatch):
@@ -57,7 +57,7 @@ async def test_a_source_that_cant_answer_is_a_warning(monkeypatch):
         return cards_from(fec.SOURCE, races)
 
     async def polls_down(*_args):
-        raise polls.PollsUnavailable("HTTP 403")
+        raise UpstreamError(polls.SOURCE, "HTTP 403", 403)
 
     monkeypatch.setattr(fec, "cards", fec_cards)
     monkeypatch.setattr(polls, "cards", polls_down)

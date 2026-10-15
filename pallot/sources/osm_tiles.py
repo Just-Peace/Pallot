@@ -20,7 +20,6 @@ DESCRIPTION = (
     "The street map under your districts' outlines, from OpenStreetMap."
 )
 URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-REFUSALS = (403, 418, 429)  # answers that pause the tiles for Ttls.tiles_backoff
 MIN_ZOOM = 5
 MAX_ZOOM = 18
 TEXAS = (-109.0, 23.5, -91.0, 38.5)  # lon/lat: the state and 2 degrees around it, so its edges have streets
@@ -46,7 +45,7 @@ class Tiles:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        cache.pause_on(SOURCE, REFUSALS, ttl.tiles_backoff)
+        cache.pause_on(SOURCE, ttl.tiles_backoff, also=(418,))
 
     async def tile(self, z: int, x: int, y: int) -> bytes:
         """The PNG of one tile; UpstreamError when it can't be had and nothing is cached."""

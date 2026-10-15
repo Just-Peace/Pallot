@@ -95,6 +95,7 @@ async def open_services(
             source_headers={
                 **({google.SOURCE: {google.KEY_HEADER: config.google_api_key}} if config.google_api_key else {}),
             },
+            memory_bytes=config.cache_memory_bytes,
             retry_after=config.ttl.retry_after,
         )
         election_precincts = ElectionPrecincts(cache, config.ttl, config.election_precincts_dir, tidy=tidy)

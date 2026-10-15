@@ -5,8 +5,9 @@ source that made it, so the Settings page can show one source at a time, and pal
 refresh or clear it. A row keeps the request itself and the lifetimes it was stored with, so refresh()
 can re-issue it without knowing what it was for. A value is parsed JSON, a web page's text
 (get_text) or an image as base64 (get_bytes). Decoded values also sit in an in-memory
-LRU bounded by their stored size, which matters for the 2.6 MB statewide candidate list;
-images stay out of it, since the browser keeps them too.
+LRU bounded by an estimate of their decoded size (DECODED_PER_BYTE times their text: the
+2.6 MB statewide candidate list takes 6.7 MB as Python objects); images stay out of it,
+since the browser keeps them too, and so do bundled answers until a lookup asks for one.
 
 A row's dates are read through a covering index, and stats() through another: the value
 is stored before them in each row, so reading them from the table walks the whole value.
@@ -171,6 +172,9 @@ class UpstreamError(Exception):
         self.until = until
 
 
+REFUSALS = frozenset({403, 429})  # answers that pause a source (pause_on)
+
+
 @dataclass
 class CallStats:
     """What one API request cost, for its line in the server's log."""
@@ -191,6 +195,7 @@ _call_stats: contextvars.ContextVar[CallStats | None] = contextvars.ContextVar("
 _refreshing: contextvars.ContextVar[bool] = contextvars.ContextVar("pallot_refreshing", default=False)
 REFRESH_WAITS = 10 * 60  # refresh() waits out a pause of a source's keys that ends within this
 REFRESH_TRIES = 3  # how many times refresh() asks a request whose keys were all resting
+DECODED_PER_BYTE = 3  # decoded JSON takes 2.4–4.5 times its text in memory, measured on the largest answers
 
 
 @contextlib.contextmanager
@@ -314,7 +319,7 @@ class HttpCache:
         self._lock = threading.Lock()
         self._client = client
         self._clock = clock
-        self._memory: OrderedDict[str, tuple[float, Any, int]] = OrderedDict()  # key -> fetched_at, value, bytes
+        self._memory: OrderedDict[str, tuple[float, Any, int]] = OrderedDict()  # key -> fetched_at, value, estimate
         self._memory_bytes = memory_bytes
         self._memory_used = 0
         self._inflight: dict[str, asyncio.Future[Cached]] = {}
@@ -435,7 +440,7 @@ class HttpCache:
                     "SELECT fetched_at FROM responses INDEXED BY responses_key_dates WHERE key = ?", (spec.key,)
                 ).fetchone()
             if row is None or row[0] < fetched_at:
-                self._store(spec, source, value, fetched_at, ttl, None, ())
+                self._store(spec, source, value, fetched_at, ttl, None, (), remember=False)
                 stored += 1
         return stored
 
@@ -445,9 +450,9 @@ class HttpCache:
         stored = self._load(spec)
         return Cached(stored.value, stored.fetched_at) if stored else None
 
-    def pause_on(self, source: str, statuses: Collection[int], seconds: float) -> None:
-        """Stop asking ``source`` for ``seconds`` once it answers with one of ``statuses``."""
-        self._pause_on[source] = (frozenset(statuses), seconds)
+    def pause_on(self, source: str, seconds: float, also: Collection[int] = ()) -> None:
+        """Stop asking ``source`` for ``seconds`` once it refuses a request: REFUSALS, and ``also``."""
+        self._pause_on[source] = (REFUSALS | frozenset(also), seconds)
 
     def cap_daily(self, source: str, most: int) -> None:
         """Send at most ``most`` of ``source``'s requests a day (UTC), then pause it until the day
@@ -699,17 +704,22 @@ class HttpCache:
         return _Stored(fetched_at, expires_at, value)
 
     def _remember(self, key: str, fetched_at: float, value: Any, size: int) -> None:
-        """Keep a decoded value in memory, dropping the least recently used past
-        ``memory_bytes`` of stored text; the caller holds self._lock."""
-        old = self._memory.pop(key, None)
-        if old:
-            self._memory_used -= old[2]
+        """Keep a decoded value in memory, dropping the least recently used past ``memory_bytes``
+        of their estimated decoded size; the caller holds self._lock."""
+        self._forget(key)
+        size *= DECODED_PER_BYTE
         if size > self._memory_bytes:
             return
         self._memory[key] = (fetched_at, value, size)
         self._memory_used += size
         while self._memory_used > self._memory_bytes:
             self._memory_used -= self._memory.popitem(last=False)[1][2]
+
+    def _forget(self, key: str) -> None:
+        """Drop one in-memory copy; the caller holds self._lock."""
+        old = self._memory.pop(key, None)
+        if old:
+            self._memory_used -= old[2]
 
     def _forget_all(self) -> None:
         """Empty the in-memory copies; the caller holds self._lock."""
@@ -726,9 +736,12 @@ class HttpCache:
         empty_ttl: float | None,
         empty_at: tuple[str, ...],
         lifetime: float | None = None,
+        *,
+        remember: bool = True,
     ) -> None:
         """Store ``value`` for ``lifetime``, or else ``ttl`` (``empty_ttl`` when it's empty);
-        the lifetimes are kept for refresh() either way."""
+        the lifetimes are kept for refresh() either way. ``remember``: keep it in memory too (not
+        for bundled answers, most of which no lookup asks for: the first that does reads it then)."""
         if lifetime is None:
             lifetime = empty_ttl if empty_ttl is not None and value_is_empty(value, empty_at) else ttl
         text = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
@@ -744,7 +757,9 @@ class HttpCache:
                 ),
             )
             self._db.execute("DELETE FROM flags WHERE name = ?", (_retry_flag(spec.key),))
-            if not spec.as_bytes:
+            if spec.as_bytes or not remember:
+                self._forget(spec.key)
+            else:
                 self._remember(spec.key, now, value, size)
 
     # -- Settings page and pallot-cache ----------------------------------------------

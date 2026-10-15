@@ -7,10 +7,10 @@ import pytest
 import respx
 
 from pallot.config import Ttls
-from pallot.http_cache import HttpCache
+from pallot.http_cache import HttpCache, UpstreamError
 from pallot.models import Candidate, Race
 from pallot.sources.ballotpedia import (
-    SOURCE, URL, Ballotpedia, BallotpediaUnavailable, BpNote, cards, council_district_in, counterparts, parse,
+    SOURCE, URL, Ballotpedia, BpNote, cards, council_district_in, counterparts, parse,
     precincts_in,
 )
 
@@ -164,10 +164,10 @@ async def test_refusal_pauses_further_calls(tmp_path):
         route = router.get(URL).mock(return_value=httpx.Response(403))
         async with httpx.AsyncClient() as client:
             source = Ballotpedia(HttpCache(tmp_path / "c.sqlite3", client), Ttls())
-            with pytest.raises(BallotpediaUnavailable):
+            with pytest.raises(UpstreamError):
                 await source.ballot(30.27, -97.74)
             assert source.cache.paused_until(SOURCE) is not None
-            with pytest.raises(BallotpediaUnavailable, match="paused"):
+            with pytest.raises(match="paused"):
                 await source.ballot(30.27, -97.74)
     assert route.call_count == 1
 
@@ -179,7 +179,7 @@ async def test_a_paused_ballotpedia_still_serves_what_it_has(tmp_path):
         async with httpx.AsyncClient() as client:
             source = Ballotpedia(HttpCache(tmp_path / "c.sqlite3", client), Ttls())
             first = await source.ballot(30.27, -97.74, dt.date(2026, 11, 3))
-            with pytest.raises(BallotpediaUnavailable):
+            with pytest.raises(UpstreamError):
                 await source.ballot(29.76, -95.37)  # somewhere else: refused, which pauses Ballotpedia
             assert source.cache.paused_until(SOURCE) is not None
             again = await source.ballot(30.27, -97.74, dt.date(2026, 11, 3))

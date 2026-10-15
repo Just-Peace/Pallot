@@ -111,6 +111,9 @@ class Config:
     suggest_max_bytes: int = 64 << 20
     # The same for each per-address source: the geocoders' and Ballotpedia's answers.
     addresses_max_bytes: int = 128 << 20
+    # The most the cache's decoded answers take in memory (estimated from their size on disk); the
+    # least recently used go first past it, and are read from disk again when asked.
+    cache_memory_bytes: int = 64 << 20
     host: str = "127.0.0.1"
     port: int = 8000  # `uv run pallot`'s default port; the Docker image always listens on 8000
     prune_every: int = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
@@ -211,6 +214,7 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         tiles_max_bytes=_megabytes(env, "PALLOT_TILES_MAX_MB") or Config.tiles_max_bytes,
         suggest_max_bytes=_megabytes(env, "PALLOT_SUGGEST_MAX_MB") or Config.suggest_max_bytes,
         addresses_max_bytes=_megabytes(env, "PALLOT_ADDRESSES_MAX_MB") or Config.addresses_max_bytes,
+        cache_memory_bytes=_megabytes(env, "PALLOT_CACHE_MEMORY_MB") or Config.cache_memory_bytes,
         host=env.get("PALLOT_HOST") or Config.host,
         port=_int(env, "PALLOT_PORT", default=Config.port),
         prune_every=_int(env, "PALLOT_PRUNE_EVERY", "a whole number of seconds", default=Config.prune_every),

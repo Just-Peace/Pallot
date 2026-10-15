@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import io
 import zipfile
+from array import array
 from pathlib import Path
 
 import httpx
@@ -24,10 +25,14 @@ SQUARE = [(-98.0, 30.0), (-97.0, 30.0), (-97.0, 31.0), (-98.0, 31.0), (-98.0, 30
 HOLE = [(-97.6, 30.4), (-97.4, 30.4), (-97.4, 30.6), (-97.6, 30.6), (-97.6, 30.4)]
 
 
+def packed(ring):
+    return array("d", (c for point in ring for c in point))
+
+
 def districts():
     return [
-        District(5, (Polygon(SQUARE, (HOLE,), (-98.0, 30.0, -97.0, 31.0)),)),
-        District(10, (Polygon(HOLE, (), (-97.6, 30.4, -97.4, 30.6)),)),
+        District(5, (Polygon(packed(SQUARE), (packed(HOLE),), (-98.0, 30.0, -97.0, 31.0)),)),
+        District(10, (Polygon(packed(HOLE), (), (-97.6, 30.4, -97.4, 30.6)),)),
     ]
 
 
