@@ -3,8 +3,9 @@
 // ↑/↓ move through the list, Enter or a click picks, Esc closes. Picking with the keyboard or a
 // mouse only fills the box; the voter still presses "Show my ballot". On a touch screen, tapping a
 // suggestion looks the ballot up straight away, and the box moves to the top of the screen when
-// it's focused, so the list opens above the keyboard. With suggestions off in Settings the box is
-// left as it was, with the browser's own address autofill.
+// it's focused, so the list opens above the keyboard. A touch screen keeps the browser's own
+// address autofill, which a phone shows above the keyboard, not over the list; the street it fills
+// in opens the list like typing does. With suggestions off in Settings the box is left as it was.
 
 import { api } from "./api.js";
 import { h } from "./dom.js";
@@ -24,8 +25,9 @@ export async function attachSuggestions(input) {
   const box = h("div", { class: "suggestions", hidden: true },
     list, h("p", { class: "suggestions-credit" }, "Suggestions from Ballotpedia · Esri data"));
   input.after(box);
-  // Our list replaces the browser's autofill, which would open on top of it.
-  input.setAttribute("autocomplete", "off");
+  const touchScreen = matchMedia("(pointer: coarse)");
+  // A desktop browser's autofill opens on top of our list, so there our list replaces it.
+  if (!touchScreen.matches) input.setAttribute("autocomplete", "off");
   input.setAttribute("role", "combobox");
   input.setAttribute("aria-autocomplete", "list");
   input.setAttribute("aria-controls", list.id);
@@ -36,7 +38,6 @@ export async function attachSuggestions(input) {
   let timer = null;
   let pending = null; // the AbortController of the call in flight
   let tapped = false; // the last press on a suggestion was a finger or a pen
-  const touchScreen = matchMedia("(pointer: coarse)");
 
   function setActive(index) {
     active = index;
@@ -105,6 +106,8 @@ export async function attachSuggestions(input) {
   }
 
   input.addEventListener("input", () => {
+    // Some browsers autofill the box without focusing it, and the list only opens on a focused box.
+    if (document.activeElement !== input) input.focus();
     clearTimeout(timer);
     const text = input.value.trim();
     if (text.length < MIN_LENGTH) {
