@@ -200,20 +200,20 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 <!-- source-stats:start -->
 | Source | Candidates | Also | Data changed | Checked |
 |---|---|---|---|---|
-| FEC | **93** | 39 races | 2026-10-15 | 2026-10-15 |
-| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-15 | 2026-10-15 |
-| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-11 | 2026-10-12 ⚠ overdue (daily) |
-| Seat holders | — | 39 Texas members of Congress · 178 Texas legislators | 2026-10-08 | 2026-10-08 |
+| FEC | **93** | 39 races | 2026-10-16 | 2026-10-16 |
+| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-16 | 2026-10-16 |
+| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-11 | 2026-10-16 |
+| Seat holders | — | 39 Texas members of Congress · 178 Texas legislators | 2026-10-16 | 2026-10-16 |
 | Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-13 | 2026-10-13 |
-| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-08 |
-| County precinct records | — | 7 counties | 2026-10-08 | 2026-10-08 |
-| FiftyPlusOne polls | — | 58 Texas Senate polls (+1) · 16 Texas House polls · 45 Texas Governor polls (+1) | 2026-10-15 | 2026-10-15 |
-| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-15 |
-| CAIR Action | **1,023** (+3) · Texas: 101 | — | 2026-10-15 | 2026-10-15 |
-| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-15 |
-| TrackAIPAC | **627** (+1) · Texas: 56 · House: 510 (+1) · Other: 1 · Senate: 116 | — | 2026-10-15 | 2026-10-15 |
-| Vote for Peace | **958** (+39) · Texas: 164 · State legislature: 336 · Federal: 240 · County: 172 (+12) · Local: 129 (+20) · Statewide: 65 (+7) · Judicial: 9 · Special district: 4 · State: 3 | — | 2026-10-15 | 2026-10-15 |
-| Texas Ethics Commission | **2,153** | 803,070 contributions (+88) · 8,289 reports (+5) | 2026-10-15 | 2026-10-15 |
+| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-16 |
+| County precinct records | — | 7 counties | 2026-10-16 | 2026-10-16 |
+| FiftyPlusOne polls | — | 59 Texas Senate polls (+1) · 16 Texas House polls · 45 Texas Governor polls | 2026-10-16 | 2026-10-16 |
+| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-16 |
+| CAIR Action | **1,023** · Texas: 101 | — | 2026-10-15 | 2026-10-16 |
+| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-16 |
+| TrackAIPAC | **627** · Texas: 56 · House: 510 · Other: 1 · Senate: 116 | — | 2026-10-15 | 2026-10-16 |
+| Vote for Peace | **1,005** (+47) · Texas: 164 · State legislature: 360 (+24) · Federal: 242 (+2) · County: 173 (+1) · Local: 130 (+1) · Statewide: 84 (+19) · Judicial: 9 · Special district: 4 · State: 3 | — | 2026-10-16 | 2026-10-16 |
+| Texas Ethics Commission | **2,153** | 803,070 contributions · 8,290 reports (+1) | 2026-10-16 | 2026-10-16 |
 <!-- source-stats:end -->
 
 ## Configuration

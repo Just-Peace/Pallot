@@ -1676,10 +1676,10 @@
       "jurisdiction": null,
       "level": "statewide",
       "name": "Ben Allen",
-      "notes": null,
+      "notes": "This candidate voted in support of AB-715 and has been a staunch supporter of restricting freedom of speech related to criticizing Israel's military actions.",
       "office_title": "Insurance Commissioner",
       "party": "Democrat",
-      "rating": "neutral",
+      "rating": "reject",
       "section": "California",
       "slug": "ben-allen",
       "state": "CA",
@@ -6431,7 +6431,7 @@
     {
       "articles": [],
       "candidate_id": "22b982db-b140-486d-a802-b182b1caa7da",
-      "district": "3",
+      "district": null,
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -6449,7 +6449,7 @@
       "level": "local",
       "name": "Elia Renteria-Garcia",
       "notes": null,
-      "office_title": "City Council Member, Anaheim",
+      "office_title": "City Council Member, District 3, Anaheim",
       "party": null,
       "rating": "vote",
       "section": "California",
@@ -7922,6 +7922,35 @@
       "slug": "elias-velazquez",
       "state": "CA",
       "url": "https://voteforpeace.info/california/elias-velazquez"
+    },
+    {
+      "articles": [],
+      "candidate_id": "e7fce8a7-efd0-4cc6-84be-680dac3458c5",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Santa Margharita",
+      "level": "local",
+      "name": "Maryann Verghese",
+      "notes": null,
+      "office_title": "City Council Member, Santa Margharita",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "maryann-verghese",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/maryann-verghese"
     },
     {
       "articles": [],
@@ -15361,6 +15390,470 @@
       "slug": "chris-mcgowan",
       "state": "IA",
       "url": "https://voteforpeace.info/iowa/chris-mcgowan"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c3eaeb41-82fb-4feb-8017-ee14bac9b317",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Jennifer Day",
+      "notes": null,
+      "office_title": "Secretary of State",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "jennifer-day",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/jennifer-day"
+    },
+    {
+      "articles": [],
+      "candidate_id": "edfc50ab-d909-47ee-bb10-3def938e7fd9",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Amy Diediker",
+      "notes": null,
+      "office_title": "Board of Education",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "amy-diediker",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/amy-diediker"
+    },
+    {
+      "articles": [],
+      "candidate_id": "a330f354-e64b-403b-a4cb-cdc97da8abcb",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Adam Hamilton",
+      "notes": null,
+      "office_title": "U.S. Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "adam-hamilton",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/adam-hamilton"
+    },
+    {
+      "articles": [],
+      "candidate_id": "31bbcc8d-2814-4d72-b425-b52567d75c4a",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Isaiah Harris",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "isaiah-harris",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/isaiah-harris"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ff1348d5-0df5-42dc-8d42-bcbadef46dd7",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Cindy Holscher",
+      "notes": null,
+      "office_title": "Governor",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "cindy-holscher",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/cindy-holscher"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f7e59b51-63c5-473d-95c5-33d25e4ed3e5",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Juan Luengo",
+      "notes": null,
+      "office_title": "State Treasurer",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "juan-luengo",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/juan-luengo"
+    },
+    {
+      "articles": [],
+      "candidate_id": "2c3df389-5cb5-439c-8237-e2a1de46ae16",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Chris Mann",
+      "notes": null,
+      "office_title": "Attorney General",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "chris-mann",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/chris-mann"
+    },
+    {
+      "articles": [],
+      "candidate_id": "835d1859-a92f-48df-b469-2852d37e4266",
+      "district": "29",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Heather Meyer",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "heather-meyer",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/heather-meyer"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c07fe769-b67c-4a15-8f88-b57034b00c03",
+      "district": "37",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Melissa Oropeza",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "melissa-oropeza",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/melissa-oropeza"
+    },
+    {
+      "articles": [],
+      "candidate_id": "8d47e05e-39e5-47b2-90cb-bd23bb6dd841",
+      "district": "24",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Jarrod Ousley",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "jarrod-ousley",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/jarrod-ousley"
+    },
+    {
+      "articles": [],
+      "candidate_id": "075b74a9-a123-4fb0-9b64-6abd2e6c53aa",
+      "district": "8",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Megan Phillips",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "megan-phillips",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/megan-phillips"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b2691b79-c32e-4257-b39e-48afaf9771bf",
+      "district": "23",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Susan Ruiz",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "susan-ruiz",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/susan-ruiz"
+    },
+    {
+      "articles": [],
+      "candidate_id": "29b01501-1741-48fa-8d47-a13ab471b09a",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Dinah Sykes",
+      "notes": null,
+      "office_title": "Insurance Commissioner",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "dinah-sykes",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/dinah-sykes"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c62dfa1a-c7c7-43df-ba61-a5f5f051083f",
+      "district": "10",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Suzanne Wikle",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "suzanne-wikle",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/suzanne-wikle"
+    },
+    {
+      "articles": [],
+      "candidate_id": "1523040a-d70e-403d-b916-3e49e2c9ed37",
+      "district": "34",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Valdenia Winn",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "valdenia-winn",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/valdenia-winn"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b3bd21d3-b845-4636-9832-ce15cb594aba",
+      "district": "25",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Rui Xu",
+      "notes": null,
+      "office_title": "House of Representatives",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Kansas",
+      "slug": "rui-xu",
+      "state": "KS",
+      "url": "https://voteforpeace.info/kansas/rui-xu"
     },
     {
       "articles": [],
@@ -28574,6 +29067,64 @@
     },
     {
       "articles": [],
+      "candidate_id": "e3406850-254d-4116-8bf2-7255fde5e0c9",
+      "district": "12",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Maggie Adams",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative Position 2",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "maggie-adams",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/maggie-adams"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0b8ff42a-b015-4602-88a0-4202da89af18",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Theo Angelis",
+      "notes": null,
+      "office_title": "Supreme Court Justice",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "theo-angelis",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/theo-angelis"
+    },
+    {
+      "articles": [],
       "candidate_id": "60bb0a74-cfbc-4fef-9bfd-05709713ac86",
       "district": "3",
       "election_date": "Nov 3, 2026",
@@ -28603,6 +29154,209 @@
     },
     {
       "articles": [],
+      "candidate_id": "3afa4700-a51d-45e7-9b80-8f1aaa7167f9",
+      "district": "11",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Steve Bergquist",
+      "notes": null,
+      "office_title": "State Representative Position 2",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "steve-bergquist",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/steve-bergquist"
+    },
+    {
+      "articles": [],
+      "candidate_id": "8b96126e-eaef-4ee7-b830-924593f4233b",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Ian Birk",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "Supreme Court Justice",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "ian-birk",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/ian-birk"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f70e4b24-6e77-494d-be92-b427e6c0a2db",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Lisa Callan",
+      "notes": null,
+      "office_title": "State Representative Position 2",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "lisa-callan",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/lisa-callan"
+    },
+    {
+      "articles": [],
+      "candidate_id": "886fb7f3-fa43-457a-8349-0db4a24afb51",
+      "district": "19",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Terry Carlson",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "terry-carlson",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/terry-carlson"
+    },
+    {
+      "articles": [],
+      "candidate_id": "7268b71d-ef1b-41bd-88eb-75165228e7dd",
+      "district": "17",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Ben Christly",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "ben-christly",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/ben-christly"
+    },
+    {
+      "articles": [],
+      "candidate_id": "cf4f37c8-32b7-46c1-b636-7879bf8d0ba9",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Thurston",
+      "level": "county",
+      "name": "Emily Clouse",
+      "notes": null,
+      "office_title": "County Commissioner, Thurston",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "emily-clouse",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/emily-clouse"
+    },
+    {
+      "articles": [],
+      "candidate_id": "8892094b-8743-4fe3-8173-9912abf5666f",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Carmela Conroy",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "U.S. Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "carmela-conroy",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/carmela-conroy"
+    },
+    {
+      "articles": [],
       "candidate_id": "b5d31460-a7fb-4101-9b0e-4a53814e9efb",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -28629,6 +29383,93 @@
       "slug": "maria-cuevas",
       "state": "WA",
       "url": "https://voteforpeace.info/washington/maria-cuevas"
+    },
+    {
+      "articles": [],
+      "candidate_id": "d2a9c96c-98b3-43bd-a09e-d59893a5e1c4",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "William Dehnel",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "william-dehnel",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/william-dehnel"
+    },
+    {
+      "articles": [],
+      "candidate_id": "a7dfae77-339f-429e-b6ff-bbb343aa1ece",
+      "district": "14",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Chelsea Dimas",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "chelsea-dimas",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/chelsea-dimas"
+    },
+    {
+      "articles": [],
+      "candidate_id": "726e285e-063b-4372-98de-74cdaa3cdab0",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Davina Duerr",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "davina-duerr",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/davina-duerr"
     },
     {
       "articles": [],
@@ -28662,7 +29503,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "John Duresky",
-      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR running against a person against our interests.",
+      "notes": null,
       "office_title": "U.S. Representative",
       "party": null,
       "rating": "vote",
@@ -28670,6 +29511,35 @@
       "slug": "john-duresky",
       "state": "WA",
       "url": "https://voteforpeace.info/washington/john-duresky"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ffee86a7-dec8-4fa9-ab8e-c52fbb3d4839",
+      "district": "11",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Ashley Fedan",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "ashley-fedan",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/ashley-fedan"
     },
     {
       "articles": [],
@@ -28699,6 +29569,122 @@
       "slug": "marie-gluskenkamp-perez",
       "state": "WA",
       "url": "https://voteforpeace.info/washington/marie-gluskenkamp-perez"
+    },
+    {
+      "articles": [],
+      "candidate_id": "dc17e517-739b-4a63-a9e8-115b200d1df0",
+      "district": "5",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Zach Hall",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "zach-hall-8gom",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/zach-hall-8gom"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c02d52b5-2a8c-495b-be7c-2b95b67fc4ee",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Jaime Hawk",
+      "notes": null,
+      "office_title": "Supreme Court Justice",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "jaime-hawk",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/jaime-hawk"
+    },
+    {
+      "articles": [],
+      "candidate_id": "48c39ca6-9709-4d19-bc73-75d679eb1686",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Natasha Hill",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "natasha-hill",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/natasha-hill"
+    },
+    {
+      "articles": [],
+      "candidate_id": "e69b2e40-eb12-4928-9415-375d3f97c00f",
+      "district": "3",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Luc Jasmin III",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "luc-jasmin-iii",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/luc-jasmin-iii"
     },
     {
       "articles": [],
@@ -28772,6 +29758,180 @@
     },
     {
       "articles": [],
+      "candidate_id": "055c3021-a392-459e-ac68-22cce040b728",
+      "district": "6",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Michaela Kelso",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "michaela-kelso",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/michaela-kelso"
+    },
+    {
+      "articles": [],
+      "candidate_id": "4d16b40f-06a6-49fa-9e89-8a4821422e81",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Shelly Kloba",
+      "notes": null,
+      "office_title": "State Representativeee",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "shelly-kloba",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/shelly-kloba"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f1fcd3a4-39a6-4245-b3b2-e56234b6b82a",
+      "district": "18",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Deken Letinich",
+      "notes": null,
+      "office_title": "State Representative Position 2",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "deken-letinich",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/deken-letinich"
+    },
+    {
+      "articles": [],
+      "candidate_id": "bc70e84b-8ee5-43c9-9a52-6d63cd58ed2c",
+      "district": "15",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Jack McEntire",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "jack-mcentire",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/jack-mcentire"
+    },
+    {
+      "articles": [],
+      "candidate_id": "e841a422-100d-4f14-9637-e479d49606fd",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Colleen Melody",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "Supreme Court Justice",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "colleen-melody",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/colleen-melody"
+    },
+    {
+      "articles": [],
+      "candidate_id": "228ee669-eba2-4b91-9cf4-d421e14974eb",
+      "district": "14",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Ezequiel Morfin",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative Position 2",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "ezequiel-morfin",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/ezequiel-morfin"
+    },
+    {
+      "articles": [],
       "candidate_id": "0ac7ab5b-79da-489b-8210-c3ba1a1ff368",
       "district": "8",
       "election_date": "Nov 3, 2026",
@@ -28798,6 +29958,35 @@
       "slug": "teresa-mosqueda",
       "state": "WA",
       "url": "https://voteforpeace.info/washington/teresa-mosqueda"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ff1b2b8a-dc0e-489a-a34e-5c1c428fe69d",
+      "district": "19",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Kevin Moynihan",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "kevin-moynihan",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/kevin-moynihan"
     },
     {
       "articles": [],
@@ -28830,6 +30019,64 @@
     },
     {
       "articles": [],
+      "candidate_id": "fbecc5f6-9a13-4364-8375-80ff92586f47",
+      "district": "6",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Julia Payne",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative Position 2",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "julia-payne",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/julia-payne"
+    },
+    {
+      "articles": [],
+      "candidate_id": "ea569a62-d5ad-4071-aedb-aaccd7192217",
+      "district": "17",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Diana Perez",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative Position 2",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "diana-perez",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/diana-perez"
+    },
+    {
+      "articles": [],
       "candidate_id": "b1b6aa9d-e6a4-4950-8e37-a143a68d20d9",
       "district": "2",
       "election_date": "Nov 3, 2026",
@@ -28856,6 +30103,122 @@
       "slug": "rebecca-salda-a",
       "state": "WA",
       "url": "https://voteforpeace.info/washington/rebecca-salda-a"
+    },
+    {
+      "articles": [],
+      "candidate_id": "338bb52e-258b-4046-ae23-160c9f323f04",
+      "district": "10",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Clyde Shavers",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "clyde-shavers",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/clyde-shavers"
+    },
+    {
+      "articles": [],
+      "candidate_id": "953282ba-f9ff-4b01-b9a3-c1806f7ebc8d",
+      "district": "2",
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Angela Taylor",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "angela-taylor",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/angela-taylor"
+    },
+    {
+      "articles": [],
+      "candidate_id": "4b4a1c43-278a-4b02-baf6-c3e4b4c77747",
+      "district": "9",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Karina Wallace",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative Position 2",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "karina-wallace",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/karina-wallace"
+    },
+    {
+      "articles": [],
+      "candidate_id": "825a51da-0ced-47cc-afee-4285f30e719e",
+      "district": "12",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Washington for Peace and Justice",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Stacy Willoughby",
+      "notes": "Washington for Peace and Justice: This candidate is likely supportive OR is running against a candidate who is known to be against our interests.",
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Washington",
+      "slug": "stacy-willoughby",
+      "state": "WA",
+      "url": "https://voteforpeace.info/washington/stacy-willoughby"
     },
     {
       "articles": [],
@@ -28906,7 +30269,7 @@
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Ryan Clancy",
-      "notes": "$35",
+      "notes": "$36",
       "office_title": "State Assembly Member",
       "party": null,
       "rating": "vote",
@@ -29301,5 +30664,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-15"
+  "snapshot": "2026-10-16"
 }
