@@ -930,6 +930,13 @@
     "party": "D",
     "state": "FL"
   },
+  "fl-eric-yonce": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Eric Yonce",
+    "party": "D",
+    "state": "FL"
+  },
   "fl-frederica-wilson": {
     "chamber": "house",
     "district": "24",
