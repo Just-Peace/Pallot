@@ -30,12 +30,13 @@ class Place:
     state_name: str | None  # "Texas"
     county: str | None  # "Travis"
     county_fips: str | None  # "453"
-    cd: int | None
+    cd: int | None  # 0 for an at-large seat or DC's delegate
     sd: int | None
     hd: int | None
     city: str | None
     school_district: str | None
     block_point: tuple[float, float] | None = None  # the census block's internal point (lat, lon)
+    county_name: str | None = None  # "Travis County", "Orleans Parish"
 
 
 def normalize_address(address: str) -> str:
@@ -89,6 +90,15 @@ def _number(entry: dict[str, Any] | None) -> int | None:
     return int(match.group()) if match else None
 
 
+def _congressional(entry: dict[str, Any] | None) -> int | None:
+    """The district's number from its GEOID (state + 2 digits): an at-large district's "00" and
+    DC's delegate's "98" are both 0, as the FEC numbers them. BASENAME's number otherwise."""
+    code = ((entry or {}).get("GEOID") or "")[2:]
+    if len(code) == 2 and code.isdigit():
+        return 0 if code == "98" else int(code)
+    return _number(entry)
+
+
 def _internal_point(entry: dict[str, Any] | None) -> tuple[float, float] | None:
     try:
         return float(entry["INTPTLAT"]), float(entry["INTPTLON"])
@@ -111,7 +121,8 @@ def parse_geographies(geographies: dict[str, Any], lat: float, lon: float, match
         state_name=(state or {}).get("NAME"),
         county=(county or {}).get("BASENAME"),
         county_fips=county_geoid[2:] or None,
-        cd=_number(_layer(geographies, "Congressional Districts")),
+        county_name=(county or {}).get("NAME"),
+        cd=_congressional(_layer(geographies, "Congressional Districts")),
         sd=_number(_layer(geographies, "Legislative Districts - Upper")),
         hd=_number(_layer(geographies, "Legislative Districts - Lower")),
         city=(city or {}).get("BASENAME"),

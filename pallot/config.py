@@ -52,6 +52,7 @@ class Ttls:
     fec_backoff: int = 2 * 60  # how long a key the FEC rate limits rests (its limit counts the last minute)
     fec_refused_backoff: int = HOUR  # how long a key the FEC refuses rests
     fec_bundle: int = 7 * DAY  # the FEC's answers bundled with Pallot, from when they were last checked (bundles/)
+    fec_races_bundle: int = 7 * DAY  # the FEC's bundled race lists for the other states, likewise
     polls: int = DAY  # FiftyPlusOne's poll lists: new polls come every few days
     polls_backoff: int = HOUR  # after FiftyPlusOne refuses us, stop asking for this long
     polls_bundle: int = 2 * DAY  # FiftyPlusOne's poll lists bundled with Pallot (bundles/), refreshed daily: a day of grace

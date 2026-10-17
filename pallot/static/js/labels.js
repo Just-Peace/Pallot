@@ -54,10 +54,27 @@ export const DISTRICTS = {
 };
 export const PRECINCT_KINDS = Object.keys(DISTRICTS).filter((kind) => DISTRICTS[kind].unit === "precinct");
 
+// How much of the voter's state's ballot Pallot has, as the server says (coverage.py): which
+// districts it shows, whether there are precincts and a map, and whether the races come from the
+// state's own list ("state") or the FEC's filers ("fec"). A ballot from before it said is Texas's.
+const FULL_COVERAGE = { ballot: "state", districts: ["cd", "sd", "hd", "sboe"], precincts: true, outlines: true };
+export function coverageOf(ballot) {
+  return ballot?.coverage || FULL_COVERAGE;
+}
+
+// A U.S. House district's number as said: "10", or "at large" for a state's one seat (0), DC's delegate's too.
+export function houseText(number, state) {
+  if (number == null) return null;
+  if (number !== 0) return String(number);
+  return state === "DC" ? "Delegate (at large)" : "At large";
+}
+
 // The voter's districts in one line: "U.S. House 10 · State Senate 14 · … · Pct 300 · JP 5", in
 // the voter registration certificate's order (the print sheet passes precinct: " Pct" for "JP Pct 5").
-export function districtLine(d, { precinct = "" } = {}) {
-  const named = (kind) => d[kind] && `${DISTRICTS[kind].short}${DISTRICTS[kind].unit === "precinct" ? precinct : ""} ${d[kind]}`;
+export function districtLine(d, { precinct = "", state = null } = {}) {
+  const value = (kind) => (kind === "cd" ? houseText(d.cd, state) : d[kind]);
+  const named = (kind) => value(kind) != null && value(kind) !== ""
+    && `${DISTRICTS[kind].short}${DISTRICTS[kind].unit === "precinct" ? precinct : ""} ${value(kind)}`;
   return [
     named("cd"), named("sd"), named("hd"), named("sboe"),
     d.election_precinct && `Pct ${d.election_precinct.name}`,
@@ -83,8 +100,11 @@ function bannedPill(candidate) {
   return reasonPill("pill-banned", [icon("ban"), "Avoiding"], `On your Avoid list: matches ${matched.map((entry) => `“${entry.text}”`).join(", ")}`);
 }
 
+const UNVERIFIED = "Filed with the FEC to run for this seat. Pallot can't confirm they're on your November ballot: "
+  + "they may have lost their primary or dropped out.";
+
 // The pills under a candidate's name: Avoiding (bannedPill), their party, Party holds seat (its note
-// names the race's holder), Incumbent, Write-in.
+// names the race's holder), Incumbent, Write-in, Unverified (from the FEC's filers, not an official list).
 export function candidatePills(candidate, race = null) {
   const party = partyName(candidate);
   const holder = candidate.party_holds_seat ? race?.holder : null;
@@ -94,5 +114,6 @@ export function candidatePills(candidate, race = null) {
     holder ? reasonPill(null, "Party holds seat", holder.hint) : null,
     candidate.incumbent ? h("span", { class: "pill" }, "Incumbent") : null,
     candidate.write_in ? h("span", { class: "pill" }, "Write-in") : null,
+    candidate.unverified ? reasonPill(null, "Unverified", UNVERIFIED) : null,
   ];
 }

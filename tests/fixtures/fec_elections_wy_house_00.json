@@ -1,0 +1,172 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 10,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY01165",
+   "candidate_name": "FRIESS, STEPHEN",
+   "candidate_pcc_id": "C00945980",
+   "candidate_pcc_name": "FRIESS FOR WYOMING",
+   "cash_on_hand_end_period": 44362.29,
+   "committee_ids": [
+    "C00945980"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 3538370.86,
+   "total_receipts": 3582733.15
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY00217",
+   "candidate_name": "GRAY, CHUCK",
+   "candidate_pcc_id": "C00932244",
+   "candidate_pcc_name": "CITIZENS FOR CHUCK GRAY",
+   "cash_on_hand_end_period": 167889.16,
+   "committee_ids": [
+    "C00932244"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1816214.84,
+   "total_receipts": 1984104.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY01157",
+   "candidate_name": "CHAPMAN, FRANK",
+   "candidate_pcc_id": "C00945063",
+   "candidate_pcc_name": "CHAPMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 5475.0,
+   "committee_ids": [
+    "C00945063"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1185769.65,
+   "total_receipts": 1191244.65
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY00233",
+   "candidate_name": "GIRALT, DAVID",
+   "candidate_pcc_id": "C00940320",
+   "candidate_pcc_name": "GIRALT FOR WYOMING",
+   "cash_on_hand_end_period": 20086.67,
+   "committee_ids": [
+    "C00940320"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 266414.61,
+   "total_receipts": 286501.28
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY00225",
+   "candidate_name": "BALOW, JILLIAN",
+   "candidate_pcc_id": "C00934950",
+   "candidate_pcc_name": "JILLIAN BALOW FOR WYOMING",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00934950"
+   ],
+   "coverage_end_date": "2026-10-01",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 184153.26,
+   "total_receipts": 184153.26
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY00241",
+   "candidate_name": "BITEMAN, DENNIS BO DEAN II",
+   "candidate_pcc_id": "C00943258",
+   "candidate_pcc_name": "BITEMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00943258"
+   ],
+   "coverage_end_date": "2026-10-11",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 122427.09,
+   "total_receipts": 122427.09
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY01173",
+   "candidate_name": "KINNEY, LISA",
+   "candidate_pcc_id": "C00944280",
+   "candidate_pcc_name": "LISA KINNEY RUNNING FOR YOU",
+   "cash_on_hand_end_period": 27250.06,
+   "committee_ids": [
+    "C00944280"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 56463.65,
+   "total_receipts": 83713.71
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY01140",
+   "candidate_name": "CHRISTENSEN, KEVIN",
+   "candidate_pcc_id": "C00941427",
+   "candidate_pcc_name": "CHRISTENSEN2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00941427"
+   ],
+   "coverage_end_date": "2026-10-13",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 43300.08,
+   "total_receipts": 43300.08
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY01207",
+   "candidate_name": "GOODENOUGH, KEITH BRIAN MR.",
+   "candidate_pcc_id": "C00956805",
+   "candidate_pcc_name": "GOODENOUGH FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00956805"
+   ],
+   "coverage_end_date": "2026-08-29",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2034.69,
+   "total_receipts": 2034.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WY01181",
+   "candidate_name": "DODSON, RICHARD",
+   "candidate_pcc_id": "C00952705",
+   "candidate_pcc_name": "DODSON FOR AMERICA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00952705"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

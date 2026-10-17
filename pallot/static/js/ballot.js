@@ -27,7 +27,7 @@ import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, read
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
-import { STATES } from "./labels.js";
+import { STATES, coverageOf } from "./labels.js";
 import { hideBanner, initRules, openRules, syncRuleBanner } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
@@ -362,7 +362,7 @@ function renderAddress() {
   const card = {
     address: lookupLabel(page.request),
     place: fromCard ? "From your voter card"
-      : [location.city, location.county && `${location.county} County`].filter(Boolean).join(" · "),
+      : [location.city, location.county_name || (location.county && `${location.county} County`)].filter(Boolean).join(" · "),
     matched: location.matched_address || "",
     election: electionLine(page.ballot),
   };
@@ -387,7 +387,9 @@ function renderApproximate() {
   notice.hidden = !approximate;
   notice.textContent = approximate
     ? `Pallot could only place this address approximately${matched ? ` (${matched})` : ""}, so this may not be your ballot. `
-      + "Check \"Your districts\" below against your voter registration certificate, or look up by your voter card."
+      + (coverageOf(page.ballot).precincts
+        ? "Check \"Your districts\" below against your voter registration certificate, or look up by your voter card."
+        : "Check \"Your districts\" below with your county's elections office.")
     : "";
 }
 
@@ -425,6 +427,9 @@ $("#print-btn").addEventListener("click", () => {
     $("#print-unpicked-text").textContent = `You've picked ${parts.join(" and ")}.`;
     $("#print-blank").checked = true;
   }
+  $("#print-why").textContent = STATES[page.ballot.location.state]
+    ? "Bring the printout with you: phones can't be used at the voting station in Texas."
+    : "Bring the printout with you: many polling places don't allow phones in the voting booth.";
   printDialog.showModal();
 });
 $("#print-next").addEventListener("click", () => {

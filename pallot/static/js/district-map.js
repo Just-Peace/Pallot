@@ -12,7 +12,7 @@
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";
 import { icon } from "./icons.js";
-import { DISTRICTS } from "./labels.js";
+import { DISTRICTS, coverageOf } from "./labels.js";
 import { setViewPref, viewPref } from "./view.js";
 
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
@@ -64,7 +64,8 @@ export function syncMap(next) {
   const asked = KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]);
   const precinct = districts.election_precinct;
   if (precinct) asked.push(["election_precinct", precinct.code], ["county", precinct.county]);
-  const nextQuery = next.location.lat == null ? "" : new URLSearchParams(asked).toString(); // a voter card the map couldn't place
+  const drawn = next.location.lat != null && coverageOf(next).outlines; // not a voter card the map couldn't place
+  const nextQuery = drawn ? new URLSearchParams(asked).toString() : "";
   section.hidden = !nextQuery;
   if (!nextQuery) {
     query = "";

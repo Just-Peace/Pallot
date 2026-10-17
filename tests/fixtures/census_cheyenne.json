@@ -1,0 +1,424 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "200 W 24TH ST, CHEYENNE, WY 82001"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "160149258"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "5600300",
+       "CENTLAT": "+41.3071287",
+       "AREAWATER": 4348085,
+       "BASENAME": "Laramie County",
+       "STATE": "56",
+       "OID": "217704486537848",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.2928302",
+       "NAME": "Laramie County PUMA",
+       "OBJECTID": 851,
+       "CENTLON": "-104.6894180",
+       "AREALAND": 6956354985,
+       "INTPTLON": "-104.6603950",
+       "MTFCC": "G6120",
+       "PUMA": "00300"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "82001",
+       "CENTLAT": "+41.0950173",
+       "AREAWATER": 409243,
+       "BASENAME": "82001",
+       "OID": "221704258328237",
+       "ZCTA5": "82001",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.1000816",
+       "NAME": "ZCTA5 82001",
+       "OBJECTID": 16192,
+       "CENTLON": "-104.9327519",
+       "AREALAND": 142744929,
+       "INTPTLON": "-104.9248839",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "16237",
+       "CENTLAT": "+41.1399518",
+       "AREAWATER": 226824,
+       "BASENAME": "Cheyenne, WY",
+       "OID": "27021240482547",
+       "UA": "16237",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.1397520",
+       "NAME": "Cheyenne, WY Urban Area",
+       "OBJECTID": 208,
+       "CENTLON": "-104.8010191",
+       "AREALAND": 87737130,
+       "INTPTLON": "-104.8009836",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 184782572.062715,
+       "NECTAPCI": "N",
+       "GEOID": "5613900",
+       "CENTLAT": "+41.1281349",
+       "AREAWATER": 384300,
+       "BASENAME": "Cheyenne",
+       "STATE": "56",
+       "OID": "27890240474694",
+       "LSADC": "25",
+       "PLACE": "13900",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+41.1282748",
+       "NAME": "Cheyenne city",
+       "OBJECTID": 32375,
+       "PLACECC": "C1",
+       "CENTLON": "-104.7985772",
+       "STGEOMETRY_Length": 271492.534396616,
+       "CBSAPCI": "Y",
+       "AREALAND": 104359859,
+       "INTPTLON": "-104.7991554",
+       "PLACENS": "02409445",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "56021",
+       "CENTLAT": "+41.3071287",
+       "AREAWATER": 4348085,
+       "STATE": "56",
+       "BASENAME": "Laramie",
+       "OID": "27590229495438",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+41.2928302",
+       "NAME": "Laramie County",
+       "OBJECTID": 1720,
+       "CENTLON": "-104.6894180",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01605075",
+       "AREALAND": 6956354985,
+       "INTPTLON": "-104.6603950",
+       "MTFCC": "G4020",
+       "COUNTY": "021"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "KG",
+       "GEOID": "5601980",
+       "CENTLAT": "+41.3237243",
+       "AREAWATER": 3903092,
+       "STATE": "56",
+       "BASENAME": "Laramie County School District 1",
+       "OID": "28490229522006",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+41.3214688",
+       "SDUNI": "01980",
+       "NAME": "Laramie County School District 1",
+       "OBJECTID": 4386,
+       "CENTLON": "-104.9418766",
+       "HIGRADE": "12",
+       "AREALAND": 4110915742,
+       "INTPTLON": "-104.9361616",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "560210010004021",
+       "CENTLAT": "+41.1402681",
+       "BLOCK": "4021",
+       "AREAWATER": 0,
+       "STATE": "56",
+       "BASENAME": "4021",
+       "OID": "210701003567912",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.1402681",
+       "NAME": "Block 4021",
+       "OBJECTID": 2497876,
+       "TRACT": "001000",
+       "CENTLON": "-104.8201894",
+       "BLKGRP": "4",
+       "AREALAND": 22889,
+       "INTPTLON": "-104.8201894",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "021"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779807",
+       "GEOID": "56",
+       "CENTLAT": "+42.9960999",
+       "AREAWATER": 1868034494,
+       "STATE": "56",
+       "BASENAME": "Wyoming",
+       "STUSAB": "WY",
+       "OID": "27490227778497",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.9738766",
+       "DIVISION": "8",
+       "NAME": "Wyoming",
+       "REGION": "4",
+       "OBJECTID": 43,
+       "CENTLON": "-107.5514568",
+       "AREALAND": 251458181296,
+       "INTPTLON": "-107.5290542",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "560210010004",
+       "CENTLAT": "+41.1409917",
+       "AREAWATER": 0,
+       "STATE": "56",
+       "BASENAME": "4",
+       "OID": "208903716675436",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.1409917",
+       "NAME": "Block Group 4",
+       "OBJECTID": 149092,
+       "TRACT": "001000",
+       "CENTLON": "-104.8225386",
+       "BLKGRP": "4",
+       "AREALAND": 517687,
+       "INTPTLON": "-104.8225386",
+       "MTFCC": "G5030",
+       "COUNTY": "021"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "90715",
+       "GEOID": "5602190715",
+       "CENTLAT": "+41.1453861",
+       "AREAWATER": 406290,
+       "STATE": "56",
+       "BASENAME": "Cheyenne",
+       "OID": "27690240470365",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.1454715",
+       "NAME": "Cheyenne CCD",
+       "OBJECTID": 4187,
+       "CENTLON": "-104.7941058",
+       "COUSUBCC": "Z5",
+       "AREALAND": 119149936,
+       "INTPTLON": "-104.7941299",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01939696",
+       "COUNTY": "021"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "56008",
+       "CENTLAT": "+41.1109276",
+       "AREAWATER": 116951,
+       "STATE": "56",
+       "BASENAME": "8",
+       "OID": "2129042579647930",
+       "SLDU": "008",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.1122817",
+       "NAME": "State Senate District 8",
+       "OBJECTID": 16,
+       "CENTLON": "-104.8406420",
+       "LSY": "2026",
+       "AREALAND": 37298311,
+       "INTPTLON": "-104.8394987",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "8",
+       "CENTLAT": "+40.2023972",
+       "AREAWATER": 18692985514,
+       "BASENAME": "Mountain",
+       "OID": "2739020719805",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1987470",
+       "DIVISION": "8",
+       "REGION": "4",
+       "NAME": "Mountain Division",
+       "OBJECTID": 5,
+       "CENTLON": "-110.2308131",
+       "AREALAND": 2217926739752,
+       "INTPTLON": "-110.2279740",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 474197341095.2517,
+       "CD120": "00",
+       "GEOID": "5600",
+       "CENTLAT": "+42.9960999",
+       "CDSESSN": "120",
+       "AREAWATER": 1868034494,
+       "STATE": "56",
+       "BASENAME": "Congressional District (at Large)",
+       "OID": "2119042393279608",
+       "LSADC": "C1",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.9738766",
+       "NAME": "Congressional District (at Large)",
+       "OBJECTID": 208,
+       "CENTLON": "-107.5514568",
+       "STGEOMETRY_Length": 2777133.2088865023,
+       "AREALAND": 251458181296,
+       "INTPTLON": "-107.5290542",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "56011",
+       "CENTLAT": "+41.1347011",
+       "SLDL": "011",
+       "AREAWATER": 1620,
+       "STATE": "56",
+       "BASENAME": "11",
+       "OID": "2139042579648041",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.1342692",
+       "NAME": "State House District 11",
+       "OBJECTID": 395,
+       "CENTLON": "-104.8152561",
+       "LSY": "2026",
+       "AREALAND": 9450813,
+       "INTPTLON": "-104.8155879",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "16940",
+       "CENTLAT": "+41.3071287",
+       "AREAWATER": 4348085,
+       "BASENAME": "Cheyenne, WY",
+       "OID": "2629034687907195",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.2928302",
+       "NAME": "Cheyenne, WY Metro Area",
+       "CSA": "",
+       "OBJECTID": 47,
+       "CENTLON": "-104.6894180",
+       "CBSA": "16940",
+       "AREALAND": 6956354985,
+       "INTPTLON": "-104.6603950",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "56021001000",
+       "CENTLAT": "+41.1412398",
+       "AREAWATER": 0,
+       "STATE": "56",
+       "BASENAME": "10",
+       "OID": "20790240481007",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.1412398",
+       "NAME": "Census Tract 10",
+       "OBJECTID": 54796,
+       "TRACT": "001000",
+       "CENTLON": "-104.8304889",
+       "AREALAND": 2034802,
+       "INTPTLON": "-104.8304889",
+       "MTFCC": "G5020",
+       "COUNTY": "021"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -104.820004035339,
+     "y": 41.139850611856
+    },
+    "addressComponents": {
+     "zip": "82001",
+     "streetName": "24TH",
+     "preType": "",
+     "city": "CHEYENNE",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "200",
+     "state": "WY",
+     "suffixType": "ST",
+     "toAddress": "298",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "200 W 24TH ST, CHEYENNE, WY, 82001"
+   }
+  ]
+ }
+}

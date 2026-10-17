@@ -14,6 +14,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
+from . import coverage
 from .http_cache import UpstreamError
 from .models import Race, SourceCard
 from .offices import OfficeScope
@@ -91,10 +92,10 @@ JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
     wikidata.SOURCE: lambda svc, races, ctx, sources: wikidata.cards(
         svc.wikidata, races, ctx.scopes, ctx.county, ctx.bp_ballot, sources.enabled(ballotpedia.SOURCE)),
     ballotpedia.SOURCE: _ballotpedia,
-    trackaipac.SOURCE: lambda svc, races, _ctx, _: asyncio.to_thread(
-        lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races))),
+    trackaipac.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
+        lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races, ctx.state or "TX"))),
     voteforpeace.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
-        voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.city),
+        voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.city, ctx.state or "TX"),
     officeholders.SOURCE: lambda svc, races, ctx, _: officeholders.cards(
         svc.officeholders, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.day),
 }
@@ -102,9 +103,12 @@ JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
 
 async def run(svc: Services, races: list[Race], sources: Sources, ctx: Context) -> Outcome:
     """Add cards in place; say what failed. Every source the voter has on is asked at once (the
-    ones without I/O in a thread), and nothing touches the races until they've all answered."""
+    ones without I/O in a thread), and nothing touches the races until they've all answered. A
+    source that only knows some states (coverage.ONLY_IN) isn't asked about another's ballot."""
     jobs: dict[str, Awaitable[CardSet]] = {}
     for source, job in JOBS.items():
+        if not coverage.works_in(source, ctx.state):
+            continue
         if sources.enabled(source) and (asked := job(svc, races, ctx, sources)) is not None:
             jobs[source] = asked
     lists = [found for found in svc.endorsements if sources.enabled(found.source)]

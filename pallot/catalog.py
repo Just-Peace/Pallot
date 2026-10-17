@@ -39,8 +39,8 @@ class SourceGroup:
 ADDRESS, OFFICIAL, BALLOT, POLLS, SCORECARDS = "address", "official", "ballot", "polls", "scorecards"
 GROUPS = (
     SourceGroup(ADDRESS, "Address lookup & maps", "Your districts and precincts from your address, and their map."),
-    SourceGroup(OFFICIAL, "Official ballot data", "The state's ballot and dates, and campaign money reported to the "
-                "FEC and the Texas Ethics Commission."),
+    SourceGroup(OFFICIAL, "Official ballot data", "The state's ballot and dates, campaign money reported to the FEC "
+                "and the Texas Ethics Commission, and outside Texas, who filed with the FEC to run for Congress."),
     SourceGroup(BALLOT, "Third-party ballot data", "Local races, candidate profiles and seat holders the state doesn't "
                 "publish."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them."),
@@ -172,7 +172,7 @@ SOURCES = (
         rules=True,
     ),
     SourceInfo(
-        fec.SOURCE, "FEC (Federal Election Commission)", fec.DESCRIPTION, True, (fec.SOURCE,),
+        fec.SOURCE, "FEC (Federal Election Commission)", fec.SETTINGS_DESCRIPTION, True, (fec.SOURCE,),
         group=OFFICIAL,
         pause=Pause("the FEC refused requests", "what it already sent still shows"),
         rules=True,
@@ -216,7 +216,9 @@ def all_sources(lists: list[EndorsementSource]) -> tuple[SourceInfo, ...]:
     return (*SOURCES[:at], *(list_info(found) for found in lists), *SOURCES[at:])
 
 
-class Admin:
+class Catalog:
+    """Every source Pallot knows, with what Settings and pallot-cache say about each."""
+
     def __init__(self, svc: Services):
         self.svc = svc
         self.sources = all_sources(svc.endorsements)

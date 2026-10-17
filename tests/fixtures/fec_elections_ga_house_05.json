@@ -1,0 +1,76 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 4,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H0GA05301",
+   "candidate_name": "WILLIAMS, NIKEMA N.",
+   "candidate_pcc_id": "C00752584",
+   "candidate_pcc_name": "NIKEMA FOR CONGRESS, INC",
+   "cash_on_hand_end_period": 76091.81,
+   "committee_ids": [
+    "C00752584"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 536864.64,
+   "total_receipts": 599714.8
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6GA05308",
+   "candidate_name": "CASTRO, ANDRES",
+   "candidate_pcc_id": "C00897439",
+   "candidate_pcc_name": "ANDRES CASTRO FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00897439"
+   ],
+   "coverage_end_date": "2026-07-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 36420.73,
+   "total_receipts": 36420.73
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6GA05324",
+   "candidate_name": "BEATTY, ARNETRESS",
+   "candidate_pcc_id": "C00924027",
+   "candidate_pcc_name": "ARNETRESS BEATTY FOR US CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00924027"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 7000.56,
+   "total_receipts": 7000.56
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6GA05316",
+   "candidate_name": "HILL, VICTOR KEITH MR.",
+   "candidate_pcc_id": "C00908574",
+   "candidate_pcc_name": "VICTOR HILL FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00908574"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

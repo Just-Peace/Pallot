@@ -137,9 +137,10 @@ def cards(
     county: str | None,
     bp_ballot: BpBallot | None = None,
     city: str | None = None,
+    state: str = "TX",
 ) -> CardSet:
-    """Cards for the candidates Vote for Peace marks in Texas, in any race (seats.match_entries)."""
+    """Cards for the candidates Vote for Peace marks in the ballot's state, in any race (seats.match_entries)."""
     snapshot = vfp.snapshot_date()
-    found = match_entries(vfp.name_index("TX"), races, scopes, county, bp_ballot, source=LABEL,
+    found = match_entries(vfp.name_index(state), races, scopes, county, bp_ballot, source=LABEL,
                           entry_id="candidate_id", city=city)
     return CardSet(candidates={key: card(person, match, snapshot) for key, (person, match) in found.items()})

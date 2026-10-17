@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
@@ -21,7 +21,9 @@ The FEC responses cover the Capitol ballot's federal races, plus the full breakd
 the candidates in FEC_DETAILS (only the first with the shared DEMO_KEY, whose few requests
 an hour fit one; set PALLOT_FEC_API_KEY, in the environment or .env, for the rest). These
 requests skip Pallot's cache, and with DEMO_KEY they use up the same per-IP allowance as
-a running Pallot. The TrackAIPAC, Vote for Peace and Texas Ethics
+a running Pallot. The ballots outside Texas (nationwide) take two Census answers, the FEC's
+lists of this cycle's elections (six pages) and five seats' filers, and add those states'
+members of Congress to the seat holders. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -74,6 +76,9 @@ VOTEFORPEACE_ELSEWHERE = ("juan-ciscomani", "shirley-weber")
 FEC_CYCLE = 2026
 FEC_RACES = ("TX-SEN", "TX-10")  # the Capitol ballot's federal races
 FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
+# Outside Texas: a state with a Senate race, one with a single, at-large seat, and DC's delegate.
+NATIONWIDE = {"atlanta": "55 Trinity Ave SW, Atlanta, GA 30303", "cheyenne": "200 W 24th St, Cheyenne, WY 82001"}
+NATIONWIDE_RACES = ("GA-SEN", "GA-05", "WY-SEN", "WY-00", "DC-00")
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -190,6 +195,49 @@ def record_fec(client: httpx.Client, key: str) -> None:
               "Set PALLOT_FEC_API_KEY, or run --only fec again in an hour.")
 
 
+def record_nationwide(client: httpx.Client, key: str) -> None:
+    """The ballots outside Texas: NATIONWIDE's Census answers, the FEC's lists of this cycle's
+    elections (every page) and NATIONWIDE_RACES' filers, named by state, and those states'
+    members of Congress added to officeholders_congress.json."""
+    def get(url: str, params: dict[str, str], headers: dict[str, str] | None = None) -> dict:
+        response = client.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+    for name, address in NATIONWIDE.items():
+        save(f"census_{name}.json",
+             get(f"{census.BASE}/onelineaddress", {"address": census.normalize_address(address), **census.PARAMS}))
+    fec_headers = {"X-Api-Key": key}
+    try:
+        for office in ("senate", "house"):
+            page, pages = 1, 1
+            while page <= pages:
+                data = get(f"{fec.API}/elections/search/",
+                           {"cycle": str(FEC_CYCLE), "office": office, "per_page": "100", "page": str(page)}, fec_headers)
+                pages = int(data["pagination"]["pages"])
+                save(f"fec_elections_search_{office}_{page}.json", data)
+                page += 1
+        for seat in NATIONWIDE_RACES:
+            state, _, district = seat.partition("-")
+            params = {"state": state, "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts"}
+            if district == "SEN":
+                params["office"], name = "senate", f"fec_elections_{state.lower()}_senate.json"
+            else:
+                params.update(office="house", district=f"{int(district):02d}")
+                name = f"fec_elections_{state.lower()}_house_{int(district):02d}.json"
+            save(name, get(f"{fec.API}/elections/", params, fec_headers))
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code != 429:
+            raise
+        print("The FEC's hourly limit ran out; the rest of the nationwide fixtures were not recorded. "
+              "Set PALLOT_FEC_API_KEY, or run --only nationwide again in an hour.")
+    states = {seat.partition("-")[0] for seat in NATIONWIDE_RACES}
+    members = get(officeholders.CONGRESS, {})
+    path = FIXTURES / "officeholders_congress.json"
+    kept = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") not in states]
+    save(path.name, kept + [m for m in members if m["terms"][-1].get("state") in states])
+
+
 def record_polls(client: httpx.Client) -> None:
     """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
     polls plus a few from other states."""
@@ -227,6 +275,8 @@ def record_officeholders(client: httpx.Client) -> None:
     members = response.json()
     texas = [m for m in members if m["terms"][-1].get("state") == officeholders.STATE]
     others = [m for m in members if m["terms"][-1].get("state") != officeholders.STATE][:3]
+    nationwide = {seat.partition("-")[0] for seat in NATIONWIDE_RACES}
+    others += [m for m in members if m["terms"][-1].get("state") in nationwide and m not in others]
     save("officeholders_congress.json", texas + others)
     response = client.get(officeholders.LEGISLATURE)
     response.raise_for_status()
@@ -359,7 +409,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
                                            "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     only = parser.parse_args(argv).only
@@ -371,6 +421,8 @@ def main(argv: list[str] | None = None) -> int:
             record_suggest(client)
         if only in (None, "fec"):
             record_fec(client, config.fec_api_key)
+        if only in (None, "nationwide"):
+            record_nationwide(client, config.fec_api_key)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

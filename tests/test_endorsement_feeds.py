@@ -16,7 +16,7 @@ import pytest
 import respx
 from fastapi.testclient import TestClient
 
-from pallot.admin import SOURCES
+from pallot.catalog import SOURCES
 from pallot.config import DAY, Ttls
 from pallot.http_cache import HttpCache, Unreadable, UpstreamError
 from pallot.models import Candidate, Race

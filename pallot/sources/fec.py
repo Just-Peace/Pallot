@@ -6,9 +6,10 @@ a free key (PALLOT_FEC_API_KEY, from https://api.open.fec.gov/developers/), each
 on the ballot gets five more calls: where the money came from, donation sizes, donors'
 states, donors' employers, and outside spending for and against. Everything goes through
 HttpCache for a week; the key travels in a header that HttpCache never stores. Pallot comes
-with these answers for Texas's federal races (bundles/data/fec.json, refreshed by
-`uv run pallot-bundle refresh`), loaded into the cache at startup, so a lookup asks the FEC only
-for what the bundle lacks or has gone stale. Each key may
+with these answers for Texas's federal races (bundles/data/fec.json), and with every other
+state's race lists (fec_races.json), both refreshed by `uv run pallot-bundle refresh` and loaded
+into the cache at startup, so a lookup asks the FEC only for what the bundles lack or has gone
+stale. Outside Texas, the race lists are the ballot (ballot_races). Each key may
 make 60 requests a minute, so Pallot sends at most KEY_LIMIT with one, and waits only when
 every key's minute is full. With more keys (PALLOT_FEC_API_KEY2 to 5), requests take each key
 in turn. A key that hits the rate limit anyway (429) rests for two minutes, and one that's
@@ -26,8 +27,8 @@ from typing import Any, Callable, Mapping
 
 from ..config import DEMO_KEY, Ttls
 from ..http_cache import Cached, HttpCache, RequestSpec, UpstreamError
-from ..matching import NameIndex, last_first, match_person
-from ..models import Badge, Breakdown, Comparison, Fact, Link, Match, Race, Share, SourceCard
+from ..matching import NameIndex, full_key, last_first, match_person
+from ..models import Badge, Breakdown, Candidate, Comparison, Fact, Link, Match, Race, RaceNote, Share, SourceCard
 from ..text import display_date, display_office, display_org, display_person, display_time, money, money_short
 from . import CardSet, compare
 from .highlights import highlights
@@ -39,6 +40,10 @@ LABEL = "FEC"
 DESCRIPTION = (
     "Money raised and spent by congressional campaigns, and outside spending for or against them, "
     "from reports filed with the Federal Election Commission."
+)
+SETTINGS_DESCRIPTION = (
+    "Money raised and spent by congressional campaigns, and outside spending for or against them, from reports "
+    "filed with the Federal Election Commission; outside Texas, also who filed to run for Congress."
 )
 API = "https://api.open.fec.gov/v1"
 SITE = "https://www.fec.gov/data"
@@ -64,6 +69,18 @@ _NOT_EMPLOYERS = {
 def cycle_of(day: dt.date) -> int:
     """The FEC's two-year period, named for its even year: 2026 covers 2025–26."""
     return day.year + day.year % 2
+
+
+def general_day(today: dt.date) -> dt.date:
+    """The next federal general election on or after ``today``: the Tuesday after the first
+    Monday of November in an even year."""
+    year = today.year + today.year % 2
+    while True:
+        first_monday = dt.date(year, 11, 1) + dt.timedelta(days=(7 - dt.date(year, 11, 1).weekday()) % 7)
+        day = first_monday + dt.timedelta(days=1)
+        if day >= today:
+            return day
+        year += 2
 
 
 def party_code(party_full: str | None) -> str | None:
@@ -168,6 +185,20 @@ class Fec:
         got = await self._get("/elections/", params, ttl)
         return _campaigns(list((got.value or {}).get("results") or []))
 
+    async def elections(self, cycle: int, office: str) -> list[tuple[str, int]]:
+        """Every (state, district) the FEC lists an election for this cycle, for "senate" or
+        "house" (district 0 for a Senate seat, an at-large seat or a delegate's): the House's
+        take several pages, each cached."""
+        seats: list[tuple[str, int]] = []
+        page, pages = 1, 1
+        while page <= pages:
+            params = {"cycle": str(cycle), "office": office, "per_page": "100", "page": str(page)}
+            got = (await self._get("/elections/search/", params, self.ttl.fec)).value or {}
+            pages = int((got.get("pagination") or {}).get("pages") or 1)
+            seats += [(row["state"], int(row.get("district") or 0)) for row in got.get("results") or [] if row.get("state")]
+            page += 1
+        return seats
+
     async def details(self, row: dict[str, Any], cycle: int, ttl: float) -> Details:
         candidate_id = row["candidate_id"]
         whole = {"cycle": str(cycle), "election_full": "true"}
@@ -193,6 +224,84 @@ class Fec:
             results = (got.value or {}).get("results") or []
             parts[name] = (results[0] if results else None) if name == "totals" else results
         return Details(**parts)
+
+
+# -- races, where no official list has them ----------------------------------------------
+
+CANDIDACY = 5000
+RACE_NOTE = (
+    "Everyone who filed with the FEC to run for this seat and raised at least $5,000. Some may have lost "
+    "their primary or dropped out, and campaigns that raised less aren't listed: check your state's official "
+    "list of candidates."
+)
+
+
+def seat_of(state: str, district: int | None) -> str:
+    return f"{state}-SEN" if district is None else f"{state}-{district:02d}"
+
+
+def race_name(state: str, district: int | None) -> str:
+    """As Texas SOS's are shown: "U.S. Senator", "U.S. Representative District 5"."""
+    if district is None:
+        return "U.S. Senator"
+    if state == "DC":
+        return "Delegate to the U.S. House of Representatives"
+    return "U.S. Representative At Large" if district == 0 else f"U.S. Representative District {district}"
+
+
+def candidates(rows: list[dict[str, Any]]) -> list[Candidate]:
+    """The filers who raised at least CANDIDACY, and the incumbent, most raised first. A name
+    filed twice keeps the campaign that raised more."""
+    kept: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        name = row.get("candidate_name")
+        if not (name and row.get("candidate_id")):
+            continue
+        raised = _number(row.get("total_receipts")) or 0.0
+        if raised < CANDIDACY and row.get("incumbent_challenge_full") != "Incumbent":
+            continue
+        key = full_key(last_first(name))
+        if key not in kept or raised > (_number(kept[key].get("total_receipts")) or 0.0):
+            kept[key] = row
+    ordered = sorted(kept.values(), key=lambda row: (-(_number(row.get("total_receipts")) or 0.0),
+                                                     full_key(last_first(row["candidate_name"]))))
+    out = []
+    for row in ordered:
+        party_full = (row.get("party_full") or "").strip()
+        write_in = party_full.upper() == "WRITE-IN"
+        code = None if write_in else party_code(party_full)
+        out.append(Candidate(
+            key=f"{SOURCE}:{row['candidate_id']}",
+            name=display_person(last_first(row["candidate_name"])),
+            party=code,
+            party_name=None if write_in or code or not party_full else display_office(party_full.upper()),
+            incumbent=row.get("incumbent_challenge_full") == "Incumbent",
+            write_in=write_in,
+            unverified=True,
+        ))
+    return out
+
+
+async def ballot_races(fec: Fec, state: str, district: int | None, senate: bool, day: dt.date) -> list[Race]:
+    """The state's Senate race (when ``senate``) and the House race for ``district``, from the
+    FEC's filers, every one unverified. The same requests cards() makes, so it adds none."""
+    cycle, ttl = cycle_of(day), fec.lifetime(day)
+    wanted = ([None] if senate else []) + ([district] if district is not None else [])
+    races = []
+    for number in wanted:
+        seat = seat_of(state, number)
+        rows = await fec.race(seat, cycle, ttl)
+        races.append(Race(
+            key=f"{SOURCE}:{cycle}:{seat}",
+            name=race_name(state, number),
+            group="federal",
+            seat=seat,
+            source=SOURCE,
+            url=race_page(seat, cycle),
+            candidates=candidates(rows),
+            notes=[RaceNote(text=RACE_NOTE, url=race_page(seat, cycle), source=LABEL)],
+        ))
+    return races
 
 
 # -- cards ----------------------------------------------------------------------------
@@ -546,7 +655,8 @@ def race_card(race: Race, rows: dict[str, dict[str, Any]], cycle: int, details: 
 
 async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
     """Cards for candidates in congressional races that the FEC lists for that seat, and a
-    money comparison for each such race. Raises UpstreamError if no race could be loaded."""
+    money comparison for each such race. A candidate the FEC's own list put on the ballot
+    (ballot_races) is its row, no match needed. Raises UpstreamError if no race could be loaded."""
     federal = [race for race in races if race.seat]
     out = CardSet()
     if not federal:
@@ -569,7 +679,7 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
         log.warning("%s", failures[0])
         out.warnings.append("The FEC isn't answering right now, so some federal races have no campaign money.")
 
-    matched: list[tuple[str, str, dict[str, Any], Match]] = []  # candidate key, seat, FEC row, match
+    matched: list[tuple[str, str, dict[str, Any], Match | None]] = []  # candidate key, seat, FEC row, match
     compared: list[tuple[Race, dict[str, dict[str, Any]]]] = []  # races with anyone found, and their rows
     for race in federal:
         rows = lists.get(race.seat or "")
@@ -580,7 +690,13 @@ async def cards(fec: Fec, races: list[Race], day: dt.date | None) -> CardSet:
             if row.get("candidate_name") and row.get("candidate_id"):
                 index.add(last_first(row["candidate_name"]), row)
         found_rows = {}
+        by_id = {row["candidate_id"]: row for row in rows if row.get("candidate_id")}
         for candidate in race.candidates:
+            own = by_id.get(candidate.key.removeprefix(f"{SOURCE}:")) if candidate.key.startswith(f"{SOURCE}:") else None
+            if own:
+                found_rows[candidate.key] = own
+                matched.append((candidate.key, race.seat or "", own, None))
+                continue
             found = match_person(
                 index, candidate.name, candidate.party, race.seat,
                 seats_of=lambda _row, seat=race.seat: {seat},

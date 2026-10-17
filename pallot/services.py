@@ -14,7 +14,7 @@ import httpx
 from bundles.registry import seed as seed_bundles
 from bundles.store import PACKAGE_DATA_DIR as BUNDLES_DIR
 
-from .admin import SOURCES
+from .catalog import SOURCES
 from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache

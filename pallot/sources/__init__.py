@@ -52,7 +52,7 @@ class RefreshFailed(Exception):
 
 class KeptSource(Protocol):
     """A source kept in files rather than HttpCache rows (the SBOE and precinct maps, the
-    bundled snapshots). Settings asks it for its row's fine print (admin.py), and pallot-cache
+    bundled snapshots). Settings asks it for its row's fine print (catalog.py), and pallot-cache
     (maintain.py) to check, refresh and clear it, so a new one only needs its SourceInfo."""
 
     @property

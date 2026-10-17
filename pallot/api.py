@@ -31,7 +31,7 @@ from starlette.datastructures import Headers
 from starlette.types import Scope
 
 from . import __version__, ics
-from .admin import Admin
+from .catalog import Catalog
 from .ballot import BallotError, Services, election_dates, start_ballot
 from .config import Config, load_config
 from .counties import COUNTIES
@@ -344,7 +344,7 @@ def create_app(
         ) as svc:
             await asyncio.to_thread(prune, svc.cache, config)
             app.state.svc = svc
-            app.state.admin = Admin(svc)
+            app.state.catalog = Catalog(svc)
             log_setup(svc)
             app.state.warm_up = warming = asyncio.create_task(warm_up(svc))
             pruning = asyncio.create_task(keep_pruning(svc))
@@ -368,8 +368,8 @@ def create_app(
     def services(request: Request) -> Services:
         return request.app.state.svc
 
-    def admin(request: Request) -> Admin:
-        return request.app.state.admin
+    def catalog(request: Request) -> Catalog:
+        return request.app.state.catalog
 
     def chosen(request: Request) -> Sources:
         """The sources this voter has on: their choices, kept in their browser and sent in a header
@@ -511,7 +511,7 @@ def create_app(
                 builder = await start_ballot(services(request), body, on)
             except BallotError as exc:
                 raise HTTPException(exc.status, exc.message) from exc
-            builder.ballot.sources_off = admin(request).rule_sources_off(on)
+            builder.ballot.sources_off = catalog(request).rule_sources_off(on)
             if NDJSON not in request.headers.get("accept", ""):
                 return await builder.finish()
             first = _line(builder.ballot, done=False)  # before finish() adds the cards to the same races
@@ -540,7 +540,7 @@ def create_app(
 
     @app.get("/api/sources", response_model=SourcesOverview)
     def sources(request: Request) -> SourcesOverview:
-        return admin(request).overview(chosen(request))
+        return catalog(request).overview(chosen(request))
 
     @app.get("/api/endorsements", response_model=list[EndorsementListInfo])
     def endorsements(request: Request) -> list[EndorsementListInfo]:
