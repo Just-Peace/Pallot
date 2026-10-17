@@ -45,7 +45,6 @@ COVERED = {
 ONLY_IN: dict[str, frozenset[str]] = {
     "tec": frozenset({"TX"}),
     "polls": frozenset({"TX"}),
-    "wikidata": frozenset({"TX"}),
 }
 
 
