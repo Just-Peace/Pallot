@@ -1,0 +1,424 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1000 BANK ST, RICHMOND, VA 23219"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "201540589"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "5176001",
+       "CENTLAT": "+37.5582346",
+       "AREAWATER": 3380580,
+       "BASENAME": "Richmond City (North & West)",
+       "STATE": "51",
+       "OID": "2177029730526071",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.5584837",
+       "NAME": "Richmond City (North & West) PUMA",
+       "OBJECTID": 1996,
+       "CENTLON": "-077.4926579",
+       "AREALAND": 74355920,
+       "INTPTLON": "-077.4926674",
+       "MTFCC": "G6120",
+       "PUMA": "76001"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "23219",
+       "CENTLAT": "+37.5407921",
+       "AREAWATER": 391747,
+       "BASENAME": "23219",
+       "OID": "221704258312564",
+       "ZCTA5": "23219",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.5406042",
+       "NAME": "ZCTA5 23219",
+       "OBJECTID": 24619,
+       "CENTLON": "-077.4348421",
+       "AREALAND": 3437189,
+       "INTPTLON": "-077.4347331",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "74746",
+       "CENTLAT": "+37.4847448",
+       "AREAWATER": 27155188,
+       "BASENAME": "Richmond, VA",
+       "OID": "27021226606268",
+       "UA": "74746",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.4853862",
+       "NAME": "Richmond, VA Urban Area",
+       "OBJECTID": 1405,
+       "CENTLON": "-077.4842478",
+       "AREALAND": 1327040320,
+       "INTPTLON": "-077.4840805",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 258122963.3526575,
+       "NECTAPCI": "N",
+       "GEOID": "5167000",
+       "CENTLAT": "+37.5294349",
+       "AREAWATER": 6849166,
+       "BASENAME": "Richmond",
+       "STATE": "51",
+       "OID": "27890226589942",
+       "LSADC": "25",
+       "PLACE": "67000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+37.5313990",
+       "NAME": "Richmond city",
+       "OBJECTID": 32208,
+       "PLACECC": "C7",
+       "CENTLON": "-077.4755831",
+       "STGEOMETRY_Length": 108505.29562923552,
+       "CBSAPCI": "Y",
+       "AREALAND": 155205053,
+       "INTPTLON": "-077.4760085",
+       "PLACENS": "01789073",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "51760",
+       "CENTLAT": "+37.5294349",
+       "AREAWATER": 6849166,
+       "STATE": "51",
+       "BASENAME": "Richmond",
+       "OID": "27590226573779",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+37.5313990",
+       "NAME": "Richmond city",
+       "OBJECTID": 1205,
+       "CENTLON": "-077.4755831",
+       "COUNTYCC": "C7",
+       "COUNTYNS": "01789073",
+       "AREALAND": 155205053,
+       "INTPTLON": "-077.4760085",
+       "MTFCC": "G4020",
+       "COUNTY": "760"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "5103240",
+       "CENTLAT": "+37.5294349",
+       "AREAWATER": 6849166,
+       "STATE": "51",
+       "BASENAME": "Richmond City Public Schools",
+       "OID": "28490226609794",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+37.5313990",
+       "SDUNI": "03240",
+       "NAME": "Richmond City Public Schools",
+       "OBJECTID": 6854,
+       "CENTLON": "-077.4755831",
+       "HIGRADE": "12",
+       "AREALAND": 155205053,
+       "INTPTLON": "-077.4760085",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "517600305021006",
+       "CENTLAT": "+37.5385681",
+       "BLOCK": "1006",
+       "AREAWATER": 0,
+       "STATE": "51",
+       "BASENAME": "1006",
+       "OID": "210701003934165",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.5385681",
+       "NAME": "Block 1006",
+       "OBJECTID": 2150411,
+       "TRACT": "030502",
+       "CENTLON": "-077.4336437",
+       "BLKGRP": "1",
+       "AREALAND": 69062,
+       "INTPTLON": "-077.4336437",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "760"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779803",
+       "GEOID": "51",
+       "CENTLAT": "+37.5182631",
+       "AREAWATER": 8529984660,
+       "STATE": "51",
+       "BASENAME": "Virginia",
+       "STUSAB": "VA",
+       "OID": "2749099610787",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+37.5204693",
+       "DIVISION": "5",
+       "NAME": "Virginia",
+       "REGION": "3",
+       "OBJECTID": 45,
+       "CENTLON": "-078.6759174",
+       "AREALAND": 102256265428,
+       "INTPTLON": "-078.6670562",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "517600305021",
+       "CENTLAT": "+37.5372376",
+       "AREAWATER": 176253,
+       "STATE": "51",
+       "BASENAME": "1",
+       "OID": "2089015487081455",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.5375379",
+       "NAME": "Block Group 1",
+       "OBJECTID": 37789,
+       "TRACT": "030502",
+       "CENTLON": "-077.4407766",
+       "BLKGRP": "1",
+       "AREALAND": 1146318,
+       "INTPTLON": "-077.4411735",
+       "MTFCC": "G5030",
+       "COUNTY": "760"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "95291",
+       "GEOID": "5176095291",
+       "CENTLAT": "+37.5294349",
+       "AREAWATER": 6849166,
+       "STATE": "51",
+       "BASENAME": "Richmond",
+       "OID": "27690226582340",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+37.5313990",
+       "NAME": "Richmond city",
+       "OBJECTID": 8148,
+       "CENTLON": "-077.4755831",
+       "COUSUBCC": "Z7",
+       "AREALAND": 155205053,
+       "INTPTLON": "-077.4760085",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01789073",
+       "COUNTY": "760"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "51014",
+       "CENTLAT": "+37.5642462",
+       "AREAWATER": 7437289,
+       "STATE": "51",
+       "BASENAME": "14",
+       "OID": "2129042975428293",
+       "SLDU": "014",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+37.5644496",
+       "NAME": "State Senate District 14",
+       "OBJECTID": 231,
+       "CENTLON": "-077.4571891",
+       "LSY": "2026",
+       "AREALAND": 167986722,
+       "INTPTLON": "-077.4586741",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "5",
+       "CENTLAT": "+33.7954697",
+       "AREAWATER": 86320496528,
+       "BASENAME": "South Atlantic",
+       "OID": "2739020719808",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7948282",
+       "DIVISION": "5",
+       "REGION": "3",
+       "NAME": "South Atlantic Division",
+       "OBJECTID": 2,
+       "CENTLON": "-080.9687982",
+       "AREALAND": 687144333254,
+       "INTPTLON": "-080.9658812",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 14360902192.282742,
+       "CD120": "04",
+       "GEOID": "5104",
+       "CENTLAT": "+37.0063385",
+       "CDSESSN": "120",
+       "AREAWATER": 263729922,
+       "STATE": "51",
+       "BASENAME": "4",
+       "OID": "2119042975419363",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+37.0093180",
+       "NAME": "Congressional District 4",
+       "OBJECTID": 410,
+       "CENTLON": "-077.4044450",
+       "STGEOMETRY_Length": 784121.1351337739,
+       "AREALAND": 8876925227,
+       "INTPTLON": "-077.4250173",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "51078",
+       "CENTLAT": "+37.5559352",
+       "SLDL": "078",
+       "AREAWATER": 3361046,
+       "STATE": "51",
+       "BASENAME": "78",
+       "OID": "2139042975428422",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+37.5572049",
+       "NAME": "State House District 78",
+       "OBJECTID": 2550,
+       "CENTLON": "-077.5047554",
+       "LSY": "2026",
+       "AREALAND": 61113734,
+       "INTPTLON": "-077.5048996",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "40060",
+       "CENTLAT": "+37.4119109",
+       "AREAWATER": 330866370,
+       "BASENAME": "Richmond, VA",
+       "OID": "2629034687907743",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.4113970",
+       "NAME": "Richmond, VA Metro Area",
+       "CSA": "",
+       "OBJECTID": 831,
+       "CENTLON": "-077.4465872",
+       "CBSA": "40060",
+       "AREALAND": 11312431471,
+       "INTPTLON": "-077.4436538",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "51760030502",
+       "CENTLAT": "+37.5360537",
+       "AREAWATER": 375712,
+       "STATE": "51",
+       "BASENAME": "305.02",
+       "OID": "2079015487081163",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.5363931",
+       "NAME": "Census Tract 305.02",
+       "OBJECTID": 67773,
+       "TRACT": "030502",
+       "CENTLON": "-077.4392476",
+       "AREALAND": 1436525,
+       "INTPTLON": "-077.4397151",
+       "MTFCC": "G5020",
+       "COUNTY": "760"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -77.43532052505,
+     "y": 37.538497318137
+    },
+    "addressComponents": {
+     "zip": "23219",
+     "streetName": "BANK",
+     "preType": "",
+     "city": "RICHMOND",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "900",
+     "state": "VA",
+     "suffixType": "ST",
+     "toAddress": "1098",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1000 BANK ST, RICHMOND, VA, 23219"
+   }
+  ]
+ }
+}

@@ -38,9 +38,10 @@ def test_sources_overview(client):
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts",
                                                        "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "wikidata",
                                                        "ballotpedia", "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
-                                                       "mupac", "fec", "tec", "polls", "state_nc", "state_mi"]
+                                                       "mupac", "fec", "tec", "polls", "state_nc", "state_mi", "state_pa",
+                                                       "state_fl", "state_va"]
     (geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
-     fec, tec, polls, _, _) = overview["sources"]  # no Google key: its row is left out
+     fec, tec, polls, *_) = overview["sources"]  # no Google key: its row is left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
     assert "Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton" in county["description"]
@@ -141,7 +142,7 @@ def test_sources_are_grouped(client):
     assert grouped == {
         "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
         "official": ["sos", "key_dates", "fec", "tec"],
-        "states": ["state_nc", "state_mi"],
+        "states": ["state_nc", "state_mi", "state_pa", "state_fl", "state_va"],
         "ballot": ["wikidata", "ballotpedia", "officeholders"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],

@@ -15,6 +15,7 @@ import dataclasses
 import datetime as dt
 import re
 from dataclasses import dataclass
+from html.parser import HTMLParser
 from typing import Any, ClassVar
 
 from ..config import Ttls
@@ -81,6 +82,40 @@ def party(text: str | None, names: dict[str, str] | None = None) -> tuple[str | 
     if not raw or raw.upper() in ("UNA", "NON", "NPA", "NONPARTISAN", "NO PARTY AFFILIATION", "UNAFFILIATED"):
         return None, None
     return None, (names or {}).get(raw.upper(), raw)
+
+
+class Rows(HTMLParser):
+    """Each table row's cells, as text, empty ones included."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.rows: list[list[str]] = []
+        self._row: list[str] | None = None
+        self._cell: list[str] | None = None
+
+    def handle_starttag(self, tag: str, attrs: Any) -> None:
+        if tag == "tr":
+            self._row = []
+        elif tag == "td" and self._row is not None:
+            self._cell = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "td" and self._row is not None and self._cell is not None:
+            self._row.append(" ".join("".join(self._cell).split()))
+            self._cell = None
+        elif tag == "tr" and self._row is not None:
+            self.rows.append(self._row)
+            self._row = None
+
+    def handle_data(self, data: str) -> None:
+        if self._cell is not None:
+            self._cell.append(data)
+
+
+def ordinal(number: int) -> str:
+    """3 -> "3rd", 11 -> "11th"."""
+    suffix = "th" if 10 <= number % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
+    return f"{number}{suffix}"
 
 
 _ORDINALS = {
