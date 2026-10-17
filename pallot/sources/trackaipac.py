@@ -157,12 +157,12 @@ def card(person: dict[str, Any], match: Match, snapshot: str | None) -> SourceCa
     )
 
 
-def cards(tracker: TrackAipac, races: list[Race]) -> dict[str, SourceCard]:
-    """Cards for candidates in congressional races who appear on TrackAIPAC."""
+def cards(tracker: TrackAipac, races: list[Race], state: str = "TX") -> dict[str, SourceCard]:
+    """Cards for candidates in congressional races who appear on TrackAIPAC in the ballot's state."""
     congressional = [race for race in races if race.seat]
     if not congressional:
         return {}
-    index = tracker.name_index("TX")
+    index = tracker.name_index(state)
     snapshot = tracker.snapshot_date()
     out = {}
     for race in congressional:

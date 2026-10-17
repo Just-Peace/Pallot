@@ -8,7 +8,7 @@ import { openTopCard } from "./ballot-top.js";
 import { $, h, pairBox } from "./dom.js";
 import { listed } from "./format.js";
 import { icon } from "./icons.js";
-import { DISTRICTS, PRECINCT_KINDS, STATES } from "./labels.js";
+import { DISTRICTS, PRECINCT_KINDS, STATES, coverageOf, houseText } from "./labels.js";
 import { showToast } from "./toast.js";
 import { sourceNote } from "./view.js";
 
@@ -98,8 +98,9 @@ function districtRow(...items) {
 }
 
 // Where the districts came from: the address, or the voter card's precinct (no districts when the
-// precinct map couldn't place it).
-function districtsSource(location) {
+// precinct map couldn't place it). Without precincts, the Census alone.
+function districtsSource(location, coverage) {
+  if (!coverage.precincts) return "Districts from the US Census.";
   if (location.source !== "voter_card") return "Districts from the US Census and the Texas Legislative Council.";
   if (location.lat == null) return "County and precinct from your voter card.";
   return "Districts from your voter card: the US Census and the Texas Legislative Council, inside your precinct on the Council's map.";
@@ -126,18 +127,25 @@ export function renderDistricts() {
   const fromCard = location.source === "voter_card";
   const precinctName = precinct?.name ?? (fromCard ? page.request?.precinct : null);
   const notUp = new Set(d.not_up || []);
+  const coverage = coverageOf(ballot);
+  const editable = coverage.ballot === "state";
+  if (!editable) editing = false;
   const number = (kind, options = {}) => district(districtLabel(kind, { short: editing }), shown[kind],
     { notUp: notUp.has(kind), missing: needed(kind), edit: editing ? kind : null, ...options });
+  const house = (kind) => (kind === "cd" && !editing ? houseText(shown.cd, location.state) : shown[kind]);
+  const covered = (kind) => coverage.districts.includes(kind)
+    && district(districtLabel(kind, { short: editing }), house(kind),
+      { notUp: notUp.has(kind), missing: needed(kind), edit: editing ? kind : null });
 
   const rows = [
-    districtRow(number("cd"), number("sd"), number("hd"), number("sboe")),
+    districtRow(...["cd", "sd", "hd", "sboe"].map(covered)),
     districtRow(
-      location.county && district("County", location.county),
+      location.county && district("County", coverage.precincts ? location.county : location.county_name || location.county),
       precinctName && district("Precinct", precinctName, {
         title: precinct ? `Election precinct, from the map “${precinct.map_label}”` : "Election precinct, from your voter card",
       }),
-      number("commissioner"),
-      number("jp"),
+      coverage.precincts && number("commissioner"),
+      coverage.precincts && number("jp"),
     ),
     districtRow(
       location.city && district(null, location.city),
@@ -145,15 +153,18 @@ export function renderDistricts() {
       school && district(null, school),
     ),
     location.approximate
-      ? h("p", { class: "district-warn" }, "Approximate address: check these against your voter registration certificate.")
+      ? h("p", { class: "district-warn" }, coverage.precincts
+        ? "Approximate address: check these against your voter registration certificate."
+        : "Approximate address: these districts may not be yours.")
       : null,
     leftOutNote(),
     editing ? null : notUpNote(d),
   ].filter(Boolean);
   $("#districts-card").replaceChildren(
-    h("div", { class: "districts-head" }, h("h2", { id: "districts-card-title" }, "Your districts"), districtActions(d)),
+    h("div", { class: "districts-head" }, h("h2", { id: "districts-card-title" }, "Your districts"),
+      editable ? districtActions(d) : null),
     ...(editing ? [districtsForm(rows, shown)] : rows),
-    sourceNote(districtsSource(location),
+    sourceNote(districtsSource(location, coverage),
       enteredDistricts(d), precinct ? electionPrecinctSource(precinct) : "", precinctSources(d)),
   );
   $("#districts-card").hidden = false;

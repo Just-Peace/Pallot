@@ -55,6 +55,7 @@ class Holder:
     party_name: str | None
     started: dt.date | None = None  # when their current term began
     ends: dt.date | None = None  # when it ends (a senator's)
+    fec_ids: tuple[str, ...] = ()  # their FEC candidate IDs, as ballot_races keys candidates ("fec:<id>")
 
 
 def _party(text: str | None) -> tuple[str | None, str | None]:
@@ -69,12 +70,12 @@ def _date(text: str | None) -> dt.date | None:
         return None
 
 
-def congress_holders(members: list[dict[str, Any]], state: str = STATE) -> list[Holder]:
-    """The state's members of Congress, each at their current term's seat."""
+def congress_holders(members: list[dict[str, Any]], state: str | None = STATE) -> list[Holder]:
+    """The state's members of Congress (every state's with None), each at their current term's seat."""
     out = []
     for member in members:
         term = (member.get("terms") or [{}])[-1]
-        if term.get("state") != state or term.get("type") not in ("sen", "rep"):
+        if (state and term.get("state") != state) or not term.get("state") or term.get("type") not in ("sen", "rep"):
             continue
         if term["type"] == "rep" and not isinstance(term.get("district"), int):
             continue
@@ -84,10 +85,12 @@ def congress_holders(members: list[dict[str, Any]], state: str = STATE) -> list[
         if name.get("nickname") and name.get("last"):
             names.append(f"{name['nickname']} {name['last']}")
         code, party_name = _party(term.get("party"))
+        where = term["state"]
         out.append(Holder(
-            seat=f"{state}-SEN" if term["type"] == "sen" else f"{state}-{term['district']:02d}",
+            seat=f"{where}-SEN" if term["type"] == "sen" else f"{where}-{term['district']:02d}",
             name=full, names=names, party=code, party_name=party_name,
             started=_date(term.get("start")), ends=_date(term.get("end")),
+            fec_ids=tuple((member.get("id") or {}).get("fec") or ()),
         ))
     return out
 
@@ -119,7 +122,7 @@ class Officeholders:
         return got.value
 
     async def congress(self) -> list[Holder]:
-        return congress_holders(list(await self._get(CONGRESS, text=False) or []))
+        return congress_holders(list(await self._get(CONGRESS, text=False) or []), state=None)
 
     async def legislature(self) -> list[Holder]:
         return legislature_holders(await self._get(LEGISLATURE, text=True) or "")
@@ -134,34 +137,38 @@ def _seat_of(race: Race, scope: OfficeScope | None, bp_ballot: BpBallot | None, 
 
 
 def _senator_up(holders: list[Holder], day: dt.date) -> Holder | None:
-    """The senator whose seat is up: the one whose term ends in the January after the election."""
-    return next((h for h in holders if h.ends and h.ends.year == day.year + 1), None)
+    """The senator whose seat is up: the one whose term ends after the election and by the January
+    after it, an appointee's (whose seat a special election fills) included."""
+    return next((h for h in holders if h.ends and day <= h.ends < dt.date(day.year + 1, 2, 1)), None)
 
 
 def _hint(holder: Holder, seat: str) -> str:
     who = f"Held by {holder.name}" + (f", a {holder.party_name}" if holder.party_name else "")
-    if not seat.endswith("-SEN") and "-" in seat and holder.started and holder.started < REDRAWN:
+    if seat.startswith(f"{STATE}-") and not seat.endswith("-SEN") and holder.started and holder.started < REDRAWN:
         who += ", elected under the district's lines before Texas redrew its U.S. House map in 2025"
     return who
 
 
 def seat_info(race: Race, holder: Holder | None, seat: str) -> tuple[SeatInfo, str | None]:
     """The race's SeatInfo and the key of the candidate who is the holder (None if nobody
-    surely is). A likely match of the holder makes no claim at all."""
+    surely is). A candidate from the FEC's list is the holder by FEC ID, since its legal names
+    ("T. Jonathan Ossoff") aren't the ones people go by. A likely match of the holder makes no
+    claim at all."""
     if holder is None:
         return SeatInfo(holder=None, open=True), None
-    index = NameIndex()
-    for candidate in race.candidates:
-        index.add(candidate.name, candidate.key)
-    found: set[str] = set()
-    likely = False
-    for name in holder.names:
-        keys, how = index.find(name)
-        if how in (FULL, FIRST_LAST) and len(set(keys)) == 1:
-            found |= set(keys)
-        elif keys:
-            likely = True
     info = SeatHolder(name=holder.name, party=holder.party, party_name=holder.party_name, hint=_hint(holder, seat))
+    found = {c.key for c in race.candidates if c.key.startswith("fec:") and c.key.removeprefix("fec:") in holder.fec_ids}
+    likely = False
+    if not found:
+        index = NameIndex()
+        for candidate in race.candidates:
+            index.add(candidate.name, candidate.key)
+        for name in holder.names:
+            keys, how = index.find(name)
+            if how in (FULL, FIRST_LAST) and len(set(keys)) == 1:
+                found |= set(keys)
+            elif keys:
+                likely = True
     if len(found) != 1:
         if likely or found:
             return SeatInfo(holder=info, open=False), None

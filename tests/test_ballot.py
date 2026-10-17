@@ -594,11 +594,6 @@ def test_a_texas_sos_refusal_pauses_it_and_the_ballot_comes_from_ballotpedia(cli
     assert row["notice"].endswith(" after Texas SOS refused a request; ballots it already sent still show.")
 
 
-def test_outside_texas_is_refused(client):
-    response = client.post("/api/ballot", json={"address": ADDRESSES["dc"]})
-    assert response.status_code == 422 and "Texas" in response.json()["detail"]
-
-
 def test_unknown_address(client):
     response = client.post("/api/ballot", json={"address": "Nowhere Street 123"})
     assert response.status_code == 422

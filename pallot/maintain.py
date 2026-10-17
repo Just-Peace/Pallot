@@ -17,7 +17,7 @@ import sqlite3
 import sys
 from typing import Any, Callable, Collection
 
-from .admin import Admin, SourceInfo
+from .catalog import Catalog, SourceInfo
 from .ballot import Services
 from .config import BadConfig, load_config
 from .http_cache import SavedRequest
@@ -54,11 +54,11 @@ class Maintenance:
     def __init__(self, svc: Services, only: Collection[str] = (), say: Callable[[str], Any] = print,
                  *, reset_snapshots: bool = False, delete_only: bool = False):
         self.svc = svc
-        self.admin = Admin(svc)
-        known = [info.id for info in self.admin.sources]
+        self.catalog = Catalog(svc)
+        known = [info.id for info in self.catalog.sources]
         if unknown := sorted(set(only) - set(known)):
             raise ValueError(f"Unknown source {', '.join(unknown)}. The sources are: {', '.join(known)}.")
-        self.selected = [info for info in self.admin.sources if not only or info.id in only]
+        self.selected = [info for info in self.catalog.sources if not only or info.id in only]
         self.everything = not only
         self.say = say
         self.reset_snapshots = reset_snapshots
@@ -74,7 +74,7 @@ class Maintenance:
                 self.say(f"  {line}")
         if self.everything:
             total = self.svc.cache.file_bytes() + sum(
-                kept.size() for info in self.selected if (kept := self.admin.kept(info)))
+                kept.size() for info in self.selected if (kept := self.catalog.kept(info)))
             self.say(f"Everything kept takes {display_size(total)}.")
 
     def _state(self, info: SourceInfo) -> list[str]:
@@ -98,12 +98,12 @@ class Maintenance:
                 lines.append("Nothing saved.")
             if not info.refreshable:
                 lines.append("Only fetched as it's used: pruned, never refreshed.")
-            if came := self.admin.bundled(info):
+            if came := self.catalog.bundled(info):
                 lines.append(came)
-        if paused := self.admin.paused(info):
+        if paused := self.catalog.paused(info):
             lines.append(paused)
         lines += self._keys(info)
-        if kept := self.admin.kept(info):
+        if kept := self.catalog.kept(info):
             lines += [f"{fact.label}: {fact.value}" for fact in kept.details()]
             if why := kept.stale():
                 lines.append(f"Stale: {why}.")
@@ -146,7 +146,7 @@ class Maintenance:
             paused_until = paused_until or report.paused_until
         if info.cache_tags and (refreshed or hard):
             parts.append(f"Refreshed {_plural(refreshed, 'saved response')}.")
-        kept = self.admin.kept(info)
+        kept = self.catalog.kept(info)
         if kept and (hard or kept.stale()):
             try:
                 parts.append(await kept.refresh())
@@ -185,7 +185,7 @@ class Maintenance:
             removed = sum(cache.clear(tag) for info in self.selected for tag in info.cache_tags)
         cleared = []
         for info in self.selected:
-            kept = self.admin.kept(info)
+            kept = self.catalog.kept(info)
             if kept and not info.frozen and (self.reset_snapshots or not info.bundled):
                 kept.clear()
                 cleared.append(info.label)

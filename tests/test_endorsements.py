@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from pallot.admin import SOURCES
+from pallot.catalog import SOURCES
 from pallot.models import Candidate, Race
 from pallot.offices import classify
 from pallot.sources.endorsements import ENDORSEMENTS_DIR, FLAG, BadList, load_all, parse

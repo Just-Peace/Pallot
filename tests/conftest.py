@@ -48,6 +48,9 @@ ADDRESSES = {
     "mopac": "13500 N Mopac Expy, Austin, TX 78728",
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
+    "atlanta": "55 Trinity Ave SW, Atlanta, GA 30303",  # outside Texas: a Senate race and GA-05
+    "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat
+    "pr": "1 Calle Fortaleza, San Juan, PR 00901",  # made up: DC's geography, in Puerto Rico
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -83,6 +86,14 @@ def hd93_census() -> dict[str, Any]:
     geographies = data["result"]["addressMatches"][0]["geographies"]
     lower = next(name for name in geographies if "Legislative Districts - Lower" in name)
     geographies[lower][0]["BASENAME"] = "93"
+    return data
+
+
+def territory_census() -> dict[str, Any]:
+    """DC's answer moved to Puerto Rico, which Pallot doesn't cover."""
+    data = copy.deepcopy(load("census_dc.json"))
+    state = data["result"]["addressMatches"][0]["geographies"]["States"][0]
+    state.update(STUSAB="PR", GEOID="72", STATE="72", NAME="Puerto Rico", BASENAME="Puerto Rico")
     return data
 
 
@@ -334,6 +345,8 @@ class Upstream:
                 name = self._addresses.get(params["address"])
                 if name == "hd93":
                     return httpx.Response(200, json=hd93_census())
+                if name == "pr":
+                    return httpx.Response(200, json=territory_census())
                 return _file(f"census_{name}.json") if name else httpx.Response(200, json={"result": {"addressMatches": []}})
             if self.census_coordinates:
                 match = load(f"census_{self.census_coordinates}.json")["result"]["addressMatches"][0]
@@ -509,9 +522,12 @@ class Upstream:
             return httpx.Response(self.fec_status, json={"error": {"code": "OVER_RATE_LIMIT"}})
         path, empty = request.url.path.removeprefix("/v1"), {"results": []}
         if path == "/elections/":
-            office = params["office"]
-            return _file("fec_elections_senate.json" if office == "senate" else f"fec_elections_house_{params['district']}.json",
+            office, state = params["office"], params["state"]
+            prefix = "fec_elections" if state == "TX" else f"fec_elections_{state.lower()}"
+            return _file(f"{prefix}_senate.json" if office == "senate" else f"{prefix}_house_{params['district']}.json",
                          default=empty)
+        if path == "/elections/search/":
+            return _file(f"fec_elections_search_{params['office']}_{params.get('page', '1')}.json", default=empty)
         if path.startswith("/candidate/") and path.endswith("/totals/"):
             return _file(f"fec_totals_{path.split('/')[2]}.json", default=empty)
         for suffix, name in (("/schedule_a/by_size/by_candidate/", "by_size"), ("/schedule_a/by_state/by_candidate/", "by_state"),

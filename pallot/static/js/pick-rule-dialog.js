@@ -24,6 +24,9 @@ export function initRules(context) {
   closeOnBackdrop(dialog);
 }
 
+// The ballot's state, whose donors the in-state share counts.
+const homeState = () => page?.ballot?.location?.state_name || "Texas";
+
 // ---- the controls ---------------------------------------------------------------------
 
 // A checkbox and its label, then ``extra`` (the amount boxes it goes with).
@@ -219,7 +222,7 @@ function draw(rule, options, startScope) {
       button.lastChild.textContent = String(count);
       button.title = `${party.label}: in ${plural(count, "race")} here`;
     }
-    const words = describeRule(rule, parties, has);
+    const words = describeRule(rule, parties, has, { home: homeState() });
     pickWords.textContent = words.pick || "";
     skipWords.textContent = words.skip || "";
     pickWords.hidden = !words.pick;
@@ -272,7 +275,7 @@ function draw(rule, options, startScope) {
       if (folded.length) page.picks.setCollapsed(folded, false);
       page.renderRaces();
     };
-    showBanner(describeRule(rule, parties, has), undo);
+    showBanner(describeRule(rule, parties, has, { home: homeState() }), undo);
     page.renderRaces();
     const did = [picked ? `picked ${plural(picked, "race")}` : null, takenBack ? `took back ${plural(takenBack, "pick")}` : null];
     showToast(`Your conditions ${did.filter(Boolean).join(" and ")}.`, { label: "Undo", run: undo });
@@ -338,8 +341,8 @@ function draw(rule, options, startScope) {
       moneyOn && checkRow("Their money is", rule.money.on, set((on) => { rule.money.on = on; }), { extra: moneyInputs, stacked: true }),
       has.small && checkRow("Small donations make up at least", rule.small.on, set((on) => { rule.small.on = on; }),
         { extra: percentBox("small", "Small donations' share of what they raised, in percent") }),
-      has.texas && checkRow("Texas donors make up at least", rule.texas.on, set((on) => { rule.texas.on = on; }),
-        { extra: percentBox("texas", "Texas donors' share of itemized donations, in percent") })),
+      has.texas && checkRow(`${homeState()} donors make up at least`, rule.texas.on, set((on) => { rule.texas.on = on; }),
+        { extra: percentBox("texas", `${homeState()} donors' share of itemized donations, in percent`) })),
     group("Polls", has.polls && checkRow("They lead the polls", rule.leads, set((on) => { rule.leads = on; }))));
 
   const skipRows = [

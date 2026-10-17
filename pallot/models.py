@@ -142,13 +142,14 @@ class SourceCard(BaseModel):
 
 
 class Candidate(BaseModel):
-    key: str  # stable across refreshes: "sos:<election>:<candidate>" or "bp:<candidate>"
+    key: str  # stable across refreshes: "sos:<election>:<candidate>", "bp:<candidate>" or "fec:<FEC candidate ID>"
     name: str
     party: str | None = None  # D, R, L, G, I …
     party_name: str | None = None
     incumbent: bool = False
     party_holds_seat: bool = False  # of the seat holder's party, but not the holder (Race.holder)
     write_in: bool = False
+    unverified: bool = False  # filed to run (the FEC), but no official list says they're on this ballot
     photo_url: str | None = None
     cards: list[SourceCard] = Field(default_factory=list)
 
@@ -171,7 +172,7 @@ class SeatHolder(BaseModel):
 
 
 class Race(BaseModel):
-    key: str  # "sos:<election>:<office>" or "bp:<race>"
+    key: str  # "sos:<election>:<office>", "bp:<race>" or "fec:<cycle>:<seat>"
     name: str
     group: str
     seats: int = 1
@@ -215,6 +216,7 @@ class Location(BaseModel):
     city: str | None
     school_district: str | None
     geocoder: Literal["census", "nominatim", "google"] | None  # None: found from a voter card
+    county_name: str | None = None  # the Census's full name: "Travis County", "Orleans Parish"
     approximate: bool = False
     source: Literal["address", "voter_card"] = "address"  # a voter card's point is one inside its precinct
 
@@ -307,6 +309,15 @@ class SourceRef(BaseModel):
     label: str
 
 
+class Coverage(BaseModel):
+    """How much of the voter's state's ballot Pallot has (coverage.py), which the page draws by."""
+
+    ballot: Literal["state", "fec"] = "state"  # the state's official list, or the FEC's filers (unverified)
+    districts: list[str] = ["cd", "sd", "hd", "sboe"]  # the district kinds found and shown
+    precincts: bool = True  # election, commissioner and JP precincts
+    outlines: bool = True  # the districts' map
+
+
 class Ballot(BaseModel):
     election_date: str | None
     elections: list[ElectionRef]
@@ -320,6 +331,7 @@ class Ballot(BaseModel):
     warnings: list[str]
     left_out: LeftOut | None = None
     sources_off: list[SourceRef] = []  # the sources Pick by rule's conditions use that this request has off
+    coverage: Coverage = Coverage()
 
 
 class PrecinctInput(BaseModel):

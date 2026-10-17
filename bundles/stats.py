@@ -40,6 +40,7 @@ class Row:
 
 BUNDLES: dict[str, tuple[str, dict[str, tuple[str, str]]]] = {
     "fec": ("FEC", {"candidates": ("c", ""), "races": ("o", "races")}),
+    "fec_races": ("FEC race lists, other states", {"races": ("o", "races"), "states": ("o", "states")}),
     "sos": ("Texas SOS candidate lists", {"candidates": ("c", ""), "elections": ("o", "elections")}),
     "sos_ballot_order": ("Texas SOS ballot orders", {"ballot_orders": ("o", "county ballot orders"),
                                                      "elections": ("o", "elections"),

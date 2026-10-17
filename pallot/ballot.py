@@ -8,6 +8,9 @@ on. Official path: the county's Texas SOS
 ballot order is filtered down to those districts. Ballotpedia adds city/school races, races the state doesn't list
 at all, its notes on races and the voter's precincts, or supplies the whole ballot when the state source is off.
 Then every candidate gets a card from each enabled source (enrich.py).
+
+A state without its own list (coverage.py) gets only the races for Congress, from the people who
+filed with the FEC, each unverified.
 """
 
 from __future__ import annotations
@@ -22,7 +25,7 @@ from typing import Any, Callable
 
 from bundles.store import Seeded
 
-from . import counties, enrich
+from . import counties, coverage, enrich
 from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .matching import NameIndex
@@ -35,6 +38,7 @@ from .settings import Sources
 from .sources import ballotpedia as ballotpedia_source
 from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
+from .sources import fec as fec_source
 from .sources import google as google_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
@@ -193,8 +197,8 @@ async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, 
                                    "request. Addresses already looked up still work.") from exc
         log.warning("%s", exc)
         raise BallotError(502, "The address lookup isn't answering right now. Try again in a minute.") from exc
-    if place.state_fips != TEXAS_FIPS:
-        raise BallotError(422, "Pallot only covers Texas addresses for now.")
+    if place.state not in coverage.STATES:
+        raise BallotError(422, "Pallot covers addresses in the 50 states and DC.")
     location = Location(
         matched_address=label,
         lat=place.lat,
@@ -206,6 +210,7 @@ async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, 
         school_district=place.school_district,
         geocoder=geocoder,
         approximate=approximate,
+        county_name=place.county_name,
     )
     return place, location
 
@@ -415,14 +420,20 @@ class _Builder:
         self.context = enrich.Context()
 
     async def races(self) -> Ballot:
-        """The ballot without cards, kept in ``self.ballot`` for ``finish()``."""
-        if not (self.use_sos or self.use_bp):
-            raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
+        """The ballot without cards, kept in ``self.ballot`` for ``finish()``. A state Pallot has
+        only the FEC's filers for (coverage.py) takes _from_fec instead."""
         card: CardPlace | None = None
         if self.request.address:
             place, location = await locate(self.svc, self.request.address, self.sources)
+            cover = coverage.of(location.state)
+            if cover.ballot == "fec":
+                return await self._from_fec(place, location, cover)
+            if not (self.use_sos or self.use_bp):
+                raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
             county_name, county_fips, points = place.county, place.county_fips, [(place.lat, place.lon)]
         else:
+            if not (self.use_sos or self.use_bp):
+                raise BallotError(400, "No ballot source is turned on. Turn on Texas SOS or Ballotpedia in Settings.")
             card = await locate_precinct(self.svc, self.request.county or "", self.request.precinct or "", self.sources)
             place, location, points = card.place, card.location, card.points
             county_name, county_fips = card.county, card.county_fips
@@ -531,6 +542,59 @@ class _Builder:
             notes=list(self.notes),
             warnings=list(self.warnings),
             left_out=self._left_out(shown),
+            coverage=coverage.of(location.state).info(),
+        )
+        return self.ballot
+
+    async def _from_fec(self, place: Place, location: Location, cover: coverage.Coverage) -> Ballot:
+        """The races for Congress from the FEC's filers (fec.ballot_races), for a state without
+        its own list: the Senate race when the FEC lists one this cycle, and the address's House
+        race. No state source, key dates, precincts or Ballotpedia."""
+        if not self.sources.enabled(fec_source.SOURCE):
+            raise BallotError(400, "Outside Texas, Pallot's races come from the FEC, which is turned off. Turn on "
+                                   "the FEC in Settings.")
+        fec = self.svc.fec
+        day = fec_source.general_day(self.svc.today())
+        requested = self.request.election_date
+        if requested and requested != day:
+            self.warnings.append(f"Outside Texas, Pallot has only the general election on {day:%b %d, %Y}; showing it.")
+        state = location.state or ""
+        cycle = fec_source.cycle_of(day)
+        try:
+            senate = (state, 0) in await fec.elections(cycle, "senate")
+        except UpstreamError as exc:
+            log.warning("%s", exc)
+            self.warnings.append("Couldn't load the FEC's list of this year's Senate races, so the U.S. Senate race "
+                                 "isn't shown.")
+            senate = False
+        if place.cd is None:
+            self.warnings.append("Couldn't tell your U.S. House district from your address, so its race isn't shown.")
+        try:
+            races = await fec_source.ballot_races(fec, state, place.cd, senate, day)
+        except UpstreamError as exc:
+            if exc.until:
+                raise BallotError(502, f"The FEC is paused until {display_time(exc.until)} after refusing a request, and "
+                                       f"nothing is kept yet for this {self.where}.") from exc
+            log.warning("%s", exc)
+            raise BallotError(502, f"The FEC isn't answering right now, and nothing is kept yet for this {self.where}. "
+                                   "Try again in a minute.") from exc
+        if not races:
+            raise BallotError(404, " ".join(self.warnings) or f"No ballot data found for this {self.where}.")
+        self.notes.append("Outside Texas, Pallot lists only the races for Congress, from the people who filed with the "
+                          "FEC. Your ballot has more races: check your county's sample ballot.")
+        self.context = enrich.Context(day=day, county=location.county, city=location.city, state=location.state)
+        self.every_race = races
+        self.ballot = Ballot(
+            election_date=day.isoformat(),
+            elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
+            location=location,
+            districts=Districts(cd=place.cd),
+            races=races,
+            maybe=[],
+            measures=[],
+            notes=list(self.notes),
+            warnings=list(self.warnings),
+            coverage=cover.info(),
         )
         return self.ballot
 

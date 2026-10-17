@@ -1,4 +1,5 @@
-"""The FEC's bundle: Texas's federal races from Texas SOS, then what a lookup of them asks the FEC."""
+"""The FEC's bundles: Texas's federal races from Texas SOS, then what a lookup of them asks the FEC
+(fec); and every other state's race lists, as a lookup there asks them (fec_races)."""
 
 from __future__ import annotations
 
@@ -6,10 +7,12 @@ import asyncio
 import time
 from typing import Any
 
-from pallot.http_cache import UpstreamError
+from pallot.coverage import STATES
+from pallot.http_cache import RequestSpec, UpstreamError
 from pallot.models import Candidate, Race
 from pallot.offices import classify
 from pallot.sources import fec
+from pallot.sources.officeholders import STATE
 from pallot.sources.sos import Election, Sos, still_running
 from pallot.text import display_office, display_person
 
@@ -85,3 +88,40 @@ async def build(ctx: Context) -> dict[str, int]:
         raise BundleError(f"{len(money.failed)} FEC calls failed, e.g. {money.failed[0]}")
     return {"races": sum(len(races) for _, races in ballots),
             "candidates": sum(len(race.candidates) for _, races in ballots for race in races)}
+
+
+def is_race_list(spec: RequestSpec) -> bool:
+    """fec_races' answers: the lists of this cycle's elections, and each seat's filers outside Texas."""
+    path = spec.url.removeprefix(fec.API)
+    return path == "/elections/search/" or (path == "/elections/" and (spec.params or {}).get("state") != STATE)
+
+
+async def build_races(ctx: Context) -> dict[str, int]:
+    """The FEC's lists of this cycle's Senate and House elections, then each seat's filers in the
+    50 states and DC but Texas (whose the fec bundle has), as ballot_races asks for them."""
+    money = _Counted(ctx.cache, ctx.config.ttl, ctx.config.fec_api_keys, ctx.today)
+    day = fec.general_day(ctx.today())
+    cycle, ttl = fec.cycle_of(day), money.lifetime(day)
+    seats: list[str] = []
+    for _ in range(ROUNDS):
+        money.failed.clear()
+        try:
+            listed = [(state, None) for state, _ in await money.elections(cycle, "senate")]
+            listed += await money.elections(cycle, "house")
+        except UpstreamError:
+            listed = []
+        seats = sorted({fec.seat_of(state, number) for state, number in listed if state in STATES and state != STATE})
+        for seat in seats:
+            try:
+                await money.race(seat, cycle, ttl)
+            except UpstreamError:
+                pass  # its call is in money.failed
+        if not money.failed:
+            break
+        if until := ctx.cache.paused_until(fec.SOURCE):
+            await asyncio.sleep(max(0.0, until - time.time()) + 1)
+    if money.failed:
+        raise BundleError(f"{len(money.failed)} FEC calls failed, e.g. {money.failed[0]}")
+    if not seats:
+        raise BundleError("the FEC lists no elections this cycle")
+    return {"races": len(seats), "states": len({seat.partition("-")[0] for seat in seats})}

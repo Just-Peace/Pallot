@@ -46,5 +46,5 @@ def lifetimes(tmp_path: Path, name: str) -> set[float]:
 
 def came_with(client: TestClient, source: str) -> str | None:
     """What pallot-cache check says came with Pallot for the source ("Came with N answers, checked …")."""
-    admin = client.app.state.admin
-    return admin.bundled(next(info for info in admin.sources if info.id == source))
+    catalog = client.app.state.catalog
+    return catalog.bundled(next(info for info in catalog.sources if info.id == source))

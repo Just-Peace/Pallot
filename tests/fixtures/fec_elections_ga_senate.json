@@ -1,0 +1,205 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 12,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8GA00180",
+   "candidate_name": "OSSOFF, T. JONATHAN",
+   "candidate_pcc_id": "C00718866",
+   "candidate_pcc_name": "JON OSSOFF FOR SENATE",
+   "cash_on_hand_end_period": 42587451.0,
+   "committee_ids": [
+    "C00718866"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 59730545.53,
+   "total_receipts": 97986263.04
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00390",
+   "candidate_name": "COLLINS, MICHAEL A JR",
+   "candidate_pcc_id": "C00544684",
+   "candidate_pcc_name": "MIKE COLLINS FOR SENATE",
+   "cash_on_hand_end_period": 1159314.47,
+   "committee_ids": [
+    "C00544684",
+    "C00892000"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 9693572.36,
+   "total_receipts": 10249716.29
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00374",
+   "candidate_name": "CARTER, EARL LEROY",
+   "candidate_pcc_id": "C00543967",
+   "candidate_pcc_name": "BUDDY CARTER FOR SENATE",
+   "cash_on_hand_end_period": 58641.47,
+   "committee_ids": [
+    "C00543967"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 10283590.15,
+   "total_receipts": 7323301.28
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00382",
+   "candidate_name": "KING, JOHN",
+   "candidate_pcc_id": "C00904870",
+   "candidate_pcc_name": "JOHN KING FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00904870"
+   ],
+   "coverage_end_date": "2026-01-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 563078.46,
+   "total_receipts": 563078.46
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S2GA00282",
+   "candidate_name": "MCCOLUMN, JONATHAN MR",
+   "candidate_pcc_id": "C00805721",
+   "candidate_pcc_name": "MCCOLUMN FOR SENATE",
+   "cash_on_hand_end_period": 12412.31,
+   "committee_ids": [
+    "C00805721"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 23433.03,
+   "total_receipts": 36143.79
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00267",
+   "candidate_name": "BOX, REAGAN",
+   "candidate_pcc_id": "C00818807",
+   "candidate_pcc_name": "REAGAN BOX FOR US HOUSE 2026",
+   "cash_on_hand_end_period": 8043.24,
+   "committee_ids": [
+    "C00818807"
+   ],
+   "coverage_end_date": "2024-12-31",
+   "incumbent_challenge_full": null,
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 26130.41,
+   "total_receipts": 33606.11
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00275",
+   "candidate_name": "JACKSON, DEVELLE LAVAUGHN",
+   "candidate_pcc_id": "C00846790",
+   "candidate_pcc_name": "JACKSON FOR CONGRESS 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00846790"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00283",
+   "candidate_name": "WATKINS, VINSON L",
+   "candidate_pcc_id": "C00879551",
+   "candidate_pcc_name": "WATKINS FOR GEORGIA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00879551"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00291",
+   "candidate_name": "CHAPMAN, CHRISTOPH LA'FLARE",
+   "candidate_pcc_id": "C00885343",
+   "candidate_pcc_name": "THE SUPER PACT",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00885343"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00309",
+   "candidate_name": "TEMPLE, RICK",
+   "candidate_pcc_id": "C00892349",
+   "candidate_pcc_name": "RICK TEMPLE FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00892349"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00317",
+   "candidate_name": "BARTELL, ELBERT",
+   "candidate_pcc_id": "C00949891",
+   "candidate_pcc_name": "BARTELL FOR SENATE COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00949891"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6GA00366",
+   "candidate_name": "CLEMENT, CHRISTINA LOREN REV DR TRUSTE",
+   "candidate_pcc_id": "C00857128",
+   "candidate_pcc_name": "STATE OF LOC NATION FOR CLEMENT FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00857128"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

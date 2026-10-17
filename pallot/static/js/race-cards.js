@@ -157,6 +157,7 @@ function raceCard(race) {
     race.unexpired ? "Unexpired term" : null,
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
     race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
+    race.source === "fec" ? "From FEC filings" : null,
   ].filter(Boolean).join(" · ");
   const candRows = race.candidates.map((c) => candidateRow(race, c));
   const quiet = quietWriteIns(race, candRows);
