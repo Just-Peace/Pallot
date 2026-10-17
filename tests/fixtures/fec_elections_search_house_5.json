@@ -1,0 +1,252 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 440,
+  "is_count_exact": true,
+  "page": 5,
+  "pages": 5,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "cycle": 2026,
+   "district": "27",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "27",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "27",
+   "office": "H",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "28",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "28",
+   "office": "H",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "28",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "29",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "29",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "30",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "30",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "31",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "31",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "32",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "32",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "33",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "33",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "34",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "34",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "35",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "35",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "36",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "36",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "37",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "37",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "38",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "38",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "39",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "40",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "41",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "42",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "43",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "44",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "45",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "46",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "47",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "48",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "49",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "50",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "51",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "52",
+   "office": "H",
+   "state": "CA"
+  }
+ ]
+}

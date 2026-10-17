@@ -1,0 +1,92 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0WY00137",
+   "candidate_name": "LUMMIS, CYNTHIA MARIE MRS.",
+   "candidate_pcc_id": "C00443580",
+   "candidate_pcc_name": "LUMMIS FOR WYOMING INC.",
+   "cash_on_hand_end_period": 815391.08,
+   "committee_ids": [
+    "C00443580"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2017075.73,
+   "total_receipts": 2718016.58
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6WY00209",
+   "candidate_name": "HAGEMAN, HARRIET",
+   "candidate_pcc_id": "C00788943",
+   "candidate_pcc_name": "HAGEMAN FOR WYOMING",
+   "cash_on_hand_end_period": 593893.9,
+   "committee_ids": [
+    "C00788943"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2967957.68,
+   "total_receipts": 2678888.54
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6WY00225",
+   "candidate_name": "MEAD, SAMUEL",
+   "candidate_pcc_id": "C00947424",
+   "candidate_pcc_name": "MEAD FOR WYOMING",
+   "cash_on_hand_end_period": 13649.02,
+   "committee_ids": [
+    "C00947424"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 285697.49,
+   "total_receipts": 299346.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6WY00217",
+   "candidate_name": "BYRD, JAMES WILLARD MR.",
+   "candidate_pcc_id": "C00938738",
+   "candidate_pcc_name": "BYRD FOR US SENATE",
+   "cash_on_hand_end_period": 356.16,
+   "committee_ids": [
+    "C00938738"
+   ],
+   "coverage_end_date": "2026-07-29",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 23292.88,
+   "total_receipts": 22558.71
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6WY00191",
+   "candidate_name": "SKOVGARD, JIMMY MR",
+   "candidate_pcc_id": "C00903369",
+   "candidate_pcc_name": "SKOVGARD FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00903369"
+   ],
+   "coverage_end_date": "2026-10-02",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 11938.12,
+   "total_receipts": 11058.95
+  }
+ ]
+}

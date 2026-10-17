@@ -1,0 +1,332 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 20,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2DC01029",
+   "candidate_name": "WILLIAMS, KELLY",
+   "candidate_pcc_id": "C00853739",
+   "candidate_pcc_name": "KELLY MIKEL FOR DC",
+   "cash_on_hand_end_period": 3959482.76,
+   "committee_ids": [
+    "C00853739"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1841.24,
+   "total_receipts": 3962768.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC00196",
+   "candidate_name": "PINTO, BROOKE",
+   "candidate_pcc_id": "C00922369",
+   "candidate_pcc_name": "BROOKE PINTO FOR CONGRESS",
+   "cash_on_hand_end_period": 3030.48,
+   "committee_ids": [
+    "C00922369"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1657109.96,
+   "total_receipts": 1660140.44
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01079",
+   "candidate_name": "WHITE, ROBERT C. JR.",
+   "candidate_pcc_id": "C00921502",
+   "candidate_pcc_name": "THE CONGRESSIONAL COMMITTEE TO ELECT ROBERT WHITE 2026",
+   "cash_on_hand_end_period": 78540.04,
+   "committee_ids": [
+    "C00921502"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 937089.58,
+   "total_receipts": 1009951.68
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC00170",
+   "candidate_name": "ZALESNE, KINNEY",
+   "candidate_pcc_id": "C00911842",
+   "candidate_pcc_name": "KINNEY FOR DC",
+   "cash_on_hand_end_period": 104024.47,
+   "committee_ids": [
+    "C00911842"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 720556.33,
+   "total_receipts": 824580.8
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01137",
+   "candidate_name": "JACZKO, GREGORY DR.",
+   "candidate_pcc_id": "C00938381",
+   "candidate_pcc_name": "GREG JACZKO FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00938381"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 140016.69,
+   "total_receipts": 140016.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01103",
+   "candidate_name": "HOLBROOK, TRENT WILLIAM",
+   "candidate_pcc_id": "C00932921",
+   "candidate_pcc_name": "FRIENDS OF TRENT HOLBROOK",
+   "cash_on_hand_end_period": 7124.12,
+   "committee_ids": [
+    "C00932921"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 57201.73,
+   "total_receipts": 64325.85
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01053",
+   "candidate_name": "MATTHEWS, ROBERT",
+   "candidate_pcc_id": "C00918987",
+   "candidate_pcc_name": "FRIENDS OF MATTHEWS FOR CONGRESS",
+   "cash_on_hand_end_period": 48647.48,
+   "committee_ids": [
+    "C00918987"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 430.52,
+   "total_receipts": 49078.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01038",
+   "candidate_name": "CHAFFIN, GORDON",
+   "candidate_pcc_id": "C00915686",
+   "candidate_pcc_name": "GORDON CHAFFIN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00915686"
+   ],
+   "coverage_end_date": "2026-07-15",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 35065.26,
+   "total_receipts": 35065.26
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01111",
+   "candidate_name": "ROSADO, DENISE MS.",
+   "candidate_pcc_id": "C00934083",
+   "candidate_pcc_name": "ROSADO FOR CONGRESS",
+   "cash_on_hand_end_period": 5057.41,
+   "committee_ids": [
+    "C00934083"
+   ],
+   "coverage_end_date": "2026-05-27",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1062.66,
+   "total_receipts": 6188.02
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H0DC01023",
+   "candidate_name": "MAYE, GREG",
+   "candidate_pcc_id": "C00909382",
+   "candidate_pcc_name": "GREG MAYE FOR DC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00909382"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4DC00100",
+   "candidate_name": "FREEMAN, KYMONE",
+   "candidate_pcc_id": "C00866863",
+   "candidate_pcc_name": "THE COMMITTEE TO ELECT KYMONE FREEMAN",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00866863"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "OTHER",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC00188",
+   "candidate_name": "BROWN, DEIRDRE",
+   "candidate_pcc_id": "C00919407",
+   "candidate_pcc_name": "DEIRDRE FOR DC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00919407"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC00204",
+   "candidate_name": "MORRIS, VINCENT",
+   "candidate_pcc_id": "C00929448",
+   "candidate_pcc_name": "VINCE FOR DC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929448"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC00212",
+   "candidate_name": "EDEN, ARTEMUS",
+   "candidate_pcc_id": "C00933523",
+   "candidate_pcc_name": "SOLUTIONATOR EDEN FOR WASHINGTON DC CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00933523"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01012",
+   "candidate_name": "RIOS, ANGEL ANTHONY MR.",
+   "candidate_pcc_id": "C00891762",
+   "candidate_pcc_name": "RIOS FOR D.C DELEGATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00891762"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01061",
+   "candidate_name": "PATTERSON, JACQUE DONALD DR SR",
+   "candidate_pcc_id": "C00920249",
+   "candidate_pcc_name": "JACQUE FOR DC DELEGATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00920249"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01087",
+   "candidate_name": "READY, BRIAN",
+   "candidate_pcc_id": "C00922005",
+   "candidate_pcc_name": "BRIAN READY FOR DC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00922005"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01095",
+   "candidate_name": "SMITH, MICHAEL LAUREL MR.",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00925545"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC01129",
+   "candidate_name": "RANDOLPH, SYLVIA",
+   "candidate_pcc_id": "C00922286",
+   "candidate_pcc_name": "SYLVIA RANDOLPH FOR US REPRESENTATIVE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00922286"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6DC98018",
+   "candidate_name": "STEVENS, SANDI LEE MS",
+   "candidate_pcc_id": "C00939066",
+   "candidate_pcc_name": "SANDI STEVENS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00939066"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

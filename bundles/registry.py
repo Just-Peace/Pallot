@@ -11,7 +11,8 @@ from . import county_precincts, endorsement_feeds, fec, officeholders, polls, so
 from .entry import Bundle
 
 BUNDLES: tuple[Bundle, ...] = (
-    Bundle("fec", fec.build, "daily"),
+    Bundle("fec", fec.build, "daily", include=lambda spec: not fec.is_race_list(spec)),
+    Bundle("fec", fec.build_races, "daily", name="fec_races", include=fec.is_race_list),
     Bundle("sos", sos.build, "daily", lifetime=sos.lifetime, include=sos.statewide),
     Bundle("sos", sos.build_ballot_orders, "daily", lifetime=sos.lifetime, name="sos_ballot_order",
            include=sos.is_ballot_order, keep=sos.published),

@@ -1,0 +1,612 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 440,
+  "is_count_exact": true,
+  "page": 3,
+  "pages": 5,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "GA"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "LA"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "WI"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "KY"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "OH"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "CO"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "IN"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "TN"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "IL"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "NJ"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "MO"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "NC"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "MN"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "AL"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "SC"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "OR"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "MA"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "AZ"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "PA"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "NY"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "MI"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "MD"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "VA"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "06",
+   "office": "H",
+   "state": "WA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "CO"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "OH"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "MA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "MD"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "IL"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "NJ"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "NY"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "MO"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "MN"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "GA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "SC"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "WI"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "WA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "MI"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "AL"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "AZ"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "TN"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "IN"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "VA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "PA"
+  },
+  {
+   "cycle": 2026,
+   "district": "07",
+   "office": "H",
+   "state": "NC"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "MD"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "AZ"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "CO"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "GA"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "IL"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "IN"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "MA"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "MI"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "MN"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "MO"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "NC"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "NY"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "OH"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "PA"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "TN"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "VA"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "WA"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "WI"
+  },
+  {
+   "cycle": 2026,
+   "district": "08",
+   "office": "H",
+   "state": "NJ"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "TN"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "IN"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "MA"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "VA"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "NY"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "MI"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "NJ"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "CA"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "NC"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "PA"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "WA"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "GA"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "OH"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "AZ"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "09",
+   "office": "H",
+   "state": "IL"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "IL"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "NC"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "PA"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "MI"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "OH"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "VA"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "GA"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "NY"
+  },
+  {
+   "cycle": 2026,
+   "district": "10",
+   "office": "H",
+   "state": "WA"
+  }
+ ]
+}

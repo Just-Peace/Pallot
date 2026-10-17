@@ -111,7 +111,7 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
 
   const state = STATES[ballot.location.state];
   const tips = state?.printTips ?? ["Bring this sheet with you: many polling places don't allow phones in the voting booth."];
-  const districts = districtLine(ballot.districts, { precinct: " Pct" });
+  const districts = districtLine(ballot.districts, { precinct: " Pct", state: ballot.location.state });
   const when = whenLine(ballot);
 
   sheet.replaceChildren(

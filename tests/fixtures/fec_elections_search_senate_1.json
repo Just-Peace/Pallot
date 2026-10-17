@@ -1,0 +1,222 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 35,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "NC"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "SC"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "AK"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "AL"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "AR"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "CO"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "DE"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "MN"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "MI"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "ME"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "MA"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "LA"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "KY"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "KS"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "IL"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "ID"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "IA"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "GA"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "FL"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "WY"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "WV"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "VA"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "TX"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "TN"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "SD"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "RI"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "OR"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "OK"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "OH"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "NM"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "NJ"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "NH"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "NE"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "MT"
+  },
+  {
+   "cycle": 2026,
+   "district": "00",
+   "office": "S",
+   "state": "MS"
+  }
+ ]
+}

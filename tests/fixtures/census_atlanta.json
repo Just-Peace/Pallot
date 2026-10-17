@@ -1,0 +1,468 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "55 TRINITY AVE SW, ATLANTA, GA 30303"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "17344323"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "1301405",
+       "CENTLAT": "+33.7129986",
+       "AREAWATER": 108628,
+       "BASENAME": "Atlanta Regional Commission (Central)--Fulton County (East)--Atlanta City (South)",
+       "STATE": "13",
+       "OID": "2177029558362227",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7118291",
+       "NAME": "Atlanta Regional Commission (Central)--Fulton County (East)--Atlanta City (South) PUMA",
+       "OBJECTID": 1259,
+       "CENTLON": "-084.3784045",
+       "AREALAND": 76809916,
+       "INTPTLON": "-084.3777918",
+       "MTFCC": "G6120",
+       "PUMA": "01405"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "30303",
+       "CENTLAT": "+33.7528453",
+       "AREAWATER": 0,
+       "BASENAME": "30303",
+       "OID": "221704258282136",
+       "ZCTA5": "30303",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7528453",
+       "NAME": "ZCTA5 30303",
+       "OBJECTID": 11496,
+       "CENTLON": "-084.3902259",
+       "AREALAND": 2685165,
+       "INTPTLON": "-084.3902259",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "03817",
+       "CENTLAT": "+33.8362703",
+       "AREAWATER": 99397447,
+       "BASENAME": "Atlanta, GA",
+       "OID": "27021102446168",
+       "UA": "03817",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.8348581",
+       "NAME": "Atlanta, GA Urban Area",
+       "OBJECTID": 2594,
+       "CENTLON": "-084.3365022",
+       "AREALAND": 6612779732,
+       "INTPTLON": "-084.3377012",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 2,
+       "STGEOMETRY_Area": 512412485.30022097,
+       "NECTAPCI": "N",
+       "GEOID": "1304000",
+       "CENTLAT": "+33.7628900",
+       "AREAWATER": 2788719,
+       "BASENAME": "Atlanta",
+       "STATE": "13",
+       "OID": "27890105372738",
+       "LSADC": "25",
+       "PLACE": "04000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+33.7629088",
+       "NAME": "Atlanta city",
+       "OBJECTID": 32017,
+       "PLACECC": "C1",
+       "CENTLON": "-084.4220682",
+       "STGEOMETRY_Length": 224155.1371475094,
+       "CBSAPCI": "Y",
+       "AREALAND": 350444656,
+       "INTPTLON": "-084.4226745",
+       "PLACENS": "02403126",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "13121",
+       "CENTLAT": "+33.7899616",
+       "AREAWATER": 20568425,
+       "STATE": "13",
+       "BASENAME": "Fulton",
+       "OID": "275901011086271",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+33.7900338",
+       "NAME": "Fulton County",
+       "OBJECTID": 1222,
+       "CENTLON": "-084.4676823",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01694833",
+       "AREALAND": 1364561001,
+       "INTPTLON": "-084.4681816",
+       "MTFCC": "G4020",
+       "COUNTY": "121"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "1300120",
+       "CENTLAT": "+33.7628984",
+       "AREAWATER": 2788803,
+       "STATE": "13",
+       "BASENAME": "Atlanta City School District",
+       "OID": "28490105378204",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+33.7629088",
+       "SDUNI": "00120",
+       "NAME": "Atlanta City School District",
+       "OBJECTID": 8232,
+       "CENTLON": "-084.4221010",
+       "HIGRADE": "12",
+       "AREALAND": 350325774,
+       "INTPTLON": "-084.4226745",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "131210035001017",
+       "CENTLAT": "+33.7487317",
+       "BLOCK": "1017",
+       "AREAWATER": 0,
+       "STATE": "13",
+       "BASENAME": "1017",
+       "OID": "210701005414254",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7487317",
+       "NAME": "Block 1017",
+       "OBJECTID": 276805,
+       "TRACT": "003500",
+       "CENTLON": "-084.3904357",
+       "BLKGRP": "1",
+       "AREALAND": 21547,
+       "INTPTLON": "-084.3904357",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "121"
+      }
+     ],
+     "Metropolitan Divisions": [
+      {
+       "POP100": "",
+       "GEOID": "1206012054",
+       "CENTLAT": "+33.6465222",
+       "AREAWATER": 302405047,
+       "BASENAME": "Atlanta-Sandy Springs-Roswell, GA",
+       "OID": "2639034687908155",
+       "LSADC": "M3",
+       "METDIV": "12054",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.6447810",
+       "NAME": "Atlanta-Sandy Springs-Roswell, GA Metro Division",
+       "CSA": "122",
+       "OBJECTID": 28,
+       "CENTLON": "-084.2954543",
+       "CBSA": "12060",
+       "AREALAND": 18052217553,
+       "INTPTLON": "-084.2951288",
+       "HU100": "",
+       "MTFCC": "G3120"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01705317",
+       "GEOID": "13",
+       "CENTLAT": "+32.6279417",
+       "AREAWATER": 4417014621,
+       "STATE": "13",
+       "BASENAME": "Georgia",
+       "STUSAB": "GA",
+       "OID": "2749048077737",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+32.6295789",
+       "DIVISION": "5",
+       "NAME": "Georgia",
+       "REGION": "3",
+       "OBJECTID": 37,
+       "CENTLON": "-083.4165286",
+       "AREALAND": 149487969421,
+       "INTPTLON": "-083.4235109",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "131210035001",
+       "CENTLAT": "+33.7486260",
+       "AREAWATER": 0,
+       "STATE": "13",
+       "BASENAME": "1",
+       "OID": "208903717492412",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7486260",
+       "NAME": "Block Group 1",
+       "OBJECTID": 241546,
+       "TRACT": "003500",
+       "CENTLON": "-084.3856455",
+       "BLKGRP": "1",
+       "AREALAND": 567320,
+       "INTPTLON": "-084.3856455",
+       "MTFCC": "G5030",
+       "COUNTY": "121"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "122",
+       "CENTLAT": "+33.7640720",
+       "AREAWATER": 661205369,
+       "BASENAME": "Atlanta--Athens-Clarke County--Sandy Springs, GA-AL",
+       "OID": "2619034687907977",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7644037",
+       "NAME": "Atlanta--Athens-Clarke County--Sandy Springs, GA-AL CSA",
+       "OBJECTID": 44,
+       "CSA": "122",
+       "CENTLON": "-084.3723082",
+       "INTPTLON": "-084.3727678",
+       "AREALAND": 34521740790,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "90144",
+       "GEOID": "1312190144",
+       "CENTLAT": "+33.7616044",
+       "AREAWATER": 7878617,
+       "STATE": "13",
+       "BASENAME": "Atlanta",
+       "OID": "276901011255575",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7619599",
+       "NAME": "Atlanta CCD",
+       "OBJECTID": 6996,
+       "CENTLON": "-084.4705733",
+       "COUSUBCC": "Z5",
+       "AREALAND": 612001559,
+       "INTPTLON": "-084.4723780",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01936089",
+       "COUNTY": "121"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "13036",
+       "CENTLAT": "+33.7021779",
+       "AREAWATER": 170666,
+       "STATE": "13",
+       "BASENAME": "36",
+       "OID": "2129042579651769",
+       "SLDU": "036",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.7021727",
+       "NAME": "State Senate District 36",
+       "OBJECTID": 800,
+       "CENTLON": "-084.3974537",
+       "LSY": "2026",
+       "AREALAND": 120744876,
+       "INTPTLON": "-084.3954527",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "5",
+       "CENTLAT": "+33.7954697",
+       "AREAWATER": 86320496528,
+       "BASENAME": "South Atlantic",
+       "OID": "2739020719808",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7948282",
+       "DIVISION": "5",
+       "REGION": "3",
+       "NAME": "South Atlantic Division",
+       "OBJECTID": 2,
+       "CENTLON": "-080.9687982",
+       "AREALAND": 687144333254,
+       "INTPTLON": "-080.9658812",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 848354135.8507031,
+       "CD120": "05",
+       "GEOID": "1305",
+       "CENTLAT": "+33.6965325",
+       "CDSESSN": "120",
+       "AREAWATER": 2696150,
+       "STATE": "13",
+       "BASENAME": "5",
+       "OID": "2119042393277617",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.6937460",
+       "NAME": "Congressional District 5",
+       "OBJECTID": 8,
+       "CENTLON": "-084.3792963",
+       "STGEOMETRY_Length": 206328.56344986675,
+       "AREALAND": 583014720,
+       "INTPTLON": "-084.3824902",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "13058",
+       "CENTLAT": "+33.7308653",
+       "SLDL": "058",
+       "AREAWATER": 71846,
+       "STATE": "13",
+       "BASENAME": "58",
+       "OID": "2139042579652008",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.7293348",
+       "NAME": "State House District 58",
+       "OBJECTID": 4079,
+       "CENTLON": "-084.4357117",
+       "LSY": "2026",
+       "AREALAND": 30984331,
+       "INTPTLON": "-084.4349168",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "12060",
+       "CENTLAT": "+33.7325311",
+       "AREAWATER": 384018066,
+       "BASENAME": "Atlanta-Sandy Springs-Roswell, GA",
+       "OID": "2629034687907084",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7324018",
+       "NAME": "Atlanta-Sandy Springs-Roswell, GA Metro Area",
+       "CSA": "122",
+       "OBJECTID": 8,
+       "CENTLON": "-084.3925649",
+       "CBSA": "12060",
+       "AREALAND": 22750762306,
+       "INTPTLON": "-084.3928478",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "13121003500",
+       "CENTLAT": "+33.7509228",
+       "AREAWATER": 0,
+       "STATE": "13",
+       "BASENAME": "35",
+       "OID": "207901011353334",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7509228",
+       "NAME": "Census Tract 35",
+       "OBJECTID": 37377,
+       "TRACT": "003500",
+       "CENTLON": "-084.3917294",
+       "AREALAND": 1389853,
+       "INTPTLON": "-084.3917294",
+       "MTFCC": "G5020",
+       "COUNTY": "121"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -84.390279998653,
+     "y": 33.747923442489
+    },
+    "addressComponents": {
+     "zip": "30303",
+     "streetName": "TRINITY",
+     "preType": "",
+     "city": "ATLANTA",
+     "preDirection": "",
+     "suffixDirection": "SW",
+     "fromAddress": "53",
+     "state": "GA",
+     "suffixType": "AVE",
+     "toAddress": "99",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "55 TRINITY AVE SW, ATLANTA, GA, 30303"
+   }
+  ]
+ }
+}

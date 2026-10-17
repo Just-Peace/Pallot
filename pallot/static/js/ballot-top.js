@@ -5,6 +5,7 @@
 
 import { $, h } from "./dom.js";
 import { keyDatesSummary } from "./key-dates.js";
+import { coverageOf, houseText } from "./labels.js";
 
 // Opens or folds a card the lines stand for (``id``: "key-dates", "districts-card").
 export function openTopCard(id, open) {
@@ -29,8 +30,11 @@ function fill(id, label, text) {
 function districtsText(ballot, request) {
   const d = ballot.districts;
   const precinct = d.election_precinct?.name ?? (ballot.location.source === "voter_card" ? request?.precinct : null);
+  const shown = new Set(coverageOf(ballot).districts);
+  const house = houseText(d.cd, ballot.location.state);
   return [
-    d.cd != null && `US House ${d.cd}`, d.sd != null && `Senate ${d.sd}`, d.hd != null && `House ${d.hd}`, precinct && `Pct ${precinct}`,
+    house != null && `US House ${house}`, shown.has("sd") && d.sd != null && `Senate ${d.sd}`,
+    shown.has("hd") && d.hd != null && `House ${d.hd}`, precinct && `Pct ${precinct}`,
   ].filter(Boolean).join(" · ") || "not known yet";
 }
 

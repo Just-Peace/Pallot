@@ -12,6 +12,7 @@ import { syncMapShown } from "./district-map.js";
 import { initEndorserBar, moreHelp } from "./endorser-bar.js";
 import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
+import { STATES } from "./labels.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { hasAnyPicks, onPicksSaved } from "./picks.js";
 import { STILL_LOADING, cardFor, redrawRace, refillPart, setAllCollapsed } from "./race-cards.js";
@@ -228,8 +229,14 @@ const TIPS = [
   {
     id: "print", when: anyPicked, target: () => $(narrow.matches ? "#more-btn" : "#print-btn"),
     after: () => (narrow.matches ? progressInfo : tools),
-    text: () => (narrow.matches ? "Print your picks from More: phones can't be used at Texas voting stations."
-      : "Print your picks: phones can't be used at the voting station in Texas."),
+    text: () => {
+      const texas = Boolean(STATES[page.ballot.location.state]);
+      if (narrow.matches) {
+        return texas ? "Print your picks from More: phones can't be used at Texas voting stations."
+          : "Print your picks from More, to bring with you.";
+      }
+      return texas ? "Print your picks: phones can't be used at the voting station in Texas." : "Print your picks, to bring with you.";
+    },
   },
 ];
 

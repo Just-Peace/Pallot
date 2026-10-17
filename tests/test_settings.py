@@ -6,7 +6,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from pallot.admin import SOURCES
+from pallot.catalog import SOURCES
 from pallot.settings import DEFAULT_SOURCES, DEFAULTS_FILE, BadSourcesFile, Sources, defaults, read_sources_file
 
 from .conftest import switch

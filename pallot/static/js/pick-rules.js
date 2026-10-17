@@ -202,8 +202,9 @@ const share = (amount) => `${COUNT.format(amount)}%`;
 // The rule in words, as { pick, skip } (null for a half with nothing on): "Pick Democratic
 // incumbents who have endorsements from JVP Action and spent under $1M." Only the conditions with
 // something to go on (``has``, from available()) count, as only they show in the dialog.
-// ``parties``: ballotParties(), for the chips' names.
-export function describeRule(rule, parties, has) {
+// ``parties``: ballotParties(), for the chips' names; ``home``: the ballot's state, whose donors
+// in_state_share counts (the rule's stored key stays "texas").
+export function describeRule(rule, parties, has, { home = "Texas" } = {}) {
   const on = (condition, amount) => condition && known(amount);
   const adjectives = parties.filter((p) => rule.parties.includes(p.code))
     .map((p) => (p.code === WRITE_INS ? "write-in" : p.label));
@@ -220,7 +221,7 @@ export function describeRule(rule, parties, has) {
     moneyWords,
     on(rule.small.on && has.small, rule.small.amount) ? `get at least ${share(rule.small.amount)} of their money in small donations` : null,
     on(rule.texas.on && has.texas, rule.texas.amount)
-      ? `get at least ${share(rule.texas.amount)} of their itemized donations from Texas` : null,
+      ? `get at least ${share(rule.texas.amount)} of their itemized donations from ${home}` : null,
     rule.leads && has.polls ? "lead the polls" : null,
   ].filter(Boolean);
   const pick = adjectives.length || noun !== "candidates" || clauses.length
