@@ -15,6 +15,7 @@ from .sources import (
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
+from .states.adapters import ADAPTERS
 from .text import display_date, display_time, iso_utc
 
 
@@ -36,11 +37,13 @@ class SourceGroup:
     toggle_all: bool = False  # Settings offers "Turn all on" and "Turn all off" for it
 
 
-ADDRESS, OFFICIAL, BALLOT, POLLS, SCORECARDS = "address", "official", "ballot", "polls", "scorecards"
+ADDRESS, OFFICIAL, STATES, BALLOT, POLLS, SCORECARDS = "address", "official", "states", "ballot", "polls", "scorecards"
 GROUPS = (
     SourceGroup(ADDRESS, "Address lookup & maps", "Your districts and precincts from your address, and their map."),
     SourceGroup(OFFICIAL, "Official ballot data", "The state's ballot and dates, campaign money reported to the FEC "
                 "and the Texas Ethics Commission, and outside Texas, who filed with the FEC to run for Congress."),
+    SourceGroup(STATES, "State election offices", "Other states' official lists of the candidates on their ballots. "
+                "Without its state's list, a ballot has only the races for Congress.", toggle_all=True),
     SourceGroup(BALLOT, "Third-party ballot data", "Local races, candidate profiles and seat holders the state doesn't "
                 "publish."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them."),
@@ -193,6 +196,11 @@ SOURCES = (
         group=POLLS,
         pause=Pause("FiftyPlusOne refused a request", "polls it already sent still show"),
         rules=True,
+    ),
+    *(
+        SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES,
+                   pause=Pause(f"the {cls.label} refused a request", "the list already fetched still shows"))
+        for cls in ADAPTERS.values()
     ),
 )
 

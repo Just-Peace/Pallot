@@ -1,0 +1,124 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 7,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2MI07123",
+   "candidate_name": "BARRETT, THOMAS MORE",
+   "candidate_pcc_id": "C00793976",
+   "candidate_pcc_name": "TOM BARRETT FOR CONGRESS",
+   "cash_on_hand_end_period": 2362085.08,
+   "committee_ids": [
+    "C00793976"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 5551695.49,
+   "total_receipts": 7891380.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MI07256",
+   "candidate_name": "BRINK,, BRIDGET",
+   "candidate_pcc_id": "C00908541",
+   "candidate_pcc_name": "BRINK FOR CONGRESS",
+   "cash_on_hand_end_period": 32889.3,
+   "committee_ids": [
+    "C00908541"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3073460.42,
+   "total_receipts": 3106349.72
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MI07272",
+   "candidate_name": "MAASDAM, MATTHEW",
+   "candidate_pcc_id": "C00909549",
+   "candidate_pcc_name": "MATT MAASDAM FOR CONGRESS",
+   "cash_on_hand_end_period": 8671.78,
+   "committee_ids": [
+    "C00909549"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 2238745.81,
+   "total_receipts": 2247417.59
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MI07298",
+   "candidate_name": "LAWRENCE, WILLIAM",
+   "candidate_pcc_id": "C00916809",
+   "candidate_pcc_name": "FRIENDS OF WILLIAM LAWRENCE",
+   "cash_on_hand_end_period": 383115.63,
+   "committee_ids": [
+    "C00916809"
+   ],
+   "coverage_end_date": "2026-07-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 736082.13,
+   "total_receipts": 1119197.76
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MI07280",
+   "candidate_name": "COWEN, JOSH",
+   "candidate_pcc_id": "C00911313",
+   "candidate_pcc_name": "COWEN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00911313"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 209460.19,
+   "total_receipts": 209460.19
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MI07231",
+   "candidate_name": "RAIS, MUHAMMAD SALMAN",
+   "candidate_pcc_id": "C00902593",
+   "candidate_pcc_name": "MUHAMMAD SALMAN RAIS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00902593"
+   ],
+   "coverage_end_date": "2026-03-11",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MI07264",
+   "candidate_name": "SMELTZER BADGER, SAMUEL ELYON",
+   "candidate_pcc_id": "C00909002",
+   "candidate_pcc_name": "ELYON BADGER FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00909002"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

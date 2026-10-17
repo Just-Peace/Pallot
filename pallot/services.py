@@ -40,10 +40,12 @@ from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
 from .sources.wikidata import Wikidata
+from .states.adapters import ADAPTERS, open_lists
 
 MIN_INTERVAL = {
     "nominatim": 1.0, "suggestions": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
     "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, **{feed.source: 1.0 for feed in FEEDS},
+    **{cls.source: 2.0 for cls in ADAPTERS.values()},
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
@@ -133,6 +135,7 @@ async def open_services(
                 key_dates=key_dates.KeyDatesPage(cache, config.ttl),
                 tigerweb=Tigerweb(cache, config.ttl),
                 tiles=Tiles(cache, config.ttl),
+                states=open_lists(cache, config.ttl),
                 today=today,
             )
             await asyncio.to_thread(svc.trackaipac.ensure_seeded)

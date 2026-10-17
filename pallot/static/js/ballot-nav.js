@@ -230,7 +230,7 @@ const TIPS = [
     id: "print", when: anyPicked, target: () => $(narrow.matches ? "#more-btn" : "#print-btn"),
     after: () => (narrow.matches ? progressInfo : tools),
     text: () => {
-      const texas = Boolean(STATES[page.ballot.location.state]);
+      const texas = Boolean(STATES[page.ballot.location.state]?.noPhones);
       if (narrow.matches) {
         return texas ? "Print your picks from More: phones can't be used at Texas voting stations."
           : "Print your picks from More, to bring with you.";

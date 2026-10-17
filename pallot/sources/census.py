@@ -31,8 +31,8 @@ class Place:
     county: str | None  # "Travis"
     county_fips: str | None  # "453"
     cd: int | None  # 0 for an at-large seat or DC's delegate
-    sd: int | None
-    hd: int | None
+    sd: int | str | None  # the district's name where it isn't a number ("Third Suffolk")
+    hd: int | str | None
     city: str | None
     school_district: str | None
     block_point: tuple[float, float] | None = None  # the census block's internal point (lat, lon)
@@ -90,6 +90,13 @@ def _number(entry: dict[str, Any] | None) -> int | None:
     return int(match.group()) if match else None
 
 
+def _legislative(entry: dict[str, Any] | None) -> int | str | None:
+    """A legislative district's number, or its name where the state names them: "3rd Suffolk"
+    is a name, not district 3."""
+    name = " ".join(((entry or {}).get("BASENAME") or "").split())
+    return int(name) if name.isdigit() else name or None
+
+
 def _congressional(entry: dict[str, Any] | None) -> int | None:
     """The district's number from its GEOID (state + 2 digits): an at-large district's "00" and
     DC's delegate's "98" are both 0, as the FEC numbers them. BASENAME's number otherwise."""
@@ -123,8 +130,8 @@ def parse_geographies(geographies: dict[str, Any], lat: float, lon: float, match
         county_fips=county_geoid[2:] or None,
         county_name=(county or {}).get("NAME"),
         cd=_congressional(_layer(geographies, "Congressional Districts")),
-        sd=_number(_layer(geographies, "Legislative Districts - Upper")),
-        hd=_number(_layer(geographies, "Legislative Districts - Lower")),
+        sd=_legislative(_layer(geographies, "Legislative Districts - Upper")),
+        hd=_legislative(_layer(geographies, "Legislative Districts - Lower")),
         city=(city or {}).get("BASENAME"),
         school_district=(school or {}).get("NAME"),
         block_point=_internal_point(_layer(geographies, "Census Blocks")),  # not "Census Block Groups"

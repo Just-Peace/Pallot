@@ -246,8 +246,8 @@ class CountySource(BaseModel):
 
 class Districts(BaseModel):
     cd: int | None = None
-    sd: int | None = None
-    hd: int | None = None
+    sd: int | str | None = None  # a name where the state names its districts ("Third Suffolk")
+    hd: int | str | None = None
     sboe: int | None = None
     election_precinct: ElectionPrecinct | None = None
     city_council: str | None = None
@@ -312,7 +312,7 @@ class SourceRef(BaseModel):
 class Coverage(BaseModel):
     """How much of the voter's state's ballot Pallot has (coverage.py), which the page draws by."""
 
-    ballot: Literal["state", "fec"] = "state"  # the state's official list, or the FEC's filers (unverified)
+    ballot: Literal["state", "list", "fec"] = "state"  # Texas SOS's ballot, another state's official list, or the FEC's filers (unverified)
     districts: list[str] = ["cd", "sd", "hd", "sboe"]  # the district kinds found and shown
     precincts: bool = True  # election, commissioner and JP precincts
     outlines: bool = True  # the districts' map

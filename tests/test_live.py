@@ -99,7 +99,7 @@ def test_officeholders_live():
     congress = officeholders.congress_holders(response.json())
     assert len([h for h in congress if h.seat == "TX-SEN"]) == 2 and len(congress) >= 36
     assert all(h.party and h.started and h.ends for h in congress)
-    response = httpx.get(officeholders.LEGISLATURE, timeout=60, follow_redirects=True)
+    response = httpx.get(officeholders.LEGISLATURE.format(state="tx"), timeout=60, follow_redirects=True)
     response.raise_for_status()
     legislature = officeholders.legislature_holders(response.text)
     assert len([h for h in legislature if h.seat.startswith("STATESEN:")]) >= 28

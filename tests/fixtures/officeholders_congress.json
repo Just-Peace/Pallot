@@ -5787,5 +5787,2395 @@
     "url": "https://blair.house.gov/"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "F000450",
+   "thomas": "01791",
+   "govtrack": 400643,
+   "opensecrets": "N00026166",
+   "votesmart": 6051,
+   "fec": [
+    "H4NC05146"
+   ],
+   "cspan": 1013052,
+   "wikipedia": "Virginia Foxx",
+   "house_history": 13547,
+   "ballotpedia": "Virginia Foxx",
+   "maplight": 649,
+   "icpsr": 20521,
+   "wikidata": "Q458453",
+   "google_entity_id": "kg:/m/02b5dz",
+   "pictorial": 13134
+  },
+  "name": {
+   "first": "Virginia",
+   "last": "Foxx",
+   "official_full": "Virginia Foxx"
+  },
+  "bio": {
+   "birthday": "1943-06-29",
+   "gender": "F"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "url": "http://foxx.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "url": "http://foxx.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "url": "http://foxx.house.gov",
+    "address": "1230 Longworth HOB; Washington DC 20515-3305",
+    "phone": "202-225-2071",
+    "fax": "202-225-2995",
+    "contact_form": "http://www.house.gov/formfoxx/IMA/issue_subscribe.htm",
+    "office": "1230 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "NC",
+    "party": "Republican",
+    "district": 5,
+    "url": "http://foxx.house.gov",
+    "address": "2350 Rayburn HOB; Washington DC 20515-3305",
+    "phone": "202-225-2071",
+    "fax": "202-225-2995",
+    "contact_form": "https://foxx.house.gov/forms/writeyourrep/?zip5=&zip4=",
+    "office": "2350 Rayburn House Office Building",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "NC",
+    "party": "Republican",
+    "district": 5,
+    "url": "http://foxx.house.gov",
+    "address": "2350 Rayburn HOB; Washington DC 20515-3305",
+    "phone": "202-225-2071",
+    "fax": "202-225-2995",
+    "contact_form": "https://foxx.house.gov/forms/writeyourrep/?zip5=&zip4=",
+    "office": "2350 Rayburn House Office Building",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "phone": "202-225-2071",
+    "url": "https://foxx.house.gov",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55",
+    "address": "2262 Rayburn House Office Building; Washington DC 20515-3305",
+    "office": "2262 Rayburn House Office Building",
+    "fax": "202-225-2995"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "phone": "202-225-2071",
+    "address": "2462 Rayburn House Office Building Washington DC 20515-3305",
+    "office": "2462 Rayburn House Office Building",
+    "url": "https://foxx.house.gov",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://foxx.house.gov",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55",
+    "address": "2462 Rayburn House Office Building Washington DC 20515-3305",
+    "office": "2462 Rayburn House Office Building",
+    "phone": "202-225-2071"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://foxx.house.gov",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55",
+    "address": "2462 Rayburn House Office Building Washington DC 20515-3305",
+    "office": "2462 Rayburn House Office Building",
+    "phone": "202-225-2071"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://foxx.house.gov",
+    "rss_url": "http://foxx.house.gov/common/rss/?rss=55",
+    "address": "2462 Rayburn House Office Building Washington DC 20515-3305",
+    "office": "2462 Rayburn House Office Building",
+    "phone": "202-225-2071"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001058",
+   "thomas": "02028",
+   "govtrack": 412437,
+   "opensecrets": "N00030673",
+   "votesmart": 38351,
+   "fec": [
+    "H0MI02094"
+   ],
+   "cspan": 1033765,
+   "wikipedia": "Bill Huizenga",
+   "house_history": 15610,
+   "ballotpedia": "Bill Huizenga",
+   "maplight": 1448,
+   "icpsr": 21142,
+   "wikidata": "Q862199",
+   "google_entity_id": "kg:/m/05b0j1w",
+   "pictorial": 13097
+  },
+  "name": {
+   "first": "Bill",
+   "last": "Huizenga",
+   "official_full": "Bill Huizenga"
+  },
+  "bio": {
+   "birthday": "1969-01-31",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "MI",
+    "district": 2,
+    "party": "Republican",
+    "url": "http://huizenga.house.gov/",
+    "address": "1217 Longworth HOB; Washington DC 20515-2202",
+    "phone": "202-225-4401",
+    "fax": "202-226-0779",
+    "office": "1217 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "MI",
+    "party": "Republican",
+    "district": 2,
+    "url": "http://huizenga.house.gov",
+    "address": "1217 Longworth HOB; Washington DC 20515-2202",
+    "phone": "202-225-4401",
+    "fax": "202-226-0779",
+    "office": "1217 Longworth House Office Building",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx",
+    "contact_form": "http://huizenga.house.gov/contact/"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "MI",
+    "party": "Republican",
+    "district": 2,
+    "url": "http://huizenga.house.gov",
+    "address": "1217 Longworth HOB; Washington DC 20515-2202",
+    "phone": "202-225-4401",
+    "fax": "202-226-0779",
+    "office": "1217 Longworth House Office Building",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx",
+    "contact_form": "http://huizenga.house.gov/contact/"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "MI",
+    "district": 2,
+    "party": "Republican",
+    "phone": "202-225-4401",
+    "url": "https://huizenga.house.gov",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx",
+    "address": "2232 Rayburn House Office Building; Washington DC 20515-2202",
+    "office": "2232 Rayburn House Office Building",
+    "fax": "202-226-0779"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 2,
+    "party": "Republican",
+    "phone": "202-225-4401",
+    "address": "2232 Rayburn House Office Building Washington DC 20515-2202",
+    "office": "2232 Rayburn House Office Building",
+    "url": "https://huizenga.house.gov",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://huizenga.house.gov",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx",
+    "address": "2232 Rayburn House Office Building Washington DC 20515-2202",
+    "office": "2232 Rayburn House Office Building",
+    "phone": "202-225-4401"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 4,
+    "party": "Republican",
+    "url": "https://huizenga.house.gov",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx",
+    "address": "2232 Rayburn House Office Building Washington DC 20515-2204",
+    "office": "2232 Rayburn House Office Building",
+    "phone": "202-225-4401"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 4,
+    "party": "Republican",
+    "url": "https://huizenga.house.gov",
+    "rss_url": "http://huizenga.house.gov/news/rss.aspx",
+    "address": "2232 Rayburn House Office Building Washington DC 20515-2204",
+    "office": "2232 Rayburn House Office Building",
+    "phone": "202-225-4401"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "P000595",
+   "thomas": "01929",
+   "govtrack": 412305,
+   "opensecrets": "N00029277",
+   "votesmart": 8749,
+   "fec": [
+    "H8MI09068",
+    "S4MI00355"
+   ],
+   "cspan": 50199,
+   "wikipedia": "Gary Peters",
+   "house_history": 20028,
+   "ballotpedia": "Gary Peters",
+   "maplight": 787,
+   "icpsr": 20923,
+   "lis": "S380",
+   "wikidata": "Q1494930",
+   "google_entity_id": "kg:/m/02x0lnt",
+   "pictorial": 13351
+  },
+  "name": {
+   "first": "Gary",
+   "middle": "C.",
+   "last": "Peters",
+   "official_full": "Gary C. Peters"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1958-12-01"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "MI",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://peters.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "MI",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://peters.house.gov",
+    "address": "1609 Longworth HOB; Washington DC 20515-2209",
+    "phone": "202-225-5802",
+    "fax": "202-226-2356",
+    "contact_form": "https://forms.house.gov/peters/contact-form.shtml",
+    "office": "1609 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "MI",
+    "party": "Democrat",
+    "district": 14,
+    "url": "http://peters.house.gov",
+    "address": "1609 Longworth HOB; Washington DC 20515-2214",
+    "phone": "202-225-5802",
+    "fax": "202-226-2356",
+    "contact_form": "https://petersforms.house.gov/contact-us-form",
+    "office": "1609 Longworth House Office Building",
+    "rss_url": "http://peters.house.gov/common/rss/?rss=22"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "MI",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.peters.senate.gov",
+    "address": "724 Hart Senate Office Building Washington DC 20510",
+    "office": "724 Hart Senate Office Building",
+    "phone": "202-224-6221",
+    "contact_form": "https://www.peters.senate.gov/contact/email-gary",
+    "fax": "202-226-2356"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "class": 2,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.peters.senate.gov",
+    "contact_form": "https://www.peters.senate.gov/contact/email-gary",
+    "address": "724 Hart Senate Office Building Washington DC 20510",
+    "office": "724 Hart Senate Office Building",
+    "phone": "202-224-6221"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "W000798",
+   "thomas": "01855",
+   "govtrack": 412213,
+   "opensecrets": "N00026368",
+   "votesmart": 8618,
+   "fec": [
+    "H4MI07103"
+   ],
+   "cspan": 1022844,
+   "wikipedia": "Tim Walberg",
+   "ballotpedia": "Tim Walberg",
+   "maplight": 698,
+   "icpsr": 20725,
+   "house_history": 24179,
+   "wikidata": "Q978618",
+   "google_entity_id": "kg:/m/0d7n3m",
+   "pictorial": 13098
+  },
+  "name": {
+   "first": "Tim",
+   "last": "Walberg",
+   "official_full": "Tim Walberg"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1951-04-12"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Republican",
+    "url": "http://walberg.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Republican",
+    "url": "http://walberg.house.gov/",
+    "address": "418 Cannon HOB; Washington DC 20515-2207",
+    "phone": "202-225-6276",
+    "fax": "202-225-6281",
+    "office": "418 Cannon House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "MI",
+    "party": "Republican",
+    "district": 7,
+    "url": "http://walberg.house.gov",
+    "address": "2436 Rayburn HOB; Washington DC 20515-2207",
+    "phone": "202-225-6276",
+    "fax": "202-225-6281",
+    "office": "2436 Rayburn House Office Building",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx",
+    "contact_form": "https://walberg.house.gov/contact/contactform.htm"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "MI",
+    "party": "Republican",
+    "district": 7,
+    "url": "http://walberg.house.gov",
+    "address": "2436 Rayburn HOB; Washington DC 20515-2207",
+    "phone": "202-225-6276",
+    "fax": "202-225-6281",
+    "office": "2436 Rayburn House Office Building",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx",
+    "contact_form": "https://walberg.house.gov/contact/contactform.htm"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Republican",
+    "phone": "202-225-6276",
+    "url": "https://walberg.house.gov",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx",
+    "address": "2436 Rayburn House Office Building; Washington DC 20515-2207",
+    "office": "2436 Rayburn House Office Building",
+    "fax": "202-225-6281"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Republican",
+    "phone": "202-225-6276",
+    "address": "2266 Rayburn House Office Building Washington DC 20515-2207",
+    "office": "2266 Rayburn House Office Building",
+    "url": "https://walberg.house.gov",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Republican",
+    "url": "https://walberg.house.gov",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx",
+    "address": "2266 Rayburn House Office Building Washington DC 20515-2207",
+    "office": "2266 Rayburn House Office Building",
+    "phone": "202-225-6276"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://walberg.house.gov",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx",
+    "address": "2266 Rayburn House Office Building Washington DC 20515-2205",
+    "office": "2266 Rayburn House Office Building",
+    "phone": "202-225-6276"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://walberg.house.gov",
+    "rss_url": "http://walberg.house.gov/news/rss.aspx",
+    "address": "2266 Rayburn House Office Building Washington DC 20515-2205",
+    "office": "2266 Rayburn House Office Building",
+    "phone": "202-225-6276"
+   }
+  ]
+ },
+ {
+  "id": {
+   "govtrack": 412550,
+   "bioguide": "H001067",
+   "thomas": "02140",
+   "cspan": 79622,
+   "votesmart": 136448,
+   "wikipedia": "Richard Hudson (American politician)",
+   "fec": [
+    "H2NC08185"
+   ],
+   "opensecrets": "N00033630",
+   "ballotpedia": "Richard Hudson",
+   "maplight": 1774,
+   "icpsr": 21346,
+   "wikidata": "Q3956999",
+   "google_entity_id": "kg:/m/0nbwfxs",
+   "pictorial": 13138
+  },
+  "name": {
+   "first": "Richard",
+   "last": "Hudson",
+   "official_full": "Richard Hudson"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1971-11-04"
+  },
+  "leadership_roles": [
+   {
+    "title": "House Republican Conference Secretary",
+    "chamber": "house",
+    "start": "2021-01-03",
+    "end": "2023-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "NC",
+    "party": "Republican",
+    "district": 8,
+    "office": "429 Cannon House Office Building",
+    "address": "429 Cannon HOB; Washington DC 20515-3308",
+    "phone": "202-225-3715",
+    "url": "http://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml",
+    "contact_form": "https://hudson.house.gov/email-me",
+    "fax": "704-782-1004"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "NC",
+    "party": "Republican",
+    "district": 8,
+    "office": "429 Cannon House Office Building",
+    "address": "429 Cannon HOB; Washington DC 20515-3308",
+    "phone": "202-225-3715",
+    "url": "http://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml",
+    "contact_form": "https://hudson.house.gov/email-me",
+    "fax": "704-782-1004"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NC",
+    "district": 8,
+    "party": "Republican",
+    "phone": "202-225-3715",
+    "url": "https://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml",
+    "address": "429 Cannon House Office Building; Washington DC 20515-3308",
+    "office": "429 Cannon House Office Building",
+    "fax": "704-782-1004"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NC",
+    "district": 8,
+    "party": "Republican",
+    "phone": "202-225-3715",
+    "address": "2112 Rayburn House Office Building Washington DC 20515-3308",
+    "office": "2112 Rayburn House Office Building",
+    "url": "https://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 8,
+    "party": "Republican",
+    "url": "https://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml",
+    "address": "2112 Rayburn House Office Building Washington DC 20515-3308",
+    "office": "2112 Rayburn House Office Building",
+    "phone": "202-225-3715"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 9,
+    "party": "Republican",
+    "url": "https://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml",
+    "address": "2112 Rayburn House Office Building Washington DC 20515-3309",
+    "office": "2112 Rayburn House Office Building",
+    "phone": "202-225-3715"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 9,
+    "party": "Republican",
+    "url": "https://hudson.house.gov",
+    "rss_url": "http://hudson.house.gov/rss.xml",
+    "address": "2112 Rayburn House Office Building Washington DC 20515-3309",
+    "office": "2112 Rayburn House Office Building",
+    "phone": "202-225-3715",
+    "fax": "202-225-4036"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "A000370",
+   "thomas": "02201",
+   "fec": [
+    "H4NC12100"
+   ],
+   "govtrack": 412607,
+   "opensecrets": "N00035451",
+   "cspan": 76386,
+   "wikipedia": "Alma Adams",
+   "ballotpedia": "Alma Adams",
+   "house_history": 15032409256,
+   "maplight": 2063,
+   "wikidata": "Q4733597",
+   "google_entity_id": "kg:/m/02b45d",
+   "votesmart": 5935,
+   "icpsr": 21545,
+   "pictorial": 13141
+  },
+  "name": {
+   "first": "Alma",
+   "middle": "S.",
+   "last": "Adams",
+   "official_full": "Alma S. Adams"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1946-05-27"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2014-11-12",
+    "end": "2015-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "url": "http://adams.house.gov/",
+    "contact_form": "http://adams.house.gov/contact",
+    "address": "2304 Rayburn HOB; Washington DC 20515-3312",
+    "office": "2304 Rayburn House Office Building",
+    "phone": "202-225-1510"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "url": "http://adams.house.gov",
+    "contact_form": "http://adams.house.gov/contact",
+    "address": "222 Cannon HOB; Washington DC 20515-3312",
+    "office": "222 Cannon House Office Building",
+    "phone": "202-225-1510",
+    "fax": "202-225-1512"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "phone": "202-225-1510",
+    "url": "https://adams.house.gov",
+    "address": "222 Cannon House Office Building; Washington DC 20515-3312",
+    "office": "222 Cannon House Office Building",
+    "fax": "202-225-1512"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "phone": "202-225-1510",
+    "address": "2436 Rayburn House Office Building Washington DC 20515-3312",
+    "office": "2436 Rayburn House Office Building",
+    "url": "https://adams.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "url": "https://adams.house.gov",
+    "address": "2436 Rayburn House Office Building Washington DC 20515-3312",
+    "office": "2436 Rayburn House Office Building",
+    "phone": "202-225-1510"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "url": "https://adams.house.gov",
+    "address": "2436 Rayburn House Office Building Washington DC 20515-3312",
+    "office": "2436 Rayburn House Office Building",
+    "phone": "202-225-1510"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 12,
+    "party": "Democrat",
+    "url": "https://adams.house.gov",
+    "address": "2436 Rayburn House Office Building Washington DC 20515-3312",
+    "office": "2436 Rayburn House Office Building",
+    "phone": "202-225-1510"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001194",
+   "fec": [
+    "H4MI04126"
+   ],
+   "govtrack": 412634,
+   "opensecrets": "N00036275",
+   "thomas": "02248",
+   "maplight": 2090,
+   "wikidata": "Q16194212",
+   "wikipedia": "John Moolenaar",
+   "google_entity_id": "kg:/m/0z6rww4",
+   "votesmart": 37676,
+   "cspan": 76660,
+   "icpsr": 21526,
+   "ballotpedia": "John Moolenaar",
+   "pictorial": 13095
+  },
+  "name": {
+   "first": "John",
+   "middle": "R.",
+   "last": "Moolenaar",
+   "official_full": "John R. Moolenaar"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1961-05-08"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "MI",
+    "district": 4,
+    "party": "Republican",
+    "address": "117 Cannon HOB; Washington DC 20515-2204",
+    "office": "117 Cannon House Office Building",
+    "phone": "202-225-3561",
+    "url": "https://moolenaar.house.gov",
+    "fax": "202-225-9679"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "MI",
+    "district": 4,
+    "party": "Republican",
+    "phone": "202-225-3561",
+    "url": "https://moolenaar.house.gov",
+    "address": "117 Cannon House Office Building; Washington DC 20515-2204",
+    "office": "117 Cannon House Office Building",
+    "fax": "202-225-9679"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 4,
+    "party": "Republican",
+    "phone": "202-225-3561",
+    "address": "117 Cannon House Office Building Washington DC 20515-2204",
+    "office": "117 Cannon House Office Building",
+    "url": "https://moolenaar.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 4,
+    "party": "Republican",
+    "url": "https://moolenaar.house.gov",
+    "address": "117 Cannon House Office Building Washington DC 20515-2204",
+    "office": "117 Cannon House Office Building",
+    "phone": "202-225-3561"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://moolenaar.house.gov",
+    "address": "246 Cannon House Office Building Washington DC 20515-2202",
+    "office": "246 Cannon House Office Building",
+    "phone": "202-225-3561"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://moolenaar.house.gov",
+    "address": "246 Cannon House Office Building Washington DC 20515-2202",
+    "office": "246 Cannon House Office Building",
+    "phone": "202-225-3561"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "D000624",
+   "fec": [
+    "H4MI12079"
+   ],
+   "govtrack": 412637,
+   "opensecrets": "N00036149",
+   "thomas": "02251",
+   "house_history": 15032409588,
+   "maplight": 2093,
+   "wikidata": "Q5248232",
+   "wikipedia": "Debbie Dingell",
+   "google_entity_id": "kg:/m/03m4188",
+   "votesmart": 152482,
+   "cspan": 20818,
+   "icpsr": 21529,
+   "ballotpedia": "Debbie Dingell",
+   "pictorial": 13099
+  },
+  "name": {
+   "first": "Debbie",
+   "last": "Dingell",
+   "official_full": "Debbie Dingell"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1953-11-23"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "MI",
+    "district": 12,
+    "party": "Democrat",
+    "address": "116 Cannon HOB; Washington DC 20515-2212",
+    "office": "116 Cannon House Office Building",
+    "phone": "202-225-4071",
+    "url": "https://debbiedingell.house.gov",
+    "fax": "202-226-0371"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "MI",
+    "district": 12,
+    "party": "Democrat",
+    "phone": "202-225-4071",
+    "url": "https://debbiedingell.house.gov",
+    "address": "116 Cannon House Office Building; Washington DC 20515-2212",
+    "office": "116 Cannon House Office Building",
+    "fax": "202-226-0371"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 12,
+    "party": "Democrat",
+    "phone": "202-225-4071",
+    "address": "116 Cannon House Office Building Washington DC 20515-2212",
+    "office": "116 Cannon House Office Building",
+    "url": "https://debbiedingell.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 12,
+    "party": "Democrat",
+    "url": "https://debbiedingell.house.gov",
+    "address": "116 Cannon House Office Building Washington DC 20515-2212",
+    "office": "116 Cannon House Office Building",
+    "phone": "202-225-4071"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 6,
+    "party": "Democrat",
+    "url": "https://debbiedingell.house.gov",
+    "address": "102 Cannon House Office Building Washington DC 20515-2206",
+    "office": "102 Cannon House Office Building",
+    "phone": "202-225-4071"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 6,
+    "party": "Democrat",
+    "url": "https://debbiedingell.house.gov",
+    "address": "102 Cannon House Office Building Washington DC 20515-2206",
+    "office": "102 Cannon House Office Building",
+    "phone": "202-225-4071"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "R000603",
+   "fec": [
+    "H2NC07096"
+   ],
+   "govtrack": 412641,
+   "opensecrets": "N00033527",
+   "thomas": "02256",
+   "maplight": 2097,
+   "wikidata": "Q5239255",
+   "wikipedia": "David Rouzer",
+   "google_entity_id": "kg:/m/0jt1s3l",
+   "votesmart": 102964,
+   "cspan": 79710,
+   "icpsr": 21544,
+   "ballotpedia": "David Rouzer",
+   "pictorial": 13136
+  },
+  "name": {
+   "first": "David",
+   "last": "Rouzer",
+   "official_full": "David Rouzer"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1972-02-16"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "NC",
+    "district": 7,
+    "party": "Republican",
+    "address": "424 Cannon HOB; Washington DC 20515-3307",
+    "office": "424 Cannon House Office Building",
+    "phone": "202-225-2731",
+    "url": "https://rouzer.house.gov",
+    "fax": "202-225-5773"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NC",
+    "district": 7,
+    "party": "Republican",
+    "phone": "202-225-2731",
+    "url": "https://rouzer.house.gov",
+    "address": "424 Cannon House Office Building; Washington DC 20515-3307",
+    "office": "424 Cannon House Office Building",
+    "fax": "202-225-5773"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NC",
+    "district": 7,
+    "party": "Republican",
+    "phone": "202-225-2731",
+    "address": "2439 Rayburn House Office Building Washington DC 20515-3307",
+    "office": "2439 Rayburn House Office Building",
+    "url": "https://rouzer.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 7,
+    "party": "Republican",
+    "url": "https://rouzer.house.gov",
+    "address": "2333 Rayburn House Office Building Washington DC 20515-3307",
+    "office": "2333 Rayburn House Office Building",
+    "phone": "202-225-2731"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 7,
+    "party": "Republican",
+    "url": "https://rouzer.house.gov",
+    "address": "2333 Rayburn House Office Building Washington DC 20515-3307",
+    "office": "2333 Rayburn House Office Building",
+    "phone": "202-225-2731"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 7,
+    "party": "Republican",
+    "url": "https://rouzer.house.gov",
+    "address": "2333 Rayburn House Office Building Washington DC 20515-3307",
+    "office": "2333 Rayburn House Office Building",
+    "phone": "202-225-2731"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "T000476",
+   "thomas": "02291",
+   "fec": [
+    "S4NC00162"
+   ],
+   "govtrack": 412668,
+   "opensecrets": "N00035492",
+   "lis": "S384",
+   "maplight": 2124,
+   "wikidata": "Q7786750",
+   "wikipedia": "Thom Tillis",
+   "google_entity_id": "kg:/m/0fq0395",
+   "votesmart": 57717,
+   "cspan": 77055,
+   "icpsr": 41504,
+   "ballotpedia": "Thom Tillis (North Carolina)",
+   "pictorial": 13369
+  },
+  "name": {
+   "first": "Thom",
+   "last": "Tillis",
+   "official_full": "Thom Tillis"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1960-08-30"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "NC",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.tillis.senate.gov",
+    "address": "113 Dirksen Senate Office Building Washington DC 20510",
+    "office": "113 Dirksen Senate Office Building",
+    "phone": "202-224-6342",
+    "contact_form": "https://www.tillis.senate.gov/public/index.cfm/email-me"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "class": 2,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.tillis.senate.gov",
+    "contact_form": "https://www.tillis.senate.gov/public/index.cfm/email-me",
+    "address": "113 Dirksen Senate Office Building Washington DC 20510",
+    "office": "113 Dirksen Senate Office Building",
+    "phone": "202-224-6342",
+    "fax": "202-228-2563"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001301",
+   "govtrack": 412709,
+   "wikipedia": "Jack Bergman",
+   "wikidata": "Q6262116",
+   "votesmart": 170172,
+   "fec": [
+    "H6MI01226"
+   ],
+   "opensecrets": "N00039533",
+   "maplight": 2221,
+   "google_entity_id": "kg:/m/05b2l3v",
+   "cspan": 1020529,
+   "icpsr": 21704,
+   "ballotpedia": "Jack Bergman",
+   "pictorial": 13094
+  },
+  "name": {
+   "first": "Jack",
+   "last": "Bergman",
+   "official_full": "Jack Bergman"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1947-02-02"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "MI",
+    "district": 1,
+    "party": "Republican",
+    "phone": "202-225-4735",
+    "address": "414 Cannon House Office Building; Washington DC 20515-2201",
+    "office": "414 Cannon House Office Building",
+    "url": "https://bergman.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 1,
+    "party": "Republican",
+    "phone": "202-225-4735",
+    "address": "414 Cannon House Office Building Washington DC 20515-2201",
+    "office": "414 Cannon House Office Building",
+    "url": "https://bergman.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://bergman.house.gov",
+    "address": "566 Cannon House Office Building Washington DC 20515-2201",
+    "office": "566 Cannon House Office Building",
+    "phone": "202-225-4735"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://bergman.house.gov",
+    "address": "566 Cannon House Office Building Washington DC 20515-2201",
+    "office": "566 Cannon House Office Building",
+    "phone": "202-225-4735"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://bergman.house.gov",
+    "address": "566 Cannon House Office Building Washington DC 20515-2201",
+    "office": "566 Cannon House Office Building",
+    "phone": "202-225-4735"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001305",
+   "lis": "S417",
+   "govtrack": 412712,
+   "wikipedia": "Ted Budd",
+   "wikidata": "Q27733792",
+   "votesmart": 171489,
+   "fec": [
+    "H6NC13129",
+    "S2NC00505"
+   ],
+   "opensecrets": "N00039551",
+   "maplight": 2224,
+   "google_entity_id": "kg:/g/11c2nmnsj0",
+   "cspan": 103513,
+   "icpsr": 21708,
+   "ballotpedia": "Ted Budd",
+   "pictorial": 13415
+  },
+  "name": {
+   "first": "Ted",
+   "last": "Budd",
+   "official_full": "Ted Budd"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1971-10-21"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NC",
+    "district": 13,
+    "party": "Republican",
+    "phone": "202-225-4531",
+    "address": "118 Cannon House Office Building; Washington DC 20515-3313",
+    "office": "118 Cannon House Office Building",
+    "url": "https://budd.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NC",
+    "district": 13,
+    "party": "Republican",
+    "phone": "202-225-4531",
+    "address": "118 Cannon House Office Building Washington DC 20515-3313",
+    "office": "118 Cannon House Office Building",
+    "url": "https://budd.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 13,
+    "party": "Republican",
+    "url": "https://budd.house.gov",
+    "address": "103 Cannon House Office Building Washington DC 20515-3313",
+    "office": "103 Cannon House Office Building",
+    "phone": "202-225-4531"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "NC",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.budd.senate.gov",
+    "contact_form": "https://www.budd.senate.gov/contact/",
+    "address": "354 Russell Senate Office Building Washington DC 20510",
+    "office": "354 Russell Senate Office Building",
+    "phone": "202-224-3154"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001208",
+   "lis": "S436",
+   "fec": [
+    "H8MI08102",
+    "S4MI00470"
+   ],
+   "govtrack": 412784,
+   "wikipedia": "Elissa Slotkin",
+   "wikidata": "Q30323721",
+   "opensecrets": "N00041357",
+   "votesmart": 181080,
+   "ballotpedia": "Elissa Slotkin",
+   "icpsr": 21965,
+   "google_entity_id": "kg:/g/11dfr3z7r1",
+   "pictorial": 13100
+  },
+  "name": {
+   "first": "Elissa",
+   "last": "Slotkin",
+   "official_full": "Elissa Slotkin"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1976-07-10"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 8,
+    "party": "Democrat",
+    "phone": "202-225-4872",
+    "address": "1531 Longworth House Office Building Washington DC 20515-2208",
+    "office": "1531 Longworth House Office Building",
+    "url": "https://slotkin.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 8,
+    "party": "Democrat",
+    "url": "https://slotkin.house.gov",
+    "address": "1210 Longworth House Office Building Washington DC 20515-2208",
+    "office": "1210 Longworth House Office Building",
+    "phone": "202-225-4872"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://slotkin.house.gov",
+    "address": "2245 Rayburn House Office Building Washington DC 20515-2207",
+    "office": "2245 Rayburn House Office Building",
+    "phone": "202-225-4872"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "MI",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.slotkin.senate.gov",
+    "address": "291 Russell Senate Office Building Washington DC 20510",
+    "office": "291 Russell Senate Office Building",
+    "phone": "202-224-4822"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001215",
+   "fec": [
+    "H8MI11254",
+    "S6MI00426"
+   ],
+   "govtrack": 412786,
+   "wikipedia": "Haley Stevens",
+   "wikidata": "Q58322563",
+   "opensecrets": "N00040915",
+   "votesmart": 181092,
+   "ballotpedia": "Haley Stevens",
+   "icpsr": 21972,
+   "google_entity_id": "kg:/g/11fjw095g8",
+   "pictorial": 13104
+  },
+  "name": {
+   "first": "Haley",
+   "middle": "M.",
+   "last": "Stevens",
+   "official_full": "Haley M. Stevens"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1983-06-24"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 11,
+    "party": "Democrat",
+    "phone": "202-225-8171",
+    "address": "227 Cannon House Office Building Washington DC 20515-2211",
+    "office": "227 Cannon House Office Building",
+    "url": "https://stevens.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 11,
+    "party": "Democrat",
+    "url": "https://stevens.house.gov",
+    "address": "1510 Longworth House Office Building Washington DC 20515-2211",
+    "office": "1510 Longworth House Office Building",
+    "phone": "202-225-8171"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 11,
+    "party": "Democrat",
+    "url": "https://stevens.house.gov",
+    "address": "2411 Rayburn House Office Building Washington DC 20515-2211",
+    "office": "2411 Rayburn House Office Building",
+    "phone": "202-225-8171"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 11,
+    "party": "Democrat",
+    "url": "https://stevens.house.gov",
+    "address": "2411 Rayburn House Office Building Washington DC 20515-2211",
+    "office": "2411 Rayburn House Office Building",
+    "phone": "202-225-8171"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "T000481",
+   "fec": [
+    "H8MI13250"
+   ],
+   "govtrack": 412787,
+   "wikipedia": "Rashida Tlaib",
+   "wikidata": "Q7294939",
+   "opensecrets": "N00042649",
+   "google_entity_id": "kg:/m/059_x6c",
+   "votesmart": 105368,
+   "icpsr": 21975,
+   "ballotpedia": "Rashida Tlaib",
+   "pictorial": 13105
+  },
+  "name": {
+   "first": "Rashida",
+   "last": "Tlaib",
+   "official_full": "Rashida Tlaib"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1976-07-24"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MI",
+    "district": 13,
+    "party": "Democrat",
+    "phone": "202-225-5126",
+    "address": "1628 Longworth House Office Building Washington DC 20515-2213",
+    "office": "1628 Longworth House Office Building",
+    "url": "https://tlaib.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 13,
+    "party": "Democrat",
+    "url": "https://tlaib.house.gov",
+    "address": "1628 Longworth House Office Building Washington DC 20515-2213",
+    "office": "1628 Longworth House Office Building",
+    "phone": "202-225-5126"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 12,
+    "party": "Democrat",
+    "url": "https://tlaib.house.gov",
+    "address": "2438 Rayburn House Office Building Washington DC 20515-2212",
+    "office": "2438 Rayburn House Office Building",
+    "phone": "202-225-5126"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 12,
+    "party": "Democrat",
+    "url": "https://tlaib.house.gov",
+    "address": "2438 Rayburn House Office Building Washington DC 20515-2212",
+    "office": "2438 Rayburn House Office Building",
+    "phone": "202-225-5126"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001210",
+   "fec": [
+    "H0NC03172"
+   ],
+   "govtrack": 412845,
+   "opensecrets": "N00044027",
+   "wikipedia": "Greg Murphy (politician)",
+   "wikidata": "Q23074266",
+   "ballotpedia": "Gregory Murphy",
+   "icpsr": 21987,
+   "google_entity_id": "kg:/g/11clyw935r",
+   "votesmart": 166135,
+   "pictorial": 13132
+  },
+  "name": {
+   "first": "Gregory",
+   "middle": "Francis",
+   "last": "Murphy",
+   "official_full": "Gregory F. Murphy"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1963-03-05"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-09-17",
+    "end": "2021-01-03",
+    "state": "NC",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://gregmurphy.house.gov/",
+    "contact_form": "https://gregmurphy.house.gov/contact/email",
+    "address": "2333 Rayburn House Office Building Washington DC 20515-3303",
+    "office": "2333 Rayburn House Office Building",
+    "phone": "202-225-3415"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://gregmurphy.house.gov",
+    "address": "313 Cannon House Office Building Washington DC 20515-3303",
+    "office": "313 Cannon House Office Building",
+    "phone": "202-225-3415"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://murphy.house.gov",
+    "address": "407 Cannon House Office Building Washington DC 20515-3303",
+    "office": "407 Cannon House Office Building",
+    "phone": "202-225-3415"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://murphy.house.gov",
+    "address": "407 Cannon House Office Building Washington DC 20515-3303",
+    "office": "407 Cannon House Office Building",
+    "phone": "202-225-3415"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001136",
+   "fec": [
+    "H0MI10287"
+   ],
+   "opensecrets": "N00045730",
+   "govtrack": 456827,
+   "wikidata": "Q102184540",
+   "wikipedia": "Lisa McClain",
+   "google_entity_id": "kg:/g/11j1xf64qr",
+   "ballotpedia": "Lisa McClain",
+   "pictorial": 13102,
+   "votesmart": 191633
+  },
+  "name": {
+   "first": "Lisa",
+   "middle": "C.",
+   "last": "McClain",
+   "official_full": "Lisa C. McClain"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1966-04-07"
+  },
+  "leadership_roles": [
+   {
+    "title": "House Republican Conference Chair",
+    "chamber": "house",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MI",
+    "district": 10,
+    "party": "Republican",
+    "address": "218 Cannon House Office Building Washington DC 20515-2210",
+    "office": "218 Cannon House Office Building",
+    "phone": "202-225-2106",
+    "url": "https://mcclain.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 9,
+    "party": "Republican",
+    "url": "https://mcclain.house.gov",
+    "address": "444 Cannon House Office Building Washington DC 20515-2209",
+    "office": "444 Cannon House Office Building",
+    "phone": "202-225-2106"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 9,
+    "party": "Republican",
+    "url": "https://mcclain.house.gov",
+    "address": "562 Cannon House Office Building Washington DC 20515-2209",
+    "office": "562 Cannon House Office Building",
+    "phone": "202-225-2106"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "R000305",
+   "fec": [
+    "H0NC02125"
+   ],
+   "opensecrets": "N00038565",
+   "govtrack": 456831,
+   "wikidata": "Q5248285",
+   "wikipedia": "Deborah Ross (politician)",
+   "google_entity_id": "kg:/m/02b3x2",
+   "ballotpedia": "Deborah Ross",
+   "pictorial": 13131,
+   "votesmart": 41560
+  },
+  "name": {
+   "first": "Deborah",
+   "middle": "Koff",
+   "last": "Ross",
+   "official_full": "Deborah K. Ross"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1963-06-20"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NC",
+    "district": 2,
+    "party": "Democrat",
+    "address": "1208 Longworth House Office Building Washington DC 20515-3302",
+    "office": "1208 Longworth House Office Building",
+    "phone": "202-225-3032",
+    "url": "https://ross.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 2,
+    "party": "Democrat",
+    "url": "https://ross.house.gov",
+    "address": "1221 Longworth House Office Building Washington DC 20515-3302",
+    "office": "1221 Longworth House Office Building",
+    "phone": "202-225-3032"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 2,
+    "party": "Democrat",
+    "url": "https://ross.house.gov",
+    "address": "1221 Longworth House Office Building Washington DC 20515-3302",
+    "office": "1221 Longworth House Office Building",
+    "phone": "202-225-3032"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001221",
+   "fec": [
+    "H0MI03316"
+   ],
+   "govtrack": 456906,
+   "opensecrets": "N00044885",
+   "wikidata": "Q115137368",
+   "wikipedia": "Hillary Scholten",
+   "votesmart": 191584,
+   "pictorial": 13096,
+   "google_entity_id": "kg:/g/11j2tyrlxq",
+   "ballotpedia": "Hillary Scholten"
+  },
+  "name": {
+   "first": "Hillary",
+   "middle": "Jeanne",
+   "last": "Scholten",
+   "official_full": "Hillary J. Scholten"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1982-02-22"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 3,
+    "party": "Democrat",
+    "url": "https://scholten.house.gov",
+    "address": "1317 Longworth House Office Building Washington DC 20515-2203",
+    "office": "1317 Longworth House Office Building",
+    "phone": "202-225-3831"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 3,
+    "party": "Democrat",
+    "url": "https://scholten.house.gov",
+    "address": "1317 Longworth House Office Building Washington DC 20515-2203",
+    "office": "1317 Longworth House Office Building",
+    "phone": "202-225-3831"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "J000307",
+   "fec": [
+    "H2MI10150",
+    "S8MI00372"
+   ],
+   "govtrack": 456907,
+   "opensecrets": "N00041550",
+   "wikidata": "Q56027187",
+   "wikipedia": "John James (Michigan politician)",
+   "google_entity_id": "kg:/g/11f7r6ft_j",
+   "ballotpedia": "John James (Michigan)",
+   "votesmart": 181062,
+   "pictorial": 13103
+  },
+  "name": {
+   "first": "John",
+   "middle": "Edwards",
+   "last": "James",
+   "official_full": "John James"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1981-06-08"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 10,
+    "party": "Republican",
+    "url": "https://james.house.gov",
+    "address": "1319 Longworth House Office Building Washington DC 20515-2210",
+    "office": "1319 Longworth House Office Building",
+    "phone": "202-225-4961"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 10,
+    "party": "Republican",
+    "url": "https://james.house.gov",
+    "address": "1519 Longworth House Office Building Washington DC 20515-2210",
+    "office": "1519 Longworth House Office Building",
+    "phone": "202-225-4961"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "T000488",
+   "fec": [
+    "H2MI13204"
+   ],
+   "govtrack": 456908,
+   "opensecrets": "N00049602",
+   "wikidata": "Q7503912",
+   "wikipedia": "Shri Thanedar",
+   "ballotpedia": "Shri Thanedar",
+   "votesmart": 182346,
+   "pictorial": 13106
+  },
+  "name": {
+   "first": "Shri",
+   "last": "Thanedar",
+   "official_full": "Shri Thanedar"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1955-02-22"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MI",
+    "district": 13,
+    "party": "Democrat",
+    "url": "https://thanedar.house.gov",
+    "address": "1039 Longworth House Office Building Washington DC 20515-2213",
+    "office": "1039 Longworth House Office Building",
+    "phone": "202-225-5802"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 13,
+    "party": "Democrat",
+    "url": "https://thanedar.house.gov",
+    "address": "154 Cannon House Office Building Washington DC 20515-2213",
+    "office": "154 Cannon House Office Building",
+    "phone": "202-225-5802"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "D000230",
+   "fec": [
+    "H2NC02287"
+   ],
+   "govtrack": 456912,
+   "opensecrets": "N00049636",
+   "wikidata": "Q5294403",
+   "wikipedia": "Don Davis (North Carolina politician)",
+   "votesmart": 102950,
+   "pictorial": 13130,
+   "ballotpedia": "Donald Davis"
+  },
+  "name": {
+   "first": "Donald",
+   "middle": "Gene",
+   "last": "Davis",
+   "official_full": "Donald G. Davis"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1971-08-29"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://dondavis.house.gov",
+    "address": "1123 Longworth House Office Building Washington DC 20515-3301",
+    "office": "1123 Longworth House Office Building",
+    "phone": "202-225-3101"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://dondavis.house.gov",
+    "address": "1123 Longworth House Office Building Washington DC 20515-3301",
+    "office": "1123 Longworth House Office Building",
+    "phone": "202-225-3101"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "F000477",
+   "fec": [
+    "H2NC06114"
+   ],
+   "govtrack": 456913,
+   "opensecrets": "N00049652",
+   "wikidata": "Q16729064",
+   "wikipedia": "Valerie Foushee",
+   "votesmart": 93091,
+   "pictorial": 13133,
+   "ballotpedia": "Valerie Foushee"
+  },
+  "name": {
+   "first": "Valerie",
+   "middle": "Jean",
+   "last": "Foushee",
+   "official_full": "Valerie P. Foushee"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1956-05-07"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://foushee.house.gov",
+    "address": "1716 Longworth House Office Building Washington DC 20515-3304",
+    "office": "1716 Longworth House Office Building",
+    "phone": "202-225-1784"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://foushee.house.gov",
+    "address": "2452 Rayburn House Office Building Washington DC 20515-3304",
+    "office": "2452 Rayburn House Office Building",
+    "phone": "202-225-1784"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "E000246",
+   "fec": [
+    "H2NC14050"
+   ],
+   "govtrack": 456914,
+   "opensecrets": "N00049670",
+   "wikidata": "Q55065043",
+   "wikipedia": "Chuck Edwards",
+   "google_entity_id": "kg:/g/11ghxw1t29",
+   "votesmart": 166600,
+   "pictorial": 13140,
+   "ballotpedia": "Chuck Edwards"
+  },
+  "name": {
+   "first": "Charles (Chuck)",
+   "middle": "Marion",
+   "last": "Edwards",
+   "official_full": "Chuck Edwards"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1960-09-13"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NC",
+    "district": 11,
+    "party": "Republican",
+    "url": "https://edwards.house.gov",
+    "address": "1505 Longworth House Office Building Washington DC 20515-3311",
+    "office": "1505 Longworth House Office Building",
+    "phone": "202-225-6401"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 11,
+    "party": "Republican",
+    "url": "https://edwards.house.gov",
+    "address": "1505 Longworth House Office Building Washington DC 20515-3311",
+    "office": "1505 Longworth House Office Building",
+    "phone": "202-225-6401"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001321",
+   "fec": [
+    "H2MI07123"
+   ],
+   "govtrack": 456994,
+   "opensecrets": "N00049596",
+   "wikipedia": "Tom Barrett (Michigan politician)",
+   "wikidata": "Q18684588",
+   "votesmart": 153540,
+   "ballotpedia": "Tom Barrett (Michigan)"
+  },
+  "name": {
+   "first": "Tom",
+   "middle": "More",
+   "last": "Barrett",
+   "official_full": "Tom Barrett"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1981-04-30"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 7,
+    "party": "Republican",
+    "address": "1232 Longworth House Office Building Washington DC 20515-2207",
+    "office": "1232 Longworth House Office Building",
+    "phone": "202-225-4872",
+    "url": "https://barrett.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001237",
+   "fec": [
+    "H4MI08218"
+   ],
+   "govtrack": 456995,
+   "opensecrets": "N00054163",
+   "wikipedia": "Kristen McDonald Rivet",
+   "wikidata": "Q115227000",
+   "google_entity_id": "kg:/g/11swd0vjj8",
+   "votesmart": 199213,
+   "ballotpedia": "Kristen McDonald Rivet"
+  },
+  "name": {
+   "first": "Kristen",
+   "middle": "Lee",
+   "last": "McDonald Rivet",
+   "official_full": "Kristen McDonald Rivet"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1970-07-11"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MI",
+    "district": 8,
+    "party": "Democrat",
+    "address": "1408 Longworth House Office Building Washington DC 20515-2208",
+    "office": "1408 Longworth House Office Building",
+    "phone": "202-225-3611",
+    "url": "https://mcdonaldrivet.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001240",
+   "fec": [
+    "H4NC06177"
+   ],
+   "govtrack": 457001,
+   "opensecrets": "N00054055",
+   "wikipedia": "Addison McDowell",
+   "wikidata": "Q130979819",
+   "votesmart": 213685,
+   "ballotpedia": "Addison McDowell"
+  },
+  "name": {
+   "first": "Addison",
+   "middle": "Parker",
+   "last": "McDowell",
+   "official_full": "Addison P. McDowell"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1994-01-21"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 6,
+    "party": "Republican",
+    "address": "1032 Longworth House Office Building Washington DC 20515-3306",
+    "office": "1032 Longworth House Office Building",
+    "phone": "202-225-3065",
+    "url": "https://mcdowell.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001102",
+   "fec": [
+    "H6NC09200",
+    "H4NC08066"
+   ],
+   "govtrack": 457002,
+   "opensecrets": "N00035491",
+   "wikipedia": "Mark Harris (North Carolina politician)",
+   "wikidata": "Q55622212",
+   "votesmart": 146230,
+   "ballotpedia": "Mark Harris (North Carolina)",
+   "google_entity_id": "kg:/g/11f6156x_t"
+  },
+  "name": {
+   "first": "Mark",
+   "middle": "Everette",
+   "last": "Harris",
+   "official_full": "Mark Harris"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1966-04-24"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 8,
+    "party": "Republican",
+    "address": "126 Cannon House Office Building Washington DC 20515-3308",
+    "office": "126 Cannon House Office Building",
+    "phone": "202-225-1976",
+    "url": "https://markharris.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001101",
+   "fec": [
+    "H2NC13243"
+   ],
+   "govtrack": 457003,
+   "opensecrets": "N00050144",
+   "wikipedia": "Pat Harrigan",
+   "wikidata": "Q131179069",
+   "votesmart": 202557,
+   "ballotpedia": "Pat Harrigan"
+  },
+  "name": {
+   "first": "Pat",
+   "last": "Harrigan",
+   "official_full": "Pat Harrigan"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1987-06-21"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 10,
+    "party": "Republican",
+    "address": "1233 Longworth House Office Building Washington DC 20515-3310",
+    "office": "1233 Longworth House Office Building",
+    "phone": "202-225-2576",
+    "url": "https://harrigan.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "K000405",
+   "fec": [
+    "H4NC13116"
+   ],
+   "govtrack": 457004,
+   "opensecrets": "N00053743",
+   "wikipedia": "Brad Knott",
+   "wikidata": "Q130979816",
+   "votesmart": 213703,
+   "ballotpedia": "Brad Knott"
+  },
+  "name": {
+   "first": "Brad",
+   "last": "Knott",
+   "official_full": "Brad Knott"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1986-04-17"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 13,
+    "party": "Republican",
+    "address": "1239 Longworth House Office Building Washington DC 20515-3313",
+    "office": "1239 Longworth House Office Building",
+    "phone": "202-225-4531",
+    "url": "https://knott.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001236",
+   "fec": [
+    "H4NC14015"
+   ],
+   "govtrack": 457005,
+   "opensecrets": "N00053948",
+   "wikipedia": "Tim Moore (North Carolina politician)",
+   "wikidata": "Q7804002",
+   "votesmart": 41316,
+   "ballotpedia": "Timothy K. Moore"
+  },
+  "name": {
+   "first": "Tim",
+   "middle": "Keith",
+   "last": "Moore",
+   "official_full": "Tim Moore"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1970-10-02"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NC",
+    "district": 14,
+    "party": "Republican",
+    "address": "1424 Longworth House Office Building Washington DC 20515-0001",
+    "office": "1424 Longworth House Office Building",
+    "phone": "202-225-5634",
+    "url": "https://timmoore.house.gov"
+   }
+  ]
  }
 ]

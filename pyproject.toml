@@ -31,7 +31,7 @@ pallot-bundle = "bundles.__main__:main"
 dev = ["pytest>=8", "pytest-xdist>=3.5", "respx>=0.21", "ruff>=0.15"]  # installed by `uv sync`
 
 [tool.setuptools]
-packages = ["pallot", "pallot.sources", "trackaipac_cache", "tec_cache", "voteforpeace_cache", "bundles"]
+packages = ["pallot", "pallot.sources", "pallot.states", "trackaipac_cache", "tec_cache", "voteforpeace_cache", "bundles"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pallot.__version__" }

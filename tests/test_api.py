@@ -38,9 +38,9 @@ def test_sources_overview(client):
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts",
                                                        "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "wikidata",
                                                        "ballotpedia", "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
-                                                       "mupac", "fec", "tec", "polls"]
+                                                       "mupac", "fec", "tec", "polls", "state_nc", "state_mi"]
     (geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
-     fec, tec, polls) = overview["sources"]  # no Google key: its row is left out
+     fec, tec, polls, _, _) = overview["sources"]  # no Google key: its row is left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
     assert "Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton" in county["description"]
@@ -135,12 +135,13 @@ def test_sources_are_grouped(client):
     overview = client.get("/api/sources").json()
     assert [(g["id"], g["title"], g["toggle_all"]) for g in overview["groups"]] == [
         ("address", "Address lookup & maps", False), ("official", "Official ballot data", False),
-        ("ballot", "Third-party ballot data", False), ("polls", "Third-party polls", False),
-        ("scorecards", "Third-party endorsements", True)]
+        ("states", "State election offices", True), ("ballot", "Third-party ballot data", False),
+        ("polls", "Third-party polls", False), ("scorecards", "Third-party endorsements", True)]
     grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
     assert grouped == {
         "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
         "official": ["sos", "key_dates", "fec", "tec"],
+        "states": ["state_nc", "state_mi"],
         "ballot": ["wikidata", "ballotpedia", "officeholders"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
