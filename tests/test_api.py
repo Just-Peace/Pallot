@@ -36,11 +36,11 @@ def test_elections_list(client):
 def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts",
-                                                       "tigerweb", "osm_tiles", "suggestions", "sos", "key_dates", "wikidata",
+                                                       "tigerweb", "osm_tiles", "sos", "key_dates", "wikidata",
                                                        "ballotpedia", "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
                                                        "mupac", "fec", "tec", "polls", "state_nc", "state_mi"]
-    (geocoding, precincts, county, outlines, tiles, suggestions, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
-     fec, tec, polls, _, _) = overview["sources"]  # no Google key: its row is left out
+    (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
+     fec, tec, polls, _, _) = overview["sources"]  # no Google key: its rows (Google, suggestions) are left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
     assert "Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton" in county["description"]
@@ -51,7 +51,7 @@ def test_sources_overview(client):
     assert [s["id"] for s in overview["sources"] if s["frozen"]] == ["examplepac"]
     assert (dates["label"], dates["toggleable"], dates["notice"]) == ("Key election dates (Texas SOS)", True, None)
     assert (outlines["label"], outlines["enabled"]) == ("District map (US Census TIGERweb)", True)
-    assert geocoding["toggleable"] is False and sos["enabled"] is True and suggestions["enabled"] is True
+    assert geocoding["toggleable"] is False and sos["enabled"] is True
     assert tiles["enabled"] is True and example["enabled"] is True
     assert peace["label"] == "Vote for Peace" and peace["counts"] == ["164 Texas candidates", "166 in all"]
     assert set(overview) == {"groups", "sources"}  # nothing to refresh or clear, and no server stats
@@ -139,7 +139,7 @@ def test_sources_are_grouped(client):
         ("polls", "Third-party polls", False), ("scorecards", "Third-party endorsements", True)]
     grouped = {g["id"]: [s["id"] for s in overview["sources"] if s["group"] == g["id"]] for g in overview["groups"]}
     assert grouped == {
-        "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles", "suggestions"],
+        "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles"],
         "official": ["sos", "key_dates", "fec", "tec"],
         "states": ["state_nc", "state_mi"],
         "ballot": ["wikidata", "ballotpedia", "officeholders"],

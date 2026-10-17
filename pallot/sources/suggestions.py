@@ -1,14 +1,11 @@
-"""Address suggestions as the voter types, from Ballotpedia's address search (Esri data).
+"""Address suggestions as the voter types, from Google's Places Autocomplete (New), anywhere in
+the US. Only with a key in PALLOT_GOOGLE_API_KEY (the Places API enabled for it), sent in a
+header as the geocoding fallback's is, so it never reaches a RequestSpec or the cache.
 
-The endpoint behind Ballotpedia's own sample-ballot widget: unofficial, answers only
-requests that carry Ballotpedia's origin header, and for personal use. Requests go through
-HttpCache like every other source (30 days, a pause after a refusal), so the same text is
-sent once.
-
-It searches the whole US and answers five addresses at most, so "tx " goes in front of what
-was typed (on the end, the half-typed last word would no longer count as the start of one),
-and anything outside Texas is left out. It only knows addresses, so text without a house
-number isn't sent.
+Requests go through HttpCache like every other source (Ttls.suggest, a pause after a refusal,
+and at most Config.suggest_daily_max a day, since Google bills by the request), so the same text
+is sent once. Only street addresses are asked for, and only text that starts with a house number
+is sent.
 """
 
 from __future__ import annotations
@@ -19,20 +16,16 @@ from typing import Any
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec
 from ..models import AddressSuggestion
-from .ballotpedia import ORIGIN
 
 SOURCE = "suggestions"
-URL = "https://api4.ballotpedia.org/address_autocomplete"
-DESCRIPTION = (
-    "Suggests Texas addresses as you type, from Ballotpedia's address search (unofficial endpoint, personal use)."
-)
+URL = "https://places.googleapis.com/v1/places:autocomplete"
+DESCRIPTION = "Suggests addresses as you type, from Google Maps."
 MIN_LENGTH = 5
 MAX_SUGGESTIONS = 5
+TYPES = ["street_address", "premise", "subpremise"]  # a building's address, not a business or an area
 
 # "1100 Congress Ave": a house number, then at least three characters of the street.
 _ADDRESS = re.compile(r"^(\d+[a-z]?)\s+(\S.{2,})$")
-# "1100 Congress Ave, Austin, TX, 78701, USA"
-_TEXAS = re.compile(r"^(?P<place>.+?), TX(?:, (?P<zip>\d{5}))?(?:, USA)?$")
 
 
 def normalize(text: str) -> str:
@@ -45,38 +38,37 @@ def wanted(text: str) -> bool:
     return len(text) >= MIN_LENGTH and bool(_ADDRESS.match(text))
 
 
-def query(text: str) -> str:
-    """What's sent for ``text`` (normalized): "tx " in front, unless it already names Texas."""
-    return text if {"tx", "texas"} & set(re.findall(r"[a-z]+", text)) else f"tx {text}"
+def request(text: str) -> RequestSpec:
+    return RequestSpec("POST", URL, json={"input": text, "includedRegionCodes": ["us"], "includedPrimaryTypes": TYPES,
+                                          "languageCode": "en"})
 
 
-def parse(results: list[dict[str, Any]]) -> list[AddressSuggestion]:
-    """The Texas addresses among Ballotpedia's results, as "1100 Congress Ave, Austin, TX 78701"."""
+def parse(answer: dict[str, Any]) -> list[AddressSuggestion]:
+    """Google's predictions as "1100 Congress Avenue, Austin, TX", without the country."""
     found = []
-    for result in results:
-        texas = _TEXAS.match((result.get("Text") or "").strip())
-        if texas:
-            label = f"{texas['place']}, TX {texas['zip']}" if texas["zip"] else f"{texas['place']}, TX"
-            found.append(AddressSuggestion(label=label))
+    for suggestion in answer.get("suggestions") or []:
+        text = (((suggestion.get("placePrediction") or {}).get("text") or {}).get("text") or "").strip()
+        if text:
+            found.append(AddressSuggestion(label=re.sub(r",\s*USA$", "", text)))
     return found[:MAX_SUGGESTIONS]
 
 
 class Suggestions:
-    def __init__(self, cache: HttpCache, ttl: Ttls):
+    def __init__(self, cache: HttpCache, ttl: Ttls, api_key: str = "", daily_max: int = 0):
         self.cache = cache
         self.ttl = ttl
+        self.keyed = bool(api_key)
         cache.pause_on(SOURCE, ttl.suggest_backoff, also=(401,))
+        if daily_max:
+            cache.cap_daily(SOURCE, daily_max)
 
     async def suggest(self, text: str) -> list[AddressSuggestion]:
-        """Up to five addresses for ``text``; nothing is sent unless it looks like the start
-        of one. Raises UpstreamError if Ballotpedia can't be asked and nothing is cached."""
+        """Up to five addresses for ``text``; nothing is sent without a key, or unless it looks
+        like the start of one. Raises UpstreamError if Google can't be asked and nothing is cached."""
         text = normalize(text)
-        if not wanted(text):
+        if not (self.keyed and wanted(text)):
             return []
-        spec = RequestSpec(
-            "GET", URL, params={"location": query(text)}, headers={"Origin": ORIGIN, "Accept": "application/json"}
-        )
         got = await self.cache.get_json(
-            SOURCE, spec, ttl=self.ttl.suggest, empty_ttl=self.ttl.geocode_miss, empty_at=("data", "Results")
+            SOURCE, request(text), ttl=self.ttl.suggest, empty_ttl=self.ttl.geocode_miss, empty_at=("suggestions",)
         )
-        return parse(((got.value or {}).get("data") or {}).get("Results") or [])
+        return parse(got.value or {})

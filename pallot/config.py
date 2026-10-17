@@ -45,7 +45,7 @@ class Ttls:
     geocode_miss: int = DAY
     geocode_backoff: int = HOUR  # after the Census geocoder, Nominatim or Google refuses us, stop asking that one for this long
     suggest: int = 30 * DAY  # address suggestions as you type
-    suggest_backoff: int = HOUR  # after Ballotpedia refuses an address search, stop asking for this long
+    suggest_backoff: int = HOUR  # after Google refuses an address search, stop asking for this long
     ballotpedia: int = DAY
     ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
@@ -109,6 +109,7 @@ class Config:
     rate_limits: RateLimits = field(default_factory=RateLimits)
     max_lookups: int = 8  # ballots being looked up at once, streamed ones still adding their cards included
     google_daily_max: int = 300  # Google requests a day (UTC), 0 for no limit: Google bills by the request
+    suggest_daily_max: int = 1000  # Google address searches a day (UTC) for suggestions, 0 for no limit
     # The most the street map's tiles and the address suggestions keep in the cache; the oldest
     # go first past it (services.prune, at startup and every few hours).
     tiles_max_bytes: int = 512 << 20
@@ -215,6 +216,7 @@ def load_config(env: Mapping[str, str] | None = None, *, env_file: Path | None =
         }),
         max_lookups=max(1, _int(env, "PALLOT_MAX_LOOKUPS", default=Config.max_lookups)),
         google_daily_max=_int(env, "PALLOT_GOOGLE_DAILY_MAX", default=Config.google_daily_max),
+        suggest_daily_max=_int(env, "PALLOT_SUGGEST_DAILY_MAX", default=Config.suggest_daily_max),
         tiles_max_bytes=_megabytes(env, "PALLOT_TILES_MAX_MB") or Config.tiles_max_bytes,
         suggest_max_bytes=_megabytes(env, "PALLOT_SUGGEST_MAX_MB") or Config.suggest_max_bytes,
         addresses_max_bytes=_megabytes(env, "PALLOT_ADDRESSES_MAX_MB") or Config.addresses_max_bytes,

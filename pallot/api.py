@@ -171,7 +171,7 @@ def log_setup(svc: Services) -> None:
         log.warning("FEC: %s.", trouble)
     if not svc.google.keyed:
         log.warning("No Google key is set in PALLOT_GOOGLE_API_KEY, so addresses the Census and OpenStreetMap can't "
-                    "place aren't found, and Settings leaves Google out. A key: %s", google.KEY_SIGNUP)
+                    "place aren't found, addresses aren't suggested as voters type, and Settings leaves both out. A key (with the Geocoding and Places APIs): %s", google.KEY_SIGNUP)
 
 
 def invalid_request(errors: Sequence[Mapping[str, Any]]) -> str:
@@ -485,9 +485,10 @@ def create_app(
     @app.get("/api/suggest", response_model=SuggestResult)
     async def suggest(request: Request, q: str = "") -> SuggestResult:
         """Addresses for what's in the address box so far. With an empty ``q`` it only says
-        whether suggestions are on. Nothing here is worth an error: a failure is no suggestions."""
+        whether suggestions are on: the voter's switch, and a Google key on the server. Nothing
+        here is worth an error: a failure is no suggestions."""
         svc = services(request)
-        if not chosen(request).enabled(suggestions.SOURCE):
+        if not (svc.suggestions.keyed and chosen(request).enabled(suggestions.SOURCE)):
             return SuggestResult(enabled=False, suggestions=[])
         try:
             found = await svc.suggestions.suggest(q[:200])
