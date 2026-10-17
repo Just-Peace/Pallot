@@ -53,6 +53,8 @@ def json_request(spec: RequestSpec) -> dict[str, Any]:
         request["as_text"] = True
     if spec.as_bytes:
         request["as_bytes"] = True
+    if spec.form:
+        request["form"] = spec.form
     return request
 
 

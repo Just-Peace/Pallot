@@ -1,0 +1,204 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 12,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4FL01247",
+   "candidate_name": "GROSS, KEITH",
+   "candidate_pcc_id": "C00837567",
+   "candidate_pcc_name": "KEITH GROSS FOR FLORIDA",
+   "cash_on_hand_end_period": 31017.35,
+   "committee_ids": [
+    "C00837567"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 12315589.85,
+   "total_receipts": 12340830.55
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02331",
+   "candidate_name": "ROGERS, AUSTIN",
+   "candidate_pcc_id": "C00936963",
+   "candidate_pcc_name": "ROGERS FOR FLORIDA",
+   "cash_on_hand_end_period": 340468.22,
+   "committee_ids": [
+    "C00936963"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 960563.47,
+   "total_receipts": 1301031.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02315",
+   "candidate_name": "POWER, EVAN MR",
+   "candidate_pcc_id": "C00934471",
+   "candidate_pcc_name": "EVAN POWER FOR CONGRESS COMMITTEE",
+   "cash_on_hand_end_period": 36666.56,
+   "committee_ids": [
+    "C00934471"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 809785.65,
+   "total_receipts": 846452.21
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02299",
+   "candidate_name": "GREEN, AMANDA MARIE",
+   "candidate_pcc_id": "C00914333",
+   "candidate_pcc_name": "AMANDA MARIE GREEN FOR CONGRESS",
+   "cash_on_hand_end_period": 70665.09,
+   "committee_ids": [
+    "C00914333"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 538230.91,
+   "total_receipts": 608896.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02281",
+   "candidate_name": "ZATESLO, NICHOLAS",
+   "candidate_pcc_id": "C00903195",
+   "candidate_pcc_name": "ZATESLO FOR CONGRESS",
+   "cash_on_hand_end_period": -489.33,
+   "committee_ids": [
+    "C00903195"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 488389.26,
+   "total_receipts": 488080.53
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02398",
+   "candidate_name": "BARNES, BRICE",
+   "candidate_pcc_id": "C00946798",
+   "candidate_pcc_name": "BRICE BARNES FOR FLORIDA",
+   "cash_on_hand_end_period": 867.6,
+   "committee_ids": [
+    "C00946798"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 450389.08,
+   "total_receipts": 451256.68
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02356",
+   "candidate_name": "NORTON, JIM",
+   "candidate_pcc_id": "C00938712",
+   "candidate_pcc_name": "JIM NORTON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00938712"
+   ],
+   "coverage_end_date": "2026-10-15",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 422186.26,
+   "total_receipts": 422186.26
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02364",
+   "candidate_name": "MURPHY, LUKE",
+   "candidate_pcc_id": "C00938860",
+   "candidate_pcc_name": "LUKE MURPHY FOR CONGRESS",
+   "cash_on_hand_end_period": 7319.09,
+   "committee_ids": [
+    "C00938860"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 293521.88,
+   "total_receipts": 300840.97
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4FL02138",
+   "candidate_name": "BAILEY, HUY-YEN CAM MS.",
+   "candidate_pcc_id": "C00882886",
+   "candidate_pcc_name": "YEN BAILEY FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00882886"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 199860.35,
+   "total_receipts": 184389.43
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02349",
+   "candidate_name": "ROWELL, AUDIE",
+   "candidate_pcc_id": "C00938639",
+   "candidate_pcc_name": "AUDIE ROWELL FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00938639"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 124830.84,
+   "total_receipts": 124830.84
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02323",
+   "candidate_name": "LEWIS, NICHOLAS JUSTIN",
+   "candidate_pcc_id": "C00934901",
+   "candidate_pcc_name": "NICK LEWIS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00934901"
+   ],
+   "coverage_end_date": "2026-08-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 107001.0,
+   "total_receipts": 107001.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6FL02380",
+   "candidate_name": "JONES, LEE",
+   "candidate_pcc_id": "C00946418",
+   "candidate_pcc_name": "LEEJONESFORCONGRESS",
+   "cash_on_hand_end_period": 25229.28,
+   "committee_ids": [
+    "C00946418"
+   ],
+   "coverage_end_date": "2026-10-15",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 27809.57,
+   "total_receipts": 53038.85
+  }
+ ]
+}

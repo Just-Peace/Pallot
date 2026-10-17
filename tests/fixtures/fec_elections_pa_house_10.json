@@ -1,0 +1,172 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 10,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4PA10104",
+   "candidate_name": "STELSON, JANELLE",
+   "candidate_pcc_id": "C00852368",
+   "candidate_pcc_name": "FRIENDS OF JANELLE STELSON",
+   "cash_on_hand_end_period": 2517215.39,
+   "committee_ids": [
+    "C00852368"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6187776.59,
+   "total_receipts": 8689754.5
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2PA04135",
+   "candidate_name": "PERRY, SCOTT",
+   "candidate_pcc_id": "C00510164",
+   "candidate_pcc_name": "PATRIOTS FOR PERRY",
+   "cash_on_hand_end_period": 1645752.89,
+   "committee_ids": [
+    "C00510164"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 4893167.14,
+   "total_receipts": 6457001.05
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10182",
+   "candidate_name": "DOUGLAS, JUSTIN",
+   "candidate_pcc_id": "C00918698",
+   "candidate_pcc_name": "JUSTIN DOUGLAS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00918698"
+   ],
+   "coverage_end_date": "2026-07-16",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 156435.45,
+   "total_receipts": 156435.45
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10174",
+   "candidate_name": "HARMAN, ISABELLE A",
+   "candidate_pcc_id": "C00917021",
+   "candidate_pcc_name": "ISABELLE HARMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 5108.5,
+   "committee_ids": [
+    "C00917021"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 61457.37,
+   "total_receipts": 66565.87
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10208",
+   "candidate_name": "DALTON, KAREN LYNN MS.",
+   "candidate_pcc_id": "C00920074",
+   "candidate_pcc_name": "FRIENDS OF KAREN DALTON",
+   "cash_on_hand_end_period": -178.2,
+   "committee_ids": [
+    "C00920074"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 15803.13,
+   "total_receipts": 15624.93
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10232",
+   "candidate_name": "SHIMP, FOGEL G",
+   "candidate_pcc_id": "C00935544",
+   "candidate_pcc_name": "SHIMP FOR CONGRESS",
+   "cash_on_hand_end_period": 13.56,
+   "committee_ids": [
+    "C00935544"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 86.9,
+   "total_receipts": 86.9
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10190",
+   "candidate_name": "LILLICH, WILLIAM EDWARD",
+   "candidate_pcc_id": "C00919126",
+   "candidate_pcc_name": "WILL FOR PA10",
+   "cash_on_hand_end_period": 28.07,
+   "committee_ids": [
+    "C00919126"
+   ],
+   "coverage_end_date": "2026-04-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10216",
+   "candidate_name": "CASS, JASON",
+   "candidate_pcc_id": "C00925693",
+   "candidate_pcc_name": "JASON CASS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00925693"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10224",
+   "candidate_name": "ROBINSON, MICHAEL D",
+   "candidate_pcc_id": "C00933580",
+   "candidate_pcc_name": "MICHAEL ROBINSON",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00933580"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6PA10240",
+   "candidate_name": "ROBINSON, MICHAEL",
+   "candidate_pcc_id": "C00933580",
+   "candidate_pcc_name": "MICHAEL ROBINSON",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00933580"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

@@ -53,6 +53,9 @@ ADDRESSES = {
     "pr": "1 Calle Fortaleza, San Juan, PR 00901",  # made up: DC's geography, in Puerto Rico
     "raleigh": "1 E Edenton St, Raleigh, NC 27601",  # North Carolina's official list (states/nc.py)
     "lansing": "100 N Capitol Ave, Lansing, MI 48933",  # Michigan's (states/mi.py)
+    "harrisburg": "501 N 3rd St, Harrisburg, PA 17120",  # Pennsylvania's (states/pa.py)
+    "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",  # Florida's (states/fl.py)
+    "richmond": "1000 Bank St, Richmond, VA 23219",  # Virginia's federal list (states/va.py)
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -61,7 +64,11 @@ PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only
 FEED_URLS = {feed.api: feed.source for feed in FEEDS}
 FEED_PAGES = {feed.url: feed.source for feed in FEEDS if feed.token}
 FEED_TOKEN = "recorded-token"  # the token in a feed's recorded page; its endpoint refuses any other
-STATE_LISTS = {"s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html"}  # host -> its recorded list
+STATE_LISTS = {
+    "s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html",
+    "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
+    "www.elections.virginia.gov": "state_va.html",
+}  # host -> its recorded list
 
 
 @functools.cache

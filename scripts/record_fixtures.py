@@ -24,8 +24,10 @@ requests skip Pallot's cache, and with DEMO_KEY they use up the same per-IP allo
 a running Pallot. The ballots outside Texas (nationwide) take two Census answers, the FEC's
 lists of this cycle's elections (six pages) and five seats' filers, and add those states'
 members of Congress to the seat holders. The states with an official list (state_lists) take an
-address each, North Carolina's list (cut down to four counties and the columns read) and
-Michigan's report, their seats' FEC filers, and their legislators. The TrackAIPAC, Vote for Peace and Texas Ethics
+address each, North Carolina's list (cut down to four counties and the columns read),
+Michigan's report, Pennsylvania's and Florida's lists (cut down to the address's races and the
+fields read) and Virginia's federal list (without its contact columns), their seats' FEC
+filers, and their legislators. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -35,6 +37,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
+import html
 import io
 import json
 import re
@@ -56,7 +60,8 @@ from pallot.matching import full_key  # noqa: E402
 from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
-from pallot.states import mi, nc  # noqa: E402
+from pallot.sources.fec import general_day  # noqa: E402
+from pallot.states import Rows, fl, mi, nc, ordinal, pa, va  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
 ADDRESSES = {
@@ -83,7 +88,11 @@ FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
 NATIONWIDE = {"atlanta": "55 Trinity Ave SW, Atlanta, GA 30303", "cheyenne": "200 W 24th St, Cheyenne, WY 82001"}
 NATIONWIDE_RACES = ("GA-SEN", "GA-05", "WY-SEN", "WY-00", "DC-00")
 # States with an official list (pallot/states): an address in each, and NC's counties kept in its cut-down list.
-STATE_ADDRESSES = {"raleigh": "1 E Edenton St, Raleigh, NC 27601", "lansing": "100 N Capitol Ave, Lansing, MI 48933"}
+STATE_ADDRESSES = {
+    "raleigh": "1 E Edenton St, Raleigh, NC 27601", "lansing": "100 N Capitol Ave, Lansing, MI 48933",
+    "harrisburg": "501 N 3rd St, Harrisburg, PA 17120", "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",
+    "richmond": "1000 Bank St, Richmond, VA 23219",
+}
 NC_COUNTIES = ("WAKE", "DURHAM", "ALAMANCE", "MECKLENBURG")
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
@@ -244,19 +253,70 @@ def record_nationwide(client: httpx.Client, key: str) -> None:
     save(path.name, kept + [m for m in members if m["terms"][-1].get("state") in states])
 
 
+def record_pa(client: httpx.Client, place: census.Place) -> None:
+    """Pennsylvania's page cut down to its election and the candidates statewide, in the address's
+    districts and on its county's party committees, with only the fields states/pa.py reads."""
+    response = client.get(pa.URL)
+    response.raise_for_status()
+    election = re.search(r'<option selected="selected" value="\d+">[^<]+</option>', response.text)
+    rows = json.loads(html.unescape(re.search(r"id='dataJson' type='hidden' value='([^']*)'", response.text).group(1)))
+    mine = {f"{ordinal(place.cd)} Congressional District", f"{ordinal(place.sd)} Senatorial District",
+            f"{ordinal(place.hd)} Legislative District", "Statewide"}
+    kept = [{c: row[c] for c in pa.COLUMNS} for row in rows
+            if " ".join(row["DistrictName"].split()) in mine or row["DistrictName"].startswith(place.county)]
+    data = html.escape(json.dumps(kept, ensure_ascii=False), quote=True)
+    (FIXTURES / "state_pa.html").write_text(
+        f"<html><body><select>{election.group(0)}</select>\n<input id='dataJson' type='hidden' value='{data}' />\n</body></html>\n",
+        encoding="utf-8", newline="")
+    print(f"state_pa.html: {len(kept):,} candidates")
+
+
+def record_fl(client: httpx.Client, place: census.Place) -> None:
+    """Florida's extract cut down to the columns states/fl.py reads, and to the candidates for
+    statewide offices, appeals courts, special districts and the address's districts and circuit."""
+    response = client.post(fl.URL, data=fl.form(general_day(dt.date(FEC_CYCLE, 1, 1))))
+    response.raise_for_status()
+    mine = {"USR": place.cd, "STS": place.sd, "STR": place.hd, "CTJ": 2}  # Leon County is in the Second Circuit
+    rows = [row for row in csv.DictReader(io.StringIO(response.text), delimiter="\t")
+            if row["OfficeCode"] not in mine or row["Juris1num"].strip().lstrip("0") == str(mine[row["OfficeCode"]])]
+    out = io.StringIO()
+    writer = csv.DictWriter(out, fl.COLUMNS, extrasaction="ignore", delimiter="\t", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    (FIXTURES / "state_fl.tsv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_fl.tsv: {len(rows):,} rows")
+
+
+def record_va(client: httpx.Client) -> None:
+    """Virginia's federal list, as a page with only its title and the table's first columns
+    (no candidates' emails, phones or addresses)."""
+    day = general_day(dt.date(FEC_CYCLE, 1, 1))
+    response = client.get(va.URL.format(day=day.day, year=day.year))
+    response.raise_for_status()
+    reader = Rows()
+    reader.feed(response.text)
+    heading = re.search(r"<h1>[^<]+</h1>", response.text).group(0)
+    rows = "\n".join("<tr>" + "".join(f"<td>{html.escape(cell)}</td>" for cell in row[:len(va.COLUMNS)]) + "</tr>"
+                     for row in reader.rows if len(row) >= len(va.COLUMNS))
+    (FIXTURES / "state_va.html").write_text(f"<html><body>{heading}\n<table>\n{rows}\n</table></body></html>\n",
+                                            encoding="utf-8", newline="")
+    print(f"state_va.html: {len(reader.rows):,} rows")
+
+
 def record_state_lists(client: httpx.Client, key: str) -> None:
     """The states with an official list: STATE_ADDRESSES' Census answers; North Carolina's list cut
     down to NC_COUNTIES and to the columns states/nc.py reads (no addresses, phones or emails);
     Michigan's report without its inline styles; the FEC's filers for each address's seats; their
     Open States legislators (the columns officeholders.py reads), and their members of Congress
     added to officeholders_congress.json."""
-    seats = []
+    seats, places = [], {}
     for name, address in STATE_ADDRESSES.items():
         response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
         response.raise_for_status()
         save(f"census_{name}.json", response.json())
         match = response.json()["result"]["addressMatches"][0]
         place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+        places[place.state] = place
         seats += [f"{place.state}-SEN", f"{place.state}-{place.cd:02d}"]
 
     response = client.get(nc.URL.format(year=FEC_CYCLE))
@@ -272,6 +332,9 @@ def record_state_lists(client: httpx.Client, key: str) -> None:
     response.raise_for_status()
     (FIXTURES / "state_mi.html").write_text(re.sub(r'\s(?:style|class)="[^"]*"', "", response.text), encoding="utf-8", newline="")
     print(f"state_mi.html: {(FIXTURES / 'state_mi.html').stat().st_size:,} bytes")
+    record_pa(client, places["PA"])
+    record_fl(client, places["FL"])
+    record_va(client)
 
     try:
         for seat in seats:

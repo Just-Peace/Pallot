@@ -1,0 +1,108 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 6,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4VA04066",
+   "candidate_name": "MCCLELLAN, JENNIFER",
+   "candidate_pcc_id": "C00829812",
+   "candidate_pcc_name": "MCCLELLAN FOR CONGRESS",
+   "cash_on_hand_end_period": 206331.82,
+   "committee_ids": [
+    "C00829812"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1345437.78,
+   "total_receipts": 1497688.37
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VA04095",
+   "candidate_name": "BROWN, JASON II",
+   "candidate_pcc_id": "C00936195",
+   "candidate_pcc_name": "JASON BROWN II FOR CONGRESS",
+   "cash_on_hand_end_period": 257.99,
+   "committee_ids": [
+    "C00936195"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 3058.49,
+   "total_receipts": 3316.48
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VA04129",
+   "candidate_name": "MURRAY, ROBERT P.",
+   "candidate_pcc_id": "C00957795",
+   "candidate_pcc_name": "VIRGINIA LOVERS FOR ROBERT MURRAY",
+   "cash_on_hand_end_period": 1200.86,
+   "committee_ids": [
+    "C00957795"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 27.23,
+   "total_receipts": 1228.09
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VA04103",
+   "candidate_name": "KERSEY, ANDRE ODELL",
+   "candidate_pcc_id": "C00943688",
+   "candidate_pcc_name": "KERSEY FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00943688"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VA04111",
+   "candidate_name": "GOODMAN, JUSTIN",
+   "candidate_pcc_id": "C00957092",
+   "candidate_pcc_name": "JUSTIN GOODMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00957092"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VA04137",
+   "candidate_name": "BELL, JOAN E.",
+   "candidate_pcc_id": "C00958439",
+   "candidate_pcc_name": "JOAN E. ANDREWS BELL",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00958439"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "UNAFFILIATED",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}
