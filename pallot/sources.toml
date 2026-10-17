@@ -28,7 +28,7 @@ state_mi = true             # Michigan Bureau of Elections
 
 # Third-party ballot data. Ballotpedia's terms forbid commercial scraping, so it starts off.
 ballotpedia = false
-wikidata = true             # Wikidata: profiles and photos of Texas officeholders
+wikidata = true             # Wikidata: profiles and photos of officeholders
 officeholders = true        # congress-legislators and Open States: who holds each congressional and legislative seat
 
 # Third-party polls

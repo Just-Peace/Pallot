@@ -551,10 +551,12 @@ function profileBody(card) {
 }
 
 // Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's and
-// Ballotpedia's profiles, a section each.
-export function profilePanel(cards) {
+// Ballotpedia's profiles, a section each; with none, a line saying so about ``name``.
+export function profilePanel(cards, name) {
   return h("div", { class: "card-panel profile" },
-    cards.map((card) => foldSection(card.label, [isLikely(card) ? likelyFlag() : null, sectionMeta(card)], profileBody(card))));
+    cards.length
+      ? cards.map((card) => foldSection(card.label, [isLikely(card) ? likelyFlag() : null, sectionMeta(card)], profileBody(card)))
+      : h("p", { class: "muted" }, `None of Pallot's sources has a profile of ${name} yet.`));
 }
 
 // Details' Polls tab: the candidate's median, large, over one bar in their party's colour, with
