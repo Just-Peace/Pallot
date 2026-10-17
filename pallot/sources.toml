@@ -19,8 +19,12 @@ google = true               # Google: finds an address the Census and OpenStreet
 # Official ballot data
 sos = true                  # Texas Secretary of State: the ballot and candidate filings
 key_dates = true            # Texas Secretary of State: the election's key dates
-fec = true                  # FEC: money in congressional races
+fec = true                  # FEC: money in congressional races, and the races for Congress in states without a list below
 tec = true                  # Texas Ethics Commission: money in state races
+
+# Other states' official lists of candidates (their election offices)
+state_nc = true             # NC State Board of Elections
+state_mi = true             # Michigan Bureau of Elections
 
 # Third-party ballot data. Ballotpedia's terms forbid commercial scraping, so it starts off.
 ballotpedia = false

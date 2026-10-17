@@ -2,7 +2,7 @@
 // a proposition's pick key, the labels of a race's picks, and the election line (long and short).
 
 import { formatDate } from "./format.js";
-import { GROUP_LABELS, GROUP_ORDER, partyName } from "./labels.js";
+import { GROUP_LABELS, GROUP_ORDER, coverageOf, partyName } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 
 const ELECTION_DAY = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
@@ -14,9 +14,11 @@ const PARTY_LETTERS = new Set(["R", "D", "L", "G"]); // the wallet card's "(D)";
 // Propositions aren't among them.
 export function ballotSections(ballot) {
   const sections = [];
+  const sboe = coverageOf(ballot).districts.includes("sboe");
   for (const group of GROUP_ORDER) {
     const races = ballot.races.filter((r) => r.group === group);
-    if (races.length) sections.push({ id: `group-${group}`, title: GROUP_LABELS[group], races, maybe: false });
+    const title = group === "legislature" && !sboe ? "Legislature" : GROUP_LABELS[group];
+    if (races.length) sections.push({ id: `group-${group}`, title, races, maybe: false });
   }
   for (const section of ballot.maybe) {
     sections.push({ ...section, id: `maybe-${section.id}`, kind: section.id, maybe: true });

@@ -79,7 +79,8 @@ async def build(entry: Bundle, config: Config, today: Callable[[], dt.date],
                     spec = RequestSpec.loads(saved.request)
                     kept = cache.peek(spec)
                     if kept is not None and entry.wants(spec, kept.value):
-                        answers.append({"request": json_request(spec), "value": kept.value})
+                        value = entry.shape(kept.value) if entry.shape else kept.value
+                        answers.append({"request": json_request(spec), "value": value})
             finally:
                 cache.close()
     if not answers:

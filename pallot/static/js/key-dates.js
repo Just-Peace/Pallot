@@ -85,10 +85,18 @@ function mailVoting(dates, state) {
       calendarLink(deadline, dates.election_day, "mail", "Add the mail-ballot deadline to your calendar")) : null);
 }
 
-// The card's contents, or null when Pallot has nothing for the address's state.
+// The card's contents, or null when Pallot has nothing for the address's state. A state with only
+// its election office's site gets the link: its registration, dates and polling places are there.
 export function keyDatesCard(ballot) {
   const state = STATES[ballot.location.state];
-  if (!state?.registration) return null;
+  if (!state) return null;
+  if (!state.registration) {
+    return [
+      h("h2", { id: "key-dates-title" }, "When to vote"),
+      h("p", {}, "Check your registration, the key dates and where to vote with the state's election office: ",
+        extLink(state.site.url, state.site.label), "."),
+    ];
+  }
   const dates = ballot.key_dates;
   const upcoming = dates && [dates.register_by, dates.early_voting_start, dates.early_voting_end, dates.election_day]
     .some((iso) => iso && daysUntil(iso) >= 0);

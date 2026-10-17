@@ -1,5 +1,5 @@
 """Who holds each seat now, and their party: Congress from the congress-legislators project's
-current members (public domain), the Texas Legislature from Open States' current people (CC0).
+current members (public domain), a state's Legislature from Open States' current people (CC0).
 
 Each is one public file, fetched whole through HttpCache for a week, and only when the ballot
 has a race of that body, so nothing about the voter is sent. A race whose holder isn't among
@@ -33,10 +33,10 @@ log = logging.getLogger("uvicorn.error")
 SOURCE = "officeholders"
 LABEL = "Seat holders"
 DESCRIPTION = (
-    "Who holds each U.S. Congress and Texas Legislature seat now, from congress-legislators and Open States."
+    "Who holds each U.S. Congress and state Legislature seat now, from congress-legislators and Open States."
 )
 CONGRESS = "https://unitedstates.github.io/congress-legislators/legislators-current.json"
-LEGISLATURE = "https://data.openstates.org/people/current/tx.csv"
+LEGISLATURE = "https://data.openstates.org/people/current/{state}.csv"
 STATE = "TX"
 # Texas redrew its U.S. House map in 2025: a term that began before the first Congress elected
 # under it was won under the district's old lines.
@@ -96,7 +96,7 @@ def congress_holders(members: list[dict[str, Any]], state: str | None = STATE) -
 
 
 def legislature_holders(text: str) -> list[Holder]:
-    """The Texas Legislature's members, at "STATESEN:9" or "STATEREP:26"."""
+    """A Legislature's members, at "STATESEN:9" or "STATEREP:26" (numbered districts only)."""
     out = []
     for row in csv.DictReader(io.StringIO(text)):
         chamber, district = _CHAMBERS.get(row.get("current_chamber") or ""), (row.get("current_district") or "").strip()
@@ -124,8 +124,8 @@ class Officeholders:
     async def congress(self) -> list[Holder]:
         return congress_holders(list(await self._get(CONGRESS, text=False) or []), state=None)
 
-    async def legislature(self) -> list[Holder]:
-        return legislature_holders(await self._get(LEGISLATURE, text=True) or "")
+    async def legislature(self, state: str = STATE) -> list[Holder]:
+        return legislature_holders(await self._get(LEGISLATURE.format(state=state.lower()), text=True) or "")
 
 
 def _seat_of(race: Race, scope: OfficeScope | None, bp_ballot: BpBallot | None, county: str | None) -> str | None:
@@ -183,7 +183,7 @@ def seat_info(race: Race, holder: Holder | None, seat: str) -> tuple[SeatInfo, s
 
 async def cards(
     svc: Officeholders, races: list[Race], scopes: dict[str, OfficeScope], county: str | None,
-    bp_ballot: BpBallot | None, day: dt.date | None,
+    bp_ballot: BpBallot | None, day: dt.date | None, state: str = STATE,
 ) -> CardSet:
     """Each covered race's seat (CardSet.seats) and the candidates who hold it (incumbents). A
     list is fetched only when the ballot has a race it covers. Raises UpstreamError
@@ -199,7 +199,7 @@ async def cards(
         if not wants:
             continue
         try:
-            got[name] = await (svc.congress() if name == "congress" else svc.legislature())
+            got[name] = await (svc.congress() if name == "congress" else svc.legislature(state))
         except UpstreamError as exc:
             failures.append(exc)
     if failures and not got:

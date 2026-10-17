@@ -1,0 +1,286 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 17,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4MI00595",
+   "candidate_name": "ROGERS, MICHAEL J",
+   "candidate_pcc_id": "C00849810",
+   "candidate_pcc_name": "ROGERS FOR SENATE",
+   "cash_on_hand_end_period": 6527471.03,
+   "committee_ids": [
+    "C00849810",
+    "C00892026"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 14293939.07,
+   "total_receipts": 20565706.38
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00418",
+   "candidate_name": "EL-SAYED, ABDUL",
+   "candidate_pcc_id": "C00902668",
+   "candidate_pcc_name": "ABDUL FOR U.S. SENATE",
+   "cash_on_hand_end_period": 2552762.55,
+   "committee_ids": [
+    "C00902668",
+    "C00961805"
+   ],
+   "coverage_end_date": "2026-07-15",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 11961573.38,
+   "total_receipts": 14514335.93
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00426",
+   "candidate_name": "STEVENS, HALEY",
+   "candidate_pcc_id": "C00903039",
+   "candidate_pcc_name": "HALEY STEVENS FOR SENATE",
+   "cash_on_hand_end_period": 152338.17,
+   "committee_ids": [
+    "C00903039"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 13151823.43,
+   "total_receipts": 13304161.6
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00392",
+   "candidate_name": "MCMORROW, MALLORY",
+   "candidate_pcc_id": "C00901173",
+   "candidate_pcc_name": "MCMORROW FOR MICHIGAN",
+   "cash_on_hand_end_period": 413585.43,
+   "committee_ids": [
+    "C00901173"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 10992326.28,
+   "total_receipts": 11405911.71
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00459",
+   "candidate_name": "TATE, JOSEPH ALLEN",
+   "candidate_pcc_id": "C00904862",
+   "candidate_pcc_name": "TATE FOR MICHIGAN",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00904862"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 243635.76,
+   "total_receipts": 243635.76
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00434",
+   "candidate_name": "SCOTT, GENEVIEVE",
+   "candidate_pcc_id": "C00903427",
+   "candidate_pcc_name": "SCOTT FOR US SENATE",
+   "cash_on_hand_end_period": 2538.61,
+   "committee_ids": [
+    "C00903427"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 80540.62,
+   "total_receipts": 83079.23
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00517",
+   "candidate_name": "SMITH, BERNADETTE",
+   "candidate_pcc_id": "C00926279",
+   "candidate_pcc_name": "BERNADETTE SMITH FOR US SENATE",
+   "cash_on_hand_end_period": 3796.03,
+   "committee_ids": [
+    "C00926279"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 73459.17,
+   "total_receipts": 77255.2
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00467",
+   "candidate_name": "HOWARD, RACHEL ELIZABETH",
+   "candidate_pcc_id": "C00906867",
+   "candidate_pcc_name": "RACHEL FOR US SENATE",
+   "cash_on_hand_end_period": 4766.23,
+   "committee_ids": [
+    "C00906867"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6170.77,
+   "total_receipts": 10937.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00384",
+   "candidate_name": "HEURTEBISE, FREDERICK",
+   "candidate_pcc_id": "C00897736",
+   "candidate_pcc_name": "FREDERICK HEURTEBISE FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00897736"
+   ],
+   "coverage_end_date": "2025-05-03",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 10058.6,
+   "total_receipts": 10058.6
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00509",
+   "candidate_name": "STEPHENS, THOMAS WAYNE",
+   "candidate_pcc_id": "C00915314",
+   "candidate_pcc_name": "TJ STEPHENS FOR SENATE",
+   "cash_on_hand_end_period": 779.52,
+   "committee_ids": [
+    "C00915314"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "NO PARTY AFFILIATION",
+   "total_disbursements": 220.48,
+   "total_receipts": 1000.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4MI00512",
+   "candidate_name": "MARSH, DOUGLAS PHILIP",
+   "candidate_pcc_id": "C00875971",
+   "candidate_pcc_name": "COMMITTEE TO ELECT DOUGLAS P. MARSH",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00875971"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "GREEN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00400",
+   "candidate_name": "BENHAM, KENT",
+   "candidate_pcc_id": "C00901728",
+   "candidate_pcc_name": "BENHAMFORSENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00901728"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00442",
+   "candidate_name": "CHRISTENSEN, LYDIA LYNN",
+   "candidate_pcc_id": "C00903575",
+   "candidate_pcc_name": "LYDIA CHRISTENSEN FOR UNITED STATES SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00903575"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00483",
+   "candidate_name": "ZOLLNER, TRAVIS JOSEPH",
+   "candidate_pcc_id": "C00902791",
+   "candidate_pcc_name": "TRAVIS ZOLLNER FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00902791"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00491",
+   "candidate_name": "KAMAL, ANDREW",
+   "candidate_pcc_id": "C00915033",
+   "candidate_pcc_name": "KAMAL FOR MICHIGAN SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00915033"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MI00566",
+   "candidate_name": "LONG, TIMOTHY E",
+   "candidate_pcc_id": "C00957514",
+   "candidate_pcc_name": "COMMITTEE TO ELECT TIMOTHY E LONG TO THE US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00957514"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "U.S. TAXPAYERS PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8MI00422",
+   "candidate_name": "WILLIS, VALERIE LEE",
+   "candidate_pcc_id": "C00675256",
+   "candidate_pcc_name": "VOTE WILLIS FOR UNITED STATES SENATE MICHIGAN 2026 COMMITTEE ",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00675256"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": null,
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

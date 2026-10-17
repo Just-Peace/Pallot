@@ -1,0 +1,158 @@
+"""Each state's official list of the candidates on its general-election ballot, from its
+Secretary of State or elections board: one adapter per state (adapters.py), reading the list
+into Filings, one per candidate in a race, with withdrawn and disqualified candidates left out.
+
+An adapter asks for its whole list in one request through HttpCache, under its own source
+(``state_<st>``), so each state has its own throttle, pause and Settings row. A list the
+adapter can't read is refused as a failed request (HttpCache.check_answers), so the last good
+copy keeps serving. The bundled copy (bundles/states.py) is the parsed filings, not the raw
+file, which carries candidates' addresses and phone numbers: read() takes either.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+import datetime as dt
+import re
+from dataclasses import dataclass
+from typing import Any, ClassVar
+
+from ..config import Ttls
+from ..http_cache import HttpCache, RequestSpec
+
+# Where a race is on the ballot, which placement (place.py) checks against the voter's address.
+REACHES = (
+    "cd",  # a U.S. House district
+    "sd", "hd",  # a State Senate or State House district
+    "state",  # the whole state
+    "counties",  # one district of an office split among whole counties (a judicial district): ``counties``
+    "county",  # the whole county in ``counties``
+    "part_county",  # part of the county in ``counties`` (a commissioner's district): not placed
+    "city",  # the whole of ``city``
+    "part_city",  # part of ``city`` (a ward): not placed
+    "unplaced",  # somewhere the list doesn't say (Michigan's circuit courts): left out
+)
+
+
+@dataclass(frozen=True)
+class Filing:
+    day: str  # the election's ISO date
+    office_id: str  # the race in the list: the state's own name for it
+    office: str  # as shown: "U.S. Representative District 9"
+    family: str  # the office without its district or seat ("NC SUPERIOR COURT JUDGE")
+    group: str  # models.GROUPS
+    reach: str  # REACHES
+    district: str | None  # the state's own spelling: "9", "12A", "Third Suffolk"
+    name: str  # as printed on the ballot
+    party: str | None = None  # D, R, L, G, I
+    party_name: str | None = None
+    counties: tuple[str, ...] = ()  # in capitals, as the list names them
+    city: str | None = None  # in capitals
+    seats: int = 1
+    unexpired: bool = False
+    write_in: bool = False
+    incumbent: bool = False
+    order: int = 0  # where the race and the candidate come in the list (ballot order where it gives one)
+
+
+def filings_json(filings: list[Filing]) -> dict[str, Any]:
+    return {"filings": [dataclasses.asdict(f) for f in filings]}
+
+
+def from_json(value: dict[str, Any]) -> list[Filing]:
+    return [Filing(**{**row, "counties": tuple(row.get("counties") or ())}) for row in value.get("filings") or []]
+
+
+_PARTIES = {
+    "DEM": "D", "DEMOCRAT": "D", "DEMOCRATIC": "D", "DEMOCRATIC PARTY": "D",
+    "REP": "R", "REPUBLICAN": "R", "REPUBLICAN PARTY": "R",
+    "LIB": "L", "LIBERTARIAN": "L", "LIBERTARIAN PARTY": "L",
+    "GRE": "G", "GRN": "G", "GREEN": "G", "GREEN PARTY": "G",
+}
+
+
+def party(text: str | None, names: dict[str, str] | None = None) -> tuple[str | None, str | None]:
+    """(code, name) for a list's party: D/R/L/G with no name, or no code and the party's own
+    name ("Working Class Party", from ``names`` for a code like "CST"); (None, None) for none."""
+    raw = " ".join((text or "").split())
+    code = _PARTIES.get(raw.upper())
+    if code:
+        return code, None
+    if not raw or raw.upper() in ("UNA", "NON", "NPA", "NONPARTISAN", "NO PARTY AFFILIATION", "UNAFFILIATED"):
+        return None, None
+    return None, (names or {}).get(raw.upper(), raw)
+
+
+_ORDINALS = {
+    "FIRST": 1, "SECOND": 2, "THIRD": 3, "FOURTH": 4, "FIFTH": 5, "SIXTH": 6, "SEVENTH": 7, "EIGHTH": 8, "NINTH": 9,
+    "TENTH": 10, "ELEVENTH": 11, "TWELFTH": 12, "THIRTEENTH": 13, "FOURTEENTH": 14, "FIFTEENTH": 15,
+    "SIXTEENTH": 16, "SEVENTEENTH": 17, "EIGHTEENTH": 18, "NINETEENTH": 19, "TWENTIETH": 20,
+}
+
+
+def district_key(text: str | int | None) -> str:
+    """One spelling for a district however it's written, so a list's and the Census's agree:
+    "025", "District 25" and 25 are "25"; "3rd Suffolk" and "Third Suffolk" are "3 SUFFOLK"."""
+    words = re.sub(r"[^A-Z0-9 ]", " ", str(text if text is not None else "").upper()).split()
+    out = []
+    for word in words:
+        if word in ("DISTRICT", "STATE", "SENATE", "HOUSE", "SENATORIAL", "REPRESENTATIVE"):
+            continue
+        word = str(_ORDINALS.get(word, word))
+        word = re.sub(r"^(\d+)(?:ST|ND|RD|TH)$", r"\1", word)
+        out.append((word.lstrip("0") or "0") if word.isdigit() else re.sub(r"^0+(?=\d)", "", word))
+    return " ".join(out)
+
+
+class StateList:
+    """One state's list. A subclass names its state, source, label and page, makes its request
+    (spec) and reads the answer (parse); everything else is shared."""
+
+    state: ClassVar[str]  # "NC"
+    source: ClassVar[str]  # "state_nc"
+    label: ClassVar[str]  # "NC State Board of Elections"
+    page: ClassVar[str]  # where voters can see the list themselves
+    description: ClassVar[str]  # its Settings line
+
+    def __init__(self, cache: HttpCache, ttl: Ttls):
+        self.cache = cache
+        self.ttl = ttl
+        self._read: tuple[Any, list[Filing]] | None = None
+        cache.pause_on(self.source, ttl.state_list_backoff)
+        cache.check_answers(self.source, self.check)
+
+    def spec(self, day: dt.date) -> RequestSpec:
+        raise NotImplementedError
+
+    @classmethod
+    def parse(cls, raw: Any) -> list[Filing]:
+        """Every candidate in the raw answer, for every general election it lists; ValueError
+        for an answer that isn't the list (a maintenance page, renamed columns)."""
+        raise NotImplementedError
+
+    @classmethod
+    def shape(cls, raw: Any) -> dict[str, Any]:
+        """The answer as bundled: its filings, without the raw file."""
+        return raw if isinstance(raw, dict) else filings_json(cls.parse(raw))
+
+    def read(self, value: Any) -> list[Filing]:
+        """The filings in a stored answer, raw or bundled, parsed once per copy HttpCache keeps."""
+        if self._read is not None and self._read[0] is value:
+            return self._read[1]
+        filings = from_json(value) if isinstance(value, dict) else self.parse(value)
+        self._read = (value, filings)
+        return filings
+
+    def check(self, value: Any) -> str | None:
+        try:
+            filings = self.read(value)
+        except ValueError as exc:
+            return f"can't read its list of candidates: {exc}"
+        return None if filings else "its list has no candidates"
+
+    async def filings(self, day: dt.date) -> list[Filing] | None:
+        """The candidates on the ballot of the general election on ``day``, or None while the
+        list doesn't have that election yet. UpstreamError when it can't be had."""
+        got = await self.cache.get_json(self.source, self.spec(day), ttl=self.ttl.state_list)
+        found = [f for f in self.read(got.value) if f.day == day.isoformat()]
+        return found or None

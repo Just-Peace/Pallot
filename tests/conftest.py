@@ -51,6 +51,8 @@ ADDRESSES = {
     "atlanta": "55 Trinity Ave SW, Atlanta, GA 30303",  # outside Texas: a Senate race and GA-05
     "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat
     "pr": "1 Calle Fortaleza, San Juan, PR 00901",  # made up: DC's geography, in Puerto Rico
+    "raleigh": "1 E Edenton St, Raleigh, NC 27601",  # North Carolina's official list (states/nc.py)
+    "lansing": "100 N Capitol Ave, Lansing, MI 48933",  # Michigan's (states/mi.py)
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -59,6 +61,7 @@ PNG = b"\x89PNG\r\n\x1a\n" + b"a map tile"  # what the tile server answers: only
 FEED_URLS = {feed.api: feed.source for feed in FEEDS}
 FEED_PAGES = {feed.url: feed.source for feed in FEEDS if feed.token}
 FEED_TOKEN = "recorded-token"  # the token in a feed's recorded page; its endpoint refuses any other
+STATE_LISTS = {"s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html"}  # host -> its recorded list
 
 
 @functools.cache
@@ -313,6 +316,7 @@ class Upstream:
         self.feed_page_status: int | None = None  # e.g. 403 when the page with a feed's token refuses us
         self.feed_pages: dict[str, str] = {}  # feed source id -> its page, in place of the recorded one
         self.feed_tokens: list[str | None] = []  # the token each request to a feed that wants one carried
+        self.state_lists: dict[str, str] = {}  # host -> its list's answer, in place of the recorded one
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
         self.arcgis: dict[str, dict[str, Any]] = {
@@ -429,11 +433,18 @@ class Upstream:
             return httpx.Response(200, content=sboe_zip())
         if url.host == "api.open.fec.gov":
             return self._fec(request)
+        if url.host in STATE_LISTS:
+            text = self.state_lists.get(url.host)
+            body = text.encode() if text is not None else fixture_bytes(STATE_LISTS[url.host])
+            return httpx.Response(200, content=body, headers={"content-type": "text/plain; charset=utf-8"})
         if url.host in ("unitedstates.github.io", "data.openstates.org"):
             if self.officeholders_status:
                 return httpx.Response(self.officeholders_status)
             if url.host == "data.openstates.org":
-                return httpx.Response(200, content=fixture_bytes("officeholders_tx.csv"), headers={"content-type": "text/csv"})
+                state = url.path.rsplit("/", 1)[-1].removesuffix(".csv")
+                if not (FIXTURES / f"officeholders_{state}.csv").exists():
+                    return httpx.Response(404)
+                return httpx.Response(200, content=fixture_bytes(f"officeholders_{state}.csv"), headers={"content-type": "text/csv"})
             if self.congress_members is not None:
                 return httpx.Response(200, json=self.congress_members)
             return _file("officeholders_congress.json")

@@ -1,9 +1,11 @@
 """How much of each state's ballot Pallot has, and which sources work where.
 
-A state with an entry in COVERED has its races from its own official list (Texas SOS), its
-districts and precincts, and their map. Every other state falls back to FEDERAL: the races for
-Congress, from the people who filed with the FEC, none of them confirmed on the state's ballot.
-A state added later gets its own entry, and a source that goes nationwide leaves ONLY_IN.
+A state with an entry in COVERED has its races from its own official list: Texas's from Texas
+SOS, with its districts, precincts and their map ("state"); another's from its adapter
+(states/adapters.py), every race the list has that the address places ("list"). Every other
+state falls back to FEDERAL: the races for Congress, from the people who filed with the FEC,
+none of them confirmed on the state's ballot. A state added later gets its own entry, and a
+source that goes nationwide leaves ONLY_IN.
 """
 
 from __future__ import annotations
@@ -16,7 +18,7 @@ from .models import Coverage as CoverageInfo
 
 @dataclass(frozen=True)
 class Coverage:
-    ballot: Literal["state", "fec"]  # the state's own list of races, or the FEC's filers (unverified)
+    ballot: Literal["state", "list", "fec"]  # Texas SOS's ballot, another state's official list, or the FEC's filers
     districts: tuple[str, ...]  # the district kinds found from the address and shown: "cd", "sd", …
     precincts: bool  # election, commissioner and JP precincts
     outlines: bool  # the districts' map
@@ -32,7 +34,12 @@ STATES = frozenset({
     "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
 })  # the 50 states and DC, whose addresses Pallot covers
 FEDERAL = Coverage("fec", ("cd",), precincts=False, outlines=False)
-COVERED = {"TX": Coverage("state", ("cd", "sd", "hd", "sboe"), precincts=True, outlines=True)}
+LIST = Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False)
+COVERED = {
+    "TX": Coverage("state", ("cd", "sd", "hd", "sboe"), precincts=True, outlines=True),
+    "NC": LIST,
+    "MI": LIST,
+}
 
 # Sources that only know some states. A ballot with no state (a test's) counts as Texas's.
 ONLY_IN: dict[str, frozenset[str]] = {

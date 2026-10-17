@@ -1,0 +1,285 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 17,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00407",
+   "candidate_name": "COOPER, ROY",
+   "candidate_pcc_id": "C00913566",
+   "candidate_pcc_name": "COOPER FOR NORTH CAROLINA",
+   "cash_on_hand_end_period": 12477394.91,
+   "committee_ids": [
+    "C00913566"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 34713071.15,
+   "total_receipts": 47190466.06
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00415",
+   "candidate_name": "WHATLEY, MICHAEL",
+   "candidate_pcc_id": "C00913996",
+   "candidate_pcc_name": "WHATLEY FOR SENATE",
+   "cash_on_hand_end_period": 916101.5,
+   "committee_ids": [
+    "C00909416",
+    "C00913996"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 12499619.7,
+   "total_receipts": 13415721.2
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00340",
+   "candidate_name": "NICKEL, WILEY",
+   "candidate_pcc_id": "C00763045",
+   "candidate_pcc_name": "WILEY NICKEL FOR NORTH CAROLINA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00763045"
+   ],
+   "coverage_end_date": "2026-03-20",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3009088.64,
+   "total_receipts": 2972089.47
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00373",
+   "candidate_name": "BROWN, DON",
+   "candidate_pcc_id": "C00857110",
+   "candidate_pcc_name": "DON BROWN FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00857110"
+   ],
+   "coverage_end_date": "2026-04-13",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 225529.84,
+   "total_receipts": 224689.23
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00563",
+   "candidate_name": "DUBLIN, MICHAEL LOUIS JR.",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 3726.63,
+   "committee_ids": [
+    "C00857912"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "GREEN PARTY",
+   "total_disbursements": 26038.01,
+   "total_receipts": 28023.28
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00522",
+   "candidate_name": "MORROW, MICHELE",
+   "candidate_pcc_id": "C00931956",
+   "candidate_pcc_name": "THE ELECT MICHELE MORROW COMMITTEE",
+   "cash_on_hand_end_period": -186.62,
+   "committee_ids": [
+    "C00931956"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 13200.44,
+   "total_receipts": 13013.82
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00480",
+   "candidate_name": "JOHNSON, THOMAS LEE",
+   "candidate_pcc_id": "C00930677",
+   "candidate_pcc_name": "JOHNSON FOR SENATE CAMPAIGN COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00930677"
+   ],
+   "coverage_end_date": "2026-04-13",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 4626.94,
+   "total_receipts": 6720.07
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8NC00270",
+   "candidate_name": "WILLIAMS, MARCUS W.",
+   "candidate_pcc_id": "C00931659",
+   "candidate_pcc_name": "MARCUS W WILLIAMS FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00931659"
+   ],
+   "coverage_end_date": "2026-03-17",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 5656.28,
+   "total_receipts": 5656.28
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00472",
+   "candidate_name": "DANSIE, RICHARD",
+   "candidate_pcc_id": "C00929232",
+   "candidate_pcc_name": "DANSIE FOR US SENATE",
+   "cash_on_hand_end_period": 630.17,
+   "committee_ids": [
+    "C00929232"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1780.0,
+   "total_receipts": 2410.17
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S2NC00547",
+   "candidate_name": "SIBHATU, LICHIA WOLDEGABREAL",
+   "candidate_pcc_id": "C00785451",
+   "candidate_pcc_name": "LICHIA SIBHATU AND COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00785451"
+   ],
+   "coverage_end_date": "2023-03-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S2NC00745",
+   "candidate_name": "COLON, ROBERT",
+   "candidate_pcc_id": "C00906420",
+   "candidate_pcc_name": "ROBERT COLON FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00906420"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00357",
+   "candidate_name": "NILSSON, ROBERT ANDERS MR",
+   "candidate_pcc_id": "C00895615",
+   "candidate_pcc_name": "ANDY NILSSON COMMITTEE",
+   "cash_on_hand_end_period": 1912.66,
+   "committee_ids": [
+    "C00895615"
+   ],
+   "coverage_end_date": "2025-11-08",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 52.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00423",
+   "candidate_name": "QUICK, ORRICK ROMAINE",
+   "candidate_pcc_id": "C00914903",
+   "candidate_pcc_name": "FRIENDS OF ORRICK QUICK FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00914903"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00431",
+   "candidate_name": "JOHNSON, CONSTANCE \"CONNIE\"",
+   "candidate_pcc_id": "C00915157",
+   "candidate_pcc_name": "CONSTANCE \"CONNIE\" JOHNSON FOR UNITED STATES SENATOR FOR NC 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00915157"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "OTHER",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00514",
+   "candidate_name": "HAMMOND, ALYSSIA ROSE-KATHERINE",
+   "candidate_pcc_id": "C00931063",
+   "candidate_pcc_name": "QUEEN ALYSSIA FOR UNITED STATES SENATE NORTH CAROLINA 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00931063"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00530",
+   "candidate_name": "FARROW, DARYL",
+   "candidate_pcc_id": "C00932798",
+   "candidate_pcc_name": "FARROW FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00932798"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NC00548",
+   "candidate_name": "TEMPLE, ELIZABETH A.",
+   "candidate_pcc_id": "C00913905",
+   "candidate_pcc_name": "ELIZABETH ANNE TEMPLE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00913905"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": null,
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

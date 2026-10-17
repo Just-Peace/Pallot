@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
 the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
@@ -23,7 +23,9 @@ an hour fit one; set PALLOT_FEC_API_KEY, in the environment or .env, for the res
 requests skip Pallot's cache, and with DEMO_KEY they use up the same per-IP allowance as
 a running Pallot. The ballots outside Texas (nationwide) take two Census answers, the FEC's
 lists of this cycle's elections (six pages) and five seats' filers, and add those states'
-members of Congress to the seat holders. The TrackAIPAC, Vote for Peace and Texas Ethics
+members of Congress to the seat holders. The states with an official list (state_lists) take an
+address each, North Carolina's list (cut down to four counties and the columns read) and
+Michigan's report, their seats' FEC filers, and their legislators. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -54,6 +56,7 @@ from pallot.matching import full_key  # noqa: E402
 from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
+from pallot.states import mi, nc  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
 ADDRESSES = {
@@ -79,6 +82,9 @@ FEC_DETAILS = ("S6TX00479", "S6TX00388")  # James Talarico, Ken Paxton
 # Outside Texas: a state with a Senate race, one with a single, at-large seat, and DC's delegate.
 NATIONWIDE = {"atlanta": "55 Trinity Ave SW, Atlanta, GA 30303", "cheyenne": "200 W 24th St, Cheyenne, WY 82001"}
 NATIONWIDE_RACES = ("GA-SEN", "GA-05", "WY-SEN", "WY-00", "DC-00")
+# States with an official list (pallot/states): an address in each, and NC's counties kept in its cut-down list.
+STATE_ADDRESSES = {"raleigh": "1 E Edenton St, Raleigh, NC 27601", "lansing": "100 N Capitol Ave, Lansing, MI 48933"}
+NC_COUNTIES = ("WAKE", "DURHAM", "ALAMANCE", "MECKLENBURG")
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -238,6 +244,69 @@ def record_nationwide(client: httpx.Client, key: str) -> None:
     save(path.name, kept + [m for m in members if m["terms"][-1].get("state") in states])
 
 
+def record_state_lists(client: httpx.Client, key: str) -> None:
+    """The states with an official list: STATE_ADDRESSES' Census answers; North Carolina's list cut
+    down to NC_COUNTIES and to the columns states/nc.py reads (no addresses, phones or emails);
+    Michigan's report without its inline styles; the FEC's filers for each address's seats; their
+    Open States legislators (the columns officeholders.py reads), and their members of Congress
+    added to officeholders_congress.json."""
+    seats = []
+    for name, address in STATE_ADDRESSES.items():
+        response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+        response.raise_for_status()
+        save(f"census_{name}.json", response.json())
+        match = response.json()["result"]["addressMatches"][0]
+        place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+        seats += [f"{place.state}-SEN", f"{place.state}-{place.cd:02d}"]
+
+    response = client.get(nc.URL.format(year=FEC_CYCLE))
+    response.raise_for_status()
+    rows = [row for row in csv.DictReader(io.StringIO(response.text)) if row["county_name"].upper() in NC_COUNTIES]
+    out = io.StringIO()
+    writer = csv.DictWriter(out, nc.COLUMNS, extrasaction="ignore", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    (FIXTURES / "state_nc.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_nc.csv: {len(rows):,} rows")
+    response = client.get(mi.URL, params={"page": "page.miboePublicReport", "electionType": "GEN", "electionYear": str(FEC_CYCLE)})
+    response.raise_for_status()
+    (FIXTURES / "state_mi.html").write_text(re.sub(r'\s(?:style|class)="[^"]*"', "", response.text), encoding="utf-8", newline="")
+    print(f"state_mi.html: {(FIXTURES / 'state_mi.html').stat().st_size:,} bytes")
+
+    try:
+        for seat in seats:
+            state, _, district = seat.partition("-")
+            params = {"state": state, "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts"}
+            if district == "SEN":
+                params["office"], name = "senate", f"fec_elections_{state.lower()}_senate.json"
+            else:
+                params.update(office="house", district=district)
+                name = f"fec_elections_{state.lower()}_house_{district}.json"
+            response = client.get(f"{fec.API}/elections/", params=params, headers={"X-Api-Key": key})
+            response.raise_for_status()
+            save(name, response.json())
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code != 429:
+            raise
+        print("The FEC's hourly limit ran out; its state-list fixtures were not all recorded.")
+
+    states = {seat.partition("-")[0] for seat in seats}
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    for state in states:
+        response = client.get(officeholders.LEGISLATURE.format(state=state.lower()))
+        response.raise_for_status()
+        out = io.StringIO()
+        writer = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(csv.DictReader(io.StringIO(response.text)))
+        (FIXTURES / f"officeholders_{state.lower()}.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    kept = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") not in states]
+    save(path.name, kept + [m for m in response.json() if m["terms"][-1].get("state") in states])
+
+
 def record_polls(client: httpx.Client) -> None:
     """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
     polls plus a few from other states."""
@@ -275,10 +344,10 @@ def record_officeholders(client: httpx.Client) -> None:
     members = response.json()
     texas = [m for m in members if m["terms"][-1].get("state") == officeholders.STATE]
     others = [m for m in members if m["terms"][-1].get("state") != officeholders.STATE][:3]
-    nationwide = {seat.partition("-")[0] for seat in NATIONWIDE_RACES}
+    nationwide = {seat.partition("-")[0] for seat in NATIONWIDE_RACES} | {"NC", "MI"}  # and STATE_ADDRESSES' states
     others += [m for m in members if m["terms"][-1].get("state") in nationwide and m not in others]
     save("officeholders_congress.json", texas + others)
-    response = client.get(officeholders.LEGISLATURE)
+    response = client.get(officeholders.LEGISLATURE.format(state="tx"))
     response.raise_for_status()
     columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
     rows = list(csv.DictReader(io.StringIO(response.text)))
@@ -409,7 +478,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
                                            "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     only = parser.parse_args(argv).only
@@ -423,6 +492,8 @@ def main(argv: list[str] | None = None) -> int:
             record_fec(client, config.fec_api_key)
         if only in (None, "nationwide"):
             record_nationwide(client, config.fec_api_key)
+        if only in (None, "state_lists"):
+            record_state_lists(client, config.fec_api_key)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

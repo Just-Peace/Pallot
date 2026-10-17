@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
-from . import registry, store
+from . import registry, states, store
 from .entry import CADENCES
 from .refresh import DUE_SLACK
 
@@ -56,6 +56,7 @@ BUNDLES: dict[str, tuple[str, dict[str, tuple[str, str]]]] = {
     "mupac": ("Muslims United PAC", {"candidates": ("c", ""), "texas": ("c", "Texas")}),
     "cair": ("CAIR Action", {"candidates": ("c", ""), "texas": ("c", "Texas")}),
     "emgage": ("Emgage PAC", {"candidates": ("c", ""), "texas": ("c", "Texas")}),
+    **states.LABELS,
 }
 SKIP = {"answers", "answers_hash", "last_checked", "last_refresh"}
 

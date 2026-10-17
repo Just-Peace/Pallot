@@ -427,7 +427,7 @@ $("#print-btn").addEventListener("click", () => {
     $("#print-unpicked-text").textContent = `You've picked ${parts.join(" and ")}.`;
     $("#print-blank").checked = true;
   }
-  $("#print-why").textContent = STATES[page.ballot.location.state]
+  $("#print-why").textContent = STATES[page.ballot.location.state]?.noPhones
     ? "Bring the printout with you: phones can't be used at the voting station in Texas."
     : "Bring the printout with you: many polling places don't allow phones in the voting booth.";
   printDialog.showModal();

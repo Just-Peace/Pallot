@@ -1,0 +1,76 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 4,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H0NC02125",
+   "candidate_name": "ROSS, DEBORAH",
+   "candidate_pcc_id": "C00729277",
+   "candidate_pcc_name": "DEBORAH ROSS FOR CONGRESS",
+   "cash_on_hand_end_period": 1355772.09,
+   "committee_ids": [
+    "C00729277"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1351529.77,
+   "total_receipts": 1969791.47
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NC02213",
+   "candidate_name": "MCGINNIS, BRIAN",
+   "candidate_pcc_id": "C00925792",
+   "candidate_pcc_name": "MCGINNIS FOR THE PEOPLE",
+   "cash_on_hand_end_period": 45613.8,
+   "committee_ids": [
+    "C00925792"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 27862.89,
+   "total_receipts": 72695.16
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NC02197",
+   "candidate_name": "BENNETT, ROBERT",
+   "candidate_pcc_id": "C00923953",
+   "candidate_pcc_name": "ROB FOR NC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00923953"
+   ],
+   "coverage_end_date": "2025-12-09",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 529.0,
+   "total_receipts": 529.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4NC02135",
+   "candidate_name": "DOUGLASS, EUGENE FARLEY DR.",
+   "candidate_pcc_id": "C00846030",
+   "candidate_pcc_name": "GENE DOUGLASS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00846030"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

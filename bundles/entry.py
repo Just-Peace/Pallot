@@ -37,7 +37,9 @@ class Bundle:
     {"races": 39}). ``cadence`` is how often a refresh is worth it (``--due``). ``lifetime``, for a
     source whose answers last differently, picks each one's. ``include`` picks the requests that
     belong in this bundle, when a source is split over several; ``keep`` leaves out answers a
-    lookup should ask live (e.g. an empty one, kept briefly)."""
+    lookup should ask live (e.g. an empty one, kept briefly); ``shape`` makes an answer what's
+    bundled instead (a state's list: its parsed candidates, not the raw file), which the source
+    reads as well as the raw one."""
 
     source: str
     build: Callable[[Context], Awaitable[Mapping[str, int]]]
@@ -46,6 +48,7 @@ class Bundle:
     name: str = ""
     include: Callable[[RequestSpec], bool] | None = None
     keep: Callable[[Any], bool] | None = None
+    shape: Callable[[Any], Any] | None = None
 
     def __post_init__(self) -> None:
         if not self.name:

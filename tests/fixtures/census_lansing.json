@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "100 N CAPITOL AVE, LANSING, MI 48933"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "17499235"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "2601802",
+       "CENTLAT": "+42.7146778",
+       "AREAWATER": 1893505,
+       "BASENAME": "Ingham County (Northwest)",
+       "STATE": "26",
+       "OID": "217704486484039",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7143173",
+       "NAME": "Ingham County (Northwest) PUMA",
+       "OBJECTID": 742,
+       "CENTLON": "-084.5543026",
+       "AREALAND": 93977436,
+       "INTPTLON": "-084.5546852",
+       "MTFCC": "G6120",
+       "PUMA": "01802"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "48933",
+       "CENTLAT": "+42.7295857",
+       "AREAWATER": 135664,
+       "BASENAME": "48933",
+       "OID": "221704258285378",
+       "ZCTA5": "48933",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7293725",
+       "NAME": "ZCTA5 48933",
+       "OBJECTID": 33226,
+       "CENTLON": "-084.5560217",
+       "AREALAND": 2708078,
+       "INTPTLON": "-084.5562422",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "47719",
+       "CENTLAT": "+42.7216707",
+       "AREAWATER": 8694820,
+       "BASENAME": "Lansing, MI",
+       "OID": "2702161218774",
+       "UA": "47719",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7215995",
+       "NAME": "Lansing, MI Urban Area",
+       "OBJECTID": 700,
+       "CENTLON": "-084.5412247",
+       "AREALAND": 403594388,
+       "INTPTLON": "-084.5400118",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 192018946.63708973,
+       "NECTAPCI": "N",
+       "GEOID": "2646000",
+       "CENTLAT": "+42.7141224",
+       "AREAWATER": 1645602,
+       "BASENAME": "Lansing",
+       "STATE": "26",
+       "OID": "27890177905353",
+       "LSADC": "25",
+       "PLACE": "46000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.7143412",
+       "NAME": "Lansing city",
+       "OBJECTID": 32270,
+       "PLACECC": "C5",
+       "CENTLON": "-084.5604510",
+       "STGEOMETRY_Length": 158460.14090426895,
+       "CBSAPCI": "Y",
+       "AREALAND": 101959763,
+       "INTPTLON": "-084.5608887",
+       "PLACENS": "01626588",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "26065",
+       "CENTLAT": "+42.5970155",
+       "AREAWATER": 11999085,
+       "STATE": "26",
+       "BASENAME": "Ingham",
+       "OID": "27590181237036",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.6035338",
+       "NAME": "Ingham County",
+       "OBJECTID": 1929,
+       "CENTLON": "-084.3735357",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01622975",
+       "AREALAND": 1440243331,
+       "INTPTLON": "-084.3738107",
+       "MTFCC": "G4020",
+       "COUNTY": "065"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "2621150",
+       "CENTLAT": "+42.7385668",
+       "AREAWATER": 2180882,
+       "STATE": "26",
+       "BASENAME": "Lansing Public School District",
+       "OID": "28490174967535",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+42.7390050",
+       "SDUNI": "21150",
+       "NAME": "Lansing Public School District",
+       "OBJECTID": 2547,
+       "CENTLON": "-084.5514565",
+       "HIGRADE": "12",
+       "AREALAND": 131758867,
+       "INTPTLON": "-084.5521996",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "260650067001010",
+       "CENTLAT": "+42.7336706",
+       "BLOCK": "1010",
+       "AREAWATER": 0,
+       "STATE": "26",
+       "BASENAME": "1010",
+       "OID": "210701008255855",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7336706",
+       "NAME": "Block 1010",
+       "OBJECTID": 3384806,
+       "TRACT": "006700",
+       "CENTLON": "-084.5554313",
+       "BLKGRP": "1",
+       "AREALAND": 56512,
+       "INTPTLON": "-084.5554313",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "065"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779789",
+       "GEOID": "26",
+       "CENTLAT": "+44.8382368",
+       "AREAWATER": 103860203105,
+       "STATE": "26",
+       "BASENAME": "Michigan",
+       "STUSAB": "MI",
+       "OID": "2749048217992",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.8441783",
+       "DIVISION": "3",
+       "NAME": "Michigan",
+       "REGION": "2",
+       "OBJECTID": 9,
+       "CENTLON": "-085.6650623",
+       "AREALAND": 146625951684,
+       "INTPTLON": "-085.6604877",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "260650067001",
+       "CENTLAT": "+42.7306466",
+       "AREAWATER": 43146,
+       "STATE": "26",
+       "BASENAME": "1",
+       "OID": "20890181202456",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7306710",
+       "NAME": "Block Group 1",
+       "OBJECTID": 2844,
+       "TRACT": "006700",
+       "CENTLON": "-084.5528765",
+       "BLKGRP": "1",
+       "AREALAND": 1053230,
+       "INTPTLON": "-084.5530891",
+       "MTFCC": "G5030",
+       "COUNTY": "065"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "330",
+       "CENTLAT": "+42.7708428",
+       "AREAWATER": 67047162,
+       "BASENAME": "Lansing-East Lansing-Owosso, MI",
+       "OID": "2619034687908059",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7712337",
+       "NAME": "Lansing-East Lansing-Owosso, MI CSA",
+       "OBJECTID": 123,
+       "CSA": "330",
+       "CENTLON": "-084.4969412",
+       "INTPTLON": "-084.4960079",
+       "AREALAND": 5775067772,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "46000",
+       "GEOID": "2606546000",
+       "CENTLAT": "+42.7104591",
+       "AREAWATER": 1544645,
+       "STATE": "26",
+       "BASENAME": "Lansing",
+       "OID": "27690181238131",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+42.7106048",
+       "NAME": "Lansing city",
+       "OBJECTID": 14257,
+       "CENTLON": "-084.5498167",
+       "COUSUBCC": "C5",
+       "AREALAND": 86228678,
+       "INTPTLON": "-084.5495445",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01626588",
+       "COUNTY": "065"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "26021",
+       "CENTLAT": "+42.5826398",
+       "AREAWATER": 16366769,
+       "STATE": "26",
+       "BASENAME": "21",
+       "OID": "2129042393370328",
+       "SLDU": "021",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.5819589",
+       "NAME": "State Senate District 21",
+       "OBJECTID": 1694,
+       "CENTLON": "-084.7045598",
+       "LSY": "2026",
+       "AREALAND": 2279869995,
+       "INTPTLON": "-084.7050476",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+42.6527032",
+       "AREAWATER": 151233658750,
+       "BASENAME": "East North Central",
+       "OID": "2739020719809",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.8441768",
+       "DIVISION": "3",
+       "REGION": "2",
+       "NAME": "East North Central Division",
+       "OBJECTID": 8,
+       "CENTLON": "-086.8359814",
+       "AREALAND": 629311863266,
+       "INTPTLON": "-085.6604907",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 13518619630.991707,
+       "CD120": "07",
+       "GEOID": "2607",
+       "CENTLAT": "+42.7341230",
+       "CDSESSN": "120",
+       "AREAWATER": 124824195,
+       "STATE": "26",
+       "BASENAME": "7",
+       "OID": "2119042393278165",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.7359220",
+       "NAME": "Congressional District 7",
+       "OBJECTID": 111,
+       "CENTLON": "-084.3367704",
+       "STGEOMETRY_Length": 551144.6390899074,
+       "AREALAND": 7164407918,
+       "INTPTLON": "-084.3443447",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "26077",
+       "CENTLAT": "+42.8364035",
+       "SLDL": "077",
+       "AREAWATER": 4975424,
+       "STATE": "26",
+       "BASENAME": "77",
+       "OID": "2139042393370388",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.8352605",
+       "NAME": "State House District 77",
+       "OBJECTID": 128,
+       "CENTLON": "-084.6787500",
+       "LSY": "2026",
+       "AREALAND": 518522941,
+       "INTPTLON": "-084.6745158",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "29620",
+       "CENTLAT": "+42.7129540",
+       "AREAWATER": 41626515,
+       "BASENAME": "Lansing-East Lansing, MI",
+       "OID": "2629034687907495",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7136586",
+       "NAME": "Lansing-East Lansing, MI Metro Area",
+       "CSA": "330",
+       "OBJECTID": 338,
+       "CENTLON": "-084.6069939",
+       "CBSA": "29620",
+       "AREALAND": 4399456834,
+       "INTPTLON": "-084.6053717",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "26065006700",
+       "CENTLAT": "+42.7296482",
+       "AREAWATER": 43146,
+       "STATE": "26",
+       "BASENAME": "67",
+       "OID": "207903716796624",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7282633",
+       "NAME": "Census Tract 67",
+       "OBJECTID": 64625,
+       "TRACT": "006700",
+       "CENTLON": "-084.5631549",
+       "AREALAND": 2725213,
+       "INTPTLON": "-084.5631115",
+       "MTFCC": "G5020",
+       "COUNTY": "065"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -84.553968454462,
+     "y": 42.733619774672
+    },
+    "addressComponents": {
+     "zip": "48933",
+     "streetName": "CAPITOL",
+     "preType": "",
+     "city": "LANSING",
+     "preDirection": "S",
+     "suffixDirection": "",
+     "fromAddress": "100",
+     "state": "MI",
+     "suffixType": "AVE",
+     "toAddress": "198",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "100 S CAPITOL AVE, LANSING, MI, 48933"
+   }
+  ]
+ }
+}

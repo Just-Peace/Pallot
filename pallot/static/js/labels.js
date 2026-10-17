@@ -15,10 +15,39 @@ export const GROUP_LABELS = {
   local: "City & school district",
 };
 
-// Details that differ by state, keyed by the address's postal code. Only Texas is covered so far.
+// The state's election office, where its registration, key dates and polling places are: every
+// state's site, and Texas's details besides.
+const SITES = {
+  AL: "https://www.sos.alabama.gov/alabama-votes", AK: "https://www.elections.alaska.gov/",
+  AZ: "https://azsos.gov/elections", AR: "https://www.sos.arkansas.gov/elections",
+  CA: "https://www.sos.ca.gov/elections", CO: "https://www.coloradosos.gov/pubs/elections/main.html",
+  CT: "https://portal.ct.gov/sots", DE: "https://elections.delaware.gov/", DC: "https://www.dcboe.org/",
+  FL: "https://dos.fl.gov/elections/", GA: "https://sos.ga.gov/elections", HI: "https://elections.hawaii.gov/",
+  ID: "https://voteidaho.gov/", IL: "https://www.elections.il.gov/", IN: "https://www.in.gov/sos/elections/",
+  IA: "https://sos.iowa.gov/elections-voting", KS: "https://www.sos.ks.gov/elections/elections.html",
+  KY: "https://elect.ky.gov/", LA: "https://www.sos.la.gov/elections-voting", ME: "https://www.maine.gov/sos/elections-voting",
+  MD: "https://elections.maryland.gov/", MA: "https://www.sec.state.ma.us/divisions/elections/",
+  MI: "https://www.michigan.gov/sos/elections", MN: "https://www.sos.mn.gov/elections-voting/",
+  MS: "https://www.sos.ms.gov/elections-voting", MO: "https://www.sos.mo.gov/elections", MT: "https://sosmt.gov/elections/",
+  NE: "https://sos.nebraska.gov/elections", NV: "https://www.nvsos.gov/sos/elections", NH: "https://www.sos.nh.gov/elections",
+  NJ: "https://www.nj.gov/state/elections/", NM: "https://www.sos.nm.gov/voting-and-elections/",
+  NY: "https://elections.ny.gov/", NC: "https://www.ncsbe.gov/", ND: "https://www.sos.nd.gov/elections",
+  OH: "https://www.ohiosos.gov/elections/", OK: "https://oklahoma.gov/elections.html",
+  OR: "https://sos.oregon.gov/elections/", PA: "https://www.pa.gov/agencies/vote", RI: "https://vote.sos.ri.gov/",
+  SC: "https://scvotes.gov/", SD: "https://sdsos.gov/elections-voting/", TN: "https://sos.tn.gov/elections",
+  UT: "https://vote.utah.gov/", VT: "https://sos.vermont.gov/elections/", VA: "https://www.elections.virginia.gov/",
+  WA: "https://www.sos.wa.gov/elections", WV: "https://sos.wv.gov/elections", WI: "https://elections.wi.gov/",
+  WY: "https://sos.wyo.gov/Elections/",
+};
+const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
+
+// Details that differ by state, keyed by the address's postal code: every state's election
+// office (``site``), and Texas's registration, mail voting, poll hours and print tips.
 export const STATES = {
+  ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
     site: { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
+    noPhones: true, // phones can't be used at the voting station
     // My Voter Portal: a login with name and date of birth, which also shows the voter's polling place
     registration: {
       label: "Am I registered?", short: "Registered?", url: "https://goelect.txelections.civixapps.com/ivis-mvp-ui/#/login",

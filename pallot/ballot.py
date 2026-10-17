@@ -9,8 +9,9 @@ ballot order is filtered down to those districts. Ballotpedia adds city/school r
 at all, its notes on races and the voter's precincts, or supplies the whole ballot when the state source is off.
 Then every candidate gets a card from each enabled source (enrich.py).
 
-A state without its own list (coverage.py) gets only the races for Congress, from the people who
-filed with the FEC, each unverified.
+Another state with an adapter for its official list (states/) gets every race on that list
+that the address places (states/place.py). A state without one, or whose list can't be had,
+gets only the races for Congress, from the people who filed with the FEC, each unverified.
 """
 
 from __future__ import annotations
@@ -62,6 +63,8 @@ from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
+from .states import StateList
+from .states import place as state_place
 from .text import display_office, display_person, display_time
 
 log = logging.getLogger("uvicorn.error")
@@ -124,6 +127,7 @@ class Services:
     key_dates: KeyDatesPage
     tigerweb: Tigerweb
     tiles: Tiles
+    states: dict[str, StateList] = field(default_factory=dict)  # the official lists of states other than Texas, by postal code
     today: Callable[[], dt.date] = dt.date.today
     bundles: dict[str, Seeded] = field(default_factory=dict)  # what came with Pallot, by bundle (Settings)
 
@@ -426,6 +430,8 @@ class _Builder:
         if self.request.address:
             place, location = await locate(self.svc, self.request.address, self.sources)
             cover = coverage.of(location.state)
+            if cover.ballot == "list":
+                return await self._from_list(place, location, cover)
             if cover.ballot == "fec":
                 return await self._from_fec(place, location, cover)
             if not (self.use_sos or self.use_bp):
@@ -543,6 +549,73 @@ class _Builder:
             warnings=list(self.warnings),
             left_out=self._left_out(shown),
             coverage=coverage.of(location.state).info(),
+        )
+        return self.ballot
+
+    async def _from_list(self, place: Place, location: Location, cover: coverage.Coverage) -> Ballot:
+        """The races on the state's official list that the address places (states/place.py),
+        the ones it can't settle left out unless asked for, as Texas's precinct races. With the
+        list off, not yet out, or not to be had, the FEC's races for Congress instead, saying why."""
+        lists = self.svc.states.get(location.state or "")
+        if lists is None:
+            return await self._from_fec(place, location, coverage.FEDERAL)
+        day = fec_source.general_day(self.svc.today())
+        when = f"{day:%b} {day.day}, {day.year}"
+        if not self.sources.enabled(lists.source):
+            self.notes.append(f"The list of candidates from the {lists.label} is turned off, so this ballot has only "
+                              f"the races for Congress. [Turn it on in Settings](settings.html#toggle-{lists.source}).")
+            return await self._from_fec(place, location, coverage.FEDERAL)
+        try:
+            filings = await lists.filings(day)
+        except UpstreamError as exc:
+            log.warning("%s", exc)
+            self.warnings.append(f"Couldn't load the list of candidates from the {lists.label}, so this ballot has "
+                                 "only the races for Congress.")
+            return await self._from_fec(place, location, coverage.FEDERAL)
+        if not filings:
+            self.notes.append(f"The {lists.label} hasn't published its list of candidates for {when} yet, so this "
+                              "ballot has only the races for Congress.")
+            return await self._from_fec(place, location, coverage.FEDERAL)
+        requested = self.request.election_date
+        if requested and requested != day:
+            self.warnings.append(f"Pallot has only the general election on {when} here; showing it.")
+        districts = Districts(cd=place.cd, sd=place.sd, hd=place.hd)
+        found = state_place.races(filings, location, districts, state=lists.state, source=lists.source, url=lists.page)
+        if not (found.races or found.unconfirmed):
+            raise BallotError(404, f"The {lists.label} lists no races for this {self.where}.")
+        if found.unplaced:
+            self.notes.append(f"The {lists.label} also lists {found.unplaced} court "
+                              f"{'race' if found.unplaced == 1 else 'races'} without saying which counties "
+                              f"{'it covers' if found.unplaced == 1 else 'they cover'}, so "
+                              f"{'it isn' if found.unplaced == 1 else 'they aren'}'t shown: your county's sample "
+                              "ballot has yours.")
+        shown = self.request.all_races
+        count = len(found.unconfirmed)
+        maybe = [MaybeSection(id="unconfirmed", title=MAYBE_SECTIONS["unconfirmed"][0],
+                              explanation="These races are on the ballot in only part of your county or town, and "
+                                          "Pallot can't tell from your address whether yours is one. Your county's "
+                                          "sample ballot says.",
+                              races=found.unconfirmed)] if count and shown else []
+        left_out = LeftOut(
+            races=count, missing=[], shown=shown,
+            lines=[f"{count} {'race is' if count == 1 else 'races are'} on the ballot in only part of your county or "
+                   "town, and Pallot can't tell whether yours is one."],
+        ) if count else None
+        self.every_race = found.races + [race for section in maybe for race in section.races]
+        self.context = enrich.Context(day=day, scopes=found.scopes, county=location.county, city=location.city,
+                                      state=location.state)
+        self.ballot = Ballot(
+            election_date=day.isoformat(),
+            elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
+            location=location,
+            districts=districts,
+            races=found.races,
+            maybe=maybe,
+            measures=[],
+            notes=list(self.notes),
+            warnings=list(self.warnings),
+            left_out=left_out,
+            coverage=cover.info(),
         )
         return self.ballot
 

@@ -97,7 +97,7 @@ JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
     voteforpeace.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
         voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.city, ctx.state or "TX"),
     officeholders.SOURCE: lambda svc, races, ctx, _: officeholders.cards(
-        svc.officeholders, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.day),
+        svc.officeholders, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.day, ctx.state or "TX"),
 }
 
 
