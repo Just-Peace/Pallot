@@ -291,7 +291,7 @@ class Upstream:
         self.nominatim_answer: list[dict[str, Any]] | None = None  # Nominatim's answer for any address (default: MoPac's for it, else none)
         self.google_keys: list[str | None] = []  # the X-Goog-Api-Key each request to Google carried
         self.google_answer: dict[str, Any] | None = None  # Google's answer for NEW_STREET (default: the MoPac point, a rooftop)
-        self.suggestions_status: int | None = None  # e.g. 429 when Ballotpedia's address search throttles us
+        self.suggestions_status: int | None = None  # e.g. 429 when Google's address search throttles us
         self.polls_status: int | None = None  # e.g. 403 when FiftyPlusOne refuses us
         self.polls_agents: set[str | None] = set()  # the User-Agents FiftyPlusOne was sent
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
@@ -399,14 +399,15 @@ class Upstream:
                 if extra:
                     return httpx.Response(200, json=load(f"sos_candidates_{body['electionId']}.json") + extra)
                 return _file(f"sos_candidates_{body['electionId']}.json", default=[])
-        if url.host == "api4.ballotpedia.org" and url.path == "/address_autocomplete":
+        if url.host == "places.googleapis.com":
+            self.google_keys.append(request.headers.get("x-goog-api-key"))
             if self.suggestions_status:
                 return httpx.Response(self.suggestions_status)
-            if request.headers.get("origin") != ballotpedia.ORIGIN:
-                return httpx.Response(403, json={"success": False, "data": {}, "message": "Insufficient privileges."})
-            name = next((name for name, text in SUGGEST.items()
-                         if suggestions.query(suggestions.normalize(text)) == params["location"]), None)
-            return _file(f"suggestions_{name}.json") if name else httpx.Response(200, json={"success": True, "data": {"Results": []}})
+            if request.headers.get("x-goog-api-key") != GOOGLE_KEY:
+                return httpx.Response(403, json={"error": {"status": "PERMISSION_DENIED"}})
+            typed = json.loads(request.content)["input"]
+            name = next((name for name, text in SUGGEST.items() if suggestions.normalize(text) == typed), None)
+            return _file(f"suggestions_{name}.json") if name else httpx.Response(200, json={})
         if url.host == "api4.ballotpedia.org":
             if self.ballotpedia_status:
                 return httpx.Response(self.ballotpedia_status)
