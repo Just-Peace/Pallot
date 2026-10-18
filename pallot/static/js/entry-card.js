@@ -6,16 +6,22 @@
 //
 // The voter card tab shows only once the server says it takes a voter card (GET /api/config's
 // ``voter_card``); its ``default_entry`` ("address" or "voter_card") chooses the tab a first visit
-// starts on.
+// starts on. Its ``states`` give the State box, each state's counties for the County box's
+// suggestions, and the district boxes its coverage shows: Texas's precinct, which finds the rest,
+// and its commissioner and JP precincts too. The voter's last state is remembered.
 
 import { api } from "./api.js";
 import { $, h } from "./dom.js";
 import { DISTRICTS, STATES } from "./labels.js";
+import { setUiPref, uiPref } from "./storage.js";
 
 const ENTRIES = {
   address: { tab: $("#entry-tab-address"), panel: $("#entry-address"), focus: () => $("#address") },
-  voter_card: { tab: $("#entry-tab-card"), panel: $("#entry-voter-card"), focus: () => $("#vc-county") },
+  voter_card: { tab: $("#entry-tab-card"), panel: $("#entry-voter-card"), focus: () => $("#vc-state") },
 };
+const TEXAS = { code: "TX", name: "Texas", counties: [], districts: ["cd", "sd", "hd", "sboe"], precincts: true };
+let cardStates = { TX: TEXAS };
+let wantedState = "TX";
 const tabs = $("#entry-tabs");
 const card = $("#entry");
 const home = card.parentElement;
@@ -45,23 +51,26 @@ export function focusEntry() {
   ENTRIES[chosen].focus().focus();
 }
 
-// The voter card's boxes: { county, precinct, districts: { cd, sd, hd, sboe }, precincts:
-// { commissioner, jp } }, each district or precinct only when filled in.
+// The voter card's boxes: { state, county, precinct, districts: { cd, sd, hd, sboe }, precincts:
+// { commissioner, jp } }, the precinct, each district and each precinct only when filled in.
 export function readVoterCard() {
   const number = (input) => (input.value.trim() ? Number(input.value) : null);
-  const request = { county: $("#vc-county").value.trim(), precinct: $("#vc-precinct").value.trim(), districts: {}, precincts: {} };
-  for (const input of $("#vc-districts").querySelectorAll("input")) {
+  const request = { state: $("#vc-state").value, county: $("#vc-county").value.trim(), districts: {}, precincts: {} };
+  const precinct = $("#vc-precinct")?.value.trim();
+  if (precinct) request.precinct = precinct;
+  for (const input of $("#vc-districts").querySelectorAll("input[type=number]")) {
     const value = number(input);
     if (value != null) request[DISTRICTS[input.name].unit === "precinct" ? "precincts" : "districts"][input.name] = value;
   }
   return request;
 }
 
-// Fills the voter card's boxes from a remembered lookup ({ county, precinct, districts, precincts }).
-export function fillVoterCard({ county = "", precinct = "", districts = {}, precincts = {} } = {}) {
+// Fills the voter card's boxes from a remembered lookup ({ state, county, precinct, districts,
+// precincts }); a lookup from before the card had a state is Texas's.
+export function fillVoterCard({ state = "TX", county = "", precinct = "", districts = {}, precincts = {} } = {}) {
+  chooseState(state);
   $("#vc-county").value = county;
-  $("#vc-precinct").value = precinct ?? "";
-  const numbers = { ...districts, ...precincts };
+  const numbers = { ...districts, ...precincts, precinct: precinct ?? "" };
   for (const input of $("#vc-districts").querySelectorAll("input")) input.value = numbers[input.name] ?? "";
 }
 
@@ -73,14 +82,61 @@ export function placeEntry(panel = null) {
   else target.prepend(card);
 }
 
-// Each district a field the size of County and Precinct's, on the same grid: optional, not minor.
-function drawVoterCardBoxes() {
-  const highest = STATES.TX?.districtCounts || {};
-  $("#vc-districts").replaceChildren(...Object.entries(DISTRICTS).map(([kind, { short }]) =>
+// The state's optional boxes, each the size of State and County's, on the same grid: Texas's
+// precinct first, then the districts its coverage shows, and its commissioner and JP precincts.
+// ``keep``: the values to put back, by name. Texas's wording, sketch and links show only for Texas.
+function drawVoterCardBoxes(state, keep = {}) {
+  const highest = STATES[state.code]?.districtCounts || {};
+  const kinds = [...state.districts, ...(state.precincts ? Object.keys(DISTRICTS).filter((kind) => DISTRICTS[kind].unit === "precinct") : [])];
+  const precinct = state.precincts && h("div", { class: "field" },
+    h("label", { for: "vc-precinct" }, "Precinct"),
+    h("input", { id: "vc-precinct", name: "precinct", type: "text", autocomplete: "off", autocapitalize: "characters",
+      spellcheck: "false", maxlength: "8", pattern: "[0-9A-Za-z]{1,8}", placeholder: "e.g. 300",
+      title: "The precinct number on your card, such as 300 or 101A", value: keep.precinct || "" }));
+  $("#vc-districts").replaceChildren(...[precinct, ...kinds.filter((kind) => DISTRICTS[kind]).map((kind) =>
     h("div", { class: "field" },
-      h("label", { for: `vc-${kind}` }, short),
+      h("label", { for: `vc-${kind}` }, DISTRICTS[kind].short),
       h("input", { type: "number", inputmode: "numeric", min: "1", id: `vc-${kind}`, name: kind,
-        max: highest[kind] ? String(highest[kind]) : null }))));
+        max: highest[kind] ? String(highest[kind]) : null, value: keep[kind] ?? "" })))].filter(Boolean));
+  const texas = state.code === "TX";
+  $("#vc-districts-hint").textContent = state.precincts
+    ? "Optional: fill in any your card lists. With your precinct, Pallot finds the rest."
+    : "Optional: fill in any your card lists.";
+  $("#vc-where").hidden = !texas;
+  if (!texas) $("#vc-where-panel").hidden = true;
+  $("#vc-where").setAttribute("aria-expanded", String(!$("#vc-where-panel").hidden));
+  const sample = texas ? "Travis" : state.counties[0]?.replace(/ (County|Parish|Borough|Census Area|Municipality)$/, "");
+  $("#vc-county").placeholder = sample ? `e.g. ${sample}` : "";
+  $("#vc-counties").replaceChildren(...state.counties.map((name) => h("option", { value: name })));
+}
+
+function boxValues() {
+  return Object.fromEntries([...$("#vc-districts").querySelectorAll("input")].map((input) => [input.name, input.value]));
+}
+
+// Shows a state's boxes, empty. Before the states have loaded, it's remembered and Texas's show.
+function chooseState(code) {
+  wantedState = code;
+  const state = cardStates[code] || cardStates.TX;
+  $("#vc-state").value = state.code;
+  drawVoterCardBoxes(state);
+}
+
+// Fills the State box once the states have loaded, keeping what the voter or a remembered lookup put in the boxes.
+function initStates(states) {
+  if (!states.length) return;
+  cardStates = Object.fromEntries(states.map((state) => [state.code, state]));
+  if (!cardStates.TX) cardStates.TX = TEXAS;
+  $("#vc-state").replaceChildren(...states.map((state) => h("option", { value: state.code }, state.name)));
+  const state = cardStates[wantedState] || cardStates.TX;
+  $("#vc-state").value = state.code;
+  drawVoterCardBoxes(state, boxValues());
+  $("#vc-state").addEventListener("change", () => {
+    const code = $("#vc-state").value;
+    setUiPref("cardState", code);
+    $("#vc-county").value = "";
+    chooseState(code);
+  });
 }
 
 // "Where do I find these?", a small link by the districts' heading: shows or hides the card's sketch under them.
@@ -124,7 +180,7 @@ export async function loadEntryConfig({ startOn = () => null, typed = () => fals
     return;
   }
   if (!config?.voter_card) return;
-  $("#vc-counties").replaceChildren(...(config.counties || []).map((name) => h("option", { value: name })));
+  initStates(config.states || []);
   initTabs();
   tabs.hidden = false;
   if (chosenByVoter) return;
@@ -132,6 +188,6 @@ export async function loadEntryConfig({ startOn = () => null, typed = () => fals
   selectEntry(mode === "voter_card" ? "voter_card" : "address");
 }
 
-drawVoterCardBoxes();
 initWhere();
+chooseState(uiPref("cardState") || "TX");
 selectEntry("address");

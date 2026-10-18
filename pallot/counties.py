@@ -1,48 +1,65 @@
-"""Texas's 254 counties, for a voter card's County. Their FIPS codes run in alphabetical order, odd
-numbers only (Anderson 001, Andrews 003 … Zavala 507), as Texas SOS's ids do (find_county)."""
+"""The counties of every state and DC, for a voter card's County: the Census's 2020 list
+(data/counties.json, from national_county2020.txt), with each county's FIPS code. Texas SOS's
+county ids run in the same alphabetical order (find_county)."""
 
 from __future__ import annotations
 
+import json
 import re
+import unicodedata
+from dataclasses import dataclass
+from functools import cache
+from pathlib import Path
 
-COUNTIES = (
-    "Anderson", "Andrews", "Angelina", "Aransas", "Archer", "Armstrong", "Atascosa", "Austin", "Bailey", "Bandera",
-    "Bastrop", "Baylor", "Bee", "Bell", "Bexar", "Blanco", "Borden", "Bosque", "Bowie", "Brazoria",
-    "Brazos", "Brewster", "Briscoe", "Brooks", "Brown", "Burleson", "Burnet", "Caldwell", "Calhoun", "Callahan",
-    "Cameron", "Camp", "Carson", "Cass", "Castro", "Chambers", "Cherokee", "Childress", "Clay", "Cochran",
-    "Coke", "Coleman", "Collin", "Collingsworth", "Colorado", "Comal", "Comanche", "Concho", "Cooke", "Coryell",
-    "Cottle", "Crane", "Crockett", "Crosby", "Culberson", "Dallam", "Dallas", "Dawson", "Deaf Smith", "Delta",
-    "Denton", "DeWitt", "Dickens", "Dimmit", "Donley", "Duval", "Eastland", "Ector", "Edwards", "Ellis",
-    "El Paso", "Erath", "Falls", "Fannin", "Fayette", "Fisher", "Floyd", "Foard", "Fort Bend", "Franklin",
-    "Freestone", "Frio", "Gaines", "Galveston", "Garza", "Gillespie", "Glasscock", "Goliad", "Gonzales", "Gray",
-    "Grayson", "Gregg", "Grimes", "Guadalupe", "Hale", "Hall", "Hamilton", "Hansford", "Hardeman", "Hardin",
-    "Harris", "Harrison", "Hartley", "Haskell", "Hays", "Hemphill", "Henderson", "Hidalgo", "Hill", "Hockley",
-    "Hood", "Hopkins", "Houston", "Howard", "Hudspeth", "Hunt", "Hutchinson", "Irion", "Jack", "Jackson",
-    "Jasper", "Jeff Davis", "Jefferson", "Jim Hogg", "Jim Wells", "Johnson", "Jones", "Karnes", "Kaufman", "Kendall",
-    "Kenedy", "Kent", "Kerr", "Kimble", "King", "Kinney", "Kleberg", "Knox", "Lamar", "Lamb",
-    "Lampasas", "La Salle", "Lavaca", "Lee", "Leon", "Liberty", "Limestone", "Lipscomb", "Live Oak", "Llano",
-    "Loving", "Lubbock", "Lynn", "McCulloch", "McLennan", "McMullen", "Madison", "Marion", "Martin", "Mason",
-    "Matagorda", "Maverick", "Medina", "Menard", "Midland", "Milam", "Mills", "Mitchell", "Montague", "Montgomery",
-    "Moore", "Morris", "Motley", "Nacogdoches", "Navarro", "Newton", "Nolan", "Nueces", "Ochiltree", "Oldham",
-    "Orange", "Palo Pinto", "Panola", "Parker", "Parmer", "Pecos", "Polk", "Potter", "Presidio", "Rains",
-    "Randall", "Reagan", "Real", "Red River", "Reeves", "Refugio", "Roberts", "Robertson", "Rockwall", "Runnels",
-    "Rusk", "Sabine", "San Augustine", "San Jacinto", "San Patricio", "San Saba", "Schleicher", "Scurry", "Shackelford", "Shelby",
-    "Sherman", "Smith", "Somervell", "Starr", "Stephens", "Sterling", "Stonewall", "Sutton", "Swisher", "Tarrant",
-    "Taylor", "Terrell", "Terry", "Throckmorton", "Titus", "Tom Green", "Travis", "Trinity", "Tyler", "Upshur",
-    "Upton", "Uvalde", "Val Verde", "Van Zandt", "Victoria", "Walker", "Waller", "Ward", "Washington", "Webb",
-    "Wharton", "Wheeler", "Wichita", "Wilbarger", "Willacy", "Williamson", "Wilson", "Winkler", "Wise", "Wood",
-    "Yoakum", "Young", "Zapata", "Zavala",
-)
+FILE = Path(__file__).parent / "data" / "counties.json"
+KINDS = (" City and Borough", " Census Area", " Planning Region", " Municipality", " Borough", " Parish", " County",
+         " city")  # what the Census adds to a county's name: "Orleans Parish", "Baltimore city"
+
+
+@dataclass(frozen=True)
+class County:
+    name: str  # as the Census's geocoder names it: "Travis", "Orleans"
+    full_name: str  # "Travis County", "Orleans Parish", "Baltimore city"
+    fips: int  # 453
+
+
+@cache
+def _states() -> dict[str, dict]:
+    return json.loads(FILE.read_text(encoding="utf-8"))
+
+
+def state_names() -> dict[str, str]:
+    """Every state's name by its postal code, in the order the entry card lists them."""
+    return {code: state["name"] for code, state in sorted(_states().items(), key=lambda item: item[1]["name"])}
+
+
+def _base(full_name: str) -> str:
+    return next((full_name.removesuffix(kind) for kind in KINDS if full_name.endswith(kind)), full_name)
+
+
+def counties(state: str) -> list[County]:
+    found = _states().get(state, {}).get("counties", {})
+    return [County(_base(name), name, int(fips)) for fips, name in found.items()]
 
 
 def _plain(name: str) -> str:
-    """ "De Witt County" and "dewitt" alike: letters only, without "County"."""
-    return re.sub(r"[^a-z]", "", re.sub(r"\s+county\s*$", "", name.strip().lower()))
+    """ "De Witt County" and "dewitt", "Doña Ana" and "dona ana" alike: plain letters only, without the word "County"."""
+    letters = unicodedata.normalize("NFKD", name.strip().lower()).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z]", "", re.sub(r"\s+county\s*$", "", letters))
 
 
-_BY_NAME = {_plain(name): (name, 2 * i + 1) for i, name in enumerate(COUNTIES)}
+@cache
+def _by_name(state: str) -> dict[str, County]:
+    """A county by its full name, or by its short one where no other county has it: "Baltimore"
+    is Baltimore County, "Baltimore city" the city."""
+    found: dict[str, County] = {}
+    for county in counties(state):
+        found.setdefault(_plain(county.name), county)
+    for county in counties(state):
+        found[_plain(county.full_name)] = county
+    return found
 
 
-def find(name: str) -> tuple[str, int] | None:
-    """The county a voter typed, as Texas names it, and its FIPS code; None for no such county."""
-    return _BY_NAME.get(_plain(name))
+def find(state: str, name: str) -> County | None:
+    """The county a voter typed in a state; None for no such county."""
+    return _by_name(state).get(_plain(name))

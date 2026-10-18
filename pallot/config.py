@@ -120,7 +120,7 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 8000  # `uv run pallot`'s default port; the Docker image always listens on 8000
     prune_every: int = 6 * HOUR  # how often a running server prunes the transient caches (services.prune)
-    # The entry card's tab on a first visit: "address", or "voter_card" (County and Precinct number).
+    # The entry card's tab on a first visit: "address", or "voter_card" (state, county and districts).
     default_entry: Literal["address", "voter_card"] = "address"
 
     @property

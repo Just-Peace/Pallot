@@ -75,7 +75,7 @@ def test_a_lookup_nothing_answers_says_so_plainly(make_app, upstream, caplog):
         found = answers(client)
     assert found["ballot"] == {"detail": "The address lookup isn't answering right now. Try again in a minute."}
     assert found["elections"] == {"detail": "Texas SOS isn't answering right now. Try again in a minute."}
-    assert found["no address"] == {"detail": "Enter an address, or your county and precinct number."}
+    assert found["no address"] == {"detail": "Enter an address, or your state and county."}
     assert found["short address"] == {"detail": "Enter your street address, with the city or ZIP code."}
     assert found["bad districts"] == {"detail": "Check the district numbers you entered."}
     assert found["wrong host"] == {"detail": "Pallot isn't available at this address."}

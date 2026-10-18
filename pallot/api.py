@@ -34,11 +34,12 @@ from . import __version__, ics
 from .catalog import Catalog
 from .ballot import BallotError, Services, election_dates, start_ballot
 from .config import Config, load_config
-from .counties import COUNTIES
+from . import counties, coverage
 from .http_cache import UpstreamError
 from .limits import ClientLimits
 from .models import (
-    Ballot, BallotRequest, DistrictOutlines, ElectionDate, EndorsementListInfo, EntryConfig, SourcesOverview, SuggestResult,
+    Ballot, BallotRequest, CardState, DistrictOutlines, ElectionDate, EndorsementListInfo, EntryConfig, SourcesOverview,
+    SuggestResult,
 )
 from .outlines import district_outlines
 from .services import MIN_INTERVAL, open_services, prune
@@ -72,13 +73,19 @@ _IMPORT = re.compile(r'^import\s[^"]*?"(\.{1,2}/[^"]+)"', re.M)
 # What a voter is told when the page sends what Pallot can't take, by the field: one plain sentence, not Pydantic's.
 INVALID_FIELDS = {
     "address": "Enter your street address, with the city or ZIP code.",
-    "county": "Enter your county as it's written on your voter registration certificate.",
-    "precinct": "Enter the precinct number on your voter registration certificate.",
+    "state": "Choose your state.",
+    "county": "Enter your county as it's written on your voter registration card.",
+    "precinct": "Enter the precinct number on your voter registration card, or leave it empty.",
     "precincts": "Check the commissioner, JP and constable precinct numbers you entered.",
     "districts": "Check the district numbers you entered.",
 }
-ADDRESS_OR_CARD = "Enter an address, or your county and precinct number."
+ADDRESS_OR_CARD = "Enter an address, or your state and county."
 INVALID = "Pallot couldn't read that request. Reload the page and try again."
+CARD_STATES = [
+    CardState(code=code, name=name, counties=[c.full_name for c in counties.counties(code)],
+              districts=list(coverage.of(code).districts), precincts=coverage.of(code).precincts)
+    for code, name in counties.state_names().items()
+]
 
 
 def _line(ballot: Ballot, *, done: bool) -> bytes:
@@ -415,9 +422,9 @@ def create_app(
 
     @app.get("/api/config", response_model=EntryConfig)
     def entry_config() -> EntryConfig:
-        """What the ballot page's entry card offers: the voter card tab, and the tab a first visit
-        starts on (PALLOT_DEFAULT_ENTRY)."""
-        return EntryConfig(default_entry=config.default_entry, voter_card=True, counties=list(COUNTIES))
+        """What the ballot page's entry card offers: the voter card tab, its states with their
+        counties and districts, and the tab a first visit starts on (PALLOT_DEFAULT_ENTRY)."""
+        return EntryConfig(default_entry=config.default_entry, voter_card=True, states=CARD_STATES)
 
     @app.get("/api/elections", response_model=list[ElectionDate])
     async def elections(request: Request) -> list[ElectionDate]:
