@@ -527,8 +527,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 .ballot-head h1 { margin: 0; }
 .ballot-head p { margin: 2px 0 0; }
-/* Print beside the title, narrow screens only (see the end of the file) */
-.ballot-head .head-print { display: none; }
 
 .ballot-top { display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; margin: 8px 0 4px; }
 /* When to vote and Your districts side by side, the map under both, the full width */
@@ -1466,12 +1464,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .strip-race:empty { display: none; }
   .progress { overflow: hidden; text-overflow: ellipsis; }
   .strip-race:not(:empty) + .progress { font-size: 0.78rem; font-weight: 500; line-height: 1.25; color: var(--muted); }
-  /* Print, the finish line: a big button beside the title, then, once it scrolls away, its icon on the strip */
-  .ballot-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; }
-  .ballot-head > :not(.head-print) { grid-column: 1; }
-  .ballot-head .head-print { display: inline-flex; grid-column: 2; grid-row: 1 / span 2; min-height: 44px; white-space: nowrap; }
-  .progress-info .more-btn, .print-away .progress-info .strip-print { display: inline-flex; flex: none; }
-  .progress-info .strip-print { padding-inline: 9px; }
+  /* Print picks, the finish line, in blue between Next race and More */
+  .progress-info :is(.more-btn, .strip-print) { display: inline-flex; flex: none; }
   /* while the cards load, a moving line along the strip's foot; its words for screen readers only */
   .cards-loading { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; gap: 0; }
   .cards-loading > span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -1521,6 +1515,14 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   input[type="text"], input[type="number"], select, textarea { font-size: var(--fs-input); }
   .lede { font-size: var(--fs-sub); }
   .ballot-head p { font-size: var(--fs-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* the title and the election on one line: "Your ballot · Nov 3 · General Election" */
+  .ballot-head { display: flex; align-items: baseline; gap: 6px; }
+  .ballot-head h1 { flex: none; }
+  .ballot-head p { min-width: 0; margin: 0; }
+  .ballot-head p:not(:empty)::before { content: "· "; }
+  /* the map's folded line as slim as the summary's lines */
+  .district-map { padding: 2px 14px; }
+  .district-map:not(.collapsed) { padding-bottom: 12px; }
   .phone-words { display: inline; }
   .wide-words { display: none; }
   .btn, .btn.small, .icon-btn, .link-btn, .topbar-btn, .focus-chip, .rule-chip, .map-pick, .seg-option, .section-chips a,
@@ -1562,7 +1564,12 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   /* the race cards: less padding, so each candidate's row has more room */
   .race-head { gap: 10px; padding: 10px 12px; }
   .race.collapsed .race-head { padding-top: 9px; padding-bottom: 9px; }
-  .race-toggle { grid-template-columns: 22px minmax(0, 1fr); grid-template-areas: "chevron name" ". status" ". meta"; }
+  /* a race's name and "Open seat" on one line, the second cut short first; its pick on the next */
+  .race-toggle { grid-template-columns: 22px minmax(0, max-content) minmax(0, 1fr); grid-template-areas: "chevron name meta" ". status status";
+    column-gap: 8px; }
+  .race-meta { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .race-meta:not(:empty)::before { content: "· "; }
+  .race.collapsed .race-name { grid-column: 2 / -1; }
   .race-status { max-width: none; }
   .race.collapsed .race-name { white-space: normal; } /* the pick has a line of its own, so the name wraps rather than being cut */
   .race-name { font-size: var(--fs-race); }
@@ -1717,6 +1724,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* More's chips, segments and buttons too: drawn at their usual size, the 44px hit area around them */
   .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn), .details-head :is(.btn, .icon-btn) { position: relative; min-height: 0; }
+  /* a money or poll box's title too, so a folded box is one slim line */
+  .box-toggle { position: relative; min-height: 0; }
+  .box-toggle::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
   .details-head :is(.btn, .icon-btn)::after { content: ""; position: absolute; left: 50%; top: 50%;
     width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   .sheet .seg-option { min-height: 34px; }
