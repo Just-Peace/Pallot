@@ -206,6 +206,7 @@ def test_every_answer_carries_the_security_headers(client):
         headers = client.get(path).headers
         assert headers["content-security-policy"].startswith("default-src 'self'; script-src 'self'"), path
         assert "frame-ancestors 'none'" in headers["content-security-policy"], path
+        assert "https://thumb.wikimedia.org" in headers["content-security-policy"], path
         assert headers["x-content-type-options"] == "nosniff", path
         assert headers["referrer-policy"] == "strict-origin-when-cross-origin", path
         assert headers["x-frame-options"] == "DENY", path
