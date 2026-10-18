@@ -55,6 +55,7 @@ SECURITY_HEADERS = {
     "Content-Security-Policy": "; ".join((
         "default-src 'self'", "script-src 'self'", "style-src 'self'",
         "img-src 'self' data: https://commons.wikimedia.org https://upload.wikimedia.org"
+        " https://thumb.wikimedia.org"
         " https://ballotpedia-api4.s3.amazonaws.com https://s3.amazonaws.com/ballotpedia-api4/",
         "connect-src 'self'", "frame-ancestors 'none'", "base-uri 'none'", "form-action 'self'", "object-src 'none'",
     )),
