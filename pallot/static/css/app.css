@@ -1437,9 +1437,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .site-footer { left: 0; }
   .site-footer p { padding: 0 16px; }
   .to-top { right: calc(16px + env(safe-area-inset-right, 0px)); }
-  .ballot-tools { margin: 12px 0 4px; }
-  /* only Print stays in the toolbar; View, Help me pick and Clear picks are in More */
-  .ballot-tools :is(#view-controls, .tool-divider, #help-menu, #clear-picks) { display: none; }
+  /* View, Help me pick, Clear picks and Print are all in More, so the toolbar takes no room */
+  .ballot-tools { display: none; }
   .section-chips { display: block; margin: -12px -16px 12px; padding: 8px 16px; }
 
   /* The strip, slim (ballot-nav.js): the section chips on top, then one line with the race on
@@ -1526,7 +1525,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .top-line:hover .chevron { background: var(--neutral-soft); color: var(--text); }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
-  #print-btn { min-height: 40px; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
   .head-compare .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
@@ -1576,7 +1574,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-grid .avatar { width: 32px; height: 32px; font-size: var(--fs-fine); }
   .cand-name { font-size: var(--fs-body); }
   .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: var(--fs-control); }
-  .cand-profile .profile-btn { padding: 4px 11px; font-size: var(--fs-control); line-height: inherit; }
+  .cand-profile .profile-btn { position: relative; padding: 2px 9px; font-size: var(--fs-fine); line-height: 1.4; }
+  .cand-profile .profile-btn::after { content: ""; position: absolute; inset: -8px -4px; }
   /* outside Detailed, Note, Avoid and Search wait behind "…", at the end of the second line, and open
      on a line of their own; in Detailed they take its place */
   :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { display: inline-flex; align-items: center;
