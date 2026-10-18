@@ -210,8 +210,8 @@ class Location(BaseModel):
     matched_address: str | None
     lat: float | None  # None: a voter card's precinct the precinct map couldn't place
     lon: float | None
-    state: str | None = None  # postal code, "TX"
-    state_name: str | None = None
+    state: str  # postal code, "TX"
+    state_name: str  # "Texas"
     county: str | None
     city: str | None
     school_district: str | None

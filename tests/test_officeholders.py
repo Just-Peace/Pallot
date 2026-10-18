@@ -70,7 +70,7 @@ def test_a_refusal_pauses_it_and_the_ballot_still_loads(client, upstream):
 
 
 def test_the_lists_are_read():
-    congress = congress_holders(load("officeholders_congress.json"))
+    congress = congress_holders(load("officeholders_congress.json"), "TX")
     assert len([h for h in congress if h.seat == "TX-SEN"]) == 2
     assert all(h.seat.startswith("TX-") for h in congress)
     carter = next(h for h in congress if h.name == "John R. Carter")
@@ -83,7 +83,7 @@ def test_the_lists_are_read():
 
 
 def test_the_senator_up_is_the_one_whose_term_ends_after_the_election():
-    holders = congress_holders(load("officeholders_congress.json"))
+    holders = congress_holders(load("officeholders_congress.json"), "TX")
     senators = [h for h in holders if h.seat == "TX-SEN"]
     assert officeholders._senator_up(senators, dt.date(2026, 11, 3)).name == "John Cornyn"
     assert officeholders._senator_up(senators, dt.date(2030, 11, 5)).name == "Ted Cruz"

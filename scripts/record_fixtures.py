@@ -390,8 +390,8 @@ def record_polls(client: httpx.Client) -> None:
             if len(page) < polls.PAGE:
                 break
             offset += polls.PAGE
-        texas = [row for row in rows if row.get("state") == polls.STATE]
-        others = [row for row in rows if row.get("state") != polls.STATE][:3]
+        texas = [row for row in rows if row.get("state") == "Texas"]
+        others = [row for row in rows if row.get("state") != "Texas"][:3]
         save(f"polls_{kind}.json", {"success": True, "count": len(texas + others), "data": texas + others})
 
 
@@ -411,8 +411,8 @@ def record_officeholders(client: httpx.Client) -> None:
     response = client.get(officeholders.CONGRESS)
     response.raise_for_status()
     members = response.json()
-    texas = [m for m in members if m["terms"][-1].get("state") == officeholders.STATE]
-    others = [m for m in members if m["terms"][-1].get("state") != officeholders.STATE][:3]
+    texas = [m for m in members if m["terms"][-1].get("state") == "TX"]
+    others = [m for m in members if m["terms"][-1].get("state") != "TX"][:3]
     nationwide = {seat.partition("-")[0] for seat in NATIONWIDE_RACES} | {"NC", "MI"}  # and STATE_ADDRESSES' states
     others += [m for m in members if m["terms"][-1].get("state") in nationwide and m not in others]
     save("officeholders_congress.json", texas + others)

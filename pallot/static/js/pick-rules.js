@@ -204,7 +204,7 @@ const share = (amount) => `${COUNT.format(amount)}%`;
 // something to go on (``has``, from available()) count, as only they show in the dialog.
 // ``parties``: ballotParties(), for the chips' names; ``home``: the ballot's state, whose donors
 // in_state_share counts (the rule's stored key stays "texas").
-export function describeRule(rule, parties, has, { home = "Texas" } = {}) {
+export function describeRule(rule, parties, has, { home } = {}) {
   const on = (condition, amount) => condition && known(amount);
   const adjectives = parties.filter((p) => rule.parties.includes(p.code))
     .map((p) => (p.code === WRITE_INS ? "write-in" : p.label));

@@ -217,7 +217,7 @@ async def locate(svc: Services, address: str, sources: Sources) -> tuple[Place, 
         lat=place.lat,
         lon=place.lon,
         state=place.state,
-        state_name=place.state_name,
+        state_name=coverage.NAMES[place.state],
         county=place.county,
         city=place.city,
         school_district=place.school_district,
@@ -565,7 +565,7 @@ class _Builder:
         """The races on the state's official list that the address places (states/place.py),
         the ones it can't settle left out unless asked for, as Texas's precinct races. With the
         list off, not yet out, or not to be had, the FEC's races for Congress instead, saying why."""
-        lists = self.svc.states.get(location.state or "")
+        lists = self.svc.states.get(location.state)
         if lists is None:
             return await self._from_fec(place, location, coverage.FEDERAL)
         day = fec_source.general_day(self.svc.today())
@@ -642,7 +642,7 @@ class _Builder:
         requested = self.request.election_date
         if requested and requested != day:
             self.warnings.append(f"Outside Texas, Pallot has only the general election on {day:%b %d, %Y}; showing it.")
-        state = location.state or ""
+        state = location.state
         cycle = fec_source.cycle_of(day)
         try:
             senate = (state, 0) in await fec.elections(cycle, "senate")

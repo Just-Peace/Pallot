@@ -9,7 +9,7 @@ from .entry import BundleError, Context
 
 
 async def build(ctx: Context) -> dict[str, int]:
-    """Every page of the Senate, House and Governor lists; counts each kind's Texas polls."""
+    """Every page of the Senate, House and Governor lists; counts each kind's polls nationwide."""
     svc = Polls(ctx.cache, ctx.config.ttl, ctx.today)
     counts = {}
     try:

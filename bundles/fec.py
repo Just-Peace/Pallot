@@ -12,8 +12,7 @@ from pallot.http_cache import RequestSpec, UpstreamError
 from pallot.models import Candidate, Race
 from pallot.offices import classify
 from pallot.sources import fec
-from pallot.sources.officeholders import STATE
-from pallot.sources.sos import Election, Sos, still_running
+from pallot.sources.sos import STATE, Election, Sos, still_running
 from pallot.text import display_office, display_person
 
 from .entry import BundleError, Context

@@ -29,14 +29,14 @@ def cards_from(source: str, races: list[Race]) -> CardSet:
 
 async def run(races: list[Race]) -> enrich.Outcome:
     sources = Sources({source: source in (fec.SOURCE, polls.SOURCE) for source in enrich.JOBS})
-    return await enrich.run(SimpleNamespace(fec=None, polls=None, endorsements=[]), races, sources, enrich.Context())
+    return await enrich.run(SimpleNamespace(fec=None, polls=None, endorsements=[]), races, sources, enrich.Context(state="TX"))
 
 
 async def test_sources_are_asked_at_once_and_cards_keep_their_order(monkeypatch):
     started = {fec.SOURCE: asyncio.Event(), polls.SOURCE: asyncio.Event()}
 
     def fake(source: str, other: str):
-        async def cards(_svc, races, _day):
+        async def cards(_svc, races, *_rest):
             started[source].set()
             await asyncio.wait_for(started[other].wait(), 2)  # times out unless the other one is running too
             if source == fec.SOURCE:
