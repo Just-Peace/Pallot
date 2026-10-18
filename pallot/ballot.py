@@ -639,8 +639,6 @@ class _Builder:
                                    "Try again in a minute.") from exc
         if not races:
             raise BallotError(404, " ".join(self.warnings) or f"No ballot data found for this {self.where}.")
-        self.notes.append("Outside Texas, Pallot lists only the races for Congress, from the people who filed with the "
-                          "FEC. Your ballot has more races: check your county's sample ballot.")
         self.context = enrich.Context(day=day, county=location.county, city=location.city, state=location.state)
         self.every_race = races
         self.ballot = Ballot(

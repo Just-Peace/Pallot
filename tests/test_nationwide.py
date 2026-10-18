@@ -34,7 +34,7 @@ def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):
     assert senate["holder"]["name"] == "Jon Ossoff" and not senate["open_seat"]  # matched by FEC ID, not name
     assert senate["notes"][0]["source"] == "FEC" and "raised at least $5,000" in senate["notes"][0]["text"]
     assert any(card["source"] == "fec" and card["match"] is None for card in ossoff["cards"])
-    assert any("only the races for Congress" in note for note in ballot["notes"])
+    assert not any("only the races for Congress" in note for note in ballot["notes"])  # the page's coverage line says it
     assert not [host for host in TEXAS_ONLY_HOSTS if upstream.count(host)]
 
 
