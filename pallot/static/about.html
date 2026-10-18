@@ -18,25 +18,37 @@
     <main id="main" class="content">
       <header class="page-head">
         <h1>About Pallot</h1>
-        <p class="lede">A personal helper for working through your ballot: every race, what several sources say about each candidate, and a printout of your picks.</p>
+        <p class="lede">Your vote is yours. Pallot is a personal helper for working through your ballot: its races, what several sources say about each candidate, and a printout of your picks.</p>
       </header>
 
       <section class="panel prose" aria-labelledby="what">
         <h2 id="what">What it does</h2>
         <ul>
-          <li>Shows every race on your ballot, in ballot order, from your home address, or from the county and precinct on your voter registration certificate. It covers Texas for now.</li>
+          <li>Shows the races on your ballot, from your home address or from your voter registration card, anywhere in the 50 states and DC. How much it has depends on your state (see <a href="#coverage">where it covers</a>).</li>
           <li>Puts what each source says about a candidate side by side. Each candidate shows how much money they've raised and from whom, what the state's filings, Wikidata, TrackAIPAC and Vote for Peace say<span data-endorsements="clause"></span>, and where they stand in public polls, plus a web search. A race says when its seat is open, and which party holds it now.</li>
           <li>Shows when to vote and your districts, with a map.</li>
           <li>Lets you pick, take notes, and print your picks to take to the polls.</li>
         </ul>
       </section>
 
+      <section class="panel prose" aria-labelledby="coverage">
+        <h2 id="coverage">Where it covers</h2>
+        <ul>
+          <li><strong>Full ballot: Texas.</strong> Every federal, state, district, county and precinct race, in ballot order, from the Texas Secretary of State, with your precincts, the key dates and a map of your districts.</li>
+          <li><strong>The state's official list: Michigan, North Carolina, Pennsylvania, Florida and Virginia.</strong> The races on the candidate list the state's election office publishes for the November ballot: Congress, statewide offices, the Legislature and some courts, and in North Carolina county and town races too. Virginia elects only Congress in 2026. Michigan also has its key dates.</li>
+          <li><strong>Congress only: every other state, and DC.</strong> Your U.S. Senate and U.S. House races, from the people who filed with the FEC for the seat and raised $5,000 or more. The FEC doesn't say who made the November ballot, so each is marked Unverified: someone who lost a primary or dropped out may still be listed.</li>
+        </ul>
+        <p>More states are on the way. Wherever you are, your official sample ballot has every race.</p>
+      </section>
+
       <section class="panel prose" aria-labelledby="isnt">
         <h2 id="isnt">What it isn't</h2>
         <ul>
-          <li><strong>Not official.</strong> It isn't tied to any government, party, campaign or source, and it can be wrong. Check your county's sample ballot.</li>
-          <li><strong>Not an endorsement.</strong> It shows what the sources say about everyone on your ballot. Who you vote for is up to you.</li>
+          <li><strong>Not always right.</strong> Pallot puts together what public sources say. A source can be late, incomplete or wrong, and Pallot can match the wrong record. Check your official sample ballot from your county or state elections office before you vote.</li>
+          <li><strong>Not official.</strong> It isn't tied to any government, election office, party, campaign or source.</li>
+          <li><strong>Not an endorsement.</strong> Pallot doesn't back any candidate, party or cause. It shows what the sources say about everyone on your ballot, including endorsements others make. Who you vote for is your choice alone.</li>
           <li><strong>Not where you register or vote.</strong> <a href="https://vote.gov/" target="_blank" rel="noopener noreferrer">Vote.gov</a> points you to your state's election office.</li>
+          <li><strong>No warranty.</strong> Pallot is provided as is, without warranty of any kind. Its makers and contributors aren't liable for any decision made with it, or for anything a source got wrong.</li>
         </ul>
       </section>
 
@@ -46,15 +58,16 @@
           <table class="data-table">
             <thead><tr><th scope="col">Source</th><th scope="col">Used for</th></tr></thead>
             <tbody>
-              <tr><th scope="row"><a href="https://www.sos.state.tx.us/elections/" target="_blank" rel="noopener noreferrer">Texas Secretary of State</a></th><td>Elections, ballot order, candidates and key dates</td></tr>
+              <tr><th scope="row"><a href="https://www.sos.state.tx.us/elections/" target="_blank" rel="noopener noreferrer">Texas Secretary of State</a></th><td>Texas's elections, ballot order, candidates and key dates</td></tr>
+              <tr><th scope="row"><a href="https://mvic.sos.state.mi.us/" target="_blank" rel="noopener noreferrer">Michigan Bureau of Elections</a>, <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener noreferrer">NC State Board of Elections</a>, <a href="https://www.pavoterservices.pa.gov/" target="_blank" rel="noopener noreferrer">Pennsylvania Department of State</a>, <a href="https://dos.fl.gov/elections/" target="_blank" rel="noopener noreferrer">Florida Division of Elections</a>, <a href="https://www.elections.virginia.gov/" target="_blank" rel="noopener noreferrer">Virginia Department of Elections</a></th><td>Each state's official list of the candidates on its November ballot</td></tr>
               <tr><th scope="row"><a href="https://www.wikidata.org/" target="_blank" rel="noopener noreferrer">Wikidata</a></th><td>Profiles and photos of candidates who hold or held an office in their state, with links to Wikipedia (CC0; photos from Wikimedia Commons)</td></tr>
               <tr><th scope="row"><a href="https://geocoding.geo.census.gov/geocoder/" target="_blank" rel="noopener noreferrer">US Census</a></th><td>Your county and districts, and their outlines</td></tr>
-              <tr><th scope="row"><a href="https://data.capitol.texas.gov/" target="_blank" rel="noopener noreferrer">Texas Legislative Council</a></th><td>Your State Board of Education district and election precinct</td></tr>
-              <tr><th scope="row"><a href="https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Harris</a>, <a href="https://services3.arcgis.com/zqe2kwz79KUqUvxC/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Dallas</a>, <a href="https://mapit.tarrantcounty.com/arcgis/rest/services/Dynamic" target="_blank" rel="noopener noreferrer">Tarrant</a>, <a href="https://taxmaps.traviscountytx.gov/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Travis</a>, <a href="https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap" target="_blank" rel="noopener noreferrer">Fort Bend</a>, <a href="https://maps.bexar.org/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Bexar</a>, <a href="https://gis.dentoncounty.gov/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Denton</a></th><td>Commissioner and JP precincts, in these counties</td></tr>
+              <tr><th scope="row"><a href="https://data.capitol.texas.gov/" target="_blank" rel="noopener noreferrer">Texas Legislative Council</a></th><td>In Texas, your State Board of Education district and election precinct</td></tr>
+              <tr><th scope="row"><a href="https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Harris</a>, <a href="https://services3.arcgis.com/zqe2kwz79KUqUvxC/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Dallas</a>, <a href="https://mapit.tarrantcounty.com/arcgis/rest/services/Dynamic" target="_blank" rel="noopener noreferrer">Tarrant</a>, <a href="https://taxmaps.traviscountytx.gov/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Travis</a>, <a href="https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap" target="_blank" rel="noopener noreferrer">Fort Bend</a>, <a href="https://maps.bexar.org/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Bexar</a>, <a href="https://gis.dentoncounty.gov/arcgis/rest/services" target="_blank" rel="noopener noreferrer">Denton</a></th><td>Commissioner and JP precincts, in these Texas counties</td></tr>
               <tr><th scope="row"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></th><td>The street map, and addresses the Census can't find</td></tr>
               <tr><th scope="row"><a href="https://developers.google.com/maps/documentation/geocoding" target="_blank" rel="noopener noreferrer">Google Geocoding</a></th><td>Addresses no one else can find, and address suggestions as you type, if a key is set</td></tr>
-              <tr><th scope="row"><a href="https://www.fec.gov/data/" target="_blank" rel="noopener noreferrer">FEC</a></th><td>Campaign money for Congress</td></tr>
-              <tr><th scope="row"><a href="https://www.ethics.texas.gov/data-reports/campaign-finance/" target="_blank" rel="noopener noreferrer">Texas Ethics Commission</a></th><td>Campaign money for state offices</td></tr>
+              <tr><th scope="row"><a href="https://www.fec.gov/data/" target="_blank" rel="noopener noreferrer">FEC</a></th><td>Campaign money for Congress, and the candidates for Congress in states without a list above</td></tr>
+              <tr><th scope="row"><a href="https://www.ethics.texas.gov/data-reports/campaign-finance/" target="_blank" rel="noopener noreferrer">Texas Ethics Commission</a></th><td>Campaign money for Texas's state offices</td></tr>
               <tr><th scope="row"><a href="https://fiftyplusone.news" target="_blank" rel="noopener noreferrer">FiftyPlusOne</a></th><td>Polls for U.S. Senate, U.S. House and Governor</td></tr>
               <tr><th scope="row"><a href="https://www.trackaipac.com" target="_blank" rel="noopener noreferrer">TrackAIPAC</a></th><td>Pro-Israel lobby money and endorsements in congressional races</td></tr>
               <tr><th scope="row"><a href="https://voteforpeace.info/candidates" target="_blank" rel="noopener noreferrer">Vote for Peace</a></th><td>Whether it calls a candidate an Ally, Neutral or Opposed, used with permission (off at first)</td></tr>
@@ -78,9 +91,9 @@
 
       <section class="panel prose" aria-labelledby="credits">
         <h2 id="credits">Who makes it</h2>
-        <p>Pallot is made by <a href="https://github.com/Just-Peace" target="_blank" rel="noopener noreferrer">Just-Peace</a> for voters who want to see their whole ballot and weigh every candidate for themselves. We don't back any candidate or party, and your vote is yours.</p>
+        <p>Pallot is made by <a href="https://github.com/Just-Peace" target="_blank" rel="noopener noreferrer">Just-Peace</a> for voters who want to see their whole ballot and weigh every candidate for themselves. We don't back any candidate or party. Your vote is yours.</p>
         <p>Questions, corrections or ideas: <a data-contact>email us</a>, or open a <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issue</a>.</p>
-        <p class="fine">Map data © OpenStreetMap contributors. Map by <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a> (BSD 2-Clause, © Volodymyr Agafonkin and CloudMade), bundled with Pallot. Icons by <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">Feather</a> (MIT). Seat holders from congress-legislators (public domain) and Open States (CC0), bundled with Pallot and refreshed weekly. Officeholders' profiles from Wikidata (CC0), its list of Texas officeholders bundled with Pallot and refreshed weekly; candidate photos from Wikimedia Commons, each under its own file's licence. District outlines from the US Census's TIGERweb (public domain), bundled with Pallot and refreshed weekly. Commissioner and JP precincts from the seven counties' public map servers, bundled with Pallot and refreshed weekly. Polls from FiftyPlusOne, bundled with Pallot with FiftyPlusOne's permission and refreshed daily. Endorsement lists from Muslims United PAC, CAIR Action and Emgage PAC, each bundled with Pallot with its organization's permission and refreshed daily. Address suggestions from Google Maps. Pallot <span data-version></span>.</p>
+        <p class="fine">Map data © OpenStreetMap contributors. Map by <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a> (BSD 2-Clause, © Volodymyr Agafonkin and CloudMade), bundled with Pallot. Icons by <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">Feather</a> (MIT). Seat holders from congress-legislators (public domain) and Open States (CC0), bundled with Pallot and refreshed weekly. Officeholders' profiles from Wikidata (CC0), its list of Texas officeholders bundled with Pallot and refreshed weekly; candidate photos from Wikimedia Commons, each under its own file's licence. District outlines from the US Census's TIGERweb (public domain), bundled with Pallot and refreshed weekly. Candidate lists from the FEC (public domain) and from the election offices of Michigan, North Carolina, Pennsylvania, Florida and Virginia, bundled with Pallot and refreshed daily. Commissioner and JP precincts from the seven counties' public map servers, bundled with Pallot and refreshed weekly. Polls from FiftyPlusOne, bundled with Pallot with FiftyPlusOne's permission and refreshed daily. Endorsement lists from Muslims United PAC, CAIR Action and Emgage PAC, each bundled with Pallot with its organization's permission and refreshed daily. Address suggestions from Google Maps. Pallot <span data-version></span>.</p>
       </section>
     </main>
   </div>

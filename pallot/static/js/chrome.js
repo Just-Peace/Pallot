@@ -118,7 +118,7 @@ function contactLink(link = h("a", {}, "Contact")) {
 
 function renderFooter(app) {
   const footer = h("footer", { class: "site-footer" },
-    h("p", {}, "Pallot is an unofficial helper: always check your county's official sample ballot. · ",
+    h("p", {}, "Pallot is unofficial and endorses no one: always check your official sample ballot. · ",
       extLink(REPO, "GitHub"), " · ", contactLink(), ` · ${VERSION_LABEL}`));
   app.after(footer);
   trackHeight(footer, "--footer-h"); // the content, Back to top and the toasts keep clear of it, however many lines it wraps to
