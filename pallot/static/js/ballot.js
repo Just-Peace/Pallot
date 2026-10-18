@@ -332,6 +332,7 @@ function render() {
   renderAddress();
   renderHeader();
   renderApproximate();
+  renderCoverage();
   renderKeyDates();
   renderDistricts();
   renderBallotTop(page.ballot, page.request);
@@ -393,6 +394,23 @@ function renderApproximate() {
         ? "Check \"Your districts\" below against your voter registration certificate, or look up by your voter card."
         : "Check \"Your districts\" below with your county's elections office.")
     : "";
+}
+
+// How much of the ballot Pallot has, right under the title, outside the full ballot (Texas): a
+// state's official list leaves out what it doesn't have; the FEC's filers aren't confirmed.
+function renderCoverage() {
+  const { ballot } = coverageOf(page.ballot);
+  const notice = $("#coverage-note");
+  notice.hidden = ballot === "state";
+  if (notice.hidden) return;
+  const state = page.ballot.location.state_name || "your state";
+  const what = ballot === "list"
+    ? phoneWords(`From ${state}'s official list of candidates. Races it doesn't have, such as most county and city races, aren't shown.`,
+      `From ${state}'s official candidate list; races it doesn't have aren't shown.`)
+    : phoneWords("Congress only: the people who filed with the FEC for your seats, not confirmed on your ballot. Your other races aren't shown.",
+      "Congress only, from FEC filings, not confirmed on your ballot.");
+  notice.classList.toggle("notice-warn", ballot === "fec");
+  notice.replaceChildren(...what, " ", h("a", { href: "faq.html#coverage" }, "What Pallot has here"));
 }
 
 function renderKeyDates() {
