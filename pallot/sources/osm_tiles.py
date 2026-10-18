@@ -1,11 +1,12 @@
-"""The street map under your districts' outlines: OpenStreetMap's tiles, through Pallot.
+"""The street map around the voter's address, under their districts' outlines where Pallot has
+them: OpenStreetMap's tiles, through Pallot.
 
 The browser asks Pallot for a tile (GET /api/tiles/{z}/{x}/{y}.png) and Pallot asks
 tile.openstreetmap.org, keeping each tile for 7 days. That's what OSM's tile usage policy
 asks of a proxy: a User-Agent that names Pallot (Config.user_agent), tiles kept at least 7
 days, and only the tiles someone is looking at. A prefetch or a bulk re-download is
-forbidden, so pallot-cache never refreshes them: it only prunes them. Only tiles over Texas are
-asked for, so Pallot can't be used as a tile proxy for anywhere else.
+forbidden, so pallot-cache never refreshes them: it only prunes them. Only tiles over the 50
+states and DC are asked for, so Pallot can't be used as a tile proxy for anywhere else.
 """
 
 from __future__ import annotations
@@ -17,12 +18,17 @@ from ..http_cache import HttpCache, RequestSpec
 
 SOURCE = "osm_tiles"
 DESCRIPTION = (
-    "The street map under your districts' outlines, from OpenStreetMap."
+    "The street map around your address, under your districts' outlines, from OpenStreetMap."
 )
 URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 MIN_ZOOM = 5
 MAX_ZOOM = 18
-TEXAS = (-109.0, 23.5, -91.0, 38.5)  # lon/lat: the state and 2 degrees around it, so its edges have streets
+REGIONS = (  # lon/lat: the 48 states and DC, Alaska, the Aleutians past the antimeridian, Hawaii; as in district-map.js
+    (-127.0, 22.5, -64.0, 51.0),
+    (-180.0, 50.0, -128.0, 72.5),
+    (172.0, 50.0, 180.0, 54.0),
+    (-162.0, 18.0, -154.0, 23.0),
+)
 
 
 def _lon(x: float, z: int) -> float:
@@ -34,11 +40,13 @@ def _lat(y: float, z: int) -> float:
 
 
 def wanted(z: int, x: int, y: int) -> bool:
-    """A real tile at a zoom the map allows, over Texas."""
+    """A real tile at a zoom the map allows, over the 50 states or DC."""
     if not MIN_ZOOM <= z <= MAX_ZOOM or not (0 <= x < 2**z and 0 <= y < 2**z):
         return False
-    west, south, east, north = TEXAS
-    return _lon(x + 1, z) > west and _lon(x, z) < east and _lat(y + 1, z) < north and _lat(y, z) > south
+    return any(
+        _lon(x + 1, z) > west and _lon(x, z) < east and _lat(y + 1, z) < north and _lat(y, z) > south
+        for west, south, east, north in REGIONS
+    )
 
 
 class Tiles:

@@ -331,6 +331,7 @@ class Ballot(BaseModel):
     warnings: list[str]
     left_out: LeftOut | None = None
     sources_off: list[SourceRef] = []  # the sources Pick by rule's conditions use that this request has off
+    street_map: bool = True  # the street map (/api/tiles) is on for this request
     coverage: Coverage = Coverage()
 
 

@@ -8,6 +8,8 @@
 // it never traps the page's scrolling. Its heading folds it away like a race's, remembered in
 // the browser (view.js, showMap: folded at first); nothing is fetched for it while it's folded.
 // A change of the switch elsewhere (Settings, another tab) applies with syncMapShown().
+// Where Pallot has no outlines (outside Texas) it's the street map alone, with the pin, and
+// nothing is asked of /api/district-outlines; with the street map off too, there's no map.
 
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";
@@ -16,7 +18,13 @@ import { DISTRICTS, coverageOf } from "./labels.js";
 import { setViewPref, viewPref } from "./view.js";
 
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
-const TEXAS = [[23.5, -109], [38.5, -91]]; // as far as the server serves tiles (sources/osm_tiles.py)
+const REGIONS = [ // as far as the server serves tiles (sources/osm_tiles.py)
+  [[22.5, -127], [51, -64]],
+  [[50, -180], [72.5, -128]],
+  [[50, 172], [54, 180]],
+  [[18, -162], [23, -154]],
+];
+const STREET_ONLY = { outlines: [], notes: [], street_map: true };
 const HOME_ZOOM = [10, 14]; // the view around the address: streets, and the nearest district if it fits
 const TILES = "/api/tiles/{z}/{x}/{y}.png";
 const OSM_CREDIT = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
@@ -36,11 +44,19 @@ let parts = null; // the panel's toggle, body, picks, canvas, notes and foot, ma
 let shown = false; // the map is open (folded at first)
 let drawn = ""; // the query whose outlines are on the map
 let ballot = null;
-let query = ""; // "cd=10&sd=14&hd=49&sboe=5&election_precinct=0300&county=453": the ballot's districts
+let query = ""; // "cd=10&sd=14&hd=49&sboe=5&election_precinct=0300&county=453": the ballot's districts, or "@lat,lon" for the street map alone
 let highlight = null; // the kind picked
 let data = null; // the outlines for ``query``, once loaded
 let failed = null; // why they couldn't be loaded
 let pending = null; // the AbortController of the request still running
+
+const streetOnly = () => query.startsWith("@");
+
+// The box of REGIONS the address is in, which bounds the map and its tiles.
+function regionOf({ lat, lon }) {
+  return REGIONS.find(([[south, west], [north, east]]) => lat >= south && lat <= north && lon >= west && lon <= east)
+    || REGIONS[0];
+}
 
 function districtName(kind, number) {
   return kind === "election_precinct" ? `Precinct ${number}` : `${DISTRICTS[kind].long} District ${number}`;
@@ -64,14 +80,18 @@ export function syncMap(next) {
   const asked = KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]);
   const precinct = districts.election_precinct;
   if (precinct) asked.push(["election_precinct", precinct.code], ["county", precinct.county]);
-  const drawn = next.location.lat != null && coverageOf(next).outlines; // not a voter card the map couldn't place
-  const nextQuery = drawn ? new URLSearchParams(asked).toString() : "";
+  const { lat, lon } = next.location;
+  const placed = lat != null; // not a voter card the map couldn't place
+  const nextQuery = !placed ? ""
+    : coverageOf(next).outlines ? new URLSearchParams(asked).toString()
+      : next.street_map !== false ? `@${lat},${lon}` : "";
   section.hidden = !nextQuery;
   if (!nextQuery) {
     query = "";
     return;
   }
   makePanel();
+  labelPanel(nextQuery.startsWith("@"));
   if (nextQuery !== query) {
     query = nextQuery;
     highlight = null;
@@ -119,20 +139,18 @@ function makePanel() {
         setShown(!shown);
         setViewPref("showMap", shown);
       } },
-    }, h("span", { class: "chevron", "aria-hidden": "true" }), "Map of your districts"),
+    }, h("span", { class: "chevron", "aria-hidden": "true" })),
+    title: document.createTextNode(""),
     body: h("div", { id: "district-map-body", hidden: !shown }),
+    hint: h("p", { class: "map-hint" }),
     picks: h("div", { class: "map-picks", role: "group", "aria-label": "Highlight a district on the map" }),
-    canvas: h("div", {
-      class: "map-canvas", role: "region",
-      "aria-label": "Street map of your districts, centered on your address. Arrow keys move it; + and − zoom.",
-    }),
+    canvas: h("div", { class: "map-canvas", role: "region" }),
     notes: h("div", { class: "map-notes" }),
     foot: h("p", { class: "fine map-foot" }),
   };
+  parts.toggle.append(parts.title);
   parts.body.append(
-    h("p", { class: "map-hint" },
-      "Pick a district to highlight it and zoom to it; pick it again to go back to your address. ",
-      touch ? "Move the map with two fingers." : "Click the map to zoom it with the scroll wheel."),
+    parts.hint,
     parts.picks,
     parts.canvas,
     parts.notes,
@@ -142,6 +160,17 @@ function makePanel() {
   section.replaceChildren(h("h2", { id: "district-map-title" }, parts.toggle), parts.body);
 }
 
+// The heading, hint and name of the map: of the districts, or of the address alone.
+function labelPanel(alone) {
+  const move = touch ? "Move the map with two fingers." : "Click the map to zoom it with the scroll wheel.";
+  parts.title.data = alone ? "Map of your address" : "Map of your districts";
+  parts.hint.textContent = alone ? move
+    : `Pick a district to highlight it and zoom to it; pick it again to go back to your address. ${move}`;
+  parts.picks.hidden = alone;
+  parts.canvas.setAttribute("aria-label", `Street map ${alone ? "" : "of your districts, "}centered on your address. `
+    + "Arrow keys move it; + and − zoom.");
+}
+
 async function load() {
   failed = null;
   pending?.abort();
@@ -149,12 +178,14 @@ async function load() {
   pending = controller;
   const asked = query;
   parts.picks.replaceChildren();
-  parts.notes.replaceChildren(h("p", { class: "district-note", role: "status" }, "Loading the district outlines…"));
+  parts.notes.replaceChildren(h("p", { class: "district-note", role: "status" },
+    streetOnly() ? "Loading the map…" : "Loading the district outlines…"));
   try {
     leaflet ||= import("../vendor/leaflet/leaflet-src.esm.js");
     const [module, got] = await Promise.all([
       leaflet,
-      fetched.get(asked) || api.get(`/api/district-outlines?${asked}`, { signal: controller.signal }),
+      streetOnly() ? STREET_ONLY
+        : fetched.get(asked) || api.get(`/api/district-outlines?${asked}`, { signal: controller.signal }),
     ]);
     if (controller.signal.aborted || !got) return;
     L = module;
@@ -177,14 +208,17 @@ function draw() {
     return;
   }
   drawn = query;
-  makeMap();
-  if (data.street_map && !tiles) {
-    tiles = L.tileLayer(TILES, {
-      minZoom: 5, maxZoom: 18, bounds: TEXAS, attribution: OSM_CREDIT, className: "map-tiles",
-    }).addTo(map);
-  } else if (!data.street_map && tiles) {
+  const region = regionOf(ballot.location);
+  makeMap(region);
+  map.setMaxBounds(region);
+  if (tiles && (!data.street_map || tiles.options.bounds !== region)) {
     tiles.remove();
     tiles = null;
+  }
+  if (data.street_map && !tiles) {
+    tiles = L.tileLayer(TILES, {
+      minZoom: 5, maxZoom: 18, bounds: region, attribution: OSM_CREDIT, className: "map-tiles",
+    }).addTo(map);
   }
   for (const { halo, line } of lines.values()) {
     halo.remove();
@@ -231,10 +265,10 @@ function draw() {
     data.street_map ? "The street map comes from OpenStreetMap, through Pallot." : "");
 }
 
-function makeMap() {
+function makeMap(region) {
   if (map) return;
   map = L.map(parts.canvas, {
-    minZoom: 5, maxZoom: 18, maxBounds: TEXAS, zoomSnap: 0.5,
+    minZoom: 5, maxZoom: 18, maxBounds: region, zoomSnap: 0.5,
     scrollWheelZoom: false, dragging: !touch, zoomAnimation: !still, fadeAnimation: !still,
   });
   map.setView([ballot.location.lat, ballot.location.lon], 12); // Leaflet needs a view before any layer
