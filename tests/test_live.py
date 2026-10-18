@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import os
 from pathlib import Path
 
 import httpx
@@ -76,9 +77,16 @@ def test_tec_export_still_has_what_we_read():
 
 
 def test_suggestions_live(tmp_path):
-    with TestClient(create_app(Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",)))) as client:
-        found = client.get("/api/suggest", params={"q": "1001 preston st houston"}).json()
-    assert found["enabled"] and any("Preston" in s["label"] and "Houston" in s["label"] for s in found["suggestions"])
+    """Google's Places Autocomplete suggests addresses in and outside Texas (needs PALLOT_GOOGLE_API_KEY)."""
+    key = os.environ.get("PALLOT_GOOGLE_API_KEY", "").strip()
+    if not key:
+        pytest.skip("needs PALLOT_GOOGLE_API_KEY")
+    config = Config(data_dir=tmp_path / "data", allowed_hosts=("testserver",), google_api_key=key)
+    with TestClient(create_app(config)) as client:
+        houston = client.get("/api/suggest", params={"q": "1001 preston st houston"}).json()
+        harrisburg = client.get("/api/suggest", params={"q": "501 n 3rd st harrisburg"}).json()
+    assert houston["enabled"] and any("Preston" in s["label"] and "Houston" in s["label"] for s in houston["suggestions"])
+    assert any(s["label"].endswith("Harrisburg, PA") for s in harrisburg["suggestions"])
 
 
 def test_polls_live():

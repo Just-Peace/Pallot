@@ -95,7 +95,8 @@ async def open_services(
             client,
             min_interval=dict(min_interval),
             source_headers={
-                **({google.SOURCE: {google.KEY_HEADER: config.google_api_key}} if config.google_api_key else {}),
+                **({source: {google.KEY_HEADER: config.google_api_key} for source in (google.SOURCE, suggestions.SOURCE)}
+                   if config.google_api_key else {}),
             },
             memory_bytes=config.cache_memory_bytes,
             retry_after=config.ttl.retry_after,
@@ -114,7 +115,7 @@ async def open_services(
                 census=Census(cache, config.ttl),
                 nominatim=Nominatim(cache, config.ttl),
                 google=Google(cache, config.ttl, config.google_api_key, config.google_daily_max),
-                suggestions=Suggestions(cache, config.ttl),
+                suggestions=Suggestions(cache, config.ttl, config.google_api_key, config.suggest_daily_max),
                 sboe=SboeMap(cache, config.ttl, config.sboe_path, sboe_bundled or sboe.BUNDLED),
                 election_precincts=election_precincts,
                 county_precincts=CountyPrecincts(cache, config.ttl, election_precincts),

@@ -4,7 +4,7 @@
     python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
-the address suggestions two (Ballotpedia's address search), the polls three (FiftyPlusOne, one per kind of race),
+the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
 the key dates one (the Texas SOS's Important Election Dates page, kept as served), the seat
 holders two (Congress's current members, cut down to Texas's and a few others, and Open States'
 Texas legislators, cut down to the columns Pallot reads), Wikidata two (its Texas officeholders,
@@ -53,8 +53,8 @@ sys.path.insert(0, str(ROOT))
 from pallot.config import DEMO_KEY, load_config  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
-    ballotpedia, census, county_precincts, election_precincts, fec, key_dates, nominatim, officeholders, polls, sos,
-    suggestions, tigerweb, wikidata,
+    ballotpedia, census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
+    sos, suggestions, tigerweb, wikidata,
 )
 from pallot.matching import full_key  # noqa: E402
 from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
@@ -161,12 +161,18 @@ def record_ballots(client: httpx.Client) -> None:
                  headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"}))
 
 
-def record_suggest(client: httpx.Client) -> None:
+def record_suggest(client: httpx.Client, key: str) -> None:
+    """Google's address suggestions for SUGGEST, without the place ids (only the text is read)."""
+    if not key:
+        print("No PALLOT_GOOGLE_API_KEY: the suggestions were not recorded.")
+        return
     for name, text in SUGGEST.items():
-        response = client.get(suggestions.URL, params={"location": suggestions.query(suggestions.normalize(text))},
-                              headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"})
+        spec = suggestions.request(suggestions.normalize(text))
+        response = client.post(spec.url, json=spec.json, headers={google.KEY_HEADER: key})
         response.raise_for_status()
-        save(f"suggestions_{name}.json", response.json())
+        kept = [{"placePrediction": {"text": {"text": s["placePrediction"]["text"]["text"]}}}
+                for s in response.json().get("suggestions") or [] if "placePrediction" in s]
+        save(f"suggestions_{name}.json", {"suggestions": kept})
 
 
 def record_fec(client: httpx.Client, key: str) -> None:
@@ -550,7 +556,7 @@ def main(argv: list[str] | None = None) -> int:
         if only in (None, "ballots"):
             record_ballots(client)
         if only in (None, "suggest"):
-            record_suggest(client)
+            record_suggest(client, config.google_api_key)
         if only in (None, "fec"):
             record_fec(client, config.fec_api_key)
         if only in (None, "nationwide"):

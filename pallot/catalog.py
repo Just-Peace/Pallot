@@ -118,12 +118,12 @@ SOURCES = (
     ),
     SourceInfo(
         suggestions.SOURCE,
-        "Address suggestions (Ballotpedia)",
+        "Address suggestions (Google)",
         suggestions.DESCRIPTION,
         True,
         (suggestions.SOURCE,),
         group=ADDRESS,
-        pause=Pause("Ballotpedia refused an address search", "suggestions it already sent still show"),
+        pause=Pause("Google refused an address search or today's searches ran out", "suggestions it already sent still show"),
         refreshable=False,
     ),
     SourceInfo(
@@ -245,7 +245,7 @@ class Catalog:
             groups=[SourceGroupInfo(id=g.id, title=g.title, description=g.description, toggle_all=g.toggle_all)
                     for g in GROUPS],
             sources=[self._status(info, sources) for info in self.sources
-                     if info.id != google.SOURCE or self.svc.google.keyed],
+                     if info.id not in (google.SOURCE, suggestions.SOURCE) or self.svc.google.keyed],
         )
 
     def rule_sources_off(self, sources: Sources) -> list[SourceRef]:
