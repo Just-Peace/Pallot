@@ -9,7 +9,7 @@ import pytest
 from pallot.sources import osm_tiles
 
 from . import conftest
-from .conftest import PNG, capitol_point, switch
+from .conftest import PNG, capitol_point, get_ballot, switch
 
 
 def tile_at(z: int, lat: float, lon: float) -> tuple[int, int, int]:
@@ -23,12 +23,26 @@ def get_tile(client, z: int, x: int, y: int):
     return client.get(f"/api/tiles/{z}/{x}/{y}.png")
 
 
-def test_only_tiles_over_texas_at_the_maps_zooms():
+@pytest.mark.parametrize("lat, lon", [
+    (30.27, -97.74),  # Austin
+    (40.71, -74.0),  # New York
+    (44.81, -68.77),  # Bangor
+    (24.56, -81.78),  # Key West
+    (61.22, -149.9),  # Anchorage
+    (51.88, -176.66),  # Adak, in the Aleutians
+    (52.84, 173.18),  # Attu, past the antimeridian
+    (21.31, -157.86),  # Honolulu
+])
+def test_tiles_over_the_states_and_dc(lat, lon):
+    assert osm_tiles.wanted(*tile_at(14, lat, lon))
+
+
+def test_only_tiles_over_the_states_at_the_maps_zooms():
     lat, lon = capitol_point()
-    assert osm_tiles.wanted(*tile_at(12, lat, lon))
     assert osm_tiles.wanted(*tile_at(5, 31.0, -100.0))
-    assert not osm_tiles.wanted(*tile_at(12, 27.95, -82.46))  # Tampa
-    assert not osm_tiles.wanted(*tile_at(12, 40.71, -74.0))  # New York
+    assert not osm_tiles.wanted(*tile_at(12, 51.5, -0.13))  # London
+    assert not osm_tiles.wanted(*tile_at(12, 19.43, -99.13))  # Mexico City
+    assert not osm_tiles.wanted(*tile_at(12, 18.47, -66.11))  # San Juan
     assert not osm_tiles.wanted(*tile_at(4, lat, lon)) and not osm_tiles.wanted(*tile_at(19, lat, lon))
     assert not osm_tiles.wanted(12, -1, 0) and not osm_tiles.wanted(12, 0, 4096)
 
@@ -52,8 +66,8 @@ def test_tiles_are_not_gzipped(client, upstream, monkeypatch):
     response = client.get(f"/api/tiles/{z}/{x}/{y}.png", headers={"Accept-Encoding": "gzip"})
     assert response.content == big and "content-encoding" not in response.headers
 
-def test_tiles_outside_texas_are_refused_without_asking(client, upstream):
-    assert get_tile(client, *tile_at(12, 40.71, -74.0)).status_code == 404
+def test_tiles_outside_the_states_are_refused_without_asking(client, upstream):
+    assert get_tile(client, *tile_at(12, 51.5, -0.13)).status_code == 404
     assert get_tile(client, *tile_at(19, *capitol_point())).status_code == 404
     assert upstream.count("tile.openstreetmap.org") == 0
 
@@ -61,11 +75,13 @@ def test_tiles_outside_texas_are_refused_without_asking(client, upstream):
 def test_street_map_off(client, upstream):
     switch(client, osm_tiles.SOURCE, False)
     assert client.get("/api/district-outlines", params={"hd": 49}).json()["street_map"] is False  # so the map asks for no tiles
+    assert get_ballot(client)["street_map"] is False  # so a state without outlines shows no map
     assert upstream.count("tile.openstreetmap.org") == 0
 
 
-def test_the_outlines_say_the_street_map_is_on(client, upstream):
+def test_the_outlines_and_the_ballot_say_the_street_map_is_on(client, upstream):
     assert client.get("/api/district-outlines", params={"hd": 49}).json()["street_map"] is True
+    assert get_ballot(client)["street_map"] is True
 
 
 @pytest.mark.parametrize("status", [403, 429])

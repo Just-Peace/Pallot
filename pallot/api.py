@@ -472,10 +472,10 @@ def create_app(
     async def tile(request: Request, z: int, x: int, y: int) -> Response:
         """One OpenStreetMap tile for the street map, kept by the server (see sources/osm_tiles.py).
         An image, so it carries no choice of sources: the map only asks for tiles with the street
-        map on (DistrictOutlines.street_map)."""
+        map on (Ballot.street_map, DistrictOutlines.street_map)."""
         svc = services(request)
         if not osm_tiles.wanted(z, x, y):
-            raise HTTPException(404, "Pallot only shows the street map over Texas.")
+            raise HTTPException(404, "Pallot only shows the street map over the United States.")
         try:
             body = await svc.tiles.tile(z, x, y)
         except UpstreamError as exc:
@@ -514,6 +514,7 @@ def create_app(
             except BallotError as exc:
                 raise HTTPException(exc.status, exc.message) from exc
             builder.ballot.sources_off = catalog(request).rule_sources_off(on)
+            builder.ballot.street_map = on.enabled(osm_tiles.SOURCE)
             if NDJSON not in request.headers.get("accept", ""):
                 return await builder.finish()
             first = _line(builder.ballot, done=False)  # before finish() adds the cards to the same races
