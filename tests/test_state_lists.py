@@ -134,6 +134,12 @@ def test_a_michigan_ballot_has_its_statewide_races_and_says_what_it_leaves_out(c
     assert find_race(ballot, "Justice of the Supreme Court")["seats"] == 2
     assert find_race(ballot, "Ingham County Judge of Probate, incumbent position")
     assert any("court races" in note and "sample ballot" in note for note in ballot["notes"])
+    assert ballot["key_dates"] == {
+        "election": "General Election", "election_day": "2026-11-03", "register_by": "2026-10-19",
+        "mail_apply_by": "2026-10-30", "early_voting_start": "2026-10-24", "early_voting_end": "2026-11-01",
+        "source": "Michigan Department of State", "source_url": "https://www.michigan.gov/sos/elections/voting",
+        "computed": True,
+    }
 
 
 def test_a_state_list_turned_off_leaves_the_races_for_congress_from_the_fec(client, upstream):
@@ -154,6 +160,7 @@ def test_a_state_list_that_cant_be_had_leaves_the_races_for_congress_from_the_fe
     ballot = get_ballot(client, "lansing")
     assert ballot["coverage"]["ballot"] == "fec"
     assert any("Couldn't load the list of candidates from the Michigan Bureau of Elections" in w for w in ballot["warnings"])
+    assert ballot["key_dates"]["register_by"] == "2026-10-19"
 
 
 def test_pennsylvanias_list_keeps_the_nominees_and_leaves_out_the_primarys_party_offices():

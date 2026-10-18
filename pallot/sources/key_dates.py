@@ -39,6 +39,7 @@ class Deadlines:
     mail_apply_by: dt.date | None = None  # the application must arrive (not be postmarked) by then
     early_start: dt.date | None = None
     early_end: dt.date | None = None
+    state: str = "TX"  # whose: states/key_dates.py works out other states'
 
 
 def first_date(text: str) -> dt.date | None:
