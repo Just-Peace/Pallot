@@ -40,7 +40,8 @@ const moreView = modeChoice();
 const moreFocus = focusChips();
 const moreHidePicked = h("label", { class: "check" }, h("input", { type: "checkbox", "data-view": "hidePicked" }), " Only races I haven't picked");
 const moreTheme = h("button", { type: "button", class: "icon-only theme-toggle" });
-const morePrint = moreAction("Print my picks", "printer", () => $("#print-btn").click());
+const headPrint = $("#head-print");
+const stripPrint = $("#strip-print");
 const clearButtons = [$("#clear-picks"), moreAction("Clear picks", "x", () => $("#clear-picks").click(), { class: "danger", hidden: true })];
 const waitNotes = [$("#wait-note"), h("p", { class: "fine wait-note", hidden: true }, $("#wait-note").textContent)];
 const progressInfo = strip.querySelector(".progress-info");
@@ -79,7 +80,7 @@ let applied = {}; // the view switches as the page last applied them
 let sectionCounts = []; // the left pane's section list: [{ element, keys, maybe, races, mark, matchMark }]
 let sectionLinks = []; // and its links: [{ id, link }], the section's id and the link to it
 let currentSection = null; // the id of the section marked as the one on screen
-let lastJumped = null; // the race "Next race to pick" went to last
+let lastJumped = null; // the race "Next race" went to last
 
 const showPickedButton = h("button", { type: "button", class: "link-btn", on: { click: () => setViewPref("hidePicked", false) } }, "Show them");
 export const hidingNote = h("p", { class: "notice", hidden: true }, "Races you've picked are hidden. ", showPickedButton);
@@ -141,7 +142,7 @@ export function updateProgress() {
   $("#progress").textContent = parts.join(" · ");
   $("#progress-bar").style.width = `${Math.round(share * 100)}%`;
   nextButton.disabled = !left;
-  nextButton.textContent = left ? "Next race to pick" : "All picked ✓";
+  nextButton.textContent = left ? "Next race" : "All picked ✓";
   for (const { element, keys, maybe } of sectionCounts) {
     const picked = picks.countPicked(keys);
     element.textContent = maybe ? (picked ? `${picked} picked` : String(keys.length)) : `${picked}/${keys.length}`;
@@ -156,12 +157,19 @@ export function updateProgress() {
 function syncClearPicks() {
   const empty = !page?.picks || page.picks.isEmpty();
   for (const button of clearButtons) button.hidden = empty;
+  syncPicksSection();
+}
+
+// More's "Your picks" shows only while it holds Clear picks or the line saying why Print waits.
+let picksSection = null;
+function syncPicksSection() {
+  if (picksSection) picksSection.hidden = clearButtons[1].hidden && waitNotes[1].hidden;
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
-// Print, which needs them, waits, in the toolbar and in More, a line under it saying why (Help me
-// pick's More conditions… waits too). ``failed``: they won't come, so the bar goes but they stay off.
-const needCards = [$("#print-btn"), morePrint].map((button) => ({ button, title: button.title }));
+// Print, which needs them, waits, in the toolbar, beside the title and on the strip, a line saying why
+// (Help me pick's More conditions… waits too). ``failed``: they won't come, so the bar goes but they stay off.
+const needCards = [$("#print-btn"), headPrint, stripPrint].map((button) => ({ button, title: button.title }));
 const cardsLoading = $("#cards-loading");
 const CARDS_STEPS = [
   [0, "Loading money, polls and endorsements…"],
@@ -180,6 +188,7 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
     button.title = waiting ? STILL_LOADING : title;
   }
   for (const note of waitNotes) note.hidden = !waiting;
+  syncPicksSection();
   maybeTip();
 }
 
@@ -220,14 +229,11 @@ const TIPS = [
       : "Next race jumps to one you haven't picked; j and k step too."),
   },
   {
-    id: "print", when: anyPicked, target: () => $(narrow.matches ? "#more-btn" : "#print-btn"),
-    after: () => (narrow.matches ? progressInfo : tools),
+    id: "print", when: anyPicked,
+    target: () => (!narrow.matches ? $("#print-btn") : strip.classList.contains("print-away") ? stripPrint : headPrint),
+    after: () => (!narrow.matches ? tools : strip.classList.contains("print-away") ? progressInfo : $(".ballot-head")),
     text: () => {
       const texas = Boolean(STATES[page.ballot.location.state]?.noPhones);
-      if (narrow.matches) {
-        return texas ? "Print your picks from More: phones can't be used at Texas voting stations."
-          : "Print your picks from More, to bring with you.";
-      }
       return texas ? "Print your picks: phones can't be used at the voting station in Texas." : "Print your picks, to bring with you.";
     },
   },
@@ -399,14 +405,19 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections, in the order a voter reaches for them: Print and Clear picks (with the line saying
-// why Print waits), Help me pick's controls, and the View menu's: detail and focuses (each with its
+// More's sections, in the order a voter reaches for them: Clear picks (with the line saying why the
+// title's Print waits), Help me pick's controls, and the View menu's: detail and focuses (each with its
 // "?"), Settings and the appearance, then Expand and Collapse all and Only races I haven't picked. On
-// a phone the toolbar has only Print, so More is where these live.
+// a phone the toolbar is hidden and Print sits by the title, so More is where the rest live.
 function fillMoreSheet() {
   for (const root of [moreView, moreFocus, moreHidePicked]) bindViewControls(root);
   bindThemeToggle(moreTheme);
-  addMoreSection({ id: "picks", label: "Your picks" }, morePrint, clearButtons[1], waitNotes[1]);
+  for (const button of [headPrint, stripPrint]) button.addEventListener("click", () => $("#print-btn").click());
+  // the title's Print scrolled out of view: its icon takes over on the strip
+  new IntersectionObserver(([entry]) => strip.classList.toggle("print-away", !entry.isIntersecting && narrow.matches))
+    .observe(headPrint);
+  picksSection = addMoreSection({ id: "picks", label: "Your picks" }, clearButtons[1], waitNotes[1]);
+  syncPicksSection();
   addMoreSection({ id: "help", label: ["Help me pick ", helpLink("endorsements", "Help me pick")] }, moreHelp);
   addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus,
     h("div", { class: "menu-foot" },

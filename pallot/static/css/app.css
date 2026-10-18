@@ -527,6 +527,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 
 .ballot-head h1 { margin: 0; }
 .ballot-head p { margin: 2px 0 0; }
+/* Print beside the title, narrow screens only (see the end of the file) */
+.ballot-head .head-print { display: none; }
 
 .ballot-top { display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; margin: 8px 0 4px; }
 /* When to vote and Your districts side by side, the map under both, the full width */
@@ -539,7 +541,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .top-summary { display: none; }
 .top-line { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 44px; padding: 8px 0; border: 0; background: none;
   color: var(--text); font: inherit; font-size: 0.92rem; line-height: 1.35; text-align: left; cursor: pointer; }
-.top-line + .top-line { border-top: 1px solid var(--line); }
+.top-line:not([hidden]) ~ .top-line { border-top: 1px solid var(--line); }
 .top-line .chevron { flex: none; margin-left: -4px; }
 .top-line-text { min-width: 0; }
 .top-line strong { font-weight: 650; }
@@ -688,8 +690,8 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width 0.2s; }
 .progress { margin: 0; font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
 #next-race { flex: none; }
-/* the race on screen, and More (more-sheet.js): narrow screens only (see the end of the file) */
-.strip-race, .progress-info .more-btn { display: none; }
+/* the race on screen, Print and More (more-sheet.js): narrow screens only (see the end of the file) */
+.strip-race, .progress-info :is(.more-btn, .strip-print) { display: none; }
 
 /* View and Help me pick: a <details> whose panel drops down over the ballot, in groups (How much
    detail, What matters to you, Races; Trust, Avoid) and a foot (Settings and the
@@ -1207,7 +1209,10 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .box-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
-.box-count { font-size: 0.82rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+/* a poll box's median line, its source's link at the right */
+.box-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.box-foot .fine { margin: 0; min-width: 0; }
+.box-foot .icon-btn { flex: none; }
 
 /* Details' Polls tab (pollsPanel): the median large beside one bar, then a bar per poll on 0-100
    in the candidate's party colour, the median a line across them. A margin's rival shows as text
@@ -1456,7 +1461,12 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .strip-race:empty { display: none; }
   .progress { overflow: hidden; text-overflow: ellipsis; }
   .strip-race:not(:empty) + .progress { font-size: 0.78rem; font-weight: 500; line-height: 1.25; color: var(--muted); }
-  .progress-info .more-btn { display: inline-flex; flex: none; }
+  /* Print, the finish line: a big button beside the title, then, once it scrolls away, its icon on the strip */
+  .ballot-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; }
+  .ballot-head > :not(.head-print) { grid-column: 1; }
+  .ballot-head .head-print { display: inline-flex; grid-column: 2; grid-row: 1 / span 2; min-height: 44px; white-space: nowrap; }
+  .progress-info .more-btn, .print-away .progress-info .strip-print { display: inline-flex; flex: none; }
+  .progress-info .strip-print { padding-inline: 9px; }
   /* while the cards load, a moving line along the strip's foot; its words for screen readers only */
   .cards-loading { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; gap: 0; }
   .cards-loading > span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -1517,11 +1527,16 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .key-actions .btn { min-width: 0; gap: 4px; padding-inline: 6px; }
   .entry .button-row .btn, .focus-ask-foot .btn { flex: 1 1 auto; }
   .confirm-dialog .button-row { flex-direction: column; }
-  /* When to vote and Your districts folded into a line each (ballot-top.js); a line opens its card */
+  /* When to vote and Your districts folded into a line each (ballot-top.js); a line opens its card
+     right under it, in the same box, without a frame or a heading of its own (the line says it) */
   .ballot-top { gap: 10px; }
   .top-summary { display: block; flex: 1 1 100%; padding: 2px 14px; background: var(--panel); border: 1px solid var(--line);
     border-radius: var(--radius); }
-  .ballot-top > :is(.key-dates, .districts-card):not(.open) { display: none; }
+  .top-summary > :is(.key-dates, .districts-card) { padding: 0 0 12px; border: 0; border-radius: 0; background: none; }
+  .top-summary > :is(.key-dates, .districts-card):not(.open) { display: none; }
+  .top-summary > :is(.key-dates, .districts-card) h2 { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .top-summary .districts-head { justify-content: flex-end; margin: -6px 0 2px; }
   .top-line:hover .chevron { background: var(--neutral-soft); color: var(--text); }
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
@@ -1575,8 +1590,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-name { font-size: var(--fs-body); }
   .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: var(--fs-control); }
   .cand-profile .profile-btn { position: relative; padding: 2px 9px; font-size: var(--fs-fine); line-height: 1.4; }
-  .cand-profile .profile-btn::after { content: ""; position: absolute; inset: -8px -4px; }
-  /* outside Detailed, Note, Avoid and Search wait behind "…", at the end of the second line, and open
+  .cand-profile .profile-btn::after { content: ""; position: absolute; inset: -8px -4px; }  /* outside Detailed, Note, Avoid and Search wait behind "…", at the end of the second line, and open
      on a line of their own; in Detailed they take its place */
   :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { display: inline-flex; align-items: center;
     justify-content: center; margin-left: auto; }
@@ -1691,7 +1705,11 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   input.pair-box { font-size: 16px; min-width: calc(3ch + 24px); }
   .race-head, .race.collapsed .race-head { padding-top: 4px; padding-bottom: 4px; }
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
-  .icon-btn.row-more { min-width: 44px; }
+  /* the small buttons in a box's corner and a candidate's row (Compare, a source's link, Profile, "…")
+     keep their drawn size, with the 44px hit area around them, so they don't swell into big pills */
+  :is(.box-links, .box-foot, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more { position: relative; min-height: 0; }
+  :is(.box-links, .box-foot, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after { content: "";
+    position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* the strip's section chips: 44px tall, the pill drawn inside at its usual size */
   .progress-strip .jump-list a, .progress-strip .jump-list a:hover, .progress-strip .jump-list a[aria-current] {
     position: relative; border-color: transparent; background: none; }

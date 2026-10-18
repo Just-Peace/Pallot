@@ -134,6 +134,7 @@
         <header class="ballot-head">
           <h1 tabindex="-1">Your ballot</h1>
           <p class="muted" id="ballot-sub"></p>
+          <button class="btn primary with-icon head-print" id="head-print" type="button"><span data-icon="printer"></span>Print my picks</button>
         </header>
         <p class="notice notice-warn" id="approximate" hidden></p>
         <p class="notice coverage-note" id="coverage-note" hidden></p>
@@ -144,7 +145,8 @@
               <p class="strip-race" id="strip-race" aria-hidden="true"></p>
               <p class="progress" id="progress" aria-live="polite"></p>
             </div>
-            <button class="btn small" id="next-race" type="button" aria-keyshortcuts="j k" title="Or press j and k to move from race to race">Next race to pick</button>
+            <button class="btn small" id="next-race" type="button" aria-keyshortcuts="j k" title="Or press j and k to move from race to race">Next race</button>
+            <button class="btn primary small with-icon strip-print" id="strip-print" type="button" aria-label="Print my picks" title="Print my picks"><span data-icon="printer"></span></button>
             <button class="btn small with-icon more-btn" id="more-btn" type="button" aria-haspopup="dialog" aria-controls="more-sheet"><span data-icon="more"></span>More</button>
           </div>
           <div class="button-row ballot-tools" id="ballot-tools">
@@ -228,7 +230,7 @@
       <h2 id="print-title">Print my picks</h2>
       <div id="print-unpicked" class="notice notice-warn print-unpicked" hidden>
         <p id="print-unpicked-text"></p>
-        <button class="btn small" type="button" id="print-next">Next race to pick</button>
+        <button class="btn small" type="button" id="print-next">Next race</button>
       </div>
       <fieldset class="print-layout">
         <legend>Layout</legend>

@@ -325,8 +325,8 @@ function moneyStack(parts, people) {
 
 // A Breakdown's bars and note. With a total they're shares of it (and show a %); without one
 // they're scaled to the largest part. In "points" each bar is 0-100, with its ``mark`` (the
-// median) a line across them.
-function breakdownRows(item, people = null) {
+// median) a line across them. ``tail`` goes at the right of the note.
+function breakdownRows(item, people = null, tail = null) {
   const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
   const points = item.unit === "points";
   const scale = points ? 100 : item.total || largest;
@@ -336,7 +336,8 @@ function breakdownRows(item, people = null) {
       : h("ul", { class: ["breakdown-rows", points && "poll-rows", points && item.mark != null && "marked"],
           style: points && item.mark != null ? `--mark: ${width(item.mark / 100)}` : null },
         item.parts.map((part) => shareRow(part, scale, Boolean(item.total), people, points))),
-    item.note ? h("p", { class: "fine" }, item.note) : null,
+    tail ? h("div", { class: "box-foot" }, item.note ? h("p", { class: "fine" }, item.note) : null, tail)
+      : item.note ? h("p", { class: "fine" }, item.note) : null,
   ];
 }
 
@@ -379,7 +380,9 @@ function foldBox(race, card, setting, action, body) {
     type: "button", class: "box-toggle", "aria-controls": id, "aria-label": [title, asOf].filter(Boolean).join(" · "),
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
   }, h("span", { class: "chevron", "aria-hidden": "true" }), phoneWords(short, PHONE_TITLES[card.kind]));
-  const foot = [period, asOf].filter(Boolean).join(" · ");
+  // a poll box's date in short, "updated Oct 16"; the button's name keeps it in full
+  const shownAsOf = card.kind === "polls" && card.as_of ? `updated ${formatDate(card.as_of, { month: "short", day: "numeric" })}` : asOf;
+  const foot = [period, shownAsOf].filter(Boolean).join(" · ");
   const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
     h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle),
       foot ? h("span", { class: "box-asof", "aria-hidden": "true" }, foot) : null, action),
@@ -388,13 +391,15 @@ function foldBox(race, card, setting, action, body) {
   return box;
 }
 
-// A poll box's corner, like a candidate's Note and Search: how many polls, the source, and a "?" to
-// the FAQ's answer on how the bar is worked out.
-function pollCorner(card, head) {
-  return h("span", { class: "box-links" },
-    head?.count ? h("span", { class: "box-count" }, plural(head.count, "poll")) : null,
-    card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null,
-    helpLink(MONEY_FAQ.polls, "how the poll bar is worked out"));
+// A poll box's corner: only the "?" to the FAQ's answer on how the bar is worked out. The count is in
+// the median line, and the source's link at its end (pollSource), so the head stays one short line.
+function pollCorner() {
+  return h("span", { class: "box-links" }, helpLink(MONEY_FAQ.polls, "how the poll bar is worked out"));
+}
+
+// The poll source's link, at the right of the median line under the bars.
+function pollSource(card) {
+  return card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null;
 }
 
 // A money box's corner, like a poll box's: Compare funding (``compare``), the source, and a "?" to
@@ -456,8 +461,8 @@ export function raceMoney(race, onCompare = null) {
     const shown = head ? head.parts.filter((p) => p.amount > 0) : [];
     if (!shown.length && !rest.length) return null;
     const polls = card.kind === "polls";
-    return foldBox(race, card, setting, polls ? pollCorner(card, head) : moneyCorner(card, action), [
-      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people) : moneyStack(shown, people)) : null,
+    return foldBox(race, card, setting, polls ? pollCorner() : moneyCorner(card, action), [
+      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people, pollSource(card)) : moneyStack(shown, people)) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);
   });
