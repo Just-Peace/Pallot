@@ -335,18 +335,22 @@ class PrecinctInput(BaseModel):
 
 
 class DistrictInput(BaseModel):
-    """District numbers the voter gives, which win over the ones found from the address."""
+    """District numbers the voter gives, which win over the ones found from the address. The
+    highest is any state's: California's 52 House seats, Minnesota's 67 senators, New Hampshire's
+    400 representatives."""
 
-    cd: int | None = Field(default=None, ge=1, le=38)
-    sd: int | None = Field(default=None, ge=1, le=31)
-    hd: int | None = Field(default=None, ge=1, le=150)
+    cd: int | None = Field(default=None, ge=1, le=52)
+    sd: int | None = Field(default=None, ge=1, le=67)
+    hd: int | None = Field(default=None, ge=1, le=400)
     sboe: int | None = Field(default=None, ge=1, le=15)
 
 
 class BallotRequest(BaseModel):
-    """An address, or the County and Precinct number on a voter registration certificate."""
+    """An address, or the state, county and (optional) precinct number on a voter registration
+    card. A card without a state is Texas's."""
 
     address: str | None = Field(default=None, min_length=5, max_length=200)
+    state: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
     county: str | None = Field(default=None, min_length=2, max_length=40)
     precinct: str | None = Field(default=None, min_length=1, max_length=8)
     election_date: dt.date | None = None
@@ -360,12 +364,19 @@ class BallotRequest(BaseModel):
     def _precinct_as_text(cls, value: object) -> object:
         if isinstance(value, int) and not isinstance(value, bool):
             return str(value)
-        return value.strip() if isinstance(value, str) else value
+        return (value.strip() or None) if isinstance(value, str) else value
+
+    @field_validator("state", mode="before")
+    @classmethod
+    def _state_upper(cls, value: object) -> object:
+        return (value.strip().upper() or None) if isinstance(value, str) else value
 
     @model_validator(mode="after")
     def _address_or_card(self) -> BallotRequest:
-        if not self.address and not (self.county and self.precinct):
-            raise ValueError("Enter an address, or the county and precinct number on your voter registration certificate.")
+        if not self.address and not self.county:
+            raise ValueError("Enter an address, or the state and county on your voter registration card.")
+        if not self.address and not self.state:
+            self.state = "TX"
         return self
 
     @property
@@ -373,12 +384,23 @@ class BallotRequest(BaseModel):
         return not self.address
 
 
+class CardState(BaseModel):
+    """A state on the voter card: its counties, for the County box's suggestions, and the
+    districts its coverage shows, for the district boxes."""
+
+    code: str  # "TX"
+    name: str  # "Texas"
+    counties: list[str]  # the Census's names: "Travis County", "Orleans Parish"
+    districts: list[str]  # "cd", "sd", "hd", "sboe"
+    precincts: bool  # commissioner and JP precincts too
+
+
 class EntryConfig(BaseModel):
     """What the entry card offers: GET /api/config."""
 
     default_entry: Literal["address", "voter_card"]  # the tab a first visit starts on
     voter_card: bool  # the voter card tab shows
-    counties: list[str]  # Texas's counties, for the County box's suggestions
+    states: list[CardState]  # by name, for the State box
 
 
 class ElectionDate(BaseModel):

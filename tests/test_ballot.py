@@ -355,7 +355,7 @@ def test_entered_districts_win_over_the_addresss(client):
     assert (d["cd"], d["sd"], d["entered"]) == (37, 14, ["cd"])
     assert find_race(ballot, "U.S. Representative District 37") and not find_race(ballot, "U.S. Representative District 10")
     assert get_ballot(client)["districts"]["entered"] == []
-    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"], "districts": {"cd": 39}})
+    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"], "districts": {"cd": 53}})
     assert response.status_code == 422
 
 

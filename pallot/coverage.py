@@ -36,6 +36,7 @@ STATES = frozenset({
     "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
 })  # the 50 states and DC, whose addresses Pallot covers
 NAMES = {code: name for code, name in STATE_NAMES.items() if code in STATES}  # "TX" -> "Texas"
+AT_LARGE = frozenset({"AK", "DE", "DC", "ND", "SD", "VT", "WY"})  # one U.S. House seat (DC's delegate), district 0
 FEDERAL = Coverage("fec", ("cd",), precincts=False, outlines=False)
 LIST = Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False)
 COVERED = {

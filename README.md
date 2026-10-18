@@ -59,7 +59,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 
 The FAQ (linked from every page) explains the figures and the features in detail. In short:
 
-- **Look up your ballot** by home address (with suggestions as you type), or under **My voter card** by county and precinct number, so no address is sent anywhere. Pick the election, and a party for a primary. The first lookup can take several seconds, and the very first after installing also downloads the precinct map (about 45 MB); looking the same address up again is instant.
+- **Look up your ballot** by home address (with suggestions as you type), or under **My voter card** by state, county and the districts on the card (in Texas, the precinct number too), so no address is sent anywhere. Pick the election, and a party for a primary. The first lookup can take several seconds, and the very first after installing also downloads the precinct map (about 45 MB); looking the same address up again is instant.
 - **Your ballot** lists every race in ballot order, with the candidates' party, Incumbent and Open seat, the declared write-ins, and a write-in line. Races that depend on a district or precinct Pallot doesn't know are left out, with a note saying which number to enter.
 - **When to vote** has the election's key dates, each downloadable to your calendar, and links to check your registration and find where to vote.
 - **Your districts** shows your districts and precincts, as on your voter registration certificate. You can correct any number from your certificate. A **map** shows your address on OpenStreetMap, with your districts' outlines in Texas.
@@ -239,7 +239,7 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 | `PALLOT_TRUSTED_PROXIES` | `127.0.0.1`: the reverse proxies whose `X-Forwarded-For` header says who the visitor is, comma-separated IP addresses or networks (`10.0.0.0/8`), or `*` for any. The limits count each visitor by that address (see [Running it publicly](#running-it-publicly)) |
 | `PALLOT_PRUNE_EVERY` | `21600` seconds (6 hours): how often a running Pallot prunes the street map's tiles and the address suggestions |
 | `PALLOT_PORT` | `8000`: the port `uv run pallot` listens on (`--port` wins), and in Docker the port published on the host |
-| `PALLOT_DEFAULT_ENTRY` | `address`: the entry card's tab on a first visit. `voter_card` starts on **My voter card** (County and Precinct number) instead; a voter's last lookup still picks its own tab |
+| `PALLOT_DEFAULT_ENTRY` | `address`: the entry card's tab on a first visit. `voter_card` starts on **My voter card** (state, county and districts) instead; a voter's last lookup still picks its own tab |
 
 A value Pallot can't read, such as a port that isn't a whole number or a limit that isn't a rate, stops `pallot` and `pallot-cache` from starting, with one line naming the variable and its value.
 

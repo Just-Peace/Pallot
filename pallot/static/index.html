@@ -48,14 +48,13 @@
             <fieldset class="entry-fields" disabled>
               <div class="card-grid">
                 <div class="field">
+                  <label for="vc-state">State</label>
+                  <select id="vc-state" name="state" autocomplete="address-level1"><option value="TX">Texas</option></select>
+                </div>
+                <div class="field">
                   <label for="vc-county">County <span class="req" aria-hidden="true">*</span></label>
                   <input id="vc-county" name="county" type="text" autocomplete="off" required maxlength="40" placeholder="e.g. Travis" list="vc-counties">
                   <datalist id="vc-counties"></datalist>
-                </div>
-                <div class="field">
-                  <label for="vc-precinct">Precinct <span class="req" aria-hidden="true">*</span></label>
-                  <input id="vc-precinct" name="precinct" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"
-                         required maxlength="8" pattern="[0-9A-Za-z]{1,8}" title="The precinct number on your card, such as 300 or 101A" placeholder="e.g. 300">
                 </div>
               </div>
               <div class="entry-districts" role="group" aria-labelledby="vc-districts-title" aria-describedby="vc-districts-hint">

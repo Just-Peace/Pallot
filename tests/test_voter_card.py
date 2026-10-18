@@ -24,10 +24,14 @@ def capitol_everywhere(upstream):
 
 
 def test_counties_by_name():
-    assert len(counties.COUNTIES) == 254
-    assert counties.find("Travis") == ("Travis", 453) and counties.find("harris county") == ("Harris", 201)
-    assert counties.find("De Witt") == ("DeWitt", 123) and counties.find("mclennan") == ("McLennan", 309)
-    assert counties.find("Zavala") == ("Zavala", 507) and counties.find("Atlantis") is None
+    assert len(counties.counties("TX")) == 254 and len(counties.state_names()) == 51
+    assert counties.find("TX", "Travis") == counties.County("Travis", "Travis County", 453)
+    assert counties.find("TX", "harris county").fips == 201 and counties.find("TX", "De Witt").name == "DeWitt"
+    assert counties.find("TX", "Zavala").fips == 507 and counties.find("TX", "Atlantis") is None
+    assert counties.find("LA", "Orleans Parish") == counties.find("LA", "orleans") == counties.County("Orleans", "Orleans Parish", 71)
+    assert counties.find("MD", "Baltimore").full_name == "Baltimore County"
+    assert counties.find("MD", "Baltimore city").full_name == "Baltimore city"
+    assert counties.find("NM", "dona ana") == counties.find("NM", "Doña Ana County") and counties.find("NM", "Doña Ana").fips == 13
 
 
 def test_a_voter_card_gives_the_same_ballot_as_the_address(client, upstream):
@@ -73,17 +77,61 @@ def test_a_precinct_the_map_doesnt_have(client):
     assert find_race(ballot, "U.S. Senator")
 
 
-def test_a_request_needs_an_address_or_a_county_and_precinct(client):
-    for body in ({}, {"county": "Travis"}, {"precinct": "300"}, {"address": "", "county": "Travis"}):
+def test_a_request_needs_an_address_or_a_county(client):
+    for body in ({}, {"precinct": "300"}, {"state": "NC"}, {"address": "", "county": "Travis"}, {"state": "Texas", "county": "Travis"}):
         assert client.post("/api/ballot", json=body).status_code == 422, body
     unknown = client.post("/api/ballot", json={"county": "Atlantis", "precinct": "1"})
-    assert unknown.status_code == 422 and "no county called" in unknown.json()["detail"]
+    assert unknown.status_code == 422 and unknown.json()["detail"].startswith("Texas has no county called “Atlantis”")
+    elsewhere = client.post("/api/ballot", json={"state": "nc", "county": "Travis"})
+    assert elsewhere.json()["detail"].startswith("North Carolina has no county called")
+    territory = client.post("/api/ballot", json={"state": "PR", "county": "San Juan"})
+    assert territory.status_code == 422 and territory.json()["detail"] == "Pallot covers the 50 states and DC."
+
+
+def test_a_texas_card_without_a_precinct_has_the_county_races_and_the_districts_entered(client, upstream):
+    ballot = card_ballot(client, precinct="", districts={"cd": 10, "hd": 49})
+    assert upstream.count("geocoding.geo.census.gov") == 0 and upstream.count("api4.ballotpedia.org") == 0
+    assert any(n.startswith("Without your precinct number, Pallot can't find your districts") for n in ballot["notes"])
+    assert find_race(ballot, "U.S. Senator") and find_race(ballot, "County Clerk")
+    assert find_race(ballot, "U.S. Representative District 10") and ballot["districts"]["entered"] == ["cd", "hd"]
+    assert ballot["districts"]["election_precinct"] is None and ballot["location"]["county_name"] == "Travis County"
+
+
+def test_a_north_carolina_card_has_its_list_races_for_the_county_and_the_districts_entered(client, upstream, logged_calls):
+    body = {"state": "NC", "county": "Wake", "districts": {"cd": 2, "sd": 14, "hd": 38, "sboe": 5}}
+    ballot = card_ballot(client, **body, precinct=None)
+    assert upstream.count("geocoding.geo.census.gov") == 0 and upstream.count("goelect") == 0
+    assert ballot["coverage"]["ballot"] == "list" and ballot["location"]["source"] == "voter_card"
+    assert (ballot["location"]["state"], ballot["location"]["county_name"]) == ("NC", "Wake County")
+    for name in ("U.S. Senator", "U.S. Representative District 2", "NC State Senate District 14",
+                 "NC House of Representatives District 38", "Wake County Sheriff"):
+        assert find_race(ballot, name), name
+    assert find_race(ballot, "City of Raleigh Mayor") is None and ballot["districts"]["entered"] == ["cd", "sd", "hd"]
+    assert any("Your town's races aren't shown" in n for n in ballot["notes"])
+    card_ballot(client, **body, precinct=None)
+    assert logged_calls() == 0
+
+
+def test_a_card_in_a_state_without_a_list_has_the_fec_races(client):
+    georgia = card_ballot(client, state="GA", county="Fulton", precinct=None, districts={"cd": 5})
+    assert [r["name"] for r in georgia["races"]] == ["U.S. Senator", "U.S. Representative District 5"]
+    wyoming = card_ballot(client, state="WY", county="Laramie", precinct=None)
+    assert wyoming["districts"]["cd"] == 0 and find_race(wyoming, "U.S. Representative At Large")
+    unknown = card_ballot(client, state="GA", county="Fulton", precinct=None)
+    assert [r["name"] for r in unknown["races"]] == ["U.S. Senator"]
+    assert any("Enter your U.S. House district" in n for n in unknown["notes"])
 
 
 def test_the_entry_card_config(client):
     config = client.get("/api/config").json()
     assert config["default_entry"] == "address" and config["voter_card"] is True
-    assert len(config["counties"]) == 254 and config["counties"][0] == "Anderson"
+    states = {state["code"]: state for state in config["states"]}
+    assert len(states) == 51 and config["states"][0]["name"] == "Alabama"
+    texas = states["TX"]
+    assert len(texas["counties"]) == 254 and texas["counties"][0] == "Anderson County"
+    assert texas["districts"] == ["cd", "sd", "hd", "sboe"] and texas["precincts"]
+    assert states["GA"]["districts"] == ["cd"] and not states["GA"]["precincts"]
+    assert "Orleans Parish" in states["LA"]["counties"]
 
 
 def test_races_the_districts_dont_settle_are_left_out_without_cards(client, upstream):

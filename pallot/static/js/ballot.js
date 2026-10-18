@@ -148,8 +148,9 @@ function syncPartyField() {
 function readForm() {
   let request;
   if (entryMode() === "voter_card") {
-    const { county, precinct, districts, precincts } = readVoterCard();
-    request = { county, precinct };
+    const { state, county, precinct, districts, precincts } = readVoterCard();
+    request = { state, county };
+    if (precinct) request.precinct = precinct;
     if (Object.keys(districts).length) request.districts = districts;
     if (Object.keys(precincts).length) request.precincts = precincts;
   } else {
@@ -165,12 +166,13 @@ function readForm() {
   return request;
 }
 
-// Which ballot a request is for: two requests for the same address, or the same county and
-// precinct, are one ballot, whatever else they ask.
+// Which ballot a request is for: two requests for the same address, or the same state, county and
+// precinct, are one ballot, whatever else they ask. A Texas card's is as it was before cards had a state.
 const plain = (text) => String(text ?? "").trim().replace(/\s+/g, " ").toLowerCase();
 function ballotOf(request) {
   if (request.address) return `address:${plain(request.address)}`;
-  return `card:${plain(request.county).replace(/\s+county$/, "")}:${plain(request.precinct).replace(/^0+(?=.)/, "")}`;
+  const state = request.state && request.state !== "TX" ? `${request.state}:` : "";
+  return `card:${state}${plain(request.county).replace(/\s+(county|parish|borough)$/, "")}:${plain(request.precinct).replace(/^0+(?=.)/, "")}`;
 }
 
 // The server sends the ballot as soon as its races are known, then again with every card. When
@@ -217,8 +219,8 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
         rest = Promise.resolve(quick);
       }
     }
-    if (!request.address) { // as Texas and the precinct map write them: "Travis", "300"
-      request.county = found.location.county || request.county;
+    if (!request.address) { // as the Census and the precinct map write them: "Travis County", "300"
+      request.county = found.location.county_name || found.location.county || request.county;
       request.precinct = found.districts.election_precinct?.name || request.precinct;
     }
     page.ballot = found;

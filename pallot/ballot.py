@@ -1,15 +1,16 @@
 """Assemble one voter's ballot from the enabled sources.
 
 The Census gives the county and districts, at the address or, for a voter card, at points inside its
-precinct on the precinct map (locate_precinct), the SBOE map adds the State Board of
+precinct on the precinct map (locate_card), the SBOE map adds the State Board of
 Education district, and the Texas Legislative Council's precinct map the election precinct,
 whose county's records may settle the commissioner and JP precincts. The county's Texas SOS
 ballot order is filtered down to those districts. Then every candidate gets a card from each
 enabled source (enrich.py).
 
 Another state with an adapter for its official list (states/) gets every race on that list
-that the address places (states/place.py). A state without one, or whose list can't be had,
-gets only the races for Congress, from the people who filed with the FEC, each unverified.
+that the address, or a voter card's county and districts, places (states/place.py). A state
+without one, or whose list can't be had, gets only the races for Congress, from the people who
+filed with the FEC, each unverified.
 """
 
 from __future__ import annotations
@@ -237,28 +238,41 @@ def _shared(places: list[Place]) -> Place:
     return replace(first, **keep, matched_address=None, block_point=None)
 
 
-async def locate_precinct(svc: Services, county: str, precinct: str, sources: Sources) -> CardPlace:
-    """A voter card's precinct, as locate() places an address: points inside it from the Texas
-    Legislative Council's precinct map, and the Census's districts there, kept where every point
-    agrees. No address or geocoder is involved. Without the map (turned off, still downloading,
-    unreadable) or the precinct on it, only the county, so the ballot has the statewide and county
-    races and the districts the voter typed."""
-    known = counties.find(county)
+async def locate_card(svc: Services, request: BallotRequest, sources: Sources) -> CardPlace:
+    """A voter card's state and county, and for a Texas precinct, as locate() places an address:
+    points inside it from the Texas Legislative Council's precinct map, and the Census's districts
+    there, kept where every point agrees. No address or geocoder is involved. Without a precinct,
+    the map (turned off, still downloading, unreadable) or the precinct on it, or outside Texas,
+    only the county, so the ballot has the statewide and county races and the districts the voter
+    typed."""
+    state = request.state or "TX"
+    states = counties.state_names()
+    if state not in states:
+        raise BallotError(422, "Pallot covers the 50 states and DC.")
+    typed = (request.county or "").strip()
+    known = counties.find(state, typed)
     if known is None:
-        raise BallotError(422, f"Texas has no county called “{county.strip()}”. Check the spelling on your voter "
-                               "registration certificate.")
-    name, fips = known
+        raise BallotError(422, f"{states[state]} has no county called “{typed}”. Check the spelling on your voter "
+                               "registration card.")
+    name, fips = known.name, known.fips
 
     def location(place: Place | None) -> Location:
         return Location(
             matched_address=None, lat=place.lat if place else None, lon=place.lon if place else None,
-            state="TX", state_name="Texas", county=name, city=place.city if place else None,
-            school_district=place.school_district if place else None, geocoder=None, source="voter_card",
+            state=state, state_name=states[state], county=name, county_name=known.full_name,
+            city=place.city if place else None, school_district=place.school_district if place else None,
+            geocoder=None, source="voter_card",
         )
 
     card = CardPlace(county=name, county_fips=f"{fips:03d}", location=location(None))
-    fallback = (f"so this ballot has the statewide and {name} County races, and any districts you enter under "
+    if state != "TX":
+        return card
+    precinct = request.precinct
+    fallback = (f"so this ballot has the statewide and {known.full_name} races, and any districts you enter under "
                 "\"More districts\".")
+    if not precinct:
+        card.note = f"Without your precinct number, Pallot can't find your districts, {fallback}"
+        return card
     if not sources.enabled(election_precincts_source.SOURCE):
         card.note = (f"\"Election precincts\" is off, so Pallot can't find your districts from your precinct, {fallback} "
                      f"[Turn it on in Settings](settings.html#toggle-{election_precincts_source.SOURCE}).")
@@ -394,7 +408,7 @@ class _Builder:
         self.unlisted: set[str] = set()  # SOS race keys with only write-ins, so not on the county's ballot order
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
         self.waiting: Counter[str] = Counter()  # the left-out races, by what would settle them (WAITING_ORDER)
-        self.where = "precinct" if request.voter_card else "address"
+        self.where = "address" if not request.voter_card else "precinct" if request.precinct else "county"
         self.ballot: Ballot  # set by races(), for finish()
         self.every_race: list[Race] = []
         self.context = enrich.Context()
@@ -407,17 +421,23 @@ class _Builder:
             place, location = await locate(self.svc, self.request.address, self.sources)
             cover = coverage.of(location.state)
             if cover.ballot == "list":
-                return await self._from_list(place, location, cover)
+                return await self._from_list(location, Districts(cd=place.cd, sd=place.sd, hd=place.hd), cover)
             if cover.ballot == "fec":
-                return await self._from_fec(place, location, cover)
+                return await self._from_fec(location, place.cd, cover)
             if not self.use_sos:
                 raise BallotError(400, SOS_OFF)
             county_name, county_fips = place.county, place.county_fips
         else:
+            card = await locate_card(self.svc, self.request, self.sources)
+            place, location = card.place, card.location
+            cover = coverage.of(location.state)
+            if cover.ballot != "state":
+                districts = self._card_districts(location.state, cover)
+                if cover.ballot == "list":
+                    return await self._from_list(location, districts, cover)
+                return await self._from_fec(location, districts.cd, cover)
             if not self.use_sos:
                 raise BallotError(400, SOS_OFF)
-            card = await locate_precinct(self.svc, self.request.county or "", self.request.precinct or "", self.sources)
-            place, location = card.place, card.location
             county_name, county_fips = card.county, card.county_fips
             self.notes += [card.note] if card.note else []
             self.warnings += [card.warning] if card.warning else []
@@ -503,34 +523,46 @@ class _Builder:
         )
         return self.ballot
 
-    async def _from_list(self, place: Place, location: Location, cover: coverage.Coverage) -> Ballot:
-        """The races on the state's official list that the address places (states/place.py),
-        the ones it can't settle left out unless asked for, as Texas's precinct races. With the
-        list off, not yet out, or not to be had, the FEC's races for Congress instead, saying why."""
+    def _card_districts(self, state: str, cover: coverage.Coverage) -> Districts:
+        """A voter card's districts outside Texas: the ones the voter typed that the state's
+        coverage shows, and an at-large state's one U.S. House seat."""
+        typed = self.request.districts.model_dump(exclude_unset=True) if self.request.districts else {}
+        entered = {kind: number for kind, number in typed.items() if kind in cover.districts and number is not None}
+        cd = entered.get("cd", 0 if state in coverage.AT_LARGE else None)
+        return Districts(**{**entered, "cd": cd}, entered=list(entered))
+
+    async def _from_list(self, location: Location, districts: Districts, cover: coverage.Coverage) -> Ballot:
+        """The races on the state's official list that the address or voter card places
+        (states/place.py), the ones it can't settle left out unless asked for, as Texas's precinct
+        races. With the list off, not yet out, or not to be had, the FEC's races for Congress
+        instead, saying why."""
         lists = self.svc.states.get(location.state)
         if lists is None:
-            return await self._from_fec(place, location, coverage.FEDERAL)
+            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         day = fec_source.general_day(self.svc.today())
         when = f"{day:%b} {day.day}, {day.year}"
         if not self.sources.enabled(lists.source):
             self.notes.append(f"The list of candidates from the {lists.label} is turned off, so this ballot has only "
                               f"the races for Congress. [Turn it on in Settings](settings.html#toggle-{lists.source}).")
-            return await self._from_fec(place, location, coverage.FEDERAL)
+            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         try:
             filings = await lists.filings(day)
         except UpstreamError as exc:
             log.warning("%s", exc)
             self.warnings.append(f"Couldn't load the list of candidates from the {lists.label}, so this ballot has "
                                  "only the races for Congress.")
-            return await self._from_fec(place, location, coverage.FEDERAL)
+            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         if not filings:
             self.notes.append(f"The {lists.label} hasn't published its list of candidates for {when} yet, so this "
                               "ballot has only the races for Congress.")
-            return await self._from_fec(place, location, coverage.FEDERAL)
+            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         requested = self.request.election_date
         if requested and requested != day:
             self.warnings.append(f"Pallot has only the general election on {when} here; showing it.")
-        districts = Districts(cd=place.cd, sd=place.sd, hd=place.hd)
+        if location.source == "voter_card":
+            self.notes.append(f"Without your address, this ballot has the statewide and {location.county_name} races, "
+                              "and those of any districts you enter under \"More districts\". Your town's races "
+                              "aren't shown: your county's sample ballot has them.")
         found = state_place.races(filings, location, districts, state=lists.state, source=lists.source, url=lists.page)
         if not (found.races or found.unconfirmed):
             raise BallotError(404, f"The {lists.label} lists no races for this {self.where}.")
@@ -570,11 +602,11 @@ class _Builder:
         )
         return self.ballot
 
-    async def _from_fec(self, place: Place, location: Location, cover: coverage.Coverage) -> Ballot:
+    async def _from_fec(self, location: Location, cd: int | None, cover: coverage.Coverage) -> Ballot:
         """The races for Congress from the FEC's filers (fec.ballot_races), for a state without
-        its own list: the Senate race when the FEC lists one this cycle, and the address's House
-        race. No state source or precincts; key dates only where they're worked out by rule
-        (states/key_dates.py)."""
+        its own list: the Senate race when the FEC lists one this cycle, and the House race of
+        district ``cd``. No state source or precincts; key dates only where they're worked out by
+        rule (states/key_dates.py)."""
         if not self.sources.enabled(fec_source.SOURCE):
             raise BallotError(400, "Outside Texas, Pallot's races come from the FEC, which is turned off. Turn on "
                                    "the FEC in Settings.")
@@ -592,10 +624,12 @@ class _Builder:
             self.warnings.append("Couldn't load the FEC's list of this year's Senate races, so the U.S. Senate race "
                                  "isn't shown.")
             senate = False
-        if place.cd is None:
+        if cd is None and location.source == "voter_card":
+            self.notes.append("Enter your U.S. House district under \"More districts\" to see its race.")
+        elif cd is None:
             self.warnings.append("Couldn't tell your U.S. House district from your address, so its race isn't shown.")
         try:
-            races = await fec_source.ballot_races(fec, state, place.cd, senate, day)
+            races = await fec_source.ballot_races(fec, state, cd, senate, day)
         except UpstreamError as exc:
             if exc.until:
                 raise BallotError(502, f"The FEC is paused until {display_time(exc.until)} after refusing a request, and "
@@ -614,7 +648,7 @@ class _Builder:
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
             key_dates=computed_key_dates(location.state, day),
             location=location,
-            districts=Districts(cd=place.cd),
+            districts=Districts(cd=cd),
             races=races,
             maybe=[],
             notes=list(self.notes),
@@ -726,7 +760,7 @@ class _Builder:
     async def _card_precincts(
         self, card: CardPlace
     ) -> tuple[ElectionPrecinct | None, county_precincts_source.Found | None]:
-        """The voter card's precinct, found on the map by locate_precinct(), and what its county's
+        """The voter card's precinct, found on the map by locate_card(), and what its county's
         records say for it."""
         precinct = card.precinct
         if not (precinct and self.use_county_precincts):

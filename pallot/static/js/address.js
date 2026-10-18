@@ -15,10 +15,15 @@ export function showAddress({ address, place = "", matched = "", election = "" }
   setTopBarAddress(address);
 }
 
-// What a lookup is for, as the card shows it: the address, or the voter card's "Precinct 300, Travis County".
+// What a lookup is for, as the card shows it: the address, or the voter card's "Precinct 300,
+// Travis County", "Wake County, NC" or "Orleans Parish, LA" (a card without a state is Texas's).
 export function lookupLabel(request) {
   if (request?.address) return request.address;
-  return request?.county && request?.precinct != null ? `Precinct ${request.precinct}, ${request.county} County` : "";
+  if (!request?.county) return "";
+  const county = /\s(County|Parish|Borough|Area|Municipality|Region|city|City)$/.test(request.county)
+    ? request.county : `${request.county} County`;
+  const state = request.state && request.state !== "TX" ? `, ${request.state}` : "";
+  return [request.precinct ? `Precinct ${request.precinct}` : null, `${county}${state}`].filter(Boolean).join(", ");
 }
 
 // The remembered card for this address, or just the address if the card is for another one.
