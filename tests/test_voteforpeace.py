@@ -150,8 +150,8 @@ def test_a_title_before_the_name_is_left_out(snapshot):
 
 @pytest.mark.parametrize("city, confidence", [("Austin", "exact"), ("Round Rock", "likely"), (None, "likely")])
 def test_a_city_as_the_jurisdiction_is_the_voters_city(snapshot, city, confidence):
-    council = race("City Council Member, District 9", ("Zohaib Qadri", None), key="bp:9", group="local")
-    match = cards(snapshot, [council], {}, "Travis", city=city).candidates["bp:9:0"].match  # "Austin" on the site
+    council = race("City Council Member, District 9", ("Zohaib Qadri", None), key="city:9", group="local")
+    match = cards(snapshot, [council], {}, "Travis", city=city).candidates["city:9:0"].match  # "Austin" on the site
     assert match.confidence == confidence
 
 

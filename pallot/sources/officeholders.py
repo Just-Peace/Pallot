@@ -25,8 +25,7 @@ from ..matching import FIRST_LAST, FULL, NameIndex
 from ..models import Race, SeatHolder
 from ..offices import OfficeScope
 from . import CardSet, SeatInfo
-from .ballotpedia import BpBallot
-from .tec import bp_seat, tec_seat
+from .tec import tec_seat
 
 log = logging.getLogger("uvicorn.error")
 
@@ -127,11 +126,10 @@ class Officeholders:
         return legislature_holders(await self._get(LEGISLATURE.format(state=state.lower()), text=True) or "")
 
 
-def _seat_of(race: Race, scope: OfficeScope | None, bp_ballot: BpBallot | None, county: str | None) -> str | None:
+def _seat_of(race: Race, scope: OfficeScope | None, county: str | None) -> str | None:
     if race.seat:
         return race.seat
-    bp_race = next((r for r in bp_ballot.races if f"bp:{r.id}" == race.key), None) if bp_ballot else None
-    seat = tec_seat(scope, county) if scope else bp_seat(bp_race, county) if bp_race else None
+    seat = tec_seat(scope, county) if scope else None
     return seat if seat and seat.split(":")[0] in _CHAMBERS.values() else None
 
 
@@ -183,13 +181,13 @@ def seat_info(race: Race, holder: Holder | None, seat: str) -> tuple[SeatInfo, s
 
 async def cards(
     svc: Officeholders, races: list[Race], scopes: dict[str, OfficeScope], county: str | None,
-    bp_ballot: BpBallot | None, day: dt.date | None, state: str,
+    day: dt.date | None, state: str,
 ) -> CardSet:
     """Each covered race's seat (CardSet.seats) and the candidates who hold it (incumbents). A
     list is fetched only when the ballot has a race it covers. Raises UpstreamError
     if a list was needed and none could be had."""
     out = CardSet()
-    seats = {race.key: seat for race in races if (seat := _seat_of(race, scopes.get(race.key), bp_ballot, county))}
+    seats = {race.key: seat for race in races if (seat := _seat_of(race, scopes.get(race.key), county))}
     if not seats:
         return out
     wanted = {"congress": any("-" in s for s in seats.values()), "legislature": any(":" in s for s in seats.values())}

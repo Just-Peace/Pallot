@@ -963,7 +963,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 .race-body { padding: 12px 16px 14px; }
 .race-note { margin: 0 0 10px; overflow-wrap: anywhere; }
 
-.race-options, .measure-options { border: 0; margin: 0; padding: 0; min-width: 0; }
+.race-options { border: 0; margin: 0; padding: 0; min-width: 0; }
 .cands { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 
 .cand { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--panel-2);
@@ -1053,14 +1053,6 @@ button.badge-btn:hover { text-decoration: underline; filter: brightness(0.96); }
 .note label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
 .saved { font-size: 0.8rem; color: var(--good); margin-left: 4px; }
 
-
-.measure .race-body p { margin: 6px 0; }
-.measure-options { display: flex; gap: 10px; margin-top: 8px; }
-.measure-option { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--radius-sm);
-  padding: 6px 14px; background: var(--panel-2); cursor: pointer; }
-.measure-option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
-.measure .race-status.done { color: var(--accent); }
-.measure.has-pick { border-left-color: var(--accent); }
 
 
 /* ---- details dialog ---- */
@@ -1682,7 +1674,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
    rather than bigger text ---- */
 
 @media (pointer: coarse) {
-  .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .measure-option, .switch, .check, .site-nav a, .jump-list a,
+  .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .switch, .check, .site-nav a, .jump-list a,
   .race-toggle, .box-toggle, .map-toggle, .entry-tab, .chip-menu > a, .chip-menu > .link-btn,
   input[type="text"], input[type="search"], input[type="number"], select { min-height: 44px; }
   a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
@@ -1730,8 +1722,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .print-sheet table.with-notes th:nth-child(1), .print-sheet table.with-notes td:nth-child(1) { width: 36%; }
   .print-sheet table.with-notes th:nth-child(2), .print-sheet table.with-notes td:nth-child(2) { width: 32%; }
   .print-sheet table.with-notes th:nth-child(3), .print-sheet table.with-notes td:nth-child(3) { width: 32%; }
-  .print-sheet table.measures td:nth-child(1) { width: 70%; }
-  .print-sheet table.measures td:nth-child(2) { width: 30%; }
   .print-sheet tr { page-break-inside: avoid; }
   .print-sheet th, .print-sheet td { border-bottom: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
   .print-sheet th { font-size: 9pt; text-transform: uppercase; color: #333; }

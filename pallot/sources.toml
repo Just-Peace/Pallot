@@ -29,8 +29,7 @@ state_pa = true             # Pennsylvania Department of State
 state_fl = true             # Florida Division of Elections
 state_va = true             # Virginia Department of Elections
 
-# Third-party ballot data. Ballotpedia's terms forbid commercial scraping, so it starts off.
-ballotpedia = false
+# Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
 officeholders = true        # congress-legislators and Open States: who holds each congressional and legislative seat
 

@@ -83,8 +83,6 @@ def test_an_exact_match_gets_its_photo_and_stable_links(client, upstream):
     assert links["Wikipedia article"] == "https://en.wikipedia.org/wiki/Greg_Abbott"
     facts = {fact["label"]: fact["value"] for fact in card["facts"]}
     assert facts["Party"] == "Republican Party" and facts["Offices held"].startswith("Governor of Texas (2015–)")
-    sources = [c["source"] for c in abbott["cards"]]
-    assert sources.index(wikidata.SOURCE) < sources.index("ballotpedia")  # before Ballotpedia on the Profile tab
 
 
 def test_someone_running_for_another_office_is_likely_and_still_has_their_photo(client, upstream):
@@ -109,13 +107,9 @@ def test_a_loose_name_or_another_party_is_no_match():
     assert not trusted(Match(confidence="likely", method="last name, in the same seat"), "R", "R")
 
 
-def test_the_card_is_short_and_links_ballotpedia_only_while_it_is_on(client, upstream):
+def test_the_card_is_short(client):
     card = card_of(person(find_race(get_ballot(client), "Governor"), "Greg Abbott"))
     assert card["description"] is None  # Settings describes the source
-    assert "Ballotpedia" in {link["label"] for link in card["links"]}
-    switch(client, "ballotpedia", False)
-    card = card_of(person(find_race(get_ballot(client), "Governor"), "Greg Abbott"))
-    assert "Ballotpedia" not in {link["label"] for link in card["links"]}
 
 
 def test_a_second_lookup_asks_nothing(client, upstream, logged_calls):

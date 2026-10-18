@@ -46,7 +46,7 @@
           <summary>Can I use Pallot without my address?</summary>
           <div class="faq-body">
             <p>Yes. Choose "My voter card" on the card at the top of the ballot page, and type your county and your precinct number, as your voter registration certificate shows them. Your address isn't asked for or sent anywhere.</p>
-            <p>Pallot finds your precinct on the Texas Legislative Council's precinct map, which it already keeps, and takes three points spread through it. It asks the US Census for the districts at those points, keeping only the ones all three share, reads your State Board of Education district from the Council's map, and, in seven counties, your commissioner and JP precincts from the county's records. With Ballotpedia on, it asks Ballotpedia's ballot at the same three points. A precinct can cross a city or school district line, so a race Ballotpedia lists at only some of the points is left off, like any race Pallot can't place (see "Why are some races left off my ballot?"). Only those points go to the Census and Ballotpedia; <a href="privacy.html#lookups">Privacy</a> has the details.</p>
+            <p>Pallot finds your precinct on the Texas Legislative Council's precinct map, which it already keeps, and takes three points spread through it. It asks the US Census for the districts at those points, keeping only the ones all three share, reads your State Board of Education district from the Council's map, and, in seven counties, your commissioner and JP precincts from the county's records. Only those points go to the Census; <a href="privacy.html#lookups">Privacy</a> has the details.</p>
             <p>Under "More districts" you can type any district your card lists: U.S. House, State Senate, State House, SBOE, Commissioner and JP. A number you type wins over the one Pallot found. While the precinct map is still downloading (the first lookup after Pallot is installed), or if Pallot can't find your precinct on it, the ballot has the statewide and county races and the districts you typed, and a note says why.</p>
           </div>
         </details>
@@ -63,14 +63,14 @@
           <summary>How does Pallot know what's on my ballot?</summary>
           <div class="faq-body">
             <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's maps give your State Board of Education district and your election precinct.</p>
-            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts. If Ballotpedia is on, it adds city council, school board and special district races, and any other race the state doesn't list, such as an appraisal district's board (these say "Listed by Ballotpedia"). It also adds Ballotpedia's notes on a race, such as a replacement nominee, and tells Pallot your commissioner and JP precincts. With the Texas Secretary of State turned off in <a href="settings.html">Settings</a>, the ballot comes from Ballotpedia alone.</p>
+            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts.</p>
           </div>
         </details>
 
         <details class="faq" id="local-races">
           <summary>Why don't I see my city council or school board races?</summary>
           <div class="faq-body">
-            <p>Those races come from Ballotpedia, which is off until you turn it on under Sources in <a href="settings.html">Settings</a>. Its ballot is an unofficial endpoint meant for personal use, so Pallot doesn't ask it unless you choose to. While it's off, the Texas Secretary of State's ballot still has every federal, state, district and county race.</p>
+            <p>Pallot's ballot comes from the Texas Secretary of State, which lists every federal, state, district and county race, but not city council, school board or special district races. Your county's sample ballot has those.</p>
           </div>
         </details>
 
@@ -100,9 +100,9 @@
         <details class="faq">
           <summary>What does "Depends on your commissioner or JP precinct" mean?</summary>
           <div class="faq-body">
-            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, Pallot gets them from the county's own records (see "How does Pallot know my commissioner and JP precincts?"); elsewhere, it uses Ballotpedia's answer when it has one. Ballotpedia only names a precinct that has a race on this ballot, so when yours has none this time, those races stay listed until you enter your precincts.</p>
+            <p>County commissioner, justice of the peace and constable races are only on some ballots in a county, depending on your commissioner and justice of the peace precincts, and the Census doesn't say which ones you're in. In seven counties, Pallot gets them from the county's own records (see "How does Pallot know my commissioner and JP precincts?"); elsewhere, you enter them.</p>
             <p>Until Pallot knows them, those races are left off your ballot, and a note under "Your districts" says so (see "Why are some races left off my ballot?"); "Show these races anyway" lists them under "Depends on your commissioner or JP precinct". Those numbers are printed on your voter registration certificate; enter them under "Your districts" at the top of your ballot ("Enter it" in the note opens the boxes). You only need two numbers: your commissioner precinct, and your justice of the peace precinct, which also elects your constable.</p>
-            <p>The small print under "Your districts" says where each number came from: your county, Ballotpedia, or you. If one is wrong, the pencil at the top of "Your districts" turns every number, your U.S. House, State Senate, State House and SBOE districts too, into a box you can change or empty, and the reset arrow puts the looked-up ones back. Only the numbers you change are kept as yours; the others keep following your address, your county's records and Ballotpedia.</p>
+            <p>The small print under "Your districts" says where each number came from: your county, or you. If one is wrong, the pencil at the top of "Your districts" turns every number, your U.S. House, State Senate, State House and SBOE districts too, into a box you can change or empty, and the reset arrow puts the looked-up ones back. Only the numbers you change are kept as yours; the others keep following your address and your county's records.</p>
           </div>
         </details>
 
@@ -129,10 +129,10 @@
           <div class="faq-body">
             <p>Texas law keeps each election precinct inside one commissioner precinct and one justice of the peace precinct, so once Pallot knows your election precinct (see "Where does my election precinct come from"), your county's records say the other two. There's no statewide list, so this works in the counties whose records Pallot reads:</p>
             <ul>
-              <li><strong>Harris, Dallas, Tarrant, Travis and Fort Bend</strong> publish a list of their election precincts, with each one's commissioner and JP precinct. Fort Bend's has commissioner precincts only, so your JP precinct there comes from Ballotpedia, when your JP precinct has a race this time, or from you. Pallot only uses a county's list when it has exactly the precincts on the Texas Legislative Council's map, so a list for another year, with precincts drawn differently, is never used.</li>
+              <li><strong>Harris, Dallas, Tarrant, Travis and Fort Bend</strong> publish a list of their election precincts, with each one's commissioner and JP precinct. Fort Bend's has commissioner precincts only, so your JP precinct there comes from you. Pallot only uses a county's list when it has exactly the precincts on the Texas Legislative Council's map, so a list for another year, with precincts drawn differently, is never used.</li>
               <li><strong>Bexar and Denton</strong> publish maps of their commissioner and JP precincts instead. Pallot takes points spread through your election precinct, each at least 160 feet from its edges, and gives a number only when they all fall in the same commissioner (or JP) precinct on the county's map. The two maps are drawn separately, so near a precinct's edge they can disagree by several feet; keeping 160 feet in gave no wrong numbers when checked against the lists of Dallas and Harris counties, for all 2,015 of their precincts. When your election precinct crosses a line on the county's map, or is too small to check, Pallot leaves the number for you to enter, and a note says why.</li>
             </ul>
-            <p>Near the line between two election precincts, Pallot gives a number only when both precincts have the same one. When the county's records and Ballotpedia disagree, Pallot uses the county's and a note says so. A number you enter always wins.</p>
+            <p>Near the line between two election precincts, Pallot gives a number only when both precincts have the same one. A number you enter always wins.</p>
             <p>Pallot downloads a county's whole list or maps, at most once a week, when you look up an address there; your address is never sent. The counties publish proposals for new precincts too, which Pallot never uses. Your voter registration certificate wins if they differ. Turn "Commissioner &amp; JP precincts (counties)" off in <a href="settings.html">Settings</a> to leave them out.</p>
           </div>
         </details>
@@ -183,15 +183,8 @@
         <details class="faq" id="left-out">
           <summary>Why are some races left off my ballot?</summary>
           <div class="faq-body">
-            <p>Your ballot holds the races Pallot found for your districts and precincts, and those for the numbers you entered. A race whose district or precinct Pallot doesn't know is left off, and nothing (money, polls, endorsements) is fetched for it: a commissioner, JP or constable race until your precincts are known, a district Pallot couldn't place you in, or, for a voter card, a city or school race that's on the ballot in only part of your precinct.</p>
-            <p>One note under "Your districts" says what's missing, such as "Your Justice of the Peace precinct isn't known: 6 races depend on it". "Enter it" opens the card's boxes. "Show these races anyway" brings them back for this ballot, under "Depends on your commissioner or JP precinct", "Couldn't confirm" (districts Pallot couldn't place you in) and "Only on part of your precinct", each saying why; "See the races" jumps to them, and "Hide these races" leaves them off again.</p>
-          </div>
-        </details>
-
-        <details class="faq">
-          <summary>Why are some races under "Special districts"?</summary>
-          <div class="faq-body">
-            <p>Ballotpedia lists water and municipal utility districts (MUDs) for your area, but you only vote in one if your home is inside it, and Pallot can't tell whether it is. They're always listed in their own section, so check your county's sample ballot for them.</p>
+            <p>Your ballot holds the races Pallot found for your districts and precincts, and those for the numbers you entered. A race whose district or precinct Pallot doesn't know is left off, and nothing (money, polls, endorsements) is fetched for it: a commissioner, JP or constable race until your precincts are known, or a district Pallot couldn't place you in.</p>
+            <p>One note under "Your districts" says what's missing, such as "Your Justice of the Peace precinct isn't known: 6 races depend on it". "Enter it" opens the card's boxes. "Show these races anyway" brings them back for this ballot, under "Depends on your commissioner or JP precinct" and "Couldn't confirm" (districts Pallot couldn't place you in), each saying why; "See the races" jumps to them, and "Hide these races" leaves them off again.</p>
           </div>
         </details>
 
@@ -252,8 +245,8 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, <a href="#wikidata">Wikidata</a>, Ballotpedia, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS, Wikidata and Ballotpedia share the Profile tab, where Details opens, and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. In Details, ‹ and › step through the race's other candidates; on a phone they're in the bar at the bottom, beside Pick, and a swipe left or right does the same. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
-            <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Exact match" and "Likely match"</a>). "Incumbent" comes from the state's filing, from Ballotpedia when it matches the candidate exactly in the same race, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
+            <p>From the Texas Secretary of State's candidate filings, <a href="#wikidata">Wikidata</a>, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS and Wikidata share the Profile tab, where Details opens, and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. In Details, ‹ and › step through the race's other candidates; on a phone they're in the bar at the bottom, beside Pick, and a swipe left or right does the same. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
+            <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Exact match" and "Likely match"</a>). "Incumbent" comes from the state's filing, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
           </div>
         </details>
 
@@ -261,7 +254,7 @@
           <summary>Where do the Wikidata profiles and photos come from?</summary>
           <div class="faq-body">
             <p>From <a href="https://www.wikidata.org" target="_blank" rel="noopener noreferrer">Wikidata</a>, the free knowledge base behind Wikipedia, which anyone can edit. Pallot keeps its list of every living person who holds or held an office in your state (a U.S. Senate or House seat, a seat in the Legislature, or a statewide office), and matches the candidates to it by name. In Texas, and for Congress everywhere, the office confirms it. A candidate who has never held an office in the state has no Wikidata section, and their Profile tab says so if no other source has one.</p>
-            <p>A candidate running for an office they already hold (or held) is an "Exact match"; one running for another office is a "Likely match" (see <a href="#matches">"Exact match" and "Likely match"</a>). Since the list holds everyone who has held an office in the state, the name must match in full, or by first and last name, and a different party rules it out. Wikidata's photo, from Wikimedia Commons, is shown when it has one, otherwise Ballotpedia's when it's on. The section links to the person's Wikidata item, which keeps the same address even if their name changes, and to their Wikipedia article, campaign and government websites, and Ballotpedia page (while Ballotpedia is on) when Wikidata has them. Turn Wikidata off in <a href="settings.html">Settings</a> to hide it.</p>
+            <p>A candidate running for an office they already hold (or held) is an "Exact match"; one running for another office is a "Likely match" (see <a href="#matches">"Exact match" and "Likely match"</a>). Since the list holds everyone who has held an office in the state, the name must match in full, or by first and last name, and a different party rules it out. Wikidata's photo, from Wikimedia Commons, is shown when it has one. The section links to the person's Wikidata item, which keeps the same address even if their name changes, and to their Wikipedia article and campaign and government websites when Wikidata has them. Turn Wikidata off in <a href="settings.html">Settings</a> to hide it.</p>
           </div>
         </details>
 
@@ -327,7 +320,7 @@
         <details class="faq" id="fresh">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, Ballotpedia and polls, after 7 days for the FEC and Wikidata, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
+            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates and polls, after 7 days for the FEC and Wikidata, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
             <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when we refresh them; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>Settings shows how old each source's copy is. Only we can fetch a copy again early, on the server.</p>
           </div>
@@ -336,8 +329,8 @@
         <details class="faq" id="paused">
           <summary>Why is a source paused?</summary>
           <div class="faq-body">
-            <p>When a source turns Pallot away, Pallot stops asking it for an hour rather than keep trying: the address lookup (the Census geocoder and OpenStreetMap's Nominatim, each on its own), the Texas Secretary of State, Ballotpedia (its ballot and its address search, each on its own), FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map), the Texas Legislative Council's portal (the precinct and SBOE maps) and the counties' map servers (the commissioner and JP precincts) when they refuse a request, and the FEC when every key it has reached the FEC's rate limit or was refused (one key resting doesn't stop the others, and a key that reached the rate limit rests only 2 minutes, since the FEC counts each key's calls by the minute). <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
-            <p>Meanwhile, whatever the source already sent still shows. Addresses already looked up still work, and so do ballots the Texas Secretary of State already sent. Addresses Ballotpedia already answered for still show its races, and other ballots are built from the other sources. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
+            <p>When a source turns Pallot away, Pallot stops asking it for an hour rather than keep trying: the address lookup (the Census geocoder and OpenStreetMap's Nominatim, each on its own), the Texas Secretary of State, FiftyPlusOne (polls), the Texas Secretary of State's dates page, the Census's TIGERweb (the district map), OpenStreetMap's tile server (the street map), the Texas Legislative Council's portal (the precinct and SBOE maps) and the counties' map servers (the commissioner and JP precincts) when they refuse a request, and the FEC when every key it has reached the FEC's rate limit or was refused (one key resting doesn't stop the others, and a key that reached the rate limit rests only 2 minutes, since the FEC counts each key's calls by the minute). <a href="settings.html">Settings</a> shows which source is paused and until when.</p>
+            <p>Meanwhile, whatever the source already sent still shows. Addresses already looked up still work, and so do ballots the Texas Secretary of State already sent. With the FEC's shared demonstration key the limit comes quickly; see <a href="#fec-key">why the FEC tab shows only totals</a>.</p>
           </div>
         </details>
       </section>
@@ -586,7 +579,7 @@
         <details class="faq" id="sharing">
           <summary>Can I run my own Pallot?</summary>
           <div class="faq-body">
-            <p>Yes, it's open source: the <a href="https://github.com/Just-Peace/Pallot" target="_blank" rel="noopener noreferrer">README</a> explains how. Ballotpedia's ballot and address search are unofficial and meant for personal use, so they start off.</p>
+            <p>Yes, it's open source: the <a href="https://github.com/Just-Peace/Pallot" target="_blank" rel="noopener noreferrer">README</a> explains how.</p>
           </div>
         </details>
 

@@ -22,7 +22,6 @@ from ..models import Badge, Fact, Match, Race, SourceCard, Tone
 from ..offices import OfficeScope
 from ..text import display_date
 from . import CardSet, RefreshFailed
-from .ballotpedia import BpBallot
 from .seats import match_entries, office_text, without_title
 
 ENDORSEMENTS_DIR = Path(__file__).resolve().parent.parent / "endorsements"
@@ -110,25 +109,23 @@ class EndorsementList:
         races: list[Race],
         scopes: dict[str, OfficeScope],
         county: str | None,
-        bp_ballot: BpBallot | None = None,
         state: str = "TX",
         city: str | None = None,
     ) -> CardSet:
         """cards() in a thread, as enrich.run asks every list and feed."""
-        return await asyncio.to_thread(self.cards, races, scopes, county, bp_ballot, state, city)
+        return await asyncio.to_thread(self.cards, races, scopes, county, state, city)
 
     def cards(
         self,
         races: list[Race],
         scopes: dict[str, OfficeScope],
         county: str | None,
-        bp_ballot: BpBallot | None = None,
         state: str = "TX",
         city: str | None = None,
     ) -> CardSet:
         """Cards for the candidates it endorses in the ballot's state, in any race (seats.match_entries).
         The file keeps every state; only the ballot's is matched."""
-        found = match_entries(self.index(state), races, scopes, county, bp_ballot, source=self.label,
+        found = match_entries(self.index(state), races, scopes, county, source=self.label,
                               entry_id="entry_id", city=city)
         return CardSet(candidates={key: self.card(entry, match) for key, (entry, match) in found.items()})
 

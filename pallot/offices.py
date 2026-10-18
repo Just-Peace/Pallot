@@ -45,7 +45,7 @@ GROUP_OF_KIND = {
 }
 
 DISTRICT_KINDS = ("cd", "sd", "hd", "sboe")  # vary within a county; we know the voter's from their address
-PRECINCT_KINDS = ("commissioner", "jp", "constable")  # vary within a county; known only from the voter or Ballotpedia
+PRECINCT_KINDS = ("commissioner", "jp", "constable")  # vary within a county; known only from the voter or the county's records
 
 KIND_LABELS = {
     "cd": "U.S. House",

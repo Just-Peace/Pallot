@@ -64,7 +64,6 @@ def test_failing_sources_are_named_without_their_cause(make_app, upstream, caplo
     with TestClient(make_app(fec_key="DEMO_KEY")) as client:
         found = answers(client)
     ballot = found["ballot"]
-    assert "Ballotpedia isn't answering right now, so city and school races aren't shown." in ballot["warnings"]
     assert "Wikidata isn't answering right now, so its profiles aren't shown." in ballot["warnings"]
     assert not {route: leaks(answer) for route, answer in found.items() if leaks(answer)}
     assert "HTTP 500" in caplog.text and "PALLOT_FEC_API_KEY" in caplog.text and "PALLOT_ALLOWED_HOSTS" in caplog.text

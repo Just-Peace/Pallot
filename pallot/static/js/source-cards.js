@@ -550,8 +550,8 @@ function profileBody(card) {
   return h("div", { class: "card-panel" }, likelyLine(card), cardFacts(card), cardQuotes(card), cardLinks(card));
 }
 
-// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's and
-// Ballotpedia's profiles, a section each; with none, a line saying so about ``name``.
+// Details' Profile tab: the candidate's filing with the state (Texas SOS), then Wikidata's
+// profile, a section each; with none, a line saying so about ``name``.
 export function profilePanel(cards, name) {
   return h("div", { class: "card-panel profile" },
     cards.length

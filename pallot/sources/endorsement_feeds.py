@@ -25,7 +25,6 @@ from ..http_cache import Cached, HttpCache, RequestSpec, Unreadable, UpstreamErr
 from ..models import Fact, Race, Tone
 from ..offices import OfficeScope
 from . import CardSet, RefreshFailed
-from .ballotpedia import BpBallot
 from .endorsements import BadList, EndorsementList, read_entry
 from .seats import entry_seats
 
@@ -146,13 +145,12 @@ class EndorsementFeed:
         races: list[Race],
         scopes: dict[str, OfficeScope],
         county: str | None,
-        bp_ballot: BpBallot | None = None,
         state: str = "TX",
         city: str | None = None,
     ) -> CardSet:
         """The list's cards (EndorsementList.cards), fetched or from the copy kept."""
         found = await self.fetch()
-        return await found.lookup(races, scopes, county, bp_ballot, state, city)
+        return await found.lookup(races, scopes, county, state, city)
 
     # -- Settings (KeptSource) ----------------------------------------------------------------
 

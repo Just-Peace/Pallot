@@ -343,7 +343,7 @@ function render() {
   setCardsLoading(page.loadingCards);
 }
 
-// Redraws the races and propositions in place, from the saved picks, with the
+// Redraws the races in place, from the saved picks, with the
 // progress, the filters, Help me pick's marks and the rule's banner: after the picks change as a
 // whole (Clear picks, More conditions, their Undo, another tab). The rest of the page, an open edit of
 // the districts and a note being typed included, stays as it is.

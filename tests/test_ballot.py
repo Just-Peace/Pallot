@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import copy
-
 import pytest
 from fastapi.testclient import TestClient
 
@@ -34,7 +32,6 @@ def test_capitol_ballot(client):
     assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, 2)  # from Travis County's list, by election precinct 300
     assert d["precinct_sources"] == {"commissioner": "county", "jp": "county", "constable": "county"}
     assert d["county_source"] == {"county": "Travis", "method": "table"}
-    assert d["city_council"] == "District 9"
     assert d["election_precinct"] == {"name": "300", "code": "0300", "county": 453,
                                       "map_label": "2026 Primary Election Voting Precincts", "primary_map": True}
     assert ballot["location"]["county"] == "Travis" and ballot["location"]["city"] == "Austin"
@@ -57,19 +54,14 @@ def test_capitol_ballot(client):
     assert find_race(ballot, "County Commissioner Precinct 2") and not find_race(ballot, "County Commissioner Precinct 4")
     assert "precinct" not in [s["id"] for s in ballot["maybe"]]
     assert find_race(ballot, "District Judge, 147th Judicial District")  # whole-county judicial races stay
-
-    assert find_race(ballot, "Austin City Council District 9")["source"] == "ballotpedia"
-    special = next(s for s in ballot["maybe"] if s["id"] == "special")
-    assert all(r["group"] == "local" for r in special["races"]) and any(r["seats"] > 1 for r in special["races"])
+    assert {r["source"] for r in ballot["races"]} == {"sos"} and ballot["maybe"] == []
 
     paxton = senate["candidates"][0]
-    assert sources_of(paxton) == ["fec", "sos", "polls", "wikidata", "ballotpedia", "trackaipac"]  # the tabs in Details
+    assert sources_of(paxton) == ["fec", "sos", "polls", "wikidata", "trackaipac"]  # the tabs in Details
     tap = card_of(paxton, "trackaipac")
     assert tap["match"]["confidence"] == "exact"
     watchlist = next(b for b in tap["badges"] if b["text"].startswith("TrackAIPAC watchlist"))
     assert watchlist["text"] == "TrackAIPAC watchlist $0" and watchlist["url"].endswith("/candidates")
-    profile = next(link for link in card_of(paxton, "ballotpedia")["links"] if link["label"] == "Ballotpedia profile")
-    assert profile["url"].startswith("https://ballotpedia.org/")
     talarico = senate["candidates"][1]
     assert sources_of(talarico)[-4:] == ["trackaipac", "voteforpeace", "emgage", "examplepac"]  # the endorsement lists last
     vfp = card_of(talarico, "voteforpeace")
@@ -80,7 +72,7 @@ def test_capitol_ballot(client):
     assert "voteforpeace" not in sources_of(hawkins["Kyle Hawkins"])  # "K Hawkins" too, but Kristen's is the full name
     sos_card = card_of(paxton, "sos")
     assert {"Name on ballot", "Filing status", "Occupation"} <= {f["label"] for f in sos_card["facts"]}
-    assert paxton["photo_url"]  # from Ballotpedia
+    assert paxton["photo_url"].startswith("https://commons.wikimedia.org/")  # from Wikidata
 
     assert ballot["warnings"] == [] and not [note for note in ballot["notes"] if "precinct" in note]
 
@@ -91,7 +83,7 @@ def test_every_card_says_its_kind(client):
     cards += [card for race in ballot["races"] for c in race["candidates"] for card in c["cards"]]
     assert {(card["source"], card["kind"]) for card in cards} == {
         ("fec", "money"), ("tec", "money"), ("polls", "polls"), ("sos", "filing"), ("wikidata", "profile"),
-        ("ballotpedia", "profile"), ("trackaipac", "endorsement"), ("voteforpeace", "endorsement"),
+        ("trackaipac", "endorsement"), ("voteforpeace", "endorsement"),
         ("emgage", "endorsement"), ("examplepac", "endorsement"), ("cair", "endorsement"),
     }
 
@@ -181,7 +173,6 @@ def test_repeat_lookups_make_no_external_calls_even_after_a_restart(make_app, up
 
 
 def test_harris_county_gets_exactly_one_sboe_race(client):
-    switch(client, "ballotpedia", False)
     ballot = get_ballot(client, "harris")
     assert ballot["districts"]["sboe"] == 4 and ballot["location"]["county"] == "Harris"
     sboe = [r["name"] for r in ballot["races"] if "Board of Education" in r["name"]]
@@ -293,92 +284,12 @@ def test_a_failed_write_in_list_keeps_the_printed_ballot(client, upstream):
     assert any("declared write-in candidates" in note for note in ballot["notes"])
 
 
-def test_ballotpedia_off(client):
-    switch(client, "ballotpedia", False)
-    ballot = get_ballot(client)
-    assert not [r for r in ballot["races"] if r["source"] == "ballotpedia"]
-    maybe = {s["id"]: [r["name"] for r in s["races"]] for s in ballot["maybe"]}
-    assert find_race(ballot, "Justice of the Peace Precinct 5")  # the county's list still places it
-    assert "precinct" not in maybe and "special" not in maybe
-    senate = find_race(ballot, "U.S. Senator")
-    assert sources_of(senate["candidates"][0]) == ["fec", "sos", "polls", "wikidata", "trackaipac"]
-
-
-def test_state_source_off_uses_ballotpedia_for_everything(client, upstream):
+def test_texas_sos_off_is_an_error(client, upstream):
     switch(client, "sos", False)
-    ballot = get_ballot(client)
+    for request in ({"address": ADDRESSES["capitol"]}, {"county": "Travis", "precinct": "300"}):
+        response = client.post("/api/ballot", json=request)
+        assert response.status_code == 400 and "Turn it on in Settings" in response.json()["detail"]
     assert upstream.count("goelect") == 0
-    assert ballot["elections"][0]["name"] == "Ballotpedia sample ballot"
-    assert ballot["districts"]["sboe"] == 5  # from the SBOE map, which doesn't need Texas SOS
-    senate = find_race(ballot, "U.S. Senate Texas")
-    assert senate["seat"] == "TX-SEN"
-    assert any(c["write_in"] for c in senate["candidates"])
-    assert "trackaipac" in sources_of(next(c for c in senate["candidates"] if c["name"] == "Ken Paxton"))
-    assert find_race(ballot, "Travis County Justice of the Peace Precinct 5")["group"] == "precinct"
-
-
-def _bp_districts(payload):
-    return payload["data"]["elections"][0]["districts"]
-
-
-def test_ballotpedias_notes_show_under_the_race(client):
-    house = find_race(get_ballot(client), "U.S. Representative District 10")
-    assert house["notes"] == [{
-        "text": "Texas redrew its U.S. House district map ahead of the 2026 elections. Your district may have changed.",
-        "url": "https://ballotpedia.org/Redistricting_in_Texas_ahead_of_the_2026_elections",
-        "source": "Ballotpedia",
-    }]
-
-
-def test_a_race_only_ballotpedia_lists_is_added(client, upstream):
-    def add_appraisal_district(payload):
-        county = next(d for d in _bp_districts(payload) if d["type"] == "County")
-        race = copy.deepcopy(next(r for r in county["races"] if r["office"]["name"] == "Travis County Clerk"))
-        race["id"] = 999001
-        race["office"] = {"name": "Travis Central Appraisal District, Place 1", "type": "Appraisal", "level": "Local"}
-        race["candidates"][0].update(id=999002, person={"name": "Pat Appraiser"})
-        county["races"].append(race)
-
-    upstream.ballotpedia_edit = add_appraisal_district
-    ballot = get_ballot(client)
-    appraisal = find_race(ballot, "Travis Central Appraisal District, Place 1")
-    assert (appraisal["group"], appraisal["source"], candidate_names(appraisal)) == ("county", "ballotpedia", ["Pat Appraiser"])
-    assert not find_race(ballot, "Travis County Clerk")  # the state lists its candidate, so it isn't added again
-    assert not find_race(ballot, "Texas 147th District Court")
-
-
-def test_a_precinct_ballotpedia_names_without_its_kind(client, upstream):
-    def generic_name(payload):
-        next(d for d in _bp_districts(payload) if d["type"] == "County subdivision")["name"] = "Travis County Precinct 5"
-
-    upstream.ballotpedia_edit = generic_name
-    switch(client, "county_precincts", False)
-    d = get_ballot(client)["districts"]
-    assert (d["jp"], d["constable"]) == (5, 5)
-    assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"}
-
-
-def test_ballotpedia_can_say_who_holds_the_seat(client, upstream):
-    def incumbents(payload):
-        for district in _bp_districts(payload):
-            for race in district["races"]:
-                for candidate in race["candidates"]:
-                    if candidate["person"]["name"] in ("James Talarico", "Donald Huffines"):
-                        candidate["is_incumbent"] = True
-
-    upstream.ballotpedia_edit = incumbents
-    ballot = get_ballot(client)
-    talarico = next(c for c in find_race(ballot, "U.S. Senator")["candidates"] if c["name"] == "James Talarico")
-    assert talarico["incumbent"] and card_of(talarico, "ballotpedia")["match"]["confidence"] == "exact"
-    huffines = next(c for c in find_race(ballot, "Comptroller of Public Accounts")["candidates"] if c["name"] == "Don Huffines")
-    assert not huffines["incumbent"]  # Don and Donald: only a likely match
-
-
-def test_no_ballot_source_is_an_error(client):
-    switch(client, "sos", False)
-    switch(client, "ballotpedia", False)
-    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
-    assert response.status_code == 400 and "Settings" in response.json()["detail"]
 
 
 def test_entered_precincts_override_the_countys(client):
@@ -391,7 +302,7 @@ def test_entered_precincts_override_the_countys(client):
     assert "precinct" not in [s["id"] for s in ballot["maybe"]]
 
 
-def test_an_emptied_precinct_overrides_the_county_and_ballotpedia(client):
+def test_an_emptied_precinct_overrides_the_countys(client):
     ballot = get_ballot(client, precincts={"commissioner": None, "jp": None}, all_races=True)
     d = ballot["districts"]
     assert (d["jp"], d["constable"], d["commissioner"]) == (None, None, None)
@@ -406,23 +317,22 @@ def test_no_precincts_sent_brings_the_countys_numbers_back(client):
     assert (d["commissioner"], d["jp"]) == (2, 5) and set(d["precinct_sources"].values()) == {"county"}
 
 
-def test_without_the_countys_list_ballotpedia_gives_the_precincts(client, upstream):
+def test_without_the_countys_list_the_precinct_races_are_left_out(client, upstream):
     switch(client, "county_precincts", False)
     ballot = get_ballot(client, all_races=True)
     d = ballot["districts"]
-    assert (d["jp"], d["constable"], d["commissioner"]) == (5, 5, None)
-    assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"} and d["county_source"] is None
-    assert {r["name"] for r in ballot["maybe"][0]["races"]} == {"County Commissioner Precinct 2", "County Commissioner Precinct 4"}
+    assert (d["jp"], d["constable"], d["commissioner"]) == (None, None, None)
+    assert d["precinct_sources"] == {} and d["county_source"] is None
+    left_out = {r["name"] for r in ballot["maybe"][0]["races"]}
+    assert {"County Commissioner Precinct 2", "County Commissioner Precinct 4", "Justice of the Peace Precinct 5"} <= left_out
     assert upstream.count("traviscountytx") == 0
 
 
-def test_a_note_when_the_county_and_ballotpedia_differ(client, upstream):
+def test_the_countys_records_settle_the_jp_race(client, upstream):
     upstream.arcgis["taxmaps.traviscountytx.gov"][TRAVIS_QUERY] = travis_rows({**TRAVIS_LIST, "300": (2, 3)})
     ballot = get_ballot(client)
     assert ballot["districts"]["jp"] == 3 and ballot["districts"]["precinct_sources"]["jp"] == "county"
     assert find_race(ballot, "Justice of the Peace Precinct 5", maybe=False) is None
-    assert ("Ballotpedia puts this address in justice of the peace precinct 5, but Travis County's records say 3, which "
-            "this ballot uses. Your voter registration certificate says which.") in ballot["notes"]
 
 
 def test_one_number_for_jp_and_constable(client):
@@ -450,7 +360,6 @@ def test_entered_districts_win_over_the_addresss(client):
 
 
 def test_nominatim_fallback_is_marked_approximate(client):
-    switch(client, "ballotpedia", False)
     ballot = get_ballot(client, "mopac")
     assert ballot["location"]["geocoder"] == "nominatim" and ballot["location"]["approximate"]
     assert ballot["location"]["matched_address"] and ballot["location"]["county"] == "Travis"
@@ -470,7 +379,6 @@ def test_a_made_up_address_nominatim_only_places_in_a_state_or_county_is_not_fou
 @pytest.fixture
 def google_client(make_app):
     with TestClient(make_app(google_key=GOOGLE_KEY)) as test_client:
-        switch(test_client, "ballotpedia", False)
         yield test_client
 
 
@@ -580,15 +488,14 @@ def test_a_nominatim_refusal_pauses_it(client, upstream):
     assert upstream.count("nominatim.openstreetmap.org") == 1
 
 
-def test_a_texas_sos_refusal_pauses_it_and_the_ballot_comes_from_ballotpedia(client, upstream):
+def test_a_texas_sos_refusal_pauses_it(client, upstream):
     upstream.refusing["goelect.txelections.civixapps.com"] = 403
-    ballot = get_ballot(client)
-    assert ballot["races"] and any("Ballotpedia only" in w for w in ballot["warnings"])
+    first = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
+    assert first.status_code == 502
     asked = upstream.count("goelect.txelections.civixapps.com")
-    get_ballot(client)
+    again = client.post("/api/ballot", json={"address": ADDRESSES["ut"]})
+    assert again.status_code == 502 and again.json()["detail"].startswith("Texas SOS is paused until ")
     assert upstream.count("goelect.txelections.civixapps.com") == asked  # paused: not asked again
-    nothing = client.post("/api/ballot", json={"address": ADDRESSES["ut"]})  # Ballotpedia has no races there
-    assert nothing.status_code == 502 and nothing.json()["detail"].startswith("Texas SOS is paused until ")
     row = source_row(client, "sos")
     assert row["notice_tone"] == "warn"
     assert row["notice"].endswith(" after Texas SOS refused a request; ballots it already sent still show.")
@@ -599,16 +506,7 @@ def test_unknown_address(client):
     assert response.status_code == 422
 
 
-def test_ballotpedia_refusal_degrades_gracefully(client, upstream):
-    upstream.ballotpedia_status = 403
-    ballot = get_ballot(client)
-    assert find_race(ballot, "U.S. Senator")
-    assert not find_race(ballot, "Austin City Council District 9")
-    assert any("Ballotpedia" in w for w in ballot["warnings"])
-
-
 def test_state_site_down_with_nothing_cached(client, upstream):
-    switch(client, "ballotpedia", False)
     upstream.down.add("goelect.txelections.civixapps.com")
     response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
     assert response.status_code == 502

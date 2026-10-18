@@ -15,7 +15,7 @@ pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="needs Node
 
 MODULE = (STATIC_DIR / "js" / "print.js").as_uri()
 SETUP = """
-const ballot = { maybe: [], measures: [], races: [
+const ballot = { maybe: [], races: [
   { key: "r1", name: "U.S. Senate", group: "federal", seats: 1, candidates: [
     { key: "a", name: "Ann Lee", party: "D", cards: [] },
     { key: "b", name: "Bob Ray", party: "R", cards: [] },

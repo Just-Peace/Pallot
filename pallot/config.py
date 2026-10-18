@@ -46,8 +46,6 @@ class Ttls:
     geocode_backoff: int = HOUR  # after the Census geocoder, Nominatim or Google refuses us, stop asking that one for this long
     suggest: int = 30 * DAY  # address suggestions as you type
     suggest_backoff: int = HOUR  # after Google refuses an address search, stop asking for this long
-    ballotpedia: int = DAY
-    ballotpedia_backoff: int = HOUR  # after Ballotpedia refuses us, stop asking for this long
     fec: int = 7 * DAY  # campaign finance: new FEC reports come every few weeks
     fec_backoff: int = 2 * 60  # how long a key the FEC rate limits rests (its limit counts the last minute)
     fec_refused_backoff: int = HOUR  # how long a key the FEC refuses rests
@@ -114,7 +112,7 @@ class Config:
     # go first past it (services.prune, at startup and every few hours).
     tiles_max_bytes: int = 512 << 20
     suggest_max_bytes: int = 64 << 20
-    # The same for each per-address source: the geocoders' and Ballotpedia's answers.
+    # The same for each geocoder's answers.
     addresses_max_bytes: int = 128 << 20
     # The most the cache's decoded answers take in memory (estimated from their size on disk); the
     # least recently used go first past it, and are read from disk again when asked.

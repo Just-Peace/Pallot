@@ -4,7 +4,7 @@ Two SPARQL queries, both through HttpCache: PEOPLE, every living person who hold
 office in the ballot's state (a seat whose district is in the state, or an office whose
 jurisdiction is the state), one answer per state, Texas's bundled with Pallot; then DETAILS, for
 only the people matched on this ballot (their description, photo, birth date, party, website,
-Wikipedia article and Ballotpedia page). Nothing about the voter is sent, only Wikidata's own
+Wikipedia article). Nothing about the voter is sent, only Wikidata's own
 item ids and the state's. Matching is by name with the seat to corroborate
 (seats.match_entries): Congress's seats in any state, and Texas's own offices; another state's
 offices have no seat, so a match there is only "likely". Wikidata often leaves a Texas House
@@ -18,7 +18,6 @@ import logging
 import re
 from dataclasses import dataclass, field
 from typing import Any
-from urllib.parse import quote
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
@@ -27,7 +26,6 @@ from ..models import Fact, Link, Match, Race, SourceCard
 from ..offices import OfficeScope
 from ..text import display_date, iso_utc
 from . import CardSet
-from .ballotpedia import BpBallot
 from .seats import match_entries
 
 log = logging.getLogger("uvicorn.error")
@@ -56,14 +54,13 @@ PEOPLE = """SELECT DISTINCT ?p ?label ?pos ?posL ?dL ?start ?end ?party WHERE {
   OPTIONAL { ?p wdt:P102 ?party }
   ?p rdfs:label ?label . FILTER(LANG(?label) = "en")
 }"""
-DETAILS = """SELECT ?p ?desc ?img ?born ?site ?siteRole ?bp ?article ?partyL WHERE {
+DETAILS = """SELECT ?p ?desc ?img ?born ?site ?siteRole ?article ?partyL WHERE {
   VALUES ?p { %s }
   OPTIONAL { ?p schema:description ?desc . FILTER(LANG(?desc) = "en") }
   OPTIONAL { ?p wdt:P18 ?img }
   OPTIONAL { ?p wdt:P569 ?born }
   OPTIONAL { ?p p:P856 ?ws . ?ws ps:P856 ?site . FILTER NOT EXISTS { ?ws wikibase:rank wikibase:DeprecatedRank }
              OPTIONAL { ?ws pq:P3831 ?siteRole } }
-  OPTIONAL { ?p wdt:P2390 ?bp }
   OPTIONAL { ?article schema:about ?p ; schema:isPartOf <https://en.wikipedia.org/> }
   OPTIONAL { ?p wdt:P102 ?party . ?party rdfs:label ?partyL . FILTER(LANG(?partyL) = "en") }
 }"""
@@ -134,7 +131,6 @@ class Details:
     born: str | None = None
     party: str | None = None
     article: str | None = None
-    ballotpedia: str | None = None
     websites: dict[str, str] = field(default_factory=dict)  # url -> "Campaign website", "Government website" or "Website"
 
 
@@ -212,7 +208,6 @@ def details_from(answer: dict[str, Any]) -> dict[str, Details]:
         found.born = found.born or (_value(row, "born") or "")[:10] or None
         found.party = found.party or _value(row, "partyL")
         found.article = found.article or _value(row, "article")
-        found.ballotpedia = found.ballotpedia or _value(row, "bp")
         site = _value(row, "site")
         if site and site.startswith(("http://", "https://")):
             role = SITE_ROLES.get(_qid(_value(row, "siteRole")) or "")
@@ -270,9 +265,8 @@ class Wikidata:
         return out
 
 
-def card(person: Person, match: Match, found: Details | None, fetched_at: float, ballotpedia: bool = False) -> SourceCard:
-    """The Profile tab's section. No description, which Settings already gives; the Ballotpedia
-    link only while Ballotpedia is on (``ballotpedia``)."""
+def card(person: Person, match: Match, found: Details | None, fetched_at: float) -> SourceCard:
+    """The Profile tab's section. No description, which Settings already gives."""
     item = f"{ITEM}{person.qid}"
     found = found or Details()
     facts = [
@@ -286,8 +280,6 @@ def card(person: Person, match: Match, found: Details | None, fetched_at: float,
         links.append(Link(label="Wikipedia article", url=found.article))
     order = ("Campaign website", "Website", "Government website")
     links += [Link(label=role, url=site) for site, role in sorted(found.websites.items(), key=lambda s: order.index(s[1]))]
-    if found.ballotpedia and ballotpedia:
-        links.append(Link(label="Ballotpedia", url=f"https://ballotpedia.org/{quote(found.ballotpedia)}"))
     return SourceCard(
         source=SOURCE,
         kind="profile",
@@ -310,13 +302,11 @@ def trusted(match: Match, party: str | None, their_party: str | None) -> bool:
 
 
 async def cards(
-    wd: Wikidata, races: list[Race], scopes: dict[str, OfficeScope], county: str | None, bp_ballot: BpBallot | None,
-    ballotpedia: bool, state: str,
+    wd: Wikidata, races: list[Race], scopes: dict[str, OfficeScope], county: str | None, state: str,
 ) -> CardSet:
     """A card for each candidate found among ``state``'s officeholders on Wikidata (only the
-    matches trusted() keeps). ``ballotpedia``: Ballotpedia is on, so the card may link to it.
-    Raises UpstreamError when the list can't be had; without the matched people's details, the
-    cards keep the item's link and offices, with a warning."""
+    matches trusted() keeps). Raises UpstreamError when the list can't be had; without the
+    matched people's details, the cards keep the item's link and offices, with a warning."""
     out = CardSet()
     if state not in STATES:
         return out
@@ -324,7 +314,7 @@ async def cards(
     parties = {c.key: c.party for race in races for c in race.candidates}
     found = {
         key: (entry, match)
-        for key, (entry, match) in match_entries(index, races, scopes, county, bp_ballot, source=LABEL, entry_id="qid",
+        for key, (entry, match) in match_entries(index, races, scopes, county, source=LABEL, entry_id="qid",
                                                  seats_of=lambda entry: entry["seats"]).items()
         if trusted(match, parties.get(key), entry["party"])
     }
@@ -337,5 +327,5 @@ async def cards(
         log.warning("%s", exc)
         out.warnings.append("Wikidata isn't answering right now, so its profiles have no photos or links.")
     for key, (entry, match) in found.items():
-        out.candidates[key] = card(entry["person"], match, details.get(entry["qid"]), fetched_at, ballotpedia)
+        out.candidates[key] = card(entry["person"], match, details.get(entry["qid"]), fetched_at)
     return out

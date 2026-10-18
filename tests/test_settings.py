@@ -23,7 +23,7 @@ def test_the_defaults_file_names_every_source_that_can_be_turned_off():
 @pytest.mark.shipped_defaults
 def test_the_defaults_come_from_the_file():
     assert DEFAULT_SOURCES == read_sources_file(DEFAULTS_FILE)
-    assert DEFAULT_SOURCES["ballotpedia"] is False and DEFAULT_SOURCES["voteforpeace"] is False
+    assert DEFAULT_SOURCES["voteforpeace"] is False
     assert DEFAULT_SOURCES["sos"] is True
 
 
@@ -55,5 +55,5 @@ def test_no_file_in_the_data_folder_leaves_pallots_defaults(tmp_path):
 
 
 def test_a_voters_choices_only_switch_known_sources():
-    sources = Sources({"fec": True, "ballotpedia": False}).chosen('{"fec": false, "ballotpedia": true, "nope": false}')
-    assert not sources.enabled("fec") and sources.enabled("ballotpedia") and sources.enabled("geocoding")
+    sources = Sources({"fec": True, "polls": False}).chosen('{"fec": false, "polls": true, "nope": false}')
+    assert not sources.enabled("fec") and sources.enabled("polls") and sources.enabled("geocoding")

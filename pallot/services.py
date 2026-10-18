@@ -19,8 +19,7 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import ballotpedia, census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
-from .sources.ballotpedia import Ballotpedia
+from .sources import census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts
@@ -43,13 +42,13 @@ from .sources.wikidata import Wikidata
 from .states.adapters import ADAPTERS, open_lists
 
 MIN_INTERVAL = {
-    "nominatim": 1.0, "suggestions": 0.5, "ballotpedia": 1.0, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
+    "nominatim": 1.0, "suggestions": 0.5, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
     "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, **{feed.source: 1.0 for feed in FEEDS},
     **{cls.source: 2.0 for cls in ADAPTERS.values()},
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
-ADDRESSES = (census.SOURCE, nominatim.SOURCE, google.SOURCE, ballotpedia.SOURCE)  # an answer per address, capped
+ADDRESSES = (census.SOURCE, nominatim.SOURCE, google.SOURCE)  # an answer per address, capped
 
 
 def prune(cache: HttpCache, config: Config, *, vacuum: bool = True) -> int:
@@ -120,7 +119,6 @@ async def open_services(
                 election_precincts=election_precincts,
                 county_precincts=CountyPrecincts(cache, config.ttl, election_precincts),
                 sos=Sos(cache, config.ttl, today),
-                ballotpedia=Ballotpedia(cache, config.ttl, today),
                 trackaipac=TrackAipac(
                     config.trackaipac_dir, refresh_fn=trackaipac_refresh, bundled_dir=trackaipac_bundled
                 ),

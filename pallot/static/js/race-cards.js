@@ -1,8 +1,8 @@
-// The ballot's race and proposition cards: the groups, the sections that may not be on the
-// ballot, and the propositions, each card collapsible, with its candidates, notes and write-in.
+// The ballot's race cards: the groups and the sections that may not be on the ballot, each card
+// collapsible, with its candidates, notes and write-in.
 // Picking here saves to ``page.picks``; ballot.js hands over the context (initRaceCards).
 
-import { ballotSections, measureKey, pickLabels } from "./ballot-shared.js";
+import { ballotSections, pickLabels } from "./ballot-shared.js";
 import { banMatches, banName, isBanned, restoreBans, unbanName } from "./ban-list.js";
 import { openCompare } from "./compare.js";
 import { $, autosave, extLink, h, initials, safeUrl, slug } from "./dom.js";
@@ -16,7 +16,7 @@ import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
 let page = null; // { ballot, picks, loadingCards, showDetails, openDistricts, updateProgress, markEndorsers }
-const redraw = new Map(); // race or proposition key -> redraws its card from the saved picks
+const redraw = new Map(); // race key -> redraws its card from the saved picks
 const fills = new Map(); // race key -> builds what its cards make again, in place
 const parts = []; // every race head's and candidate row's parts (part()) by name, for refillPart()
 const banFills = []; // every candidate row's refillBans()
@@ -44,12 +44,6 @@ export function renderCards() {
       h("p", { class: "muted explain" }, section.explanation),
       section.kind === "precinct" ? precinctLink() : null,
       section.races.map(raceCard))));
-  const { measures } = page.ballot;
-  $("#measures").replaceChildren(
-    measures.length
-      ? h("section", { class: "group", id: "measures-section" }, h("h2", { class: "group-title" }, "Propositions"), measures.map(measureCard))
-      : "",
-  );
 }
 
 export function redrawRace(key) {
@@ -156,7 +150,6 @@ function raceCard(race) {
     race.open_seat ? "Open seat" : null,
     race.unexpired ? "Unexpired term" : null,
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
-    race.source === "ballotpedia" ? "Listed by Ballotpedia" : null,
     race.source === "fec" ? "From FEC filings" : null,
   ].filter(Boolean).join(" · ");
   const candRows = race.candidates.map((c) => candidateRow(race, c));
@@ -511,35 +504,9 @@ function settle(key, filled) {
   if (card && card.getBoundingClientRect().top < $("#progress-strip").getBoundingClientRect().bottom) card.scrollIntoView({ block: "start" });
 }
 
-// ---- precincts, propositions --------------------------------------------------------
+// ---- precincts --------------------------------------------------------
 
 function precinctLink() {
   return h("p", { class: "precinct-link" },
     h("button", { type: "button", class: "link-btn", on: { click: () => page.openDistricts() } }, "Enter your commissioner and JP precincts"));
-}
-
-function measureCard(measure) {
-  const key = measureKey(measure);
-  const name = `measure-${slug(measure.key)}`;
-  const options = [["for", "For"], ["against", "Against"]].map(([value, label]) => {
-    const vote = () => {
-      page.picks.set(key, [value]);
-      settle(key, true);
-    };
-    const input = h("input", { type: "radio", name, id: `${name}-${value}`, value, on: { change: vote } });
-    return { value, input, label: h("label", { class: "measure-option", for: `${name}-${value}` }, input, label) };
-  });
-  const body = [
-    measure.summary ? h("p", {}, measure.summary) : null,
-    h("fieldset", { class: "measure-options" }, h("legend", { class: "sr-only" }, measure.title), options.map((o) => o.label)),
-    measure.url ? h("p", { class: "fine" }, extLink(measure.url, "Read more on Ballotpedia")) : null,
-  ];
-  const card = collapsibleCard(key, { title: measure.title, meta: measure.district, body });
-  card.article.classList.add("measure");
-  redraw.set(key, () => {
-    const vote = page.picks.picked(key)[0];
-    for (const option of options) option.input.checked = option.value === vote;
-    card.show(vote ? `Voting ${vote}` : "Not decided yet", Boolean(vote));
-  });
-  return card.article;
 }

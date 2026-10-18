@@ -60,10 +60,10 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 The FAQ (linked from every page) explains the figures and the features in detail. In short:
 
 - **Look up your ballot** by home address (with suggestions as you type), or under **My voter card** by county and precinct number, so no address is sent anywhere. Pick the election, and a party for a primary. The first lookup can take several seconds, and the very first after installing also downloads the precinct map (about 45 MB); looking the same address up again is instant.
-- **Your ballot** lists every race in ballot order, with the candidates' party, Incumbent and Open seat, the declared write-ins, and a write-in line. Ballotpedia, when you turn it on, adds city, school board and special district races. Races that depend on a district or precinct Pallot doesn't know are left out, with a note saying which number to enter.
+- **Your ballot** lists every race in ballot order, with the candidates' party, Incumbent and Open seat, the declared write-ins, and a write-in line. Races that depend on a district or precinct Pallot doesn't know are left out, with a note saying which number to enter.
 - **When to vote** has the election's key dates, each downloadable to your calendar, and links to check your registration and find where to vote.
 - **Your districts** shows your districts and precincts, as on your voter registration certificate. You can correct any number from your certificate. A **map** shows your address on OpenStreetMap, with your districts' outlines in Texas.
-- **Each candidate** has their endorsements, a **Funding** summary (small donors, Texas donors, outside spending), polls where there are any, a note, a web search, and **Profile**: their filing, Wikidata and Ballotpedia profiles, issue searches, and a tab per source. **Compare funding** puts a race's candidates side by side.
+- **Each candidate** has their endorsements, a **Funding** summary (small donors, Texas donors, outside spending), polls where there are any, a note, a web search, and **Profile**: their filing and Wikidata profile, issue searches, and a tab per source. **Compare funding** puts a race's candidates side by side.
 - **View** chooses how much detail to show (Minimal, Simple, Detailed) and what matters to you (Funding, Endorsements, Polls, Where they stand).
 - **Help me pick**: **Trust** picks the candidates of the endorsers you trust, and **Avoid** marks the ones you won't vote for, from watchlists or your own list. **More conditions** picks across the ballot, or in one race, by party, endorsements, money or polls. It never guesses in a race with more matches than seats.
 - **Avoid** on a candidate adds them to your own list, which you can also fill by name or pattern in Settings. Trust never picks them.
@@ -81,13 +81,12 @@ Your picks, notes, write-ins, Help me pick choices, the people you avoid and you
 | Google Geocoding API | last fallback, when neither the Census nor Nominatim can match an address (new streets, mostly) | needs `PALLOT_GOOGLE_API_KEY`; without one it's never asked; results flagged as approximate unless they hit a building |
 | Google Places Autocomplete | address suggestions while typing, anywhere in the US | needs `PALLOT_GOOGLE_API_KEY` with the Places API (New) enabled; without one, nothing is suggested. Held to `PALLOT_SUGGEST_DAILY_MAX` a day; it has its own switch in Settings |
 | Texas Legislative Council map (PLANE2106) | State Board of Education district, and its outline on the map | comes with Pallot (see [Bundled snapshots](#bundled-snapshots)), so lookups never download it. Nothing about you is sent |
-| Texas Legislative Council precinct map (data.capitol.texas.gov, the `precincts` maps) | your election precinct, and its outline on the map; for a voter card, the points inside your precinct that the Census and Ballotpedia are asked about | the portal's list of maps is asked once a week; the newest map, a primary's or a general's (now the 2026 primary's, about 45 MB), is downloaded on the first lookup and again only when a newer one is listed. Nothing about you is sent |
+| Texas Legislative Council precinct map (data.capitol.texas.gov, the `precincts` maps) | your election precinct, and its outline on the map; for a voter card, the points inside your precinct that the Census is asked about | the portal's list of maps is asked once a week; the newest map, a primary's or a general's (now the 2026 primary's, about 45 MB), is downloaded on the first lookup and again only when a newer one is listed. Nothing about you is sent |
 | County map servers: Harris, Dallas, Tarrant, Travis, Fort Bend, Bexar and Denton | your commissioner and JP precincts, from your election precinct | each county's list of its election precincts, or its maps of its commissioner and JP precincts, found by name (the newest year, never a proposal), bundled with Pallot (see [Bundled snapshots](#bundled-snapshots)); once the bundled copy is two weeks old, downloaded whole, at most once a week, when you look up an address there. Nothing about you is sent |
 | US Census TIGERweb | the outlines of your U.S. House, State Senate and State House districts, for the map | every Texas district's outline, bundled with Pallot (see [Bundled snapshots](#bundled-snapshots)); once the bundled copy is 37 days old, one request per district, with its number and never your address |
 | OpenStreetMap tiles (tile.openstreetmap.org) | the street map around your address | through the Pallot server, only the tiles of the area you look at, following OpenStreetMap's [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); drawn with [Leaflet](https://leafletjs.com), which comes with Pallot |
 | Texas Secretary of State | official ballot order per county, candidate filings | the public API behind goelect.txelections.civixapps.com |
 | Texas Secretary of State, Important Election Dates | each election's last day to register, early voting and mail-ballot deadline | one public web page (sos.state.tx.us), read whole |
-| Ballotpedia | city council, school board and special-district races, and others the state doesn't list (appraisal district boards); notes on races; JP/constable/commissioner precinct (when it has a race on this ballot) and city council district; candidate profiles | for a voter card, asked at three points inside your precinct, keeping only what all three have. An **unofficial** endpoint. Its terms forbid commercial scraping, so it starts off: turn it on in Settings for personal use |
 | [Wikidata](https://www.wikidata.org) | profiles of candidates who hold or held an office in their state: a photo, a description, birth date, party, the offices they've held there, and stable links to their Wikidata item, Wikipedia article and campaign and government websites | Wikidata's public query service (CC0, no key). The list of every living Texas officeholder comes with Pallot (see [Bundled snapshots](#bundled-snapshots)); another state's is asked for once a week. The matched candidates' details are asked once per ballot, by their Wikidata ids. Nothing about you is sent but your state. Photos load from Wikimedia Commons |
 | TrackAIPAC | pro-Israel lobby money and endorsements for congressional candidates | bundled with Pallot (see [Bundled snapshots](#bundled-snapshots)) |
 | Vote for Peace (voteforpeace.info, from Organize for Peace) | whether it calls a candidate an Ally, Neutral or Opposed, on war, human rights and lobby money, with the groups it cites and its notes; every level, from Congress to county courts and city councils | bundled with Pallot, used with Organize for Peace's permission (see [Bundled snapshots](#bundled-snapshots)); starts off, turn it on in Settings |
@@ -100,7 +99,7 @@ Your picks, notes, write-ins, Help me pick choices, the people you avoid and you
 | FiftyPlusOne (fiftyplusone.news) | public polls of U.S. Senate, U.S. House and Governor races | the site's own JSON API; its lists come with Pallot, with its permission (see [Bundled snapshots](#bundled-snapshots)), and are downloaded again once the bundled copy is two days old |
 | Seat holders: the [congress-legislators](https://github.com/unitedstates/congress-legislators) project and [Open States](https://openstates.org) | who holds each U.S. Senate, U.S. House, State Senate and State House seat now, and their party: Open seat, Party holds seat, and Incumbent where the filing doesn't say | two public files (public domain and CC0), bundled with Pallot (see [Bundled snapshots](#bundled-snapshots)); once the bundled copy is two weeks old, each is downloaded whole at most once a week, and only when the ballot has a race of that body. Nothing about you is sent. Statewide offices, the SBOE, courts and local races aren't covered |
 
-Commissioner, JP and constable races depend on your commissioner and JP precincts. These come from the numbers you enter, then your county's records (in the seven counties above), then Ballotpedia. When none of them gives a number, those races are left out with a note. A race with only write-ins is shown when Pallot can place it. When Texas SOS has no ballot for the county (a special election), Pallot uses its statewide candidate list and shows only federal, statewide, congressional, legislative and SBOE races, with a note.
+Commissioner, JP and constable races depend on your commissioner and JP precincts. These come from the numbers you enter, then your county's records (in the seven counties above). When neither gives a number, those races are left out with a note. A race with only write-ins is shown when Pallot can place it. When Texas SOS has no ballot for the county (a special election), Pallot uses its statewide candidate list and shows only federal, statewide, congressional, legislative and SBOE races, with a note.
 
 Your election precinct comes from the newest precinct map, a primary's or a general's. When your address and the middle of its census block fall in different precincts, Pallot names both and picks neither. Your voter registration certificate wins.
 
@@ -117,7 +116,7 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 - If a source refuses a request, Pallot stops asking it for an hour (2 minutes for an FEC key at its rate limit, while your other keys carry on). What it already has still shows.
 - When a source fails, the ballot names it and says what still works. Why it failed goes to the server's log, never to the page.
 - The snapshots that come with Pallot (see [Bundled snapshots](#bundled-snapshots)) mean lookups never contact TrackAIPAC, Vote for Peace or the Texas Ethics Commission, and ask the other bundled sources only once the bundled copy is a few days old.
-- Address suggestions, street map tiles and addresses that weren't found are deleted once they've been expired for 30 days. Tiles and suggestions are kept under 512 MB and 64 MB, and each address lookup's answers (the Census's, OpenStreetMap's, Google's and Ballotpedia's) under 128 MB, the oldest going first. Everything else stays as the copy to show when a source is down.
+- Address suggestions, street map tiles and addresses that weren't found are deleted once they've been expired for 30 days. Tiles and suggestions are kept under 512 MB and 64 MB, and each address lookup's answers (the Census's, OpenStreetMap's and Google's) under 128 MB, the oldest going first. Everything else stays as the copy to show when a source is down.
 - `pallot-cache` asks the FEC more slowly than a lookup does, leaving room for a running Pallot, and doesn't ask a paused source.
 
 ## Settings
@@ -129,15 +128,15 @@ The **Settings** page has **Ballot view**, **Web search**, **People you avoid**,
 
 Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).
 
-Ballotpedia and Vote for Peace start off. Turn Ballotpedia on to add city council, school board and special district races, and Vote for Peace to add its Allies and Opposed. With Texas SOS off, the ballot comes entirely from Ballotpedia.
+Vote for Peace starts off: turn it on to add its Allies and Opposed. A Texas ballot comes from Texas SOS, so with it off Pallot can't build one.
 
 ### Which sources start on
 
-`pallot/sources.toml` declares which sources are on for someone who hasn't switched them, under `[sources]`, one `id = true` or `false` each (the ids `pallot-cache check` shows in brackets). Every endorsement list starts on. To change the defaults for everyone using your Pallot, don't edit that file: put a `sources.toml` in the data folder (`data/`, or `PALLOT_DATA_DIR`), listing only what you change, and restart Pallot. For example, to share Pallot with others without Ballotpedia's unofficial endpoints:
+`pallot/sources.toml` declares which sources are on for someone who hasn't switched them, under `[sources]`, one `id = true` or `false` each (the ids `pallot-cache check` shows in brackets). Every endorsement list starts on. To change the defaults for everyone using your Pallot, don't edit that file: put a `sources.toml` in the data folder (`data/`, or `PALLOT_DATA_DIR`), listing only what you change, and restart Pallot. For example, to share Pallot with others without Google's address lookups, which Google bills by the request:
 
 ```toml
 [sources]
-ballotpedia = false
+google = false
 suggestions = false
 ```
 
@@ -160,7 +159,7 @@ docker compose exec pallot pallot-cache check      # the same, in the container
 - **refresh** asks again only for the responses past their lifetime, downloads the precinct map when none is kept or when the portal lists a newer one (about 45 MB). The snapshots have no lifetime, so it leaves them.
 - **prune** deletes expired address suggestions and street map tiles, addresses that weren't found, and the oldest tiles, suggestions and address lookups past their caps, then shrinks the file. Pallot does the same when it starts, and every 6 hours without shrinking the file. It never deletes another source's copies, which stay to show when a source is down.
 - **hard-refresh** asks again for every saved response, re-downloads the SBOE map (so a host picks up a newer plan), checks for a newer precinct map, and refreshes TrackAIPAC, Vote for Peace and the Texas Ethics Commission (see [Bundled snapshots](#bundled-snapshots); TEC's may download about 1 GB).
-- **rebuild** deletes every saved response, pause and map, then fetches them all again, as hard-refresh does. The snapshots aren't deleted, only refreshed; `--reset-snapshots` puts them back as they came with Pallot first. `--delete-only` deletes and fetches nothing again: the next lookups fetch what they need, which is how to erase the addresses Pallot saved (`--only geocoding suggestions ballotpedia`). It asks first, unless you add `--yes`.
+- **rebuild** deletes every saved response, pause and map, then fetches them all again, as hard-refresh does. The snapshots aren't deleted, only refreshed; `--reset-snapshots` puts them back as they came with Pallot first. `--delete-only` deletes and fetches nothing again: the next lookups fetch what they need, which is how to erase the addresses Pallot saved (`--only geocoding suggestions`). It asks first, unless you add `--yes`.
 - The street map's tiles and the address suggestions are never fetched in bulk: they're only fetched as someone looks at the map or types an address, as OpenStreetMap's tile policy asks.
 - `--only` takes source ids (`--only sos fec`) for every command but prune.
 - It exits with 1 when something couldn't be fetched (the old copy stays), so it can run from cron or a systemd timer, for example once a night: `uv run pallot-cache refresh`.
@@ -231,7 +230,7 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 | `PALLOT_TTL_*` | cache lifetimes, in seconds: `.env.example` lists each one with its default, including how long a source is left alone after refusing a request and how long the answers that came with Pallot are used (see [Caching](#caching) and [Bundled snapshots](#bundled-snapshots)). `PALLOT_TTL_TILES` can't go under 7 days, as OpenStreetMap asks |
 | `PALLOT_TILES_MAX_MB` | `512`: the most the street map's tiles take in the cache; past it, the oldest are deleted when Pallot prunes |
 | `PALLOT_SUGGEST_MAX_MB` | `64`: the same for the address suggestions |
-| `PALLOT_ADDRESSES_MAX_MB` | `128`: the same for each address lookup's answers: the Census's, OpenStreetMap's, Google's and Ballotpedia's, each up to this much |
+| `PALLOT_ADDRESSES_MAX_MB` | `128`: the same for each address lookup's answers: the Census's, OpenStreetMap's and Google's, each up to this much |
 | `PALLOT_CACHE_MEMORY_MB` | `64`: the most the cache's answers take in memory. Past it, the least recently used are read from disk again when asked, which is slower. Pallot takes about 110 MB besides. A cap well under what one lookup reads saves nothing, since each lookup then reads its answers again |
 | `PALLOT_GOOGLE_DAILY_MAX` | `300`: the most Google is asked in a day (UTC), about 9,000 a month. Past it, Google is paused until midnight UTC, and Settings says so. `0` for no limit |
 | `PALLOT_SUGGEST_DAILY_MAX` | `1000`: the same for address suggestions, which ask Google once per new text typed (about 30,000 a month). Past it, suggestions stop until midnight UTC. `0` for no limit |
@@ -263,7 +262,6 @@ Pallot has no login, so anyone who can reach it can look up ballots, and each ne
 - A proxy on the same machine can stay at the default, `127.0.0.1`. Without one, a visitor on `127.0.0.1` is someone on the machine itself, and isn't limited.
 - **`PALLOT_GOOGLE_DAILY_MAX`** and **`PALLOT_SUGGEST_DAILY_MAX`** cap what Google can cost in a day, and **`PALLOT_MAX_LOOKUPS`** how many lookups run at once.
 - **`PALLOT_ALLOWED_HOSTS`** must list the name visitors open Pallot by.
-- To keep Ballotpedia's unofficial endpoints off for everyone, see [Which sources start on](#which-sources-start-on).
 
 ## Not built yet
 
