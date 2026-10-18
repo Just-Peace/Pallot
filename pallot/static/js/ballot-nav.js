@@ -405,7 +405,7 @@ function placeForWidth() {
 
 // More's sections, in the order a voter reaches for them: Clear picks (with the line saying why the
 // strip's Print picks waits), Help me pick's controls, and the View menu's: detail and focuses (each with
-// its "?"), Settings and the appearance, then Expand and Collapse all and Only races I haven't picked.
+// its "?"), then Expand and Collapse all and Only races I haven't picked.
 // On a phone the toolbar is hidden and Print picks sits on the strip, so More is where the rest live.
 function fillMoreSheet() {
   for (const root of [moreView, moreFocus, moreHidePicked]) bindViewControls(root);
@@ -414,9 +414,10 @@ function fillMoreSheet() {
   picksSection = addMoreSection({ id: "picks", label: "Your picks" }, clearButtons[1], waitNotes[1]);
   syncPicksSection();
   addMoreSection({ id: "help", label: ["Help me pick ", helpLink("endorsements", "Help me pick")] }, moreHelp);
-  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus,
-    h("div", { class: "menu-foot" },
-      h("a", { class: "btn ghost small with-icon", href: "settings.html#view-title" }, icon("settings"), "Settings"), moreTheme));
+  addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
+  // Settings and the appearance beside Done, in the sheet's head
+  $("#more-title").after(h("div", { class: "sheet-tools" },
+    h("a", { class: "icon-only", href: "settings.html#view-title", title: "Settings", "aria-label": "Settings" }, icon("settings")), moreTheme));
   addMoreSection({ id: "races", label: "Races" },
     moreAction("Expand all", "expand", () => setAllCollapsed(false)),
     moreAction("Collapse all", "collapse", () => setAllCollapsed(true)),
