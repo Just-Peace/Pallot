@@ -1079,6 +1079,9 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .details-title h2 { margin: 0 0 2px; }
 .details-title p { margin: 0 0 4px; }
 .icon-btn.close { font-size: 1rem; padding: 4px 10px; }
+/* a dialog's and More's way back to the ballot: "Done" in the accent colour, not a ✕ that reads as
+   less than ‹ Previous */
+.icon-btn.done-btn, .icon-btn.done-btn:hover { font-size: 0.92rem; font-weight: 700; color: var(--accent); background: none; border-color: transparent; }
 /* ‹ and › step through the race's candidates */
 .details-nav { display: flex; align-items: center; gap: 6px; flex: none; }
 .icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
@@ -1713,7 +1716,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   :is(.box-links, .box-foot, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after { content: "";
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* More's chips, segments and buttons too: drawn at their usual size, the 44px hit area around them */
-  .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn) { position: relative; min-height: 0; }
+  .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn), .details-head :is(.btn, .icon-btn) { position: relative; min-height: 0; }
+  .details-head :is(.btn, .icon-btn)::after { content: ""; position: absolute; left: 50%; top: 50%;
+    width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   .sheet .seg-option { min-height: 34px; }
   .sheet :is(.rule-chip, .focus-chip, .btn)::after { content: ""; position: absolute; left: 50%; top: 50%;
     width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
