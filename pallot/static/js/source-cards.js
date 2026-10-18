@@ -18,6 +18,8 @@ import { viewPref } from "./view.js";
 const MONEY_FAQ = { fec: "fec-money", tec: "tec-money", polls: "polls" };
 // What a card's date means.
 const AS_OF_WORDS = { fec: "reports through", tec: "reports through", polls: "latest poll" };
+// And in short, beside a box's heading.
+const SHORT_AS_OF_WORDS = { fec: "through", tec: "through", polls: "updated" };
 
 // A link to another website, with the badges' ↗ after its label (none for an email address).
 function webLink(url, label) {
@@ -380,8 +382,9 @@ function foldBox(race, card, setting, action, body) {
     type: "button", class: "box-toggle", "aria-controls": id, "aria-label": [title, asOf].filter(Boolean).join(" · "),
     on: { click: () => setBoxOpen(box, box.classList.contains("collapsed")) },
   }, h("span", { class: "chevron", "aria-hidden": "true" }), phoneWords(short, PHONE_TITLES[card.kind]));
-  // a poll box's date in short, "updated Oct 16"; the button's name keeps it in full
-  const shownAsOf = card.kind === "polls" && card.as_of ? `updated ${formatDate(card.as_of, { month: "short", day: "numeric" })}` : asOf;
+  // the date in short, "updated Oct 16" or "through Sep 24"; the button's name keeps it in full
+  const shownAsOf = card.as_of
+    ? `${SHORT_AS_OF_WORDS[card.source] || "as of"} ${formatDate(card.as_of, { month: "short", day: "numeric" })}` : null;
   const foot = [period, shownAsOf].filter(Boolean).join(" · ");
   const box = h("div", { class: "race-money", "data-show": setting, "data-open": OPENS[card.kind], hidden: !viewPref(setting) },
     h("div", { class: "breakdown-head" }, h("h4", { class: "breakdown-title" }, toggle),
