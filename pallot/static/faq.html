@@ -35,10 +35,24 @@
       <section class="faq-group" aria-labelledby="ballot">
         <h2 class="group-title" id="ballot">Finding your ballot</h2>
 
-        <details class="faq">
+        <details class="faq" id="coverage">
           <summary>Which addresses and elections does Pallot cover?</summary>
           <div class="faq-body">
-            <p>Texas addresses, for now. The list of elections comes from the Texas Secretary of State (Texas SOS). Pallot shows the next one unless you choose another.</p>
+            <p>Any address in the 50 states and DC, though how much of the ballot Pallot has depends on the state:</p>
+            <ul>
+              <li><strong>Texas: the full ballot.</strong> Every federal, state, district, county and precinct race, in ballot order, from the Texas Secretary of State (Texas SOS), with your precincts, the key dates and a map of your districts. Its list of elections comes from Texas SOS too: Pallot shows the next one unless you choose another.</li>
+              <li><strong>Michigan, North Carolina, Pennsylvania, Florida and Virginia: the state's official list.</strong> The races on the candidate list the state's election office publishes for the November general election: Congress, statewide offices, the Legislature and the courts the list places, and in North Carolina county and town races too. Virginia elects only Congress in 2026. Michigan also has its key dates.</li>
+              <li><strong>Every other state, and DC: Congress only.</strong> Your U.S. Senate race, when your state has one this year, and your U.S. House race, for the November general election. The candidates aren't confirmed: see <a href="#unverified">why a candidate is marked Unverified</a>.</li>
+            </ul>
+            <p>Outside Texas, Pallot has only the November general election, not primaries or local elections.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="unverified">
+          <summary>Why is a candidate marked "Unverified"?</summary>
+          <div class="faq-body">
+            <p>In a state where Pallot has only the races for Congress, its candidates are the people who filed with the FEC (Federal Election Commission) to run for your seat this cycle and raised $5,000 or more, the FEC's own line for being a candidate. They're listed by how much they raised.</p>
+            <p>The FEC doesn't say who made the November ballot: that's up to each state. So someone who lost their primary or dropped out may still be listed, and a candidate who raised less, often from a small party, may be missing. Pallot can't confirm them, so each is marked Unverified. Your state's official candidate list, or your sample ballot, says who's really on it.</p>
           </div>
         </details>
 
@@ -63,15 +77,16 @@
         <details class="faq">
           <summary>How does Pallot know what's on my ballot?</summary>
           <div class="faq-body">
-            <p>First it finds your county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts, and the Texas Legislative Council's maps give your State Board of Education district and your election precinct.</p>
-            <p>Then it takes the official ballot order for your county from the Texas Secretary of State and keeps the races for your districts.</p>
+            <p>First it finds your state, county and districts from your address. The US Census geocoder gives your U.S. House, State Senate and State House districts anywhere in the US. In Texas, the Texas Legislative Council's maps also give your State Board of Education district and your election precinct.</p>
+            <p>Then it takes the races for your districts from your state's source: in Texas, the official ballot order for your county from the Texas Secretary of State; in Michigan, North Carolina, Pennsylvania, Florida and Virginia, the state's official list of candidates; anywhere else, the FEC's filings for your U.S. Senate and U.S. House seats.</p>
+            <p>A race on that list that covers only part of your county or town, such as a ward, can't be told from your address, so it's left out, with a note, unless you ask to see it.</p>
           </div>
         </details>
 
         <details class="faq" id="local-races">
           <summary>Why don't I see my city council or school board races?</summary>
           <div class="faq-body">
-            <p>Pallot's ballot comes from the Texas Secretary of State, which lists every federal, state, district and county race, but not city council, school board or special district races. Your county's sample ballot has those.</p>
+            <p>Pallot shows only the races its source for your state lists. In Texas that's the Texas Secretary of State, which lists every federal, state, district and county race, but not city council, school board or special district races. Most other states' lists have no county or city races, and elsewhere Pallot has only the races for Congress (see <a href="#coverage">which addresses Pallot covers</a>). Your official sample ballot has every race.</p>
           </div>
         </details>
 
@@ -86,14 +101,22 @@
         <details class="faq">
           <summary>Is this my official ballot?</summary>
           <div class="faq-body">
-            <p>No. Pallot is an unofficial helper (see <a href="about.html#isnt">what it isn't</a>), and it can miss something, for example when a source hasn't caught up with a late change. Check the official sample ballot from your county elections office before you vote.</p>
+            <p>No. Pallot is an unofficial helper (see <a href="about.html#isnt">what it isn't</a>), and it can be wrong or miss something, for example when a source hasn't caught up with a late change, or when Pallot matches the wrong record. Check the official sample ballot from your county or state elections office before you vote.</p>
+            <p>Pallot is provided as is, without warranty of any kind. Its makers and contributors aren't liable for any decision made with it, or for anything a source got wrong.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="neutral">
+          <summary>Does Pallot endorse anyone?</summary>
+          <div class="faq-body">
+            <p>No. Pallot doesn't back any candidate, party or cause. It shows what each source says about everyone on your ballot, including the endorsements other organizations make, and it picks for you only by the endorsers and conditions you choose. Your vote is yours.</p>
           </div>
         </details>
 
         <details class="faq">
           <summary>Why do I have to choose a party?</summary>
           <div class="faq-body">
-            <p>In a primary, each party has its own ballot. Texas voters don't register with a party: you choose which party's primary to vote in when you vote. Choose the ballot you plan to ask for.</p>
+            <p>In a Texas primary, each party has its own ballot. Texas voters don't register with a party: you choose which party's primary to vote in when you vote. Choose the ballot you plan to ask for.</p>
             <p>If you vote in one party's primary, you can only vote in that party's runoff.</p>
           </div>
         </details>
@@ -199,7 +222,7 @@
         <details class="faq">
           <summary>Can I write in a candidate?</summary>
           <div class="faq-body">
-            <p>Yes. In Texas, a write-in vote only counts for someone who filed as a write-in candidate. The ones who filed with the Texas Secretary of State are listed in their race, after the printed names and marked "Write-in"; pick one and your printed sheet says "Name (write-in)", since you write the name in yourself. Every race also ends with a write-in line: type a name and it becomes your pick.</p>
+            <p>Yes. Every race ends with a write-in line, wherever you are; whether a write-in counts depends on your state's rules. In Texas, a write-in vote only counts for someone who filed as a write-in candidate. The ones who filed with the Texas Secretary of State are listed in their race, after the printed names and marked "Write-in"; pick one and your printed sheet says "Name (write-in)", since you write the name in yourself. Every race also ends with a write-in line: type a name and it becomes your pick.</p>
           </div>
         </details>
       </section>
@@ -213,6 +236,7 @@
             <p>In Texas, from the Texas Secretary of State's <a href="https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml" target="_blank" rel="noopener noreferrer">Important Election Dates</a> page, which lists each election's last day to register, early voting and mail-ballot deadline. Pallot shows the dates of the election on your ballot, and checks the page again once a day. The next date still to come is in bold; past ones are dimmed.</p>
             <p>In Texas, early voting's places and hours are set by each county, so check with your county elections office. On Election Day, polls are open 7 a.m. to 7 p.m.</p>
             <p>In Michigan, Pallot works the dates out from Election Day, by the rules the <a href="https://www.michigan.gov/sos/elections/voting" target="_blank" rel="noopener noreferrer">Michigan Department of State</a> explains: registering online or by mail ends 15 days before (after that, register in person at your city or township clerk's office, with proof of residency, through Election Day); early voting runs from the second Saturday before through the Sunday before, and your clerk may add earlier days; an absentee application made online or by mail is due by 5 p.m. the Friday before. Any voter there can vote absentee. Polls are open 7 a.m. to 8 p.m.</p>
+            <p>In other states, Pallot doesn't have the key dates yet, so "When to vote" links to your state's election office, which lists them.</p>
           </div>
         </details>
 
@@ -227,7 +251,7 @@
         <details class="faq" id="polling-place">
           <summary>Why doesn't Pallot show my polling place?</summary>
           <div class="faq-body">
-            <p>Texas has no public way to look up a polling place by address. The state's My Voter Portal shows yours, but only after you log in with your name, date of birth and county, which Pallot won't ask for. "Am I registered?" ("Registered?" on a phone) opens the portal, and "Where to vote" ("Where") links to the list of county elections offices, which publish their polling places before each election. During early voting you can vote at any early-voting place in your county, and many counties let you do the same on Election Day.</p>
+            <p>Pallot doesn't know polling places anywhere: your state's or county's election office lists them before each election. Texas has no public way to look up a polling place by address. The state's My Voter Portal shows yours, but only after you log in with your name, date of birth and county, which Pallot won't ask for. "Am I registered?" ("Registered?" on a phone) opens the portal, and "Where to vote" ("Where") links to the list of county elections offices, which publish their polling places before each election. During early voting you can vote at any early-voting place in your county, and many counties let you do the same on Election Day.</p>
           </div>
         </details>
 
@@ -294,7 +318,7 @@
           <summary>What is TrackAIPAC, and why does it show members of Congress as "likely"?</summary>
           <div class="faq-body">
             <p>TrackAIPAC tracks money and endorsements from pro-Israel lobby groups for congressional candidates. A candidate it endorses has a green TrackAIPAC chip under Endorsements; one on its watchlist has an amber "TrackAIPAC watchlist" chip.</p>
-            <p>It lists members of Congress by the seat they hold now. Texas redrew its congressional districts in 2025, so someone running for a different seat in 2026 shows as a likely match unless TrackAIPAC's entry mentions the new seat.</p>
+            <p>It lists members of Congress by the seat they hold now. Several states, Texas among them, redrew their congressional districts in 2025, so someone running for a different seat in 2026 shows as a likely match unless TrackAIPAC's entry mentions the new seat.</p>
           </div>
         </details>
 
@@ -342,7 +366,7 @@
         <details class="faq" id="money-sources">
           <summary>Where do the money figures come from?</summary>
           <div class="faq-body">
-            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission). Candidates for statewide office, the Legislature, the State Board of Education, the appeals and district courts, and district attorney report to the Texas Ethics Commission (TEC).</p>
+            <p>From the reports campaigns must file. Candidates for Congress report to the FEC (Federal Election Commission). In Texas, candidates for statewide office, the Legislature, the State Board of Education, the appeals and district courts, and district attorney report to the Texas Ethics Commission (TEC). Other states' state candidates report to their own state, whose figures Pallot doesn't have yet.</p>
             <p>"Raised" is what the candidate's campaign reported receiving. For Congress it covers the whole election period: two years for the House, six for the Senate. For state offices it counts the reports since the last even-year November general election, and the date is shown next to the figures. "Cash on hand" is from the candidate's latest report, and the date shown is when that report ends, not when Pallot fetched it.</p>
             <p>A candidate's details break the money down: small and large donations, individuals and political action committees (PACs), where donors live, and the largest donors. The next two answers say exactly how Pallot puts the figures together, for <a href="#fec-money">the FEC</a> and for <a href="#tec-money">the Texas Ethics Commission</a>.</p>
           </div>
@@ -355,7 +379,7 @@
             <p>A chip says <strong>Mostly</strong> when its side is more than half, and <strong>Overwhelmingly</strong> when it's more than three quarters. Green chips are money from many people at home; amber ones are money from a few, from far away, or from the candidate.</p>
             <ul>
               <li><strong>Small donors</strong> (green) or <strong>large donations</strong> (amber): the share of everything the campaign raised that came in donations under $500. Over half is small donors; under half is large donations, which counts everything else the campaign raised: donations of $500 or more, PACs and the candidate's own money. Small donations are the ones the campaign didn't itemize plus the itemized ones under $500. For Congress, a donation that wasn't itemized is from a donor who gave $200 or less in all.</li>
-              <li><strong>Texas donors</strong> (green) or <strong>out-of-state donors</strong> (amber): the share of the itemized donations from individuals with an address that came from Texas. It counts only itemized donations: for Congress, those from donors who gave more than $200 in all; for state offices, every donation the campaign itemized. Donations with no address are left out.</li>
+              <li><strong>Home-state donors</strong>, named for the candidate's state, as "Texas donors" (green), or <strong>out-of-state donors</strong> (amber): the share of the itemized donations from individuals with an address that came from the candidate's state. It counts only itemized donations: for Congress, those from donors who gave more than $200 in all; for state offices, every donation the campaign itemized. Donations with no address are left out.</li>
               <li><strong>Self-funded</strong> (amber): the candidate's own gifts and loans to their campaign are more than half of what it raised. Only for Congress: state reports don't separate them.</li>
             </ul>
             <p>At exactly half, there's no chip.</p>
@@ -541,9 +565,9 @@
         <details class="faq" id="pick-by-rule">
           <summary>Can Pallot pick for me?</summary>
           <div class="faq-body">
-            <p>Only as you choose: by the endorsers you trust, in <a href="#endorsements">Help me pick</a>, or by conditions you set with its "More conditions…". More conditions picks the candidates of the parties you choose, and only if they're the incumbent (or not), any endorser you choose endorses them (TrackAIPAC, Vote for Peace's allies or an endorsement list), their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, donors in Texas gave at least a share of their itemized donations, or they lead the polls. It can also skip, and take back the picks of, anyone on your Avoid list (on unless you turn it off), on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
+            <p>Only as you choose: by the endorsers you trust, in <a href="#endorsements">Help me pick</a>, or by conditions you set with its "More conditions…". More conditions picks the candidates of the parties you choose, and only if they're the incumbent (or not), any endorser you choose endorses them (TrackAIPAC, Vote for Peace's allies or an endorsement list), their money is under or over an amount (or the least or the most in the race), small donations make up at least a share of what they raised, donors in their state gave at least a share of their itemized donations, or they lead the polls. It can also skip, and take back the picks of, anyone on your Avoid list (on unless you turn it off), on TrackAIPAC's watchlist, opposed by Vote for Peace, with Israel lobby money over an amount, whose own money makes up over a share of what their campaign raised, or polling under a share.</p>
             <p>A TrackAIPAC, Vote for Peace, endorsement list, money or polls condition counts only in races where Pallot has that information: money in congressional and state races, TrackAIPAC in congressional races, Vote for Peace in the races where it rates someone, an endorsement list in the races where it endorses someone, polls in U.S. Senate, U.S. House and Governor races. So "Democrats who spent under $1 million" still picks the Democrat for county judge. Where more candidates match than a race has seats, it leaves the race for you rather than guessing; two candidates tied for the least money is one of those. It picks only the names printed on the ballot, unless you choose the Write-ins chip.</p>
-            <p>Small donations, Texas donors and a candidate's own money are counted as for the <a href="#funding">Funding chips</a>, with the share you choose in place of half. A candidate's own money counts only in congressional races.</p>
+            <p>Small donations, home-state donors and a candidate's own money are counted as for the <a href="#funding">Funding chips</a>, with the share you choose in place of half. A candidate's own money counts only in congressional races.</p>
             <p>The dialog shows only the conditions your ballot has something for, and says which sources you've turned off, with a link to turn each on in Settings. Beside them, it says your conditions in words and what they would change, race by race, before anything does. "Apply to" chooses every race, one section, or, under "This race only", a single race. Nothing changes until you press "Fill in the rest", which picks only in the races you haven't picked, or "Replace my picks", which replaces your picks there too; each says how many races it changes, and offers Undo. Both take back what "Don't pick" catches, and the picks Help me pick's endorsers made that no endorser you still choose endorses; picks you made yourself stay. A pick your conditions make because an endorser you chose endorses them counts as that endorser's, so unchoosing it in Help me pick takes it back. When only your choices change, "Save choices" saves them. After either, a line above the races says your conditions in words, with Edit, which opens the dialog again, and Undo, which puts your picks back; it stays until you clear your picks or change the conditions. Reset clears the conditions, and Cancel changes nothing. Your conditions stay in this browser, like your picks.</p>
             <p>Its endorsers and its TrackAIPAC watchlist and Vote for Peace rows are the same choices as <a href="#endorsements">Help me pick</a>'s Trust and Avoid chips: change them in either, and the other shows it. Open it with "More conditions…" in Help me pick at the top of your ballot (in More, on a phone).</p>
           </div>
@@ -553,7 +577,7 @@
           <summary>How do I take my picks to the polls?</summary>
           <div class="faq-body">
             <p>Use "Print my picks" at the top of your ballot. A full page can include your notes, each with its candidate's name, on the candidates you didn't pick too, and blank lines for races you haven't picked. If some races are still unpicked, it says how many you've picked, starts with the blank lines ticked, and "Next race to pick" takes you to one. A wallet card is a small card, about 3.5 inches wide, to cut out along its dashed edge and fold; it leaves notes out. Both start with Election Day and the early-voting dates. Your browser's own print (Ctrl+P) prints the same sheet with your current picks, laid out as you last chose. To keep a copy on your computer, choose "Save as PDF" as the printer.</p>
-            <p>Bring it on paper: phones can't be used at the voting station in Texas.</p>
+            <p>Bring it on paper: phones can't be used at the voting station in Texas, and many other places don't allow them in the voting booth.</p>
           </div>
         </details>
 
@@ -585,9 +609,9 @@
         </details>
 
         <details class="faq">
-          <summary>Will it cover other states?</summary>
+          <summary>Will it cover more of my state?</summary>
           <div class="faq-body">
-            <p>Not yet. The ballot order comes from the Texas Secretary of State, so each new state needs its own source for it.</p>
+            <p>It already covers every state, with as much as Pallot has a source for (see <a href="#coverage">which addresses Pallot covers</a>). Each state that gets more needs its election office's own list of candidates, read its own way, so states are added one at a time. Tell us which you'd like next in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>.</p>
           </div>
         </details>
       </section>

@@ -19,7 +19,7 @@ uv run pytest -n 0 --pdb                  # the same in one process, to use the 
 uv run pytest -m live                     # smoke tests against the real services (the FEC one needs an FEC key)
 uv run ruff check                         # pyflakes (unused imports and variables, undefined names) and syntax errors
 uv run pallot-cache check                 # what data/ keeps, and what's stale (also refresh, prune, hard-refresh, rebuild)
-uv run python scripts/record_fixtures.py  # re-record tests/fixtures from the live APIs (--only ballots|suggest|fec|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|county_precincts|endorsement_feeds|tec|trackaipac|voteforpeace)
+uv run python scripts/record_fixtures.py  # re-record tests/fixtures from the live APIs (--only ballots|suggest|fec|nationwide|state_lists|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|county_precincts|endorsement_feeds|tec|trackaipac|voteforpeace)
 uv run pallot-bundle refresh              # rebuild the bundled answers in bundles/data (--only, --due, --dry-run, --force)
 uv run pallot-bundle stats                # the snapshots' counts, as README's "What the snapshots hold"
 ```
@@ -69,8 +69,16 @@ What each outside service does that the code has to work around. AGENTS.md's "Be
 - **TIGERweb:** its "Current" service names layers like the geocoder's ("120th Congressional Districts"), each with a "… Labels" twin, so a layer is found by the end of its name, newest vintage first. Districts are asked by GEOID (`48` plus the number in 2 digits for Congress, 3 for the Legislature), simplified on the server. Errors come as a 200 (`Layer not found`).
 - **Texas SOS:** a county's ballot order lists only printed names; declared write-ins come from the statewide candidate list (`cdParty "W"`), which has no `nbOfficeTypeOrder` and no county for district judges and DAs. It sometimes answers a 5xx for a single county.
 - **SOS "Important Election Dates" page:** earlier years' tables are still in the page inside HTML comments; labels vary between tables, so a row is known by how its label starts; a date cell can add a footnote or time after the date. A maintenance page comes back as a 200 with no table.
+- **FEC:** `/elections/` lists everyone who filed for a seat in a cycle, primary losers included, and nothing in OpenFEC says who is on a state's November ballot (`/candidates/` keeps losers "active" too). That's why a state without its own list gets the filers who raised $5,000 or more, each Unverified. `/elections/search/` names the cycle's seats: the Senate's is one page (specials included), the House's five (territories included, which Pallot drops). At-large seats and DC's delegate are district `00`.
+- **State candidate lists:** each state's election office publishes its own, in its own form:
+  - Michigan: one HTML report of state and judicial offices, a heading per office; county and local candidates file with the counties, so they aren't in it.
+  - North Carolina: one CSV a year on S3, a row per candidate per county a contest reaches, primary and general together; no withdrawn candidates, write-ins or incumbents.
+  - Pennsylvania: JSON in a hidden field of the Election Info page, everyone who filed for the year; a general's candidate won the primary or was nominated by papers.
+  - Florida: a tab-separated extract asked for with the download page's form; only status `QUA` is on the ballot.
+  - Virginia: one HTML table of the federal candidates for a November election; its Legislature is elected in odd years.
+  - The raw files carry candidates' addresses and phone numbers, so only the parsed candidates are bundled.
 - **FiftyPlusOne:** nationwide lists, 500 polls to a page, filtered to the ballot's state on the server (a poll names its state in full: "Texas").
-- **Seat holders:** congress-legislators' `legislators-current.json` and Open States' `tx.csv`. `TX-SEN` has two senators: the one up is the one whose term ends in the January after the election.
+- **Seat holders:** congress-legislators' `legislators-current.json` (every state) and Open States' `tx.csv`. A state has two senators: the one up is the one whose term ends by the January after the election, which also finds an appointee whose seat is up in a special election.
 - **Wikidata:** path expressions, `GROUP_CONCAT` and the label service made the `PEOPLE` query time out, hence flat rows. Most Texas House members have no district on their position, so their seat is `STATEREP:*`. The query is one per state, by the state's Wikidata item; only Texas's own offices and Congress's seats are read as seats, so elsewhere a match for a state office is only likely. The list is everyone who held an office in the state, not candidates, so only a full-name or first-and-last match with no party against it counts.
 - **Vote for Peace:** words offices its own way ("TX State Senator" with `sd-9`, "Harris District County Court Judge" with `228`); names the high courts without the place; files some county offices as statewide; some jurisdictions are cities. The page is a Next.js app: the data is read from its `self.__next_f.push` scripts, not the HTML.
 - **Live endorsement feeds:** see [Live endorsement feeds](#live-endorsement-feeds).
@@ -88,6 +96,17 @@ Each source contributes `SourceCard`s; the page draws them by `kind` (`money`, `
 7. Its throttle in `MIN_INTERVAL` (`services.py`), its pause (`pause_on`, which pauses on 403 and 429; pass only any other status it refuses with), and its lifetimes in `Ttls`.
 8. Fixtures in `record_fixtures.py`, served by `conftest.py`'s `Upstream`, and tests with `respx`.
 9. Rows in `static/privacy.html` and `static/about.html`, and an answer in `static/faq.html` if it raises a question.
+
+## Adding a state's list
+
+A state goes from Congress only (the FEC's filers) to its own official list with:
+
+1. An adapter in `pallot/states/` that reads the list into one filing per candidate in a race, leaving out the withdrawn and disqualified, asked for in one request through `HttpCache`, and its class in `ADAPTERS` (`states/adapters.py`). Its row in Settings and its bundle follow from that.
+2. Its entry in `COVERED` (`coverage.py`): which districts its races need.
+3. Its switch in `pallot/sources.toml`.
+4. Its fixture in `record_fixtures.py --only state_lists`, and tests of the adapter and of a ballot there.
+5. Run `uv run pallot-bundle refresh --only state_<st>` once and commit `bundles/data/`.
+6. The state in README's "Where it covers" and "Bundled snapshots", About's "Where it covers" and Sources, the FAQ's "Which addresses and elections does Pallot cover?", and Privacy's list of what's downloaded whole.
 
 ## Endorsement lists
 
