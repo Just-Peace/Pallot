@@ -1,5 +1,7 @@
 // Small DOM helpers. Everything from the API is inserted as text, never as HTML.
 
+import { icon } from "./icons.js";
+
 export const $ = (selector) => document.querySelector(selector);
 
 // ``class`` is a string or an array, whose falsy entries are dropped; ``on`` is { event: listener }.
@@ -155,13 +157,13 @@ export function autosave(field, save, wait) {
   field.addEventListener("change", now);
 }
 
-// A dialog's heading row: ``content``, then ``buttons`` and Done, which closes it. ``close`` is
-// Done, to focus. The head stays at the top as the dialog scrolls, and its height is kept in the
+// A dialog's heading row: ``content``, then ``buttons`` and a blue ✕, which closes it. ``close`` is
+// the ✕, to focus. The head stays at the top as the dialog scrolls, and its height is kept in the
 // dialog's --head-h, so its tabs stick right under it.
 const headSizes = new WeakMap(); // dialog -> the ResizeObserver on its current head
 
 export function dialogHead(dialog, content, ...buttons) {
-  const close = h("button", { type: "button", class: "icon-btn close done-btn", on: { click: () => dialog.close() } }, "Done");
+  const close = h("button", { type: "button", class: "icon-only close-x", "aria-label": "Close", title: "Close", on: { click: () => dialog.close() } }, icon("x"));
   const head = h("div", { class: "details-head" }, content, h("div", { class: "details-nav" }, buttons, close));
   if (!headSizes.has(dialog)) {
     headSizes.set(dialog, new ResizeObserver(([entry]) => dialog.style.setProperty("--head-h", `${entry.target.offsetHeight}px`)));

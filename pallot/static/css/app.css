@@ -1077,12 +1077,11 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .details-title h2 { margin: 0 0 2px; }
 .details-title p { margin: 0 0 4px; }
 .icon-btn.close { font-size: 1rem; padding: 4px 10px; }
-/* a dialog's and More's way back to the ballot: "Done" in the accent colour, not a ✕ that reads as
-   less than ‹ Previous */
-.icon-btn.done-btn { position: relative; min-height: 0; padding: 4px 12px; font-size: 0.88rem; font-weight: 700; line-height: 1.3;
-  color: var(--accent-contrast); background: var(--accent); border-color: var(--accent); }
-.icon-btn.done-btn:hover { color: var(--accent-contrast); background: var(--accent-hover); border-color: var(--accent-hover); }
-.icon-btn.done-btn::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+/* a dialog's and More's way back to the ballot: a ✕ like the icons beside it, in the accent colour so
+   it isn't passed over for ‹ Previous */
+.icon-only.close-x { color: var(--accent); }
+.icon-only.close-x .icon { width: 20px; height: 20px; stroke-width: 2.5; }
+.icon-only.close-x:hover { color: var(--accent-hover); background: var(--accent-soft); }
 /* Profile's Pick, in the bar at the foot: outlined in blue, so it doesn't outshout ‹ Previous and Next › */
 .details-bar .btn.primary:not(.ghost) { color: var(--accent); background: none; border-color: var(--accent); }
 .details-bar .btn.primary:not(.ghost):hover:not(:disabled) { background: var(--accent-soft); }
@@ -1472,7 +1471,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .progress { overflow: hidden; text-overflow: ellipsis; }
   .strip-race:not(:empty) + .progress { font-size: 0.78rem; font-weight: 500; line-height: 1.25; color: var(--muted); }
   /* Print picks, the finish line, in blue between Next race and More */
-  .progress-info :is(.more-btn, .strip-print) { display: inline-flex; flex: none; }
+  .progress-info :is(.more-btn, .strip-print) { display: inline-flex; align-items: center; flex: none; }
   /* while the cards load, a moving line along the strip's foot; its words for screen readers only */
   .cards-loading { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; gap: 0; }
   .cards-loading > span { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -1651,7 +1650,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-details .details-actions .btn { padding: 6px 8px; }
   .cand-details .details-actions .btn-word { display: none; }
   .cand-details .details-actions .btn.primary, .cand-details .details-nav .step { display: none; }
-  .cand-details .icon-btn.close { padding: 4px 8px; }
   .details-bar { display: flex; gap: 8px; position: sticky; bottom: 0; z-index: 3; background: var(--panel);
     border-top: 1px solid var(--line); padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); }
   .details-bar .btn { flex: 1 1 0; justify-content: center; min-height: 44px; }
@@ -1731,6 +1729,11 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* More's chips, segments and buttons too: drawn at their usual size, the 44px hit area around them */
   .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn), .details-head :is(.btn, .icon-btn) { position: relative; min-height: 0; }
+  /* the strip's Next race, Print picks and More too, their labels centred */
+  .progress-info .btn { position: relative; display: inline-flex; min-height: 0; align-items: center; }
+  .progress-info .btn::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+  /* no focus ring where a dialog or More puts the focus as it opens, which a touch reads as a tap */
+  :is(.sheet-head, .details-head) :focus-visible { outline: none; }
   /* a money or poll box's title too, so a folded box is one slim line */
   .box-toggle { position: relative; min-height: 0; }
   .box-toggle::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
