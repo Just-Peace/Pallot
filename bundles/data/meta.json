@@ -50,11 +50,11 @@
    "texas": 3
   },
   "officeholders": {
-   "answers": 4,
-   "answers_hash": "7edf6eb49039982e1821dd57e9d5776b4a3cbe8ed3ea78886d47018498ce6ee6",
+   "answers": 7,
+   "answers_hash": "bfa2b2e0f34167092e5524ea18f16114c9ab817bf89919dc91a80aa1e362230b",
    "congress": 39,
-   "last_checked": "2026-10-17T08:04:59+00:00",
-   "last_refresh": "2026-10-17T08:04:59+00:00",
+   "last_checked": "2026-10-17T16:09:16+00:00",
+   "last_refresh": "2026-10-17T16:09:16+00:00",
    "legislature": 178
   },
   "polls": {
@@ -83,6 +83,14 @@
    "last_refresh": "2026-10-11T15:37:29+00:00",
    "server_errors": 0
   },
+  "state_fl": {
+   "answers": 1,
+   "answers_hash": "7c12e0c3be7fa89d390e59381bd2033f40a499d16aee847c4fc1a209cee035c1",
+   "candidates": 369,
+   "last_checked": "2026-10-17T15:56:17+00:00",
+   "last_refresh": "2026-10-17T15:56:17+00:00",
+   "races": 169
+  },
   "state_mi": {
    "answers": 1,
    "answers_hash": "d9910775be0df09f46dcea3bf135556f81c3edc434f55bc334683e250370bb4c",
@@ -98,6 +106,22 @@
    "last_checked": "2026-10-17T08:04:59+00:00",
    "last_refresh": "2026-10-17T08:04:59+00:00",
    "races": 1324
+  },
+  "state_pa": {
+   "answers": 1,
+   "answers_hash": "57cbc4cb30922ab17951d1ef4f8f37d1affd9669aabdff4558547d7267b2f616",
+   "candidates": 436,
+   "last_checked": "2026-10-17T15:56:17+00:00",
+   "last_refresh": "2026-10-17T15:56:17+00:00",
+   "races": 247
+  },
+  "state_va": {
+   "answers": 1,
+   "answers_hash": "cddd9ab9f2586af0c801fd45ae455d44dd07b523a75e479bf9584abe944a72d8",
+   "candidates": 38,
+   "last_checked": "2026-10-17T15:56:17+00:00",
+   "last_refresh": "2026-10-17T15:56:17+00:00",
+   "races": 12
   },
   "tigerweb": {
    "answers": 220,

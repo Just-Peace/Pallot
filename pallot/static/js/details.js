@@ -33,8 +33,8 @@ export function initDetails(context) {
 // One of a race's candidates, by ``index``. ‹ and › step through the others without closing
 // the dialog; ``focus`` ("previous" or "next") keeps the focus on the one that was pressed.
 // ``at`` is the tab to show: "profile" (the candidate's Profile button), "issues", "endorsements" or
-// a source's (a Funding chip's money source); a tab the candidate hasn't got shows the first one,
-// Profile or else Issues.
+// a source's (a Funding chip's money source); a tab the candidate hasn't got shows Profile, which
+// every candidate has, saying so when no source has a profile of them.
 export function showDetails(race, index, focus = null, at = "profile") {
   const { picks } = page;
   const candidate = race.candidates[index];
@@ -74,7 +74,7 @@ export function showDetails(race, index, focus = null, at = "profile") {
 
   const grouped = candidate.cards.filter((card) => card.kind === "endorsement");
   const profiled = candidate.cards.filter((card) => PROFILE.has(card.kind));
-  const profile = profiled.length ? { key: "profile", label: "Profile", likely: profiled.some(isLikely) } : null;
+  const profile = { key: "profile", label: "Profile", likely: profiled.some(isLikely) };
   const issues = { key: "issues", label: "Issues", likely: false };
   const endorsements = grouped.length
     ? { key: "endorsements", label: `Endorsements · ${grouped.length}`, likely: grouped.some(isLikely) }
@@ -90,7 +90,7 @@ export function showDetails(race, index, focus = null, at = "profile") {
   shown = tabs[initial].key;
   const panelFor = (tab) => {
     if (tab === issues) return stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length);
-    if (tab === profile) return profilePanel(profiled);
+    if (tab === profile) return profilePanel(profiled, candidate.name);
     if (tab === endorsements) return endorsementsPanel(grouped);
     if (tab.card.kind === "polls") return pollsPanel(tab.card, candidate.party);
     return tab.card.kind === "money" ? moneyPanel(tab.card) : cardPanel(tab.card);

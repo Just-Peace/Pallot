@@ -27,6 +27,35 @@ def test_each_office_held_is_read_as_the_seat_the_ballot_spells():
     assert seat_of("Q7444388", None) is None  # Secretary of State: appointed, never on a ballot
 
 
+def test_another_states_seats_in_congress_are_read_and_its_own_offices_have_none():
+    assert seat_of(wikidata.US_HOUSE, "Pennsylvania's 10th congressional district", "PA") == "PA-10"
+    assert seat_of(wikidata.US_HOUSE, "Wyoming's at-large congressional district", "WY") == "WY-00"
+    assert seat_of(wikidata.US_SENATE, "North Carolina Class 2 senate seat", "NC") == "NC-SEN"
+    assert seat_of(wikidata.STATE_HOUSE, "Texas State House district 49", "PA") is None
+    assert seat_of("Q5589725", None, "NC") is None
+
+
+def test_each_state_has_its_own_list():
+    assert "wd:Q1439 " in wikidata.people_spec().params["query"]
+    assert "wd:Q1454 " in wikidata.people_spec("NC").params["query"]
+    assert wikidata.people_spec("NC").key != wikidata.people_spec().key
+
+
+def test_a_ballot_outside_texas_gets_profiles_from_its_states_officeholders(client, upstream, logged_calls):
+    entity = "http://www.wikidata.org/entity/"
+    upstream.wikidata_elsewhere = {"results": {"bindings": [{
+        "p": {"value": f"{entity}Q900001"}, "label": {"value": "Roy Cooper"}, "pos": {"value": f"{entity}Q900002"},
+        "posL": {"value": "Governor of North Carolina"}, "start": {"value": "2017-01-01T00:00:00Z"},
+        "party": {"value": f"{entity}Q29552"},
+    }]}}
+    ballot = get_ballot(client, "raleigh")
+    card = card_of(person(find_race(ballot, "U.S. Senator"), "Roy Cooper"))
+    assert card["match"]["confidence"] == "likely" and card["url"] == "https://www.wikidata.org/wiki/Q900001"
+    assert {fact["label"]: fact["value"] for fact in card["facts"]}["Offices held"] == "Governor of North Carolina (2017–)"
+    get_ballot(client, "raleigh")
+    assert logged_calls() == 0
+
+
 def test_the_list_is_folded_into_one_person_each():
     people = {p.name: p for p in people_from(load("wikidata_people.json"))}
     paxton = people["Ken Paxton"]
@@ -53,7 +82,7 @@ def test_an_exact_match_gets_its_photo_and_stable_links(client, upstream):
     assert links["Wikidata item"] == "https://www.wikidata.org/wiki/Q5605224"
     assert links["Wikipedia article"] == "https://en.wikipedia.org/wiki/Greg_Abbott"
     facts = {fact["label"]: fact["value"] for fact in card["facts"]}
-    assert facts["Party"] == "Republican Party" and facts["Texas offices held"].startswith("Governor of Texas (2015–)")
+    assert facts["Party"] == "Republican Party" and facts["Offices held"].startswith("Governor of Texas (2015–)")
     sources = [c["source"] for c in abbott["cards"]]
     assert sources.index(wikidata.SOURCE) < sources.index("ballotpedia")  # before Ballotpedia on the Profile tab
 

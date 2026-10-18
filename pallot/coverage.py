@@ -39,13 +39,15 @@ COVERED = {
     "TX": Coverage("state", ("cd", "sd", "hd", "sboe"), precincts=True, outlines=True),
     "NC": LIST,
     "MI": LIST,
+    "PA": LIST,
+    "FL": LIST,
+    "VA": Coverage("list", ("cd",), precincts=False, outlines=False),  # only its federal list in an even year
 }
 
 # Sources that only know some states. A ballot with no state (a test's) counts as Texas's.
 ONLY_IN: dict[str, frozenset[str]] = {
     "tec": frozenset({"TX"}),
     "polls": frozenset({"TX"}),
-    "wikidata": frozenset({"TX"}),
 }
 
 

@@ -1,0 +1,382 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 23,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00855",
+   "candidate_name": "VINDMAN, ALEXANDER",
+   "candidate_pcc_id": "C00936559",
+   "candidate_pcc_name": "ALEX VINDMAN FOR FLORIDA",
+   "cash_on_hand_end_period": 4117608.72,
+   "committee_ids": [
+    "C00936559"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 16370306.93,
+   "total_receipts": 20487915.65
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00756",
+   "candidate_name": "WEIL, JOSHUA JOSEPH",
+   "candidate_pcc_id": "C00893321",
+   "candidate_pcc_name": "JOSH WEIL FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00893321"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 15933478.15,
+   "total_receipts": 15933478.15
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00640",
+   "candidate_name": "MOODY, ASHLEY",
+   "candidate_pcc_id": "C00895763",
+   "candidate_pcc_name": "MOODY FOR FLORIDA",
+   "cash_on_hand_end_period": 2820079.72,
+   "committee_ids": [
+    "C00895508",
+    "C00895763"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 10518105.73,
+   "total_receipts": 13338185.45
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00830",
+   "candidate_name": "NIXON, ANGELA",
+   "candidate_pcc_id": "C00915041",
+   "candidate_pcc_name": "ANGIE FOR FLORIDA",
+   "cash_on_hand_end_period": 4113082.56,
+   "committee_ids": [
+    "C00915041"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 4052942.27,
+   "total_receipts": 8177943.83
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00806",
+   "candidate_name": "MUJICA, HECTOR DANIEL",
+   "candidate_pcc_id": "C00923342",
+   "candidate_pcc_name": "HECTOR MUJICA FOR FLORIDA",
+   "cash_on_hand_end_period": 1979.77,
+   "committee_ids": [
+    "C00923342"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 854687.49,
+   "total_receipts": 856667.26
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00657",
+   "candidate_name": "LANG, JAKE",
+   "candidate_pcc_id": "C00897330",
+   "candidate_pcc_name": "JAKE LANG FOR SENATE INC",
+   "cash_on_hand_end_period": 1500.82,
+   "committee_ids": [
+    "C00897330"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 31375.01,
+   "total_receipts": 32875.83
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00848",
+   "candidate_name": "GLEASON, CHRISTOPHER",
+   "candidate_pcc_id": "C00936534",
+   "candidate_pcc_name": "VOTE FOR GLEASON",
+   "cash_on_hand_end_period": -338.86,
+   "committee_ids": [
+    "C00936534"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 32404.23,
+   "total_receipts": 32065.37
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00673",
+   "candidate_name": "LYLES, TAMIKA MS",
+   "candidate_pcc_id": "C00900522",
+   "candidate_pcc_name": "LYLES FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00900522"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 23287.14,
+   "total_receipts": 23287.14
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00897",
+   "candidate_name": "RIVERA, ERNEST ERNIE JOHN REV. DR.",
+   "candidate_pcc_id": "C00946269",
+   "candidate_pcc_name": "ERNIE 4 SENATE",
+   "cash_on_hand_end_period": 884.47,
+   "committee_ids": [
+    "C00946269"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 15350.16,
+   "total_receipts": 16234.63
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00863",
+   "candidate_name": "GILESPIE, NEIL JOSEPH",
+   "candidate_pcc_id": "C00943399",
+   "candidate_pcc_name": "NEIL J GILLESPIE FOR US SENATE",
+   "cash_on_hand_end_period": 900.2,
+   "committee_ids": [
+    "C00943399"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "NO PARTY AFFILIATION",
+   "total_disbursements": 12312.61,
+   "total_receipts": 13212.81
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00749",
+   "candidate_name": "ATKINS, JOEY MENDOZA",
+   "candidate_pcc_id": "C00907998",
+   "candidate_pcc_name": "JOEY MENDOZA ATKINS FOR SENATE",
+   "cash_on_hand_end_period": 700.82,
+   "committee_ids": [
+    "C00907998"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 8771.93,
+   "total_receipts": 9472.75
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4FL00769",
+   "candidate_name": "TOULME, ALIX CHRISTOPHER MR. JR.",
+   "candidate_pcc_id": "C00892695",
+   "candidate_pcc_name": "ALIX CHRISTOPHER TOULME JR. FOR SENATE 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00873786",
+    "C00892695"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00442",
+   "candidate_name": "WALLS-WINDHAUSER, ANGELA MARIE",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929810"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00624",
+   "candidate_name": "LAROSE, JOSUE ECONOMIST",
+   "candidate_pcc_id": "C00894972",
+   "candidate_pcc_name": "JOSUE LAROSE FOR UNITED STATES SENATE 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00894972"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00665",
+   "candidate_name": "MCBRIDE, EVELYN JANE'-MARIE DR",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00898056"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00681",
+   "candidate_name": "GREEN, JUSTIN MR",
+   "candidate_pcc_id": "C00902049",
+   "candidate_pcc_name": "JUSTIN GREEN",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00902049"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "VETERANS PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00699",
+   "candidate_name": "GOULD, CHARLES AKA ALEX A",
+   "candidate_pcc_id": "C00904359",
+   "candidate_pcc_name": "COMMITTEE TO ELECT ALEX GOULD",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00904359"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00723",
+   "candidate_name": "CRUZ, PAUL RON",
+   "candidate_pcc_id": "C00904912",
+   "candidate_pcc_name": "PAUL RON CRUZ FOR FLORIDA US SENATE 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00904912"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00814",
+   "candidate_name": "WINDHAUSER, ANGIE",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929810"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00871",
+   "candidate_name": "TANEJA PERRY, NEELAM DR",
+   "candidate_pcc_id": "C00849588",
+   "candidate_pcc_name": "NEELAM TANEJA PERRY PAC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00849588"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00905",
+   "candidate_name": "CHURCHILL, PANO DR",
+   "candidate_pcc_id": "C00948091",
+   "candidate_pcc_name": "LINCOLN PARTY COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00948091"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6FL00947",
+   "candidate_name": "MARCHAND MINCIELI, PAIGE SUNDANCE",
+   "candidate_pcc_id": "C00953950",
+   "candidate_pcc_name": "SUNDANCE FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00953950"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8FL00323",
+   "candidate_name": "BAPTISTE, ASHLEY JEAN",
+   "candidate_pcc_id": "C00921106",
+   "candidate_pcc_name": "ASHLEY JEAN BAPTISTE FOR FLORIDA SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00921106"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

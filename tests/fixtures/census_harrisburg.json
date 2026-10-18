@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "501 N 3RD ST, HARRISBURG, PA 17120"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "608423749"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "4202401",
+       "CENTLAT": "+40.2908816",
+       "AREAWATER": 21191601,
+       "BASENAME": "Dauphin County (Central)--Harrisburg City & Colonial Park",
+       "STATE": "42",
+       "OID": "217704485814330",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2911733",
+       "NAME": "Dauphin County (Central)--Harrisburg City & Colonial Park PUMA",
+       "OBJECTID": 10,
+       "CENTLON": "-076.8287770",
+       "AREALAND": 171328113,
+       "INTPTLON": "-076.8288827",
+       "MTFCC": "G6120",
+       "PUMA": "02401"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "17120",
+       "CENTLAT": "+40.2651230",
+       "AREAWATER": 0,
+       "BASENAME": "17120",
+       "OID": "221704257879157",
+       "ZCTA5": "17120",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2651230",
+       "NAME": "ZCTA5 17120",
+       "OBJECTID": 3205,
+       "CENTLON": "-076.8827629",
+       "AREALAND": 239153,
+       "INTPTLON": "-076.8827629",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "37081",
+       "CENTLAT": "+40.2485340",
+       "AREAWATER": 29252923,
+       "BASENAME": "Harrisburg, PA",
+       "OID": "27021248559123",
+       "UA": "37081",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2464475",
+       "NAME": "Harrisburg, PA Urban Area",
+       "OBJECTID": 2544,
+       "CENTLON": "-076.8778856",
+       "AREALAND": 648144739,
+       "INTPTLON": "-076.8770216",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 52847040.560971886,
+       "NECTAPCI": "N",
+       "GEOID": "4232800",
+       "CENTLAT": "+40.2752072",
+       "AREAWATER": 9699744,
+       "BASENAME": "Harrisburg",
+       "STATE": "42",
+       "OID": "27890470050594",
+       "LSADC": "25",
+       "PLACE": "32800",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.2758906",
+       "NAME": "Harrisburg city",
+       "OBJECTID": 28157,
+       "PLACECC": "C5",
+       "CENTLON": "-076.8842427",
+       "STGEOMETRY_Length": 43532.68609225552,
+       "CBSAPCI": "Y",
+       "AREALAND": 21027729,
+       "INTPTLON": "-076.8850199",
+       "PLACENS": "01215162",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "42043",
+       "CENTLAT": "+40.4152356",
+       "AREAWATER": 86047350,
+       "STATE": "42",
+       "BASENAME": "Dauphin",
+       "OID": "27590291499571",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.4110060",
+       "NAME": "Dauphin County",
+       "OBJECTID": 3122,
+       "CENTLON": "-076.7793944",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01213667",
+       "AREALAND": 1359407377,
+       "INTPTLON": "-076.7991009",
+       "MTFCC": "G4020",
+       "COUNTY": "043"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "KG",
+       "GEOID": "4211580",
+       "CENTLAT": "+40.2752072",
+       "AREAWATER": 9699744,
+       "STATE": "42",
+       "BASENAME": "Harrisburg City School District",
+       "OID": "28490470058261",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+40.2758906",
+       "SDUNI": "11580",
+       "NAME": "Harrisburg City School District",
+       "OBJECTID": 8969,
+       "CENTLON": "-076.8842427",
+       "HIGRADE": "12",
+       "AREALAND": 21027729,
+       "INTPTLON": "-076.8850199",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "420430201001012",
+       "CENTLAT": "+40.2637344",
+       "BLOCK": "1012",
+       "AREAWATER": 0,
+       "STATE": "42",
+       "BASENAME": "1012",
+       "OID": "210701007326890",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2637344",
+       "NAME": "Block 1012",
+       "OBJECTID": 3501976,
+       "TRACT": "020100",
+       "CENTLON": "-076.8835446",
+       "BLKGRP": "1",
+       "AREALAND": 66893,
+       "INTPTLON": "-076.8835446",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "043"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779798",
+       "GEOID": "42",
+       "CENTLAT": "+40.9011363",
+       "AREAWATER": 3396855899,
+       "STATE": "42",
+       "BASENAME": "Pennsylvania",
+       "STUSAB": "PA",
+       "OID": "27490163788605",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.9046042",
+       "DIVISION": "2",
+       "NAME": "Pennsylvania",
+       "REGION": "1",
+       "OBJECTID": 19,
+       "CENTLON": "-077.8369449",
+       "AREALAND": 115882233855,
+       "INTPTLON": "-077.8275233",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "420430201001",
+       "CENTLAT": "+40.2600354",
+       "AREAWATER": 1148791,
+       "STATE": "42",
+       "BASENAME": "1",
+       "OID": "20890470026503",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2584138",
+       "NAME": "Block Group 1",
+       "OBJECTID": 166076,
+       "TRACT": "020100",
+       "CENTLON": "-076.8913829",
+       "BLKGRP": "1",
+       "AREALAND": 662299,
+       "INTPTLON": "-076.8929103",
+       "MTFCC": "G5030",
+       "COUNTY": "043"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "276",
+       "CENTLAT": "+40.1554055",
+       "AREAWATER": 135675788,
+       "BASENAME": "Harrisburg-York-Lebanon, PA",
+       "OID": "2619034687908035",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1598741",
+       "NAME": "Harrisburg-York-Lebanon, PA CSA",
+       "OBJECTID": 21,
+       "CSA": "276",
+       "CENTLON": "-076.9528300",
+       "INTPTLON": "-076.9496057",
+       "AREALAND": 8822965076,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "32800",
+       "GEOID": "4204332800",
+       "CENTLAT": "+40.2752072",
+       "AREAWATER": 9699744,
+       "STATE": "42",
+       "BASENAME": "Harrisburg",
+       "OID": "27690470050404",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+40.2758906",
+       "NAME": "Harrisburg city",
+       "OBJECTID": 23960,
+       "CENTLON": "-076.8842427",
+       "COUSUBCC": "C5",
+       "AREALAND": 21027729,
+       "INTPTLON": "-076.8850199",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01215162",
+       "COUNTY": "043"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "42015",
+       "CENTLAT": "+40.3103239",
+       "AREAWATER": 52242134,
+       "STATE": "42",
+       "BASENAME": "15",
+       "OID": "2129042520338061",
+       "SLDU": "015",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+40.3120424",
+       "NAME": "State Senate District 15",
+       "OBJECTID": 1047,
+       "CENTLON": "-076.7631921",
+       "LSY": "2026",
+       "AREALAND": 720264198,
+       "INTPTLON": "-076.7627087",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+41.8513398",
+       "AREAWATER": 26186689150,
+       "BASENAME": "Middle Atlantic",
+       "OID": "2739020719811",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8451925",
+       "DIVISION": "2",
+       "REGION": "1",
+       "NAME": "Middle Atlantic Division",
+       "OBJECTID": 7,
+       "CENTLON": "-076.4757049",
+       "AREALAND": 256980916061,
+       "INTPTLON": "-076.4760328",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 5760038223.321386,
+       "CD120": "10",
+       "GEOID": "4210",
+       "CENTLAT": "+40.2443611",
+       "CDSESSN": "120",
+       "AREAWATER": 102277222,
+       "STATE": "42",
+       "BASENAME": "10",
+       "OID": "2119042393278524",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+40.2441330",
+       "NAME": "Congressional District 10",
+       "OBJECTID": 113,
+       "CENTLON": "-076.9212448",
+       "STGEOMETRY_Length": 512709.3076172428,
+       "AREALAND": 3249787592,
+       "INTPTLON": "-076.9219932",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "42103",
+       "CENTLAT": "+40.2779710",
+       "SLDL": "103",
+       "AREAWATER": 9928782,
+       "STATE": "42",
+       "BASENAME": "103",
+       "OID": "2139042531368497",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+40.2797807",
+       "NAME": "State House District 103",
+       "OBJECTID": 3467,
+       "CENTLON": "-076.9173598",
+       "LSY": "2026",
+       "AREALAND": 53353186,
+       "INTPTLON": "-076.9193351",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "1",
+       "CENTLAT": "+42.7754036",
+       "AREAWATER": 50257795201,
+       "BASENAME": "Northeast",
+       "OID": "2729020719824",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7778249",
+       "REGION": "1",
+       "NAME": "Northeast Region",
+       "OBJECTID": 3,
+       "CENTLON": "-074.2183092",
+       "AREALAND": 419357207693,
+       "INTPTLON": "-074.2123732",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "25420",
+       "CENTLAT": "+40.3266604",
+       "AREAWATER": 109302658,
+       "BASENAME": "Harrisburg-Carlisle, PA",
+       "OID": "2629034687907393",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.3359150",
+       "NAME": "Harrisburg-Carlisle, PA Metro Area",
+       "CSA": "276",
+       "OBJECTID": 711,
+       "CENTLON": "-077.1017610",
+       "CBSA": "25420",
+       "AREALAND": 4200449367,
+       "INTPTLON": "-077.0504897",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "42043020100",
+       "CENTLAT": "+40.2579939",
+       "AREAWATER": 2287145,
+       "STATE": "42",
+       "BASENAME": "201",
+       "OID": "20790470052374",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2574972",
+       "NAME": "Census Tract 201",
+       "OBJECTID": 27696,
+       "TRACT": "020100",
+       "CENTLON": "-076.8841921",
+       "AREALAND": 2290378,
+       "INTPTLON": "-076.8816307",
+       "MTFCC": "G5020",
+       "COUNTY": "043"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -76.88436208996,
+     "y": 40.263320403715
+    },
+    "addressComponents": {
+     "zip": "17120",
+     "streetName": "3RD",
+     "preType": "",
+     "city": "HARRISBURG",
+     "preDirection": "N",
+     "suffixDirection": "",
+     "fromAddress": "501",
+     "state": "PA",
+     "suffixType": "ST",
+     "toAddress": "599",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "501 N 3RD ST, HARRISBURG, PA, 17120"
+   }
+  ]
+ }
+}

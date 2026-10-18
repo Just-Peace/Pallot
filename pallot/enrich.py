@@ -90,7 +90,7 @@ JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
     sos.SOURCE: _sos,
     polls.SOURCE: lambda svc, races, ctx, _: polls.cards(svc.polls, races, ctx.day),
     wikidata.SOURCE: lambda svc, races, ctx, sources: wikidata.cards(
-        svc.wikidata, races, ctx.scopes, ctx.county, ctx.bp_ballot, sources.enabled(ballotpedia.SOURCE)),
+        svc.wikidata, races, ctx.scopes, ctx.county, ctx.bp_ballot, sources.enabled(ballotpedia.SOURCE), ctx.state),
     ballotpedia.SOURCE: _ballotpedia,
     trackaipac.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
         lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races, ctx.state or "TX"))),

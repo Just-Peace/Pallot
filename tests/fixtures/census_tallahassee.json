@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "400 S MONROE ST, TALLAHASSEE, FL 32399"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "648202102"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "1207302",
+       "CENTLAT": "+30.4363043",
+       "AREAWATER": 2731488,
+       "BASENAME": "Leon County (Central)--Tallahassee City (Central)",
+       "STATE": "12",
+       "OID": "2177029730303811",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4361392",
+       "NAME": "Leon County (Central)--Tallahassee City (Central) PUMA",
+       "OBJECTID": 2196,
+       "CENTLON": "-084.2886000",
+       "AREALAND": 134408477,
+       "INTPTLON": "-084.2890859",
+       "MTFCC": "G6120",
+       "PUMA": "07302"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "32399",
+       "CENTLAT": "+30.4015600",
+       "AREAWATER": 3821,
+       "BASENAME": "32399",
+       "OID": "221704258282219",
+       "ZCTA5": "32399",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.3832680",
+       "NAME": "ZCTA5 32399",
+       "OBJECTID": 17215,
+       "CENTLON": "-084.2441725",
+       "AREALAND": 1414791,
+       "INTPTLON": "-084.2312027",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "86464",
+       "CENTLAT": "+30.4748243",
+       "AREAWATER": 10619993,
+       "BASENAME": "Tallahassee, FL",
+       "OID": "2702187488645",
+       "UA": "86464",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4764598",
+       "NAME": "Tallahassee, FL Urban Area",
+       "OBJECTID": 260,
+       "CENTLON": "-084.2691265",
+       "AREALAND": 324974029,
+       "INTPTLON": "-084.2721156",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 369096810.1982931,
+       "NECTAPCI": "N",
+       "GEOID": "1270600",
+       "CENTLAT": "+30.4549073",
+       "AREAWATER": 7564957,
+       "BASENAME": "Tallahassee",
+       "STATE": "12",
+       "OID": "2789087487856",
+       "LSADC": "25",
+       "PLACE": "70600",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+30.4535287",
+       "NAME": "Tallahassee city",
+       "OBJECTID": 32289,
+       "PLACECC": "C1",
+       "CENTLON": "-084.2523891",
+       "STGEOMETRY_Length": 396741.55237923365,
+       "CBSAPCI": "Y",
+       "AREALAND": 265811222,
+       "INTPTLON": "-084.2522719",
+       "PLACENS": "02405563",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "12073",
+       "CENTLAT": "+30.4580233",
+       "AREAWATER": 86414549,
+       "STATE": "12",
+       "BASENAME": "Leon",
+       "OID": "2759087487836",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+30.4593104",
+       "NAME": "Leon County",
+       "OBJECTID": 3097,
+       "CENTLON": "-084.2780568",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00306916",
+       "AREALAND": 1731219884,
+       "INTPTLON": "-084.2778004",
+       "MTFCC": "G4020",
+       "COUNTY": "073"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "1201110",
+       "CENTLAT": "+30.4580233",
+       "AREAWATER": 86414549,
+       "STATE": "12",
+       "BASENAME": "Leon County School District",
+       "OID": "2849087488646",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+30.4593104",
+       "SDUNI": "01110",
+       "NAME": "Leon County School District",
+       "OBJECTID": 4085,
+       "CENTLON": "-084.2780568",
+       "HIGRADE": "12",
+       "AREALAND": 1731219884,
+       "INTPTLON": "-084.2778004",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "120730002003066",
+       "CENTLAT": "+30.4381365",
+       "BLOCK": "3066",
+       "AREAWATER": 0,
+       "STATE": "12",
+       "BASENAME": "3066",
+       "OID": "210701005062550",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4381365",
+       "NAME": "Block 3066",
+       "OBJECTID": 5229495,
+       "TRACT": "000200",
+       "CENTLON": "-084.2816598",
+       "BLKGRP": "3",
+       "AREALAND": 60541,
+       "INTPTLON": "-084.2816598",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "073"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "00294478",
+       "GEOID": "12",
+       "CENTLAT": "+28.4062029",
+       "AREAWATER": 45960279352,
+       "STATE": "12",
+       "BASENAME": "Florida",
+       "STUSAB": "FL",
+       "OID": "2749046365780",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+28.3942569",
+       "DIVISION": "5",
+       "NAME": "Florida",
+       "REGION": "3",
+       "OBJECTID": 54,
+       "CENTLON": "-082.5022125",
+       "AREALAND": 138974016116,
+       "INTPTLON": "-082.5173706",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "120730002003",
+       "CENTLAT": "+30.4405973",
+       "AREAWATER": 14284,
+       "STATE": "12",
+       "BASENAME": "3",
+       "OID": "208903717287010",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4403615",
+       "NAME": "Block Group 3",
+       "OBJECTID": 79779,
+       "TRACT": "000200",
+       "CENTLON": "-084.2798698",
+       "BLKGRP": "3",
+       "AREALAND": 1885916,
+       "INTPTLON": "-084.2801207",
+       "MTFCC": "G5030",
+       "COUNTY": "073"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "533",
+       "CENTLAT": "+30.4447057",
+       "AREAWATER": 1182214888,
+       "BASENAME": "Tallahassee-Bainbridge, FL-GA",
+       "OID": "2619034687908139",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4446098",
+       "NAME": "Tallahassee-Bainbridge, FL-GA CSA",
+       "OBJECTID": 99,
+       "CSA": "533",
+       "CENTLON": "-084.3303736",
+       "INTPTLON": "-084.3306278",
+       "AREALAND": 7735107022,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "93295",
+       "GEOID": "1207393295",
+       "CENTLAT": "+30.4361678",
+       "AREAWATER": 269397,
+       "STATE": "12",
+       "BASENAME": "Tallahassee Central",
+       "OID": "2769087487849",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4360402",
+       "NAME": "Tallahassee Central CCD",
+       "OBJECTID": 20897,
+       "CENTLON": "-084.2838980",
+       "COUSUBCC": "Z5",
+       "AREALAND": 28703415,
+       "INTPTLON": "-084.2837077",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01935944",
+       "COUNTY": "073"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "12003",
+       "CENTLAT": "+30.0878392",
+       "AREAWATER": 6202639150,
+       "STATE": "12",
+       "BASENAME": "3",
+       "OID": "2129043036639326",
+       "SLDU": "003",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.0876510",
+       "NAME": "State Senate District 3",
+       "OBJECTID": 266,
+       "CENTLON": "-084.0224008",
+       "LSY": "2026",
+       "AREALAND": 22052352883,
+       "INTPTLON": "-084.0022098",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "5",
+       "CENTLAT": "+33.7954697",
+       "AREAWATER": 86320496528,
+       "BASENAME": "South Atlantic",
+       "OID": "2739020719808",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7948282",
+       "DIVISION": "5",
+       "REGION": "3",
+       "NAME": "South Atlantic Division",
+       "OBJECTID": 2,
+       "CENTLON": "-080.9687982",
+       "AREALAND": 687144333254,
+       "INTPTLON": "-080.9658812",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 44719775794.40961,
+       "CD120": "02",
+       "GEOID": "1202",
+       "CENTLAT": "+30.2607201",
+       "CDSESSN": "120",
+       "AREAWATER": 7729956560,
+       "STATE": "12",
+       "BASENAME": "2",
+       "OID": "2119043137753399",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.2457471",
+       "NAME": "Congressional District 2",
+       "OBJECTID": 90,
+       "CENTLON": "-084.7838537",
+       "STGEOMETRY_Length": 1078801.129754728,
+       "AREALAND": 25521735021,
+       "INTPTLON": "-084.7776353",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "12009",
+       "CENTLAT": "+30.4916078",
+       "SLDL": "009",
+       "AREAWATER": 148889338,
+       "STATE": "12",
+       "BASENAME": "9",
+       "OID": "2139043036639347",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.4926525",
+       "NAME": "State House District 9",
+       "OBJECTID": 4433,
+       "CENTLON": "-083.7404639",
+       "LSY": "2026",
+       "AREALAND": 3599769897,
+       "INTPTLON": "-083.7465535",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "45220",
+       "CENTLAT": "+30.3488201",
+       "AREAWATER": 1115060237,
+       "BASENAME": "Tallahassee, FL",
+       "OID": "2629034687907867",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.3462907",
+       "NAME": "Tallahassee, FL Metro Area",
+       "CSA": "533",
+       "OBJECTID": 187,
+       "CENTLON": "-084.2757050",
+       "CBSA": "45220",
+       "AREALAND": 6188264182,
+       "INTPTLON": "-084.2668267",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "12073000200",
+       "CENTLAT": "+30.4447300",
+       "AREAWATER": 14284,
+       "STATE": "12",
+       "BASENAME": "2",
+       "OID": "2079087488601",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4462737",
+       "NAME": "Census Tract 2",
+       "OBJECTID": 36432,
+       "TRACT": "000200",
+       "CENTLON": "-084.2736574",
+       "AREALAND": 4521761,
+       "INTPTLON": "-084.2737061",
+       "MTFCC": "G5020",
+       "COUNTY": "073"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -84.280698770816,
+     "y": 30.438134315101
+    },
+    "addressComponents": {
+     "zip": "32399",
+     "streetName": "MONROE",
+     "preType": "",
+     "city": "TALLAHASSEE",
+     "preDirection": "S",
+     "suffixDirection": "",
+     "fromAddress": "400",
+     "state": "FL",
+     "suffixType": "ST",
+     "toAddress": "498",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "400 S MONROE ST, TALLAHASSEE, FL, 32399"
+   }
+  ]
+ }
+}
