@@ -311,13 +311,12 @@ def trusted(match: Match, party: str | None, their_party: str | None) -> bool:
 
 async def cards(
     wd: Wikidata, races: list[Race], scopes: dict[str, OfficeScope], county: str | None, bp_ballot: BpBallot | None,
-    ballotpedia: bool = False, state: str | None = None,
+    ballotpedia: bool, state: str,
 ) -> CardSet:
-    """A card for each candidate found among ``state``'s officeholders on Wikidata (Texas's for a
-    ballot without one; only the matches trusted() keeps). ``ballotpedia``: Ballotpedia is on, so
-    the card may link to it. Raises UpstreamError when the list can't be had; without the matched
-    people's details, the cards keep the item's link and offices, with a warning."""
-    state = state or "TX"
+    """A card for each candidate found among ``state``'s officeholders on Wikidata (only the
+    matches trusted() keeps). ``ballotpedia``: Ballotpedia is on, so the card may link to it.
+    Raises UpstreamError when the list can't be had; without the matched people's details, the
+    cards keep the item's link and offices, with a warning."""
     out = CardSet()
     if state not in STATES:
         return out

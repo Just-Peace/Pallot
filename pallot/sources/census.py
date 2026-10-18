@@ -27,7 +27,6 @@ class Place:
     matched_address: str | None
     state_fips: str | None
     state: str | None  # "TX"
-    state_name: str | None  # "Texas"
     county: str | None  # "Travis"
     county_fips: str | None  # "453"
     cd: int | None  # 0 for an at-large seat or DC's delegate
@@ -125,7 +124,6 @@ def parse_geographies(geographies: dict[str, Any], lat: float, lon: float, match
         matched_address=matched,
         state_fips=(state or {}).get("STATE") or (state or {}).get("GEOID") or county_geoid[:2] or None,
         state=(state or {}).get("STUSAB"),
-        state_name=(state or {}).get("NAME"),
         county=(county or {}).get("BASENAME"),
         county_fips=county_geoid[2:] or None,
         county_name=(county or {}).get("NAME"),

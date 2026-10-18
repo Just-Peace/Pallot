@@ -25,7 +25,7 @@ export function initRules(context) {
 }
 
 // The ballot's state, whose donors the in-state share counts.
-const homeState = () => page?.ballot?.location?.state_name || "Texas";
+const homeState = () => page.ballot.location.state_name;
 
 // ---- the controls ---------------------------------------------------------------------
 

@@ -55,7 +55,7 @@ class Context:
     scopes: dict[str, OfficeScope] = field(default_factory=dict)
     county: str | None = None
     city: str | None = None
-    state: str | None = None
+    state: str = ""  # postal code; empty only before the ballot has a place
 
 
 @dataclass
@@ -88,16 +88,16 @@ JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
     fec.SOURCE: lambda svc, races, ctx, _: fec.cards(svc.fec, races, ctx.day),
     tec.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(tec.cards, svc.tec, races, ctx.scopes, ctx.county, ctx.bp_ballot),
     sos.SOURCE: _sos,
-    polls.SOURCE: lambda svc, races, ctx, _: polls.cards(svc.polls, races, ctx.day),
+    polls.SOURCE: lambda svc, races, ctx, _: polls.cards(svc.polls, races, ctx.day, ctx.state),
     wikidata.SOURCE: lambda svc, races, ctx, sources: wikidata.cards(
         svc.wikidata, races, ctx.scopes, ctx.county, ctx.bp_ballot, sources.enabled(ballotpedia.SOURCE), ctx.state),
     ballotpedia.SOURCE: _ballotpedia,
     trackaipac.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
-        lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races, ctx.state or "TX"))),
+        lambda: CardSet(candidates=trackaipac.cards(svc.trackaipac, races, ctx.state))),
     voteforpeace.SOURCE: lambda svc, races, ctx, _: asyncio.to_thread(
-        voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.city, ctx.state or "TX"),
+        voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.city, ctx.state),
     officeholders.SOURCE: lambda svc, races, ctx, _: officeholders.cards(
-        svc.officeholders, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.day, ctx.state or "TX"),
+        svc.officeholders, races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.day, ctx.state),
 }
 
 
@@ -113,7 +113,7 @@ async def run(svc: Services, races: list[Race], sources: Sources, ctx: Context) 
             jobs[source] = asked
     lists = [found for found in svc.endorsements if sources.enabled(found.source)]
     for found in lists:
-        jobs[found.source] = found.lookup(races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.state or "TX", ctx.city)
+        jobs[found.source] = found.lookup(races, ctx.scopes, ctx.county, ctx.bp_ballot, ctx.state, ctx.city)
     unavailable = {**UNAVAILABLE, **{f.source: f.unavailable for f in lists if isinstance(f, EndorsementFeed)}}
     answers = dict(zip(jobs, await asyncio.gather(*jobs.values(), return_exceptions=True)))
 

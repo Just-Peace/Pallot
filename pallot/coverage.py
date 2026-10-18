@@ -13,6 +13,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+from trackaipac_cache.models import STATES as STATE_NAMES
+
 from .models import Coverage as CoverageInfo
 
 
@@ -33,6 +35,7 @@ STATES = frozenset({
     "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR",
     "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
 })  # the 50 states and DC, whose addresses Pallot covers
+NAMES = {code: name for code, name in STATE_NAMES.items() if code in STATES}  # "TX" -> "Texas"
 FEDERAL = Coverage("fec", ("cd",), precincts=False, outlines=False)
 LIST = Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False)
 COVERED = {
@@ -44,17 +47,16 @@ COVERED = {
     "VA": Coverage("list", ("cd",), precincts=False, outlines=False),  # only its federal list in an even year
 }
 
-# Sources that only know some states. A ballot with no state (a test's) counts as Texas's.
+# Sources that only know some states.
 ONLY_IN: dict[str, frozenset[str]] = {
     "tec": frozenset({"TX"}),
-    "polls": frozenset({"TX"}),
 }
 
 
-def of(state: str | None) -> Coverage:
-    return COVERED.get(state or "", FEDERAL)
+def of(state: str) -> Coverage:
+    return COVERED.get(state, FEDERAL)
 
 
-def works_in(source: str, state: str | None) -> bool:
+def works_in(source: str, state: str) -> bool:
     states = ONLY_IN.get(source)
-    return states is None or (state or "TX") in states
+    return states is None or state in states

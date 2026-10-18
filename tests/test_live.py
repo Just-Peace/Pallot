@@ -94,7 +94,7 @@ def test_polls_live():
     response = httpx.get(polls.API, headers=polls.HEADERS, timeout=60, params={
         "offset": "0", "limit": str(polls.PAGE), "filterValue": polls.SENATE, "sortBy": "created_at", "dir": "DESC"})
     response.raise_for_status()
-    texas = [row for row in response.json()["data"] if row.get("state") == polls.STATE]
+    texas = polls.of_state(response.json()["data"], "TX")
     assert texas and texas[0]["pollster_id"] and texas[0]["end_date"]
     answers = [a for row in texas for q in row["questions"] for a in q["answers"]]
     assert any(a["candidate"]["name"] and isinstance(a["pct"], (int, float)) for a in answers)
@@ -104,7 +104,7 @@ def test_officeholders_live():
     """Both lists of seat holders still come in the shape officeholders.py reads: every Texas seat, near enough."""
     response = httpx.get(officeholders.CONGRESS, timeout=60, follow_redirects=True)
     response.raise_for_status()
-    congress = officeholders.congress_holders(response.json())
+    congress = officeholders.congress_holders(response.json(), "TX")
     assert len([h for h in congress if h.seat == "TX-SEN"]) == 2 and len(congress) >= 36
     assert all(h.party and h.started and h.ends for h in congress)
     response = httpx.get(officeholders.LEGISLATURE.format(state="tx"), timeout=60, follow_redirects=True)

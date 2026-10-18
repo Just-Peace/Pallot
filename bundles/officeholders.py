@@ -5,22 +5,20 @@ official list (states/adapters.py)."""
 from __future__ import annotations
 
 from pallot.http_cache import UpstreamError
-from pallot.sources.officeholders import STATE, Officeholders
+from pallot.sources.officeholders import Officeholders
 from pallot.states.adapters import ADAPTERS
 
 from .entry import BundleError, Context
 
 
 async def build(ctx: Context) -> dict[str, int]:
-    """The lists; counts the Texas seats Congress's and Texas's fill."""
+    """The lists; counts the members of Congress and the legislators of the states bundled."""
     svc = Officeholders(ctx.cache, ctx.config.ttl)
     try:
-        congress = [h for h in await svc.congress() if h.seat.startswith(f"{STATE}-")]
-        legislature = await svc.legislature()
-        for state in ADAPTERS:
-            await svc.legislature(state)
+        congress = await svc.congress()
+        legislatures = {state: await svc.legislature(state) for state in ("TX", *ADAPTERS)}
     except UpstreamError as exc:
         raise BundleError(f"couldn't load a list of seat holders: {exc}") from exc
-    if not congress or not legislature:
-        raise BundleError("a list of seat holders has no Texas seats")
-    return {"congress": len(congress), "legislature": len(legislature)}
+    if not congress or not any(legislatures.values()):
+        raise BundleError("a list of seat holders is empty")
+    return {"congress": len(congress), "legislature": sum(map(len, legislatures.values()))}

@@ -11,7 +11,7 @@ from .bundling import answers, build
 from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, load, switch
 
 TEXAS_ONLY_HOSTS = ("goelect.txelections.civixapps.com", "api4.ballotpedia.org", "data.capitol.texas.gov",
-                    "www.sos.state.tx.us", "fiftyplusone.news")
+                    "www.sos.state.tx.us")
 
 
 def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):
@@ -89,8 +89,8 @@ def test_texas_keeps_its_full_coverage(client):
 
 def test_coverage_and_where_sources_work():
     assert coverage.of("TX").ballot == "state" and coverage.of("GA") is coverage.FEDERAL
-    assert coverage.works_in("polls", "TX") and coverage.works_in("polls", None)
-    assert not coverage.works_in("polls", "GA") and coverage.works_in("trackaipac", "GA")
+    assert coverage.works_in("tec", "TX")
+    assert not coverage.works_in("tec", "GA") and coverage.works_in("polls", "GA")
 
 
 def test_census_numbers_at_large_and_delegate_seats_zero():

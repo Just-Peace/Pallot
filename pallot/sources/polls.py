@@ -1,8 +1,8 @@
-"""Public polls of Texas's U.S. Senate, U.S. House and Governor races, from FiftyPlusOne
+"""Public polls of U.S. Senate, U.S. House and Governor races, from FiftyPlusOne
 (fiftyplusone.news).
 
 Its API lists every poll of one kind of race nationwide, at most 500 to a page and with no
-way to ask for one state, so we page through the lists the ballot needs and keep Texas's.
+way to ask for one state, so we page through the lists the ballot needs and keep the ballot's state's.
 Every page goes through HttpCache for a day. The site refuses clients that don't look like
 a browser (403), so requests carry a browser's User-Agent; a refusal pauses it for an hour.
 
@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from ..config import Ttls
+from ..coverage import NAMES
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import NameIndex, last_name
 from ..models import Breakdown, Candidate, Race, Share, SourceCard
@@ -34,7 +35,7 @@ SOURCE = "polls"
 LABEL = "Polls"
 SITE_LABEL = "FiftyPlusOne"
 DESCRIPTION = (
-    "Public polls of Texas's U.S. Senate, U.S. House and Governor races, from FiftyPlusOne (fiftyplusone.news)."
+    "Public polls of U.S. Senate, U.S. House and Governor races, from FiftyPlusOne (fiftyplusone.news)."
 )
 API = "https://fiftyplusone.news/api/polls"
 SITE = "https://fiftyplusone.news"
@@ -44,7 +45,6 @@ HEADERS = {  # the site answers 403 to anything that doesn't look like a browser
     "accept-language": "en-US,en;q=0.8",
 }
 PAGE = 500  # the most the API sends at once, whatever limit is asked for
-STATE = "Texas"
 SENATE, HOUSE, GOVERNOR = KINDS = ("senate_general", "house_general", "governor_general")
 _OFFICES = {SENATE: "U.S. Senate", HOUSE: "U.S. House", GOVERNOR: "Governor"}
 _POPULATIONS = {"lv": "likely voters", "rv": "registered voters", "v": "voters", "a": "adults"}  # best first
@@ -64,7 +64,7 @@ class Polls:
         return list((got.value or {}).get("data") or [])
 
     async def polls(self, kind: str) -> list[dict[str, Any]]:
-        """Every Texas poll of this kind of race. Pages are read until one comes back short
+        """Every poll of this kind of race nationwide. Pages are read until one comes back short
         (or brings nothing new, should the API ever ignore the offset)."""
         found: dict[str, dict[str, Any]] = {}
         offset = 0
@@ -76,19 +76,19 @@ class Polls:
             if len(page) < PAGE or not new:
                 break
             offset += PAGE
-        return [row for row in found.values() if row.get("state") == STATE]
+        return list(found.values())
 
 
 # -- which polls count ------------------------------------------------------------------
 
 
-def kind_of(race: Race) -> str | None:
-    """Which of FiftyPlusOne's lists has polls of this race, if any."""
-    if race.seat == "TX-SEN":
+def kind_of(race: Race, state: str) -> str | None:
+    """Which of FiftyPlusOne's lists has polls of this race of the ballot's state, if any."""
+    if race.seat == f"{state}-SEN":
         return SENATE
-    if race.seat:
+    if race.seat and re.fullmatch(rf"{state}-\d+", race.seat):
         return HOUSE
-    if re.match(r"governor\b", race.name, re.I):
+    if not race.seat and re.match(r"governor\b", race.name, re.I):
         return GOVERNOR
     return None
 
@@ -100,6 +100,12 @@ def _about(question: dict[str, Any], kind: str, race: Race) -> bool:
         return True
     district = re.search(r"\d+", question.get("seat_name") or "")
     return bool(district) and int(district.group()) == int((race.seat or "").partition("-")[2])
+
+
+def of_state(rows: list[dict[str, Any]], state: str) -> list[dict[str, Any]]:
+    """The polls of the state with this postal code."""
+    name = NAMES.get(state)
+    return [row for row in rows if row.get("state") == name]
 
 
 def _matcher(race: Race) -> Callable[[str], str | None]:
@@ -252,11 +258,11 @@ def candidate_card(candidate: Candidate, race: Race, kept: list[Reading], median
     )
 
 
-async def cards(polls: Polls, races: list[Race], day: dt.date | None) -> CardSet:
-    """A poll bar for each race FiftyPlusOne has polls of, and a Polls tab for its
-    candidates. Raises UpstreamError if none of the lists could be loaded."""
+async def cards(polls: Polls, races: list[Race], day: dt.date | None, state: str) -> CardSet:
+    """A poll bar for each of the state's races FiftyPlusOne has polls of, and a Polls tab for
+    its candidates. Raises UpstreamError if none of the lists could be loaded."""
     out = CardSet()
-    wanted = {race.key: kind for race in races if (kind := kind_of(race))}
+    wanted = {race.key: kind for race in races if (kind := kind_of(race, state))}
     if not wanted:
         return out
     cycle = (day or polls.today()).year
@@ -269,7 +275,7 @@ async def cards(polls: Polls, races: list[Race], day: dt.date | None) -> CardSet
         elif isinstance(got, BaseException):
             raise got
         else:
-            lists[kind] = got
+            lists[kind] = of_state(got, state)
     failures.sort(key=lambda f: f.until is not None)  # a list asked while another's refusal paused the rest names that refusal
     if failures and not lists:
         raise failures[0]

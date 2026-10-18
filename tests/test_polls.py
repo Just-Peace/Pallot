@@ -116,7 +116,7 @@ async def test_pages_are_read_until_one_comes_back_short(tmp_path):
             "data": first if request.url.params["offset"] == "0" else [poll(10000, 2, "2026-09-02"), first[0]]}))
         async with httpx.AsyncClient() as client:
             found = await polls.Polls(HttpCache(tmp_path / "c.sqlite3", client), Ttls()).polls(polls.SENATE)
-    assert sorted(row["poll_id"] for row in found) == ["10000", "9999"]
+    assert len(found) == polls.PAGE + 1 and {"9999", "10000"} <= {row["poll_id"] for row in found}
     assert [call.request.url.params["offset"] for call in route.calls] == ["0", "500"]
     assert all("Mozilla" in call.request.headers["user-agent"] for call in route.calls)
 
@@ -134,7 +134,27 @@ class _Refused:
 async def test_the_refusal_is_named_whichever_list_failed_first():
     governor = Race(key="gov", name="Governor", group="state", source="sos", candidates=[])
     with pytest.raises(UpstreamError, match="HTTP 403"):
-        await polls.cards(_Refused(), [SENATE, governor], dt.date(2026, 10, 1))
+        await polls.cards(_Refused(), [SENATE, governor], dt.date(2026, 10, 1), "TX")
+
+
+class _Nationwide:
+    """Polls whose Senate list has the same matchup's names polled in two states."""
+
+    async def polls(self, kind):
+        return [poll(1, "a", "2026-09-01", question({"Mike Rogers": 47, "Haley Stevens": 46}), state="Michigan"),
+                poll(2, "b", "2026-09-01", question({"Mike Rogers": 30, "Haley Stevens": 60}), state="Texas"),
+                poll(3, "c", "2026-09-01", question({"Talarico": 48, "Paxton": 44}))]
+
+
+@pytest.mark.anyio
+async def test_another_states_senate_race_gets_its_own_states_polls():
+    michigan = Race(key="mi", name="U.S. Senator", group="federal", seat="MI-SEN", source="fec", candidates=[
+        Candidate(key="rogers", name="Mike Rogers", party="R"), Candidate(key="stevens", name="Haley Stevens", party="D")])
+    found = await polls.cards(_Nationwide(), [michigan], dt.date(2026, 10, 1), "MI")
+    assert [(p.label, p.amount) for p in found.races["mi"].breakdowns[0].parts] == [("Mike Rogers", 47.0), ("Haley Stevens", 46.0)]
+    texas = await polls.cards(_Nationwide(), [SENATE], dt.date(2026, 10, 1), "TX")
+    assert texas.races["sen"].breakdowns[0].count == 1
+    assert not (await polls.cards(_Nationwide(), [SENATE], dt.date(2026, 10, 1), "MI")).races
 
 
 @pytest.mark.anyio

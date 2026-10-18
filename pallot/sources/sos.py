@@ -20,6 +20,7 @@ from ..offices import clean_office_name
 from ..text import display_office, iso_utc, parse_date, web_url
 
 SOURCE = "sos"
+STATE = "TX"  # the one state whose ballot this source has
 LABEL = "Texas SOS"
 DESCRIPTION = "Official candidate filings and ballot order from the Texas Secretary of State."
 HOST = "https://goelect.txelections.civixapps.com"

@@ -37,10 +37,9 @@ DESCRIPTION = (
 )
 CONGRESS = "https://unitedstates.github.io/congress-legislators/legislators-current.json"
 LEGISLATURE = "https://data.openstates.org/people/current/{state}.csv"
-STATE = "TX"
-# Texas redrew its U.S. House map in 2025: a term that began before the first Congress elected
-# under it was won under the district's old lines.
-REDRAWN = dt.date(2027, 1, 3)
+# States that redrew their U.S. House map mid-decade -> when the first Congress elected under the
+# new map starts (a term that began before it was won under the district's old lines), and the words.
+REDRAWN = {"TX": (dt.date(2027, 1, 3), "Texas redrew its U.S. House map in 2025")}
 _CHAMBERS = {"upper": "STATESEN", "lower": "STATEREP"}
 _PARTIES = (("REPUBLICAN", "R", "Republican"), ("DEMOCRAT", "D", "Democrat"), ("LIBERTARIAN", "L", "Libertarian"),
             ("GREEN", "G", "Green"), ("INDEPENDENT", "I", "Independent"))
@@ -70,7 +69,7 @@ def _date(text: str | None) -> dt.date | None:
         return None
 
 
-def congress_holders(members: list[dict[str, Any]], state: str | None = STATE) -> list[Holder]:
+def congress_holders(members: list[dict[str, Any]], state: str | None) -> list[Holder]:
     """The state's members of Congress (every state's with None), each at their current term's seat."""
     out = []
     for member in members:
@@ -124,7 +123,7 @@ class Officeholders:
     async def congress(self) -> list[Holder]:
         return congress_holders(list(await self._get(CONGRESS, text=False) or []), state=None)
 
-    async def legislature(self, state: str = STATE) -> list[Holder]:
+    async def legislature(self, state: str) -> list[Holder]:
         return legislature_holders(await self._get(LEGISLATURE.format(state=state.lower()), text=True) or "")
 
 
@@ -144,8 +143,9 @@ def _senator_up(holders: list[Holder], day: dt.date) -> Holder | None:
 
 def _hint(holder: Holder, seat: str) -> str:
     who = f"Held by {holder.name}" + (f", a {holder.party_name}" if holder.party_name else "")
-    if seat.startswith(f"{STATE}-") and not seat.endswith("-SEN") and holder.started and holder.started < REDRAWN:
-        who += ", elected under the district's lines before Texas redrew its U.S. House map in 2025"
+    redrawn = REDRAWN.get(seat.partition("-")[0])
+    if redrawn and not seat.endswith("-SEN") and holder.started and holder.started < redrawn[0]:
+        who += f", elected under the district's lines before {redrawn[1]}"
     return who
 
 
@@ -183,7 +183,7 @@ def seat_info(race: Race, holder: Holder | None, seat: str) -> tuple[SeatInfo, s
 
 async def cards(
     svc: Officeholders, races: list[Race], scopes: dict[str, OfficeScope], county: str | None,
-    bp_ballot: BpBallot | None, day: dt.date | None, state: str = STATE,
+    bp_ballot: BpBallot | None, day: dt.date | None, state: str,
 ) -> CardSet:
     """Each covered race's seat (CardSet.seats) and the candidates who hold it (incumbents). A
     list is fetched only when the ballot has a race it covers. Raises UpstreamError
