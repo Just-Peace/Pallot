@@ -1,0 +1,206 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 12,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00093",
+   "candidate_name": "WARNER, MARK ROBERT",
+   "candidate_pcc_id": "C00438713",
+   "candidate_pcc_name": "FRIENDS OF MARK WARNER",
+   "cash_on_hand_end_period": 7533059.24,
+   "committee_ids": [
+    "C00438713"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 20030247.93,
+   "total_receipts": 27174896.99
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8VA00321",
+   "candidate_name": "MIZUSAWA, BERT K",
+   "candidate_pcc_id": "C00934265",
+   "candidate_pcc_name": "BERT FOR SENATE 2026",
+   "cash_on_hand_end_period": 229502.49,
+   "committee_ids": [
+    "C00892075",
+    "C00934265"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 805376.66,
+   "total_receipts": 1034543.26
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00143",
+   "candidate_name": "FARINGTON, KIM",
+   "candidate_pcc_id": "C00893099",
+   "candidate_pcc_name": "KIM FARINGTON FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00893099"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 155692.92,
+   "total_receipts": 155692.92
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00200",
+   "candidate_name": "WILLIAMS, DAVID EARL MR.",
+   "candidate_pcc_id": "C00927178",
+   "candidate_pcc_name": "WILLIAMS FOR SENATE 2026",
+   "cash_on_hand_end_period": 1022.64,
+   "committee_ids": [
+    "C00927178"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 108532.12,
+   "total_receipts": 109554.76
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00176",
+   "candidate_name": "REEVES, BRYCE",
+   "candidate_pcc_id": "C00921593",
+   "candidate_pcc_name": "REEVES FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00921593"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 106324.12,
+   "total_receipts": 106324.12
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00184",
+   "candidate_name": "DANIELS, LORITA DR.",
+   "candidate_pcc_id": "C00925453",
+   "candidate_pcc_name": "LORITA DANIELS FOR US SENATE",
+   "cash_on_hand_end_period": 7038.27,
+   "committee_ids": [
+    "C00925453"
+   ],
+   "coverage_end_date": "2026-07-10",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 50121.36,
+   "total_receipts": 57159.63
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4VA00197",
+   "candidate_name": "SMITH, C.L. CHUCK JR",
+   "candidate_pcc_id": "C00932962",
+   "candidate_pcc_name": "CHUCK SMITH FOR US SENATE",
+   "cash_on_hand_end_period": 546.18,
+   "committee_ids": [
+    "C00932962"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 45168.96,
+   "total_receipts": 45715.14
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00192",
+   "candidate_name": "EICHELBERGER, GREGORY",
+   "candidate_pcc_id": "C00925610",
+   "candidate_pcc_name": "GREGORY EICHELBERGER FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00925610"
+   ],
+   "coverage_end_date": "2026-01-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 5697.72,
+   "total_receipts": 5697.72
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00226",
+   "candidate_name": "DE PAULA, ALEX",
+   "candidate_pcc_id": "C00937904",
+   "candidate_pcc_name": "ALEX DE PAULA FOR US SENATE",
+   "cash_on_hand_end_period": 1675.01,
+   "committee_ids": [
+    "C00937904"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 4000.0,
+   "total_receipts": 5675.01
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0VA00112",
+   "candidate_name": "MINA, ALDOUS D",
+   "candidate_pcc_id": "C00927285",
+   "candidate_pcc_name": "ALDOUS MINA FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00712836",
+    "C00927285"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00150",
+   "candidate_name": "REYNOLDS, JASON STEPHEN",
+   "candidate_pcc_id": "C00906297",
+   "candidate_pcc_name": "FRIENDS OF JASON REYNOLDS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00906297"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6VA00218",
+   "candidate_name": "MORAN, MARK",
+   "candidate_pcc_id": "C00935619",
+   "candidate_pcc_name": "FRIENDS OF MARK MORAN",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00935619"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

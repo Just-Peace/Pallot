@@ -12,13 +12,12 @@ from __future__ import annotations
 
 import datetime as dt
 import re
-from html.parser import HTMLParser
 from typing import Any
 
 from ..http_cache import RequestSpec
 from ..matching import last_first
 from ..sources.fec import race_name
-from . import Filing, StateList, party
+from . import Filing, Rows, StateList, party
 
 URL = "https://mi-boe.entellitrak.com/etk-mi-boe-prod/page.request.do"
 _DATE = re.compile(r"^\d{2}/\d{2}/\d{4}$")
@@ -30,34 +29,6 @@ _STATEWIDE = (
     "Governor / Lt. Governor", "Secretary of State", "Attorney General", "Member of the State Board of Education",
     "Regent of the University of Michigan", "Trustee of Michigan State University", "Governor of Wayne State University",
 )
-
-
-class _Rows(HTMLParser):
-    """Each table row's cells, as text, empty ones included."""
-
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.rows: list[list[str]] = []
-        self._row: list[str] | None = None
-        self._cell: list[str] | None = None
-
-    def handle_starttag(self, tag: str, attrs: Any) -> None:
-        if tag == "tr":
-            self._row = []
-        elif tag == "td" and self._row is not None:
-            self._cell = []
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag == "td" and self._row is not None and self._cell is not None:
-            self._row.append(" ".join("".join(self._cell).split()))
-            self._cell = None
-        elif tag == "tr" and self._row is not None:
-            self.rows.append(self._row)
-            self._row = None
-
-    def handle_data(self, data: str) -> None:
-        if self._cell is not None:
-            self._cell.append(data)
 
 
 def _kind(office: str) -> tuple[str, str, str | None, str, tuple[str, ...]]:
@@ -93,7 +64,7 @@ class MiList(StateList):
 
     @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
-        reader = _Rows()
+        reader = Rows()
         reader.feed(raw if isinstance(raw, str) else "")
         texts = [[cell for cell in row if cell] for row in reader.rows]
         day = None

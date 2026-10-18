@@ -1,17 +1,22 @@
-"""States' official lists of candidates (pallot/states): reading North Carolina's and Michigan's,
-and the ballots made from them."""
+"""States' official lists of candidates (pallot/states): reading North Carolina's, Michigan's,
+Pennsylvania's, Florida's and Virginia's, and the ballots made from them."""
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 
 import pytest
 from fastapi.testclient import TestClient
 
 from pallot.config import DAY
-from pallot.states import district_key, from_json
+from pallot.http_cache import RequestSpec
+from pallot.states import district_key, fl, from_json
+from pallot.states.fl import FlList
 from pallot.states.mi import MiList
 from pallot.states.nc import NcList
+from pallot.states.pa import PaList
+from pallot.states.va import VaList
 
 from .bundling import answers, build, came_with, lifetimes
 from .conftest import FIXTURES, candidate_names, find_race, get_ballot, switch
@@ -23,6 +28,10 @@ def nc_list() -> str:
 
 def mi_list() -> str:
     return (FIXTURES / "state_mi.html").read_text(encoding="utf-8")
+
+
+def recorded(name: str) -> str:
+    return (FIXTURES / name).read_text(encoding="utf-8")
 
 
 def test_districts_are_spelled_one_way_however_they_are_written():
@@ -147,8 +156,106 @@ def test_a_state_list_that_cant_be_had_leaves_the_races_for_congress_from_the_fe
     assert any("Couldn't load the list of candidates from the Michigan Bureau of Elections" in w for w in ballot["warnings"])
 
 
+def test_pennsylvanias_list_keeps_the_nominees_and_leaves_out_the_primarys_party_offices():
+    filings = PaList.parse(recorded("state_pa.html"))
+    assert {f.day for f in filings} == {"2026-11-03"}
+    names = {f.name for f in filings}
+    assert "Justin Douglas" not in names  # lost the primary
+    assert "Anthony James Dastra" not in names  # withdrew
+    assert not any("COMMITTEE" in f.office_id for f in filings)
+    governor = sorted((f for f in filings if f.office == "Governor"), key=lambda f: f.order)
+    assert [(f.name, f.party) for f in governor] == [
+        ("Joshua D Shapiro", "D"), ("Stacy Lorraine Garrity", "R"), ("Kenneth V Krawchuk", "L")]
+    assert [f.name for f in filings if f.office == "Lieutenant Governor"].count("Jason L Richey") == 1  # filed twice
+    house = next(f for f in filings if f.name == "Cynthia P Ward")  # nominated by write-ins in the primary
+    assert (house.reach, house.district, house.office) == ("hd", "103", "State Representative District 103")
+
+
+def test_floridas_list_keeps_only_the_qualified_candidates():
+    filings = FlList.parse(recorded("state_fl.tsv"))
+    names = {f.name for f in filings}
+    assert {"Jay Collins", "Jerry Demings", "Neal Dunn", "Tiffany Baker"}.isdisjoint(names)  # lost, withdrew, didn't qualify, unopposed
+    senate = sorted((f for f in filings if f.office == "U.S. Senator"), key=lambda f: f.order)
+    assert [(f.name, f.party) for f in senate] == [("Ashley Moody", "R"), ("Angie Nixon", "D"), ("Neil J. Gillespie", None)]
+    governor = [f for f in filings if f.office == "Governor"]
+    assert {f.name for f in governor if f.write_in} == {"Kathy Anderson", "Erik Morris"}
+    appeals = next(f for f in filings if f.office_id.startswith("DCA 1 "))
+    assert appeals.reach == "counties" and "LEON" in appeals.counties and appeals.office.startswith("Retain 1st District")
+    assert not any(f.family.startswith("LOXAHATCHEE") for f in filings)  # a special district: not placed
+
+
+def test_floridas_list_is_asked_for_with_its_download_form():
+    asked = RequestSpec("POST", fl.URL, form=fl.form(dt.date(2026, 11, 3)), as_text=True)
+    assert asked.form["elecID"] == "20261103-GEN"
+    assert RequestSpec.loads(asked.dumps()) == asked
+    assert asked.key != RequestSpec("POST", fl.URL, form=fl.form(dt.date(2028, 11, 7)), as_text=True).key
+
+
+def test_virginias_list_has_its_races_for_congress_and_their_incumbents():
+    filings = VaList.parse(recorded("state_va.html"))
+    assert {f.day for f in filings} == {"2026-11-03"} and {f.group for f in filings} == {"federal"}
+    fourth = sorted((f for f in filings if f.district == "4"), key=lambda f: f.order)
+    assert [(f.name, f.party, f.party_name, f.incumbent) for f in fourth] == [
+        ("Jennifer L. McClellan", "D", None, True), ('Robert P. "Family Man" Murray, Jr.', "R", None, False),
+        ('Joan E. "Andrews" Bell', None, "Independent", False)]
+    with pytest.raises(ValueError):
+        VaList.parse("<html><body><h1>Page not found</h1></body></html>")
+
+
+@pytest.mark.parametrize("source, host, address", [
+    ("state_pa", "www.pavoterservices.pa.gov", "harrisburg"),
+    ("state_fl", "dos.elections.myflorida.com", "tallahassee"),
+    ("state_va", "www.elections.virginia.gov", "richmond"),
+])
+def test_each_states_bundled_list_serves_a_lookup_without_asking(tmp_path, upstream, make_app, source, host, address):
+    outcome = build(tmp_path, source)
+    assert outcome.status == "updated" and outcome.answers == 1 and outcome.counts["candidates"] > 0
+    asked = upstream.count(host)
+    with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
+        ballot = get_ballot(client, address)
+    assert ballot["coverage"]["ballot"] == "list" and upstream.count(host) == asked
+
+
+def test_a_pennsylvania_ballot_comes_from_its_official_list(client, logged_calls):
+    ballot = get_ballot(client, "harrisburg")
+    assert ballot["coverage"]["ballot"] == "list"
+    assert [race["name"] for race in ballot["races"]] == [
+        "U.S. Representative District 10", "Governor", "Lieutenant Governor", "State Representative District 103"]
+    house = find_race(ballot, "U.S. Representative District 10")
+    assert candidate_names(house) == ["Janelle Stelson", "Scott Perry"] and house["seat"] == "PA-10"
+    assert not any(c["unverified"] for race in ballot["races"] for c in race["candidates"])
+    get_ballot(client, "harrisburg")
+    assert logged_calls() == 0
+
+
+def test_a_florida_ballot_has_its_courts_retention_for_the_voters_county(client, upstream, logged_calls):
+    ballot = get_ballot(client, "tallahassee")
+    assert ballot["coverage"]["ballot"] == "list"
+    assert candidate_names(find_race(ballot, "U.S. Senator")) == ["Ashley Moody", "Angie Nixon", "Neil J. Gillespie"]
+    for name in ("U.S. Representative District 2", "Governor", "Commissioner of Agriculture",
+                 "State Representative District 9", "Retain Supreme Court Justice Carlos G. Muniz",
+                 "Retain 1st District Court of Appeal Judge Tim Osterhaus"):
+        assert find_race(ballot, name), name
+    assert not any("2nd District Court of Appeal" in race["name"] for race in ballot["races"])
+    governor = find_race(ballot, "Governor")
+    assert [c["name"] for c in governor["candidates"] if c["write_in"]] == ["Kathy Anderson", "Erik Morris"]
+    assert "POST dos.elections.myflorida.com/candidates/extractCanList.asp" in upstream.calls
+    get_ballot(client, "tallahassee")
+    assert logged_calls() == 0
+
+
+def test_a_virginia_ballot_has_its_races_for_congress_from_its_list(client, logged_calls):
+    ballot = get_ballot(client, "richmond")
+    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "districts": ["cd"]}
+    assert [race["name"] for race in ballot["races"]] == ["U.S. Senator", "U.S. Representative District 4"]
+    house = find_race(ballot, "U.S. Representative District 4")
+    assert [c["incumbent"] for c in house["candidates"]] == [True, False, False]
+    get_ballot(client, "richmond")
+    assert logged_calls() == 0
+
+
 def test_settings_lists_each_states_election_office(client):
     overview = client.get("/api/sources").json()
     assert any(group["id"] == "states" and group["toggle_all"] for group in overview["groups"])
     rows = {row["id"]: row for row in overview["sources"] if row["group"] == "states"}
-    assert set(rows) == {"state_nc", "state_mi"} and rows["state_nc"]["enabled"]
+    assert set(rows) == {"state_nc", "state_mi", "state_pa", "state_fl", "state_va"} and rows["state_nc"]["enabled"]

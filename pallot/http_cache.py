@@ -92,6 +92,7 @@ class RequestSpec:
     headers: dict[str, str] | None = None
     as_text: bool = False  # the body as text (a web page), not parsed as JSON
     as_bytes: bool = False  # the body as bytes (an image), stored as base64 text
+    form: dict[str, str] | None = None  # a form's fields, sent as the body (Florida's list)
 
     @property
     def key(self) -> str:
@@ -101,12 +102,14 @@ class RequestSpec:
             identity["as_text"] = True
         if self.as_bytes:
             identity["as_bytes"] = True
+        if self.form:
+            identity["form"] = self.form
         return hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
     def dumps(self) -> str:
         return json.dumps(
             {"method": self.method, "url": self.url, "params": self.params, "json": self.json, "headers": self.headers,
-             "as_text": self.as_text, "as_bytes": self.as_bytes},
+             "as_text": self.as_text, "as_bytes": self.as_bytes, **({"form": self.form} if self.form else {})},
             sort_keys=True,
         )
 
@@ -407,7 +410,7 @@ class HttpCache:
             if stats:
                 stats.external_calls += 1
             async with self._client.stream(
-                spec.method, spec.url, params=spec.params, json=spec.json, headers=headers
+                spec.method, spec.url, params=spec.params, json=spec.json, data=spec.form, headers=headers
             ) as response:
                 response.raise_for_status()
                 if hosts and response.url.host not in hosts:
@@ -643,7 +646,8 @@ class HttpCache:
             stats = current_calls()
             if stats:
                 stats.external_calls += 1
-            response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json, headers=sent)
+            response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json,
+                                                  data=spec.form, headers=sent)
             if keys and response.status_code in keys.rest_on:
                 self.set_flag(_key_flag(source, key, response.status_code), source, keys.rest_on[response.status_code])
                 at = keys.keys.index(key)
