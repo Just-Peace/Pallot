@@ -1,5 +1,5 @@
 // What the ballot page and the print sheet both work out from a ballot: its sections in order,
-// a proposition's pick key, the labels of a race's picks, and the election line (long and short).
+// the labels of a race's picks, and the election line (long and short).
 
 import { formatDate } from "./format.js";
 import { GROUP_LABELS, GROUP_ORDER, coverageOf, partyName } from "./labels.js";
@@ -11,7 +11,6 @@ const PARTY_LETTERS = new Set(["R", "D", "L", "G"]); // the wallet card's "(D)";
 
 // The race sections in ballot order: the groups ("group-federal"), then the sections whose races
 // may not be on the ballot ("maybe-precinct", with ``maybe`` and the section's own explanation).
-// Propositions aren't among them.
 export function ballotSections(ballot) {
   const sections = [];
   const sboe = coverageOf(ballot).districts.includes("sboe");
@@ -25,8 +24,6 @@ export function ballotSections(ballot) {
   }
   return sections;
 }
-
-export const measureKey = (measure) => `measure:${measure.key}`;
 
 // A label per pick in a race: "Jane Doe (write-in)" for a declared write-in, and the voter's own
 // write-in by its typed name, or ``unnamed``. ``party``: "name" adds the candidate's party

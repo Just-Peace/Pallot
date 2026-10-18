@@ -37,10 +37,10 @@ def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts",
                                                        "tigerweb", "osm_tiles", "sos", "key_dates", "wikidata",
-                                                       "ballotpedia", "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
+                                                       "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
                                                        "mupac", "fec", "tec", "polls", "state_nc", "state_mi", "state_pa",
                                                        "state_fl", "state_va"]
-    (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, _, holders, tracker, peace, _, _, example, _,
+    (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, holders, tracker, peace, _, _, example, _,
      fec, tec, polls, *_) = overview["sources"]  # no Google key: its rows (Google, suggestions) are left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
@@ -89,34 +89,32 @@ def test_a_lookup_is_logged_without_its_address_and_shown_to_no_one(client, logg
 
 def test_switches_are_the_voters_own(client, upstream, tmp_path):
     another_browser = {HEADER: "{}"}
-    switch(client, "ballotpedia", False)
+    switch(client, "key_dates", False)
     switch(client, "geocoding", False)  # can't be turned off: ignored
     switch(client, "nope", True)  # not a source: ignored
     mine = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
-    assert mine["ballotpedia"] is False and mine["geocoding"] is True
+    assert mine["key_dates"] is False and mine["geocoding"] is True
     get_ballot(client)
-    assert upstream.count("api4.ballotpedia.org") == 0
+    assert upstream.count("sos.state.tx.us") == 0
     theirs = {s["id"]: s["enabled"] for s in client.get("/api/sources", headers=another_browser).json()["sources"]}
-    assert theirs["ballotpedia"] is True  # another browser keeps the defaults
+    assert theirs["key_dates"] is True  # another browser keeps the defaults
     client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers=another_browser)
-    assert upstream.count("api4.ballotpedia.org") > 0
+    assert upstream.count("sos.state.tx.us") > 0
     assert not (tmp_path / "data" / "settings.json").exists()  # nothing is kept on the server
 
 
 def test_a_header_that_cant_be_read_leaves_the_defaults(client):
-    for header in ("not json", '["ballotpedia"]', '{"ballotpedia": "no"}', '{"ballotpedia": 0}'):
+    for header in ("not json", '["key_dates"]', '{"key_dates": "no"}', '{"key_dates": 0}'):
         rows = client.get("/api/sources", headers={"X-Pallot-Sources": header}).json()["sources"]
-        assert next(s for s in rows if s["id"] == "ballotpedia")["enabled"] is True, header
+        assert next(s for s in rows if s["id"] == "key_dates")["enabled"] is True, header
 
 
 @pytest.mark.shipped_defaults
-def test_ballotpedia_and_vote_for_peace_start_off(client, upstream):
+def test_vote_for_peace_starts_off(client):
     enabled = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
-    assert enabled["ballotpedia"] is False and enabled["voteforpeace"] is False
-    assert all(on for source, on in enabled.items() if source not in {"ballotpedia", "voteforpeace"})
+    assert enabled["voteforpeace"] is False
+    assert all(on for source, on in enabled.items() if source != "voteforpeace")
     ballot = get_ballot(client)
-    assert upstream.count("api4.ballotpedia.org") == 0
-    assert not any(note.startswith("Ballotpedia is off") for note in ballot["notes"])
     assert not any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
                    for card in c["cards"])
 
@@ -143,7 +141,7 @@ def test_sources_are_grouped(client):
         "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles"],
         "official": ["sos", "key_dates", "fec", "tec"],
         "states": ["state_nc", "state_mi", "state_pa", "state_fl", "state_va"],
-        "ballot": ["wikidata", "ballotpedia", "officeholders"],
+        "ballot": ["wikidata", "officeholders"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
     }
@@ -353,9 +351,8 @@ def test_the_page_gets_the_races_first_then_the_cards(client, logged_calls):
 
 def test_a_streamed_lookup_that_fails_is_still_an_error_status(client):
     switch(client, "sos", False)
-    switch(client, "ballotpedia", False)
     response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}, headers={"Accept": "application/x-ndjson"})
-    assert response.status_code == 400 and "No ballot source" in response.json()["detail"]
+    assert response.status_code == 400 and "Texas SOS, which is turned off" in response.json()["detail"]
 
 
 def test_cards_that_fail_after_the_races_are_an_error_line(client, monkeypatch):
@@ -419,14 +416,6 @@ def test_every_other_page_has_sections_for_the_left_pane(client, page):
     assert len(labelled) >= 2
     for heading_id in labelled:
         assert re.search(rf'<h2 [^>]*id="{heading_id}"', main), heading_id
-
-
-def test_a_refusal_pauses_ballotpedia_and_settings_says_until_when(client, upstream):
-    upstream.ballotpedia_status = 403
-    get_ballot(client)  # from Texas SOS alone
-    row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "ballotpedia")
-    assert row["notice_tone"] == "warn" and row["notice"].startswith("Paused until ")
-    assert row["notice"].endswith(" after Ballotpedia refused a request; ballots it already sent still show.")
 
 
 def test_startup_deletes_old_suggestions_and_addresses_not_found(make_app, tmp_path):

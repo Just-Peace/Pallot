@@ -136,9 +136,9 @@ def test_a_title_before_the_name_still_matches_exactly(tmp_path, listed):
 def test_a_city_office_matches_in_the_voters_city(tmp_path):
     entry = {"name": "Zohaib Qadri", "state": "TX", "office": "Austin City Council", "district": "9", "jurisdiction": "Austin"}
     example = parse(write(tmp_path, lambda d: d["candidates"].append(entry)))
-    council = [race("City Council Member, District 9", ("Zohaib Qadri", None), key="bp:9", group="local")]
-    assert asyncio.run(example.lookup(council, {}, "Travis", city="Austin")).candidates["bp:9:0"].match.confidence == "exact"
-    assert example.cards(council, {}, "Travis").candidates["bp:9:0"].match.confidence == "likely"
+    council = [race("City Council Member, District 9", ("Zohaib Qadri", None), key="city:9", group="local")]
+    assert asyncio.run(example.lookup(council, {}, "Travis", city="Austin")).candidates["city:9:0"].match.confidence == "exact"
+    assert example.cards(council, {}, "Travis").candidates["city:9:0"].match.confidence == "likely"
 
 
 def test_the_ballot_settings_and_the_pages_list(client, upstream, logged_calls):

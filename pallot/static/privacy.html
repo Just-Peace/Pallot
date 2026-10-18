@@ -28,7 +28,7 @@
           <li>Your picks, notes and Help me pick choices never leave your browser. We never see how you plan to vote.</li>
           <li>We don't track you, build a profile of you, or sell anything.</li>
           <li>To find your ballot, your address goes to the US Census (and to a backup only if it can't match it), and what you type goes to Google for suggestions.</li>
-          <li>With your voter card instead, no address is sent anywhere: only a few points inside your precinct go to the US Census and Ballotpedia.</li>
+          <li>With your voter card instead, no address is sent anywhere: only a few points inside your precinct go to the US Census.</li>
           <li>Our server keeps a copy of each lookup, with nothing that says who asked, so it doesn't ask twice.</li>
         </ul>
       </section>
@@ -56,7 +56,6 @@
               <tr><th scope="row">OpenStreetMap Nominatim</th><td data-label="Sent">Your address, only if the Census can't match it</td><td data-label="Asked again after">30 days</td></tr>
               <tr><th scope="row">Google Geocoding</th><td data-label="Sent">Your address, only if neither can match it, with the server's key</td><td data-label="Asked again after">30 days</td></tr>
               <tr><th scope="row">Google Maps' address search</th><td data-label="Sent">What you type in the address box, once it has a house number and a street, with the server's key</td><td data-label="Asked again after">30 days</td></tr>
-              <tr><th scope="row">Ballotpedia</th><td data-label="Sent">Your address's map location; with your voter card, three points inside your precinct</td><td data-label="Asked again after">24 hours</td></tr>
               <tr><th scope="row">US Census TIGERweb</th><td data-label="Sent">Your district numbers, when their outlines aren't among those that come with Pallot</td><td data-label="Asked again after">30 days</td></tr>
               <tr><th scope="row">OpenStreetMap tiles</th><td data-label="Sent">Which squares of the map you look at</td><td data-label="Asked again after">7 days</td></tr>
               <tr><th scope="row">Texas Secretary of State</th><td data-label="Sent">Your county and election</td><td data-label="Asked again after">1 day</td></tr>
@@ -74,7 +73,7 @@
       <section class="panel prose" aria-labelledby="direct">
         <h2 id="direct">Straight from your browser</h2>
         <ul>
-          <li><strong>Candidate photos</strong> load from Wikimedia Commons or Ballotpedia, which see your internet address.</li>
+          <li><strong>Candidate photos</strong> load from Wikimedia Commons, which sees your internet address.</li>
           <li><strong>Links you open</strong> go straight to that site. A web search sends the candidate's name, office, place and year, and an Issues link the issue too; an AI assistant may keep it in your chat history.</li>
         </ul>
         <p>Everything else, including the map, comes through our server.</p>
@@ -89,7 +88,6 @@
             <tbody>
               <tr><th scope="row">Address lookups</th><td data-label="Kept">Until cleared or crowded out by newer ones; not-found ones about a month</td></tr>
               <tr><th scope="row">Address box text and its suggestions</th><td data-label="Kept">Up to 2 months</td></tr>
-              <tr><th scope="row">Ballotpedia lookups</th><td data-label="Kept">Until cleared or crowded out by newer ones</td></tr>
               <tr><th scope="row">District outlines</th><td data-label="Kept">Until cleared</td></tr>
               <tr><th scope="row">Map tiles</th><td data-label="Kept">Up to about 5 weeks</td></tr>
               <tr><th scope="row">Source data, with nothing about you</th><td data-label="Kept">Until refreshed</td></tr>

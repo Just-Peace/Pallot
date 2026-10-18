@@ -10,7 +10,7 @@
 import { api } from "./api.js";
 import { h } from "./dom.js";
 
-const MIN_LENGTH = 5; // the server doesn't ask Ballotpedia about less
+const MIN_LENGTH = 5; // the server doesn't ask Google about less
 const WAIT_MS = 300; // after the last keystroke
 const KEYBOARD_MS = 350; // a phone's keyboard opening, and the browser's own scroll to the box, before ours
 

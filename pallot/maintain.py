@@ -38,7 +38,7 @@ COMMANDS = {
                "--delete-only). The bundled snapshots aren't deleted, only refreshed, unless --reset-snapshots puts "
                "them back as they came with Pallot first.",
 }
-_SLOW = {"ballotpedia", "nominatim", "polls"}  # one request at a time when refreshing
+_SLOW = {"nominatim", "polls"}  # one request at a time when refreshing
 
 
 def _plural(count: int, word: str) -> str:

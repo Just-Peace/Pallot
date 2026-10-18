@@ -1,7 +1,7 @@
 // The print-only sheet: the voter's picks in ballot order, to take to the polls. A full
 // page, or a wallet card to cut out.
 
-import { ballotSections, electionLine, measureKey, pickLabels } from "./ballot-shared.js";
+import { ballotSections, electionLine, pickLabels } from "./ballot-shared.js";
 import { h } from "./dom.js";
 import { formatDate } from "./format.js";
 import { earlyVotingText } from "./key-dates.js";
@@ -36,14 +36,6 @@ export function printedSections(ballot, picks, { includeBlank = false, includeNo
     .filter((section) => section.races.length);
 }
 
-function printedMeasures(ballot, picks, includeBlank) {
-  return ballot.measures
-    .map((m) => ({ m, vote: picks.picked(measureKey(m))[0] }))
-    .filter(({ vote }) => vote || includeBlank);
-}
-
-const voteText = (vote) => (vote === "for" ? "For" : "Against");
-
 // A card about 3.5 inches wide, to cut out along its dashed edge (and fold, if it's long):
 // the election day and early voting, then a line per race with the pick. No notes: they
 // don't fit.
@@ -57,12 +49,6 @@ function walletCard(ballot, picks, includeBlank) {
         h("span", { class: keys.length ? "wallet-pick" : "wallet-pick blank" }, keys.length ? pickText(race, keys, picks, { short: true }) : ""));
     }),
   ]);
-  const measures = printedMeasures(ballot, picks, includeBlank);
-  if (measures.length) {
-    blocks.push([h("h2", {}, "Propositions"), measures.map(({ m, vote }) => h("p", { class: "wallet-line" },
-      h("span", { class: "wallet-race" }, m.title, ": "),
-      h("span", { class: vote ? "wallet-pick" : "wallet-pick blank" }, vote ? voteText(vote) : "")))]);
-  }
   const early = earlyVotingText(ballot, { short: true });
   return h("div", { class: "wallet-card" },
     h("h1", {}, "My ballot picks"),
@@ -101,13 +87,6 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
         h("thead", {}, h("tr", {}, headers.map((t) => h("th", {}, t)))), h("tbody", {}, body)),
     );
   });
-
-  const measures = printedMeasures(ballot, picks, includeBlank)
-    .map(({ m, vote }) => h("tr", {}, h("td", {}, m.title), h("td", { class: vote ? "" : "blank" }, vote ? voteText(vote) : "")));
-  if (measures.length) {
-    rows += measures.length;
-    tables.push(h("section", {}, h("h2", {}, "Propositions"), h("table", { class: "measures" }, h("tbody", {}, measures))));
-  }
 
   const state = STATES[ballot.location.state];
   const tips = state?.printTips ?? ["Bring this sheet with you: many polling places don't allow phones in the voting booth."];

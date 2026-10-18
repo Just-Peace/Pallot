@@ -1,4 +1,4 @@
-// Details: a candidate's Profile (Texas SOS, then Ballotpedia), their Issues (stances.js), a tab per
+// Details: a candidate's Profile (Texas SOS, then Wikidata), their Issues (stances.js), a tab per
 // other source, and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
 // each tab made of folding sections, in a dialog whose head has Search, Avoid and Pick beside ‹ › ✕. ‹ and ›
 // step through the race's other candidates, staying on the tab that's shown. On a phone, ‹, Pick and ›
@@ -16,7 +16,7 @@ import { onSwipe } from "./swipe.js";
 
 let page = null; // { picks }
 const details = $("#details");
-const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Wikidata, Ballotpedia
+const PROFILE = new Set(["filing", "profile"]); // the kinds on the Profile tab: Texas SOS, Wikidata
 let shown = "profile"; // the tab shown, which ‹ and › keep
 let current = null; // { race, index }: the candidate shown, for a swipe
 

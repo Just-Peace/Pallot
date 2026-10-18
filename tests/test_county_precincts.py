@@ -290,7 +290,7 @@ def test_a_repeat_lookup_asks_the_county_nothing(client, upstream, logged_calls)
 def test_without_election_precincts_the_county_isnt_asked(client, upstream):
     switch(client, "election_precincts", False)
     d = get_ballot(client)["districts"]
-    assert d["precinct_sources"] == {"jp": "ballotpedia", "constable": "ballotpedia"}
+    assert d["precinct_sources"] == {}
     assert upstream.count("traviscountytx") == 0
 
 
@@ -299,14 +299,13 @@ def test_a_county_that_cant_be_read_is_a_note(client, upstream):
     ballot = get_ballot(client)
     assert ("Couldn't read Travis County's records of its election precincts, so they don't give your commissioner and "
             "JP precincts this time.") in ballot["notes"]
-    assert ballot["districts"]["precinct_sources"]["jp"] == "ballotpedia" and ballot["districts"]["county_source"] is None
+    assert ballot["districts"]["precinct_sources"] == {} and ballot["districts"]["county_source"] is None
 
 
 def test_maps_on_the_ballot(client, upstream, monkeypatch):
     monkeypatch.setitem(cp.COUNTIES, TRAVIS, MAPS)
     serve_maps(upstream, [area("COMM", 2, 2000, 2000, 2000, 2000)],
                [area("JP", 1, 2000, 2000, 0, 2000), area("JP", 5, 0, 2000, 2000, 2000)])
-    switch(client, "ballotpedia", False)
     ballot = get_ballot(client)
     d = ballot["districts"]
     assert (d["commissioner"], d["jp"], d["county_source"]) == (2, None, {"county": "Travis", "method": "maps"})

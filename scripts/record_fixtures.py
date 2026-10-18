@@ -3,7 +3,7 @@
     python scripts/record_fixtures.py              # everything
     python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
-The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS, Ballotpedia), and
+The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
 the key dates one (the Texas SOS's Important Election Dates page, kept as served), the seat
 holders two (Congress's current members, cut down to Texas's and a few others, and Open States'
@@ -53,7 +53,7 @@ sys.path.insert(0, str(ROOT))
 from pallot.config import DEMO_KEY, load_config  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
-    ballotpedia, census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
+    census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
     sos, suggestions, tigerweb, wikidata,
 )
 from pallot.matching import full_key  # noqa: E402
@@ -74,7 +74,6 @@ ADDRESSES = {
 ELECTIONS = {53815: 2026, 66734: 2026, 66618: 2026}  # Nov 3, 2026: general + two specials
 COUNTIES = {227: "travis", 101: "harris"}
 TOKEN = "recorded-token"  # in place of the token an endorsement feed's page hands out
-BALLOTPEDIA_AT = ("capitol",)
 TRACKAIPAC_PEOPLE = (
     "tx-ken-paxton", "tx-james-talarico", "tx-august-pfluger", "tx-greg-casar", "tx-lloyd-doggett",
     "tx-michael-cloud", "tx-tanya-lloyd", "tx-ted-cruz", "tx-michael-mccaul", "tx-christian-menefee",
@@ -119,13 +118,9 @@ def record_ballots(client: httpx.Client) -> None:
         response.raise_for_status()
         return response.json()
 
-    points = {}
     for name, address in ADDRESSES.items():
-        data = get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-        save(f"census_{name}.json", data)
-        matches = data["result"]["addressMatches"]
-        if matches:
-            points[name] = (matches[0]["coordinates"]["y"], matches[0]["coordinates"]["x"])
+        save(f"census_{name}.json",
+             get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS}))
 
     hits = get(nominatim.URL, params={"q": census.normalize_address(ADDRESSES["mopac"]), "format": "jsonv2",
                                       "countrycodes": "us", "limit": "1"})
@@ -153,12 +148,6 @@ def record_ballots(client: httpx.Client) -> None:
         if len(rows) > 200:
             rows = [row for row in rows if row["idCandidate"] in on_ballot]
         save(f"sos_candidates_{election}.json", rows)
-
-    for name in BALLOTPEDIA_AT:
-        lat, lon = points[name]
-        save(f"ballotpedia_{name}.json",
-             get(ballotpedia.URL, params={"long": f"{lon:.5f}", "lat": f"{lat:.5f}", "include_volunteer": "true"},
-                 headers={"Origin": ballotpedia.ORIGIN, "Accept": "application/json"}))
 
 
 def record_suggest(client: httpx.Client, key: str) -> None:

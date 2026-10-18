@@ -163,7 +163,7 @@ def test_prune_deletes_only_what_is_no_use_and_keeps_tiles_under_their_cap(tmp_p
     long_ago, now = time.time() - 90 * DAY, time.time()
     cache = HttpCache(tmp_path / "cache.sqlite3", httpx.AsyncClient())
     stored = (("osm_tiles", "old", long_ago), ("osm_tiles", "a", now - 3), ("osm_tiles", "b", now - 2),
-              ("osm_tiles", "c", now - 1), ("suggestions", "old", long_ago), ("ballotpedia", "old", long_ago),
+              ("osm_tiles", "c", now - 1), ("suggestions", "old", long_ago), ("polls", "old", long_ago),
               ("fec", "old", long_ago))
     for source, q, at in stored:
         cache._store(RequestSpec("GET", "https://example.test/", params={"q": q, "s": source}), source, "x" * 100, at,
@@ -172,7 +172,7 @@ def test_prune_deletes_only_what_is_no_use_and_keeps_tiles_under_their_cap(tmp_p
     assert prune(cache, config) == 3  # the old tile, the old suggestion, and the oldest tile past the cap
     assert cache.stats("osm_tiles").entries == 2 and cache.stats("osm_tiles").oldest == pytest.approx(now - 2)
     assert cache.stats("suggestions").entries == 0
-    assert cache.stats("ballotpedia").entries == 1 and cache.stats("fec").entries == 1  # third-party copies stay
+    assert cache.stats("polls").entries == 1 and cache.stats("fec").entries == 1  # third-party copies stay
     cache.close()
 
 

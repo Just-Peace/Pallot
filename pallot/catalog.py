@@ -11,7 +11,7 @@ from .ballot import Services
 from .models import SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
-    KeptSource, ballotpedia, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
+    KeptSource, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
@@ -44,8 +44,7 @@ GROUPS = (
                 "and the Texas Ethics Commission, and outside Texas, who filed with the FEC to run for Congress."),
     SourceGroup(STATES, "State election offices", "Other states' official lists of the candidates on their ballots. "
                 "Without its state's list, a ballot has only the races for Congress.", toggle_all=True),
-    SourceGroup(BALLOT, "Third-party ballot data", "Local races, candidate profiles and seat holders the state doesn't "
-                "publish."),
+    SourceGroup(BALLOT, "Third-party ballot data", "Candidate profiles and seat holders the state doesn't publish."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them."),
     SourceGroup(SCORECARDS, "Third-party endorsements", "Organizations that endorse or warn against candidates, most "
                 "on Palestinian rights and pro-Israel lobby money.", toggle_all=True),
@@ -140,11 +139,6 @@ SOURCES = (
         wikidata.SOURCE, "Wikidata", wikidata.DESCRIPTION, True, (wikidata.SOURCE,),
         group=BALLOT,
         pause=Pause("Wikidata refused a request", "profiles it already sent still show"),
-    ),
-    SourceInfo(
-        ballotpedia.SOURCE, "Ballotpedia", ballotpedia.DESCRIPTION, True, (ballotpedia.SOURCE,),
-        group=BALLOT,
-        pause=Pause("Ballotpedia refused a request", "ballots it already sent still show"),
     ),
     SourceInfo(
         officeholders.SOURCE, "Seat holders (congress-legislators, Open States)", officeholders.DESCRIPTION, True,

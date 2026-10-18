@@ -174,7 +174,6 @@ def test_a_streamed_lookup_holds_its_place_until_its_cards_are_added(make_app, m
         assert held == [True]
         stream_ballot(client)  # and gives it back after
         switch(client, "sos", False)
-        switch(client, "ballotpedia", False)
         assert client.post("/api/ballot", json={"address": ADDRESSES["capitol"]}).status_code == 400
         assert not client.app.state.lookups.locked()  # a lookup that fails gives it back too
 
@@ -208,7 +207,6 @@ async def test_a_capped_source_is_paused_until_the_day_turns(tmp_path):
 
 def test_settings_says_why_google_is_paused(make_app, upstream):
     with TestClient(make_app(google_key=GOOGLE_KEY, google_daily_max=1)) as client:
-        switch(client, "ballotpedia", False)
         assert get_ballot(client, NEW_STREET)["location"]["geocoder"] == "google"
         row = next(s for s in client.get("/api/sources").json()["sources"] if s["id"] == "google")
         assert "today's lookups ran out" in row["notice"]
@@ -219,12 +217,12 @@ async def test_each_per_address_source_is_kept_under_its_cap(tmp_path):
     clock = Clock()
     async with httpx.AsyncClient() as client:
         cache = HttpCache(tmp_path / "c.sqlite3", client, clock=clock)
-        for source in ("census", "ballotpedia", "fec"):
+        for source in ("census", "nominatim", "fec"):
             for n in range(4):
                 clock.now += 1
                 cache._store(RequestSpec("GET", "https://x.test", params={"s": source, "n": n}), source,
                              {"pad": "x" * 1000}, clock.now, 10**6, None, ())
         prune(cache, Config(data_dir=tmp_path, addresses_max_bytes=2500))
-        assert [cache.stats(s).entries for s in ("census", "ballotpedia", "fec")] == [2, 2, 4]
+        assert [cache.stats(s).entries for s in ("census", "nominatim", "fec")] == [2, 2, 4]
         kept = cache._db.execute("SELECT request FROM responses WHERE source = 'census'").fetchall()
         assert all('"n": 2' in row[0] or '"n": 3' in row[0] for row in kept)  # the newest

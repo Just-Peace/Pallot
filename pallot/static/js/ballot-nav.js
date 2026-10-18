@@ -4,7 +4,7 @@
 // scrolling down, and the first-run tips.
 
 import { applyTheme, bindThemeToggle } from "./appearance.js";
-import { ballotSections, measureKey } from "./ballot-shared.js";
+import { ballotSections } from "./ballot-shared.js";
 import { isPaneCollapsed, narrow, onPaneToggle } from "./chrome.js";
 import { $, h, onFrame, onReturn, stepText, trackHeight } from "./dom.js";
 import { plural } from "./format.js";
@@ -101,7 +101,6 @@ export function renderSections() {
     items.push(h("li", {}, link));
   };
   for (const section of ballotSections(page.ballot)) add(section.id, section.title, section.races.map((r) => r.key), section.races, section.maybe);
-  if (page.ballot.measures.length) add("measures-section", "Propositions", page.ballot.measures.map(measureKey));
   jumpList.replaceChildren(...items);
   jump.hidden = !items.length;
   syncPollMarks();
@@ -125,23 +124,17 @@ function syncMatchMarks(count) {
   }
 }
 
-// How far the picking has gone: ``parts``, ["5 of 12 races", "1 of 2 propositions"], and
-// whether anything is ``left`` to pick. The races that may not be on the ballot aren't counted.
+// How far the picking has gone: ``parts``, ["5 of 12 races"], and whether anything is ``left``
+// to pick. The races that may not be on the ballot aren't counted.
 export function pickProgress() {
   const { ballot, picks } = page;
   const raceKeys = ballot.races.map((r) => r.key);
-  const measureKeys = ballot.measures.map(measureKey);
   const races = picks.countPicked(raceKeys);
-  const measures = picks.countPicked(measureKeys);
-  const parts = [
-    `${races} of ${plural(raceKeys.length, "race")}`,
-    measureKeys.length ? `${measures} of ${plural(measureKeys.length, "proposition")}` : null,
-  ].filter(Boolean);
-  const total = raceKeys.length + measureKeys.length;
-  return { parts, share: total ? (races + measures) / total : 0, left: races + measures < total };
+  const total = raceKeys.length;
+  return { parts: [`${races} of ${plural(total, "race")}`], share: total ? races / total : 0, left: races < total };
 }
 
-// "5 of 12 races · 1 of 2 propositions", one bar for both, and the section counts.
+// "5 of 12 races", its bar, and the section counts.
 export function updateProgress() {
   const { picks } = page;
   const { parts, share, left } = pickProgress();
@@ -195,7 +188,7 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
 // Each points at what it's about, and shows only for a voter whose focus it concerns (all of them
 // without a focus): no money tip for a voter who chose only Polls.
 const wants = (focus) => !focuses().length || focuses().includes(focus);
-const anyPicked = () => [...page.ballot.races.map((r) => r.key), ...page.ballot.measures.map(measureKey)].some((key) => page.picks.has(key));
+const anyPicked = () => page.ballot.races.some((r) => page.picks.has(r.key));
 const TIPS = [
   {
     id: "view", when: () => uiPref("focusSkipped") === true && !focuses().length,
@@ -352,14 +345,13 @@ export function goTo(card, { open = false } = {}) {
   card.querySelector(".race-toggle").focus({ preventScroll: true });
 }
 
-// The first race or proposition without a pick, after the one in focus (or the one it went
-// to last), round to the start. The races that may not be on the ballot are skipped, as the
-// progress skips them, and so are those "Only races with a match" hides. Next on the strip, and
-// in Print my picks.
+// The first race without a pick, after the one in focus (or the one it went to last), round to
+// the start. The races that may not be on the ballot are skipped, as the progress skips them, and
+// so are those "Only races with a match" hides. Next on the strip, and in Print my picks.
 export function nextRace() {
   const { ballot, picks } = page;
   if (!ballot) return;
-  const keys = [...ballot.races.map((r) => r.key), ...ballot.measures.map(measureKey)];
+  const keys = ballot.races.map((r) => r.key);
   const from = keys.indexOf(document.activeElement?.closest(".race")?.dataset.race ?? lastJumped) + 1;
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[(from + i) % keys.length];

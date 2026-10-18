@@ -29,7 +29,7 @@ uv run pallot-bundle stats                # the snapshots' counts, as README's "
 - **In parallel.** `pytest-xdist` runs one worker per CPU (`-n auto --dist loadgroup`). Each test has its own data folder under `tmp_path`.
 - **The live tests, one at a time.** They share one worker (`xdist_group("live")`), so a real service never gets two calls at once.
 - **No throttling waits.** The tests' `make_app` passes `min_interval={}`; `test_calls_to_one_source_are_spaced_out` checks the throttling itself.
-- **Sources on.** Ballotpedia and Vote for Peace start off for the voter, but most tests are about them, so `conftest.py`'s autouse `sources_on` turns them on. A test marked `shipped_defaults` sees the shipped defaults. `switch(client, id, on)` flips a source for that client's later requests, by the header the page sends.
+- **Sources on.** Vote for Peace starts off for the voter, but many tests are about it, so `conftest.py`'s autouse `sources_on` turns it on. A test marked `shipped_defaults` sees the shipped defaults. `switch(client, id, on)` flips a source for that client's later requests, by the header the page sends.
 - **`make_app` allows `testserver`**, TestClient's host name, past the Host middleware.
 - **As Pallot's pages.** `/api/*` answers only Pallot's own pages, so `conftest.py`'s autouse `as_pallots_pages` gives every TestClient the headers the page sends (`Sec-Fetch-Site: same-origin` and `X-Pallot-Sources`). A test of other callers changes or deletes them.
 - **pallot-cache beside the app.** `make_app.cache_command("refresh", "sos")` runs `maintain.run` on the test's data folder, as the command does beside a running server, and returns the exit status and what it printed.
@@ -44,7 +44,7 @@ uv run pallot-bundle stats                # the snapshots' counts, as README's "
 
 Beyond AGENTS.md's "Every outbound call goes through `HttpCache`":
 - Only answers that succeed are cached, and concurrent identical requests share one fetch.
-- Expired rows stay, as the copy to serve when a source is down. Only transient rows (address suggestions, tiles, "not found" geocodes, expired flags) are ever pruned, after `Ttls.prune_after`, and tiles, suggestions and each per-address source (the geocoders, Ballotpedia) are kept under their size caps, oldest first.
+- Expired rows stay, as the copy to serve when a source is down. Only transient rows (address suggestions, tiles, "not found" geocodes, expired flags) are ever pruned, after `Ttls.prune_after`, and tiles, suggestions and each geocoder's answers are kept under their size caps, oldest first.
 - A source that costs money (Google, and the suggestions from it) is held to so many requests a day with `cap_daily`, then paused until midnight UTC. Each request sent is a flag that expires then, so the count survives a restart.
 - Some sources answer an error with a 200 (ArcGIS servers, a maintenance page). Such a source registers a check with `check_answers`, so a refused answer never replaces a good copy. The check runs on every `get_json`, cache hits included, on the event loop, so a costly one remembers its verdict per stored copy: `HttpCache` hands back the same object while it keeps that copy in memory (a live endorsement feed parses each copy once, and builds its list from that parse).
 - SQLite runs in WAL mode with `synchronous=NORMAL`: a write isn't synced to disk each time, and a power cut can lose only the last writes, never corrupt the cache.
@@ -54,12 +54,11 @@ Beyond AGENTS.md's "Every outbound call goes through `HttpCache`":
 
 ## What the sources do
 
-What each outside service does that the code has to work around. AGENTS.md's "Be gentle with the sources" has the rules that follow from them (Nominatim, Ballotpedia, FiftyPlusOne's headers, TEC's zip, OpenStreetMap's tiles, the precinct map).
+What each outside service does that the code has to work around. AGENTS.md's "Be gentle with the sources" has the rules that follow from them (Nominatim, FiftyPlusOne's headers, TEC's zip, OpenStreetMap's tiles, the precinct map).
 
 - **Census geocoder:** already on the 2026 maps. Its `2020 Census Blocks` give each address's block point, used as the second point in the precinct check.
 - **Google Geocoding (v4):** takes the key in the `X-Goog-Api-Key` header. Answers are kept 30 days, the most Google's terms allow for coordinates. It's `refreshable=False`: a refresh would re-send every saved address to a billed API.
 - **Google Places Autocomplete (New):** the address suggestions, with the geocoding key in the same header (the Places API must be enabled for it). Only street addresses (`includedPrimaryTypes`) in the US, and nothing is sent before a house number and three more characters. Without a key, `/api/suggest` says suggestions are off and Settings leaves the row out.
-- **Ballotpedia's ballot:** may list past elections; lists only districts with a race on this ballot, so it never names a commissioner or JP precinct with no race up; a "County subdivision" district's name may not say which kind of precinct it is, so the kind comes from its races' offices; disclaimers are HTML; office summaries describe election judges for every judge, so they're left out. It lists county courts at law and probate courts as judicial districts, but their judges file with the county, so they get no TEC card.
 - **SBOE map (PLANE2106):** comes with Pallot (`pallot/data/plane2106_kml.zip`) and has no lifetime: the plan holds until the next redistricting. Then replace the zip with the new one (and `KML_URL`), and check it with `read_download`.
 - **TLC precinct maps** (CKAN `precincts` dataset on data.capitol.texas.gov): the newest map is the SHP zip ranked by the year in its description, then a general's over a primary's, then `created`. A primary's map serves its general: the TLC publishes a general's only afterwards, and counties can only redraw precincts in March or April of odd years (Election Code §42.031); 99.5% of precincts carried over in 2022, 99.9% in 2024. The server ignores `Range`. `CNTY` is the county's FIPS code, not the SOS's alphabetical number; `PREC` is the county's own name for the precinct (`0300`, `101A`, `03-3`). The projection is EPSG:3081; any other is refused.
 - **Counties' precinct records** (Election Code §42.005 puts each election precinct inside one commissioner and one JP precinct):

@@ -15,8 +15,7 @@ from typing import Any, Callable, Hashable
 from ..matching import FIRST_LAST, FULL, INITIAL, TITLES, NameIndex, match_person
 from ..models import Match, Race
 from ..offices import OfficeScope
-from .ballotpedia import BpBallot
-from .tec import bp_seat, tec_seat
+from .tec import tec_seat
 
 _PARTIES = {
     "DEMOCRAT": "D", "DEMOCRATIC": "D", "REPUBLICAN": "R", "LIBERTARIAN": "L", "GREEN": "G", "INDEPENDENT": "I",
@@ -96,12 +95,12 @@ def fit(seats: set[str], seat: str | None, city: str | None = None) -> set[str]:
     return {seat if (s.endswith("*") and seat and seat.startswith(s[:-1])) or s == place else s for s in seats}
 
 
-def race_seat(race: Race, scope: OfficeScope | None, bp_race: Any, county: str | None) -> str | None:
+def race_seat(race: Race, scope: OfficeScope | None, county: str | None) -> str | None:
     """The race's seat in entry_seats' spelling: Congress's own, a state office's as the TEC
     spells it, or else (a county, precinct or city office) the voter's county."""
     if race.seat:
         return race.seat
-    seat = tec_seat(scope, county) if scope else bp_seat(bp_race, county) if bp_race else None
+    seat = tec_seat(scope, county) if scope else None
     if seat is None and race.group in ("county", "precinct", "local", "judicial") and county:
         return f"COUNTY:{county.upper()}"
     return seat
@@ -132,7 +131,6 @@ def match_entries(
     races: list[Race],
     scopes: dict[str, OfficeScope],
     county: str | None,
-    bp_ballot: BpBallot | None,
     *,
     source: str,
     entry_id: str,
@@ -148,10 +146,9 @@ def match_entries(
     Peace files Austin's council as "Austin"). ``source`` names the list in a match's notes;
     ``entry_id`` is the entries' unique key; ``seats_of`` reads an entry's seats (entry_seats
     unless the source already knows them)."""
-    bp_races = {f"bp:{r.id}": r for r in bp_ballot.races} if bp_ballot else {}
     out: dict[str, tuple[dict[str, Any], Match]] = {}
     for race in races:
-        seat = race_seat(race, scopes.get(race.key), bp_races.get(race.key), county)
+        seat = race_seat(race, scopes.get(race.key), county)
         place = city if race.group == "local" and seat and seat.startswith("COUNTY:") else None
         claims: dict[Hashable, list[tuple[int, str, dict[str, Any], Match]]] = defaultdict(list)
         for candidate in race.candidates:

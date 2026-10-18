@@ -111,7 +111,7 @@ def test_a_north_carolina_ballot_comes_from_its_official_list(client, upstream, 
     assert find_race(ballot, "Wake County Board of Commissioners District 1") is None
     assert ballot["left_out"]["races"] > 0 and ballot["maybe"] == []
     assert (ballot["districts"]["cd"], ballot["districts"]["sd"], ballot["districts"]["hd"]) == (2, 14, 38)
-    assert ballot["key_dates"] is None and upstream.count("goelect") == 0 and upstream.count("ballotpedia") == 0
+    assert ballot["key_dates"] is None and upstream.count("goelect") == 0
     get_ballot(client, "raleigh")
     assert logged_calls() == 0
 

@@ -18,7 +18,7 @@ asked for it again for ``retry_after`` seconds. Some sources answer an error wit
 its answers (check_answers), and an answer it refuses is handled like a failed request, so it
 never replaces a good copy; with none, it's kept for ``retry_after`` and raised as
 UpstreamError meanwhile. A source can also be paused as a whole when it answers with certain
-statuses (Ballotpedia refusing us): while paused, whatever is stored is
+statuses (a source refusing us): while paused, whatever is stored is
 served and nothing is fetched, not even by refresh(). A source that costs money can be held
 to so many requests a day (cap_daily), then paused until the day turns.
 

@@ -142,7 +142,7 @@ class SourceCard(BaseModel):
 
 
 class Candidate(BaseModel):
-    key: str  # stable across refreshes: "sos:<election>:<candidate>", "bp:<candidate>" or "fec:<FEC candidate ID>"
+    key: str  # stable across refreshes: "sos:<election>:<candidate>" or "fec:<FEC candidate ID>"
     name: str
     party: str | None = None  # D, R, L, G, I …
     party_name: str | None = None
@@ -155,11 +155,11 @@ class Candidate(BaseModel):
 
 
 class RaceNote(BaseModel):
-    """A source's note on a race, as plain text, e.g. Ballotpedia's on a replacement nominee."""
+    """A source's note on a race, as plain text, e.g. the FEC's on who its list of filers leaves out."""
 
     text: str
     url: str | None = None
-    source: str  # the source's label, "Ballotpedia"
+    source: str  # the source's label, "FEC"
 
 
 class SeatHolder(BaseModel):
@@ -172,7 +172,7 @@ class SeatHolder(BaseModel):
 
 
 class Race(BaseModel):
-    key: str  # "sos:<election>:<office>", "bp:<race>" or "fec:<cycle>:<seat>"
+    key: str  # "sos:<election>:<office>" or "fec:<cycle>:<seat>"
     name: str
     group: str
     seats: int = 1
@@ -196,14 +196,6 @@ class MaybeSection(BaseModel):
     title: str
     explanation: str
     races: list[Race]
-
-
-class Measure(BaseModel):
-    key: str
-    title: str
-    summary: str | None = None
-    url: str | None = None
-    district: str | None = None
 
 
 class Location(BaseModel):
@@ -232,7 +224,7 @@ class ElectionPrecinct(BaseModel):
     primary_map: bool  # a primary's map, which normally carries over to the general
 
 
-PrecinctSource = Literal["you", "county", "ballotpedia"]
+PrecinctSource = Literal["you", "county"]
 
 
 class CountySource(BaseModel):
@@ -250,7 +242,6 @@ class Districts(BaseModel):
     hd: int | str | None = None
     sboe: int | None = None
     election_precinct: ElectionPrecinct | None = None
-    city_council: str | None = None
     commissioner: int | None = None
     jp: int | None = None
     constable: int | None = None
@@ -329,7 +320,6 @@ class Ballot(BaseModel):
     districts: Districts
     races: list[Race]
     maybe: list[MaybeSection]
-    measures: list[Measure]
     notes: list[str]
     warnings: list[str]
     left_out: LeftOut | None = None

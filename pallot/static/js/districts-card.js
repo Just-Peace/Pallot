@@ -60,8 +60,8 @@ function electionPrecinctSource(precinct) {
     + "your voter registration certificate wins if they differ.";
 }
 
-// Who gave the commissioner and JP precincts and the city council district, in a sentence each:
-// " Commissioner and JP precincts from Harris County's list of its election precincts. City council district from Ballotpedia."
+// Who gave the commissioner and JP precincts, in a sentence each:
+// " Commissioner and JP precincts from Harris County's list of its election precincts."
 function precinctSources(d) {
   const groups = new Map();
   for (const kind of PRECINCT_KINDS) {
@@ -75,11 +75,8 @@ function precinctSources(d) {
     you: () => "you entered",
     county: (names) => `from ${county?.county} County's ${county?.method === "table" ? "list of its election precincts"
       : names.length > 1 ? "maps, which hold your whole election precinct" : "map, which holds your whole election precinct"}`,
-    ballotpedia: () => `${d.city_council ? "and city council district " : ""}from Ballotpedia`,
   };
-  const parts = [...groups].map(([source, names]) => `${named(names)} ${from[source](names)}`);
-  if (d.city_council && !groups.has("ballotpedia")) parts.push("City council district from Ballotpedia");
-  return parts.map((part) => ` ${part}.`).join("");
+  return [...groups].map(([source, names]) => ` ${named(names)} ${from[source](names)}.`).join("");
 }
 
 function notUpNote(d) {
@@ -149,7 +146,6 @@ export function renderDistricts() {
     ),
     districtRow(
       location.city && district(null, location.city),
-      d.city_council && district("City council", d.city_council),
       school && district(null, school),
     ),
     location.approximate
@@ -184,7 +180,7 @@ function districtActions(d) {
 }
 
 // The card's lines with their open boxes. It sends only the numbers the voter changed, on top of
-// the ones they entered before; the rest keep following the address, the county and Ballotpedia.
+// the ones they entered before; the rest keep following the address and the county.
 function districtsForm(rows, shown) {
   const cancel = h("button", { class: "btn small ghost", type: "button", on: { click: () => setEditing(false) } }, "Cancel");
   const buttons = [h("button", { class: "btn small primary", type: "submit" }, "Update my ballot"), cancel];

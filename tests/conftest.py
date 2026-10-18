@@ -20,7 +20,7 @@ import re
 import struct
 import zipfile
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 from urllib.parse import unquote
 
 import httpx
@@ -33,7 +33,7 @@ from pallot.api import create_app
 from pallot import settings
 from pallot.settings import HEADER
 from pallot.config import Config
-from pallot.sources import ballotpedia, fec, suggestions
+from pallot.sources import fec, suggestions
 from pallot.sources.census import normalize_address
 from pallot.sources.endorsement_feeds import FEEDS
 from pallot.sources.election_precincts import read_prj
@@ -238,7 +238,7 @@ def election_precincts_zip() -> bytes:
 
 
 # The made-up map's Travis and Harris precincts in each county's list of them: election precinct ->
-# (commissioner, JP). The Capitol's 300 is in JP precinct 5, as Ballotpedia has it; 600 and 601,
+# (commissioner, JP). The Capitol's 300 is in JP precinct 5; 600 and 601,
 # either side of LINE, share a commissioner precinct and not a JP one.
 TRAVIS_LIST = {"300": (2, 5), "312": (1, 2), "101": (3, 3), "400": (4, 4), "401A": (4, 4), "500": (2, 1), "501": (2, 1),
                "600": (3, 3), "601": (3, 4)}
@@ -286,9 +286,6 @@ class Upstream:
         self.calls: list[str] = []
         self.down: set[str] = set()  # hosts that answer HTTP 500
         self.refusing: dict[str, int] = {}  # host -> the status it refuses every request with, e.g. 429
-        self.ballotpedia_status: int | None = None
-        self.ballotpedia_edit: Callable[[dict[str, Any]], None] | None = None  # changes the Capitol's ballot before it's sent
-        self.ballotpedia_at: Callable[[float, float], dict[str, Any] | None] | None = None  # its answer at (lat, lon), if any
         self.census_coordinates: str | None = None  # the recorded address whose geographies the Census gives any point (default: MoPac's)
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
@@ -416,21 +413,6 @@ class Upstream:
             typed = json.loads(request.content)["input"]
             name = next((name for name, text in SUGGEST.items() if suggestions.normalize(text) == typed), None)
             return _file(f"suggestions_{name}.json") if name else httpx.Response(200, json={})
-        if url.host == "api4.ballotpedia.org":
-            if self.ballotpedia_status:
-                return httpx.Response(self.ballotpedia_status)
-            if request.headers.get("origin") != ballotpedia.ORIGIN:
-                return httpx.Response(403)
-            if self.ballotpedia_at and (answer := self.ballotpedia_at(float(params["lat"]), float(params["long"]))):
-                return httpx.Response(200, json=answer)
-            lat, lon = capitol_point()
-            if params["lat"] == f"{lat:.5f}" and params["long"] == f"{lon:.5f}":
-                if self.ballotpedia_edit:
-                    payload = load("ballotpedia_capitol.json")
-                    self.ballotpedia_edit(payload)
-                    return httpx.Response(200, json=payload)
-                return _file("ballotpedia_capitol.json")
-            return httpx.Response(200, json={"success": True, "data": {"districts": [], "elections": []}})
         if url.host == "data.capitol.texas.gov":
             if url.path.endswith("/package_show") or "/download/precincts" in url.path:
                 if self.precincts_status:
@@ -581,10 +563,9 @@ class FakeTecResult:
 
 @pytest.fixture(autouse=True)
 def sources_on(request, monkeypatch):
-    """Ballotpedia and Vote for Peace are off until the voter turns them on, but most tests are about them, so
-    they start on here; a test marked shipped_defaults sees the defaults Pallot ships with."""
+    """Vote for Peace is off until the voter turns it on, but many tests are about it, so it
+    starts on here; a test marked shipped_defaults sees the defaults Pallot ships with."""
     if "shipped_defaults" not in request.keywords:
-        monkeypatch.setitem(settings.DEFAULT_SOURCES, "ballotpedia", True)
         monkeypatch.setitem(settings.DEFAULT_SOURCES, "voteforpeace", True)
 
 
