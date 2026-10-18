@@ -1,11 +1,14 @@
 // On a phone, When to vote and Your districts fold into a line each above the map, so the first race
 // shows on the first screen: "Early voting Oct 19–30 · Election Day Nov 3" and "Your districts: US
-// House 10 · Senate 14 · House 49 · Pct 300". A line opens its full card under it. Wider, the lines
-// are hidden and the cards always show (the CSS).
+// House 10 · Senate 14 · House 49 · Pct 300". A line opens its full card right under it, inside the
+// same box, like an accordion. Wider, the lines are hidden and the cards always show (the CSS).
 
 import { $, h } from "./dom.js";
 import { keyDatesSummary } from "./key-dates.js";
 import { coverageOf, houseText } from "./labels.js";
+
+const phone = matchMedia("(max-width: 640px)");
+const CARDS = ["key-dates", "districts-card"];
 
 // Opens or folds a card the lines stand for (``id``: "key-dates", "districts-card").
 export function openTopCard(id, open) {
@@ -13,10 +16,21 @@ export function openTopCard(id, open) {
   $(`.top-line[aria-controls="${id}"]`).setAttribute("aria-expanded", String(open));
 }
 
+// On a phone each card sits in the box under its own line; wider, back beside the other, before the map.
+function placeCards() {
+  for (const id of CARDS) {
+    const card = $(`#${id}`);
+    if (phone.matches) $(`.top-line[aria-controls="${id}"]`).after(card);
+    else $("#district-map").before(card);
+  }
+}
+
 export function initBallotTop() {
   for (const line of document.querySelectorAll(".top-line")) {
     line.addEventListener("click", () => openTopCard(line.getAttribute("aria-controls"), line.getAttribute("aria-expanded") !== "true"));
   }
+  placeCards();
+  phone.addEventListener("change", placeCards);
 }
 
 function fill(id, label, text) {

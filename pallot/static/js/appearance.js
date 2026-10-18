@@ -6,7 +6,7 @@ import { icon } from "./icons.js";
 import { UI, setUiPref, uiPref } from "./storage.js";
 
 export const THEMES = {
-  system: { label: "System", icon: "monitor" },
+  system: { label: "System", icon: "sun-moon" },
   light: { label: "Light", icon: "sun" },
   dark: { label: "Dark", icon: "moon" },
 };
