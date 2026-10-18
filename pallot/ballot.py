@@ -64,6 +64,7 @@ from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
 from .states import StateList
+from .states import key_dates as state_key_dates
 from .states import place as state_place
 from .text import display_office, display_person, display_time
 
@@ -153,6 +154,7 @@ def key_dates_of(found: Deadlines) -> KeyDates:
     def iso(day: dt.date | None) -> str | None:
         return day.isoformat() if day else None
 
+    guide = state_key_dates.GUIDES[found.state]
     return KeyDates(
         election=found.name,
         election_day=found.day.isoformat(),
@@ -160,8 +162,15 @@ def key_dates_of(found: Deadlines) -> KeyDates:
         mail_apply_by=iso(found.mail_apply_by),
         early_voting_start=iso(found.early_start),
         early_voting_end=iso(found.early_end),
-        source_url=key_dates_source.URL,
+        source=guide.source,
+        source_url=guide.url,
+        computed=guide.computed,
     )
+
+
+def computed_key_dates(state: str | None, day: dt.date) -> KeyDates | None:
+    found = state_key_dates.computed(state, day)
+    return key_dates_of(found) if found else None
 
 
 async def election_dates(sos: Sos) -> list[ElectionDate]:
@@ -607,6 +616,7 @@ class _Builder:
         self.ballot = Ballot(
             election_date=day.isoformat(),
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
+            key_dates=computed_key_dates(location.state, day),
             location=location,
             districts=districts,
             races=found.races,
@@ -622,7 +632,8 @@ class _Builder:
     async def _from_fec(self, place: Place, location: Location, cover: coverage.Coverage) -> Ballot:
         """The races for Congress from the FEC's filers (fec.ballot_races), for a state without
         its own list: the Senate race when the FEC lists one this cycle, and the address's House
-        race. No state source, key dates, precincts or Ballotpedia."""
+        race. No state source, precincts or Ballotpedia; key dates only where they're worked out
+        by rule (states/key_dates.py)."""
         if not self.sources.enabled(fec_source.SOURCE):
             raise BallotError(400, "Outside Texas, Pallot's races come from the FEC, which is turned off. Turn on "
                                    "the FEC in Settings.")
@@ -660,6 +671,7 @@ class _Builder:
         self.ballot = Ballot(
             election_date=day.isoformat(),
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
+            key_dates=computed_key_dates(location.state, day),
             location=location,
             districts=Districts(cd=place.cd),
             races=races,

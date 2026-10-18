@@ -269,7 +269,8 @@ class ElectionRef(BaseModel):
 
 
 class KeyDates(BaseModel):
-    """One election's deadlines (ISO dates), from the Texas SOS's Important Election Dates page."""
+    """One election's deadlines (ISO dates): Texas's from its SOS's Important Election Dates page,
+    other states' worked out from their election law (states/key_dates.py)."""
 
     election: str  # the page's name for it: "Uniform Election Date", "Primary Runoff Election"
     election_day: str
@@ -277,7 +278,9 @@ class KeyDates(BaseModel):
     mail_apply_by: str | None = None  # the application must arrive (not be postmarked) by then
     early_voting_start: str | None = None
     early_voting_end: str | None = None
+    source: str  # "Texas Secretary of State"
     source_url: str
+    computed: bool = False  # worked out by rule, so the source explains the rules rather than lists the dates
 
 
 class Outline(BaseModel):

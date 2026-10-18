@@ -42,7 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), and Texas's registration, mail voting, poll hours and print tips.
+// office (``site``), Texas's and Michigan's registration, mail voting and poll hours, and Texas's
+// print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -67,6 +68,23 @@ export const STATES = {
       "Phones can't be used at the voting station in Texas, so bring this sheet.",
       "Texas has no straight-ticket option: vote each race.",
     ],
+  },
+  MI: {
+    site: { label: siteLabel(SITES.MI), url: SITES.MI },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://mvic.sos.state.mi.us/Voter/Index",
+      hint: "Michigan Voter Information Center: your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://mvic.sos.state.mi.us/Voter/Index#yourclerk",
+      hint: "Your city or township clerk (Michigan Voter Information Center), who publishes where and when you can vote early",
+    },
+    localOffice: "Your city or township clerk",
+    mailApply: { label: "How to apply", url: "https://www.michigan.gov/sos/elections/voting/absentee-voting" },
+    mailEligibility: "Any registered voter can vote absentee, no reason needed. You can also apply in person at your "
+      + "clerk's office until 4 p.m. the day before Election Day.",
+    mailDeadline: "Online and mailed applications must reach your clerk by 5 p.m. on ",
+    pollHours: "7 a.m. – 8 p.m.",
   },
 };
 

@@ -1,5 +1,5 @@
-// "When to vote" at the top of the ballot: the election's key dates from the Texas SOS
-// (ballot.key_dates), each with a calendar file, then a row of buttons: check your
+// "When to vote" at the top of the ballot: the election's key dates (ballot.key_dates, from the
+// Texas SOS or worked out from the state's election law), each with a calendar file, then a row of buttons: check your
 // registration, find where to vote, add every date to a calendar (on one row on a phone, by their
 // short labels). The mail-ballot deadline
 // sits apart, in a closed "Voting by mail?", since most voters can't vote by mail.
@@ -20,42 +20,43 @@ function daysUntil(iso) {
   return Math.round((Date.UTC(year, month - 1, day) - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
 }
 
-function calendarHref(date, event) {
-  return `/api/key-dates.ics?${new URLSearchParams({ date, ...(event ? { event } : {}) })}`;
+// The calendar file of the election on ``date`` in ``state`` (Texas's when left out).
+function calendarHref(date, state, event) {
+  return `/api/key-dates.ics?${new URLSearchParams({ date, ...(state === "TX" ? {} : { state }), ...(event ? { event } : {}) })}`;
 }
 
 // The calendar icon after a date ``iso``, which adds ``event`` to a calendar, while it's still to come.
-function calendarLink(iso, electionDay, event, label) {
+function calendarLink(iso, at, event, label) {
   return daysUntil(iso) >= 0
-    ? h("a", { class: "cal-link", href: calendarHref(electionDay, event), download: "", title: label, "aria-label": label }, icon("calendar"))
+    ? h("a", { class: "cal-link", href: calendarHref(at.day, at.state, event), download: "", title: label, "aria-label": label }, icon("calendar"))
     : null;
 }
 
 // A date (and ``extra`` after it), with its calendar link.
-function dateWithCalendar(iso, electionDay, event, what, extra = "") {
-  return [formatDate(iso, DAY) + extra, calendarLink(iso, electionDay, event, `Add “${what}” to your calendar`)];
+function dateWithCalendar(iso, at, event, what, extra = "") {
+  return [formatDate(iso, DAY) + extra, calendarLink(iso, at, event, `Add “${what}” to your calendar`)];
 }
 
 // The main list: register by, early voting, Election Day. The first that isn't over is the
 // next one, in bold with how far off it is.
-function dateRows(dates, state) {
+function dateRows(dates, state, at) {
   const day = dates.election_day;
   const rows = [
     dates.register_by && {
       label: "Register by", first: dates.register_by, last: dates.register_by,
-      value: dateWithCalendar(dates.register_by, day, "register", "Last day to register"),
+      value: dateWithCalendar(dates.register_by, at, "register", "Last day to register"),
     },
     (dates.early_voting_start || dates.early_voting_end) && {
       label: "Early voting", first: dates.early_voting_start || dates.early_voting_end, last: dates.early_voting_end || dates.early_voting_start,
       value: [
-        dates.early_voting_start ? dateWithCalendar(dates.early_voting_start, day, "early_start", "Early voting begins") : null,
+        dates.early_voting_start ? dateWithCalendar(dates.early_voting_start, at, "early_start", "Early voting begins") : null,
         dates.early_voting_start && dates.early_voting_end ? " – " : null,
-        dates.early_voting_end ? dateWithCalendar(dates.early_voting_end, day, "early_end", "Last day of early voting") : null,
+        dates.early_voting_end ? dateWithCalendar(dates.early_voting_end, at, "early_end", "Last day of early voting") : null,
       ],
     },
     {
       label: "Election Day", first: day, last: day,
-      value: dateWithCalendar(day, day, "election", "Election Day", state.pollHours ? `, ${state.pollHours}` : ""),
+      value: dateWithCalendar(day, at, "election", "Election Day", state.pollHours ? `, ${state.pollHours}` : ""),
     },
   ].filter(Boolean);
   let next = null;
@@ -74,15 +75,15 @@ function dateRows(dates, state) {
   });
 }
 
-function mailVoting(dates, state) {
+function mailVoting(dates, state, at) {
   const deadline = dates?.mail_apply_by;
   return h("details", { class: "mail-voting" },
     h("summary", {}, "Voting by mail?"),
     h("p", {}, state.mailEligibility, " ", extLink(state.mailApply.url, state.mailApply.label)),
     deadline ? h("p", {},
-      "Your application must be received (not postmarked) by ", formatDate(deadline, DAY),
+      state.mailDeadline || "Your application must be received (not postmarked) by ", formatDate(deadline, DAY),
       daysUntil(deadline) < 0 ? " (passed)." : ".",
-      calendarLink(deadline, dates.election_day, "mail", "Add the mail-ballot deadline to your calendar")) : null);
+      calendarLink(deadline, at, "mail", "Add the mail-ballot deadline to your calendar")) : null);
 }
 
 // The card's contents, or null when Pallot has nothing for the address's state. A state with only
@@ -98,6 +99,7 @@ export function keyDatesCard(ballot) {
     ];
   }
   const dates = ballot.key_dates;
+  const at = dates && { day: dates.election_day, state: ballot.location.state };
   const upcoming = dates && [dates.register_by, dates.early_voting_start, dates.early_voting_end, dates.election_day]
     .some((iso) => iso && daysUntil(iso) >= 0);
   const action = (link, iconName) =>
@@ -106,19 +108,20 @@ export function keyDatesCard(ballot) {
     action(state.registration, "user-check"),
     action(state.countyOffices, "pin"),
     upcoming
-      ? h("a", { class: "btn ghost small with-icon", href: calendarHref(dates.election_day), download: "" },
+      ? h("a", { class: "btn ghost small with-icon", href: calendarHref(at.day, at.state), download: "" },
         icon("calendar"), phoneWords("Add all to calendar", "Calendar"))
       : null,
   ];
   const more = state.site ? [" More at ", extLink(state.site.url, state.site.label), "."] : [];
+  const credit = !dates ? null
+    : dates.computed ? ["Dates worked out from the state's election law; the ", extLink(dates.source_url, dates.source), " explains it. "]
+    : ["Dates from the ", extLink(dates.source_url, dates.source), ". "];
   return [
     h("h2", { id: "key-dates-title" }, "When to vote"),
-    dates ? h("dl", { class: "key-date-list" }, dateRows(dates, state)) : null,
+    dates ? h("dl", { class: "key-date-list" }, dateRows(dates, state, at)) : null,
     h("div", { class: "button-row key-actions" }, actions),
-    mailVoting(dates, state),
-    sourceNote(
-      dates ? ["Dates from the ", extLink(dates.source_url, "Texas Secretary of State"), ". "] : null,
-      "Your county elections office sets where and when you vote.", more),
+    mailVoting(dates, state, at),
+    sourceNote(credit, `${state.localOffice || "Your county elections office"} sets where and when you vote.`, more),
   ];
 }
 

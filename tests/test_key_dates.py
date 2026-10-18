@@ -1,5 +1,5 @@
-"""Key dates (the Texas SOS's Important Election Dates page): parsing, calendar files, and
-the ballot's When to vote block."""
+"""Key dates (the Texas SOS's Important Election Dates page, and Michigan's worked out by rule):
+parsing, calendar files, and the ballot's When to vote block."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from pallot.config import Ttls
 from pallot.http_cache import HttpCache, RequestSpec, UpstreamError
 from pallot.sources import key_dates
 from pallot.sources.key_dates import Deadlines, parse
+from pallot.states import key_dates as state_key_dates
 
 from .conftest import FIXTURES, get_ballot, switch
 
@@ -186,7 +187,7 @@ def test_the_ballot_has_its_elections_key_dates(client, upstream, logged_calls):
     assert ballot["key_dates"] == {
         "election": "Uniform Election Date", "election_day": "2026-11-03", "register_by": "2026-10-05",
         "mail_apply_by": "2026-10-23", "early_voting_start": "2026-10-19", "early_voting_end": "2026-10-30",
-        "source_url": key_dates.URL,
+        "source": "Texas Secretary of State", "source_url": key_dates.URL, "computed": False,
     }
     assert upstream.count("sos.state.tx.us") == 1
     get_ballot(client)
@@ -223,6 +224,39 @@ def test_calendar_downloads(client, upstream):
     assert client.get("/api/key-dates.ics", params={"date": "2026-11-04"}).status_code == 404
     assert client.get("/api/key-dates.ics", params={"date": "2026-11-03", "event": "nope"}).status_code == 422
     assert upstream.count("sos.state.tx.us") == 1
+
+
+def test_michigans_calendar_is_worked_out_without_asking_anyone(client, upstream):
+    response = client.get("/api/key-dates.ics", params={"date": "2026-11-03", "state": "MI"})
+    assert response.headers["content-disposition"] == 'attachment; filename="michigan-election-2026-11-03.ics"'
+    unfolded = response.text.replace("\r\n ", "")
+    assert "UID:mi-2026-11-03-early_start@pallot\r\nDTSTAMP" in unfolded and "DTSTART;VALUE=DATE:20261024" in unfolded
+    assert "7 a.m. to 8 p.m.\\; if you're in line at 8" in unfolded and "Texas" not in unfolded
+    mail = client.get("/api/key-dates.ics", params={"date": "2026-11-03", "state": "MI", "event": "mail"}).text
+    assert "SUMMARY:Absentee application due (Nov 3 election)" in mail
+    assert client.get("/api/key-dates.ics", params={"date": "2026-11-10", "state": "MI"}).status_code == 404
+    assert client.get("/api/key-dates.ics", params={"date": "2026-11-03", "state": "ZZ"}).status_code == 422
+    assert upstream.count("sos.state.tx.us") == 0
+
+
+# -- worked out by rule -----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("day, early_start", [(D(2026, 11, 3), D(2026, 10, 24)), (D(2026, 8, 4), D(2026, 7, 25)),
+                                              (D(2028, 11, 7), D(2028, 10, 28))])
+def test_michigans_dates_follow_its_election_law(day, early_start):
+    found = state_key_dates.computed("MI", day)
+    assert (found.register_by, found.early_start, found.early_end, found.mail_apply_by) == (
+        day - dt.timedelta(days=15), early_start, day - dt.timedelta(days=2), day - dt.timedelta(days=4))
+    assert found.early_start.weekday() == 5 and found.early_end.weekday() == 6 and found.mail_apply_by.weekday() == 4
+
+
+def test_only_michigans_statewide_election_days_have_dates():
+    assert state_key_dates.first_tuesday_after_first_monday(2022, 11) == D(2022, 11, 8)
+    assert state_key_dates.first_tuesday_after_first_monday(2027, 6) == D(2027, 6, 8)
+    for day in (D(2026, 11, 10), D(2027, 11, 2), D(2026, 5, 5)):
+        assert state_key_dates.computed("MI", day) is None, day
+    assert state_key_dates.computed("TX", D(2026, 11, 3)) is None and state_key_dates.computed(None, D(2026, 11, 3)) is None
 
 
 def test_pallot_cache_refreshes_and_rebuilds_key_dates(client, make_app, upstream):
