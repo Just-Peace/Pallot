@@ -11,7 +11,7 @@ from .bundling import answers, build
 from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, load, switch
 
 TEXAS_ONLY_HOSTS = ("goelect.txelections.civixapps.com", "api4.ballotpedia.org", "data.capitol.texas.gov",
-                    "www.sos.state.tx.us", "fiftyplusone.news", "query.wikidata.org")
+                    "www.sos.state.tx.us", "fiftyplusone.news")
 
 
 def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):

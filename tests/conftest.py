@@ -305,6 +305,7 @@ class Upstream:
         self.officeholders_status: int | None = None  # e.g. 403 when the seat holders' lists are refused us
         self.congress_members: list[dict[str, Any]] | None = None  # Congress's members (default: the recorded ones)
         self.wikidata_status: int | None = None  # e.g. 429 when Wikidata's query service throttles us
+        self.wikidata_elsewhere: dict[str, Any] = {"results": {"bindings": []}}  # another state's officeholders
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
@@ -459,6 +460,8 @@ class Upstream:
             if self.wikidata_status:
                 return httpx.Response(self.wikidata_status)
             if "VALUES" not in params["query"]:
+                if "wd:Q1439 " not in params["query"]:  # the recorded list is Texas's
+                    return httpx.Response(200, json=self.wikidata_elsewhere)
                 return _file("wikidata_people.json")
             asked = set(re.findall(r"wd:(Q\d+)", params["query"]))
             answer = load("wikidata_details.json")

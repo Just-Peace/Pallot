@@ -74,7 +74,7 @@ class Ttls:
     officeholders: int = 7 * DAY  # the lists of who holds each congressional and legislative seat
     officeholders_backoff: int = HOUR  # after either list is refused us, stop asking for this long
     officeholders_bundle: int = 14 * DAY  # both lists bundled with Pallot (bundles/), refreshed weekly: a week of grace
-    wikidata: int = 7 * DAY  # Wikidata's list of Texas officeholders, and the matched people's profiles
+    wikidata: int = 7 * DAY  # Wikidata's list of a state's officeholders, and the matched people's profiles
     wikidata_backoff: int = HOUR  # after Wikidata's query service refuses us, stop asking for this long
     wikidata_bundle: int = 14 * DAY  # the list bundled with Pallot (bundles/), refreshed weekly: a week of grace
     state_list: int = DAY  # a state's official list of candidates (states/): withdrawals and replacements come late
