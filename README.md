@@ -233,18 +233,18 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-13 | 2026-10-13 |
 | TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-18 |
 | County precinct records | — | 7 counties | 2026-10-18 | 2026-10-18 |
-| FiftyPlusOne polls | — | 510 Senate polls (+452) · 289 House polls (+273) · 533 Governor polls (+488) | 2026-10-18 | 2026-10-18 |
+| FiftyPlusOne polls | — | 510 Senate polls · 289 House polls · 533 Governor polls | 2026-10-18 | 2026-10-18 |
 | Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-18 |
-| CAIR Action | **1,066** (+43) · Texas: 142 (+41) | — | 2026-10-18 | 2026-10-18 |
+| CAIR Action | **1,066** · Texas: 142 | — | 2026-10-18 | 2026-10-18 |
 | Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-18 |
 | NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-17 | 2026-10-18 |
 | Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-17 | 2026-10-18 |
 | Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-17 | 2026-10-18 |
 | Florida Division of Elections candidate list | **369** | 169 races | 2026-10-18 | 2026-10-18 |
 | Virginia Department of Elections candidate list | **38** | 12 races | 2026-10-17 | 2026-10-18 |
-| TrackAIPAC | **627** · Texas: 56 · House: 510 · Other: 1 · Senate: 116 | — | 2026-10-15 | 2026-10-18 |
+| TrackAIPAC | **627** · Texas: 56 · House: 510 · Other: 1 · Senate: 116 | — | 2026-10-15 | 2026-10-19 |
 | Vote for Peace | **958** · Texas: 164 · State legislature: 336 · Federal: 240 · County: 172 · Local: 129 · Statewide: 65 · Judicial: 9 · Special district: 4 · State: 3 | — | 2026-10-15 | 2026-10-15 ⚠ overdue (daily) |
-| Texas Ethics Commission | **2,153** | 803,075 contributions (+5) · 8,291 reports (+2) | 2026-10-18 | 2026-10-18 |
+| Texas Ethics Commission | **2,153** | 803,075 contributions · 8,291 reports | 2026-10-18 | 2026-10-19 |
 <!-- source-stats:end -->
 
 ## Configuration

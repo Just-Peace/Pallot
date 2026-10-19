@@ -7,7 +7,7 @@
     "reports": 8291,
     "snapshot_filers": 2153
   },
-  "last_checked": "2026-10-18T20:09:39+00:00",
+  "last_checked": "2026-10-19T16:26:33+00:00",
   "last_refresh": "2026-10-18T20:09:39+00:00",
   "members": {
     "contribs_100.csv": {
@@ -205,8 +205,8 @@
   "snapshot": "2026-10-18",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"335e55c93c5aa7b38342f10a12fde339-127\"",
-    "last_modified": "Sun, 18 Oct 2026 10:35:03 GMT",
-    "size": 1063031051
+    "etag": "\"213f65e56b8bae4f910419ad01abac31-127\"",
+    "last_modified": "Mon, 19 Oct 2026 10:35:03 GMT",
+    "size": 1063031761
   }
 }
