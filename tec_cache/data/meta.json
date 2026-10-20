@@ -7,7 +7,7 @@
     "reports": 8291,
     "snapshot_filers": 2153
   },
-  "last_checked": "2026-10-19T16:26:33+00:00",
+  "last_checked": "2026-10-20T15:08:11+00:00",
   "last_refresh": "2026-10-18T20:09:39+00:00",
   "members": {
     "contribs_100.csv": {
@@ -61,14 +61,14 @@
       "last": "20261005"
     },
     "contribs_110.csv": {
-      "crc": 281672188,
+      "crc": 665929281,
       "first": "20261005",
       "last": "20261014"
     },
     "contribs_111.csv": {
-      "crc": 1896634228,
+      "crc": 1304993845,
       "first": "20261005",
-      "last": "20261018"
+      "last": "20261019"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -205,8 +205,8 @@
   "snapshot": "2026-10-18",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"213f65e56b8bae4f910419ad01abac31-127\"",
-    "last_modified": "Mon, 19 Oct 2026 10:35:03 GMT",
-    "size": 1063031761
+    "etag": "\"f560723d4040ecb559d8119ba0c3fbc7-127\"",
+    "last_modified": "Tue, 20 Oct 2026 10:35:03 GMT",
+    "size": 1063037148
   }
 }

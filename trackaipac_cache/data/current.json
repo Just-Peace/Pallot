@@ -22433,6 +22433,52 @@
       "state": "OH"
     },
     {
+      "candidate_id": "oh-don-leonard",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "15",
+      "listings": [
+        {
+          "campaign_url": "https://donforohio.com/",
+          "candidate_id": "oh-don-leonard",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "15",
+          "donate_url": "https://secure.actblue.com/donate/don-rejects-aipac?refcode=website-endorsement",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://donforohio.com/)",
+            "OH-15 [D]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Don](https://secure.actblue.com/donate/don-rejects-aipac?refcode=website-endorsement)"
+          ],
+          "name": "Don Leonard",
+          "notes": [
+            "General Election"
+          ],
+          "pacs": [],
+          "party": "D",
+          "seat": "OH-15",
+          "seat_text": "OH-15 [D]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "OH",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Don Leonard",
+      "party": "D",
+      "seat": "OH-15",
+      "state": "OH"
+    },
+    {
       "candidate_id": "oh-emilia-sykes",
       "categories": [
         "congress"
@@ -32592,5 +32638,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-15"
+  "snapshot": "2026-10-20"
 }
