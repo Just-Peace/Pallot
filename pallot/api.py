@@ -83,7 +83,8 @@ ADDRESS_OR_CARD = "Enter an address, or your state and county."
 INVALID = "Pallot couldn't read that request. Reload the page and try again."
 CARD_STATES = [
     CardState(code=code, name=name, counties=[c.full_name for c in counties.counties(code)],
-              districts=list(coverage.of(code).districts), precincts=coverage.of(code).precincts)
+              districts=list(coverage.of(code).districts), precincts=coverage.of(code).precincts,
+              labels=dict(coverage.of(code).labels))
     for code, name in counties.state_names().items()
 ]
 
@@ -440,26 +441,27 @@ def create_app(
 
     @app.get("/api/key-dates.ics")
     async def key_dates_calendar(request: Request, date: dt.date, event: ics.EventId | None = None,
-                                 state: Literal["TX", "MI"] = "TX") -> Response:
+                                 state: Literal["TX", "MI", "CA"] = "TX") -> Response:
         """The key dates of the election on ``date`` in ``state`` as a calendar file: the one
-        ``event``, or every date still to come (see ics.calendar). Texas's from its SOS's page,
-        other states' worked out by rule. A link, so it carries no choice of sources: the page only
-        offers it with the key dates on."""
+        ``event``, or every date still to come (see ics.calendar). Texas's and California's from
+        their SOS's pages, other states' worked out by rule. A link, so it carries no choice of
+        sources: the page only offers it with the key dates on."""
         svc = services(request)
+        guide = state_key_dates.GUIDES[state]
         if state in state_key_dates.RULES:
             found = state_key_dates.computed(state, date)
         else:
             try:
-                found = await svc.key_dates.on(date)
+                found = await (svc.ca_key_dates if state == "CA" else svc.key_dates).on(date)
             except UpstreamError as exc:
                 log.warning("%s", exc)
-                raise HTTPException(502, "The Texas Secretary of State's website isn't answering right now. Try again "
+                raise HTTPException(502, f"The {guide.source}'s website isn't answering right now. Try again "
                                          "in a minute.") from exc
         body = found and ics.calendar(found, today=svc.today(), stamp=dt.datetime.now(dt.timezone.utc), only=event)
         if not body:
-            raise HTTPException(404, "The Texas Secretary of State lists no such date for this election." if state == "TX"
-                                else f"{state_key_dates.GUIDES[state].name} has no such date for a statewide election.")
-        name = f"{state_key_dates.GUIDES[state].name.lower()}-election-{date.isoformat()}{f'-{event}' if event else ''}.ics"
+            raise HTTPException(404, f"The {guide.source} lists no such date for this election." if not guide.computed
+                                else f"{guide.name} has no such date for a statewide election.")
+        name = f"{guide.name.lower()}-election-{date.isoformat()}{f'-{event}' if event else ''}.ics"
         return Response(body, media_type="text/calendar; charset=utf-8",
                         headers={"Content-Disposition": f'attachment; filename="{name}"'})
 

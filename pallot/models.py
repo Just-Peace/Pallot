@@ -310,6 +310,7 @@ class Coverage(BaseModel):
     districts: list[str] = ["cd", "sd", "hd", "sboe"]  # the district kinds found and shown
     precincts: bool = True  # election, commissioner and JP precincts
     outlines: bool = True  # the districts' map
+    labels: dict[str, str] = {}  # a district kind's name in this state where it isn't the usual one: {"hd": "State Assembly"}
 
 
 class Ballot(BaseModel):
@@ -393,6 +394,7 @@ class CardState(BaseModel):
     counties: list[str]  # the Census's names: "Travis County", "Orleans Parish"
     districts: list[str]  # "cd", "sd", "hd", "sboe"
     precincts: bool  # commissioner and JP precincts too
+    labels: dict[str, str] = {}  # its own name for a district kind (Coverage.labels)
 
 
 class EntryConfig(BaseModel):

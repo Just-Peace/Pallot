@@ -1,17 +1,22 @@
 """States' official lists of candidates (pallot/states): reading North Carolina's, Michigan's,
-Pennsylvania's, Florida's and Virginia's, and the ballots made from them."""
+Pennsylvania's, Florida's, Virginia's and California's, and the ballots made from them."""
 
 from __future__ import annotations
 
 import datetime as dt
 import json
+import sqlite3
+from collections import Counter
 
 import pytest
 from fastapi.testclient import TestClient
 
 from pallot.config import DAY
 from pallot.http_cache import RequestSpec
-from pallot.states import district_key, fl, from_json
+from pallot.sources import ca_key_dates
+from pallot.sources.key_dates import Deadlines
+from pallot.states import ca, district_key, fl, from_json, pdf_lines
+from pallot.states.ca import CaList
 from pallot.states.fl import FlList
 from pallot.states.mi import MiList
 from pallot.states.nc import NcList
@@ -213,6 +218,7 @@ def test_virginias_list_has_its_races_for_congress_and_their_incumbents():
     ("state_pa", "www.pavoterservices.pa.gov", "harrisburg"),
     ("state_fl", "dos.elections.myflorida.com", "tallahassee"),
     ("state_va", "www.elections.virginia.gov", "richmond"),
+    ("state_ca", "elections.cdn.sos.ca.gov", "losangeles"),
 ])
 def test_each_states_bundled_list_serves_a_lookup_without_asking(tmp_path, upstream, make_app, source, host, address):
     outcome = build(tmp_path, source)
@@ -265,4 +271,147 @@ def test_settings_lists_each_states_election_office(client):
     overview = client.get("/api/sources").json()
     assert any(group["id"] == "states" and group["toggle_all"] for group in overview["groups"])
     rows = {row["id"]: row for row in overview["sources"] if row["group"] == "states"}
-    assert set(rows) == {"state_nc", "state_mi", "state_pa", "state_fl", "state_va"} and rows["state_nc"]["enabled"]
+    assert set(rows) == {"state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "key_dates_ca"}
+    assert rows["state_nc"]["enabled"] and rows["key_dates_ca"]["enabled"]
+
+
+def ca_list() -> bytes:
+    return (FIXTURES / "state_ca.pdf").read_bytes()
+
+
+def test_californias_list_has_its_races_parties_incumbents_and_courts():
+    filings = CaList.parse(ca_list())
+    reaches = Counter(reach for reach, _ in {(f.reach, f.office_id) for f in filings})
+    assert (reaches["cd"], reaches["state"], reaches["unplaced"]) == (52, 8 + 2, 4)  # two Supreme Court justices statewide
+    assert {"26"} <= {f.district for f in filings if f.reach == "sd"} and {"54"} <= {f.district for f in filings if f.reach == "hd"}
+    governor = sorted((f for f in filings if f.office == "Governor"), key=lambda f: f.order)
+    assert [(f.name, f.party, f.group) for f in governor] == [("Xavier Becerra", "D", "state"), ("Steve Hilton", "R", "state")]
+    kiley = next(f for f in filings if f.name == "Kevin Kiley")
+    assert (kiley.party, kiley.party_name, kiley.office, kiley.district) == (None, None, "U.S. Representative District 6", "6")
+    assert {(f.party, f.party_name) for f in filings if f.office == "Superintendent of Public Instruction"} == {(None, None)}
+    assert next(f for f in filings if f.name == "Shirley N. Weber").incumbent
+    assert not next(f for f in filings if f.name == "Donald P. (Don) Wagner").incumbent
+    assert next(f for f in filings if f.office == "State Assembly Member District 54").group == "legislature"
+    evans = next(f for f in filings if f.name == "Kelli M. Evans")
+    assert (evans.office, evans.reach, evans.group, evans.incumbent) == (
+        "Retain Kelli M. Evans, Associate Justice of the Supreme Court", "state", "judicial", True)
+    kim = next(f for f in filings if f.name == "Michelle C. Kim")
+    assert (kim.reach, kim.district, kim.counties) == ("counties", "2", ("LOS ANGELES", "SAN LUIS OBISPO", "SANTA BARBARA", "VENTURA"))
+    assert "SOLANO" in next(f for f in filings if f.name == "Charles A. Smiley").counties
+
+
+def test_californias_court_pages_are_read_through_their_spacing_wraps_and_order():
+    plain = [
+        "Court of Appeal – Third Appellate District",
+        "Alpine, Amador, Butte, Calaveras, Colusa, El Dorado, Glenn, Lassen, Modoc, Mono,",
+        "Nevada, Placer, Plumas, Sacramento, San Joaquin, Sh  asta, Sierra, Siskiyou, Sutter,",
+        "Page 37 of 41",
+        "• For Associate Justice, Court of Appeal, Third District",
+        "Shall DAVID B. SAPP be elected to the office for the term provided by law?",
+        "• For Associate Justice, Court of Appeal, Fourth District, Division One",
+        "Shall San Diego County Superior Court Judge LISA RODRIGUEZ be elected to",
+        "the office for the term provided by law?",
+        "Court of Appeal – Fourth Appellate District",
+        "Imperial, Inyo, Orange, Riverside, San Bern ardino, San Diego",
+        "• For Associate Justice of the Supreme Court",
+        "Shall Associate Justice of the Supreme Court KENNETH R. YEGAN be elected to the",
+        "office for the term provided by law?",
+    ]
+    courts = [f for f in ca.parse_lines(pdf_lines(ca_list()), plain) if f.group == "judicial"]
+    assert [f.name for f in courts] == ["Kenneth R. Yegan", "David B. Sapp", "Lisa Rodriguez"]  # the ballot's order
+    yegan, sapp, rodriguez = courts
+    assert (yegan.reach, yegan.incumbent) == ("state", True)
+    assert sapp.office == "Elect David B. Sapp, Associate Justice, Court of Appeal, Third District" and not sapp.incumbent
+    assert {"SHASTA", "SAN JOAQUIN", "SUTTER"} <= set(sapp.counties) and "SAN DIEGO" not in sapp.counties
+    assert (rodriguez.district, rodriguez.office.split(",")[0]) == ("4", "Elect Lisa Rodriguez")
+    assert "SAN BERNARDINO" in rodriguez.counties
+
+
+def test_a_california_list_without_every_house_race_or_that_isnt_a_pdf_is_refused():
+    layout = pdf_lines(ca_list())
+    cut = layout[:next(i for i, line in enumerate(layout) if line.strip() == "United States Representative District 30")]
+    with pytest.raises(ValueError, match="29 U.S. House races"):
+        ca.parse_lines(cut, [])
+    with pytest.raises(ValueError, match="not a PDF"):
+        CaList.parse(b"<html><body>Service Unavailable</body></html>")
+
+
+def test_a_california_ballot_comes_from_its_pdf_kept_only_as_its_candidates(client, upstream, logged_calls, tmp_path):
+    ballot = get_ballot(client, "losangeles")
+    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "labels": {"hd": "State Assembly"}}
+    for name in ("U.S. Representative District 34", "Governor", "Superintendent of Public Instruction",
+                 "State Senate District 26", "State Assembly Member District 54",
+                 "Retain Kelli M. Evans, Associate Justice of the Supreme Court",
+                 "Retain Michelle C. Kim, Associate Justice, Court of Appeal, Second District, Division One"):
+        assert find_race(ballot, name), name
+    assert find_race(ballot, "U.S. Representative District 34")["seat"] == "CA-34"
+    assert not any("First District" in race["name"] or "Equalization" in race["name"] for race in ballot["races"])
+    assert any("4 Board of Equalization races" in note for note in ballot["notes"])
+    evans = find_race(ballot, "Retain Kelli M. Evans, Associate Justice of the Supreme Court")
+    assert [(c["name"], c["party"], c["incumbent"]) for c in evans["candidates"]] == [("Kelli M. Evans", None, True)]
+    data = tmp_path / "data"
+    assert upstream.count("elections.cdn.sos.ca.gov") == 1 and not list(data.glob(".*.part"))
+    with sqlite3.connect(data / "cache.sqlite3") as db:
+        [(value,)] = db.execute("SELECT value FROM responses WHERE source = 'state_ca'").fetchall()
+    assert set(json.loads(value)) == {"filings"}
+    get_ballot(client, "losangeles")
+    assert logged_calls() == 0
+
+
+def test_a_california_list_it_cant_read_keeps_the_last_good_copy(make_app, upstream):
+    with TestClient(make_app()) as client:
+        get_ballot(client, "losangeles")
+    upstream.state_lists["elections.cdn.sos.ca.gov"] = "<html><body>Down for maintenance</body></html>"
+    status, said = make_app.cache_command("hard-refresh", "state_ca")
+    assert status != 0 and "failed and kept their old copy" in said and "not a PDF" in said
+    with TestClient(make_app()) as client:
+        ballot = get_ballot(client, "losangeles")
+    assert ballot["coverage"]["ballot"] == "list" and find_race(ballot, "State Assembly Member District 54")
+
+
+def test_californias_key_dates_come_from_its_secretary_of_states_page():
+    [found] = ca_key_dates.parse(recorded("key_dates_ca.html"))
+    assert found == Deadlines(dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 19),
+                              mail_apply_by=dt.date(2026, 10, 27), state="CA")
+    assert ca_key_dates.no_elections(recorded("key_dates_ca.html")) is None
+    assert ca_key_dates.no_elections("<html><body><h1>Site maintenance</h1></body></html>")
+
+
+def test_a_california_ballot_has_its_key_dates_and_their_calendar(client, upstream, logged_calls):
+    ballot = get_ballot(client, "losangeles")
+    assert ballot["key_dates"] == {
+        "election": "General Election", "election_day": "2026-11-03", "register_by": "2026-10-19",
+        "mail_apply_by": "2026-10-27", "early_voting_start": None, "early_voting_end": None,
+        "source": "California Secretary of State", "source_url": ca_key_dates.URL, "computed": False,
+    }
+    response = client.get("/api/key-dates.ics", params={"date": "2026-11-03", "state": "CA"})
+    assert response.status_code == 200 and "california-election-2026-11-03.ics" in response.headers["content-disposition"]
+    assert "SUMMARY:Last day to register to vote" in response.text.replace("\r\n ", "")
+    mail = client.get("/api/key-dates.ics", params={"date": "2026-11-03", "state": "CA", "event": "mail"})
+    assert "SUMMARY:Ask for a replacement mail ballot" in mail.text.replace("\r\n ", "")
+    assert upstream.count("www.sos.ca.gov") == 1
+    get_ballot(client, "losangeles")
+    assert logged_calls() == 0
+
+
+def test_californias_key_dates_off_or_unreadable_leave_the_ballot(client, upstream):
+    switch(client, "key_dates_ca", False)
+    ballot = get_ballot(client, "losangeles")
+    assert ballot["key_dates"] is None and upstream.count("www.sos.ca.gov") == 0
+    switch(client, "key_dates_ca", True)
+    upstream.ca_key_dates = "<html><body><h1>Site maintenance</h1></body></html>"
+    ballot = get_ballot(client, "losangeles")
+    assert ballot["key_dates"] is None and ballot["coverage"]["ballot"] == "list"
+    assert any("key dates" in note and "California Secretary of State" in note for note in ballot["notes"])
+
+
+def test_with_californias_list_off_or_unreadable_its_ballot_has_the_races_for_congress_from_the_fec(client, upstream):
+    switch(client, "state_ca", False)
+    ballot = get_ballot(client, "losangeles")
+    assert ballot["coverage"]["ballot"] == "fec" and find_race(ballot, "U.S. Representative District 34")
+    assert upstream.count("elections.cdn.sos.ca.gov") == 0
+    switch(client, "state_ca", True)
+    upstream.state_lists["elections.cdn.sos.ca.gov"] = "%PDF-1.7 cut short"
+    ballot = get_ballot(client, "losangeles")
+    assert ballot["coverage"]["ballot"] == "fec"
+    assert any("Couldn't load the list of candidates from the California Secretary of State" in w for w in ballot["warnings"])

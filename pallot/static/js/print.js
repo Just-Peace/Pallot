@@ -5,7 +5,7 @@ import { ballotSections, electionLine, pickLabels } from "./ballot-shared.js";
 import { h } from "./dom.js";
 import { formatDate } from "./format.js";
 import { earlyVotingText } from "./key-dates.js";
-import { STATES, districtLine } from "./labels.js";
+import { STATES, coverageOf, districtLine } from "./labels.js";
 
 // ``short``: parties as one letter where there's one, for the wallet card.
 function pickText(race, keys, picks, { short = false } = {}) {
@@ -90,7 +90,8 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
 
   const state = STATES[ballot.location.state];
   const tips = state?.printTips ?? ["Bring this sheet with you: many polling places don't allow phones in the voting booth."];
-  const districts = districtLine(ballot.districts, { precinct: " Pct", state: ballot.location.state });
+  const districts = districtLine(ballot.districts,
+    { precinct: " Pct", state: ballot.location.state, labels: coverageOf(ballot).labels });
   const when = whenLine(ballot);
 
   sheet.replaceChildren(

@@ -19,7 +19,7 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
+from .sources import ca_key_dates, census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
 from .sources.census import Census
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts
@@ -44,7 +44,7 @@ from .states.adapters import ADAPTERS, open_lists
 MIN_INTERVAL = {
     "nominatim": 1.0, "suggestions": 0.5, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
     "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, **{feed.source: 1.0 for feed in FEEDS},
-    **{cls.source: 2.0 for cls in ADAPTERS.values()},
+    **{cls.source: 2.0 for cls in ADAPTERS.values()}, ca_key_dates.SOURCE: 2.0,
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
@@ -132,6 +132,7 @@ async def open_services(
                 officeholders=Officeholders(cache, config.ttl),
                 wikidata=Wikidata(cache, config.ttl),
                 key_dates=key_dates.KeyDatesPage(cache, config.ttl),
+                ca_key_dates=ca_key_dates.CaKeyDatesPage(cache, config.ttl),
                 tigerweb=Tigerweb(cache, config.ttl),
                 tiles=Tiles(cache, config.ttl),
                 states=open_lists(cache, config.ttl),

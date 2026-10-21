@@ -1,6 +1,7 @@
 """Each state's key dates: whose they are and how its calendar files word them, and, for a state
 whose deadlines are fixed counts of days from Election Day, the dates worked out from that day
-alone, with nothing fetched. Texas's come from its SOS's page (sources/key_dates.py) instead.
+alone, with nothing fetched. Texas's come from its SOS's page (sources/key_dates.py) instead, and
+California's from its SOS's (sources/ca_key_dates.py).
 
 Michigan's rules, as its Department of State gives them: registration online or by mail closes
 15 days before Election Day, then it's in person at the clerk's office with proof of residency
@@ -16,6 +17,7 @@ import datetime as dt
 from dataclasses import dataclass
 from typing import Callable
 
+from ..sources import ca_key_dates as california
 from ..sources import key_dates as texas
 from ..sources.key_dates import Deadlines
 
@@ -74,7 +76,25 @@ MICHIGAN = Guide(
     credit="Dates worked out from Michigan's election law; more from the Michigan Department of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN}
+CALIFORNIA = Guide(
+    name="California",
+    source="California Secretary of State",
+    url=california.URL,
+    computed=False,
+    registration_url=california.REGISTRATION_URL,
+    mail_url=california.MAIL_URL,
+    register="The last day to register online or by mail (postmarked today) for {election} in California. After it, "
+             "you can still register and vote at your county elections office or a vote center, through Election "
+             "Day.",
+    mail_summary="Ask for a replacement mail ballot",
+    mail="Every active voter in California is mailed a ballot for {election}. If yours is lost or damaged, today is "
+         "the Secretary of State's recommended last day to ask your county elections office for a new one:",
+    early_where="Your county elections office lists the places and hours.",
+    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates from the California Secretary of State",
+)
+
+GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:

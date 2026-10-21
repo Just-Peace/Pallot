@@ -11,7 +11,7 @@ from .ballot import Services
 from .models import SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
-    KeptSource, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
+    KeptSource, ca_key_dates, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
@@ -42,8 +42,9 @@ GROUPS = (
     SourceGroup(ADDRESS, "Address lookup & maps", "Your districts and precincts from your address, and their map."),
     SourceGroup(OFFICIAL, "Official ballot data", "The state's ballot and dates, campaign money reported to the FEC "
                 "and the Texas Ethics Commission, and outside Texas, who filed with the FEC to run for Congress."),
-    SourceGroup(STATES, "State election offices", "Other states' official lists of the candidates on their ballots. "
-                "Without its state's list, a ballot has only the races for Congress.", toggle_all=True),
+    SourceGroup(STATES, "State election offices", "Other states' official lists of the candidates on their ballots, "
+                "and their key dates. Without its state's list, a ballot has only the races for Congress.",
+                toggle_all=True),
     SourceGroup(BALLOT, "Third-party ballot data", "Candidate profiles and seat holders the state doesn't publish."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them."),
     SourceGroup(SCORECARDS, "Third-party endorsements", "Organizations that endorse or warn against candidates, most "
@@ -195,6 +196,11 @@ SOURCES = (
         SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES,
                    pause=Pause(f"the {cls.label} refused a request", "the list already fetched still shows"))
         for cls in ADAPTERS.values()
+    ),
+    SourceInfo(
+        ca_key_dates.SOURCE, "Key election dates (California SOS)", ca_key_dates.DESCRIPTION, True,
+        (ca_key_dates.SOURCE,), group=STATES,
+        pause=Pause("the California Secretary of State's website refused a request", "dates it already sent still show"),
     ),
 )
 

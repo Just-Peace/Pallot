@@ -28,6 +28,8 @@ state_mi = true             # Michigan Bureau of Elections
 state_pa = true             # Pennsylvania Department of State
 state_fl = true             # Florida Division of Elections
 state_va = true             # Virginia Department of Elections
+state_ca = true             # California Secretary of State
+key_dates_ca = true         # California Secretary of State: the election's key dates
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
