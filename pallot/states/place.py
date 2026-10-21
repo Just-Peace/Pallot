@@ -23,7 +23,7 @@ from . import Filing, district_key
 class Placed:
     races: list[Race] = field(default_factory=list)  # on the ballot
     unconfirmed: list[Race] = field(default_factory=list)  # may be: on part of the county or town
-    unplaced: int = 0  # races the list doesn't say where they are
+    unplaced: list[Filing] = field(default_factory=list)  # the races the list doesn't say where they are, by their first filing
     scopes: dict[str, OfficeScope] = field(default_factory=dict)  # the Legislature's races, for the seat holders
 
 
@@ -85,7 +85,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
     for found in ordered:
         first = found[0]
         if first.reach == "unplaced":
-            placed.unplaced += 1
+            placed.unplaced.append(first)
             continue
         verdict = where(first, districts, county, city, split)
         if verdict == "skip":

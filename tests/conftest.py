@@ -56,6 +56,7 @@ ADDRESSES = {
     "harrisburg": "501 N 3rd St, Harrisburg, PA 17120",  # Pennsylvania's (states/pa.py)
     "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",  # Florida's (states/fl.py)
     "richmond": "1000 Bank St, Richmond, VA 23219",  # Virginia's federal list (states/va.py)
+    "losangeles": "200 N Spring St, Los Angeles, CA 90012",  # California's PDF list (states/ca.py)
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -67,7 +68,7 @@ FEED_TOKEN = "recorded-token"  # the token in a feed's recorded page; its endpoi
 STATE_LISTS = {
     "s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html",
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
-    "www.elections.virginia.gov": "state_va.html",
+    "www.elections.virginia.gov": "state_va.html", "elections.cdn.sos.ca.gov": "state_ca.pdf",
 }  # host -> its recorded list
 
 
@@ -322,6 +323,7 @@ class Upstream:
         self.feed_pages: dict[str, str] = {}  # feed source id -> its page, in place of the recorded one
         self.feed_tokens: list[str | None] = []  # the token each request to a feed that wants one carried
         self.state_lists: dict[str, str] = {}  # host -> its list's answer, in place of the recorded one
+        self.ca_key_dates: str | None = None  # California SOS's election dates page, in place of the recorded one
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
         self.arcgis: dict[str, dict[str, Any]] = {
@@ -424,6 +426,9 @@ class Upstream:
             return httpx.Response(200, content=sboe_zip())
         if url.host == "api.open.fec.gov":
             return self._fec(request)
+        if url.host == "www.sos.ca.gov":
+            body = self.ca_key_dates.encode() if self.ca_key_dates is not None else fixture_bytes("key_dates_ca.html")
+            return httpx.Response(200, content=body, headers={"content-type": "text/html; charset=utf-8"})
         if url.host in STATE_LISTS:
             text = self.state_lists.get(url.host)
             body = text.encode() if text is not None else fixture_bytes(STATE_LISTS[url.host])

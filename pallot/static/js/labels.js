@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's and Michigan's registration, mail voting and poll hours, and Texas's
-// print tips.
+// office (``site``), Texas's, Michigan's and California's registration, mail voting and poll hours,
+// and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -86,6 +86,22 @@ export const STATES = {
     mailDeadline: "Online and mailed applications must reach your clerk by 5 p.m. on ",
     pollHours: "7 a.m. – 8 p.m.",
   },
+  CA: {
+    site: { label: siteLabel(SITES.CA), url: SITES.CA },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://voterstatus.sos.ca.gov/",
+      hint: "My Voter Status (California SOS): your registration, and where your mail ballot is",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://www.sos.ca.gov/elections/voting-resources/county-elections-offices",
+      hint: "Every county's elections office (California SOS); yours lists its vote centers, polling places and drop boxes",
+    },
+    mailApply: { label: "Voting by mail", url: "https://www.sos.ca.gov/elections/voter-registration/vote-mail" },
+    mailEligibility: "Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must reach "
+      + "your county within 7 days), or drop it off by 8 p.m. on Election Day.",
+    mailDeadline: "If yours is lost or damaged, the Secretary of State recommends asking your county for a new one by ",
+    pollHours: "7 a.m. – 8 p.m.",
+  },
 };
 
 // The districts and precincts the voter can see and change, in the voter registration
@@ -116,12 +132,18 @@ export function houseText(number, state) {
   return state === "DC" ? "Delegate (at large)" : "At large";
 }
 
+// A district kind's name: the state's own for its chamber where the coverage gives one
+// (``labels``: California's "State Assembly"), else DISTRICTS' ``size`` ("short" or "long").
+export function districtName(kind, labels = null, size = "short") {
+  return labels?.[kind] || DISTRICTS[kind][size];
+}
+
 // The voter's districts in one line: "U.S. House 10 · State Senate 14 · … · Pct 300 · JP 5", in
 // the voter registration certificate's order (the print sheet passes precinct: " Pct" for "JP Pct 5").
-export function districtLine(d, { precinct = "", state = null } = {}) {
+export function districtLine(d, { precinct = "", state = null, labels = null } = {}) {
   const value = (kind) => (kind === "cd" ? houseText(d.cd, state) : d[kind]);
   const named = (kind) => value(kind) != null && value(kind) !== ""
-    && `${DISTRICTS[kind].short}${DISTRICTS[kind].unit === "precinct" ? precinct : ""} ${value(kind)}`;
+    && `${districtName(kind, labels)}${DISTRICTS[kind].unit === "precinct" ? precinct : ""} ${value(kind)}`;
   return [
     named("cd"), named("sd"), named("hd"), named("sboe"),
     d.election_precinct && `Pct ${d.election_precinct.name}`,

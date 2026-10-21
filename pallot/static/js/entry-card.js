@@ -12,7 +12,7 @@
 
 import { api } from "./api.js";
 import { $, h } from "./dom.js";
-import { DISTRICTS, STATES } from "./labels.js";
+import { DISTRICTS, STATES, districtName } from "./labels.js";
 import { setUiPref, uiPref } from "./storage.js";
 
 const ENTRIES = {
@@ -95,7 +95,7 @@ function drawVoterCardBoxes(state, keep = {}) {
       title: "The precinct number on your card, such as 300 or 101A", value: keep.precinct || "" }));
   $("#vc-districts").replaceChildren(...[precinct, ...kinds.filter((kind) => DISTRICTS[kind]).map((kind) =>
     h("div", { class: "field" },
-      h("label", { for: `vc-${kind}` }, DISTRICTS[kind].short),
+      h("label", { for: `vc-${kind}` }, districtName(kind, state.labels)),
       h("input", { type: "number", inputmode: "numeric", min: "1", id: `vc-${kind}`, name: kind,
         max: highest[kind] ? String(highest[kind]) : null, value: keep[kind] ?? "" })))].filter(Boolean));
   const texas = state.code === "TX";

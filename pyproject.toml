@@ -17,6 +17,7 @@ dependencies = [
     # for trackaipac_cache, which lives in this repo
     "html2text>=2020.1.16",
     "tomli>=2; python_version < '3.11'",  # sources.toml, where Python has no tomllib
+    "pypdf>=5",  # the states' candidate lists published as PDFs (California's)
 ]
 
 [project.scripts]

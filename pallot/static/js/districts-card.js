@@ -8,7 +8,7 @@ import { openTopCard } from "./ballot-top.js";
 import { $, h, pairBox } from "./dom.js";
 import { listed } from "./format.js";
 import { icon } from "./icons.js";
-import { DISTRICTS, PRECINCT_KINDS, STATES, coverageOf, houseText } from "./labels.js";
+import { DISTRICTS, PRECINCT_KINDS, STATES, coverageOf, districtName, houseText } from "./labels.js";
 import { showToast } from "./toast.js";
 import { sourceNote } from "./view.js";
 
@@ -20,16 +20,19 @@ export function initDistrictsCard(context) {
   page = context;
 }
 
+// A kind's name in the ballot's state ("State Assembly" in California): ``size`` "short" or "long".
+const kindName = (kind, size = "short") => districtName(kind, coverageOf(page.ballot).labels, size);
+
 // The name on the card, spelled out ("State Board of Education", "Justice of the Peace & Constable"),
 // or ``short`` ("SBOE", as the voter card has it) in the edit boxes.
 function districtLabel(kind, { short = false } = {}) {
-  const name = DISTRICTS[kind][short ? "short" : "long"];
+  const name = kindName(kind, short ? "short" : "long");
   return kind === "jp" ? `${name} & Constable` : name;
 }
 
 // "State Senate district", "Justice of the Peace and Constable precinct": a box's tooltip.
 function spelledOut(kind) {
-  return `${DISTRICTS[kind].long}${kind === "jp" ? " and Constable" : ""} ${DISTRICTS[kind].unit}`;
+  return `${kindName(kind, "long")}${kind === "jp" ? " and Constable" : ""} ${DISTRICTS[kind].unit}`;
 }
 
 function shownNumbers(d) {
@@ -80,7 +83,7 @@ function precinctSources(d) {
 }
 
 function notUpNote(d) {
-  const names = (d.not_up || []).filter((kind) => d[kind] != null).map((kind) => `${DISTRICTS[kind].short} ${d[kind]}`);
+  const names = (d.not_up || []).filter((kind) => d[kind] != null).map((kind) => `${kindName(kind)} ${d[kind]}`);
   if (!names.length) return null;
   return h("p", { class: "district-note" }, `${listed(names)} ${names.length > 1 ? "aren't" : "isn't"} up for election this time.`);
 }
@@ -105,7 +108,7 @@ function districtsSource(location, coverage) {
 
 // " U.S. House and SBOE districts you entered."
 function enteredDistricts(d) {
-  const names = (d.entered || []).map((kind) => DISTRICTS[kind].short);
+  const names = (d.entered || []).map((kind) => kindName(kind));
   return names.length ? ` ${listed(names)} ${names.length > 1 ? "districts" : "district"} you entered.` : "";
 }
 
