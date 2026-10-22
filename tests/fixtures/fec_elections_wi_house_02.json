@@ -1,0 +1,44 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 2,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2WI02124",
+   "candidate_name": "POCAN, MARK",
+   "candidate_pcc_id": "C00502179",
+   "candidate_pcc_name": "MARK POCAN FOR CONGRESS",
+   "cash_on_hand_end_period": 928467.82,
+   "committee_ids": [
+    "C00502179"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1075639.48,
+   "total_receipts": 1001890.34
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2WI02181",
+   "candidate_name": "OLSEN, ERIK",
+   "candidate_pcc_id": "C00811729",
+   "candidate_pcc_name": "ERIK OLSEN WI2",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00811729"
+   ],
+   "coverage_end_date": "2025-09-12",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 3414.6,
+   "total_receipts": 2840.0
+  }
+ ]
+}

@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's and Georgia's registration, mail
-// voting and poll hours, and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's and Wisconsin's
+// registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -150,6 +150,23 @@ export const STATES = {
     mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
       + "county by 7 p.m. on Election Day.",
     pollHours: "7 a.m. – 7 p.m.",
+  },
+  WI: {
+    site: { label: siteLabel(SITES.WI), url: SITES.WI },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://myvote.wi.gov/",
+      hint: "MyVote Wisconsin (Wisconsin Elections Commission): your registration, your polling place and your ballot",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://myvote.wi.gov/",
+      hint: "MyVote Wisconsin: your polling place, and your municipal clerk's office for voting early",
+    },
+    localOffice: "Your municipal clerk",
+    mailApply: { label: "How to apply", url: "https://myvote.wi.gov/" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "polling place or clerk by 8 p.m. on Election Day.",
+    mailDeadline: "Mailed or online requests must reach your clerk by 5 p.m. on ",
+    pollHours: "7 a.m. – 8 p.m.",
   },
 };
 

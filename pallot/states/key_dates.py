@@ -27,6 +27,14 @@ the county's registrars by 7 p.m. on Election Day (21-2-386); advance voting run
 fourth Monday before through the Friday before, and on the second and third Saturdays before
 (21-2-385(d)(1)), but not on an observed state holiday, so it starts the next day when that
 Monday is Columbus Day; polls are open 7 a.m. to 7 p.m. (21-2-403).
+
+Wisconsin's, for its general election (Wis. Stat. 5.02(5): the Tuesday after the first Monday of
+November in an even year): registration by mail or online closes the third Wednesday before
+(6.28(1)), then it's in person at the municipal clerk's office until 5 p.m. the Friday before
+(6.29(2)(a)), or at the polling place on Election Day (6.55(2)); any voter can vote absentee,
+asking by mail or online by 5 p.m. the fifth day before, or in person at the clerk's office from
+the fourteenth day before through the Sunday before (6.86(1)(b)), and the ballot must reach the
+polling place by 8 p.m. on Election Day (6.87(6)); polls are open 7 a.m. to 8 p.m. (6.78(1m)).
 """
 
 from __future__ import annotations
@@ -166,7 +174,26 @@ GEORGIA = Guide(
     credit="Dates worked out from Georgia's election law; more from the Georgia Secretary of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA}
+WISCONSIN = Guide(
+    name="Wisconsin",
+    source="Wisconsin Elections Commission",
+    url="https://elections.wi.gov/",
+    computed=True,
+    registration_url="https://myvote.wi.gov/",
+    mail_url="https://myvote.wi.gov/",
+    register="The last day to register online or by mail for {election} in Wisconsin. After it, you can still "
+             "register in person at your municipal clerk's office until 5 p.m. on the Friday before, or at your "
+             "polling place on Election Day, with proof of residence.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, a request made online or by mail must reach your municipal clerk by "
+         "5 p.m. today. Your ballot must reach your polling place or clerk by 8 p.m. on Election Day; one that "
+         "arrives later isn't counted. Any voter can vote absentee; how to ask:",
+    early_where="Your municipal clerk sets the places and hours, and may start later than the first day allowed.",
+    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
+)
+
+GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:
@@ -242,7 +269,25 @@ def georgia(day: dt.date) -> Deadlines | None:
     )
 
 
-RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia}
+def wisconsin(day: dt.date) -> Deadlines | None:
+    """The dates of Wisconsin's general election on ``day``, or None when there's none: register
+    online or by mail by the third Wednesday before, ask for an absentee ballot by the fifth day
+    before, vote absentee in person from the fourteenth day before through the Sunday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=20),
+        mail_apply_by=day - dt.timedelta(days=5),
+        early_start=day - dt.timedelta(days=14),
+        early_end=day - dt.timedelta(days=2),
+        state="WI",
+    )
+
+
+RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
+    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin,
+}
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:
