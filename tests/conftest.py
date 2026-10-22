@@ -60,6 +60,7 @@ ADDRESSES = {
     "phoenix": "1700 W Washington St, Phoenix, AZ 85007",  # Arizona's list, imported by hand (states/az.py)
     "lasvegas": "495 S Main St, Las Vegas, NV 89101",  # Nevada's PDF list, imported by hand (states/nv.py)
     "madison": "2 E Main St, Madison, WI 53703",  # Wisconsin's CSV list, imported by hand (states/wi.py)
+    "columbus": "90 W Broad St, Columbus, OH 43215",  # Ohio's statewide races, transcribed by hand (states/oh.py); OH-15
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"

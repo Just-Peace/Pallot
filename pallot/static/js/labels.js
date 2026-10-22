@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's and Wisconsin's
-// registration, mail voting and poll hours, and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's and
+// Ohio's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -150,6 +150,23 @@ export const STATES = {
     mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
       + "county by 7 p.m. on Election Day.",
     pollHours: "7 a.m. – 7 p.m.",
+  },
+  OH: {
+    site: { label: siteLabel(SITES.OH), url: SITES.OH },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://voterlookup.ohiosos.gov/voterlookup.aspx",
+      hint: "Ohio Secretary of State's voter lookup: your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://www.ohiosos.gov/elections/county-boards-of-elections-directory",
+      hint: "Every county board of elections (Ohio Secretary of State); yours publishes where and when you can vote early",
+    },
+    localOffice: "Your county board of elections",
+    mailApply: { label: "How to apply", url: "https://www.ohiosos.gov/elections/request-an-absentee-ballot" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
+    mailDeadline: "Your application must reach your county board by the close of business on ",
+    pollHours: "6:30 a.m. – 7:30 p.m.",
   },
   WI: {
     site: { label: siteLabel(SITES.WI), url: SITES.WI },

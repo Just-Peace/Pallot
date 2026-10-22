@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -36,7 +36,9 @@ hand in manual/state_ga (--json another copy), never downloaded, cut down to a f
 cities with its contact details made up, and the results site's list of elections and the
 year's primary, recount and runoff, cut down to a few races. Wisconsin's (state_wi) takes a
 Madison address and the contests and candidates saved by hand in manual/state_wi (--csv another
-copy), never downloaded, cut down to the state's rows and a few counties'. The TrackAIPAC, Vote for Peace and Texas Ethics
+copy), never downloaded, cut down to the state's rows and a few counties'. Ohio's (state_oh) takes
+a Columbus address and the statewide list transcribed by hand into manual/state_oh (--json another
+copy), never downloaded, with the address's House seat's FEC filers. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -108,6 +110,7 @@ NV_ADDRESS = ("lasvegas", "495 S Main St, Las Vegas, NV 89101")  # City Hall
 WI_ADDRESS = ("madison", "2 E Main St, Madison, WI 53703")  # the State Capitol
 WI_JURISDICTIONS = ("DANE COUNTY", "WOOD COUNTY", "PRICE COUNTY", "IRON COUNTY", "JEFFERSON COUNTY", "WALWORTH COUNTY",
                     "MULTIPLE COUNTIES")
+OH_ADDRESS = ("columbus", "90 W Broad St, Columbus, OH 43215")  # City Hall
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -497,6 +500,42 @@ def record_nv(client: httpx.Client, key: str, pdf: Path | None) -> None:
                               and m["terms"][-1].get("district") in (None, place.cd)])
 
 
+def record_oh(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """Ohio: OH_ADDRESS's Census answer; the statewide list transcribed by hand into
+    manual/state_oh (``saved`` another copy), never downloaded (its site blocks scripts), copied as
+    it is (it holds only offices, names and parties); its House seat's FEC filers, its legislators,
+    and its members of Congress added to officeholders_congress.json."""
+    name, address = OH_ADDRESS
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    match = response.json()["result"]["addressMatches"][0]
+    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    saved = saved or ROOT / "manual" / "state_oh" / "ohio.json"
+    if not saved.exists():
+        raise SystemExit("state_oh: save Ohio's list as manual/state_oh/ohio.json (see its README), or pass --json")
+    save("state_oh.json", json.loads(saved.read_text(encoding="utf-8")))
+    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+        "state": "OH", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+        "office": "house", "district": f"{place.cd:02d}"})
+    response.raise_for_status()
+    save(f"fec_elections_oh_house_{place.cd:02d}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="oh"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    out = io.StringIO()
+    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_oh.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "OH"]
+    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "OH"
+                              and m["terms"][-1].get("district") in (None, place.cd)])
+
+
 GA_PLACES = {
     ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
     ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
@@ -804,13 +843,13 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
-                                           "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "polls", "key_dates", "officeholders", "wikidata",
+                                           "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
                                                  "state_nv: Nevada's, instead of the one saved in manual/state_nv")
     parser.add_argument("--json", type=Path, help="state_ga: Georgia's qualifying list, instead of the one saved in "
-                                                  "manual/state_ga")
+                                                  "manual/state_ga; state_oh: Ohio's, instead of manual/state_oh/ohio.json")
     parser.add_argument("--csv", type=Path, help="state_wi: Wisconsin's contests and candidates, instead of the one "
                                                  "saved in manual/state_wi")
     args = parser.parse_args(argv)
@@ -832,9 +871,11 @@ def main(argv: list[str] | None = None) -> int:
         if only in (None, "state_nv"):
             record_nv(client, config.fec_api_key, args.pdf if only == "state_nv" else None)
         if only in (None, "state_ga"):
-            record_ga(client, args.json)
+            record_ga(client, args.json if only == "state_ga" else None)
         if only in (None, "state_wi"):
             record_wi(client, config.fec_api_key, args.csv)
+        if only in (None, "state_oh"):
+            record_oh(client, config.fec_api_key, args.json if only == "state_oh" else None)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

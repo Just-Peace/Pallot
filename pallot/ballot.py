@@ -8,7 +8,8 @@ ballot order is filtered down to those districts. Then every candidate gets a ca
 enabled source (enrich.py).
 
 Another state with an adapter for its official list (states/) gets every race on that list
-that the address, or a voter card's county and districts, places (states/place.py). A state
+that the address, or a voter card's county and districts, places (states/place.py); a list
+without Congress's districts (Ohio's statewide races) gets its House race from the FEC. A state
 without one, or whose list can't be had, gets only the races for Congress, from the people who
 filed with the FEC, each unverified.
 """
@@ -566,6 +567,11 @@ class _Builder:
                               "and those of any districts you enter under \"More districts\". Your town's races "
                               "aren't shown: your county's sample ballot has them.")
         found = state_place.races(filings, location, districts, state=lists.state, source=lists.source, url=lists.page)
+        if lists.scope_note:
+            self.notes.append(lists.scope_note)
+        if not any(f.reach == "cd" for f in filings):
+            house = await self._fec_house(location, districts.cd, day)
+            found.races = sorted(found.races + house, key=lambda race: GROUPS.index(race.group))
         if not (found.races or found.unconfirmed):
             raise BallotError(404, f"The {lists.label} lists no races for this {self.where}.")
         if found.unplaced:
@@ -606,6 +612,26 @@ class _Builder:
             coverage=cover.info(),
         )
         return self.ballot
+
+    async def _fec_house(self, location: Location, cd: int | None, day: dt.date) -> list[Race]:
+        """The U.S. House race from the FEC's filers, for a list without Congress's districts
+        (Ohio's statewide races): none, saying why, when the FEC is off or can't be had."""
+        if not self.sources.enabled(fec_source.SOURCE):
+            self.notes.append("The FEC is turned off, so the U.S. House race isn't shown. "
+                              f"[Turn it on in Settings](settings.html#toggle-{fec_source.SOURCE}).")
+            return []
+        if cd is None:
+            if location.source == "voter_card":
+                self.notes.append("Enter your U.S. House district under \"More districts\" to see its race.")
+            else:
+                self.warnings.append("Couldn't tell your U.S. House district from your address, so its race isn't shown.")
+            return []
+        try:
+            return await fec_source.ballot_races(self.svc.fec, location.state, cd, False, day)
+        except UpstreamError as exc:
+            log.warning("%s", exc)
+            self.warnings.append("Couldn't load the FEC's filers for the U.S. House race, so it isn't shown.")
+            return []
 
     async def _from_fec(self, location: Location, cd: int | None, cover: coverage.Coverage) -> Ballot:
         """The races for Congress from the FEC's filers (fec.ballot_races), for a state without

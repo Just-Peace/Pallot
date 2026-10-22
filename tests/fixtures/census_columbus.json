@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "90 W BROAD ST, COLUMBUS, OH 43215"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "218649043"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "3903406",
+       "CENTLAT": "+39.9809665",
+       "AREAWATER": 1069565,
+       "BASENAME": "Columbus (Central) & Grandview Heights Cities",
+       "STATE": "39",
+       "OID": "2177029922951485",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9814333",
+       "NAME": "Columbus (Central) & Grandview Heights Cities PUMA",
+       "OBJECTID": 1373,
+       "CENTLON": "-083.0160788",
+       "AREALAND": 37607572,
+       "INTPTLON": "-083.0163096",
+       "MTFCC": "G6120",
+       "PUMA": "03406"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "43215",
+       "CENTLAT": "+39.9663133",
+       "AREAWATER": 1369225,
+       "BASENAME": "43215",
+       "OID": "221704258295616",
+       "ZCTA5": "43215",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9668908",
+       "NAME": "ZCTA5 43215",
+       "OBJECTID": 14522,
+       "CENTLON": "-083.0125091",
+       "AREALAND": 13312820,
+       "INTPTLON": "-083.0132830",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "19234",
+       "CENTLAT": "+40.0201422",
+       "AREAWATER": 20298917,
+       "BASENAME": "Columbus, OH",
+       "OID": "27021297198854",
+       "UA": "19234",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.0204692",
+       "NAME": "Columbus, OH Urban Area",
+       "OBJECTID": 2205,
+       "CENTLON": "-082.9702062",
+       "AREALAND": 1336840525,
+       "INTPTLON": "-082.9708034",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 1013827514.3754826,
+       "NECTAPCI": "N",
+       "GEOID": "3918000",
+       "CENTLAT": "+39.9867813",
+       "AREAWATER": 17280939,
+       "BASENAME": "Columbus",
+       "STATE": "39",
+       "OID": "27890297150401",
+       "LSADC": "25",
+       "PLACE": "18000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+39.9873674",
+       "NAME": "Columbus city",
+       "OBJECTID": 32078,
+       "PLACECC": "C6",
+       "CENTLON": "-082.9849351",
+       "STGEOMETRY_Length": 1272401.673084907,
+       "CBSAPCI": "Y",
+       "AREALAND": 577182960,
+       "INTPTLON": "-082.9851797",
+       "PLACENS": "01086101",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "39049",
+       "CENTLAT": "+39.9694926",
+       "AREAWATER": 28978544,
+       "STATE": "39",
+       "BASENAME": "Franklin",
+       "OID": "27590472243840",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+39.9698749",
+       "NAME": "Franklin County",
+       "OBJECTID": 2946,
+       "CENTLON": "-083.0093204",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01074037",
+       "AREALAND": 1378992893,
+       "INTPTLON": "-083.0090858",
+       "MTFCC": "G4020",
+       "COUNTY": "049"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "3904380",
+       "CENTLAT": "+39.9807559",
+       "AREAWATER": 8514540,
+       "STATE": "39",
+       "BASENAME": "Columbus City School District",
+       "OID": "28490472281484",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+39.9814066",
+       "SDUNI": "04380",
+       "NAME": "Columbus City School District",
+       "OBJECTID": 9685,
+       "CENTLON": "-082.9720525",
+       "HIGRADE": "12",
+       "AREALAND": 358811971,
+       "INTPTLON": "-082.9722690",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "390490030004086",
+       "CENTLAT": "+39.9626456",
+       "BLOCK": "4086",
+       "AREAWATER": 0,
+       "STATE": "39",
+       "BASENAME": "4086",
+       "OID": "210701008194048",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9626456",
+       "NAME": "Block 4086",
+       "OBJECTID": 1549029,
+       "TRACT": "003000",
+       "CENTLON": "-083.0033893",
+       "BLKGRP": "4",
+       "AREALAND": 22809,
+       "INTPTLON": "-083.0033893",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "049"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01085497",
+       "GEOID": "39",
+       "CENTLAT": "+40.4097282",
+       "AREAWATER": 10273801409,
+       "STATE": "39",
+       "BASENAME": "Ohio",
+       "STUSAB": "OH",
+       "OID": "2749046634335",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.4149297",
+       "DIVISION": "3",
+       "NAME": "Ohio",
+       "REGION": "2",
+       "OBJECTID": 40,
+       "CENTLON": "-082.7168529",
+       "AREALAND": 105824555281,
+       "INTPTLON": "-082.7119975",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "390490030004",
+       "CENTLAT": "+39.9665162",
+       "AREAWATER": 21265,
+       "STATE": "39",
+       "BASENAME": "4",
+       "OID": "2089015692369765",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9674991",
+       "NAME": "Block Group 4",
+       "OBJECTID": 216499,
+       "TRACT": "003000",
+       "CENTLON": "-083.0022612",
+       "BLKGRP": "4",
+       "AREALAND": 1049172,
+       "INTPTLON": "-083.0025324",
+       "MTFCC": "G5030",
+       "COUNTY": "049"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "198",
+       "CENTLAT": "+39.9458101",
+       "AREAWATER": 232854803,
+       "BASENAME": "Columbus-Marion-Zanesville, OH",
+       "OID": "2619034687908005",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9480230",
+       "NAME": "Columbus-Marion-Zanesville, OH CSA",
+       "OBJECTID": 54,
+       "CSA": "198",
+       "CENTLON": "-082.7298199",
+       "INTPTLON": "-082.7254212",
+       "AREALAND": 23236601125,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "18000",
+       "GEOID": "3904918000",
+       "CENTLAT": "+39.9848892",
+       "AREAWATER": 17269226,
+       "STATE": "39",
+       "BASENAME": "Columbus",
+       "OID": "27690472254022",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+39.9847938",
+       "NAME": "Columbus city",
+       "OBJECTID": 35710,
+       "CENTLON": "-082.9863007",
+       "COUSUBCC": "C2",
+       "AREALAND": 564046927,
+       "INTPTLON": "-082.9865860",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01086101",
+       "COUNTY": "049"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "39015",
+       "CENTLAT": "+39.9740097",
+       "AREAWATER": 2931436,
+       "STATE": "39",
+       "BASENAME": "15",
+       "OID": "2129042462686318",
+       "SLDU": "015",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.9751361",
+       "NAME": "State Senate District 15",
+       "OBJECTID": 1200,
+       "CENTLON": "-082.9317343",
+       "LSY": "2026",
+       "AREALAND": 223203511,
+       "INTPTLON": "-082.9318854",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+42.6527032",
+       "AREAWATER": 151233658750,
+       "BASENAME": "East North Central",
+       "OID": "2739020719809",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.8441768",
+       "DIVISION": "3",
+       "REGION": "2",
+       "NAME": "East North Central Division",
+       "OBJECTID": 8,
+       "CENTLON": "-086.8359814",
+       "AREALAND": 629311863266,
+       "INTPTLON": "-085.6604907",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 11907472733.23838,
+       "CD120": "15",
+       "GEOID": "3915",
+       "CENTLAT": "+39.6736898",
+       "CDSESSN": "120",
+       "AREAWATER": 59055580,
+       "STATE": "39",
+       "BASENAME": "15",
+       "OID": "2119042393345239",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.6735328",
+       "NAME": "Congressional District 15",
+       "OBJECTID": 298,
+       "CENTLON": "-083.4495147",
+       "STGEOMETRY_Length": 983942.8152370419,
+       "AREALAND": 6985921583,
+       "INTPTLON": "-083.4492085",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "39001",
+       "CENTLAT": "+39.9704669",
+       "SLDL": "001",
+       "AREAWATER": 560446,
+       "STATE": "39",
+       "BASENAME": "1",
+       "OID": "2139042470031140",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.9707777",
+       "NAME": "State House District 1",
+       "OBJECTID": 3558,
+       "CENTLON": "-082.9598254",
+       "LSY": "2026",
+       "AREALAND": 72016949,
+       "INTPTLON": "-082.9605370",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "18140",
+       "CENTLAT": "+39.9673704",
+       "AREAWATER": 139089771,
+       "BASENAME": "Columbus, OH",
+       "OID": "2629034687907223",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9685617",
+       "NAME": "Columbus, OH Metro Area",
+       "CSA": "198",
+       "OBJECTID": 575,
+       "CENTLON": "-082.8359175",
+       "CBSA": "18140",
+       "AREALAND": 12425387148,
+       "INTPTLON": "-082.8359105",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "39049003000",
+       "CENTLAT": "+39.9702955",
+       "AREAWATER": 21265,
+       "STATE": "39",
+       "BASENAME": "30",
+       "OID": "20790472265307",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.9719118",
+       "NAME": "Census Tract 30",
+       "OBJECTID": 20088,
+       "TRACT": "003000",
+       "CENTLON": "-082.9948595",
+       "AREALAND": 3525166,
+       "INTPTLON": "-082.9955640",
+       "MTFCC": "G5020",
+       "COUNTY": "049"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -83.002490882407,
+     "y": 39.962070274139
+    },
+    "addressComponents": {
+     "zip": "43215",
+     "streetName": "BROAD",
+     "preType": "",
+     "city": "COLUMBUS",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "90",
+     "state": "OH",
+     "suffixType": "ST",
+     "toAddress": "98",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "90 W BROAD ST, COLUMBUS, OH, 43215"
+   }
+  ]
+ }
+}

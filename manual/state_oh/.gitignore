@@ -1,0 +1,5 @@
+# Only the transcribed list and these notes are committed: a saved copy of the sample ballot stays on this machine.
+*
+!.gitignore
+!README.md
+!ohio.json
