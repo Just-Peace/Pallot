@@ -172,6 +172,7 @@ class StateList:
     page: ClassVar[str]  # where voters can see the list themselves
     description: ClassVar[str]  # its Settings line
     max_bytes: ClassVar[int] = 0  # a list that's a file this big at most (a PDF): kept as its filings alone
+    scope_note: ClassVar[str] = ""  # the ballot's note on what a list covering only part of the ballot leaves out
 
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache

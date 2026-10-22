@@ -1,0 +1,194 @@
+{
+  "state": {
+    "name": "Ohio",
+    "postal_code": "OH"
+  },
+  "election": {
+    "name": "General Election",
+    "date": "2026-11-03",
+    "status_note": "Candidates transcribed from the Ohio Secretary of State's official sample ballot template for the November 3, 2026 general election."
+  },
+  "scope": {
+    "type": "statewide_offices_only",
+    "includes": [
+      "Ohio statewide executive offices",
+      "Ohio Supreme Court contests elected statewide",
+      "U.S. Senate contest statewide in Ohio"
+    ],
+    "excludes": [
+      "U.S. House districts",
+      "Ohio Senate and House districts",
+      "county offices",
+      "municipal and township offices",
+      "local ballot issues"
+    ]
+  },
+  "source": {
+    "title": "Official Sample Ballot for the November 3, 2026 General Election",
+    "url": "https://www.ohiosos.gov/assets/dir2026-45-official-sample-ballot-november-3-2026.pdf",
+    "official_directives_page": "https://www.ohiosos.gov/elections/elections-administration/directives",
+    "source_purpose": "The Secretary of State says this sample provides the correct title and order of offices and ballot layout; it is not a county-specific ballot."
+  },
+  "contests": [
+    {
+      "office": "Governor and Lieutenant Governor",
+      "office_level": "statewide",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Amy Acton",
+          "running_mate": "David Pepper",
+          "party": "Democratic"
+        },
+        {
+          "name": "Don Kissick",
+          "running_mate": "James L. Mills",
+          "party": "Libertarian"
+        },
+        {
+          "name": "Vivek Ramaswamy",
+          "running_mate": "Robert A. McColley",
+          "party": "Republican"
+        }
+      ],
+      "write_in_option_shown": true
+    },
+    {
+      "office": "Attorney General",
+      "office_level": "statewide",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Keith Faber",
+          "party": "Republican"
+        },
+        {
+          "name": "John J. Kulewicz",
+          "party": "Democratic"
+        }
+      ],
+      "write_in_option_shown": false
+    },
+    {
+      "office": "Auditor of State",
+      "office_level": "statewide",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Annette Blackwell",
+          "party": "Democratic"
+        },
+        {
+          "name": "Frank LaRose",
+          "party": "Republican"
+        }
+      ],
+      "write_in_option_shown": false
+    },
+    {
+      "office": "Secretary of State",
+      "office_level": "statewide",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Tom Pruss",
+          "party": "Libertarian"
+        },
+        {
+          "name": "Allison Russo",
+          "party": "Democratic"
+        },
+        {
+          "name": "Robert Sprague",
+          "party": "Republican"
+        }
+      ],
+      "write_in_option_shown": false
+    },
+    {
+      "office": "Treasurer of State",
+      "office_level": "statewide",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Jay Edwards",
+          "party": "Republican"
+        },
+        {
+          "name": "Seth Walsh",
+          "party": "Democratic"
+        }
+      ],
+      "write_in_option_shown": false
+    },
+    {
+      "office": "Justice of the Supreme Court",
+      "office_level": "statewide",
+      "term": "Full term commencing 2027-01-01",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Daniel R. Hawkins",
+          "party": "Republican"
+        },
+        {
+          "name": "Marilyn Zayas",
+          "party": "Democratic"
+        }
+      ],
+      "write_in_option_shown": false
+    },
+    {
+      "office": "Justice of the Supreme Court",
+      "office_level": "statewide",
+      "term": "Full term commencing 2027-01-02",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Jennifer Brunner",
+          "party": "Democratic"
+        },
+        {
+          "name": "Colleen O’Donnell",
+          "party": "Republican"
+        }
+      ],
+      "write_in_option_shown": false
+    },
+    {
+      "office": "U.S. Senator",
+      "office_level": "statewide",
+      "term": "Unexpired term ending 2029-01-03",
+      "vote_for": 1,
+      "candidates": [
+        {
+          "name": "Sherrod Brown",
+          "party": "Democratic"
+        },
+        {
+          "name": "Jon Husted",
+          "party": "Republican"
+        },
+        {
+          "name": "Greg Levy",
+          "party": "Other-party candidate"
+        },
+        {
+          "name": "William B. Redpath",
+          "party": "Libertarian"
+        }
+      ],
+      "write_in_option_shown": true
+    }
+  ],
+  "data_quality": {
+    "verified_against_official_source": true,
+    "county_specific": false,
+    "write_in_names_included": false,
+    "notes": [
+      "A write-in option is represented as a boolean and not as a named candidate.",
+      "Party labels are transcribed from the official sample ballot.",
+      "This is a statewide-office dataset, not a complete candidate list for every Ohio county or every district."
+    ]
+  }
+}

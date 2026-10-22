@@ -15214,5 +15214,149 @@
     "phone": "202-225-2906"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "C001126",
+   "fec": [
+    "H2OH15228"
+   ],
+   "govtrack": 456864,
+   "opensecrets": "N00048568",
+   "wikipedia": "Mike Carey (politician)",
+   "wikidata": "Q108010312",
+   "pictorial": 13209,
+   "ballotpedia": "Mike Carey (Ohio)",
+   "google_entity_id": "kg:/g/11q1q1bh32",
+   "votesmart": 196349
+  },
+  "name": {
+   "first": "Mike",
+   "last": "Carey",
+   "official_full": "Mike Carey"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1971-03-13"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2021-11-04",
+    "end": "2023-01-03",
+    "state": "OH",
+    "district": 15,
+    "party": "Republican",
+    "url": "https://carey.house.gov",
+    "address": "2234 Rayburn House Office Building Washington DC 20515-3515",
+    "office": "2234 Rayburn House Office Building",
+    "phone": "202-225-2015"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "OH",
+    "district": 15,
+    "party": "Republican",
+    "url": "https://carey.house.gov",
+    "address": "1433 Longworth House Office Building Washington DC 20515-3515",
+    "office": "1433 Longworth House Office Building",
+    "phone": "202-225-2015"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "OH",
+    "district": 15,
+    "party": "Republican",
+    "url": "https://carey.house.gov",
+    "address": "1433 Longworth House Office Building Washington DC 20515-3515",
+    "office": "1433 Longworth House Office Building",
+    "phone": "202-225-2015"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001242",
+   "lis": "S434",
+   "fec": [
+    "S4OH00192"
+   ],
+   "govtrack": 456967,
+   "opensecrets": "N00048437",
+   "wikipedia": "Bernie Moreno",
+   "wikidata": "Q124858476",
+   "votesmart": 201791,
+   "ballotpedia": "Bernie Moreno",
+   "google_entity_id": "kg:/g/11r97h3rzn"
+  },
+  "name": {
+   "first": "Bernie",
+   "last": "Moreno",
+   "official_full": "Bernie Moreno"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1967-02-14"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "OH",
+    "class": 1,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.moreno.senate.gov",
+    "address": "284 Russell Senate Office Building Washington DC 20510",
+    "office": "284 Russell Senate Office Building",
+    "phone": "202-224-2315"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001104",
+   "lis": "S438",
+   "govtrack": 457032,
+   "fec": [
+    "S6OH00304"
+   ],
+   "wikipedia": "Jon Husted",
+   "wikidata": "Q6270269",
+   "votesmart": 45796,
+   "ballotpedia": "Jon Husted"
+  },
+  "name": {
+   "first": "Jon",
+   "middle": "Allen",
+   "last": "Husted",
+   "official_full": "Jon Husted"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1967-08-25"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2025-01-21",
+    "end": "2026-11-03",
+    "how": "appointment",
+    "end-type": "special-election",
+    "state": "OH",
+    "class": 3,
+    "party": "Republican",
+    "state_rank": "junior",
+    "url": "https://www.husted.senate.gov",
+    "address": "304 Russell Senate Office Building Washington DC 20510",
+    "office": "304 Russell Senate Office Building",
+    "phone": "202-224-3353"
+   }
+  ]
  }
 ]
