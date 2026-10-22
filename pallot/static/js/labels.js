@@ -42,7 +42,7 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's and Nevada's registration, mail
+// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's and Georgia's registration, mail
 // voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
@@ -133,6 +133,22 @@ export const STATES = {
     mailEligibility: "Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must arrive "
       + "by 5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on Election Day.",
     mailDeadline: "To still be mailed one, register or update your registration by ",
+    pollHours: "7 a.m. – 7 p.m.",
+  },
+  GA: {
+    site: { label: siteLabel(SITES.GA), url: SITES.GA },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://mvp.sos.ga.gov/s/",
+      hint: "My Voter Page (Georgia Secretary of State): your registration, your polling place and your sample ballot",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://mvp.sos.ga.gov/s/",
+      hint: "My Voter Page: your polling place and your county's early voting places",
+    },
+    localOffice: "Your county's board of registrars",
+    mailApply: { label: "How to apply", url: "https://securemyabsenteeballot.sos.ga.gov/s/" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county by 7 p.m. on Election Day.",
     pollHours: "7 a.m. – 7 p.m.",
   },
 };
