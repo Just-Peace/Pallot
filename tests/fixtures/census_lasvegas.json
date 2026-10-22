@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "495 S MAIN ST, LAS VEGAS, NV 89101"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "651804189"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "3200407",
+       "CENTLAT": "+36.1710496",
+       "AREAWATER": 0,
+       "BASENAME": "Las Vegas City (Southeast)",
+       "STATE": "32",
+       "OID": "217704486695969",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1710496",
+       "NAME": "Las Vegas City (Southeast) PUMA",
+       "OBJECTID": 2444,
+       "CENTLON": "-115.1273692",
+       "AREALAND": 46956114,
+       "INTPTLON": "-115.1273692",
+       "MTFCC": "G6120",
+       "PUMA": "00407"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "89101",
+       "CENTLAT": "+36.1727881",
+       "AREAWATER": 0,
+       "BASENAME": "89101",
+       "OID": "221704258469716",
+       "ZCTA5": "89101",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1727881",
+       "NAME": "ZCTA5 89101",
+       "OBJECTID": 10489,
+       "CENTLON": "-115.1223241",
+       "AREALAND": 13931483,
+       "INTPTLON": "-115.1223241",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "47995",
+       "CENTLAT": "+36.1333340",
+       "AREAWATER": 1516537,
+       "BASENAME": "Las Vegas--Henderson--Paradise, NV",
+       "OID": "270214485566467",
+       "UA": "47995",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1341652",
+       "NAME": "Las Vegas--Henderson--Paradise, NV Urban Area",
+       "OBJECTID": 1525,
+       "CENTLON": "-115.1605908",
+       "AREALAND": 1127466639,
+       "INTPTLON": "-115.1591806",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 2,
+       "STGEOMETRY_Area": 566189373.0945953,
+       "NECTAPCI": "N",
+       "GEOID": "3240000",
+       "CENTLAT": "+36.2333238",
+       "AREAWATER": 138524,
+       "BASENAME": "Las Vegas",
+       "STATE": "32",
+       "OID": "27890679599946",
+       "LSADC": "25",
+       "PLACE": "40000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+36.2334989",
+       "NAME": "Las Vegas city",
+       "OBJECTID": 32024,
+       "PLACECC": "C1",
+       "CENTLON": "-115.2653776",
+       "STGEOMETRY_Length": 445565.0354154408,
+       "CBSAPCI": "Y",
+       "AREALAND": 367491891,
+       "INTPTLON": "-115.2640367",
+       "PLACENS": "02411630",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "32003",
+       "CENTLAT": "+36.2138076",
+       "AREAWATER": 438377794,
+       "STATE": "32",
+       "BASENAME": "Clark",
+       "OID": "27590535768196",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+36.2120986",
+       "NAME": "Clark County",
+       "OBJECTID": 794,
+       "CENTLON": "-115.0136550",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00863600",
+       "AREALAND": 20439314893,
+       "INTPTLON": "-115.0152388",
+       "MTFCC": "G4020",
+       "COUNTY": "003"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "3200060",
+       "CENTLAT": "+36.2138076",
+       "AREAWATER": 438377794,
+       "STATE": "32",
+       "BASENAME": "Clark County School District",
+       "OID": "28490536182505",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+36.2120986",
+       "SDUNI": "00060",
+       "NAME": "Clark County School District",
+       "OBJECTID": 2658,
+       "CENTLON": "-115.0136550",
+       "HIGRADE": "12",
+       "AREALAND": 20439314893,
+       "INTPTLON": "-115.0152388",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "320030007001001",
+       "CENTLAT": "+36.1673700",
+       "BLOCK": "1001",
+       "AREAWATER": 0,
+       "STATE": "32",
+       "BASENAME": "1001",
+       "OID": "210701004996250",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1673700",
+       "NAME": "Block 1001",
+       "OBJECTID": 895760,
+       "TRACT": "000700",
+       "CENTLON": "-115.1484433",
+       "BLKGRP": "1",
+       "AREALAND": 17024,
+       "INTPTLON": "-115.1484433",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "003"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779793",
+       "GEOID": "32",
+       "CENTLAT": "+39.3292318",
+       "AREAWATER": 1839846018,
+       "STATE": "32",
+       "BASENAME": "Nevada",
+       "STUSAB": "NV",
+       "OID": "27490286467734",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+39.3310928",
+       "DIVISION": "8",
+       "NAME": "Nevada",
+       "REGION": "4",
+       "OBJECTID": 26,
+       "CENTLON": "-116.6313463",
+       "AREALAND": 284537080522,
+       "INTPTLON": "-116.6151469",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "320030007001",
+       "CENTLAT": "+36.1694045",
+       "AREAWATER": 0,
+       "STATE": "32",
+       "BASENAME": "1",
+       "OID": "208903716488027",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1694045",
+       "NAME": "Block Group 1",
+       "OBJECTID": 120343,
+       "TRACT": "000700",
+       "CENTLON": "-115.1475457",
+       "BLKGRP": "1",
+       "AREALAND": 232192,
+       "INTPTLON": "-115.1475457",
+       "MTFCC": "G5030",
+       "COUNTY": "003"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "332",
+       "CENTLAT": "+37.4785344",
+       "AREAWATER": 481585776,
+       "BASENAME": "Las Vegas-Henderson, NV",
+       "OID": "2619034687908060",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.4257769",
+       "NAME": "Las Vegas-Henderson, NV CSA",
+       "OBJECTID": 161,
+       "CSA": "332",
+       "CENTLON": "-116.0154573",
+       "INTPTLON": "-116.0711182",
+       "AREALAND": 67530254090,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "94504",
+       "GEOID": "3200394504",
+       "CENTLAT": "+36.1297245",
+       "AREAWATER": 1599945,
+       "STATE": "32",
+       "BASENAME": "Las Vegas",
+       "OID": "27690679599906",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1295524",
+       "NAME": "Las Vegas CCD",
+       "OBJECTID": 15889,
+       "CENTLON": "-115.1169570",
+       "COUSUBCC": "Z5",
+       "AREALAND": 1240761432,
+       "INTPTLON": "-115.1158559",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01937450",
+       "COUNTY": "003"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "32002",
+       "CENTLAT": "+36.1907785",
+       "AREAWATER": 0,
+       "STATE": "32",
+       "BASENAME": "2",
+       "OID": "2129042398555506",
+       "SLDU": "002",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+36.1907785",
+       "NAME": "State Senate District 2",
+       "OBJECTID": 1683,
+       "CENTLON": "-115.0892501",
+       "LSY": "2026",
+       "AREALAND": 54856883,
+       "INTPTLON": "-115.0892501",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "8",
+       "CENTLAT": "+40.2023972",
+       "AREAWATER": 18692985514,
+       "BASENAME": "Mountain",
+       "OID": "2739020719805",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1987470",
+       "DIVISION": "8",
+       "REGION": "4",
+       "NAME": "Mountain Division",
+       "OBJECTID": 5,
+       "CENTLON": "-110.2308131",
+       "AREALAND": 2217926739752,
+       "INTPTLON": "-110.2279740",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 174597685478.93417,
+       "CD120": "04",
+       "GEOID": "3204",
+       "CENTLAT": "+37.7951008",
+       "CDSESSN": "120",
+       "AREAWATER": 565761186,
+       "STATE": "32",
+       "BASENAME": "4",
+       "OID": "2119042393278265",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+37.8021410",
+       "NAME": "Congressional District 4",
+       "OBJECTID": 241,
+       "CENTLON": "-116.2081532",
+       "STGEOMETRY_Length": 2089761.2540782203,
+       "AREALAND": 108236725164,
+       "INTPTLON": "-116.2121690",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "32011",
+       "CENTLAT": "+36.1763428",
+       "SLDL": "011",
+       "AREAWATER": 0,
+       "STATE": "32",
+       "BASENAME": "11",
+       "OID": "2139042403279610",
+       "LSADC": "L3",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+36.1763428",
+       "NAME": "Assembly District 11",
+       "OBJECTID": 2163,
+       "CENTLON": "-115.1196816",
+       "LSY": "2026",
+       "AREALAND": 23389662,
+       "INTPTLON": "-115.1196816",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "29820",
+       "CENTLAT": "+36.2138076",
+       "AREAWATER": 438377794,
+       "BASENAME": "Las Vegas-Henderson-North Las Vegas, NV",
+       "OID": "2629034687907501",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.2120986",
+       "NAME": "Las Vegas-Henderson-North Las Vegas, NV Metro Area",
+       "CSA": "332",
+       "OBJECTID": 757,
+       "CENTLON": "-115.0136550",
+       "CBSA": "29820",
+       "AREALAND": 20439314893,
+       "INTPTLON": "-115.0152388",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "32003000700",
+       "CENTLAT": "+36.1701274",
+       "AREAWATER": 0,
+       "STATE": "32",
+       "BASENAME": "7",
+       "OID": "20790679601662",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1701274",
+       "NAME": "Census Tract 7",
+       "OBJECTID": 27096,
+       "TRACT": "000700",
+       "CENTLON": "-115.1411884",
+       "AREALAND": 1478745,
+       "INTPTLON": "-115.1411884",
+       "MTFCC": "G5020",
+       "COUNTY": "003"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -115.14926863628,
+     "y": 36.167103720988
+    },
+    "addressComponents": {
+     "zip": "89101",
+     "streetName": "S MAIN",
+     "preType": "",
+     "city": "LAS VEGAS",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "401",
+     "state": "NV",
+     "suffixType": "ST",
+     "toAddress": "499",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "495 S MAIN ST, LAS VEGAS, NV, 89101"
+   }
+  ]
+ }
+}

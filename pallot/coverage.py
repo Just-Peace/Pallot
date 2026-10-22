@@ -49,6 +49,7 @@ COVERED = {
     "VA": Coverage("list", ("cd",), precincts=False, outlines=False),  # only its federal list in an even year
     "CA": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "AZ": LIST,  # its State Senate and State House districts are both the Legislative District
+    "NV": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
 }
 
 # Sources that only know some states.

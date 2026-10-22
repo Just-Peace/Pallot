@@ -10,6 +10,15 @@ through Election Day (MCL 168.497); early voting runs at least from the second S
 through the Sunday before (MCL 168.720a, from Proposal 2 of 2022); any voter can vote absentee,
 applying online or by mail by 5 p.m. the Friday before. Only its even-year August primary and
 November general are statewide, the elections those rules are for.
+
+Nevada's, for its general election (NRS 293.12755: the first Tuesday after the first Monday of
+November in an even year): registration by mail or in person at the county clerk's closes the
+fourth Tuesday before, online on Election Day itself (NRS 293.560), and in person at a polling
+place it goes on through Election Day (NRS 293.5772 to 293.5887); every active voter is mailed a
+ballot, and so is anyone who registers or updates their registration by 14 days before
+(NRS 293.269911); early voting runs from the third Saturday before through the Friday before
+(NRS 293.3568); a mailed ballot must be postmarked by Election Day and reach the clerk by 5 p.m.
+on the fourth day after (NRS 293.269921); polls are open 7 a.m. to 7 p.m. (NRS 293.273).
 """
 
 from __future__ import annotations
@@ -111,7 +120,27 @@ ARIZONA = Guide(
     credit="Dates from the Arizona Secretary of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA}
+NEVADA = Guide(
+    name="Nevada",
+    source="Nevada Secretary of State",
+    url="https://www.nvsos.gov/sos/elections",
+    computed=True,
+    registration_url="https://registertovote.nv.gov/",
+    mail_url="https://www.nvsos.gov/sos/elections",
+    register="The last day to register by mail or in person at your county clerk's office for {election} in Nevada. "
+             "After it, you can still register online through Election Day, or in person at a polling place during "
+             "early voting or on Election Day.",
+    mail_summary="Last day to register and still be mailed a ballot",
+    mail="Every active voter in Nevada is mailed a ballot for {election}. Register or update your registration by "
+         "today to still be mailed one. Mailed back, it must be postmarked by Election Day and reach your county "
+         "clerk by 5 p.m. on the fourth day after; or drop it off at any polling place or drop box by 7 p.m. on "
+         "Election Day. More:",
+    early_where="Your county clerk lists the places and hours.",
+    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates worked out from Nevada's election law; more from the Nevada Secretary of State",
+)
+
+GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:
@@ -146,7 +175,23 @@ def arizona(day: dt.date) -> Deadlines | None:
     return ARIZONA_DATES.get(day)
 
 
-RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona}
+def nevada(day: dt.date) -> Deadlines | None:
+    """The dates of Nevada's general election on ``day``, or None when there's none: register by
+    mail or in person the fourth Tuesday before, still be mailed a ballot 14 days before, early
+    voting the third Saturday before through the Friday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=28),
+        mail_apply_by=day - dt.timedelta(days=14),
+        early_start=day - dt.timedelta(days=17),
+        early_end=day - dt.timedelta(days=4),
+        state="NV",
+    )
+
+
+RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona, "NV": nevada}
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:

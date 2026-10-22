@@ -123,6 +123,14 @@
    "last_refresh": "2026-10-17T08:04:59+00:00",
    "races": 1324
   },
+  "state_nv": {
+   "answers": 1,
+   "answers_hash": "3364a8c09993b7e79b33b5938b3e9bdfc768d8be355bbf519a2790ef15842364",
+   "candidates": 633,
+   "last_checked": "2026-10-22T12:20:25+00:00",
+   "last_refresh": "2026-10-22T12:20:25+00:00",
+   "races": 364
+  },
   "state_pa": {
    "answers": 1,
    "answers_hash": "57cbc4cb30922ab17951d1ef4f8f37d1affd9669aabdff4558547d7267b2f616",
