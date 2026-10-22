@@ -11,6 +11,8 @@
 /data
 tests
 scripts
+# lists saved by hand: only their parsed candidates (bundles/data) go in the image
+manual
 **/__pycache__
 *.pyc
 .pytest_cache

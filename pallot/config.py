@@ -78,6 +78,7 @@ class Ttls:
     state_list: int = DAY  # a state's official list of candidates (states/): withdrawals and replacements come late
     state_list_backoff: int = HOUR  # after a state's election site refuses us, stop asking it for this long
     state_list_bundle: int = 2 * DAY  # each state's list bundled with Pallot (bundles/), refreshed daily: a day of grace
+    state_list_imported: int = 365 * DAY  # a list saved by hand and imported (pallot-bundle import-list): never fetched
     retry_after: int = 15 * 60  # after a failed request, serve its old copy this long before asking again
     prune_after: int = 30 * DAY  # delete expired suggestions, tiles and addresses not found once expired this long
 

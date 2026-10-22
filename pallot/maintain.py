@@ -20,7 +20,7 @@ from typing import Any, Callable, Collection
 from .catalog import Catalog, SourceInfo
 from .ballot import Services
 from .config import BadConfig, load_config
-from .http_cache import SavedRequest
+from .http_cache import RequestSpec, SavedRequest
 from .services import open_services, prune
 from .sources import RefreshFailed, fec, google, suggestions
 from .text import display_size, display_time
@@ -96,7 +96,10 @@ class Maintenance:
                 ]))
             else:
                 lines.append("Nothing saved.")
-            if not info.refreshable:
+            if info.imported:
+                lines.append(f"Saved by hand and imported with pallot-bundle import-list: never fetched or refreshed. "
+                             f"{self.catalog.imported(info)}")
+            elif not info.refreshable:
                 lines.append("Only fetched as it's used: pruned, never refreshed.")
             if came := self.catalog.bundled(info):
                 lines.append(came)
@@ -175,14 +178,21 @@ class Maintenance:
     async def rebuild(self) -> None:
         """Note every saved request, delete them all (with the pauses and failure flags, when
         it's everything) and the maps, then ask them all again. Tiles and suggestions are only
-        deleted: they're fetched again as they're used. The bundled snapshots are only refreshed,
-        unless ``reset_snapshots``. With ``delete_only``, nothing is fetched."""
+        deleted: they're fetched again as they're used. A list imported by hand is put back, since
+        it can't be asked again. The bundled snapshots are only refreshed, unless
+        ``reset_snapshots``. With ``delete_only``, nothing is fetched."""
         cache = self.svc.cache
         saved = {tag: cache.saved(tag) for info in self.selected if info.refreshable for tag in info.cache_tags}
+        imported = [(tag, spec, found) for info in self.selected if info.imported for tag in info.cache_tags
+                    for spec in (RequestSpec.loads(row.request) for row in cache.saved(tag))
+                    if (found := cache.peek(spec))]
         if self.everything:
             removed = cache.clear()
         else:
             removed = sum(cache.clear(tag) for info in self.selected for tag in info.cache_tags)
+        for tag, spec, found in imported:
+            cache.seed(tag, [(spec, found.value)], found.fetched_at, self.svc.config.ttl.state_list_imported)
+        removed -= len(imported)
         cleared = []
         for info in self.selected:
             kept = self.catalog.kept(info)

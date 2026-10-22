@@ -93,7 +93,7 @@ NATIONWIDE_RACES = ("GA-SEN", "GA-05", "WY-SEN", "WY-00", "DC-00")
 STATE_ADDRESSES = {
     "raleigh": "1 E Edenton St, Raleigh, NC 27601", "lansing": "100 N Capitol Ave, Lansing, MI 48933",
     "harrisburg": "501 N 3rd St, Harrisburg, PA 17120", "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",
-    "richmond": "1000 Bank St, Richmond, VA 23219",
+    "richmond": "1000 Bank St, Richmond, VA 23219", "phoenix": "1700 W Washington St, Phoenix, AZ 85007",
 }
 NC_COUNTIES = ("WAKE", "DURHAM", "ALAMANCE", "MECKLENBURG")
 CA_ADDRESS = ("losangeles", "200 N Spring St, Los Angeles, CA 90012")  # City Hall: an even State Senate district, up in 2026

@@ -1,0 +1,468 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1700 W WASHINGTON ST, PHOENIX, AZ 85007"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "128211545"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "0400118",
+       "CENTLAT": "+33.4473030",
+       "AREAWATER": 162673,
+       "BASENAME": "Phoenix City--Downtown & Sky Harbor International Airport",
+       "STATE": "04",
+       "OID": "217704486135799",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.4477819",
+       "NAME": "Phoenix City--Downtown & Sky Harbor International Airport PUMA",
+       "OBJECTID": 2239,
+       "CENTLON": "-112.0395465",
+       "AREALAND": 93258429,
+       "INTPTLON": "-112.0401030",
+       "MTFCC": "G6120",
+       "PUMA": "00118"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "85007",
+       "CENTLAT": "+33.4467985",
+       "AREAWATER": 44584,
+       "BASENAME": "85007",
+       "OID": "221704258467562",
+       "ZCTA5": "85007",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.4465287",
+       "NAME": "ZCTA5 85007",
+       "OBJECTID": 30776,
+       "CENTLON": "-112.0907331",
+       "AREALAND": 11923661,
+       "INTPTLON": "-112.0903187",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "69184",
+       "CENTLAT": "+33.5014822",
+       "AREAWATER": 8797091,
+       "BASENAME": "Phoenix--Mesa--Scottsdale, AZ",
+       "OID": "270211231876576",
+       "UA": "69184",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.4999005",
+       "NAME": "Phoenix--Mesa--Scottsdale, AZ Urban Area",
+       "OBJECTID": 1982,
+       "CENTLON": "-111.9611889",
+       "AREALAND": 2876296140,
+       "INTPTLON": "-111.9631531",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 1943134449.2574916,
+       "NECTAPCI": "N",
+       "GEOID": "0455000",
+       "CENTLAT": "+33.5718758",
+       "AREAWATER": 2566814,
+       "BASENAME": "Phoenix",
+       "STATE": "04",
+       "OID": "278901230483031",
+       "LSADC": "25",
+       "PLACE": "55000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+33.5721544",
+       "NAME": "Phoenix city",
+       "OBJECTID": 31975,
+       "PLACECC": "C1",
+       "CENTLON": "-112.0892081",
+       "STGEOMETRY_Length": 627948.6579267726,
+       "CBSAPCI": "Y",
+       "AREALAND": 1342825889,
+       "INTPTLON": "-112.0901324",
+       "PLACENS": "02411414",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "04013",
+       "CENTLAT": "+33.3483268",
+       "AREAWATER": 62006320,
+       "STATE": "04",
+       "BASENAME": "Maricopa",
+       "OID": "275901230330570",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+33.3451756",
+       "NAME": "Maricopa County",
+       "OBJECTID": 2691,
+       "CENTLON": "-112.4932091",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00037026",
+       "AREALAND": 23833172607,
+       "INTPTLON": "-112.4989296",
+       "MTFCC": "G4020",
+       "COUNTY": "013"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "040131143011018",
+       "CENTLAT": "+33.4486623",
+       "BLOCK": "1018",
+       "AREAWATER": 0,
+       "STATE": "04",
+       "BASENAME": "1018",
+       "OID": "210701002253274",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.4486623",
+       "NAME": "Block 1018",
+       "OBJECTID": 8161275,
+       "TRACT": "114301",
+       "CENTLON": "-112.0991402",
+       "BLKGRP": "1",
+       "AREALAND": 21632,
+       "INTPTLON": "-112.0991402",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "013"
+      }
+     ],
+     "Secondary School Districts": [
+      {
+       "LOGRADE": "09",
+       "GEOID": "0406330",
+       "CENTLAT": "+33.4412478",
+       "AREAWATER": 1797579,
+       "STATE": "04",
+       "BASENAME": "Phoenix Union High School District",
+       "OID": "283901230483149",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+33.4408648",
+       "NAME": "Phoenix Union High School District",
+       "OBJECTID": 278,
+       "SDSEC": "06330",
+       "CENTLON": "-112.0982750",
+       "HIGRADE": "12",
+       "AREALAND": 449902563,
+       "INTPTLON": "-112.0990258",
+       "MTFCC": "G5410"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779777",
+       "GEOID": "04",
+       "CENTLAT": "+34.2750988",
+       "AREAWATER": 853634417,
+       "STATE": "04",
+       "BASENAME": "Arizona",
+       "STUSAB": "AZ",
+       "OID": "274901053753069",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+34.2039362",
+       "DIVISION": "8",
+       "NAME": "Arizona",
+       "REGION": "4",
+       "OBJECTID": 48,
+       "CENTLON": "-111.6605311",
+       "AREALAND": 294366472972,
+       "INTPTLON": "-111.6063449",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "040131143011",
+       "CENTLAT": "+33.4476821",
+       "AREAWATER": 0,
+       "STATE": "04",
+       "BASENAME": "1",
+       "OID": "208901227520317",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.4476821",
+       "NAME": "Block Group 1",
+       "OBJECTID": 123491,
+       "TRACT": "114301",
+       "CENTLON": "-112.0912797",
+       "BLKGRP": "1",
+       "AREALAND": 1327770,
+       "INTPTLON": "-112.0912797",
+       "MTFCC": "G5030",
+       "COUNTY": "013"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "429",
+       "CENTLAT": "+33.3389732",
+       "AREAWATER": 179220353,
+       "BASENAME": "Phoenix-Mesa, AZ",
+       "OID": "2619034687908102",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.3420476",
+       "NAME": "Phoenix-Mesa, AZ CSA",
+       "OBJECTID": 129,
+       "CSA": "429",
+       "CENTLON": "-111.7594718",
+       "INTPTLON": "-111.7567369",
+       "AREALAND": 50054887051,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "92601",
+       "GEOID": "0401392601",
+       "CENTLAT": "+33.5167729",
+       "AREAWATER": 9399934,
+       "STATE": "04",
+       "BASENAME": "Phoenix",
+       "OID": "276901230482780",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5211331",
+       "NAME": "Phoenix CCD",
+       "OBJECTID": 27215,
+       "CENTLON": "-112.0287509",
+       "COUSUBCC": "Z5",
+       "AREALAND": 2806494312,
+       "INTPTLON": "-112.0284405",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01934968",
+       "COUNTY": "013"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "04011",
+       "CENTLAT": "+33.3810848",
+       "AREAWATER": 358852,
+       "STATE": "04",
+       "BASENAME": "11",
+       "OID": "2129042393383346",
+       "SLDU": "011",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.3795497",
+       "NAME": "State Senate District 11",
+       "OBJECTID": 323,
+       "CENTLON": "-112.0874173",
+       "LSY": "2026",
+       "AREALAND": 274828419,
+       "INTPTLON": "-112.0848634",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "8",
+       "CENTLAT": "+40.2023972",
+       "AREAWATER": 18692985514,
+       "BASENAME": "Mountain",
+       "OID": "2739020719805",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1987470",
+       "DIVISION": "8",
+       "REGION": "4",
+       "NAME": "Mountain Division",
+       "OBJECTID": 5,
+       "CENTLON": "-110.2308131",
+       "AREALAND": 2217926739752,
+       "INTPTLON": "-110.2279740",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 769717747.9465884,
+       "CD120": "03",
+       "GEOID": "0403",
+       "CENTLAT": "+33.4244578",
+       "CDSESSN": "120",
+       "AREAWATER": 1551534,
+       "STATE": "04",
+       "BASENAME": "3",
+       "OID": "2119042393277175",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.4240875",
+       "NAME": "Congressional District 3",
+       "OBJECTID": 320,
+       "CENTLON": "-112.1231637",
+       "STGEOMETRY_Length": 157297.01874153488,
+       "AREALAND": 533197097,
+       "INTPTLON": "-112.1217241",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "04011",
+       "CENTLAT": "+33.3810848",
+       "SLDL": "011",
+       "AREAWATER": 358852,
+       "STATE": "04",
+       "BASENAME": "11",
+       "OID": "2139042393383403",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.3795497",
+       "NAME": "State House District 11",
+       "OBJECTID": 2371,
+       "CENTLON": "-112.0874173",
+       "LSY": "2026",
+       "AREALAND": 274828419,
+       "INTPTLON": "-112.0848634",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Elementary School Districts": [
+      {
+       "LOGRADE": "PK",
+       "SDELM": "06300",
+       "GEOID": "0406300",
+       "CENTLAT": "+33.4522936",
+       "AREAWATER": 5154,
+       "STATE": "04",
+       "BASENAME": "Phoenix Elementary District",
+       "OID": "282901230455693",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+33.4530772",
+       "NAME": "Phoenix Elementary District",
+       "OBJECTID": 1672,
+       "CENTLON": "-112.0788155",
+       "HIGRADE": "08",
+       "AREALAND": 40064822,
+       "INTPTLON": "-112.0783438",
+       "MTFCC": "G5400"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "38060",
+       "CENTLAT": "+33.1862391",
+       "AREAWATER": 82753533,
+       "BASENAME": "Phoenix-Mesa-Chandler, AZ",
+       "OID": "2629034687907696",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.1857653",
+       "NAME": "Phoenix-Mesa-Chandler, AZ Metro Area",
+       "CSA": "429",
+       "OBJECTID": 522,
+       "CENTLON": "-112.0690760",
+       "CBSA": "38060",
+       "AREALAND": 37732818416,
+       "INTPTLON": "-112.0678624",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "04013114301",
+       "CENTLAT": "+33.4476821",
+       "AREAWATER": 0,
+       "STATE": "04",
+       "BASENAME": "1143.01",
+       "OID": "207901231021893",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.4476821",
+       "NAME": "Census Tract 1143.01",
+       "OBJECTID": 57517,
+       "TRACT": "114301",
+       "CENTLON": "-112.0912797",
+       "AREALAND": 1327770,
+       "INTPTLON": "-112.0912797",
+       "MTFCC": "G5020",
+       "COUNTY": "013"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -112.098251192919,
+     "y": 33.448174841255
+    },
+    "addressComponents": {
+     "zip": "85007",
+     "streetName": "WASHINGTON",
+     "preType": "",
+     "city": "PHOENIX",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "1700",
+     "state": "AZ",
+     "suffixType": "ST",
+     "toAddress": "1898",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1700 W WASHINGTON ST, PHOENIX, AZ, 85007"
+   }
+  ]
+ }
+}

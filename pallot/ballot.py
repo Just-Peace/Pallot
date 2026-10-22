@@ -556,8 +556,7 @@ class _Builder:
                                  "only the races for Congress.")
             return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         if not filings:
-            self.notes.append(f"The {lists.label} hasn't published its list of candidates for {when} yet, so this "
-                              "ballot has only the races for Congress.")
+            self.notes.append(f"{lists.missing(when)}, so this ballot has only the races for Congress.")
             return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         requested = self.request.election_date
         if requested and requested != day:
