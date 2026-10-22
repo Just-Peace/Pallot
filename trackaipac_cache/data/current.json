@@ -26563,6 +26563,52 @@
       "state": "TN"
     },
     {
+      "candidate_id": "tn-kristi-burke",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "01",
+      "listings": [
+        {
+          "campaign_url": "https://www.votekristiburke.com/",
+          "candidate_id": "tn-kristi-burke",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "01",
+          "donate_url": "https://secure.actblue.com/donate/kristi-rejects-aipac?refcode=website-endorsement",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://www.votekristiburke.com/)",
+            "TN-01 [D]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Kristi](https://secure.actblue.com/donate/kristi-rejects-aipac?refcode=website-endorsement)"
+          ],
+          "name": "Kristi Burke",
+          "notes": [
+            "General Election"
+          ],
+          "pacs": [],
+          "party": "D",
+          "seat": "TN-01",
+          "seat_text": "TN-01 [D]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "TN",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Kristi Burke",
+      "party": "D",
+      "seat": "TN-01",
+      "state": "TN"
+    },
+    {
       "candidate_id": "tn-marsha-blackburn",
       "categories": [
         "congress"
@@ -32638,5 +32684,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-20"
+  "snapshot": "2026-10-22"
 }
