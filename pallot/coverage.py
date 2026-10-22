@@ -51,6 +51,7 @@ COVERED = {
     "AZ": LIST,  # its State Senate and State House districts are both the Legislative District
     "NV": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "GA": LIST,
+    "WI": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
 }
 
 # Sources that only know some states.

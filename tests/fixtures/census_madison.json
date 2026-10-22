@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "2 E MAIN ST, MADISON, WI 53703"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "49472500"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "5502101",
+       "CENTLAT": "+43.0759649",
+       "AREAWATER": 13934514,
+       "BASENAME": "Dane County--City of Madison (Central)",
+       "STATE": "55",
+       "OID": "2177029730093184",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0766804",
+       "NAME": "Dane County--City of Madison (Central) PUMA",
+       "OBJECTID": 133,
+       "CENTLON": "-089.3768500",
+       "AREALAND": 31407120,
+       "INTPTLON": "-089.3771500",
+       "MTFCC": "G6120",
+       "PUMA": "02101"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "53703",
+       "CENTLAT": "+43.0797074",
+       "AREAWATER": 76610,
+       "BASENAME": "53703",
+       "OID": "221704258306649",
+       "ZCTA5": "53703",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0796072",
+       "NAME": "ZCTA5 53703",
+       "OBJECTID": 19611,
+       "CENTLON": "-089.3773925",
+       "AREALAND": 4790189,
+       "INTPTLON": "-089.3784229",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "53200",
+       "CENTLAT": "+43.0945181",
+       "AREAWATER": 3305851,
+       "BASENAME": "Madison, WI",
+       "OID": "27021689279996",
+       "UA": "53200",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0419689",
+       "NAME": "Madison, WI Urban Area",
+       "OBJECTID": 1360,
+       "CENTLON": "-089.3919468",
+       "AREALAND": 387728978,
+       "INTPTLON": "-089.4922081",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 513409766.87677133,
+       "NECTAPCI": "N",
+       "GEOID": "5548000",
+       "CENTLAT": "+43.0813410",
+       "AREAWATER": 55508444,
+       "BASENAME": "Madison",
+       "STATE": "55",
+       "OID": "27890689268972",
+       "LSADC": "25",
+       "PLACE": "48000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+43.0878147",
+       "NAME": "Madison city",
+       "OBJECTID": 32610,
+       "PLACECC": "C5",
+       "CENTLON": "-089.3906600",
+       "STGEOMETRY_Length": 383614.60992971837,
+       "CBSAPCI": "Y",
+       "AREALAND": 218249765,
+       "INTPTLON": "-089.4298563",
+       "PLACENS": "01583625",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "55025",
+       "CENTLAT": "+43.0672853",
+       "AREAWATER": 106205819,
+       "STATE": "55",
+       "BASENAME": "Dane",
+       "OID": "27590689263643",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+43.0674684",
+       "NAME": "Dane County",
+       "OBJECTID": 1830,
+       "CENTLON": "-089.4181331",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01581072",
+       "AREALAND": 3098910434,
+       "INTPTLON": "-089.4178523",
+       "MTFCC": "G4020",
+       "COUNTY": "025"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "5508520",
+       "CENTLAT": "+43.0696802",
+       "AREAWATER": 3603318,
+       "STATE": "55",
+       "BASENAME": "Madison Metropolitan School District",
+       "OID": "28490689280019",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+43.0696612",
+       "SDUNI": "08520",
+       "NAME": "Madison Metropolitan School District",
+       "OBJECTID": 10394,
+       "CENTLON": "-089.3943742",
+       "HIGRADE": "12",
+       "AREALAND": 190364823,
+       "INTPTLON": "-089.3942047",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "550250017043000",
+       "CENTLAT": "+43.0746892",
+       "BLOCK": "3000",
+       "AREAWATER": 0,
+       "STATE": "55",
+       "BASENAME": "3000",
+       "OID": "210701005922936",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0746892",
+       "NAME": "Block 3000",
+       "OBJECTID": 2301654,
+       "TRACT": "001704",
+       "CENTLON": "-089.3841720",
+       "BLKGRP": "3",
+       "AREALAND": 60282,
+       "INTPTLON": "-089.3841720",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "025"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779806",
+       "GEOID": "55",
+       "CENTLAT": "+44.6273136",
+       "AREAWATER": 29340521874,
+       "STATE": "55",
+       "BASENAME": "Wisconsin",
+       "STUSAB": "WI",
+       "OID": "2749096104710",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.6309071",
+       "DIVISION": "3",
+       "NAME": "Wisconsin",
+       "REGION": "2",
+       "OBJECTID": 34,
+       "CENTLON": "-089.7097854",
+       "AREALAND": 140295169676,
+       "INTPTLON": "-089.7093916",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "550250017043",
+       "CENTLAT": "+43.0746128",
+       "AREAWATER": 0,
+       "STATE": "55",
+       "BASENAME": "3",
+       "OID": "2089015482543923",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0746128",
+       "NAME": "Block Group 3",
+       "OBJECTID": 167830,
+       "TRACT": "001704",
+       "CENTLON": "-089.3866153",
+       "BLKGRP": "3",
+       "AREALAND": 176437,
+       "INTPTLON": "-089.3866153",
+       "MTFCC": "G5030",
+       "COUNTY": "025"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "357",
+       "CENTLAT": "+43.0794246",
+       "AREAWATER": 266355765,
+       "BASENAME": "Madison-Janesville-Beloit, WI",
+       "OID": "2619034687908070",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0817016",
+       "NAME": "Madison-Janesville-Beloit, WI CSA",
+       "OBJECTID": 88,
+       "CSA": "357",
+       "CENTLON": "-089.5768277",
+       "INTPTLON": "-089.5865619",
+       "AREALAND": 12583701992,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "48000",
+       "GEOID": "5502548000",
+       "CENTLAT": "+43.0813410",
+       "AREAWATER": 55508444,
+       "STATE": "55",
+       "BASENAME": "Madison",
+       "OID": "27690689263761",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+43.0878147",
+       "NAME": "Madison city",
+       "OBJECTID": 12522,
+       "CENTLON": "-089.3906600",
+       "COUSUBCC": "C5",
+       "AREALAND": 218249765,
+       "INTPTLON": "-089.4298563",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01583625",
+       "COUNTY": "025"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "55026",
+       "CENTLAT": "+43.0702610",
+       "AREAWATER": 46977451,
+       "STATE": "55",
+       "BASENAME": "26",
+       "OID": "2129042579647799",
+       "SLDU": "026",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+43.0639610",
+       "NAME": "State Senate District 26",
+       "OBJECTID": 43,
+       "CENTLON": "-089.3524662",
+       "LSY": "2026",
+       "AREALAND": 127572503,
+       "INTPTLON": "-089.3477127",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+42.6527032",
+       "AREAWATER": 151233658750,
+       "BASENAME": "East North Central",
+       "OID": "2739020719809",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.8441768",
+       "DIVISION": "3",
+       "REGION": "2",
+       "NAME": "East North Central Division",
+       "OBJECTID": 8,
+       "CENTLON": "-086.8359814",
+       "AREALAND": 629311863266,
+       "INTPTLON": "-085.6604907",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 21141002547.659447,
+       "CD120": "02",
+       "GEOID": "5502",
+       "CENTLAT": "+42.9668811",
+       "CDSESSN": "120",
+       "AREAWATER": 174474690,
+       "STATE": "55",
+       "BASENAME": "2",
+       "OID": "2119042393279579",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.9614077",
+       "NAME": "Congressional District 2",
+       "OBJECTID": 259,
+       "CENTLON": "-089.7377186",
+       "STGEOMETRY_Length": 818383.927365149,
+       "AREALAND": 11139294756,
+       "INTPTLON": "-089.7339555",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "55076",
+       "CENTLAT": "+43.1074909",
+       "SLDL": "076",
+       "AREAWATER": 275982,
+       "STATE": "55",
+       "BASENAME": "76",
+       "OID": "2139042579647894",
+       "LSADC": "L3",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+43.1104185",
+       "NAME": "Assembly District 76",
+       "OBJECTID": 510,
+       "CENTLON": "-089.3551487",
+       "LSY": "2026",
+       "AREALAND": 26565866,
+       "INTPTLON": "-089.3550698",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "31540",
+       "CENTLAT": "+43.0795263",
+       "AREAWATER": 200087103,
+       "BASENAME": "Madison, WI",
+       "OID": "2629034687907540",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0837595",
+       "NAME": "Madison, WI Metro Area",
+       "CSA": "357",
+       "OBJECTID": 501,
+       "CENTLON": "-089.5932921",
+       "CBSA": "31540",
+       "AREALAND": 8569850945,
+       "INTPTLON": "-089.5975739",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "55025001704",
+       "CENTLAT": "+43.0729164",
+       "AREAWATER": 0,
+       "STATE": "55",
+       "BASENAME": "17.04",
+       "OID": "207903716575156",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0729164",
+       "NAME": "Census Tract 17.04",
+       "OBJECTID": 34991,
+       "TRACT": "001704",
+       "CENTLON": "-089.3860992",
+       "AREALAND": 422109,
+       "INTPTLON": "-089.3860992",
+       "MTFCC": "G5020",
+       "COUNTY": "025"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -89.383108835932,
+     "y": 43.07399602785
+    },
+    "addressComponents": {
+     "zip": "53703",
+     "streetName": "MAIN",
+     "preType": "",
+     "city": "MADISON",
+     "preDirection": "E",
+     "suffixDirection": "",
+     "fromAddress": "2",
+     "state": "WI",
+     "suffixType": "ST",
+     "toAddress": "98",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "2 E MAIN ST, MADISON, WI, 53703"
+   }
+  ]
+ }
+}
