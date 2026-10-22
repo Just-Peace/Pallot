@@ -2,6 +2,7 @@
 whose deadlines are fixed counts of days from Election Day, the dates worked out from that day
 alone, with nothing fetched. Texas's come from its SOS's page (sources/key_dates.py) instead, and
 California's from its SOS's (sources/ca_key_dates.py).
+Arizona's are entered by hand from its Secretary of State's list, whose site blocks scripts.
 
 Michigan's rules, as its Department of State gives them: registration online or by mail closes
 15 days before Election Day, then it's in person at the clerk's office with proof of residency
@@ -94,7 +95,23 @@ CALIFORNIA = Guide(
     credit="Dates from the California Secretary of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA}
+ARIZONA = Guide(
+    name="Arizona",
+    source="Arizona Secretary of State",
+    url="https://azsos.gov/elections",
+    computed=False,
+    registration_url="https://my.arizona.vote/",
+    mail_url="https://my.arizona.vote/",
+    register="The last day to register to vote in {election} in Arizona, by 11:59 p.m.",
+    mail_summary="Early ballot request due",
+    mail="If you vote early by mail in {election}, ask your county recorder for your ballot in time for it to reach "
+         "you and come back by Election Day. Any voter can vote early by mail; how to ask:",
+    early_where="Your county recorder lists the places and hours.",
+    polls="Polls are open 6 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates from the Arizona Secretary of State",
+)
+
+GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:
@@ -116,10 +133,23 @@ def michigan(day: dt.date) -> Deadlines | None:
     )
 
 
-RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan}
+ARIZONA_DATES = {
+    dt.date(2026, 11, 3): Deadlines(
+        dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 5),
+        early_start=dt.date(2026, 10, 7), state="AZ",
+    ),
+}
+
+
+def arizona(day: dt.date) -> Deadlines | None:
+    """The dates of Arizona's statewide election on ``day``, as its Secretary of State lists them."""
+    return ARIZONA_DATES.get(day)
+
+
+RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona}
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:
-    """The state's key dates for the election on ``day``, when they're worked out by rule."""
+    """The state's key dates for the election on ``day``, when they're worked out by rule or entered by hand."""
     rule = RULES.get(state or "")
     return rule(day) if rule else None

@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's and California's registration, mail voting and poll hours,
-// and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's and Arizona's registration, mail voting and
+// poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -101,6 +101,22 @@ export const STATES = {
       + "your county within 7 days), or drop it off by 8 p.m. on Election Day.",
     mailDeadline: "If yours is lost or damaged, the Secretary of State recommends asking your county for a new one by ",
     pollHours: "7 a.m. – 8 p.m.",
+  },
+  AZ: {
+    site: { label: siteLabel(SITES.AZ), url: SITES.AZ },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://my.arizona.vote/",
+      hint: "Arizona.Vote (Arizona Secretary of State): your registration, your polling place and your ballot's status",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://my.arizona.vote/",
+      hint: "Arizona.Vote: your polling place; Maricopa and Pima counties also have their own lookups",
+    },
+    localOffice: "Your county recorder",
+    mailApply: { label: "How to ask", url: "https://my.arizona.vote/" },
+    mailEligibility: "Any registered voter can vote early by mail, no reason needed. Early ballots go out from "
+      + "October 7; ask your county recorder for yours, or join the Active Early Voting List.",
+    pollHours: "6 a.m. – 7 p.m.",
   },
 };
 

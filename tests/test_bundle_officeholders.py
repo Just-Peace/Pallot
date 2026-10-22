@@ -16,9 +16,9 @@ def holder_calls(upstream) -> int:
 
 def test_a_lookup_with_the_seat_holders_bundled_asks_neither_list(tmp_path, upstream, make_app):
     outcome = build(tmp_path, "officeholders")
-    assert outcome.status == "updated" and outcome.answers == 8 and outcome.counts["congress"] and outcome.counts["legislature"]
-    # Open States' CSVs (the legislators of Texas and the six states with a list), congress's JSON
-    assert [a["request"].get("as_text", False) for a in answers(tmp_path, "officeholders")] == [True] * 7 + [False]
+    assert outcome.status == "updated" and outcome.answers == 9 and outcome.counts["congress"] and outcome.counts["legislature"]
+    # Open States' CSVs (the legislators of Texas and the seven states with a list), congress's JSON
+    assert [a["request"].get("as_text", False) for a in answers(tmp_path, "officeholders")] == [True] * 8 + [False]
     assert entry("officeholders").cadence == "weekly" and lifetimes(tmp_path, "officeholders") == {14 * DAY}
     asked = holder_calls(upstream)
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
@@ -27,7 +27,7 @@ def test_a_lookup_with_the_seat_holders_bundled_asks_neither_list(tmp_path, upst
     assert next(r for r in ballot["races"] if r["name"] == "U.S. Senator")["holder"]["name"] == "John Cornyn"
     assert next(r for r in ballot["races"] if r["name"] == "State Representative District 49")["holder"]
     assert holder_calls(upstream) == asked
-    assert said.startswith("Came with 8 answers, checked ")
+    assert said.startswith("Came with 9 answers, checked ")
 
 
 def test_a_refused_list_writes_no_seat_holders(tmp_path, upstream):

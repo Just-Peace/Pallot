@@ -57,6 +57,7 @@ ADDRESSES = {
     "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",  # Florida's (states/fl.py)
     "richmond": "1000 Bank St, Richmond, VA 23219",  # Virginia's federal list (states/va.py)
     "losangeles": "200 N Spring St, Los Angeles, CA 90012",  # California's PDF list (states/ca.py)
+    "phoenix": "1700 W Washington St, Phoenix, AZ 85007",  # Arizona's list, imported by hand (states/az.py)
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"

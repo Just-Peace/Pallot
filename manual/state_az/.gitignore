@@ -1,0 +1,4 @@
+# The saved page carries candidates' contact details: only its parsed candidates are committed (bundles/data/state_az.json).
+*
+!.gitignore
+!README.md

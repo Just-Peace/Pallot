@@ -9,8 +9,9 @@ from typing import Any, Awaitable, Callable, Literal, Mapping
 from pallot.config import DAY, Config, Ttls
 from pallot.http_cache import HttpCache, RequestSpec
 
-Cadence = Literal["daily", "weekly"]
-CADENCES: dict[str, float] = {"daily": DAY, "weekly": 7 * DAY}  # seconds between refreshes worth making
+Cadence = Literal["daily", "weekly", "manual"]
+# Seconds between refreshes worth making; a manual bundle is only imported (pallot-bundle import-list), never refreshed.
+CADENCES: dict[str, float] = {"daily": DAY, "weekly": 7 * DAY, "manual": float("inf")}
 
 
 class BundleError(Exception):

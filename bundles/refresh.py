@@ -135,6 +135,10 @@ def refresh(
     for entry in registry.BUNDLES if bundles is None else bundles:
         if only and entry.name not in only:
             continue
+        if entry.cadence == "manual":
+            outcomes.append(Outcome(entry.name, "skipped", detail="imported by hand, never fetched "
+                                                                  "(pallot-bundle import-list)"))
+            continue
         if due and not is_due(entry, meta.get(entry.name, {}), now):
             checked = meta[entry.name]["last_checked"]
             outcomes.append(Outcome(entry.name, "skipped", detail=f"checked {checked}, within its {entry.cadence} cadence"))

@@ -9,6 +9,7 @@ copy keeps serving. The bundled copy (bundles/states.py) is the parsed filings, 
 file, which carries candidates' addresses and phone numbers: read() takes either. A list that's
 a big file (California's PDF, mostly images) is streamed to disk and kept as its filings alone
 (``max_bytes``), so the cache and the bundle hold the same.
+A state whose site blocks scripts (ManualList) is never asked: its list is saved by hand and imported.
 """
 
 from __future__ import annotations
@@ -73,7 +74,7 @@ def from_json(value: dict[str, Any]) -> list[Filing]:
 _PARTIES = {
     "DEM": "D", "DEMOCRAT": "D", "DEMOCRATIC": "D", "DEMOCRATIC PARTY": "D",
     "REP": "R", "REPUBLICAN": "R", "REPUBLICAN PARTY": "R",
-    "LIB": "L", "LIBERTARIAN": "L", "LIBERTARIAN PARTY": "L",
+    "LIB": "L", "LBT": "L", "LIBERTARIAN": "L", "LIBERTARIAN PARTY": "L",
     "GRE": "G", "GRN": "G", "GREEN": "G", "GREEN PARTY": "G",
 }
 
@@ -221,3 +222,30 @@ class StateList:
         got = await self.cache.get_json(self.source, self.spec(day), ttl=self.ttl.state_list)
         found = [f for f in self.read(got.value) if f.day == day.isoformat()]
         return found or None
+
+    def missing(self, when: str) -> str:
+        """The ballot's note when the list has no candidates for the election on ``when``."""
+        return f"The {self.label} hasn't published its list of candidates for {when} yet"
+
+
+class ManualList(StateList):
+    """A list Pallot never fetches, because the state's site blocks scripts: the maintainer saves
+    it in their own browser and imports the file (pallot-bundle import-list), which bundles its
+    parsed filings under spec(day). A lookup reads only that imported copy."""
+
+    folder: ClassVar[str]  # where the saved file and the steps to refresh it are: "manual/state_az"
+    binary: ClassVar[bool] = False  # parse() takes the saved file's bytes (a PDF), not its text
+    challenge: ClassVar[tuple[str, ...]] = ()  # what the site's bot check page says, to refuse it by name
+
+    @classmethod
+    def spec(cls, day: dt.date) -> RequestSpec:  # type: ignore[override]
+        """The imported copy's key: not an address, so nothing can ever ask the state's site for it."""
+        return RequestSpec("GET", f"manual:{cls.source}", params={"day": day.isoformat()})
+
+    async def filings(self, day: dt.date) -> list[Filing] | None:
+        kept = self.cache.peek(self.spec(day))
+        found = [f for f in self.read(kept.value) if f.day == day.isoformat()] if kept else []
+        return found or None
+
+    def missing(self, when: str) -> str:
+        return f"Pallot doesn't have the {self.label}'s list of candidates for {when} yet"

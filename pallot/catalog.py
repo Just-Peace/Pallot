@@ -15,6 +15,7 @@ from .sources import (
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
+from .states import ManualList
 from .states.adapters import ADAPTERS
 from .text import display_date, display_time, iso_utc
 
@@ -66,6 +67,7 @@ class SourceInfo:
     kept: str | None = None  # the Services field of a source kept in files (KeptSource), asked for its row
     frozen: bool = False  # comes with Pallot as captured and is never fetched: nothing to refresh or clear
     rules: bool = False  # Pick by rule's conditions use it, so its dialog names it while it's off
+    imported: bool = False  # saved by hand and imported (pallot-bundle import-list): never fetched or refreshed
 
 
 SOURCES = (
@@ -193,6 +195,9 @@ SOURCES = (
         rules=True,
     ),
     *(
+        SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES, refreshable=False,
+                   imported=True)
+        if issubclass(cls, ManualList) else
         SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES,
                    pause=Pause(f"the {cls.label} refused a request", "the list already fetched still shows"))
         for cls in ADAPTERS.values()
@@ -298,11 +303,21 @@ class Catalog:
         count = sum(b.answers for b in loaded)
         return f"Came with {count:,} answer{'' if count == 1 else 's'}, checked {checked}."
 
+    def imported(self, info: SourceInfo) -> str:
+        """When a list saved by hand was imported, or that none has been yet."""
+        loaded = [bundle for bundle in self.svc.bundles.values() if bundle.source in info.cache_tags]
+        if not loaded:
+            return "No list imported yet, so ballots here have only the races for Congress."
+        day = dt.datetime.fromtimestamp(max(b.checked_at for b in loaded)).date()
+        return f"Imported by hand on {display_date(day)}."
+
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
         """A short line under the source's description, only when the voter should know: a pause, a
         failure or a download under way, never its cause or the host's setup (those are the server
         log's and pallot-cache check's)."""
         if paused := self.paused(info):
             return paused, "warn"
+        if info.imported:
+            return self.imported(info), "info"
         kept = self.kept(info)
         return (kept.notice() if kept else None) or (None, "info")
