@@ -1,12 +1,15 @@
 """The states' official lists of candidates: one bundle each (state_<st>), holding the next
 general election's list as its parsed candidates (StateList.shape), not the raw file, which
 carries their addresses and phone numbers. One state failing never holds back another. A list
-saved by hand (ManualList) has a manual bundle, written only by its import (manual.py)."""
+saved by hand (ManualList) has a manual bundle, written only by its import (manual.py); the part
+of its ballot that's fetched (ManualList.fetched: Georgia's nominees) has a daily one of its own,
+state_<st>_results, under the same source."""
 
 from __future__ import annotations
 
 from typing import Awaitable, Callable
 
+from pallot.http_cache import RequestSpec
 from pallot.sources.fec import general_day
 from pallot.states import ManualList, StateList
 from pallot.states.adapters import ADAPTERS
@@ -38,11 +41,26 @@ def imported(cls: type[ManualList]) -> Callable[[Context], Awaitable[dict[str, i
     return build
 
 
-BUNDLES = tuple(
-    Bundle(cls.source, imported(cls), "manual", lifetime=lambda ttl, _spec: ttl.state_list_imported, shape=cls.shape)
-    if issubclass(cls, ManualList) else
-    Bundle(cls.source, builder(cls), "daily", lifetime=lambda ttl, _spec: ttl.state_list_bundle, shape=cls.shape)
-    for cls in ADAPTERS.values()
-)
-LABELS = {cls.source: (f"{cls.label} candidate list", {"candidates": ("c", ""), "races": ("o", "races")})
-          for cls in ADAPTERS.values()}
+def _manual(spec: RequestSpec) -> bool:
+    return spec.url.startswith("manual:")
+
+
+def _bundles(cls: type[StateList]) -> tuple[Bundle, ...]:
+    if not issubclass(cls, ManualList):
+        return (Bundle(cls.source, builder(cls), "daily", lifetime=lambda ttl, _spec: ttl.state_list_bundle,
+                       shape=cls.shape),)
+    manual = Bundle(cls.source, imported(cls), "manual", lifetime=lambda ttl, _spec: ttl.state_list_imported,
+                    include=_manual, shape=cls.shape)
+    if not cls.fetched:
+        return (manual,)
+    return manual, Bundle(cls.source, builder(cls), "daily", lifetime=lambda ttl, _spec: ttl.state_list_bundle,
+                          name=f"{cls.source}_results", include=lambda spec: not _manual(spec), shape=cls.shape)
+
+
+BUNDLES = tuple(bundle for cls in ADAPTERS.values() for bundle in _bundles(cls))
+LABELS = {
+    **{cls.source: (f"{cls.label} candidate list", {"candidates": ("c", ""), "races": ("o", "races")})
+       for cls in ADAPTERS.values()},
+    **{f"{cls.source}_results": (f"{cls.label} party nominees", {"candidates": ("c", ""), "races": ("o", "races")})
+       for cls in ADAPTERS.values() if issubclass(cls, ManualList) and cls.fetched},
+}

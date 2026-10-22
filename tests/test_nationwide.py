@@ -4,13 +4,26 @@ from __future__ import annotations
 
 import datetime as dt
 
+import pytest
+
 from pallot import coverage
 from pallot.sources import census, fec, officeholders
+from pallot.states import key_dates as state_key_dates
+from pallot.states.adapters import ADAPTERS
 
 from .bundling import answers, build
 from .conftest import ADDRESSES, candidate_names, find_race, get_ballot, load, switch
 
 TEXAS_ONLY_HOSTS = ("goelect.txelections.civixapps.com", "data.capitol.texas.gov", "www.sos.state.tx.us")
+
+
+@pytest.fixture(autouse=True)
+def georgia_without_its_list(monkeypatch):
+    """Georgia stands in here for a state without an official list or key dates, whose FEC filers
+    are recorded; its own ballot is test_state_ga's."""
+    monkeypatch.delitem(coverage.COVERED, "GA")
+    monkeypatch.delitem(ADAPTERS, "GA")
+    monkeypatch.delitem(state_key_dates.RULES, "GA")
 
 
 def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):
@@ -87,7 +100,7 @@ def test_texas_keeps_its_full_coverage(client):
 
 
 def test_coverage_and_where_sources_work():
-    assert coverage.of("TX").ballot == "state" and coverage.of("GA") is coverage.FEDERAL
+    assert coverage.of("TX").ballot == "state" and coverage.of("WY") is coverage.FEDERAL
     assert coverage.works_in("tec", "TX")
     assert not coverage.works_in("tec", "GA") and coverage.works_in("polls", "GA")
 

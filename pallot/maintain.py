@@ -96,7 +96,10 @@ class Maintenance:
                 ]))
             else:
                 lines.append("Nothing saved.")
-            if info.imported:
+            if info.imported and info.fetched:
+                lines.append(f"Its list is saved by hand and imported with pallot-bundle import-list, and its primary "
+                             f"results fetched as they're used: never refreshed. {self.catalog.imported(info)}")
+            elif info.imported:
                 lines.append(f"Saved by hand and imported with pallot-bundle import-list: never fetched or refreshed. "
                              f"{self.catalog.imported(info)}")
             elif not info.refreshable:

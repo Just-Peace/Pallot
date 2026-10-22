@@ -1,0 +1,71 @@
+{
+ "election": {
+  "name": [
+   {
+    "languageId": "en",
+    "text": "RECOUNT - May 19th, 2026 PSC District 3-REP"
+   }
+  ],
+  "electionDate": "2026-05-19"
+ },
+ "ballotItems": [
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "PSC - District 3 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Fitz Johnson"
+       }
+      ],
+      "voteCount": 389682,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-c857-3a10-42ab-08dec66323c3",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Brandon Martin"
+       }
+      ],
+      "voteCount": 386640,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-c857-3a10-42ab-08dec66323c3",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  }
+ ]
+}

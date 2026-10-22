@@ -19,6 +19,14 @@ ballot, and so is anyone who registers or updates their registration by 14 days 
 (NRS 293.269911); early voting runs from the third Saturday before through the Friday before
 (NRS 293.3568); a mailed ballot must be postmarked by Election Day and reach the clerk by 5 p.m.
 on the fourth day after (NRS 293.269921); polls are open 7 a.m. to 7 p.m. (NRS 293.273).
+
+Georgia's, for its general election (O.C.G.A. 21-2-9: the first Tuesday after the first Monday of
+November in an even year): registration closes the fifth Monday before (21-2-224); any voter can
+vote absentee, applying by the eleventh day before (21-2-381(a)(1)(A)), and the ballot must reach
+the county's registrars by 7 p.m. on Election Day (21-2-386); advance voting runs weekdays from the
+fourth Monday before through the Friday before, and on the second and third Saturdays before
+(21-2-385(d)(1)), but not on an observed state holiday, so it starts the next day when that
+Monday is Columbus Day; polls are open 7 a.m. to 7 p.m. (21-2-403).
 """
 
 from __future__ import annotations
@@ -140,7 +148,25 @@ NEVADA = Guide(
     credit="Dates worked out from Nevada's election law; more from the Nevada Secretary of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA}
+GEORGIA = Guide(
+    name="Georgia",
+    source="Georgia Secretary of State",
+    url="https://sos.ga.gov/elections",
+    computed=True,
+    registration_url="https://mvp.sos.ga.gov/s/",
+    mail_url="https://securemyabsenteeballot.sos.ga.gov/s/",
+    register="The last day to register to vote in {election} in Georgia.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee in {election}, your application must reach your county's board of registrars today. "
+         "Your ballot must reach them by 7 p.m. on Election Day; one that arrives later isn't counted. Any voter can "
+         "vote absentee; how to apply:",
+    early_where="Your county's board of registrars lists the places and hours. Early voting is on weekdays, and on "
+                "the second and third Saturdays before Election Day; some counties also open on Sundays.",
+    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates worked out from Georgia's election law; more from the Georgia Secretary of State",
+)
+
+GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:
@@ -191,7 +217,32 @@ def nevada(day: dt.date) -> Deadlines | None:
     )
 
 
-RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona, "NV": nevada}
+def columbus_day(year: int) -> dt.date:
+    """The second Monday of October, a Georgia state holiday."""
+    first = dt.date(year, 10, 1)
+    return first + dt.timedelta(days=(0 - first.weekday()) % 7 + 7)
+
+
+def georgia(day: dt.date) -> Deadlines | None:
+    """The dates of Georgia's general election on ``day``, or None when there's none: register by
+    the fifth Monday before, apply to vote absentee by the eleventh day before, early voting the
+    fourth Monday before (the Tuesday when that's Columbus Day) through the Friday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    early = day - dt.timedelta(days=22)
+    if early == columbus_day(day.year):
+        early += dt.timedelta(days=1)
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=29),
+        mail_apply_by=day - dt.timedelta(days=11),
+        early_start=early,
+        early_end=day - dt.timedelta(days=4),
+        state="GA",
+    )
+
+
+RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia}
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:

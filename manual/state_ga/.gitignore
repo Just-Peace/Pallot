@@ -1,0 +1,4 @@
+# The saved answer carries candidates' contact details: only its parsed candidates are committed (bundles/data/state_ga.json).
+*
+!.gitignore
+!README.md

@@ -1,0 +1,1505 @@
+{
+ "actions": [
+  {
+   "returnValue": {
+    "returnValue": {
+     "Federal": {
+      " ": {
+       "U.S. Senate  (NP)": [
+        {
+         "Id": "a0n000000000000001",
+         "Name__c": "made up 1",
+         "Last_Name__c": "made up 1",
+         "Official_FullName__c": "made up 1",
+         "Elected_Office__c": "a0n000000000000001",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 1",
+         "Email__c": "candidate1@example.com",
+         "County__c": "COBB",
+         "Date_Qualified__c": "3/2/2026",
+         "Incumbent__c": false,
+         "Campaign_Website__c": "https://example.com",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 1",
+         "Mailing_Street_Name2__c": "made up 1",
+         "Mailing_City__c": "made up 1",
+         "Mailing_State__c": "made up 1",
+         "Candidate_Party__c": "Libertarian",
+         "Mailing_Zip_Code__c": "made up 1",
+         "Name_on_Ballot__c": "ALLEN BUCKLEY",
+         "Business_Phone__c": "555-0101",
+         "vr_Political_Bodies__c": "Libertarian",
+         "Website_Unit_Apt_Lot_Suite__c": "https://example.com",
+         "Website_Street_Name__c": "made up 1",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "U.S. Senate  (NP)",
+          "Office_Type__c": "Federal",
+          "Id": "a0ncs00000PCrF3AAL"
+         }
+        }
+       ],
+       "U.S House of Representatives, District 14": [
+        {
+         "Id": "a0n000000000000002",
+         "Name__c": "made up 2",
+         "Last_Name__c": "made up 2",
+         "Official_FullName__c": "made up 2",
+         "Elected_Office__c": "a0n000000000000002",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 2",
+         "Email__c": "candidate2@example.com",
+         "County__c": "WALKER",
+         "Date_Qualified__c": "3/4/2026",
+         "Incumbent__c": false,
+         "Campaign_Website__c": "https://example.com",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 2",
+         "Mailing_Street_Name2__c": "made up 2",
+         "Mailing_City__c": "made up 2",
+         "Mailing_State__c": "made up 2",
+         "Candidate_Party__c": "Libertarian",
+         "Mailing_Zip_Code__c": "made up 2",
+         "Name_on_Ballot__c": "ANDREW PAUL UNDERWOOD",
+         "vr_Political_Bodies__c": "Libertarian",
+         "Website_Unit_Apt_Lot_Suite__c": "https://example.com",
+         "Website_Street_Name__c": "made up 2",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "U.S House of Representatives, District 14",
+          "Office_Type__c": "Federal",
+          "Id": "a0ncs00000PQodtAAD"
+         }
+        }
+       ]
+      }
+     },
+     "State Race": {
+      " ": {
+       "State House, District 137": [
+        {
+         "Id": "a0n000000000000003",
+         "Name__c": "made up 3",
+         "Last_Name__c": "made up 3",
+         "Official_FullName__c": "made up 3",
+         "Elected_Office__c": "a0n000000000000003",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 3",
+         "Email__c": "candidate3@example.com",
+         "County__c": "MUSCOGEE",
+         "vr_Political_Party__c": "made up 3",
+         "Date_Qualified__c": "3/4/2026",
+         "Incumbent__c": false,
+         "Campaign_Website__c": "https://example.com",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 3",
+         "Mailing_Street_Name2__c": "made up 3",
+         "Mailing_City__c": "made up 3",
+         "Mailing_State__c": "made up 3",
+         "Candidate_Party__c": "Independent",
+         "Mailing_Zip_Code__c": "made up 3",
+         "Name_on_Ballot__c": "STEPHEN MATTHEW ACORN",
+         "Business_Phone__c": "555-0103",
+         "Website_Phone_Number__c": "555-0103",
+         "Elected_Office__r": {
+          "Name": "State House, District 137",
+          "Office_Type__c": "State Race",
+          "Id": "a0ncs00000PPltNAAT"
+         }
+        }
+       ],
+       "State House, District 151": [
+        {
+         "Id": "a0n000000000000004",
+         "Name__c": "made up 4",
+         "Last_Name__c": "made up 4",
+         "Official_FullName__c": "made up 4",
+         "Elected_Office__c": "a0n000000000000004",
+         "Declaration__c": "Qualified - Signatures Required",
+         "Occupation__c": "made up 4",
+         "County__c": "SUMTER",
+         "vr_Political_Party__c": "made up 4",
+         "Date_Qualified__c": "3/4/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 4",
+         "Mailing_Street_Name2__c": "made up 4",
+         "Mailing_City__c": "made up 4",
+         "Mailing_State__c": "made up 4",
+         "Candidate_Party__c": "Independent",
+         "Mailing_Zip_Code__c": "made up 4",
+         "Name_on_Ballot__c": "TRAVIS TERRELL LOCKHART",
+         "Business_Phone__c": "555-0104",
+         "Elected_Office__r": {
+          "Name": "State House, District 151",
+          "Office_Type__c": "State Race",
+          "Id": "a0ncs00000PQeufAAD"
+         }
+        }
+       ],
+       "State Senate, District 6": [
+        {
+         "Id": "a0n000000000000005",
+         "Name__c": "made up 5",
+         "Last_Name__c": "made up 5",
+         "Official_FullName__c": "made up 5",
+         "Elected_Office__c": "a0n000000000000005",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 5",
+         "County__c": "COWETA",
+         "vr_Political_Party__c": "made up 5",
+         "Date_Qualified__c": "3/6/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 5",
+         "Mailing_Street_Name2__c": "made up 5",
+         "Mailing_City__c": "made up 5",
+         "Mailing_State__c": "made up 5",
+         "Candidate_Party__c": "Independent",
+         "Mailing_Zip_Code__c": "made up 5",
+         "Name_on_Ballot__c": "CHRISTINA POTTS",
+         "Elected_Office__r": {
+          "Name": "State Senate, District 6",
+          "Office_Type__c": "State Race",
+          "Id": "a0ncs00000PYibJAAT"
+         }
+        }
+       ],
+       "Special Primary District Attorney, Atlantic Judicial Circuit (R)": [
+        {
+         "Id": "a0n000000000000006",
+         "Name__c": "made up 6",
+         "Last_Name__c": "made up 6",
+         "Official_FullName__c": "made up 6",
+         "Elected_Office__c": "a0n000000000000006",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 6",
+         "County__c": "MCINTOSH",
+         "vr_Political_Party__c": "made up 6",
+         "Date_Qualified__c": "8/24/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name2__c": "made up 6",
+         "Mailing_City__c": "made up 6",
+         "Mailing_State__c": "made up 6",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 6",
+         "Name_on_Ballot__c": "RICHARD EUGENE BRAUN",
+         "Elected_Office__r": {
+          "Name": "Special Primary District Attorney, Atlantic Judicial Circuit (R)",
+          "Office_Type__c": "State Race",
+          "Id": "a0ncs00000b4R7ZAAU"
+         }
+        },
+        {
+         "Id": "a0n000000000000007",
+         "Name__c": "made up 7",
+         "Last_Name__c": "made up 7",
+         "Official_FullName__c": "made up 7",
+         "Elected_Office__c": "a0n000000000000007",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 7",
+         "County__c": "BRYAN",
+         "vr_Political_Party__c": "made up 7",
+         "Date_Qualified__c": "8/24/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 7",
+         "Mailing_Street_Name2__c": "made up 7",
+         "Mailing_City__c": "made up 7",
+         "Mailing_State__c": "made up 7",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 7",
+         "Name_on_Ballot__c": "LAURIE ELYSE BAIO",
+         "Elected_Office__r": {
+          "Name": "Special Primary District Attorney, Atlantic Judicial Circuit (R)",
+          "Office_Type__c": "State Race",
+          "Id": "a0ncs00000b4R7ZAAU"
+         }
+        }
+       ]
+      }
+     },
+     "Statewide": {
+      " ": {
+       "Public Service Commissioner, District 5": [
+        {
+         "Id": "a0n000000000000008",
+         "Name__c": "made up 8",
+         "Last_Name__c": "made up 8",
+         "Official_FullName__c": "made up 8",
+         "Elected_Office__c": "a0n000000000000008",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 8",
+         "Email__c": "candidate8@example.com",
+         "County__c": "COBB",
+         "Date_Qualified__c": "3/2/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 8",
+         "Mailing_Street_Name2__c": "made up 8",
+         "Mailing_City__c": "made up 8",
+         "Mailing_State__c": "made up 8",
+         "Candidate_Party__c": "Libertarian",
+         "Mailing_Zip_Code__c": "made up 8",
+         "Name_on_Ballot__c": "THOMAS MICHAEL BLOOMING",
+         "vr_Political_Bodies__c": "Libertarian",
+         "Elected_Office__r": {
+          "Name": "Public Service Commissioner, District 5",
+          "Office_Type__c": "Statewide",
+          "Id": "a0ncs00000PCrF4AAL"
+         }
+        }
+       ],
+       "Governor": [
+        {
+         "Id": "a0n000000000000009",
+         "Name__c": "made up 9",
+         "Last_Name__c": "made up 9",
+         "Official_FullName__c": "made up 9",
+         "Elected_Office__c": "a0n000000000000009",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 9",
+         "County__c": "DEKALB",
+         "Date_Qualified__c": "3/4/2026",
+         "Incumbent__c": false,
+         "Mailing_Apt_Lot_Unit__c": "made up 9",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 9",
+         "Mailing_Street_Name2__c": "made up 9",
+         "Mailing_Address_Line_2__c": "made up 9",
+         "Mailing_City__c": "made up 9",
+         "Mailing_State__c": "made up 9",
+         "Candidate_Party__c": "Libertarian",
+         "Mailing_Zip_Code__c": "made up 9",
+         "Name_on_Ballot__c": "CHASE RUSSELL OLIVER",
+         "Business_Phone__c": "555-0109",
+         "vr_Political_Bodies__c": "Libertarian",
+         "Elected_Office__r": {
+          "Name": "Governor",
+          "Office_Type__c": "Statewide",
+          "Id": "a0ncs00000PQFeXAAX"
+         }
+        }
+       ],
+       "Insurance and Fire Safety Commissioner": [
+        {
+         "Id": "a0n000000000000010",
+         "Name__c": "made up 10",
+         "Last_Name__c": "made up 10",
+         "Official_FullName__c": "made up 10",
+         "Elected_Office__c": "a0n000000000000010",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 10",
+         "Email__c": "candidate10@example.com",
+         "County__c": "CLARKE",
+         "Date_Qualified__c": "3/5/2026",
+         "Incumbent__c": false,
+         "Campaign_Website__c": "https://example.com",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 10",
+         "Mailing_Street_Name2__c": "made up 10",
+         "Mailing_City__c": "made up 10",
+         "Mailing_State__c": "made up 10",
+         "Candidate_Party__c": "Libertarian",
+         "Mailing_Zip_Code__c": "made up 10",
+         "Name_on_Ballot__c": "COLIN MCKINNEY",
+         "vr_Political_Bodies__c": "Libertarian",
+         "Website_Phone_Number__c": "555-0110",
+         "Website_Street_Name__c": "made up 10",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "Insurance and Fire Safety Commissioner",
+          "Office_Type__c": "Statewide",
+          "Id": "a0ncs00000PSu5hAAD"
+         }
+        }
+       ]
+      }
+     },
+     "Countywide": {
+      "FULTON": {
+       "For Soil and Water District Supervisor": [
+        {
+         "Id": "a0n000000000000011",
+         "Name__c": "made up 11",
+         "Last_Name__c": "made up 11",
+         "Official_FullName__c": "made up 11",
+         "Elected_Office__c": "a0n000000000000011",
+         "Declaration__c": "Qualified - Signatures Accepted",
+         "Occupation__c": "made up 11",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 11",
+         "Date_Qualified__c": "3/2/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 11",
+         "Mailing_Street_Name2__c": "made up 11",
+         "Mailing_City__c": "made up 11",
+         "Mailing_State__c": "made up 11",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 11",
+         "Name_on_Ballot__c": "ZANE PLACIE",
+         "Website_State__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For Soil and Water District Supervisor",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000NovXJAAZ"
+         }
+        },
+        {
+         "Id": "a0n000000000000012",
+         "Name__c": "made up 12",
+         "Last_Name__c": "made up 12",
+         "Official_FullName__c": "made up 12",
+         "Elected_Office__c": "a0n000000000000012",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 12",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 12",
+         "Date_Qualified__c": "3/5/2026",
+         "Incumbent__c": true,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 12",
+         "Mailing_Street_Name2__c": "made up 12",
+         "Mailing_City__c": "made up 12",
+         "Mailing_State__c": "made up 12",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 12",
+         "Name_on_Ballot__c": "WALTER S. REKUC JR",
+         "Business_Phone__c": "555-0112",
+         "Elected_Office__r": {
+          "Name": "For Soil and Water District Supervisor",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000NovXJAAZ"
+         }
+        },
+        {
+         "Id": "a0n000000000000013",
+         "Name__c": "made up 13",
+         "Last_Name__c": "made up 13",
+         "Official_FullName__c": "made up 13",
+         "Elected_Office__c": "a0n000000000000013",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 13",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 13",
+         "Date_Qualified__c": "3/6/2026",
+         "Incumbent__c": true,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 13",
+         "Mailing_Street_Name2__c": "made up 13",
+         "Mailing_City__c": "made up 13",
+         "Mailing_State__c": "made up 13",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 13",
+         "Name_on_Ballot__c": "JASON ULSETH",
+         "Website_Street_Name__c": "made up 13",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For Soil and Water District Supervisor",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000NovXJAAZ"
+         }
+        }
+       ]
+      },
+      "POLK": {
+       "County Commissioner District 3": [
+        {
+         "Id": "a0n000000000000014",
+         "Name__c": "made up 14",
+         "Last_Name__c": "made up 14",
+         "Official_FullName__c": "made up 14",
+         "Elected_Office__c": "a0n000000000000014",
+         "Declaration__c": "Disqualified",
+         "Occupation__c": "made up 14",
+         "Email__c": "candidate14@example.com",
+         "County__c": "POLK",
+         "vr_Political_Party__c": "made up 14",
+         "Date_Qualified__c": "3/5/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 14",
+         "Mailing_Street_Name2__c": "made up 14",
+         "Mailing_City__c": "made up 14",
+         "Mailing_State__c": "made up 14",
+         "Candidate_Party__c": "Independent",
+         "Mailing_Zip_Code__c": "made up 14",
+         "Name_on_Ballot__c": "CATHERINE MARIE MCGINNIS",
+         "Business_Phone__c": "555-0114",
+         "Website_Street_Name__c": "made up 14",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "County Commissioner District 3",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000PYBViAAP"
+         }
+        }
+       ]
+      },
+      "LAMAR": {
+       "(C) Duplicated Contest": [
+        {
+         "Id": "a0n000000000000015",
+         "Name__c": "made up 15",
+         "Last_Name__c": "made up 15",
+         "Official_FullName__c": "made up 15",
+         "Elected_Office__c": "a0n000000000000015",
+         "Declaration__c": "Qualified - Signatures Accepted",
+         "Occupation__c": "made up 15",
+         "County__c": "LAMAR",
+         "vr_Political_Party__c": "made up 15",
+         "Date_Qualified__c": "3/6/2026",
+         "Incumbent__c": true,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 15",
+         "Mailing_Street_Name2__c": "made up 15",
+         "Mailing_City__c": "made up 15",
+         "Mailing_State__c": "made up 15",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 15",
+         "Name_on_Ballot__c": "THOMAS \"JOSH\" SAPPINGTON",
+         "Website_Phone_Number__c": "555-0115",
+         "Website_Street_Name__c": "made up 15",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "(C) Duplicated Contest",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000NzGx4AAF"
+         }
+        },
+        {
+         "Id": "a0n000000000000016",
+         "Name__c": "made up 16",
+         "Last_Name__c": "made up 16",
+         "Official_FullName__c": "made up 16",
+         "Elected_Office__c": "a0n000000000000016",
+         "Declaration__c": "Qualified - Signatures Accepted",
+         "Occupation__c": "made up 16",
+         "County__c": "LAMAR",
+         "vr_Political_Party__c": "made up 16",
+         "Date_Qualified__c": "3/6/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 16",
+         "Mailing_Street_Name2__c": "made up 16",
+         "Mailing_City__c": "made up 16",
+         "Mailing_State__c": "made up 16",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 16",
+         "Name_on_Ballot__c": "TIMOTHY BRITT GOOLSBY",
+         "Website_Phone_Number__c": "555-0116",
+         "Website_Street_Name__c": "made up 16",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "(C) Duplicated Contest",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000NzGx4AAF"
+         }
+        }
+       ]
+      },
+      "FORSYTH": {
+       "Forsyth County Soil & Water Conservation District Supervisor": [
+        {
+         "Id": "a0n000000000000017",
+         "Name__c": "made up 17",
+         "Last_Name__c": "made up 17",
+         "Official_FullName__c": "made up 17",
+         "Elected_Office__c": "a0n000000000000017",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 17",
+         "County__c": "FORSYTH",
+         "vr_Political_Party__c": "made up 17",
+         "Date_Qualified__c": "3/31/2026",
+         "Incumbent__c": true,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 17",
+         "Mailing_Street_Name2__c": "made up 17",
+         "Mailing_City__c": "made up 17",
+         "Mailing_State__c": "made up 17",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 17",
+         "Name_on_Ballot__c": "WESLEY HALL",
+         "Elected_Office__r": {
+          "Name": "Forsyth County Soil & Water Conservation District Supervisor",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000N86xRAAR"
+         }
+        }
+       ],
+       "For Tax Commissioner (To Fill the Unexpired Term of Matthew Ledbetter, Deceased)": [
+        {
+         "Id": "a0n000000000000018",
+         "Name__c": "made up 18",
+         "Last_Name__c": "made up 18",
+         "Official_FullName__c": "made up 18",
+         "Elected_Office__c": "a0n000000000000018",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 18",
+         "Email__c": "candidate18@example.com",
+         "County__c": "FORSYTH",
+         "vr_Political_Party__c": "made up 18",
+         "Date_Qualified__c": "7/29/2026",
+         "Incumbent__c": true,
+         "Campaign_Website__c": "https://example.com",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 18",
+         "Mailing_Street_Name2__c": "made up 18",
+         "Mailing_City__c": "made up 18",
+         "Mailing_State__c": "made up 18",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 18",
+         "Name_on_Ballot__c": "DAVID D HICKS",
+         "Website_Phone_Number__c": "555-0118",
+         "Elected_Office__r": {
+          "Name": "For Tax Commissioner (To Fill the Unexpired Term of Matthew Ledbetter, Deceased)",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000ZAAjVAAX"
+         }
+        }
+       ]
+      },
+      "WASHINGTON": {
+       "FOR STATE COURT SOLICITOR (DUPLICATE)": [
+        {
+         "Id": "a0n000000000000019",
+         "Name__c": "made up 19",
+         "Last_Name__c": "made up 19",
+         "Official_FullName__c": "made up 19",
+         "Elected_Office__c": "a0n000000000000019",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 19",
+         "Email__c": "candidate19@example.com",
+         "County__c": "WASHINGTON",
+         "vr_Political_Party__c": "made up 19",
+         "Date_Qualified__c": "8/10/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 19",
+         "Mailing_Street_Name2__c": "made up 19",
+         "Mailing_City__c": "made up 19",
+         "Mailing_State__c": "made up 19",
+         "Candidate_Party__c": "Democrat",
+         "Mailing_Zip_Code__c": "made up 19",
+         "Name_on_Ballot__c": "CARL S. CANSINO",
+         "Website_Phone_Number__c": "555-0119",
+         "Elected_Office__r": {
+          "Name": "FOR STATE COURT SOLICITOR (DUPLICATE)",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000YE8LWAA1"
+         }
+        }
+       ]
+      },
+      "TOWNS": {
+       "For Sheriff": [
+        {
+         "Id": "a0n000000000000020",
+         "Name__c": "made up 20",
+         "Last_Name__c": "made up 20",
+         "Official_FullName__c": "made up 20",
+         "Elected_Office__c": "a0n000000000000020",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 20",
+         "County__c": "TOWNS",
+         "vr_Political_Party__c": "made up 20",
+         "Date_Qualified__c": "9/8/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 20",
+         "Mailing_Street_Name2__c": "made up 20",
+         "Mailing_City__c": "made up 20",
+         "Mailing_State__c": "made up 20",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 20",
+         "Name_on_Ballot__c": "ANTHONY WAYNE COLEMAN",
+         "Website_Street_Name__c": "made up 20",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For Sheriff",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000cCjrVAAS"
+         }
+        },
+        {
+         "Id": "a0n000000000000021",
+         "Name__c": "made up 21",
+         "Last_Name__c": "made up 21",
+         "Official_FullName__c": "made up 21",
+         "Elected_Office__c": "a0n000000000000021",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 21",
+         "County__c": "TOWNS",
+         "vr_Political_Party__c": "made up 21",
+         "Date_Qualified__c": "9/9/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 21",
+         "Mailing_Street_Name2__c": "made up 21",
+         "Mailing_City__c": "made up 21",
+         "Mailing_State__c": "made up 21",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 21",
+         "Name_on_Ballot__c": "DAREN BEAR OSBORN",
+         "Website_Street_Name__c": "made up 21",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For Sheriff",
+          "Office_Type__c": "Countywide",
+          "Id": "a0ncs00000cCjrVAAS"
+         }
+        }
+       ]
+      }
+     },
+     "County Level": {
+      "SPALDING": {
+       "(C) For County Commission District 5": [
+        {
+         "Id": "a0n000000000000022",
+         "Name__c": "made up 22",
+         "Last_Name__c": "made up 22",
+         "Official_FullName__c": "made up 22",
+         "Elected_Office__c": "a0n000000000000022",
+         "Declaration__c": "Withdrawn",
+         "Occupation__c": "made up 22",
+         "Email__c": "candidate22@example.com",
+         "County__c": "SPALDING",
+         "vr_Political_Party__c": "made up 22",
+         "Date_Qualified__c": "3/6/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 22",
+         "Mailing_Street_Name2__c": "made up 22",
+         "Mailing_City__c": "made up 22",
+         "Mailing_State__c": "made up 22",
+         "Candidate_Party__c": "Independent",
+         "Mailing_Zip_Code__c": "made up 22",
+         "Name_on_Ballot__c": "DAN HUNT",
+         "Elected_Office__r": {
+          "Name": "(C) For County Commission District 5",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000PZ4VNAA1"
+         }
+        }
+       ]
+      },
+      "FULTON": {
+       "For County Commissioner District 4 (Unexpired Term of Mo Ivory, Resigned)": [
+        {
+         "Id": "a0n000000000000023",
+         "Name__c": "made up 23",
+         "Last_Name__c": "made up 23",
+         "Official_FullName__c": "made up 23",
+         "Elected_Office__c": "a0n000000000000023",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 23",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 23",
+         "Date_Qualified__c": "4/29/2026",
+         "Incumbent__c": false,
+         "Mailing_Apt_Lot_Unit__c": "made up 23",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 23",
+         "Mailing_Street_Name2__c": "made up 23",
+         "Mailing_City__c": "made up 23",
+         "Mailing_State__c": "made up 23",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 23",
+         "Name_on_Ballot__c": "NATALIE HALL",
+         "Business_Phone__c": "555-0123",
+         "Elected_Office__r": {
+          "Name": "For County Commissioner District 4 (Unexpired Term of Mo Ivory, Resigned)",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000QhSmrAAF"
+         }
+        },
+        {
+         "Id": "a0n000000000000024",
+         "Name__c": "made up 24",
+         "Last_Name__c": "made up 24",
+         "Official_FullName__c": "made up 24",
+         "Elected_Office__c": "a0n000000000000024",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 24",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 24",
+         "Date_Qualified__c": "4/29/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 24",
+         "Mailing_Street_Name2__c": "made up 24",
+         "Mailing_City__c": "made up 24",
+         "Mailing_State__c": "made up 24",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 24",
+         "Name_on_Ballot__c": "KAREN RENE",
+         "Elected_Office__r": {
+          "Name": "For County Commissioner District 4 (Unexpired Term of Mo Ivory, Resigned)",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000QhSmrAAF"
+         }
+        },
+        {
+         "Id": "a0n000000000000025",
+         "Name__c": "made up 25",
+         "Last_Name__c": "made up 25",
+         "Official_FullName__c": "made up 25",
+         "Elected_Office__c": "a0n000000000000025",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 25",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 25",
+         "Date_Qualified__c": "5/1/2026",
+         "Incumbent__c": false,
+         "Mailing_Apt_Lot_Unit__c": "made up 25",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 25",
+         "Mailing_Street_Name2__c": "made up 25",
+         "Mailing_City__c": "made up 25",
+         "Candidate_Party__c": "Democrat",
+         "Mailing_Zip_Code__c": "made up 25",
+         "Name_on_Ballot__c": "AARON A. SAMPSON JR",
+         "Business_Phone__c": "555-0125",
+         "Elected_Office__r": {
+          "Name": "For County Commissioner District 4 (Unexpired Term of Mo Ivory, Resigned)",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000QhSmrAAF"
+         }
+        },
+        {
+         "Id": "a0n000000000000026",
+         "Name__c": "made up 26",
+         "Last_Name__c": "made up 26",
+         "Official_FullName__c": "made up 26",
+         "Elected_Office__c": "a0n000000000000026",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 26",
+         "County__c": "FULTON",
+         "vr_Political_Party__c": "made up 26",
+         "Date_Qualified__c": "5/1/2026",
+         "Incumbent__c": false,
+         "Mailing_Apt_Lot_Unit__c": "made up 26",
+         "Mailing_Street_Name_1_PO_Box__c": "made up 26",
+         "Mailing_Street_Name2__c": "made up 26",
+         "Mailing_City__c": "made up 26",
+         "Mailing_State__c": "made up 26",
+         "Candidate_Party__c": "Democrat",
+         "Mailing_Zip_Code__c": "made up 26",
+         "Name_on_Ballot__c": "ROHIT MALHOTRA",
+         "Business_Phone__c": "555-0126",
+         "Elected_Office__r": {
+          "Name": "For County Commissioner District 4 (Unexpired Term of Mo Ivory, Resigned)",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000QhSmrAAF"
+         }
+        }
+       ]
+      },
+      "TELFAIR": {
+       "Special Election - County Commissioner District 3": [
+        {
+         "Id": "a0n000000000000027",
+         "Name__c": "made up 27",
+         "Last_Name__c": "made up 27",
+         "Official_FullName__c": "made up 27",
+         "Elected_Office__c": "a0n000000000000027",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 27",
+         "County__c": "TELFAIR",
+         "vr_Political_Party__c": "made up 27",
+         "Date_Qualified__c": "8/17/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 27",
+         "Mailing_Street_Name2__c": "made up 27",
+         "Mailing_City__c": "made up 27",
+         "Mailing_State__c": "made up 27",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 27",
+         "Name_on_Ballot__c": "STEPHEN LESTER DOPSON",
+         "Elected_Office__r": {
+          "Name": "Special Election - County Commissioner District 3",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000a0USnAAM"
+         }
+        },
+        {
+         "Id": "a0n000000000000028",
+         "Name__c": "made up 28",
+         "Last_Name__c": "made up 28",
+         "Official_FullName__c": "made up 28",
+         "Elected_Office__c": "a0n000000000000028",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 28",
+         "County__c": "TELFAIR",
+         "vr_Political_Party__c": "made up 28",
+         "Date_Qualified__c": "8/17/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 28",
+         "Mailing_Street_Name2__c": "made up 28",
+         "Mailing_City__c": "made up 28",
+         "Mailing_State__c": "made up 28",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 28",
+         "Name_on_Ballot__c": "ANNIE KRISTEN PETERSON",
+         "Elected_Office__r": {
+          "Name": "Special Election - County Commissioner District 3",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000a0USnAAM"
+         }
+        },
+        {
+         "Id": "a0n000000000000029",
+         "Name__c": "made up 29",
+         "Last_Name__c": "made up 29",
+         "Official_FullName__c": "made up 29",
+         "Elected_Office__c": "a0n000000000000029",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 29",
+         "County__c": "TELFAIR",
+         "vr_Political_Party__c": "made up 29",
+         "Date_Qualified__c": "8/17/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 29",
+         "Mailing_Street_Name2__c": "made up 29",
+         "Mailing_City__c": "made up 29",
+         "Mailing_State__c": "made up 29",
+         "Candidate_Party__c": "Democrat",
+         "Mailing_Zip_Code__c": "made up 29",
+         "Name_on_Ballot__c": "SHIRLEY DANIELS",
+         "Elected_Office__r": {
+          "Name": "Special Election - County Commissioner District 3",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000a0USnAAM"
+         }
+        },
+        {
+         "Id": "a0n000000000000030",
+         "Name__c": "made up 30",
+         "Last_Name__c": "made up 30",
+         "Official_FullName__c": "made up 30",
+         "Elected_Office__c": "a0n000000000000030",
+         "Declaration__c": "Withdrawn",
+         "Occupation__c": "made up 30",
+         "County__c": "TELFAIR",
+         "vr_Political_Party__c": "made up 30",
+         "Date_Qualified__c": "8/18/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 30",
+         "Mailing_Street_Name2__c": "made up 30",
+         "Mailing_City__c": "made up 30",
+         "Mailing_State__c": "made up 30",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 30",
+         "Name_on_Ballot__c": "ANTHONY CLAYTON WOODARD",
+         "Elected_Office__r": {
+          "Name": "Special Election - County Commissioner District 3",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000a0USnAAM"
+         }
+        },
+        {
+         "Id": "a0n000000000000031",
+         "Name__c": "made up 31",
+         "Last_Name__c": "made up 31",
+         "Official_FullName__c": "made up 31",
+         "Elected_Office__c": "a0n000000000000031",
+         "Declaration__c": "Withdrawn",
+         "Occupation__c": "made up 31",
+         "County__c": "TELFAIR",
+         "vr_Political_Party__c": "made up 31",
+         "Date_Qualified__c": "8/19/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 31",
+         "Mailing_Street_Name2__c": "made up 31",
+         "Mailing_City__c": "made up 31",
+         "Mailing_State__c": "made up 31",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 31",
+         "Name_on_Ballot__c": "WILLIAM JACKSON JONES JR",
+         "Elected_Office__r": {
+          "Name": "Special Election - County Commissioner District 3",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000a0USnAAM"
+         }
+        },
+        {
+         "Id": "a0n000000000000032",
+         "Name__c": "made up 32",
+         "Last_Name__c": "made up 32",
+         "Official_FullName__c": "made up 32",
+         "Elected_Office__c": "a0n000000000000032",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 32",
+         "County__c": "TELFAIR",
+         "vr_Political_Party__c": "made up 32",
+         "Date_Qualified__c": "8/19/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 32",
+         "Mailing_Street_Name2__c": "made up 32",
+         "Mailing_City__c": "made up 32",
+         "Mailing_State__c": "made up 32",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 32",
+         "Name_on_Ballot__c": "JAMES SUTTON",
+         "Elected_Office__r": {
+          "Name": "Special Election - County Commissioner District 3",
+          "Office_Type__c": "County Level",
+          "Id": "a0ncs00000a0USnAAM"
+         }
+        }
+       ]
+      }
+     },
+     "Municipalwide": {
+      "GORDON": {
+       "To Fill Vacant Seat": [
+        {
+         "Id": "a0n000000000000033",
+         "Name__c": "made up 33",
+         "Last_Name__c": "made up 33",
+         "Elected_Office__c": "a0n000000000000033",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 33",
+         "County__c": "WILKINSON",
+         "vr_Political_Party__c": "made up 33",
+         "Date_Qualified__c": "7/13/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name2__c": "made up 33",
+         "Mailing_City__c": "made up 33",
+         "Mailing_State__c": "made up 33",
+         "Candidate_Party__c": "Democrat",
+         "Mailing_Zip_Code__c": "made up 33",
+         "Name_on_Ballot__c": "RODNEY ORLANDO EVANS",
+         "Elected_Office__r": {
+          "Name": "To Fill Vacant Seat",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "GORDON",
+          "Id": "a0ncs00000YgvSxAAJ"
+         }
+        },
+        {
+         "Id": "a0n000000000000034",
+         "Name__c": "made up 34",
+         "Last_Name__c": "made up 34",
+         "Elected_Office__c": "a0n000000000000034",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 34",
+         "County__c": "WILKINSON",
+         "vr_Political_Party__c": "made up 34",
+         "Date_Qualified__c": "7/17/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name2__c": "made up 34",
+         "Mailing_City__c": "made up 34",
+         "Mailing_State__c": "made up 34",
+         "Candidate_Party__c": "Republican",
+         "Mailing_Zip_Code__c": "made up 34",
+         "Name_on_Ballot__c": "PATRICIA DUPREE BROOKS",
+         "Business_Phone__c": "555-0134",
+         "Elected_Office__r": {
+          "Name": "To Fill Vacant Seat",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "GORDON",
+          "Id": "a0ncs00000YgvSxAAJ"
+         }
+        }
+       ]
+      },
+      "PINE_LAKE": {
+       "For Mayor (To Fill the Unexpired Term of Brandy Hall, Resigned)": [
+        {
+         "Id": "a0n000000000000035",
+         "Name__c": "made up 35",
+         "Last_Name__c": "made up 35",
+         "Official_FullName__c": "made up 35",
+         "Elected_Office__c": "a0n000000000000035",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 35",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 35",
+         "Date_Qualified__c": "7/30/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name2__c": "made up 35",
+         "Mailing_City__c": "made up 35",
+         "Mailing_State__c": "made up 35",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 35",
+         "Name_on_Ballot__c": "JEFF GOLDBERG",
+         "Website_Phone_Number__c": "555-0135",
+         "Website_Street_Name__c": "made up 35",
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For Mayor (To Fill the Unexpired Term of Brandy Hall, Resigned)",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "PINE_LAKE",
+          "Id": "a0ncs00000Zs1KjAAJ"
+         }
+        }
+       ],
+       "For City Council": [
+        {
+         "Id": "a0n000000000000036",
+         "Name__c": "made up 36",
+         "Last_Name__c": "made up 36",
+         "Official_FullName__c": "made up 36",
+         "Elected_Office__c": "a0n000000000000036",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 36",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 36",
+         "Date_Qualified__c": "7/30/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name2__c": "made up 36",
+         "Mailing_City__c": "made up 36",
+         "Mailing_State__c": "made up 36",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 36",
+         "Name_on_Ballot__c": "JAMES PAPROSKI",
+         "Website_Phone_Number__c": "555-0136",
+         "Website_Street_Name__c": "made up 36",
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "PINE_LAKE",
+          "Id": "a0ncs00000Zs2DZAAZ"
+         }
+        }
+       ]
+      },
+      "DORAVILLE": {
+       "For City Council District 2, Post 2 At Large": [
+        {
+         "Id": "a0n000000000000037",
+         "Name__c": "made up 37",
+         "Last_Name__c": "made up 37",
+         "Official_FullName__c": "made up 37",
+         "Elected_Office__c": "a0n000000000000037",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 37",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 37",
+         "Date_Qualified__c": "8/11/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 37",
+         "Mailing_Street_Name2__c": "made up 37",
+         "Mailing_City__c": "made up 37",
+         "Mailing_State__c": "made up 37",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 37",
+         "Name_on_Ballot__c": "ANGIE RILEY TOOLEY",
+         "Business_Phone__c": "555-0137",
+         "Elected_Office__r": {
+          "Name": "For City Council District 2, Post 2 At Large",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DORAVILLE",
+          "Id": "a0ncs00000ZyqsRAAR"
+         }
+        },
+        {
+         "Id": "a0n000000000000038",
+         "Name__c": "made up 38",
+         "Last_Name__c": "made up 38",
+         "Official_FullName__c": "made up 38",
+         "Elected_Office__c": "a0n000000000000038",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 38",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 38",
+         "Date_Qualified__c": "8/12/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 38",
+         "Mailing_Street_Name2__c": "made up 38",
+         "Mailing_City__c": "made up 38",
+         "Mailing_State__c": "made up 38",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 38",
+         "Name_on_Ballot__c": "SCHUYLER \"SKY\" CLARK",
+         "Business_Phone__c": "555-0138",
+         "Website_Phone_Number__c": "555-0138",
+         "Website_Street_Name__c": "made up 38",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council District 2, Post 2 At Large",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DORAVILLE",
+          "Id": "a0ncs00000ZyqsRAAR"
+         }
+        },
+        {
+         "Id": "a0n000000000000039",
+         "Name__c": "made up 39",
+         "Last_Name__c": "made up 39",
+         "Official_FullName__c": "made up 39",
+         "Elected_Office__c": "a0n000000000000039",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 39",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 39",
+         "Date_Qualified__c": "8/12/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 39",
+         "Mailing_Street_Name2__c": "made up 39",
+         "Mailing_City__c": "made up 39",
+         "Mailing_State__c": "made up 39",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 39",
+         "Name_on_Ballot__c": "TOM HART",
+         "Website_Phone_Number__c": "555-0139",
+         "Website_Street_Name__c": "made up 39",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council District 2, Post 2 At Large",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DORAVILLE",
+          "Id": "a0ncs00000ZyqsRAAR"
+         }
+        },
+        {
+         "Id": "a0n000000000000040",
+         "Name__c": "made up 40",
+         "Last_Name__c": "made up 40",
+         "Official_FullName__c": "made up 40",
+         "Elected_Office__c": "a0n000000000000040",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 40",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 40",
+         "Date_Qualified__c": "8/10/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 40",
+         "Mailing_Street_Name2__c": "made up 40",
+         "Mailing_City__c": "made up 40",
+         "Mailing_State__c": "made up 40",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 40",
+         "Name_on_Ballot__c": "TAMMI BAILEY FULTS",
+         "Business_Phone__c": "555-0140",
+         "Website_Phone_Number__c": "555-0140",
+         "Website_Street_Name__c": "made up 40",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council District 2, Post 2 At Large",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DORAVILLE",
+          "Id": "a0ncs00000ZyqsRAAR"
+         }
+        },
+        {
+         "Id": "a0n000000000000041",
+         "Last_Name__c": "made up 41",
+         "Official_FullName__c": "made up 41",
+         "Elected_Office__c": "a0n000000000000041",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 41",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 41",
+         "Date_Qualified__c": "8/12/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 41",
+         "Mailing_Street_Name2__c": "made up 41",
+         "Mailing_City__c": "made up 41",
+         "Mailing_State__c": "made up 41",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 41",
+         "Name_on_Ballot__c": "BRIAN KYSER",
+         "Business_Phone__c": "555-0141",
+         "Website_Phone_Number__c": "555-0141",
+         "Website_Street_Name__c": "made up 41",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council District 2, Post 2 At Large",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DORAVILLE",
+          "Id": "a0ncs00000ZyqsRAAR"
+         }
+        }
+       ]
+      },
+      "FLOWERY_BRANCH": {
+       "DUPLICATE - City Council Member Post 3": [
+        {
+         "Id": "a0n000000000000042",
+         "Name__c": "made up 42",
+         "Last_Name__c": "made up 42",
+         "Official_FullName__c": "made up 42",
+         "Elected_Office__c": "a0n000000000000042",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 42",
+         "County__c": "HALL",
+         "Date_Qualified__c": "8/10/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 42",
+         "Mailing_Street_Name2__c": "made up 42",
+         "Mailing_City__c": "made up 42",
+         "Mailing_State__c": "made up 42",
+         "Candidate_Party__c": "Other",
+         "Mailing_Zip_Code__c": "made up 42",
+         "Name_on_Ballot__c": "EDWARD RAY ASBRIDGE",
+         "vr_Political_Bodies__c": "Other",
+         "Website_Street_Name__c": "made up 42",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "DUPLICATE - City Council Member Post 3",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "FLOWERY_BRANCH",
+          "Id": "a0ncs00000aQKzFAAW"
+         }
+        },
+        {
+         "Id": "a0n000000000000043",
+         "Name__c": "made up 43",
+         "Last_Name__c": "made up 43",
+         "Official_FullName__c": "made up 43",
+         "Elected_Office__c": "a0n000000000000043",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 43",
+         "Email__c": "candidate43@example.com",
+         "County__c": "HALL",
+         "Date_Qualified__c": "8/10/2026",
+         "Incumbent__c": false,
+         "Mailing_Apt_Lot_Unit__c": "made up 43",
+         "Mailing_Street_Name2__c": "made up 43",
+         "Mailing_City__c": "made up 43",
+         "Mailing_State__c": "made up 43",
+         "Candidate_Party__c": "Other",
+         "Mailing_Zip_Code__c": "made up 43",
+         "Name_on_Ballot__c": "CHARLES DAVID THOMPSON",
+         "Business_Phone__c": "555-0143",
+         "vr_Political_Bodies__c": "Other",
+         "Website_Unit_Apt_Lot_Suite__c": "https://example.com",
+         "Website_Street_Name__c": "made up 43",
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "DUPLICATE - City Council Member Post 3",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "FLOWERY_BRANCH",
+          "Id": "a0ncs00000aQKzFAAW"
+         }
+        }
+       ]
+      },
+      "DANVILLE_TWIGGS": {
+       "City Council": [
+        {
+         "Id": "a0n000000000000044",
+         "Name__c": "made up 44",
+         "Last_Name__c": "made up 44",
+         "Official_FullName__c": "made up 44",
+         "Elected_Office__c": "a0n000000000000044",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 44",
+         "Email__c": "candidate44@example.com",
+         "County__c": "TWIGGS",
+         "vr_Political_Party__c": "made up 44",
+         "Date_Qualified__c": "8/18/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 44",
+         "Mailing_Street_Name2__c": "made up 44",
+         "Mailing_City__c": "made up 44",
+         "Mailing_State__c": "made up 44",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 44",
+         "Name_on_Ballot__c": "MAGGIE JACKSON",
+         "Business_Phone__c": "555-0144",
+         "Website_Phone_Number__c": "555-0144",
+         "Website_Street_Name__c": "made up 44",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "City Council",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DANVILLE_TWIGGS",
+          "Id": "a0ncs00000YOEW8AAP"
+         }
+        },
+        {
+         "Id": "a0n000000000000045",
+         "Name__c": "made up 45",
+         "Last_Name__c": "made up 45",
+         "Official_FullName__c": "made up 45",
+         "Elected_Office__c": "a0n000000000000045",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 45",
+         "County__c": "TWIGGS",
+         "vr_Political_Party__c": "made up 45",
+         "Date_Qualified__c": "8/18/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name2__c": "made up 45",
+         "Mailing_City__c": "made up 45",
+         "Mailing_State__c": "made up 45",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 45",
+         "Name_on_Ballot__c": "JOY MARIE JACKSON",
+         "Business_Phone__c": "555-0145",
+         "Website_Phone_Number__c": "555-0145",
+         "Website_Street_Name__c": "made up 45",
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "City Council",
+          "Office_Type__c": "Municipalwide",
+          "Municipality__c": "DANVILLE_TWIGGS",
+          "Id": "a0ncs00000YOEW8AAP"
+         }
+        }
+       ]
+      }
+     },
+     "Municipal Level": {
+      "HAZLEHURST": {
+       "For City Council Ward 4": [
+        {
+         "Id": "a0n000000000000046",
+         "Name__c": "made up 46",
+         "Last_Name__c": "made up 46",
+         "Official_FullName__c": "made up 46",
+         "Elected_Office__c": "a0n000000000000046",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 46",
+         "County__c": "JEFFDAVIS",
+         "vr_Political_Party__c": "made up 46",
+         "Date_Qualified__c": "8/17/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 46",
+         "Mailing_Street_Name2__c": "made up 46",
+         "Mailing_City__c": "made up 46",
+         "Mailing_State__c": "made up 46",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 46",
+         "Name_on_Ballot__c": "JOHN M. BLOODWORTH",
+         "Website_State__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council Ward 4",
+          "Office_Type__c": "Municipal Level",
+          "Municipality__c": "HAZLEHURST",
+          "Id": "a0ncs00000VWsD7AAL"
+         }
+        },
+        {
+         "Id": "a0n000000000000047",
+         "Name__c": "made up 47",
+         "Last_Name__c": "made up 47",
+         "Official_FullName__c": "made up 47",
+         "Elected_Office__c": "a0n000000000000047",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 47",
+         "County__c": "JEFFDAVIS",
+         "vr_Political_Party__c": "made up 47",
+         "Date_Qualified__c": "8/18/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 47",
+         "Mailing_Street_Name2__c": "made up 47",
+         "Mailing_City__c": "made up 47",
+         "Mailing_State__c": "made up 47",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 47",
+         "Name_on_Ballot__c": "ERIC CARELOCK",
+         "Elected_Office__r": {
+          "Name": "For City Council Ward 4",
+          "Office_Type__c": "Municipal Level",
+          "Municipality__c": "HAZLEHURST",
+          "Id": "a0ncs00000VWsD7AAL"
+         }
+        },
+        {
+         "Id": "a0n000000000000048",
+         "Name__c": "made up 48",
+         "Last_Name__c": "made up 48",
+         "Official_FullName__c": "made up 48",
+         "Elected_Office__c": "a0n000000000000048",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 48",
+         "County__c": "JEFFDAVIS",
+         "vr_Political_Party__c": "made up 48",
+         "Date_Qualified__c": "8/18/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 48",
+         "Mailing_Street_Name2__c": "made up 48",
+         "Mailing_City__c": "made up 48",
+         "Mailing_State__c": "made up 48",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 48",
+         "Name_on_Ballot__c": "YASHIACA K. BROWN",
+         "Elected_Office__r": {
+          "Name": "For City Council Ward 4",
+          "Office_Type__c": "Municipal Level",
+          "Municipality__c": "HAZLEHURST",
+          "Id": "a0ncs00000VWsD7AAL"
+         }
+        }
+       ]
+      },
+      "BROOKHAVEN": {
+       "For City Council District 2": [
+        {
+         "Id": "a0n000000000000049",
+         "Name__c": "made up 49",
+         "Last_Name__c": "made up 49",
+         "Official_FullName__c": "made up 49",
+         "Elected_Office__c": "a0n000000000000049",
+         "Declaration__c": "Qualified",
+         "Occupation__c": "made up 49",
+         "Email__c": "candidate49@example.com",
+         "County__c": "DEKALB",
+         "vr_Political_Party__c": "made up 49",
+         "Date_Qualified__c": "8/17/2026",
+         "Incumbent__c": false,
+         "Mailing_Street_Name_1_PO_Box__c": "made up 49",
+         "Mailing_Street_Name2__c": "made up 49",
+         "Mailing_City__c": "made up 49",
+         "Mailing_State__c": "made up 49",
+         "Candidate_Party__c": "Non-Partisan",
+         "Mailing_Zip_Code__c": "made up 49",
+         "Name_on_Ballot__c": "CONOR SEN",
+         "Business_Phone__c": "555-0149",
+         "Website_Phone_Number__c": "555-0149",
+         "Website_Street_Name__c": "made up 49",
+         "Website_Street_Number__c": 0,
+         "Website_City__c": "https://example.com",
+         "Website_State__c": "https://example.com",
+         "Website_Zip_Code__c": "https://example.com",
+         "Elected_Office__r": {
+          "Name": "For City Council District 2",
+          "Office_Type__c": "Municipal Level",
+          "Municipality__c": "BROOKHAVEN",
+          "Id": "a0ncs00000ZqqMYAAZ"
+         }
+        }
+       ]
+      }
+     }
+    },
+    "cacheable": true
+   }
+  }
+ ]
+}
