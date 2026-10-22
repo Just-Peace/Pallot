@@ -1,0 +1,76 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 4,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4AZ03109",
+   "candidate_name": "ANSARI, YASSAMIN",
+   "candidate_pcc_id": "C00836767",
+   "candidate_pcc_name": "YASSAMIN ANSARI FOR CONGRESS",
+   "cash_on_hand_end_period": 354319.61,
+   "committee_ids": [
+    "C00836767"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1282755.3,
+   "total_receipts": 1626664.2
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4AZ03174",
+   "candidate_name": "AVERSA, ALAN",
+   "candidate_pcc_id": "C00891051",
+   "candidate_pcc_name": "ALAN AVERSA FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00891051"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "AMERICAN INDEPENDENT PARTY",
+   "total_disbursements": 523.01,
+   "total_receipts": 523.01
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AZ01322",
+   "candidate_name": "REDKEY, DAVID WAYNE MR.",
+   "candidate_pcc_id": "C00913558",
+   "candidate_pcc_name": "FRIENDS OF DAVID REDKEY",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00913558"
+   ],
+   "coverage_end_date": "2026-07-01",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "GREEN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AZ03252",
+   "candidate_name": "CANO-BRAVO, SANDY",
+   "candidate_pcc_id": "C00909218",
+   "candidate_pcc_name": "SANDY CANO-BRAVO FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00909218"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

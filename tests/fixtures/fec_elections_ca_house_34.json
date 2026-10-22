@@ -1,0 +1,124 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 7,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H8CA34266",
+   "candidate_name": "GOMEZ, JIMMY",
+   "candidate_pcc_id": "C00629659",
+   "candidate_pcc_name": "JIMMY GOMEZ FOR CONGRESS",
+   "cash_on_hand_end_period": 705363.98,
+   "committee_ids": [
+    "C00629659"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 694481.03,
+   "total_receipts": 1311086.1
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CA34286",
+   "candidate_name": "GONZALES-TORRES, ANGELA",
+   "candidate_pcc_id": "C00901652",
+   "candidate_pcc_name": "ANGELA FOR CA34",
+   "cash_on_hand_end_period": 147416.16,
+   "committee_ids": [
+    "C00901652"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 302537.81,
+   "total_receipts": 449953.97
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CA34294",
+   "candidate_name": "LUCERO, ROB",
+   "candidate_pcc_id": "C00903567",
+   "candidate_pcc_name": "LUCERO FOR CONGRESS INC.",
+   "cash_on_hand_end_period": 106.4,
+   "committee_ids": [
+    "C00903567"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 183357.01,
+   "total_receipts": 183468.56
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CA34302",
+   "candidate_name": "DIXON, ARTHUR",
+   "candidate_pcc_id": "C00903773",
+   "candidate_pcc_name": "ARTHUR DIXON FOR CONGRESS",
+   "cash_on_hand_end_period": 12491.0,
+   "committee_ids": [
+    "C00903773"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 4500.0,
+   "total_receipts": 16991.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CA34278",
+   "candidate_name": "COLIN, LOREN",
+   "candidate_pcc_id": "C00895532",
+   "candidate_pcc_name": "LOREN COLIN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00895532"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "NO PARTY PREFERENCE",
+   "total_disbursements": 9050.01,
+   "total_receipts": 9050.01
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4CA34091",
+   "candidate_name": "LEE, CALVIN",
+   "candidate_pcc_id": "C00870550",
+   "candidate_pcc_name": "CALVIN LEE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00870550"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CA34260",
+   "candidate_name": "FERRELL, DAVID MATTHEW MR.",
+   "candidate_pcc_id": "C00891432",
+   "candidate_pcc_name": "FERRELL FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00891432"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

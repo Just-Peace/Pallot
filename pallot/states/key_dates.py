@@ -1,6 +1,8 @@
 """Each state's key dates: whose they are and how its calendar files word them, and, for a state
 whose deadlines are fixed counts of days from Election Day, the dates worked out from that day
-alone, with nothing fetched. Texas's come from its SOS's page (sources/key_dates.py) instead.
+alone, with nothing fetched. Texas's come from its SOS's page (sources/key_dates.py) instead, and
+California's from its SOS's (sources/ca_key_dates.py).
+Arizona's are entered by hand from its Secretary of State's list, whose site blocks scripts.
 
 Michigan's rules, as its Department of State gives them: registration online or by mail closes
 15 days before Election Day, then it's in person at the clerk's office with proof of residency
@@ -8,6 +10,15 @@ through Election Day (MCL 168.497); early voting runs at least from the second S
 through the Sunday before (MCL 168.720a, from Proposal 2 of 2022); any voter can vote absentee,
 applying online or by mail by 5 p.m. the Friday before. Only its even-year August primary and
 November general are statewide, the elections those rules are for.
+
+Nevada's, for its general election (NRS 293.12755: the first Tuesday after the first Monday of
+November in an even year): registration by mail or in person at the county clerk's closes the
+fourth Tuesday before, online on Election Day itself (NRS 293.560), and in person at a polling
+place it goes on through Election Day (NRS 293.5772 to 293.5887); every active voter is mailed a
+ballot, and so is anyone who registers or updates their registration by 14 days before
+(NRS 293.269911); early voting runs from the third Saturday before through the Friday before
+(NRS 293.3568); a mailed ballot must be postmarked by Election Day and reach the clerk by 5 p.m.
+on the fourth day after (NRS 293.269921); polls are open 7 a.m. to 7 p.m. (NRS 293.273).
 """
 
 from __future__ import annotations
@@ -16,6 +27,7 @@ import datetime as dt
 from dataclasses import dataclass
 from typing import Callable
 
+from ..sources import ca_key_dates as california
 from ..sources import key_dates as texas
 from ..sources.key_dates import Deadlines
 
@@ -74,7 +86,61 @@ MICHIGAN = Guide(
     credit="Dates worked out from Michigan's election law; more from the Michigan Department of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN}
+CALIFORNIA = Guide(
+    name="California",
+    source="California Secretary of State",
+    url=california.URL,
+    computed=False,
+    registration_url=california.REGISTRATION_URL,
+    mail_url=california.MAIL_URL,
+    register="The last day to register online or by mail (postmarked today) for {election} in California. After it, "
+             "you can still register and vote at your county elections office or a vote center, through Election "
+             "Day.",
+    mail_summary="Ask for a replacement mail ballot",
+    mail="Every active voter in California is mailed a ballot for {election}. If yours is lost or damaged, today is "
+         "the Secretary of State's recommended last day to ask your county elections office for a new one:",
+    early_where="Your county elections office lists the places and hours.",
+    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates from the California Secretary of State",
+)
+
+ARIZONA = Guide(
+    name="Arizona",
+    source="Arizona Secretary of State",
+    url="https://azsos.gov/elections",
+    computed=False,
+    registration_url="https://my.arizona.vote/",
+    mail_url="https://my.arizona.vote/",
+    register="The last day to register to vote in {election} in Arizona, by 11:59 p.m.",
+    mail_summary="Early ballot request due",
+    mail="If you vote early by mail in {election}, ask your county recorder for your ballot in time for it to reach "
+         "you and come back by Election Day. Any voter can vote early by mail; how to ask:",
+    early_where="Your county recorder lists the places and hours.",
+    polls="Polls are open 6 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates from the Arizona Secretary of State",
+)
+
+NEVADA = Guide(
+    name="Nevada",
+    source="Nevada Secretary of State",
+    url="https://www.nvsos.gov/sos/elections",
+    computed=True,
+    registration_url="https://registertovote.nv.gov/",
+    mail_url="https://www.nvsos.gov/sos/elections",
+    register="The last day to register by mail or in person at your county clerk's office for {election} in Nevada. "
+             "After it, you can still register online through Election Day, or in person at a polling place during "
+             "early voting or on Election Day.",
+    mail_summary="Last day to register and still be mailed a ballot",
+    mail="Every active voter in Nevada is mailed a ballot for {election}. Register or update your registration by "
+         "today to still be mailed one. Mailed back, it must be postmarked by Election Day and reach your county "
+         "clerk by 5 p.m. on the fourth day after; or drop it off at any polling place or drop box by 7 p.m. on "
+         "Election Day. More:",
+    early_where="Your county clerk lists the places and hours.",
+    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates worked out from Nevada's election law; more from the Nevada Secretary of State",
+)
+
+GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:
@@ -96,10 +162,39 @@ def michigan(day: dt.date) -> Deadlines | None:
     )
 
 
-RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan}
+ARIZONA_DATES = {
+    dt.date(2026, 11, 3): Deadlines(
+        dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 5),
+        early_start=dt.date(2026, 10, 7), state="AZ",
+    ),
+}
+
+
+def arizona(day: dt.date) -> Deadlines | None:
+    """The dates of Arizona's statewide election on ``day``, as its Secretary of State lists them."""
+    return ARIZONA_DATES.get(day)
+
+
+def nevada(day: dt.date) -> Deadlines | None:
+    """The dates of Nevada's general election on ``day``, or None when there's none: register by
+    mail or in person the fourth Tuesday before, still be mailed a ballot 14 days before, early
+    voting the third Saturday before through the Friday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=28),
+        mail_apply_by=day - dt.timedelta(days=14),
+        early_start=day - dt.timedelta(days=17),
+        early_end=day - dt.timedelta(days=4),
+        state="NV",
+    )
+
+
+RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona, "NV": nevada}
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:
-    """The state's key dates for the election on ``day``, when they're worked out by rule."""
+    """The state's key dates for the election on ``day``, when they're worked out by rule or entered by hand."""
     rule = RULES.get(state or "")
     return rule(day) if rule else None

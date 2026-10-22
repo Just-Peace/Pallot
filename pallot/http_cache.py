@@ -4,7 +4,8 @@ One SQLite row per distinct request (method + URL + params + body), tagged with 
 source that made it, so the Settings page can show one source at a time, and pallot-cache
 refresh or clear it. A row keeps the request itself and the lifetimes it was stored with, so refresh()
 can re-issue it without knowing what it was for. A value is parsed JSON, a web page's text
-(get_text) or an image as base64 (get_bytes). Decoded values also sit in an in-memory
+(get_text), an image as base64 (get_bytes), or what a source makes of a file too big to keep
+(read_files: a state's PDF list, kept as its candidates). Decoded values also sit in an in-memory
 LRU bounded by an estimate of their decoded size (DECODED_PER_BYTE times their text: the
 2.6 MB statewide candidate list takes 6.7 MB as Python objects); images stay out of it,
 since the browser keeps them too, and so do bundled answers until a lookup asks for one.
@@ -336,6 +337,7 @@ class HttpCache:
         self._checks: dict[str, Callable[[Any], str | None]] = {}
         self._pages: dict[str, tuple[RequestSpec, Callable[[str], dict[str, str]]]] = {}
         self._daily: dict[str, int] = {}
+        self._files: dict[str, tuple[Path, Callable[[Path], Any], int]] = {}
 
     def close(self) -> None:
         self._db.close()
@@ -402,27 +404,8 @@ class HttpCache:
         until = self.paused_until(source)
         if until:
             raise UpstreamError(source, f"paused until {iso_utc(until)}", until=until)
-        written = 0
         try:
-            headers = await self._headers(source, spec)
-            await self._throttle(source)
-            stats = current_calls()
-            if stats:
-                stats.external_calls += 1
-            async with self._client.stream(
-                spec.method, spec.url, params=spec.params, json=spec.json, data=spec.form, headers=headers
-            ) as response:
-                response.raise_for_status()
-                if hosts and response.url.host not in hosts:
-                    raise ValueError(f"the download was redirected to {response.url.host}")
-                if int(response.headers.get("content-length") or 0) > max_bytes:
-                    raise ValueError(f"the download is larger than {max_bytes:,} bytes")
-                with path.open("wb") as fh:
-                    async for chunk in response.aiter_bytes(1 << 20):
-                        written += len(chunk)
-                        if written > max_bytes:
-                            raise ValueError(f"the download is larger than {max_bytes:,} bytes")
-                        await asyncio.to_thread(fh.write, chunk)
+            return await self._stream(source, spec, path, max_bytes, hosts)
         except (httpx.HTTPError, ValueError) as exc:
             path.unlink(missing_ok=True)
             self._refused(source, exc)
@@ -431,7 +414,52 @@ class HttpCache:
         except BaseException:
             path.unlink(missing_ok=True)
             raise
+
+    async def _stream(
+        self, source: str, spec: RequestSpec, path: Path, max_bytes: int, hosts: Collection[str]
+    ) -> int:
+        """download()'s request, throttled and counted, written into ``path``; its size."""
+        written = 0
+        headers = await self._headers(source, spec)
+        await self._throttle(source)
+        stats = current_calls()
+        if stats:
+            stats.external_calls += 1
+        async with self._client.stream(
+            spec.method, spec.url, params=spec.params, json=spec.json, data=spec.form, headers=headers
+        ) as response:
+            response.raise_for_status()
+            if hosts and response.url.host not in hosts:
+                raise ValueError(f"the download was redirected to {response.url.host}")
+            if int(response.headers.get("content-length") or 0) > max_bytes:
+                raise ValueError(f"the download is larger than {max_bytes:,} bytes")
+            with path.open("wb") as fh:
+                async for chunk in response.aiter_bytes(1 << 20):
+                    written += len(chunk)
+                    if written > max_bytes:
+                        raise ValueError(f"the download is larger than {max_bytes:,} bytes")
+                    await asyncio.to_thread(fh.write, chunk)
         return written
+
+    def read_files(self, source: str, folder: Path, read: Callable[[Path], Any], *, max_bytes: int) -> None:
+        """Fetch ``source``'s answers as files too big to keep (a PDF list, mostly images): each
+        is streamed into a file under ``folder`` as download() does, and what ``read`` makes of
+        it is stored in its place, then the file deleted. get_json, refresh and the checks work
+        on what's stored; a ValueError from ``read`` is an answer it can't read."""
+        self._files[source] = (folder, read, max_bytes)
+
+    async def _read_file(self, source: str, spec: RequestSpec) -> Any:
+        folder, read, max_bytes = self._files[source]
+        folder.mkdir(parents=True, exist_ok=True)
+        path = folder / f".{source}-{uuid.uuid4().hex}.part"
+        try:
+            await self._stream(source, spec, path, max_bytes, ())
+            try:
+                return await asyncio.to_thread(read, path)
+            except ValueError as exc:
+                raise Unreadable(str(exc)) from exc
+        finally:
+            path.unlink(missing_ok=True)
 
     def seed(self, source: str, answers: Iterable[tuple[RequestSpec, Any]], fetched_at: float, ttl: float) -> int:
         """Store answers fetched elsewhere (a bundled snapshot) as fetched at ``fetched_at`` and
@@ -618,6 +646,8 @@ class HttpCache:
         return Cached(stored.value, stored.fetched_at, stale=True)
 
     async def _request(self, source: str, spec: RequestSpec) -> Any:
+        if source in self._files:
+            return await self._read_file(source, spec)
         response = await self._send(source, spec, await self._headers(source, spec))
         if spec.as_bytes:
             return base64.b64encode(response.content).decode("ascii")

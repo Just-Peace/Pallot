@@ -1,0 +1,76 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 4,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2NV04011",
+   "candidate_name": "HORSFORD, STEVEN ALEXZANDER",
+   "candidate_pcc_id": "C00668228",
+   "candidate_pcc_name": "NEVADANS FOR STEVEN HORSFORD",
+   "cash_on_hand_end_period": 1176288.57,
+   "committee_ids": [
+    "C00668228"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 2797522.09,
+   "total_receipts": 3967520.15
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NV04111",
+   "candidate_name": "WHIPPLE, CODY K",
+   "candidate_pcc_id": "C00901827",
+   "candidate_pcc_name": "CODY K 4 CONGRESS",
+   "cash_on_hand_end_period": 78763.3,
+   "committee_ids": [
+    "C00901827"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1081732.03,
+   "total_receipts": 1160495.33
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NV04137",
+   "candidate_name": "KENNEDY, RONDA",
+   "candidate_pcc_id": "C00943597",
+   "candidate_pcc_name": "KENNEDY FOR NEVADA",
+   "cash_on_hand_end_period": 261454.97,
+   "committee_ids": [
+    "C00943597"
+   ],
+   "coverage_end_date": "2026-05-20",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 88545.03,
+   "total_receipts": 350000.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NV04129",
+   "candidate_name": "HILL, AARON DR.",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 4571.98,
+   "committee_ids": [
+    "C00895490"
+   ],
+   "coverage_end_date": "2025-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 43870.58,
+   "total_receipts": 48442.56
+  }
+ ]
+}

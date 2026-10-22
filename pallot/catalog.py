@@ -11,10 +11,11 @@ from .ballot import Services
 from .models import SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
-    KeptSource, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
+    KeptSource, ca_key_dates, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
+from .states import ManualList
 from .states.adapters import ADAPTERS
 from .text import display_date, display_time, iso_utc
 
@@ -42,8 +43,9 @@ GROUPS = (
     SourceGroup(ADDRESS, "Address lookup & maps", "Your districts and precincts from your address, and their map."),
     SourceGroup(OFFICIAL, "Official ballot data", "The state's ballot and dates, campaign money reported to the FEC "
                 "and the Texas Ethics Commission, and outside Texas, who filed with the FEC to run for Congress."),
-    SourceGroup(STATES, "State election offices", "Other states' official lists of the candidates on their ballots. "
-                "Without its state's list, a ballot has only the races for Congress.", toggle_all=True),
+    SourceGroup(STATES, "State election offices", "Other states' official lists of the candidates on their ballots, "
+                "and their key dates. Without its state's list, a ballot has only the races for Congress.",
+                toggle_all=True),
     SourceGroup(BALLOT, "Third-party ballot data", "Candidate profiles and seat holders the state doesn't publish."),
     SourceGroup(POLLS, "Third-party polls", "Public polls of the races that have them."),
     SourceGroup(SCORECARDS, "Third-party endorsements", "Organizations that endorse or warn against candidates, most "
@@ -65,6 +67,7 @@ class SourceInfo:
     kept: str | None = None  # the Services field of a source kept in files (KeptSource), asked for its row
     frozen: bool = False  # comes with Pallot as captured and is never fetched: nothing to refresh or clear
     rules: bool = False  # Pick by rule's conditions use it, so its dialog names it while it's off
+    imported: bool = False  # saved by hand and imported (pallot-bundle import-list): never fetched or refreshed
 
 
 SOURCES = (
@@ -192,9 +195,17 @@ SOURCES = (
         rules=True,
     ),
     *(
+        SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES, refreshable=False,
+                   imported=True)
+        if issubclass(cls, ManualList) else
         SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES,
                    pause=Pause(f"the {cls.label} refused a request", "the list already fetched still shows"))
         for cls in ADAPTERS.values()
+    ),
+    SourceInfo(
+        ca_key_dates.SOURCE, "Key election dates (California SOS)", ca_key_dates.DESCRIPTION, True,
+        (ca_key_dates.SOURCE,), group=STATES,
+        pause=Pause("the California Secretary of State's website refused a request", "dates it already sent still show"),
     ),
 )
 
@@ -292,11 +303,21 @@ class Catalog:
         count = sum(b.answers for b in loaded)
         return f"Came with {count:,} answer{'' if count == 1 else 's'}, checked {checked}."
 
+    def imported(self, info: SourceInfo) -> str:
+        """When a list saved by hand was imported, or that none has been yet."""
+        loaded = [bundle for bundle in self.svc.bundles.values() if bundle.source in info.cache_tags]
+        if not loaded:
+            return "No list imported yet, so ballots here have only the races for Congress."
+        day = dt.datetime.fromtimestamp(max(b.checked_at for b in loaded)).date()
+        return f"Imported by hand on {display_date(day)}."
+
     def _notice(self, info: SourceInfo) -> tuple[str | None, Tone]:
         """A short line under the source's description, only when the voter should know: a pause, a
         failure or a download under way, never its cause or the host's setup (those are the server
         log's and pallot-cache check's)."""
         if paused := self.paused(info):
             return paused, "warn"
+        if info.imported:
+            return self.imported(info), "info"
         kept = self.kept(info)
         return (kept.notice() if kept else None) or (None, "info")

@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -27,7 +27,11 @@ members of Congress to the seat holders. The states with an official list (state
 address each, North Carolina's list (cut down to four counties and the columns read),
 Michigan's report, Pennsylvania's and Florida's lists (cut down to the address's races and the
 fields read) and Virginia's federal list (without its contact columns), their seats' FEC
-filers, and their legislators. The TrackAIPAC, Vote for Peace and Texas Ethics
+filers, and their legislators. California's (state_ca) takes a Los Angeles address and its
+certified list, a 14 MB PDF (--pdf a copy you downloaded), cut down to a small PDF of the pages
+that address needs, and the table of its SOS's election dates page. Nevada's (state_nv) takes a
+Las Vegas address and the certified list saved by hand in manual/state_nv (--pdf another copy),
+never downloaded, cut down the same way. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -53,7 +57,7 @@ sys.path.insert(0, str(ROOT))
 from pallot.config import DEMO_KEY, load_config  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
-    census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
+    ca_key_dates, census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
     sos, suggestions, tigerweb, wikidata,
 )
 from pallot.matching import full_key  # noqa: E402
@@ -61,7 +65,8 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import Rows, fl, mi, nc, ordinal, pa, va  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ca, fl, mi, nc, ordinal, pa, va  # noqa: E402
+from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
 ADDRESSES = {
@@ -90,9 +95,11 @@ NATIONWIDE_RACES = ("GA-SEN", "GA-05", "WY-SEN", "WY-00", "DC-00")
 STATE_ADDRESSES = {
     "raleigh": "1 E Edenton St, Raleigh, NC 27601", "lansing": "100 N Capitol Ave, Lansing, MI 48933",
     "harrisburg": "501 N 3rd St, Harrisburg, PA 17120", "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",
-    "richmond": "1000 Bank St, Richmond, VA 23219",
+    "richmond": "1000 Bank St, Richmond, VA 23219", "phoenix": "1700 W Washington St, Phoenix, AZ 85007",
 }
 NC_COUNTIES = ("WAKE", "DURHAM", "ALAMANCE", "MECKLENBURG")
+CA_ADDRESS = ("losangeles", "200 N Spring St, Los Angeles, CA 90012")  # City Hall: an even State Senate district, up in 2026
+NV_ADDRESS = ("lasvegas", "495 S Main St, Las Vegas, NV 89101")  # City Hall
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -365,6 +372,123 @@ def record_state_lists(client: httpx.Client, key: str) -> None:
     save(path.name, kept + [m for m in response.json() if m["terms"][-1].get("state") in states])
 
 
+def record_ca(client: httpx.Client, key: str, pdf: Path | None) -> None:
+    """California: CA_ADDRESS's Census answer; the SOS's certified list (or ``pdf``, a copy of it)
+    cut down to the pages for it: the statewide races, every U.S. House page (a list without all
+    52 races is refused), the address's Senate and Assembly races, and the courts' pages for the
+    Supreme Court and the address's appellate district; the SOS's election dates page, cut down to
+    its table of deadlines; its seat's FEC filers, its legislators
+    (the columns officeholders.py reads), and its senators and representative added to officeholders_congress.json."""
+    name, address = CA_ADDRESS
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    match = response.json()["result"]["addressMatches"][0]
+    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    if pdf is None:
+        response = client.get(ca.URL.format(year=FEC_CYCLE))
+        response.raise_for_status()
+        raw = response.content
+    else:
+        raw = pdf.read_bytes()
+    county = (place.county or "").upper()
+    appeal = next(f.district for f in ca.CaList.parse(raw) if f.family == "COURT OF APPEAL" and county in f.counties)
+    word = next(w for w, n in _ORDINALS.items() if str(n) == appeal).capitalize()
+    reader = PdfReader(io.BytesIO(raw))
+    headings = {*ca.STATEWIDE, f"State Senate District {place.sd}", f"State Assembly Member District {place.hd}"}
+    kept = []
+    for index, page in enumerate(reader.pages):
+        lines = {" ".join(line.split()) for line in page.extract_text(extraction_mode="layout").splitlines()}
+        plain = page.extract_text()
+        if (lines & headings or any(line.startswith("United States Representative District") for line in lines)
+                or "Supreme Court" in plain and "For all" in plain or f"{word} District" in plain
+                or f"{word} Appellate District" in plain):
+            kept.append(index)
+    writer = PdfWriter()
+    for index in kept:
+        writer.add_page(reader.pages[index])
+    writer.compress_identical_objects()
+    with (FIXTURES / "state_ca.pdf").open("wb") as fh:
+        writer.write(fh)
+    print(f"state_ca.pdf: pages {kept}, {(FIXTURES / 'state_ca.pdf').stat().st_size:,} bytes")
+
+    response = client.get(ca_key_dates.URL)
+    response.raise_for_status()
+    table = re.search(r"<table>.*?</table>", response.text, re.S).group(0)
+    (FIXTURES / "key_dates_ca.html").write_text(f"<html><body><h1>Election Dates and Resources</h1>\n{table}\n</body></html>\n",
+                                                encoding="utf-8", newline="")
+    print(f"key_dates_ca.html: {len(ca_key_dates.parse(table)):,} elections")
+
+    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+        "state": "CA", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+        "office": "house", "district": f"{place.cd:02d}"})
+    response.raise_for_status()
+    save(f"fec_elections_ca_house_{place.cd:02d}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="ca"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    out = io.StringIO()
+    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_ca.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "CA"]
+    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "CA"
+                              and m["terms"][-1].get("district") in (None, place.cd)])
+
+
+def record_nv(client: httpx.Client, key: str, pdf: Path | None) -> None:
+    """Nevada: NV_ADDRESS's Census answer; the SOS's certified list, never downloaded (its site
+    blocks scripts): ``pdf``, or the copy saved in manual/state_nv, cut down to the first page (the
+    column headings and the statewide races) and the pages with the address's county or city; its
+    seat's FEC filers, its legislators, and its representative added to officeholders_congress.json."""
+    name, address = NV_ADDRESS
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    match = response.json()["result"]["addressMatches"][0]
+    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    saved = pdf or next(iter(sorted((ROOT / "manual" / "state_nv").glob("*.pdf"))), None)
+    if saved is None:
+        raise SystemExit("state_nv: save Nevada's certified list in manual/state_nv (see its README), or pass --pdf")
+    reader = PdfReader(io.BytesIO(saved.read_bytes()))
+    places = {f"{place.county} County".upper(), f"City Of {place.city}".upper()}
+    kept = [index for index, page in enumerate(reader.pages)
+            if index == 0 or places & {" ".join(cell.upper().split())
+                                       for line in page.extract_text(extraction_mode="layout").splitlines()
+                                       for cell in re.split(r"\s{3,}", line.strip())}]
+    writer = PdfWriter()
+    for index in kept:
+        writer.add_page(reader.pages[index])
+    writer.compress_identical_objects()
+    with (FIXTURES / "state_nv.pdf").open("wb") as fh:
+        writer.write(fh)
+    print(f"state_nv.pdf: pages {kept}, {(FIXTURES / 'state_nv.pdf').stat().st_size:,} bytes")
+
+    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+        "state": "NV", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+        "office": "house", "district": f"{place.cd:02d}"})
+    response.raise_for_status()
+    save(f"fec_elections_nv_house_{place.cd:02d}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="nv"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    out = io.StringIO()
+    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_nv.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "NV"]
+    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "NV"
+                              and m["terms"][-1].get("district") in (None, place.cd)])
+
+
 def record_polls(client: httpx.Client) -> None:
     """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
     polls plus a few from other states."""
@@ -536,10 +660,13 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
                                            "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
-    only = parser.parse_args(argv).only
+    parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
+                                                 "state_nv: Nevada's, instead of the one saved in manual/state_nv")
+    args = parser.parse_args(argv)
+    only = args.only
     config = load_config()
     with httpx.Client(timeout=90, headers={"User-Agent": config.user_agent}, follow_redirects=True) as client:
         if only in (None, "ballots"):
@@ -552,6 +679,10 @@ def main(argv: list[str] | None = None) -> int:
             record_nationwide(client, config.fec_api_key)
         if only in (None, "state_lists"):
             record_state_lists(client, config.fec_api_key)
+        if only in (None, "state_ca"):
+            record_ca(client, config.fec_api_key, args.pdf if only == "state_ca" else None)
+        if only in (None, "state_nv"):
+            record_nv(client, config.fec_api_key, args.pdf if only == "state_nv" else None)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

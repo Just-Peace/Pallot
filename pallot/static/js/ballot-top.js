@@ -5,7 +5,7 @@
 
 import { $, h } from "./dom.js";
 import { keyDatesSummary } from "./key-dates.js";
-import { coverageOf, houseText } from "./labels.js";
+import { coverageOf, districtName, houseText } from "./labels.js";
 
 const phone = matchMedia("(max-width: 640px)");
 const CARDS = ["key-dates", "districts-card"];
@@ -40,15 +40,17 @@ function fill(id, label, text) {
   );
 }
 
-// "US House 10 · Senate 14 · House 49 · Pct 300", as many as are known.
+// "US House 10 · Senate 14 · House 49 · Pct 300" ("Assembly 23" in California), as many as are known.
 function districtsText(ballot, request) {
   const d = ballot.districts;
   const precinct = d.election_precinct?.name ?? (ballot.location.source === "voter_card" ? request?.precinct : null);
-  const shown = new Set(coverageOf(ballot).districts);
+  const coverage = coverageOf(ballot);
+  const shown = new Set(coverage.districts);
   const house = houseText(d.cd, ballot.location.state);
+  const chamber = (kind) => shown.has(kind) && d[kind] != null
+    && `${districtName(kind, coverage.labels).replace(/^State /, "")} ${d[kind]}`;
   return [
-    house != null && `US House ${house}`, shown.has("sd") && d.sd != null && `Senate ${d.sd}`,
-    shown.has("hd") && d.hd != null && `House ${d.hd}`, precinct && `Pct ${precinct}`,
+    house != null && `US House ${house}`, chamber("sd"), chamber("hd"), precinct && `Pct ${precinct}`,
   ].filter(Boolean).join(" · ") || "not known yet";
 }
 

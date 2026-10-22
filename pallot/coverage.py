@@ -10,7 +10,7 @@ source that goes nationwide leaves ONLY_IN.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal
 
 from trackaipac_cache.models import STATES as STATE_NAMES
@@ -24,10 +24,11 @@ class Coverage:
     districts: tuple[str, ...]  # the district kinds found from the address and shown: "cd", "sd", …
     precincts: bool  # election, commissioner and JP precincts
     outlines: bool  # the districts' map
+    labels: dict[str, str] = field(default_factory=dict)  # a district kind's name in this state: {"hd": "State Assembly"}
 
     def info(self) -> CoverageInfo:
         return CoverageInfo(ballot=self.ballot, districts=list(self.districts), precincts=self.precincts,
-                            outlines=self.outlines)
+                            outlines=self.outlines, labels=dict(self.labels))
 
 
 STATES = frozenset({
@@ -46,6 +47,9 @@ COVERED = {
     "PA": LIST,
     "FL": LIST,
     "VA": Coverage("list", ("cd",), precincts=False, outlines=False),  # only its federal list in an even year
+    "CA": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
+    "AZ": LIST,  # its State Senate and State House districts are both the Legislative District
+    "NV": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
 }
 
 # Sources that only know some states.

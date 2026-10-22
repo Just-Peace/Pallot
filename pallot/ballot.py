@@ -38,6 +38,7 @@ from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
 from .sources import fec as fec_source
 from .sources import google as google_source
+from .sources import ca_key_dates as ca_key_dates_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.census import TEXAS_FIPS, Census, Place
@@ -46,6 +47,7 @@ from .sources.election_precincts import ElectionPrecincts, StillDownloading
 from .sources.endorsement_feeds import EndorsementSource
 from .sources.fec import Fec
 from .sources.google import Google
+from .sources.ca_key_dates import CaKeyDatesPage
 from .sources.key_dates import Deadlines, KeyDatesPage
 from .sources.nominatim import Nominatim
 from .sources.osm_tiles import Tiles
@@ -111,6 +113,7 @@ class Services:
     officeholders: Officeholders
     wikidata: Wikidata
     key_dates: KeyDatesPage
+    ca_key_dates: CaKeyDatesPage
     tigerweb: Tigerweb
     tiles: Tiles
     states: dict[str, StateList] = field(default_factory=dict)  # the official lists of states other than Texas, by postal code
@@ -553,8 +556,7 @@ class _Builder:
                                  "only the races for Congress.")
             return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         if not filings:
-            self.notes.append(f"The {lists.label} hasn't published its list of candidates for {when} yet, so this "
-                              "ballot has only the races for Congress.")
+            self.notes.append(f"{lists.missing(when)}, so this ballot has only the races for Congress.")
             return await self._from_fec(location, districts.cd, coverage.FEDERAL)
         requested = self.request.election_date
         if requested and requested != day:
@@ -567,10 +569,13 @@ class _Builder:
         if not (found.races or found.unconfirmed):
             raise BallotError(404, f"The {lists.label} lists no races for this {self.where}.")
         if found.unplaced:
-            self.notes.append(f"The {lists.label} also lists {found.unplaced} court "
-                              f"{'race' if found.unplaced == 1 else 'races'} without saying which counties "
-                              f"{'it covers' if found.unplaced == 1 else 'they cover'}, so "
-                              f"{'it isn' if found.unplaced == 1 else 'they aren'}'t shown: your county's sample "
+            one = len(found.unplaced) == 1
+            what = ("court" if any(f.group == "judicial" for f in found.unplaced)
+                    else " and ".join(sorted({f.family for f in found.unplaced})))
+            self.notes.append(f"The {lists.label} also lists {len(found.unplaced)} {what} "
+                              f"{'race' if one else 'races'} without saying which counties "
+                              f"{'it covers' if one else 'they cover'}, so "
+                              f"{'it isn' if one else 'they aren'}'t shown: your county's sample "
                               "ballot has yours.")
         shown = self.request.all_races
         count = len(found.unconfirmed)
@@ -590,7 +595,7 @@ class _Builder:
         self.ballot = Ballot(
             election_date=day.isoformat(),
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
-            key_dates=computed_key_dates(location.state, day),
+            key_dates=await self._state_key_dates(location.state, day),
             location=location,
             districts=districts,
             races=found.races,
@@ -606,7 +611,7 @@ class _Builder:
         """The races for Congress from the FEC's filers (fec.ballot_races), for a state without
         its own list: the Senate race when the FEC lists one this cycle, and the House race of
         district ``cd``. No state source or precincts; key dates only where they're worked out by
-        rule (states/key_dates.py)."""
+        rule (states/key_dates.py), or California's from its SOS (_state_key_dates)."""
         if not self.sources.enabled(fec_source.SOURCE):
             raise BallotError(400, "Outside Texas, Pallot's races come from the FEC, which is turned off. Turn on "
                                    "the FEC in Settings.")
@@ -644,7 +649,7 @@ class _Builder:
         self.ballot = Ballot(
             election_date=day.isoformat(),
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
-            key_dates=computed_key_dates(location.state, day),
+            key_dates=await self._state_key_dates(location.state, day),
             location=location,
             districts=Districts(cd=cd),
             races=races,
@@ -814,6 +819,22 @@ class _Builder:
             self.notes.append(f"Couldn't read {name or 'your'} County's records of its election precincts, so they "
                               "don't give your commissioner and JP precincts this time.")
             return None
+
+    async def _state_key_dates(self, state: str, day: dt.date) -> KeyDates | None:
+        """Another state's dates for the election on ``day``: California's from its SOS's page
+        while that source is on, a state's whose deadlines are counts of days worked out by rule."""
+        if state != "CA":
+            return computed_key_dates(state, day)
+        if not self.sources.enabled(ca_key_dates_source.SOURCE):
+            return None
+        try:
+            found = await self.svc.ca_key_dates.on(day)
+        except UpstreamError as exc:
+            log.warning("%s", exc)
+            self.notes.append("Couldn't load the key dates (registration, mail ballots) from the California Secretary "
+                              "of State; see sos.ca.gov.")
+            return None
+        return key_dates_of(found) if found else None
 
     async def _key_dates(self) -> list[Deadlines]:
         try:

@@ -13404,5 +13404,1444 @@
     "phone": "202-225-1492"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "S001150",
+   "lis": "S427",
+   "thomas": "01635",
+   "govtrack": 400361,
+   "opensecrets": "N00009585",
+   "votesmart": 9489,
+   "fec": [
+    "H0CA27085",
+    "S4CA00555"
+   ],
+   "cspan": 90167,
+   "wikipedia": "Adam Schiff",
+   "ballotpedia": "Adam Schiff",
+   "maplight": 453,
+   "icpsr": 20104,
+   "house_history": 22560,
+   "wikidata": "Q350843",
+   "google_entity_id": "kg:/m/024tls",
+   "pictorial": 12944
+  },
+  "name": {
+   "first": "Adam",
+   "middle": "B.",
+   "last": "Schiff",
+   "official_full": "Adam B. Schiff"
+  },
+  "bio": {
+   "birthday": "1960-06-22",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "CA",
+    "district": 27,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "CA",
+    "district": 29,
+    "party": "Democrat",
+    "url": "http://www.house.gov/schiff"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "CA",
+    "district": 29,
+    "party": "Democrat",
+    "url": "http://www.house.gov/schiff"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "CA",
+    "district": 29,
+    "party": "Democrat",
+    "url": "http://schiff.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "CA",
+    "district": 29,
+    "party": "Democrat",
+    "url": "http://schiff.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "CA",
+    "district": 29,
+    "party": "Democrat",
+    "url": "http://schiff.house.gov",
+    "address": "2411 Rayburn HOB; Washington DC 20515-0529",
+    "phone": "202-225-4176",
+    "fax": "202-225-5828",
+    "contact_form": "http://schiff.house.gov/HoR/CA29/Contact+Information/Contact+Form.htm",
+    "office": "2411 Rayburn House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "CA",
+    "party": "Democrat",
+    "district": 28,
+    "url": "http://schiff.house.gov",
+    "address": "2411 Rayburn HOB; Washington DC 20515-0528",
+    "phone": "202-225-4176",
+    "fax": "202-225-5828",
+    "contact_form": "https://schiff.house.gov/email-congressman-schiff1",
+    "office": "2411 Rayburn House Office Building",
+    "rss_url": "http://schiff.house.gov/common/rss/?rss=49"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "CA",
+    "party": "Democrat",
+    "district": 28,
+    "url": "http://schiff.house.gov",
+    "address": "2411 Rayburn HOB; Washington DC 20515-0528",
+    "phone": "202-225-4176",
+    "fax": "202-225-5828",
+    "contact_form": "https://schiff.house.gov/contact",
+    "office": "2411 Rayburn House Office Building",
+    "rss_url": "http://schiff.house.gov/common/rss/?rss=49"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "CA",
+    "district": 28,
+    "party": "Democrat",
+    "phone": "202-225-4176",
+    "url": "https://schiff.house.gov",
+    "rss_url": "http://schiff.house.gov/common/rss/?rss=49",
+    "address": "2372 Rayburn House Office Building; Washington DC 20515-0528",
+    "office": "2372 Rayburn House Office Building",
+    "fax": "202-225-5828"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "CA",
+    "district": 28,
+    "party": "Democrat",
+    "phone": "202-225-4176",
+    "address": "2269 Rayburn House Office Building Washington DC 20515-0528",
+    "office": "2269 Rayburn House Office Building",
+    "url": "https://schiff.house.gov",
+    "rss_url": "http://schiff.house.gov/common/rss/?rss=49"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "CA",
+    "district": 28,
+    "party": "Democrat",
+    "url": "https://schiff.house.gov",
+    "rss_url": "http://schiff.house.gov/common/rss/?rss=49",
+    "address": "2309 Rayburn House Office Building Washington DC 20515-0528",
+    "office": "2309 Rayburn House Office Building",
+    "phone": "202-225-4176"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2024-12-08",
+    "state": "CA",
+    "district": 30,
+    "party": "Democrat",
+    "url": "https://schiff.house.gov",
+    "rss_url": "http://schiff.house.gov/common/rss/?rss=49",
+    "address": "2309 Rayburn House Office Building Washington DC 20515-0530",
+    "office": "2309 Rayburn House Office Building",
+    "phone": "202-225-4176"
+   },
+   {
+    "type": "sen",
+    "start": "2024-12-09",
+    "end": "2025-01-03",
+    "how": "special-election",
+    "state": "CA",
+    "party": "Democrat",
+    "class": 1,
+    "state_rank": "junior",
+    "url": "https://www.schiff.senate.gov",
+    "contact_form": "https://www.schiff.senate.gov",
+    "address": "B40B Dirksen Senate Office Building Washington DC 20510",
+    "office": "B40b Dirksen Senate Office Building",
+    "phone": "202-224-3841"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "CA",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.schiff.senate.gov",
+    "address": "112 Hart Senate Office Building Washington DC 20510",
+    "office": "112 Hart Senate Office Building",
+    "phone": "202-224-3841",
+    "fax": "202-228-0026"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000585",
+   "fec": [
+    "H8CA34266"
+   ],
+   "govtrack": 412739,
+   "opensecrets": "N00040597",
+   "votesmart": 138524,
+   "wikipedia": "Jimmy Gomez",
+   "wikidata": "Q6200205",
+   "ballotpedia": "Jimmy Gomez",
+   "google_entity_id": "kg:/m/0n_73h1",
+   "cspan": 108883,
+   "house_history": 15032449022,
+   "maplight": 2250,
+   "icpsr": 21754,
+   "pictorial": 12948
+  },
+  "name": {
+   "first": "Jimmy",
+   "last": "Gomez",
+   "official_full": "Jimmy Gomez"
+  },
+  "bio": {
+   "birthday": "1974-11-25",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-07-11",
+    "end": "2019-01-03",
+    "state": "CA",
+    "district": 34,
+    "party": "Democrat",
+    "url": "https://gomez.house.gov",
+    "phone": "202-225-6235",
+    "address": "1226 Longworth House Office Building; Washington DC 20515-0534",
+    "office": "1226 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "CA",
+    "district": 34,
+    "party": "Democrat",
+    "phone": "202-225-6235",
+    "address": "1530 Longworth House Office Building Washington DC 20515-0534",
+    "office": "1530 Longworth House Office Building",
+    "url": "https://gomez.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "CA",
+    "district": 34,
+    "party": "Democrat",
+    "url": "https://gomez.house.gov",
+    "address": "1530 Longworth House Office Building Washington DC 20515-0534",
+    "office": "1530 Longworth House Office Building",
+    "phone": "202-225-6235"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "CA",
+    "district": 34,
+    "party": "Democrat",
+    "url": "https://gomez.house.gov",
+    "address": "506 Cannon House Office Building Washington DC 20515-0534",
+    "office": "506 Cannon House Office Building",
+    "phone": "202-225-6235"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "CA",
+    "district": 34,
+    "party": "Democrat",
+    "url": "https://gomez.house.gov",
+    "address": "506 Cannon House Office Building Washington DC 20515-0534",
+    "office": "506 Cannon House Office Building",
+    "phone": "202-225-6235"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "P000145",
+   "lis": "S413",
+   "fec": [
+    "S2CA00955"
+   ],
+   "opensecrets": "N00047888",
+   "govtrack": 456856,
+   "wikipedia": "Alex Padilla",
+   "wikidata": "Q4717593",
+   "ballotpedia": "Alex Padilla",
+   "votesmart": 59742,
+   "pictorial": 13341
+  },
+  "name": {
+   "first": "Alejandro",
+   "nickname": "Alex",
+   "last": "Padilla",
+   "official_full": "Alex Padilla"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1973-03-22"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2021-01-20",
+    "end": "2022-12-21",
+    "how": "appointment",
+    "state": "CA",
+    "class": 3,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "address": "112 Hart Senate Office Building Washington DC 20510",
+    "office": "112 Hart Senate Office Building",
+    "phone": "202-224-3553",
+    "url": "https://www.padilla.senate.gov",
+    "contact_form": "https://www.padilla.senate.gov/contact/"
+   },
+   {
+    "type": "sen",
+    "start": "2022-12-22",
+    "end": "2023-01-03",
+    "how": "special-election",
+    "state": "CA",
+    "class": 3,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "address": "112 Hart Senate Office Building Washington DC 20510",
+    "office": "112 Hart Senate Office Building",
+    "phone": "202-224-3553",
+    "url": "https://www.padilla.senate.gov",
+    "contact_form": "https://www.padilla.senate.gov/contact/"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "CA",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.padilla.senate.gov",
+    "contact_form": "https://www.padilla.senate.gov/contact/",
+    "address": "331 Hart Senate Office Building Washington DC 20510",
+    "office": "331 Hart Senate Office Building",
+    "phone": "202-224-3553"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000565",
+   "thomas": "01992",
+   "govtrack": 412397,
+   "opensecrets": "N00030771",
+   "votesmart": 123491,
+   "fec": [
+    "H0AZ01259"
+   ],
+   "cspan": 62470,
+   "wikipedia": "Paul Gosar",
+   "house_history": 14283,
+   "ballotpedia": "Paul Gosar",
+   "maplight": 1411,
+   "icpsr": 21103,
+   "wikidata": "Q2059832",
+   "google_entity_id": "kg:/m/0czdqz0",
+   "pictorial": 12914
+  },
+  "name": {
+   "first": "Paul",
+   "last": "Gosar",
+   "official_full": "Paul A. Gosar",
+   "middle": "A."
+  },
+  "bio": {
+   "birthday": "1958-11-22",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "AZ",
+    "district": 1,
+    "party": "Republican",
+    "url": "http://gosar.house.gov/",
+    "address": "504 Cannon HOB; Washington DC 20515-0301",
+    "phone": "202-225-2315",
+    "fax": "200-226-9739",
+    "office": "504 Cannon House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "AZ",
+    "party": "Republican",
+    "district": 4,
+    "url": "http://gosar.house.gov",
+    "address": "504 Cannon HOB; Washington DC 20515-0304",
+    "phone": "202-225-2315",
+    "fax": "202-226-9739",
+    "office": "504 Cannon House Office Building",
+    "rss_url": "http://gosar.house.gov/rss.xml",
+    "contact_form": "https://gosar.house.gov/contact-me/email-me"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "AZ",
+    "party": "Republican",
+    "district": 4,
+    "url": "http://gosar.house.gov",
+    "address": "504 Cannon HOB; Washington DC 20515-0304",
+    "phone": "202-225-2315",
+    "fax": "202-226-9739",
+    "office": "504 Cannon House Office Building",
+    "rss_url": "http://gosar.house.gov/rss.xml",
+    "contact_form": "https://gosar.house.gov/contact-me/email-me"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "AZ",
+    "district": 4,
+    "party": "Republican",
+    "phone": "202-225-2315",
+    "url": "https://gosar.house.gov",
+    "rss_url": "http://gosar.house.gov/rss.xml",
+    "address": "2057 Rayburn House Office Building; Washington DC 20515-0304",
+    "office": "2057 Rayburn House Office Building",
+    "fax": "202-226-9739"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "AZ",
+    "district": 4,
+    "party": "Republican",
+    "phone": "202-225-2315",
+    "address": "2057 Rayburn House Office Building Washington DC 20515-0304",
+    "office": "2057 Rayburn House Office Building",
+    "url": "https://gosar.house.gov",
+    "rss_url": "http://gosar.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "AZ",
+    "district": 4,
+    "party": "Republican",
+    "url": "https://gosar.house.gov",
+    "rss_url": "http://gosar.house.gov/rss.xml",
+    "address": "2057 Rayburn House Office Building Washington DC 20515-0304",
+    "office": "2057 Rayburn House Office Building",
+    "phone": "202-225-2315"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 9,
+    "party": "Republican",
+    "url": "https://gosar.house.gov",
+    "rss_url": "http://gosar.house.gov/rss.xml",
+    "address": "2057 Rayburn House Office Building Washington DC 20515-0309",
+    "office": "2057 Rayburn House Office Building",
+    "phone": "202-225-2315"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 9,
+    "party": "Republican",
+    "url": "https://gosar.house.gov",
+    "rss_url": "http://gosar.house.gov/rss.xml",
+    "address": "2057 Rayburn House Office Building Washington DC 20515-0309",
+    "office": "2057 Rayburn House Office Building",
+    "phone": "202-225-2315"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001183",
+   "thomas": "01994",
+   "govtrack": 412399,
+   "opensecrets": "N00006460",
+   "votesmart": 106387,
+   "fec": [
+    "H4AZ06045",
+    "H8AZ05097"
+   ],
+   "cspan": 5205,
+   "wikipedia": "David Schweikert",
+   "ballotpedia": "David Schweikert",
+   "maplight": 1413,
+   "icpsr": 21105,
+   "house_history": 22621,
+   "wikidata": "Q1176561",
+   "google_entity_id": "kg:/m/03wbpxj",
+   "pictorial": 12906
+  },
+  "name": {
+   "first": "David",
+   "last": "Schweikert",
+   "official_full": "David Schweikert"
+  },
+  "bio": {
+   "birthday": "1962-03-03",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "AZ",
+    "district": 5,
+    "party": "Republican",
+    "url": "http://schweikert.house.gov/",
+    "address": "1205 Longworth HOB; Washington DC 20515-0305",
+    "phone": "202-225-2190",
+    "office": "1205 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "AZ",
+    "party": "Republican",
+    "district": 6,
+    "url": "http://schweikert.house.gov",
+    "address": "1205 Longworth HOB; Washington DC 20515-0306",
+    "phone": "202-225-2190",
+    "office": "1205 Longworth House Office Building",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml",
+    "contact_form": "https://schweikert.house.gov/contact-form",
+    "fax": "202-225-0096"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "AZ",
+    "party": "Republican",
+    "district": 6,
+    "url": "http://schweikert.house.gov",
+    "address": "409 Cannon HOB; Washington DC 20515-0306",
+    "phone": "202-225-2190",
+    "office": "409 Cannon House Office Building",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml",
+    "contact_form": "https://schweikert.house.gov/contact-form",
+    "fax": "202-225-0096"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "AZ",
+    "district": 6,
+    "party": "Republican",
+    "phone": "202-225-2190",
+    "url": "https://schweikert.house.gov",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml",
+    "address": "2059 Rayburn House Office Building; Washington DC 20515-0306",
+    "office": "2059 Rayburn House Office Building",
+    "fax": "202-225-0096"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "AZ",
+    "district": 6,
+    "party": "Republican",
+    "phone": "202-225-2190",
+    "address": "1526 Longworth House Office Building Washington DC 20515-0306",
+    "office": "1526 Longworth House Office Building",
+    "url": "https://schweikert.house.gov",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "AZ",
+    "district": 6,
+    "party": "Republican",
+    "url": "https://schweikert.house.gov",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml",
+    "address": "304 Cannon House Office Building Washington DC 20515-0306",
+    "office": "304 Cannon House Office Building",
+    "phone": "202-225-2190"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://schweikert.house.gov",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml",
+    "address": "460 Cannon House Office Building Washington DC 20515-0301",
+    "office": "460 Cannon House Office Building",
+    "phone": "202-225-2190"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://schweikert.house.gov",
+    "rss_url": "http://schweikert.house.gov/rss/press-releases.xml",
+    "address": "166 Cannon House Office Building Washington DC 20515-0301",
+    "office": "166 Cannon House Office Building",
+    "phone": "202-225-2190"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000574",
+   "lis": "S432",
+   "fec": [
+    "H4AZ07043",
+    "S4AZ00139"
+   ],
+   "govtrack": 412612,
+   "opensecrets": "N00036097",
+   "thomas": "02226",
+   "maplight": 2068,
+   "wikidata": "Q16218474",
+   "wikipedia": "Ruben Gallego",
+   "google_entity_id": "kg:/m/0wy0mz5",
+   "cspan": 77233,
+   "icpsr": 21502,
+   "votesmart": 123732,
+   "ballotpedia": "Ruben Gallego",
+   "pictorial": 12908
+  },
+  "name": {
+   "first": "Ruben",
+   "last": "Gallego",
+   "official_full": "Ruben Gallego"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1979-11-20"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "AZ",
+    "district": 7,
+    "party": "Democrat",
+    "address": "1218 Longworth HOB; Washington DC 20515-0307",
+    "office": "1218 Longworth House Office Building",
+    "phone": "202-225-4065",
+    "url": "https://rubengallego.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "AZ",
+    "district": 7,
+    "party": "Democrat",
+    "phone": "202-225-4065",
+    "url": "https://rubengallego.house.gov",
+    "address": "1218 Longworth House Office Building; Washington DC 20515-0307",
+    "office": "1218 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "AZ",
+    "district": 7,
+    "party": "Democrat",
+    "phone": "202-225-4065",
+    "address": "1131 Longworth House Office Building Washington DC 20515-0307",
+    "office": "1131 Longworth House Office Building",
+    "url": "https://rubengallego.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "AZ",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://rubengallego.house.gov",
+    "address": "1131 Longworth House Office Building Washington DC 20515-0307",
+    "office": "1131 Longworth House Office Building",
+    "phone": "202-225-4065"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 3,
+    "party": "Democrat",
+    "url": "https://rubengallego.house.gov",
+    "address": "1114 Longworth House Office Building Washington DC 20515-0303",
+    "office": "1114 Longworth House Office Building",
+    "phone": "202-225-4065"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "AZ",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.gallego.senate.gov",
+    "address": "302 Hart Senate Office Building Washington DC 20510",
+    "office": "302 Hart Senate Office Building",
+    "phone": "202-224-4521"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001302",
+   "govtrack": 412683,
+   "wikipedia": "Andy Biggs",
+   "wikidata": "Q16199304",
+   "votesmart": 28088,
+   "fec": [
+    "H6AZ05083"
+   ],
+   "opensecrets": "N00039293",
+   "maplight": 2195,
+   "google_entity_id": "kg:/m/0_1m23v",
+   "cspan": 105145,
+   "icpsr": 21705,
+   "ballotpedia": "Andy Biggs",
+   "pictorial": 12910
+  },
+  "name": {
+   "first": "Andy",
+   "last": "Biggs",
+   "official_full": "Andy Biggs"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1958-11-07"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "AZ",
+    "district": 5,
+    "party": "Republican",
+    "phone": "202-225-2635",
+    "address": "1626 Longworth House Office Building; Washington DC 20515-0305",
+    "office": "1626 Longworth House Office Building",
+    "url": "https://biggs.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "AZ",
+    "district": 5,
+    "party": "Republican",
+    "phone": "202-225-2635",
+    "address": "1318 Longworth House Office Building Washington DC 20515-0305",
+    "office": "1318 Longworth House Office Building",
+    "url": "https://biggs.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "AZ",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://biggs.house.gov",
+    "address": "171 Cannon House Office Building Washington DC 20515-0305",
+    "office": "171 Cannon House Office Building",
+    "phone": "202-225-2635"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://biggs.house.gov",
+    "address": "252 Cannon House Office Building Washington DC 20515-0305",
+    "office": "252 Cannon House Office Building",
+    "phone": "202-225-2635"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 5,
+    "party": "Republican",
+    "url": "https://biggs.house.gov",
+    "address": "464 Cannon House Office Building Washington DC 20515-0305",
+    "office": "464 Cannon House Office Building",
+    "phone": "202-225-2635"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001211",
+   "fec": [
+    "H8AZ09040"
+   ],
+   "govtrack": 412753,
+   "wikipedia": "Greg Stanton",
+   "wikidata": "Q5606289",
+   "opensecrets": "N00041750",
+   "google_entity_id": "kg:/m/0hgrxqb",
+   "votesmart": 72030,
+   "icpsr": 21968,
+   "ballotpedia": "Greg Stanton",
+   "pictorial": 12909
+  },
+  "name": {
+   "first": "Greg",
+   "last": "Stanton",
+   "official_full": "Greg Stanton"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1970-03-08"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "AZ",
+    "district": 9,
+    "party": "Democrat",
+    "phone": "202-225-9888",
+    "address": "128 Cannon House Office Building Washington DC 20515-0309",
+    "office": "128 Cannon House Office Building",
+    "url": "https://stanton.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "AZ",
+    "district": 9,
+    "party": "Democrat",
+    "url": "https://stanton.house.gov",
+    "address": "207 Cannon House Office Building Washington DC 20515-0309",
+    "office": "207 Cannon House Office Building",
+    "phone": "202-225-9888"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://stanton.house.gov",
+    "address": "207 Cannon House Office Building Washington DC 20515-0304",
+    "office": "207 Cannon House Office Building",
+    "phone": "202-225-9888"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://stanton.house.gov",
+    "address": "207 Cannon House Office Building Washington DC 20515-0304",
+    "office": "207 Cannon House Office Building",
+    "phone": "202-225-9888"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "K000377",
+   "lis": "S406",
+   "fec": [
+    "S0AZ00350"
+   ],
+   "govtrack": 456794,
+   "opensecrets": "N00044223",
+   "wikipedia": "Mark Kelly",
+   "wikidata": "Q357510",
+   "ballotpedia": "Mark Kelly",
+   "votesmart": 190594,
+   "pictorial": 13430
+  },
+  "name": {
+   "first": "Mark",
+   "last": "Kelly",
+   "official_full": "Mark Kelly"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1964-02-21"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2020-12-02",
+    "end": "2023-01-03",
+    "how": "special-election",
+    "state": "AZ",
+    "class": 3,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.kelly.senate.gov",
+    "contact_form": "https://www.kelly.senate.gov",
+    "address": "516 Hart Senate Office Building Washington DC 20510",
+    "office": "516 Hart Senate Office Building",
+    "phone": "202-224-2235"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "AZ",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.kelly.senate.gov",
+    "contact_form": "https://www.kelly.senate.gov/contact/contact-form/",
+    "address": "516 Hart Senate Office Building Washington DC 20510",
+    "office": "516 Hart Senate Office Building",
+    "phone": "202-224-2235"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C001132",
+   "fec": [
+    "H2AZ01354"
+   ],
+   "govtrack": 456879,
+   "opensecrets": "N00048953",
+   "wikidata": "Q115155633",
+   "wikipedia": "Eli Crane",
+   "ballotpedia": "Eli Crane",
+   "votesmart": 205885,
+   "pictorial": 12907,
+   "google_entity_id": "kg:/g/11q8yhkkg8"
+  },
+  "name": {
+   "first": "Eli",
+   "last": "Crane",
+   "official_full": "Elijah Crane"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1980-01-03"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://crane.house.gov",
+    "address": "1229 Longworth House Office Building Washington DC 20515-0302",
+    "office": "1229 Longworth House Office Building",
+    "phone": "202-225-3361"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://crane.house.gov",
+    "address": "307 Cannon House Office Building Washington DC 20515-0302",
+    "office": "307 Cannon House Office Building",
+    "phone": "202-225-3361"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C001133",
+   "fec": [
+    "H2AZ02360"
+   ],
+   "govtrack": 456880,
+   "opensecrets": "N00049039",
+   "wikidata": "Q115220916",
+   "wikipedia": "Juan Ciscomani",
+   "votesmart": 106728,
+   "pictorial": 12911,
+   "ballotpedia": "Juan Ciscomani",
+   "google_entity_id": "kg:/g/11rwlm4mv5"
+  },
+  "name": {
+   "first": "Juan",
+   "middle": "Guadaloupe",
+   "last": "Ciscomani",
+   "official_full": "Juan Ciscomani"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1982-08-30"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "AZ",
+    "district": 6,
+    "party": "Republican",
+    "url": "https://ciscomani.house.gov",
+    "address": "1429 Longworth House Office Building Washington DC 20515-0306",
+    "office": "1429 Longworth House Office Building",
+    "phone": "202-225-2542"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 6,
+    "party": "Republican",
+    "url": "https://ciscomani.house.gov",
+    "address": "461 Cannon House Office Building Washington DC 20515-0306",
+    "office": "461 Cannon House Office Building",
+    "phone": "202-225-2542"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "A000381",
+   "fec": [
+    "H4AZ03109"
+   ],
+   "govtrack": 456972,
+   "opensecrets": "N00052497",
+   "wikipedia": "Yassamin Ansari",
+   "wikidata": "Q122226202",
+   "votesmart": 201437,
+   "ballotpedia": "Yassamin Ansari",
+   "google_entity_id": "kg:/g/11l246bt1h"
+  },
+  "name": {
+   "first": "Yassamin",
+   "last": "Ansari",
+   "official_full": "Yassamin Ansari"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1992-04-07"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 3,
+    "party": "Democrat",
+    "address": "1432 Longworth House Office Building Washington DC 20515-0303",
+    "office": "1432 Longworth House Office Building",
+    "phone": "202-225-4065",
+    "url": "https://ansari.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001098",
+   "fec": [
+    "H4AZ08108"
+   ],
+   "govtrack": 456973,
+   "opensecrets": "N00053795",
+   "wikipedia": "Abraham Hamadeh",
+   "wikidata": "Q124307977",
+   "votesmart": 205532,
+   "ballotpedia": "Abraham Hamadeh",
+   "google_entity_id": "kg:/g/11rj4xtrgt"
+  },
+  "name": {
+   "first": "Abraham",
+   "middle": "Jamal",
+   "last": "Hamadeh",
+   "official_full": "Abraham J. Hamadeh"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1991-05-15"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 8,
+    "party": "Republican",
+    "address": "1722 Longworth House Office Building Washington DC 20515-0308",
+    "office": "1722 Longworth House Office Building",
+    "phone": "202-225-4576",
+    "url": "https://hamadeh.house.gov"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000606",
+   "fec": [
+    "H6AZ07121"
+   ],
+   "govtrack": 457037,
+   "wikipedia": "Adelita Grijalva",
+   "wikidata": "Q134612342",
+   "ballotpedia": "Adelita Grijalva",
+   "house_history": 36507227802,
+   "votesmart": 196554
+  },
+  "name": {
+   "first": "Adelita",
+   "middle": "S.",
+   "last": "Grijalva",
+   "official_full": "Adelita S. Grijalva"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1970-10-30"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-11-12",
+    "end": "2027-01-03",
+    "state": "AZ",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://grijalva.house.gov",
+    "address": "1203 Longworth House Office Building Washington DC 20515-0307",
+    "office": "1203 Longworth House Office Building",
+    "phone": "202-225-2435"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C001113",
+   "fec": [
+    "S6NV00200"
+   ],
+   "govtrack": 412681,
+   "votesmart": 69579,
+   "wikipedia": "Catherine Cortez Masto",
+   "ballotpedia": "Catherine Cortez Masto",
+   "lis": "S385",
+   "wikidata": "Q5052604",
+   "google_entity_id": "kg:/m/02rtp9t",
+   "opensecrets": "N00037161",
+   "maplight": 2193,
+   "cspan": 105698,
+   "icpsr": 41700,
+   "pictorial": 13404
+  },
+  "name": {
+   "first": "Catherine",
+   "last": "Cortez Masto",
+   "official_full": "Catherine Cortez Masto"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1964-03-29"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Democratic Outreach Vice Chair",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Democratic Outreach Vice Chair",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "NV",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "address": "313 Hart Senate Office Building Washington DC 20510",
+    "office": "313 Hart Senate Office Building",
+    "phone": "202-224-3542",
+    "url": "https://www.cortezmasto.senate.gov",
+    "contact_form": "https://www.cortezmasto.senate.gov/contact"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "NV",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.cortezmasto.senate.gov",
+    "contact_form": "https://www.cortezmasto.senate.gov/contact",
+    "address": "309 Hart Senate Office Building Washington DC 20510",
+    "office": "309 Hart Senate Office Building",
+    "phone": "202-224-3542"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "R000608",
+   "lis": "S402",
+   "govtrack": 412715,
+   "wikipedia": "Jacky Rosen",
+   "wikidata": "Q27825033",
+   "votesmart": 169471,
+   "fec": [
+    "H6NV03139",
+    "S8NV00156"
+   ],
+   "opensecrets": "N00038734",
+   "maplight": 2227,
+   "google_entity_id": "kg:/g/11c5qshznp",
+   "cspan": 104738,
+   "icpsr": 21743,
+   "pictorial": 13386,
+   "ballotpedia": "Jacky Rosen"
+  },
+  "name": {
+   "first": "Jacky",
+   "last": "Rosen",
+   "official_full": "Jacky Rosen"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1957-08-02"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NV",
+    "district": 3,
+    "party": "Democrat",
+    "phone": "202-225-3252",
+    "address": "413 Cannon House Office Building; Washington DC 20515-2803",
+    "office": "413 Cannon House Office Building",
+    "url": "https://rosen.house.gov"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "NV",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.rosen.senate.gov",
+    "address": "713 Hart Senate Office Building Washington DC 20510",
+    "office": "713 Hart Senate Office Building",
+    "phone": "202-224-6244",
+    "contact_form": "https://www.rosen.senate.gov/contact_jacky"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "NV",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.rosen.senate.gov",
+    "contact_form": "https://www.rosen.senate.gov/contact_jacky",
+    "address": "713 Hart Senate Office Building Washington DC 20510",
+    "office": "713 Hart Senate Office Building",
+    "phone": "202-224-6244"
+   }
+  ]
+ },
+ {
+  "id": {
+   "govtrack": 412559,
+   "bioguide": "H001066",
+   "thomas": "02147",
+   "cspan": 67777,
+   "votesmart": 44064,
+   "wikipedia": "Steven Horsford",
+   "fec": [
+    "H2NV04011"
+   ],
+   "opensecrets": "N00033638",
+   "ballotpedia": "Steven Horsford",
+   "maplight": 1783,
+   "icpsr": 21339,
+   "wikidata": "Q3514907",
+   "google_entity_id": "kg:/m/03c01w9",
+   "pictorial": 13168
+  },
+  "name": {
+   "first": "Steven",
+   "last": "Horsford",
+   "middle": "A.",
+   "official_full": "Steven Horsford"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1973-04-29"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "NV",
+    "party": "Democrat",
+    "district": 4,
+    "office": "1330 Longworth House Office Building",
+    "address": "1330 Longworth HOB; Washington DC 20515-2804",
+    "phone": "202-225-9894",
+    "url": "http://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "contact_form": "https://horsford.house.gov/contact/email-me"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "phone": "202-225-9894",
+    "address": "1330 Longworth House Office Building Washington DC 20515-2804",
+    "office": "1330 Longworth House Office Building",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "address": "562 Cannon House Office Building Washington DC 20515-2804",
+    "office": "562 Cannon House Office Building",
+    "phone": "202-225-9894"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "address": "406 Cannon House Office Building Washington DC 20515-2804",
+    "office": "406 Cannon House Office Building",
+    "phone": "202-225-9894"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "address": "406 Cannon House Office Building Washington DC 20515-2804",
+    "office": "406 Cannon House Office Building",
+    "phone": "202-225-9894"
+   }
+  ]
  }
 ]

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import datetime as dt
 import os
 from pathlib import Path
 
@@ -17,11 +18,13 @@ from pallot.api import create_app
 from pallot.services import MIN_INTERVAL
 from pallot.config import DEMO_KEY, Config, Ttls, load_config
 from pallot.http_cache import HttpCache, track_calls
-from pallot.sources import fec, key_dates, officeholders, polls, wikidata
+from pallot.sources import ca_key_dates, fec, key_dates, officeholders, polls, wikidata
 from pallot.sources.county_precincts import COUNTIES, CountyPrecincts
 from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
 from pallot.sources.endorsement_feeds import make_feeds
 from pallot.sources.sboe import _inside
+from pallot import counties
+from pallot.states.ca import CaList
 
 from .conftest import census_points, switch
 
@@ -141,6 +144,14 @@ def test_key_dates_live():
     assert any(d.early_start and d.early_end and d.mail_apply_by for d in found)
 
 
+def test_california_key_dates_live():
+    """The California SOS's election dates page still answers scripts and parses into elections with deadlines."""
+    response = httpx.get(ca_key_dates.URL, headers={"User-Agent": Config.user_agent}, timeout=60, follow_redirects=True)
+    response.raise_for_status()
+    found = ca_key_dates.parse(response.text)
+    assert found and all(d.register_by and d.register_by < d.day for d in found)
+
+
 def test_district_outlines_live(tmp_path, logged_calls):
     """TIGERweb still names its layers as the geocoder does, and the Capitol's districts come back
     as rings around it; asked again, from the cache."""
@@ -192,6 +203,28 @@ async def test_election_precincts_live(tmp_path, precinct_map_dir):
     assert len(codes) > 9000 and all(1 <= len(code) <= 16 for code in codes)  # the outlines API's limit
     lat, lon = census_points("capitol")[0]
     assert sum(_inside(lon, lat, ring) for ring in outline) % 2
+
+
+@pytest.mark.anyio
+async def test_california_list_live(tmp_path):
+    """California's certified list (one 14 MB PDF) still reads whole: every U.S. House race, the
+    Legislature's and the courts' retention, kept as its candidates alone; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = CaList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.filings(day)
+            stats = track_calls()
+            again = await lists.filings(day)
+        finally:
+            cache.close()
+    assert found and again == found and stats.external_calls == 0
+    reaches = {reach: len({f.office_id for f in found if f.reach == reach}) for reach in ("cd", "sd", "hd", "counties")}
+    assert reaches["cd"] == 52 and reaches["sd"] >= 19 and reaches["hd"] == 80 and reaches["counties"] >= 30
+    assert {county for f in found for county in f.counties} == {c.name.upper() for c in counties.counties("CA")}
+    assert not list(tmp_path.glob(".*.part"))
 
 
 @pytest.mark.anyio
