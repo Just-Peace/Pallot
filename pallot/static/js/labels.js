@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's and Arizona's registration, mail voting and
-// poll hours, and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's, Arizona's and Nevada's registration, mail
+// voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -117,6 +117,23 @@ export const STATES = {
     mailEligibility: "Any registered voter can vote early by mail, no reason needed. Early ballots go out from "
       + "October 7; ask your county recorder for yours, or join the Active Early Voting List.",
     pollHours: "6 a.m. – 7 p.m.",
+  },
+  NV: {
+    site: { label: siteLabel(SITES.NV), url: SITES.NV },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://www.nvsos.gov/votersearch/",
+      hint: "Nevada Secretary of State's voter search: your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: SITES.NV,
+      hint: "Nevada Secretary of State's elections page; your county clerk publishes where and when you can vote",
+    },
+    localOffice: "Your county clerk",
+    mailApply: { label: "More on voting by mail", url: SITES.NV },
+    mailEligibility: "Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must arrive "
+      + "by 5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on Election Day.",
+    mailDeadline: "To still be mailed one, register or update your registration by ",
+    pollHours: "7 a.m. – 7 p.m.",
   },
 };
 

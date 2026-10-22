@@ -14601,5 +14601,247 @@
     "phone": "202-225-2435"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "C001113",
+   "fec": [
+    "S6NV00200"
+   ],
+   "govtrack": 412681,
+   "votesmart": 69579,
+   "wikipedia": "Catherine Cortez Masto",
+   "ballotpedia": "Catherine Cortez Masto",
+   "lis": "S385",
+   "wikidata": "Q5052604",
+   "google_entity_id": "kg:/m/02rtp9t",
+   "opensecrets": "N00037161",
+   "maplight": 2193,
+   "cspan": 105698,
+   "icpsr": 41700,
+   "pictorial": 13404
+  },
+  "name": {
+   "first": "Catherine",
+   "last": "Cortez Masto",
+   "official_full": "Catherine Cortez Masto"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1964-03-29"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Democratic Outreach Vice Chair",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Democratic Outreach Vice Chair",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "NV",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "address": "313 Hart Senate Office Building Washington DC 20510",
+    "office": "313 Hart Senate Office Building",
+    "phone": "202-224-3542",
+    "url": "https://www.cortezmasto.senate.gov",
+    "contact_form": "https://www.cortezmasto.senate.gov/contact"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "NV",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.cortezmasto.senate.gov",
+    "contact_form": "https://www.cortezmasto.senate.gov/contact",
+    "address": "309 Hart Senate Office Building Washington DC 20510",
+    "office": "309 Hart Senate Office Building",
+    "phone": "202-224-3542"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "R000608",
+   "lis": "S402",
+   "govtrack": 412715,
+   "wikipedia": "Jacky Rosen",
+   "wikidata": "Q27825033",
+   "votesmart": 169471,
+   "fec": [
+    "H6NV03139",
+    "S8NV00156"
+   ],
+   "opensecrets": "N00038734",
+   "maplight": 2227,
+   "google_entity_id": "kg:/g/11c5qshznp",
+   "cspan": 104738,
+   "icpsr": 21743,
+   "pictorial": 13386,
+   "ballotpedia": "Jacky Rosen"
+  },
+  "name": {
+   "first": "Jacky",
+   "last": "Rosen",
+   "official_full": "Jacky Rosen"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1957-08-02"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NV",
+    "district": 3,
+    "party": "Democrat",
+    "phone": "202-225-3252",
+    "address": "413 Cannon House Office Building; Washington DC 20515-2803",
+    "office": "413 Cannon House Office Building",
+    "url": "https://rosen.house.gov"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "NV",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.rosen.senate.gov",
+    "address": "713 Hart Senate Office Building Washington DC 20510",
+    "office": "713 Hart Senate Office Building",
+    "phone": "202-224-6244",
+    "contact_form": "https://www.rosen.senate.gov/contact_jacky"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "NV",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.rosen.senate.gov",
+    "contact_form": "https://www.rosen.senate.gov/contact_jacky",
+    "address": "713 Hart Senate Office Building Washington DC 20510",
+    "office": "713 Hart Senate Office Building",
+    "phone": "202-224-6244"
+   }
+  ]
+ },
+ {
+  "id": {
+   "govtrack": 412559,
+   "bioguide": "H001066",
+   "thomas": "02147",
+   "cspan": 67777,
+   "votesmart": 44064,
+   "wikipedia": "Steven Horsford",
+   "fec": [
+    "H2NV04011"
+   ],
+   "opensecrets": "N00033638",
+   "ballotpedia": "Steven Horsford",
+   "maplight": 1783,
+   "icpsr": 21339,
+   "wikidata": "Q3514907",
+   "google_entity_id": "kg:/m/03c01w9",
+   "pictorial": 13168
+  },
+  "name": {
+   "first": "Steven",
+   "last": "Horsford",
+   "middle": "A.",
+   "official_full": "Steven Horsford"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1973-04-29"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "NV",
+    "party": "Democrat",
+    "district": 4,
+    "office": "1330 Longworth House Office Building",
+    "address": "1330 Longworth HOB; Washington DC 20515-2804",
+    "phone": "202-225-9894",
+    "url": "http://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "contact_form": "https://horsford.house.gov/contact/email-me"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "phone": "202-225-9894",
+    "address": "1330 Longworth House Office Building Washington DC 20515-2804",
+    "office": "1330 Longworth House Office Building",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "address": "562 Cannon House Office Building Washington DC 20515-2804",
+    "office": "562 Cannon House Office Building",
+    "phone": "202-225-9894"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "address": "406 Cannon House Office Building Washington DC 20515-2804",
+    "office": "406 Cannon House Office Building",
+    "phone": "202-225-9894"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NV",
+    "district": 4,
+    "party": "Democrat",
+    "url": "https://horsford.house.gov",
+    "rss_url": "http://horsford.house.gov/rss.xml",
+    "address": "406 Cannon House Office Building Washington DC 20515-2804",
+    "office": "406 Cannon House Office Building",
+    "phone": "202-225-9894"
+   }
+  ]
  }
 ]
