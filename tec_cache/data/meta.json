@@ -1,14 +1,14 @@
 {
-  "content_hash": "7334595773a9cabafbfde9ae3c7c76a12235244dfac41a0a488263e3c317507a",
+  "content_hash": "ba9c61e3121b790deb5f1f886e6d3dbeb968998ec35810bccdcbfd2dd23399f4",
   "counts": {
-    "contribs": 803126,
+    "contribs": 803145,
     "dce": 9679,
     "filers": 10625,
-    "reports": 8295,
+    "reports": 8296,
     "snapshot_filers": 2153
   },
-  "last_checked": "2026-10-22T15:06:27+00:00",
-  "last_refresh": "2026-10-22T15:06:27+00:00",
+  "last_checked": "2026-10-23T14:58:43+00:00",
+  "last_refresh": "2026-10-23T14:58:43+00:00",
   "members": {
     "contribs_100.csv": {
       "crc": 4049114134,
@@ -26,7 +26,7 @@
       "last": "20261005"
     },
     "contribs_103.csv": {
-      "crc": 1814462188,
+      "crc": 415234107,
       "first": "20260805",
       "last": "20261006"
     },
@@ -41,12 +41,12 @@
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 922776880,
+      "crc": 787446037,
       "first": "20260929",
       "last": "20261006"
     },
     "contribs_107.csv": {
-      "crc": 1494835679,
+      "crc": 3582019491,
       "first": "20261001",
       "last": "20261013"
     },
@@ -66,9 +66,9 @@
       "last": "20261014"
     },
     "contribs_111.csv": {
-      "crc": 1641792833,
+      "crc": 2185889482,
       "first": "20261005",
-      "last": "20261021"
+      "last": "20261023"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -181,7 +181,7 @@
       "last": "20260703"
     },
     "contribs_96.csv": {
-      "crc": 3759055499,
+      "crc": 3649292522,
       "first": "20260113",
       "last": "20260714"
     },
@@ -202,11 +202,11 @@
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-10-22",
+  "snapshot": "2026-10-23",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"91c4ec302f95dc6f4c7c4207fb2bd332-127\"",
-    "last_modified": "Thu, 22 Oct 2026 10:35:03 GMT",
-    "size": 1063068782
+    "etag": "\"e70470c73167aea8c35b5117d37aff70-127\"",
+    "last_modified": "Fri, 23 Oct 2026 10:35:03 GMT",
+    "size": 1063136374
   }
 }

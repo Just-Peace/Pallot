@@ -2658,6 +2658,35 @@
     },
     {
       "articles": [],
+      "candidate_id": "5093574c-a4c7-4d6e-88df-fac869d67a07",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Chino Hills",
+      "level": "local",
+      "name": "Shanita Ayala",
+      "notes": null,
+      "office_title": "City Council Member, District 2, Chino Hills",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "shanita-ayala",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/shanita-ayala"
+    },
+    {
+      "articles": [],
       "candidate_id": "12caa0ab-4f92-443b-8851-c1c5105d48cf",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -3177,7 +3206,7 @@
       "jurisdiction": "San Francisco",
       "level": "local",
       "name": "Dion-Jay Brookter",
-      "notes": null,
+      "notes": "This candidate has taken a strong stance against Flock contracts.",
       "office_title": "Board of Supervisors, San Francisco",
       "party": null,
       "rating": "vote",
@@ -5206,6 +5235,28 @@
       "slug": "mary-gwin",
       "state": "CA",
       "url": "https://voteforpeace.info/california/mary-gwin"
+    },
+    {
+      "articles": [],
+      "candidate_id": "4411f02b-ca33-4f0c-896c-410be6795bc1",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": "Santa Clarita",
+      "level": "local",
+      "name": "Brett Haddock",
+      "notes": "This candidate is running on an anti-Flock platform",
+      "office_title": "City Council Member, Santa Clarita",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "brett-haddock",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/brett-haddock"
     },
     {
       "articles": [],
@@ -7352,7 +7403,7 @@
       "jurisdiction": "San Francisco",
       "level": "local",
       "name": "Gary McCoy",
-      "notes": null,
+      "notes": "Plans to propose ending Flock contract and redirecting the money to mental health crisis teams, lighting and speed cameras",
       "office_title": "Board of Supervisors, San Francisco",
       "party": null,
       "rating": "vote",
@@ -8177,7 +8228,7 @@
       "jurisdiction": "San Francisco",
       "level": "local",
       "name": "Michael Nguyen",
-      "notes": null,
+      "notes": "Opposes Flock cameras and the impact on civil liberties.",
       "office_title": "Board of Supervisors, San Francisco",
       "party": null,
       "rating": "vote",
@@ -30648,35 +30699,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "90f81485-09f9-4e1f-8c1e-24b334f7cdf2",
-      "district": "15",
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": "https://cairaction.org/",
-          "notes": "Preferred",
-          "organization": "CAIR Action (Preferred, not Endorsed)",
-          "type": "preferred"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": "Ohio",
-      "level": "state_legislature",
-      "name": "Latyna M. Humphrey",
-      "notes": null,
-      "office_title": "State Senator",
-      "party": null,
-      "rating": "vote",
-      "section": "Ohio",
-      "slug": "latyna-m-humphrey",
-      "state": "OH",
-      "url": "https://voteforpeace.info/ohio/latyna-m-humphrey"
-    },
-    {
-      "articles": [],
       "candidate_id": "206fd430-5c2a-4827-9d4b-7cb94695779b",
       "district": "7",
       "election_date": "Nov 3, 2026",
@@ -41130,6 +41152,12 @@
           "notes": null,
           "organization": "Washington for Peace and Justice",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -43552,5 +43580,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-22"
+  "snapshot": "2026-10-23"
 }

@@ -1,10 +1,10 @@
 {
-  "last_checked": "2026-10-22T15:06:18+00:00",
-  "last_refresh": "2026-10-22T15:06:18+00:00",
+  "last_checked": "2026-10-23T14:58:34+00:00",
+  "last_refresh": "2026-10-23T14:58:34+00:00",
   "schema_version": 2,
   "source_hashes": {
-    "candidates": "3f7819085caf7415dada15d76aa3c90b4a4006264ad699b0c7146248aa01098a",
-    "congress": "3989cc2aa8f0fe52fa2b9ac2d52001faf0474f7ca6df54955c74fcd8c770d37d",
+    "candidates": "98d19d356aadbaf87a663cc3dd718e83a91b6d73f1275e0ab3d16553c116fc40",
+    "congress": "e6a831c85ab98dde69f2b2aed9b4494b4db0ce6c51a70f937104fced710c7971",
     "endorsements": "0465266d29c159721d3c0b8a9203b927588f258b5e24eb37dea1247fb66ca438"
   }
 }
