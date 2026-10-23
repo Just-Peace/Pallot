@@ -50,6 +50,9 @@ COVERED = {
     "CA": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "AZ": LIST,  # its State Senate and State House districts are both the Legislative District
     "NV": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
+    "GA": LIST,
+    "WI": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
+    "OH": Coverage("list", ("cd",), precincts=False, outlines=False),  # its statewide races; the House race from the FEC
 }
 
 # Sources that only know some states.

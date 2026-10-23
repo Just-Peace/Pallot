@@ -172,6 +172,7 @@ class StateList:
     page: ClassVar[str]  # where voters can see the list themselves
     description: ClassVar[str]  # its Settings line
     max_bytes: ClassVar[int] = 0  # a list that's a file this big at most (a PDF): kept as its filings alone
+    scope_note: ClassVar[str] = ""  # the ballot's note on what a list covering only part of the ballot leaves out
 
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
@@ -236,6 +237,7 @@ class ManualList(StateList):
     folder: ClassVar[str]  # where the saved file and the steps to refresh it are: "manual/state_az"
     binary: ClassVar[bool] = False  # parse() takes the saved file's bytes (a PDF), not its text
     challenge: ClassVar[tuple[str, ...]] = ()  # what the site's bot check page says, to refuse it by name
+    fetched: ClassVar[bool] = False  # part of its ballot is fetched as it's used (Georgia's nominees): bundled apart, daily
 
     @classmethod
     def spec(cls, day: dt.date) -> RequestSpec:  # type: ignore[override]

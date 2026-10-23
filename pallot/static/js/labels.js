@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's and Nevada's registration, mail
-// voting and poll hours, and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's and
+// Ohio's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -134,6 +134,56 @@ export const STATES = {
       + "by 5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on Election Day.",
     mailDeadline: "To still be mailed one, register or update your registration by ",
     pollHours: "7 a.m. – 7 p.m.",
+  },
+  GA: {
+    site: { label: siteLabel(SITES.GA), url: SITES.GA },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://mvp.sos.ga.gov/s/",
+      hint: "My Voter Page (Georgia Secretary of State): your registration, your polling place and your sample ballot",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://mvp.sos.ga.gov/s/",
+      hint: "My Voter Page: your polling place and your county's early voting places",
+    },
+    localOffice: "Your county's board of registrars",
+    mailApply: { label: "How to apply", url: "https://securemyabsenteeballot.sos.ga.gov/s/" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county by 7 p.m. on Election Day.",
+    pollHours: "7 a.m. – 7 p.m.",
+  },
+  OH: {
+    site: { label: siteLabel(SITES.OH), url: SITES.OH },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://voterlookup.ohiosos.gov/voterlookup.aspx",
+      hint: "Ohio Secretary of State's voter lookup: your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://www.ohiosos.gov/elections/county-boards-of-elections-directory",
+      hint: "Every county board of elections (Ohio Secretary of State); yours publishes where and when you can vote early",
+    },
+    localOffice: "Your county board of elections",
+    mailApply: { label: "How to apply", url: "https://www.ohiosos.gov/elections/request-an-absentee-ballot" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
+    mailDeadline: "Your application must reach your county board by the close of business on ",
+    pollHours: "6:30 a.m. – 7:30 p.m.",
+  },
+  WI: {
+    site: { label: siteLabel(SITES.WI), url: SITES.WI },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://myvote.wi.gov/",
+      hint: "MyVote Wisconsin (Wisconsin Elections Commission): your registration, your polling place and your ballot",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://myvote.wi.gov/",
+      hint: "MyVote Wisconsin: your polling place, and your municipal clerk's office for voting early",
+    },
+    localOffice: "Your municipal clerk",
+    mailApply: { label: "How to apply", url: "https://myvote.wi.gov/" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "polling place or clerk by 8 p.m. on Election Day.",
+    mailDeadline: "Mailed or online requests must reach your clerk by 5 p.m. on ",
+    pollHours: "7 a.m. – 8 p.m.",
   },
 };
 

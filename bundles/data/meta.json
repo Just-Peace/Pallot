@@ -107,6 +107,22 @@
    "last_refresh": "2026-10-22T14:29:49+00:00",
    "races": 169
   },
+  "state_ga": {
+   "answers": 1,
+   "answers_hash": "44fe54d69d797ef09bbd6d7f2256b4006a77a7e24b597d495ee812c22ecd1457",
+   "candidates": 292,
+   "last_checked": "2026-10-22T12:48:57+00:00",
+   "last_refresh": "2026-10-22T12:48:57+00:00",
+   "races": 184
+  },
+  "state_ga_results": {
+   "answers": 4,
+   "answers_hash": "45efb744093d9a5f6dcca22b532d0d7ae75f08fd8035f8d54316a5f5d77f2aa4",
+   "candidates": 451,
+   "last_checked": "2026-10-22T12:40:15+00:00",
+   "last_refresh": "2026-10-22T12:40:15+00:00",
+   "races": 271
+  },
   "state_mi": {
    "answers": 1,
    "answers_hash": "d9910775be0df09f46dcea3bf135556f81c3edc434f55bc334683e250370bb4c",
@@ -131,6 +147,14 @@
    "last_refresh": "2026-10-22T12:20:25+00:00",
    "races": 364
   },
+  "state_oh": {
+   "answers": 1,
+   "answers_hash": "59c998e6bb21bb73f43876e9c3a375966bc8c0f390efe6b98ac2dcacc56292e9",
+   "candidates": 20,
+   "last_checked": "2026-10-22T22:48:11+00:00",
+   "last_refresh": "2026-10-22T22:48:11+00:00",
+   "races": 8
+  },
   "state_pa": {
    "answers": 1,
    "answers_hash": "57cbc4cb30922ab17951d1ef4f8f37d1affd9669aabdff4558547d7267b2f616",
@@ -146,6 +170,14 @@
    "last_checked": "2026-10-22T14:29:49+00:00",
    "last_refresh": "2026-10-17T15:56:17+00:00",
    "races": 12
+  },
+  "state_wi": {
+   "answers": 1,
+   "answers_hash": "bfc0c7f17833d70418d7e5ac2d6ba011b842d22080e3a5c9c9ff1c1891d1bf46",
+   "candidates": 445,
+   "last_checked": "2026-10-22T22:56:38+00:00",
+   "last_refresh": "2026-10-22T22:56:38+00:00",
+   "races": 293
   },
   "tigerweb": {
    "answers": 220,

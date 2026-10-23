@@ -1,0 +1,92 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2OH15228",
+   "candidate_name": "CAREY, MIKE",
+   "candidate_pcc_id": "C00779603",
+   "candidate_pcc_name": "CAREY FOR CONGRESS",
+   "cash_on_hand_end_period": 627667.95,
+   "committee_ids": [
+    "C00779603"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 3536586.96,
+   "total_receipts": 4002960.6
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OH15112",
+   "candidate_name": "LEONARD, DON RALPH",
+   "candidate_pcc_id": "C00913491",
+   "candidate_pcc_name": "DON LEONARD FOR OHIO",
+   "cash_on_hand_end_period": 196061.19,
+   "committee_ids": [
+    "C00913491"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 949716.11,
+   "total_receipts": 1145777.3
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4OH15083",
+   "candidate_name": "MILLER, ADAM CLAY",
+   "candidate_pcc_id": "C00856823",
+   "candidate_pcc_name": "MILLER FOR AMERICA",
+   "cash_on_hand_end_period": 92.67,
+   "committee_ids": [
+    "C00856823"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 910535.89,
+   "total_receipts": 907014.93
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OH01088",
+   "candidate_name": "RONAN, SAMUEL",
+   "candidate_pcc_id": "C00938001",
+   "candidate_pcc_name": "SAMUEL RONAN FOR CONGRESS",
+   "cash_on_hand_end_period": -9856.66,
+   "committee_ids": [
+    "C00938001"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1000.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OH15138",
+   "candidate_name": "BARRINGTON, BRENNAN",
+   "candidate_pcc_id": "C00959312",
+   "candidate_pcc_name": "BARRINGTON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00959312"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

@@ -19,6 +19,32 @@ ballot, and so is anyone who registers or updates their registration by 14 days 
 (NRS 293.269911); early voting runs from the third Saturday before through the Friday before
 (NRS 293.3568); a mailed ballot must be postmarked by Election Day and reach the clerk by 5 p.m.
 on the fourth day after (NRS 293.269921); polls are open 7 a.m. to 7 p.m. (NRS 293.273).
+
+Georgia's, for its general election (O.C.G.A. 21-2-9: the first Tuesday after the first Monday of
+November in an even year): registration closes the fifth Monday before (21-2-224); any voter can
+vote absentee, applying by the eleventh day before (21-2-381(a)(1)(A)), and the ballot must reach
+the county's registrars by 7 p.m. on Election Day (21-2-386); advance voting runs weekdays from the
+fourth Monday before through the Friday before, and on the second and third Saturdays before
+(21-2-385(d)(1)), but not on an observed state holiday, so it starts the next day when that
+Monday is Columbus Day; polls are open 7 a.m. to 7 p.m. (21-2-403).
+
+Ohio's, for its general election (ORC 3501.01(A): the first Tuesday after the first Monday of
+November), checked on codes.ohio.gov on 2026-10-22: registration closes the thirtieth day before
+(3503.19), always a Sunday, so the next day that's neither a Sunday nor a legal holiday (1.14,
+whose holidays include Columbus Day); early voting in person runs from the day after through 5 p.m.
+on the Sunday before (3509.051); any voter can vote absentee, applying by the close of business on
+the seventh day before (3509.03(D)), and since SB 293 (effective March 20, 2026) the ballot must
+reach the county board by the close of the polls on Election Day (3509.05(D)), except a military or
+overseas voter's, counted through the fourth day after (3511.11); polls are open 6:30 a.m. to 7:30
+p.m. (3501.32). There's no registration on Election Day.
+
+Wisconsin's, for its general election (Wis. Stat. 5.02(5): the Tuesday after the first Monday of
+November in an even year): registration by mail or online closes the third Wednesday before
+(6.28(1)), then it's in person at the municipal clerk's office until 5 p.m. the Friday before
+(6.29(2)(a)), or at the polling place on Election Day (6.55(2)); any voter can vote absentee,
+asking by mail or online by 5 p.m. the fifth day before, or in person at the clerk's office from
+the fourteenth day before through the Sunday before (6.86(1)(b)), and the ballot must reach the
+polling place by 8 p.m. on Election Day (6.87(6)); polls are open 7 a.m. to 8 p.m. (6.78(1m)).
 """
 
 from __future__ import annotations
@@ -140,7 +166,65 @@ NEVADA = Guide(
     credit="Dates worked out from Nevada's election law; more from the Nevada Secretary of State",
 )
 
-GUIDES = {"TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA}
+GEORGIA = Guide(
+    name="Georgia",
+    source="Georgia Secretary of State",
+    url="https://sos.ga.gov/elections",
+    computed=True,
+    registration_url="https://mvp.sos.ga.gov/s/",
+    mail_url="https://securemyabsenteeballot.sos.ga.gov/s/",
+    register="The last day to register to vote in {election} in Georgia.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee in {election}, your application must reach your county's board of registrars today. "
+         "Your ballot must reach them by 7 p.m. on Election Day; one that arrives later isn't counted. Any voter can "
+         "vote absentee; how to apply:",
+    early_where="Your county's board of registrars lists the places and hours. Early voting is on weekdays, and on "
+                "the second and third Saturdays before Election Day; some counties also open on Sundays.",
+    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates worked out from Georgia's election law; more from the Georgia Secretary of State",
+)
+
+OHIO = Guide(
+    name="Ohio",
+    source="Ohio Secretary of State",
+    url="https://www.ohiosos.gov/elections/",
+    computed=True,
+    registration_url="https://olvr.ohiosos.gov/",
+    mail_url="https://www.ohiosos.gov/elections/request-an-absentee-ballot",
+    register="The last day to register to vote in {election} in Ohio. There's no registration on Election Day.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee in {election}, your application must reach your county board of elections by the "
+         "close of business today. Your ballot must reach the board by 7:30 p.m. on Election Day; one that arrives "
+         "later isn't counted, even if it was mailed in time. Any voter can vote absentee; how to apply:",
+    early_where="Your county board of elections lists the place and hours. Early voting ends at 5 p.m. on the Sunday "
+                "before Election Day.",
+    polls="Polls are open 6:30 a.m. to 7:30 p.m.; if you're in line at 7:30, you can vote.",
+    credit="Dates worked out from Ohio's election law; more from the Ohio Secretary of State",
+)
+
+WISCONSIN = Guide(
+    name="Wisconsin",
+    source="Wisconsin Elections Commission",
+    url="https://elections.wi.gov/",
+    computed=True,
+    registration_url="https://myvote.wi.gov/",
+    mail_url="https://myvote.wi.gov/",
+    register="The last day to register online or by mail for {election} in Wisconsin. After it, you can still "
+             "register in person at your municipal clerk's office until 5 p.m. on the Friday before, or at your "
+             "polling place on Election Day, with proof of residence.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, a request made online or by mail must reach your municipal clerk by "
+         "5 p.m. today. Your ballot must reach your polling place or clerk by 8 p.m. on Election Day; one that "
+         "arrives later isn't counted. Any voter can vote absentee; how to ask:",
+    early_where="Your municipal clerk sets the places and hours, and may start later than the first day allowed.",
+    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
+)
+
+GUIDES = {
+    "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
+    "OH": OHIO,
+}
 
 
 def first_tuesday_after_first_monday(year: int, month: int) -> dt.date:
@@ -191,7 +275,69 @@ def nevada(day: dt.date) -> Deadlines | None:
     )
 
 
-RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {"MI": michigan, "AZ": arizona, "NV": nevada}
+def columbus_day(year: int) -> dt.date:
+    """The second Monday of October, a state holiday in Georgia and a legal holiday in Ohio."""
+    first = dt.date(year, 10, 1)
+    return first + dt.timedelta(days=(0 - first.weekday()) % 7 + 7)
+
+
+def georgia(day: dt.date) -> Deadlines | None:
+    """The dates of Georgia's general election on ``day``, or None when there's none: register by
+    the fifth Monday before, apply to vote absentee by the eleventh day before, early voting the
+    fourth Monday before (the Tuesday when that's Columbus Day) through the Friday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    early = day - dt.timedelta(days=22)
+    if early == columbus_day(day.year):
+        early += dt.timedelta(days=1)
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=29),
+        mail_apply_by=day - dt.timedelta(days=11),
+        early_start=early,
+        early_end=day - dt.timedelta(days=4),
+        state="GA",
+    )
+
+
+def ohio(day: dt.date) -> Deadlines | None:
+    """The dates of Ohio's general election on ``day``, or None when there's none: register by
+    the thirtieth day before, moved past a Sunday or Columbus Day, early voting from the day after
+    through the Sunday before, apply to vote absentee by the seventh day before."""
+    if day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    register = day - dt.timedelta(days=30)
+    while register.weekday() == 6 or register == columbus_day(day.year):
+        register += dt.timedelta(days=1)
+    return Deadlines(
+        day, "General Election",
+        register_by=register,
+        mail_apply_by=day - dt.timedelta(days=7),
+        early_start=register + dt.timedelta(days=1),
+        early_end=day - dt.timedelta(days=2),
+        state="OH",
+    )
+
+
+def wisconsin(day: dt.date) -> Deadlines | None:
+    """The dates of Wisconsin's general election on ``day``, or None when there's none: register
+    online or by mail by the third Wednesday before, ask for an absentee ballot by the fifth day
+    before, vote absentee in person from the fourteenth day before through the Sunday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=20),
+        mail_apply_by=day - dt.timedelta(days=5),
+        early_start=day - dt.timedelta(days=14),
+        early_end=day - dt.timedelta(days=2),
+        state="WI",
+    )
+
+
+RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
+    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio,
+}
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:

@@ -32,6 +32,9 @@ state_ca = true             # California Secretary of State
 key_dates_ca = true         # California Secretary of State: the election's key dates
 state_az = true             # Arizona Secretary of State (its list is imported by hand)
 state_nv = true             # Nevada Secretary of State (its list is imported by hand)
+state_ga = true             # Georgia Secretary of State (its primary results, and its qualified list imported by hand)
+state_wi = true             # Wisconsin Elections Commission (its list is imported by hand)
+state_oh = true             # Ohio Secretary of State (its statewide races, transcribed by hand from its sample ballot)
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

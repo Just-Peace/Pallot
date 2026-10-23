@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -31,7 +31,14 @@ filers, and their legislators. California's (state_ca) takes a Los Angeles addre
 certified list, a 14 MB PDF (--pdf a copy you downloaded), cut down to a small PDF of the pages
 that address needs, and the table of its SOS's election dates page. Nevada's (state_nv) takes a
 Las Vegas address and the certified list saved by hand in manual/state_nv (--pdf another copy),
-never downloaded, cut down the same way. The TrackAIPAC, Vote for Peace and Texas Ethics
+never downloaded, cut down the same way. Georgia's (state_ga) takes the qualifying list saved by
+hand in manual/state_ga (--json another copy), never downloaded, cut down to a few counties and
+cities with its contact details made up, and the results site's list of elections and the
+year's primary, recount and runoff, cut down to a few races. Wisconsin's (state_wi) takes a
+Madison address and the contests and candidates saved by hand in manual/state_wi (--csv another
+copy), never downloaded, cut down to the state's rows and a few counties'. Ohio's (state_oh) takes
+a Columbus address and the statewide list transcribed by hand into manual/state_oh (--json another
+copy), never downloaded, with the address's House seat's FEC filers. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -65,7 +72,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ca, fl, mi, nc, ordinal, pa, va  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ca, fl, ga, mi, nc, ordinal, pa, va  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -100,6 +107,10 @@ STATE_ADDRESSES = {
 NC_COUNTIES = ("WAKE", "DURHAM", "ALAMANCE", "MECKLENBURG")
 CA_ADDRESS = ("losangeles", "200 N Spring St, Los Angeles, CA 90012")  # City Hall: an even State Senate district, up in 2026
 NV_ADDRESS = ("lasvegas", "495 S Main St, Las Vegas, NV 89101")  # City Hall
+WI_ADDRESS = ("madison", "2 E Main St, Madison, WI 53703")  # the State Capitol
+WI_JURISDICTIONS = ("DANE COUNTY", "WOOD COUNTY", "PRICE COUNTY", "IRON COUNTY", "JEFFERSON COUNTY", "WALWORTH COUNTY",
+                    "MULTIPLE COUNTIES")
+OH_ADDRESS = ("columbus", "90 W Broad St, Columbus, OH 43215")  # City Hall
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -489,6 +500,178 @@ def record_nv(client: httpx.Client, key: str, pdf: Path | None) -> None:
                               and m["terms"][-1].get("district") in (None, place.cd)])
 
 
+def record_oh(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """Ohio: OH_ADDRESS's Census answer; the statewide list transcribed by hand into
+    manual/state_oh (``saved`` another copy), never downloaded (its site blocks scripts), copied as
+    it is (it holds only offices, names and parties); its House seat's FEC filers, its legislators,
+    and its members of Congress added to officeholders_congress.json."""
+    name, address = OH_ADDRESS
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    match = response.json()["result"]["addressMatches"][0]
+    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    saved = saved or ROOT / "manual" / "state_oh" / "ohio.json"
+    if not saved.exists():
+        raise SystemExit("state_oh: save Ohio's list as manual/state_oh/ohio.json (see its README), or pass --json")
+    save("state_oh.json", json.loads(saved.read_text(encoding="utf-8")))
+    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+        "state": "OH", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+        "office": "house", "district": f"{place.cd:02d}"})
+    response.raise_for_status()
+    save(f"fec_elections_oh_house_{place.cd:02d}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="oh"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    out = io.StringIO()
+    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_oh.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "OH"]
+    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "OH"
+                              and m["terms"][-1].get("district") in (None, place.cd)])
+
+
+GA_PLACES = {
+    ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
+    ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
+    ("Countywide", "POLK"), ("County Level", "TELFAIR"), ("County Level", "SPALDING"),
+    ("Municipalwide", "DANVILLE_TWIGGS"), ("Municipalwide", "GORDON"), ("Municipalwide", "FLOWERY_BRANCH"),
+    ("Municipalwide", "PINE_LAKE"), ("Municipalwide", "DORAVILLE"), ("Municipal Level", "BROOKHAVEN"),
+    ("Municipal Level", "HAZLEHURST"),
+}  # the qualifying list's offices kept: Atlanta's county, and one of each kind of race and declaration
+GA_KEPT = {"Name_on_Ballot__c", "Candidate_Party__c", "Declaration__c", "Incumbent__c", "County__c", "Date_Qualified__c",
+           "Elected_Office__r", "vr_Political_Bodies__c"}
+GA_RACES = {"US SENATE", "GOVERNOR", "LIEUTENANT GOVERNOR", "STATE SCHOOL SUPERINTENDENT", "COMMISSIONER OF INSURANCE",
+            "PUBLIC SERVICE COMMISSION 3", "PUBLIC SERVICE COMMISSION 5", "US HOUSE 5", "US HOUSE 11", "STATE SENATE 36",
+            "STATE HOUSE 58", "STATE HOUSE 151", "DISTRICT ATTORNEY ATLANTIC"}
+GA_SKIPPED = ("Justice - Supreme Court of Georgia (Land)", "Party Question 1 - Rep",
+              "Special State Senate - District 7/ Especial Senador Estatal del Distrito 7")
+
+
+def _made_up(row: dict, n: int) -> dict:
+    """A qualifying row with everything but what Pallot reads made up: no real email, phone or address."""
+    out = {}
+    for key, value in row.items():
+        if key in GA_KEPT:
+            out[key] = value
+        elif isinstance(value, bool) or value is None:
+            out[key] = value
+        elif isinstance(value, (int, float)):
+            out[key] = 0
+        elif "Email" in key:
+            out[key] = f"candidate{n}@example.com"
+        elif "Phone" in key:
+            out[key] = f"555-01{n % 100:02d}"
+        elif "Website" in key and "Street" not in key:
+            out[key] = "https://example.com"
+        elif key == "Id" or key.endswith("_c") and key.startswith("Elected_Office"):
+            out[key] = f"a0n{n:015d}"
+        else:
+            out[key] = f"made up {n}"
+    return out
+
+
+def record_ga(client: httpx.Client, saved: Path | None) -> None:
+    """Georgia: the qualifying list saved by hand in manual/state_ga (``saved`` another copy), never
+    downloaded (its site blocks scripts), cut down to GA_PLACES with every contact detail made up;
+    the results site's list of elections (this year's and last), and the year's primary, recount and
+    runoff, each cut down to GA_RACES' contests and GA_SKIPPED's, with only what Pallot reads; and
+    Georgia's legislators. The Atlanta address and its FEC filers are nationwide's."""
+    path = saved or next(iter(sorted((ROOT / "manual" / "state_ga").glob("*.json"))), None)
+    if path is None:
+        raise SystemExit("state_ga: save Georgia's qualifying list in manual/state_ga (see its README), or pass --json")
+    groups = json.loads(path.read_text(encoding="utf-8"))["actions"][0]["returnValue"]["returnValue"]
+    n = 0
+    kept: dict = {}
+    for kind, places in groups.items():
+        for place, offices in places.items():
+            if (kind, place.strip()) not in GA_PLACES:
+                continue
+            for office, rows in offices.items():
+                for row in rows:
+                    n += 1
+                    kept.setdefault(kind, {}).setdefault(place, {}).setdefault(office, []).append(_made_up(row, n))
+    save("state_ga.json", {"actions": [{"returnValue": {"returnValue": kept, "cacheable": True}}]})
+
+    response = client.get(ga.ELECTIONS)
+    response.raise_for_status()
+    elections = ga.trim(response.json())
+    elections["elections"] = [e for e in elections["elections"] if str(e["electionDate"]) >= "2025"]
+    save("state_ga_elections.json", elections)
+    for election, _ in ga.stages(elections, general_day(dt.date(2026, 9, 27))):
+        response = client.get(ga.ELECTION.format(id=election))
+        response.raise_for_status()
+        data = response.json()
+        items = []
+        for item in data["ballotItems"]:
+            contest = ga._CONTEST.fullmatch(ga._text(item["name"]))
+            office = ga.state_office(contest.group("office")) if contest else None
+            if (office and office.race in GA_RACES) or ga._text(item["name"]) in GA_SKIPPED:
+                items.append({"name": item["name"], "summaryResults": {"ballotOptions": [
+                    {key: option.get(key) for key in ("name", "voteCount", "isWriteIn", "party")}
+                    for option in item["summaryResults"]["ballotOptions"]]}})
+        save(f"state_ga_{election}.json", {"election": {key: data["election"].get(key) for key in ("name", "electionDate")},
+                                           "ballotItems": items})
+    response = client.get(officeholders.LEGISLATURE.format(state="ga"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    out = io.StringIO()
+    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_ga.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+
+
+def record_wi(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """Wisconsin: WI_ADDRESS's Census answer; the Elections Commission's contests and candidates,
+    never downloaded (its site blocks scripts): ``saved``, or the copy in manual/state_wi, cut down
+    to the state's rows and WI_JURISDICTIONS'; its seat's FEC filers, its legislators, and its
+    representative added to officeholders_congress.json."""
+    name, address = WI_ADDRESS
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    match = response.json()["result"]["addressMatches"][0]
+    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    path = saved or next(iter(sorted((ROOT / "manual" / "state_wi").glob("*.csv"))), None)
+    if path is None:
+        raise SystemExit("state_wi: save Wisconsin's contests and candidates in manual/state_wi (see its README), or pass --csv")
+    text = path.read_text(encoding="utf-8-sig")
+    reader = csv.DictReader(io.StringIO(text))
+    out = io.StringIO()
+    writer = csv.DictWriter(out, reader.fieldnames or (), lineterminator="\r\n")
+    writer.writeheader()
+    writer.writerows(row for row in reader if row["Jurisdiction"] == "STATE OF WISCONSIN"
+                     or any(row["Jurisdiction"] == j or row["Jurisdiction"].endswith(f" - {j}") for j in WI_JURISDICTIONS))
+    (FIXTURES / "state_wi.csv").write_text("﻿" + out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_wi.csv: {(FIXTURES / 'state_wi.csv').stat().st_size:,} bytes")
+
+    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+        "state": "WI", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+        "office": "house", "district": f"{place.cd:02d}"})
+    response.raise_for_status()
+    save(f"fec_elections_wi_house_{place.cd:02d}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="wi"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    legislators = io.StringIO()
+    writer_csv = csv.DictWriter(legislators, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_wi.csv").write_text(legislators.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    members = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(members.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "WI"]
+    save(members.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "WI"
+                                 and m["terms"][-1].get("district") in (None, place.cd)])
+
+
 def record_polls(client: httpx.Client) -> None:
     """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
     polls plus a few from other states."""
@@ -660,11 +843,15 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "polls", "key_dates", "officeholders", "wikidata", "tigerweb", "election_precincts",
-                                           "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "polls", "key_dates", "officeholders", "wikidata",
+                                           "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
                                                  "state_nv: Nevada's, instead of the one saved in manual/state_nv")
+    parser.add_argument("--json", type=Path, help="state_ga: Georgia's qualifying list, instead of the one saved in "
+                                                  "manual/state_ga; state_oh: Ohio's, instead of manual/state_oh/ohio.json")
+    parser.add_argument("--csv", type=Path, help="state_wi: Wisconsin's contests and candidates, instead of the one "
+                                                 "saved in manual/state_wi")
     args = parser.parse_args(argv)
     only = args.only
     config = load_config()
@@ -683,6 +870,12 @@ def main(argv: list[str] | None = None) -> int:
             record_ca(client, config.fec_api_key, args.pdf if only == "state_ca" else None)
         if only in (None, "state_nv"):
             record_nv(client, config.fec_api_key, args.pdf if only == "state_nv" else None)
+        if only in (None, "state_ga"):
+            record_ga(client, args.json if only == "state_ga" else None)
+        if only in (None, "state_wi"):
+            record_wi(client, config.fec_api_key, args.csv)
+        if only in (None, "state_oh"):
+            record_oh(client, config.fec_api_key, args.json if only == "state_oh" else None)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

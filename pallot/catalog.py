@@ -68,6 +68,7 @@ class SourceInfo:
     frozen: bool = False  # comes with Pallot as captured and is never fetched: nothing to refresh or clear
     rules: bool = False  # Pick by rule's conditions use it, so its dialog names it while it's off
     imported: bool = False  # saved by hand and imported (pallot-bundle import-list): never fetched or refreshed
+    fetched: bool = False  # imported, but part of it fetched as it's used (Georgia's primary results)
 
 
 SOURCES = (
@@ -196,7 +197,9 @@ SOURCES = (
     ),
     *(
         SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES, refreshable=False,
-                   imported=True)
+                   imported=True, fetched=cls.fetched,
+                   pause=Pause(f"the {cls.label}'s results site refused a request",
+                               "the results already fetched still show") if cls.fetched else None)
         if issubclass(cls, ManualList) else
         SourceInfo(cls.source, cls.label, cls.description, True, (cls.source,), group=STATES,
                    pause=Pause(f"the {cls.label} refused a request", "the list already fetched still shows"))
@@ -304,10 +307,12 @@ class Catalog:
         return f"Came with {count:,} answer{'' if count == 1 else 's'}, checked {checked}."
 
     def imported(self, info: SourceInfo) -> str:
-        """When a list saved by hand was imported, or that none has been yet."""
-        loaded = [bundle for bundle in self.svc.bundles.values() if bundle.source in info.cache_tags]
+        """When a list saved by hand was imported, or that none has been yet: its own bundle,
+        named after the source, not one of what it fetches."""
+        loaded = [bundle for name, bundle in self.svc.bundles.items() if name == info.id]
         if not loaded:
-            return "No list imported yet, so ballots here have only the races for Congress."
+            have = "the party nominees from its primaries" if info.fetched else "the races for Congress"
+            return f"No list imported yet, so ballots here have only {have}."
         day = dt.datetime.fromtimestamp(max(b.checked_at for b in loaded)).date()
         return f"Imported by hand on {display_date(day)}."
 

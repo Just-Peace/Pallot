@@ -5,7 +5,8 @@ from __future__ import annotations
 
 import json
 
-from pallot import counties
+from pallot import counties, coverage
+from pallot.states import key_dates as state_key_dates
 
 from .conftest import TRAVIS_LIST, TRAVIS_QUERY, find_race, get_ballot, switch, travis_rows
 
@@ -112,7 +113,9 @@ def test_a_north_carolina_card_has_its_list_races_for_the_county_and_the_distric
     assert logged_calls() == 0
 
 
-def test_a_card_in_a_state_without_a_list_has_the_fec_races(client):
+def test_a_card_in_a_state_without_a_list_has_the_fec_races(client, monkeypatch):
+    monkeypatch.delitem(coverage.COVERED, "GA")  # Georgia stands in for a state without a list: its FEC filers are recorded
+    monkeypatch.delitem(state_key_dates.RULES, "GA")
     georgia = card_ballot(client, state="GA", county="Fulton", precinct=None, districts={"cd": 5})
     assert [r["name"] for r in georgia["races"]] == ["U.S. Senator", "U.S. Representative District 5"]
     wyoming = card_ballot(client, state="WY", county="Laramie", precinct=None)
@@ -130,7 +133,8 @@ def test_the_entry_card_config(client):
     texas = states["TX"]
     assert len(texas["counties"]) == 254 and texas["counties"][0] == "Anderson County"
     assert texas["districts"] == ["cd", "sd", "hd", "sboe"] and texas["precincts"]
-    assert states["GA"]["districts"] == ["cd"] and not states["GA"]["precincts"]
+    assert states["WY"]["districts"] == ["cd"] and not states["WY"]["precincts"]
+    assert states["GA"]["districts"] == ["cd", "sd", "hd"] and not states["GA"]["precincts"]
     assert "Orleans Parish" in states["LA"]["counties"]
 
 

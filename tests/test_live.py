@@ -25,6 +25,7 @@ from pallot.sources.endorsement_feeds import make_feeds
 from pallot.sources.sboe import _inside
 from pallot import counties
 from pallot.states.ca import CaList
+from pallot.states.ga import GaList
 
 from .conftest import census_points, switch
 
@@ -225,6 +226,28 @@ async def test_california_list_live(tmp_path):
     assert reaches["cd"] == 52 and reaches["sd"] >= 19 and reaches["hd"] == 80 and reaches["counties"] >= 30
     assert {county for f in found for county in f.counties} == {c.name.upper() for c in counties.counties("CA")}
     assert not list(tmp_path.glob(".*.part"))
+
+
+@pytest.mark.anyio
+async def test_georgia_nominees_live(tmp_path):
+    """Georgia's results site still answers scripts and reads as Pallot expects: a nominee of each
+    party for U.S. Senate, every U.S. House district with one, from the results site alone (never
+    the qualifying site); asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = GaList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.nominees(day)
+            stats = track_calls()
+            again = await lists.nominees(day)
+        finally:
+            cache.close()
+    assert found and again == found and stats.external_calls == 0
+    assert {f.party for f in found if f.office_id == "US SENATE"} == {"R", "D"}
+    assert {f.district for f in found if f.reach == "cd"} == {str(n) for n in range(1, 15)}
+    assert len({f.office_id for f in found if f.reach == "hd"}) > 150
 
 
 @pytest.mark.anyio

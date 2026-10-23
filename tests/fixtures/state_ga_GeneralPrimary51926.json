@@ -1,0 +1,2235 @@
+{
+ "election": {
+  "name": [
+   {
+    "languageId": "en",
+    "text": "May 19, 2026 - General Primary"
+   }
+  ],
+  "electionDate": "2026-05-19"
+ },
+ "ballotItems": [
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "US Senate - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Earl L. \"Buddy\" Carter"
+       }
+      ],
+      "voteCount": 229223,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Mike Collins"
+       }
+      ],
+      "voteCount": 369642,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "John F. Coyne III"
+       }
+      ],
+      "voteCount": 9850,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Derek Dooley"
+       }
+      ],
+      "voteCount": 275534,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Jonathan \"Jon\" McColumn"
+       }
+      ],
+      "voteCount": 28447,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "US Senate - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Jon Ossoff (I)"
+       }
+      ],
+      "voteCount": 1042331,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Governor - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Chris Carr"
+       }
+      ],
+      "voteCount": 110720,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Clark Dean"
+       }
+      ],
+      "voteCount": 7051,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Rick Jackson"
+       }
+      ],
+      "voteCount": 303621,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Burt Jones"
+       }
+      ],
+      "voteCount": 358184,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Gregg Kirkpatrick"
+       }
+      ],
+      "voteCount": 5537,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Brad Raffensperger"
+       }
+      ],
+      "voteCount": 140085,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Tom Williams"
+       }
+      ],
+      "voteCount": 3849,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Ken Yasger"
+       }
+      ],
+      "voteCount": 4770,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Governor - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Keisha Lance Bottoms"
+       }
+      ],
+      "voteCount": 608264,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Olu Brown"
+       }
+      ],
+      "voteCount": 12329,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Amanda Duffy"
+       }
+      ],
+      "voteCount": 18808,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Geoff Duncan"
+       }
+      ],
+      "voteCount": 75721,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Jason Esteves"
+       }
+      ],
+      "voteCount": 201852,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Derrick Jackson"
+       }
+      ],
+      "voteCount": 25050,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Michael \"Mike\" Thurmond"
+       }
+      ],
+      "voteCount": 139787,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Lieutenant Governor - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "David Clark"
+       }
+      ],
+      "voteCount": 140416,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Greg Dolezal"
+       }
+      ],
+      "voteCount": 205460,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Steve Gooch"
+       }
+      ],
+      "voteCount": 103623,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "John F. Kennedy"
+       }
+      ],
+      "voteCount": 242721,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Brenda Lynn Nelson-Porter"
+       }
+      ],
+      "voteCount": 17146,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Takosha Swan"
+       }
+      ],
+      "voteCount": 10054,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Blake Tillery"
+       }
+      ],
+      "voteCount": 169710,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Lieutenant Governor - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Josh McLaurin"
+       }
+      ],
+      "voteCount": 426854,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Nabilah Parkes"
+       }
+      ],
+      "voteCount": 407380,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Richard N. Wright"
+       }
+      ],
+      "voteCount": 196717,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Commissioner of Insurance - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "John King (I)"
+       }
+      ],
+      "voteCount": 797627,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Commissioner of Insurance - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Clarence Blalock"
+       }
+      ],
+      "voteCount": 181347,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Thomas Dean"
+       }
+      ],
+      "voteCount": 85039,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Ambuj \"AJ\" Jain"
+       }
+      ],
+      "voteCount": 122468,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "DeAndre Mathis"
+       }
+      ],
+      "voteCount": 201895,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Keisha Sean Waites"
+       }
+      ],
+      "voteCount": 428308,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State School Superintendent - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Nelva Lee"
+       }
+      ],
+      "voteCount": 24643,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Fred \"Bubba\" Longgrear"
+       }
+      ],
+      "voteCount": 250208,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Mesha Mainor"
+       }
+      ],
+      "voteCount": 35040,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Randell E. Trammell"
+       }
+      ],
+      "voteCount": 121064,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Richard Woods (I)"
+       }
+      ],
+      "voteCount": 428895,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State School Superintendent - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Anton Anthony"
+       }
+      ],
+      "voteCount": 302219,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Lydia Powell"
+       }
+      ],
+      "voteCount": 511811,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Otha Thornton"
+       }
+      ],
+      "voteCount": 199815,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "PSC - District 3 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Fitz Johnson"
+       }
+      ],
+      "voteCount": 389718,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Brandon Martin"
+       }
+      ],
+      "voteCount": 386771,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "PSC - District 3 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Peter Hubbard (I)"
+       }
+      ],
+      "voteCount": 944474,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "PSC - District 5 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Bobby Mehan"
+       }
+      ],
+      "voteCount": 241553,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Carolyn Tatum Roddy"
+       }
+      ],
+      "voteCount": 169405,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Josh Tolbert"
+       }
+      ],
+      "voteCount": 366773,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "PSC - District 5 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Craig Cupid"
+       }
+      ],
+      "voteCount": 183989,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Shelia Edwards"
+       }
+      ],
+      "voteCount": 557449,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Angelia Pressley"
+       }
+      ],
+      "voteCount": 259590,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "US House of Representatives - District 5 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "John \"Bongo\" Salvesen"
+       }
+      ],
+      "voteCount": 9552,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "US House of Representatives - District 5 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Arnetress Beatty"
+       }
+      ],
+      "voteCount": 16186,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Nikema Williams (I)"
+       }
+      ],
+      "voteCount": 118546,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "US House of Representatives - District 11 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Rob Adkerson"
+       }
+      ],
+      "voteCount": 17408,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Lisa Carlquist"
+       }
+      ],
+      "voteCount": 3161,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "John Cowan"
+       }
+      ],
+      "voteCount": 34150,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "John Hobbs"
+       }
+      ],
+      "voteCount": 5086,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Uloma Ekpete Kama"
+       }
+      ],
+      "voteCount": 1039,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Chris Mora"
+       }
+      ],
+      "voteCount": 4121,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Tricia Pridemore"
+       }
+      ],
+      "voteCount": 15200,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "US House of Representatives - District 11 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Chris Harden"
+       }
+      ],
+      "voteCount": 39204,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Barry Wolfert"
+       }
+      ],
+      "voteCount": 13230,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Special State Senate - District 7/ Especial Senador Estatal del Distrito 7"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Astrid S. Ross (Dem)"
+       }
+      ],
+      "voteCount": 9671,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-3712-08dead3402e6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": ""
+        }
+       ],
+       "abbreviation": "",
+       "standardName": null,
+       "color": "#FF9933",
+       "textColor": "#FFFFFF"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Aizaz Shahbaz Shaikh (Rep)"
+       }
+      ],
+      "voteCount": 9896,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-3712-08dead3402e6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": ""
+        }
+       ],
+       "abbreviation": "",
+       "standardName": null,
+       "color": "#FF9933",
+       "textColor": "#FFFFFF"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Adrienne White (Dem)"
+       }
+      ],
+      "voteCount": 9798,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-3712-08dead3402e6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": ""
+        }
+       ],
+       "abbreviation": "",
+       "standardName": null,
+       "color": "#FF9933",
+       "textColor": "#FFFFFF"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State Senate - District 36 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Katie Corkren"
+       }
+      ],
+      "voteCount": 1624,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State Senate - District 36 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Nan Grogan Orrock (I)"
+       }
+      ],
+      "voteCount": 30995,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State House of Representatives - District 58 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Torrey Balam"
+       }
+      ],
+      "voteCount": 448,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State House of Representatives - District 58 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Demetria Henderson"
+       }
+      ],
+      "voteCount": 3967,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Edith M. Ladipo"
+       }
+      ],
+      "voteCount": 957,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Kyle Lamont"
+       }
+      ],
+      "voteCount": 2262,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Mathewos Samson"
+       }
+      ],
+      "voteCount": 2994,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State House of Representatives - District 151 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Mike Cheokas (I)"
+       }
+      ],
+      "voteCount": 4408,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "State House of Representatives - District 151 - Dem"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Ethan Wolfe"
+       }
+      ],
+      "voteCount": 4535,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-ae16-08dead3402a6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "DEM"
+        }
+       ],
+       "abbreviation": "DEM",
+       "standardName": null,
+       "color": "#255C99",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "District Attorney - Atlantic Judicial Circuit - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Billy Joe Nelson, Jr. (I)"
+       }
+      ],
+      "voteCount": 13870,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Justice - Supreme Court of Georgia (Land)"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Ben Land (I)"
+       }
+      ],
+      "voteCount": 1718077,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-3712-08dead3402e6",
+       "name": [
+        {
+         "languageId": "en",
+         "text": ""
+        }
+       ],
+       "abbreviation": "",
+       "standardName": null,
+       "color": "#FF9933",
+       "textColor": "#FFFFFF"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": [
+    {
+     "languageId": "en",
+     "text": "Party Question 1 - Rep"
+    }
+   ],
+   "summaryResults": {
+    "ballotOptions": [
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "Yes"
+       }
+      ],
+      "voteCount": 825652,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     },
+     {
+      "name": [
+       {
+        "languageId": "en",
+        "text": "No"
+       }
+      ],
+      "voteCount": 91882,
+      "isWriteIn": false,
+      "party": {
+       "id": "01000000-f33c-bc21-9a88-08dead340297",
+       "name": [
+        {
+         "languageId": "en",
+         "text": "REP"
+        }
+       ],
+       "abbreviation": "REP",
+       "standardName": null,
+       "color": "#960018",
+       "textColor": "#ffffff"
+      }
+     }
+    ]
+   }
+  }
+ ]
+}

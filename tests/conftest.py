@@ -48,7 +48,7 @@ ADDRESSES = {
     "mopac": "13500 N Mopac Expy, Austin, TX 78728",
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
-    "atlanta": "55 Trinity Ave SW, Atlanta, GA 30303",  # outside Texas: a Senate race and GA-05
+    "atlanta": "55 Trinity Ave SW, Atlanta, GA 30303",  # Georgia's nominees and qualified list (states/ga.py); GA-05
     "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat
     "pr": "1 Calle Fortaleza, San Juan, PR 00901",  # made up: DC's geography, in Puerto Rico
     "raleigh": "1 E Edenton St, Raleigh, NC 27601",  # North Carolina's official list (states/nc.py)
@@ -59,6 +59,8 @@ ADDRESSES = {
     "losangeles": "200 N Spring St, Los Angeles, CA 90012",  # California's PDF list (states/ca.py)
     "phoenix": "1700 W Washington St, Phoenix, AZ 85007",  # Arizona's list, imported by hand (states/az.py)
     "lasvegas": "495 S Main St, Las Vegas, NV 89101",  # Nevada's PDF list, imported by hand (states/nv.py)
+    "madison": "2 E Main St, Madison, WI 53703",  # Wisconsin's CSV list, imported by hand (states/wi.py)
+    "columbus": "90 W Broad St, Columbus, OH 43215",  # Ohio's statewide races, transcribed by hand (states/oh.py); OH-15
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -435,6 +437,13 @@ class Upstream:
             text = self.state_lists.get(url.host)
             body = text.encode() if text is not None else fixture_bytes(STATE_LISTS[url.host])
             return httpx.Response(200, content=body, headers={"content-type": "text/plain; charset=utf-8"})
+        if url.host == "results.sos.ga.gov":
+            if url.path.endswith("/jurisdictions/Georgia"):
+                return _file("state_ga_elections.json")
+            found = re.fullmatch(r".*/elections/Georgia/([^/]+)/data", url.path)
+            if found and fixture_bytes(f"state_ga_{found.group(1)}.json") is not None:
+                return _file(f"state_ga_{found.group(1)}.json")
+            return httpx.Response(404)
         if url.host in ("unitedstates.github.io", "data.openstates.org"):
             if self.officeholders_status:
                 return httpx.Response(self.officeholders_status)

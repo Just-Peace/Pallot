@@ -272,7 +272,7 @@ def test_settings_lists_each_states_election_office(client):
     assert any(group["id"] == "states" and group["toggle_all"] for group in overview["groups"])
     rows = {row["id"]: row for row in overview["sources"] if row["group"] == "states"}
     assert set(rows) == {"state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "key_dates_ca", "state_az",
-                         "state_nv"}
+                         "state_nv", "state_ga", "state_wi", "state_oh"}
     assert rows["state_nc"]["enabled"] and rows["key_dates_ca"]["enabled"]
 
 
