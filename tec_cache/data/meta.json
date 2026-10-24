@@ -1,14 +1,14 @@
 {
-  "content_hash": "5001794f38b50c87036d203b65a0feaedc7b4f1df9db7be26d872fd279a192f8",
+  "content_hash": "23f50f1284473ff3619ba5f23eded34f8cd5fbd053ddd1ff2ad5c2e02f243308",
   "counts": {
-    "contribs": 803075,
-    "dce": 9679,
+    "contribs": 803196,
+    "dce": 9724,
     "filers": 10625,
-    "reports": 8291,
-    "snapshot_filers": 2153
+    "reports": 8302,
+    "snapshot_filers": 2154
   },
-  "last_checked": "2026-10-18T20:09:39+00:00",
-  "last_refresh": "2026-10-18T20:09:39+00:00",
+  "last_checked": "2026-10-24T14:03:53+00:00",
+  "last_refresh": "2026-10-24T14:03:53+00:00",
   "members": {
     "contribs_100.csv": {
       "crc": 4049114134,
@@ -21,12 +21,12 @@
       "last": "20261005"
     },
     "contribs_102.csv": {
-      "crc": 2718039508,
+      "crc": 3181354489,
       "first": "20260715",
       "last": "20261005"
     },
     "contribs_103.csv": {
-      "crc": 1814462188,
+      "crc": 1168043358,
       "first": "20260805",
       "last": "20261006"
     },
@@ -41,12 +41,12 @@
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 922776880,
+      "crc": 726335730,
       "first": "20260929",
       "last": "20261006"
     },
     "contribs_107.csv": {
-      "crc": 1494835679,
+      "crc": 3633532703,
       "first": "20261001",
       "last": "20261013"
     },
@@ -61,14 +61,14 @@
       "last": "20261005"
     },
     "contribs_110.csv": {
-      "crc": 281672188,
+      "crc": 665929281,
       "first": "20261005",
       "last": "20261014"
     },
     "contribs_111.csv": {
-      "crc": 1896634228,
+      "crc": 41338499,
       "first": "20261005",
-      "last": "20261018"
+      "last": "20261023"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -181,7 +181,7 @@
       "last": "20260703"
     },
     "contribs_96.csv": {
-      "crc": 3759055499,
+      "crc": 3649292522,
       "first": "20260113",
       "last": "20260714"
     },
@@ -202,11 +202,11 @@
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-10-18",
+  "snapshot": "2026-10-24",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"335e55c93c5aa7b38342f10a12fde339-127\"",
-    "last_modified": "Sun, 18 Oct 2026 10:35:03 GMT",
-    "size": 1063031051
+    "etag": "\"45253343c348c1337e6204863f02cad7-127\"",
+    "last_modified": "Sat, 24 Oct 2026 10:35:03 GMT",
+    "size": 1063318547
   }
 }

@@ -3030,6 +3030,13 @@
     "party": "R",
     "state": "OH"
   },
+  "oh-don-leonard": {
+    "chamber": "house",
+    "district": "15",
+    "name": "Don Leonard",
+    "party": "D",
+    "state": "OH"
+  },
   "oh-emilia-sykes": {
     "chamber": "house",
     "district": "13",
@@ -3580,6 +3587,13 @@
     "chamber": "house",
     "district": "09",
     "name": "Justin J. Pearson",
+    "party": "D",
+    "state": "TN"
+  },
+  "tn-kristi-burke": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Kristi Burke",
     "party": "D",
     "state": "TN"
   },
