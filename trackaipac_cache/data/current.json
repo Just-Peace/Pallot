@@ -22148,15 +22148,15 @@
           "donate_url": null,
           "donations": 569091,
           "election_date": null,
-          "ie": 1523270,
+          "ie": 1555270,
           "incumbent": null,
-          "israel_lobby_total": 2092361,
+          "israel_lobby_total": 2124361,
           "lines": [
             "NY-03 [D]",
-            "Israel Lobby Total: $2,092,361",
+            "Israel Lobby Total: $2,124,361",
             "PACs: $569,091",
-            "IE: $1,523,270",
-            "AIPAC, COPAC, DMFI, JAC, MDACC, NACPAC, NORPAC, PIA, USI"
+            "IE: $1,555,270",
+            "AIPAC, COPAC, DMFI, JAC, MDACC, NACPAC, NORPAC, PIA, USI, AO"
           ],
           "name": "Tom Suozzi",
           "notes": [],
@@ -22169,7 +22169,8 @@
             "NACPAC",
             "NORPAC",
             "PIA",
-            "USI"
+            "USI",
+            "AO"
           ],
           "party": "D",
           "seat": "NY-03",
@@ -32684,5 +32685,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-23"
+  "snapshot": "2026-10-24"
 }

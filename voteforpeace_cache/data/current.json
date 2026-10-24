@@ -1525,14 +1525,7 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [
-        {
-          "link": null,
-          "notes": null,
-          "organization": "DSA",
-          "type": "endorsed"
-        }
-      ],
+      "endorsements": [],
       "featured_text": null,
       "jurisdiction": null,
       "level": "statewide",
@@ -1540,7 +1533,7 @@
       "notes": null,
       "office_title": "Superintendent of Public Instruction",
       "party": null,
-      "rating": "vote",
+      "rating": "neutral",
       "section": "Arizona",
       "slug": "dr-teresa-ruiz",
       "state": "AZ",
@@ -2306,7 +2299,14 @@
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
       "election_stage": "general",
-      "endorsements": [],
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
       "featured_text": null,
       "jurisdiction": null,
       "level": "state_legislature",
@@ -2597,6 +2597,35 @@
       "slug": "avery-arbaugh-2",
       "state": "CA",
       "url": "https://voteforpeace.info/california/avery-arbaugh-2"
+    },
+    {
+      "articles": [],
+      "candidate_id": "44bb374b-f459-4f5a-b834-61229d39b3b9",
+      "district": "2",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Moreno Valley",
+      "level": "local",
+      "name": "Liza Arellano",
+      "notes": null,
+      "office_title": "City Council Member, Moreno Valley",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "liza-arellano",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/liza-arellano"
     },
     {
       "articles": [],
@@ -3398,6 +3427,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "75bfefac-73ec-45cd-be9c-0ca654f9a487",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Moreno Valley",
+      "level": "local",
+      "name": "Ulises Cabrera",
+      "notes": null,
+      "office_title": "Mayor, Moreno Valley",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "ulises-cabrera",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/ulises-cabrera"
+    },
+    {
+      "articles": [],
       "candidate_id": "703e9662-31bb-4daf-aa5b-670d6a0b2edc",
       "district": "40",
       "election_date": "Nov 3, 2026",
@@ -3578,6 +3642,12 @@
           "link": null,
           "notes": null,
           "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
           "type": "endorsed"
         }
       ],
@@ -4261,6 +4331,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -4941,6 +5017,12 @@
           "notes": null,
           "organization": "Working Families Party",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -5148,6 +5230,35 @@
       "slug": "angela-gonzales-torres",
       "state": "CA",
       "url": "https://voteforpeace.info/california/angela-gonzales-torres"
+    },
+    {
+      "articles": [],
+      "candidate_id": "5f619cdd-2323-4a93-ba75-07226ca69d09",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Rialto",
+      "level": "local",
+      "name": "Ana Gonzalez",
+      "notes": null,
+      "office_title": "City Council Member, Rialto",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "ana-gonzalez",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/ana-gonzalez"
     },
     {
       "articles": [],
@@ -7084,7 +7195,7 @@
     {
       "articles": [],
       "candidate_id": "0ffa47f9-ff00-4ebe-87c2-169efecb6bce",
-      "district": null,
+      "district": "4",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -7095,6 +7206,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -7102,7 +7219,7 @@
       "level": "local",
       "name": "Derek Marshall",
       "notes": null,
-      "office_title": "City Council Member, District 4, Victorville",
+      "office_title": "City Council Member, Victorville",
       "party": "Democrat",
       "rating": "vote",
       "section": "California",
@@ -8111,6 +8228,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -8659,6 +8782,35 @@
       "slug": "david-penaloza",
       "state": "CA",
       "url": "https://voteforpeace.info/california/david-penaloza"
+    },
+    {
+      "articles": [],
+      "candidate_id": "b493cea8-0e15-4108-9368-6f896823092d",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Fontana",
+      "level": "local",
+      "name": "Luz Perez",
+      "notes": null,
+      "office_title": "City Council Member, Fontana",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "luz-perez",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/luz-perez"
     },
     {
       "articles": [],
@@ -10051,6 +10203,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -10263,6 +10421,35 @@
       "slug": "hilda-solis",
       "state": "CA",
       "url": "https://voteforpeace.info/california/hilda-solis"
+    },
+    {
+      "articles": [],
+      "candidate_id": "146c40c3-8f11-4121-b861-0cca18485896",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Rancho Cucamonga",
+      "level": "local",
+      "name": "Jaskirat Sondh",
+      "notes": null,
+      "office_title": "Mayor, Rancho Cucamonga",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "jaskirat-sondh",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jaskirat-sondh"
     },
     {
       "articles": [],
@@ -10578,6 +10765,35 @@
       "slug": "karina-talamantes",
       "state": "CA",
       "url": "https://voteforpeace.info/california/karina-talamantes"
+    },
+    {
+      "articles": [],
+      "candidate_id": "7d636efe-ea08-415c-b9e1-8135f0f7c159",
+      "district": "32",
+      "election_date": "Jun 2, 2026",
+      "election_label": "Primary: Jun 2, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "California",
+      "level": "state_legislature",
+      "name": "Tiffanie Tate",
+      "notes": null,
+      "office_title": "State Senator",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "California",
+      "slug": "tiffanie-tate",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/tiffanie-tate"
     },
     {
       "articles": [],
@@ -11584,6 +11800,35 @@
       "slug": "monica-wilson",
       "state": "CA",
       "url": "https://voteforpeace.info/california/monica-wilson"
+    },
+    {
+      "articles": [],
+      "candidate_id": "0f955fdf-6e68-457b-a72f-c8d9effa23de",
+      "district": "4",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "DSA",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Moreno Valley",
+      "level": "local",
+      "name": "Nikita Wilson",
+      "notes": null,
+      "office_title": "City Council Member, Moreno Valley",
+      "party": null,
+      "rating": "vote",
+      "section": "California",
+      "slug": "nikita-wilson",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/nikita-wilson"
     },
     {
       "articles": [],
@@ -43580,5 +43825,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-23"
+  "snapshot": "2026-10-24"
 }
