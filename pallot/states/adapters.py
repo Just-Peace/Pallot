@@ -10,6 +10,7 @@ from .ca import CaList
 from .az import AzList
 from .fl import FlList
 from .ga import GaList
+from .ia import IaList
 from .mi import MiList
 from .nc import NcList
 from .nv import NvList
@@ -19,7 +20,8 @@ from .va import VaList
 from .wi import WiList
 
 ADAPTERS: dict[str, type[StateList]] = {
-    cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList)
+    cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
+                             IaList)
 }
 
 

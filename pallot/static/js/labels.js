@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's and
-// Ohio's registration, mail voting and poll hours, and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
+// Ohio's and Iowa's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -183,6 +183,23 @@ export const STATES = {
     mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
       + "polling place or clerk by 8 p.m. on Election Day.",
     mailDeadline: "Mailed or online requests must reach your clerk by 5 p.m. on ",
+    pollHours: "7 a.m. – 8 p.m.",
+  },
+  IA: {
+    site: { label: siteLabel(SITES.IA), url: SITES.IA },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: SITES.IA,
+      hint: "Iowa Secretary of State: check your registration and find your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: SITES.IA,
+      hint: "Iowa Secretary of State: your polling place, and your county auditor's office for voting early",
+    },
+    localOffice: "Your county auditor",
+    mailApply: { label: "How to ask", url: SITES.IA },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county auditor before the polls close at 8 p.m. on Election Day.",
+    mailDeadline: "Your request must reach your county auditor by 5 p.m. on ",
     pollHours: "7 a.m. – 8 p.m.",
   },
 };
