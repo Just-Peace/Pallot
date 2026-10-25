@@ -137,6 +137,6 @@ class FlList(StateList):
             filings.append(Filing(
                 day=day, office_id=race, office=shown, family=row["OfficeDesc"].upper(), group=group, reach=reach,
                 district=district, name=name, party=code, party_name=party_name, counties=counties, write_in=write_in,
-                order=(position[race] * 10 + listed) * 10_000 + index,
+                retention=row["OfficeCode"] in ("SCJ", "DCA"), order=(position[race] * 10 + listed) * 10_000 + index,
             ))
         return filings

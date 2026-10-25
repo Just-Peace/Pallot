@@ -61,7 +61,7 @@ KIND_LABELS = {
 @dataclass(frozen=True)
 class OfficeScope:
     kind: str
-    number: int | None
+    district_key: str | None  # as states.district_key spells it: "7", "I"
     unexpired: bool
     name: str  # without the county prefix and the unexpired-term suffix
 
@@ -74,8 +74,8 @@ class OfficeScope:
         """Congressional seat in the "TX-10" / "TX-SEN" form other sources use."""
         if self.kind == "us_senate":
             return "TX-SEN"
-        if self.kind == "cd" and self.number is not None:
-            return f"TX-{self.number:02d}"
+        if self.kind == "cd" and self.district_key is not None:
+            return f"TX-{int(self.district_key):02d}"
         return None
 
 
@@ -95,6 +95,6 @@ def classify(name: str, office_type: str | None, county_names: Collection[str] =
     for kind, pattern in _PATTERNS:
         match = pattern.match(text)
         if match:
-            return OfficeScope(kind, int(match.group(1)) if match.groups() else None, unexpired, text)
+            return OfficeScope(kind, str(int(match.group(1))) if match.groups() else None, unexpired, text)
     kind = _BY_OFFICE_TYPE.get((office_type or "").upper(), "countywide")
     return OfficeScope(kind, None, unexpired, text)

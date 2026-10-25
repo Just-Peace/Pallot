@@ -45,7 +45,9 @@ export function showDetails(race, index, focus = null, at = "profile") {
     syncPickButtons();
   };
   const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
-  const pickButtons = [0, 1].map(() => h("button", { type: "button", class: "btn small primary with-icon", disabled: multiFull, on: { click: pickOrUndo } }));
+  // A retention question is answered Yes or No on its card, not by picking its judge.
+  const pickButtons = [0, 1].map(() => h("button", { type: "button", class: "btn small primary with-icon", disabled: multiFull,
+    hidden: race.retention, on: { click: pickOrUndo } }));
   // In a ranked-choice race, Rank (at the next rank: "Rank 2nd") and Unrank.
   const syncPickButtons = () => {
     const keys = picks.picked(race.key);

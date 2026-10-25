@@ -97,6 +97,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
             group=first.group,
             seats=max(f.seats for f in found),
             unexpired=first.unexpired,
+            retention=first.retention,
             seat=(None if first.group != "federal" else f"{state}-SEN" if first.reach == "state"
                   else f"{state}-{int(first.district):02d}" if first.reach == "cd" and first.district else None),
             source=source,
@@ -107,7 +108,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
                 for f in sorted(found, key=lambda f: (f.order, f.name))
             ],
         )
-        if first.reach in ("sd", "hd") and first.district and first.district.isdigit():
-            placed.scopes[key] = OfficeScope(first.reach, int(first.district), first.unexpired, first.office.upper())
+        if first.reach in ("sd", "hd") and first.district:
+            placed.scopes[key] = OfficeScope(first.reach, district_key(first.district), first.unexpired, first.office.upper())
         (placed.races if verdict == "include" else placed.unconfirmed).append(race)
     return placed

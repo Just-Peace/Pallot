@@ -113,7 +113,7 @@ def tec_seat(scope: OfficeScope, county: str | None) -> str | None:
     """The seat of a Texas SOS race, spelled as seat_key spells TEC's offices; None for the
     offices TEC doesn't cover (county, precinct and local ones)."""
     if scope.kind in _DISTRICT_OFFICES:
-        return f"{_DISTRICT_OFFICES[scope.kind]}:{scope.number}"
+        return f"{_DISTRICT_OFFICES[scope.kind]}:{scope.district_key}"
     name = scope.name.upper()
     for pattern, code in _STATEWIDE:
         if re.search(pattern, name):

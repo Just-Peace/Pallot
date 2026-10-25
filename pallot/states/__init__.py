@@ -63,6 +63,7 @@ class Filing:
     unexpired: bool = False
     write_in: bool = False
     incumbent: bool = False
+    retention: bool = False  # a yes-or-no question on keeping a judge, its one candidate, in office
     order: int = 0  # where the race and the candidate come in the list (ballot order where it gives one)
 
 

@@ -106,6 +106,9 @@ def test_an_anchorage_ballot_has_its_races_from_the_list(client, upstream, logge
     assert senate["source"] == house["source"] == "state_ak" and (senate["seat"], house["seat"]) == ("AK-SEN", "AK-00")
     assert "Nick Begich" in candidate_names(house) and "Mary Peltola" in candidate_names(senate)
     assert not any(c["unverified"] for race in ballot["races"] for c in race["candidates"])
+    senator, rep = find_race(ballot, "State Senator District I"), find_race(ballot, "State Representative District 17")
+    assert (senator["holder"]["name"], rep["holder"]["name"]) == ("Löki Tobin", "Zack Fields")
+    assert next(c for c in senator["candidates"] if c["name"] == "Löki Gale Tobin")["incumbent"]
     assert any(card["source"] == "fec" and card["kind"] == "money"
                for race in (senate, house) for c in race["candidates"] for card in c["cards"])
     assert ballot["key_dates"] == {

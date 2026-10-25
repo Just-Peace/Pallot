@@ -193,6 +193,7 @@ class AzList(ManualList):
             filings.append(Filing(
                 day=day, office_id=race, office=shown, family=office.race.rstrip("0123456789I "), group=office.group,
                 reach=office.reach, district=office.district, name=row["name"], party=code, party_name=party_name,
-                counties=office.counties, seats=seats, write_in=bool(row.get("write_in")), order=row["order"],
+                counties=office.counties, seats=seats, write_in=bool(row.get("write_in")), retention=office.retention,
+                order=row["order"],
             ))
         return filings
