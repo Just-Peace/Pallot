@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "100 STATE ST, ALBANY, NY 12207"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "18355021"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "3602001",
+       "CENTLAT": "+42.6697414",
+       "AREAWATER": 1394396,
+       "BASENAME": "Albany County (East Central)--Albany City",
+       "STATE": "36",
+       "OID": "217704485962332",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.6702529",
+       "NAME": "Albany County (East Central)--Albany City PUMA",
+       "OBJECTID": 152,
+       "CENTLON": "-073.7995207",
+       "AREALAND": 61952404,
+       "INTPTLON": "-073.7992221",
+       "MTFCC": "G6120",
+       "PUMA": "02001"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "12207",
+       "CENTLAT": "+42.6565641",
+       "AREAWATER": 264496,
+       "BASENAME": "12207",
+       "OID": "221704257877919",
+       "ZCTA5": "12207",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.6555357",
+       "NAME": "ZCTA5 12207",
+       "OBJECTID": 25463,
+       "CENTLON": "-073.7474549",
+       "AREALAND": 2553403,
+       "INTPTLON": "-073.7475807",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "00970",
+       "CENTLAT": "+42.7431764",
+       "AREAWATER": 13957330,
+       "BASENAME": "Albany--Schenectady, NY",
+       "OID": "270214485573000",
+       "UA": "00970",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7429654",
+       "NAME": "Albany--Schenectady, NY Urban Area",
+       "OBJECTID": 2180,
+       "CENTLON": "-073.7980933",
+       "AREALAND": 702800665,
+       "INTPTLON": "-073.7993237",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 105133914.77514955,
+       "NECTAPCI": "N",
+       "GEOID": "3601000",
+       "CENTLAT": "+42.6663936",
+       "AREAWATER": 1377120,
+       "BASENAME": "Albany",
+       "STATE": "36",
+       "OID": "27890735648296",
+       "LSADC": "25",
+       "PLACE": "01000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.6657453",
+       "NAME": "Albany city",
+       "OBJECTID": 30654,
+       "PLACECC": "C5",
+       "CENTLON": "-073.7986632",
+       "STGEOMETRY_Length": 71241.08332157263,
+       "CBSAPCI": "Y",
+       "AREALAND": 55435347,
+       "INTPTLON": "-073.7983532",
+       "PLACENS": "00978659",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "36001",
+       "CENTLAT": "+42.6001155",
+       "AREAWATER": 26971923,
+       "STATE": "36",
+       "BASENAME": "Albany",
+       "OID": "27590735598297",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.5882401",
+       "NAME": "Albany County",
+       "OBJECTID": 1294,
+       "CENTLON": "-073.9737394",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00974099",
+       "AREALAND": 1354273428,
+       "INTPTLON": "-073.9740095",
+       "MTFCC": "G4020",
+       "COUNTY": "001"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "3602460",
+       "CENTLAT": "+42.6663936",
+       "AREAWATER": 1377120,
+       "STATE": "36",
+       "BASENAME": "Albany City School District",
+       "OID": "28490735775192",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+42.6657453",
+       "SDUNI": "02460",
+       "NAME": "Albany City School District",
+       "OBJECTID": 7729,
+       "CENTLON": "-073.7986632",
+       "HIGRADE": "12",
+       "AREALAND": 55435347,
+       "INTPTLON": "-073.7983532",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "360010011001065",
+       "CENTLAT": "+42.6498116",
+       "BLOCK": "1065",
+       "AREAWATER": 0,
+       "STATE": "36",
+       "BASENAME": "1065",
+       "OID": "210701004836229",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.6498116",
+       "NAME": "Block 1065",
+       "OBJECTID": 6016791,
+       "TRACT": "001100",
+       "CENTLON": "-073.7537771",
+       "BLKGRP": "1",
+       "AREALAND": 10769,
+       "INTPTLON": "-073.7537771",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "001"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779796",
+       "GEOID": "36",
+       "CENTLAT": "+42.9196122",
+       "AREAWATER": 19256680224,
+       "STATE": "36",
+       "BASENAME": "New York",
+       "STUSAB": "NY",
+       "OID": "27490100833860",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.9133974",
+       "DIVISION": "2",
+       "NAME": "New York",
+       "REGION": "1",
+       "OBJECTID": 25,
+       "CENTLON": "-075.5941454",
+       "AREALAND": 122049230845,
+       "INTPTLON": "-075.5962723",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "360010011001",
+       "CENTLAT": "+42.6524481",
+       "AREAWATER": 264496,
+       "STATE": "36",
+       "BASENAME": "1",
+       "OID": "20890735230369",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.6525522",
+       "NAME": "Block Group 1",
+       "OBJECTID": 173001,
+       "TRACT": "001100",
+       "CENTLON": "-073.7509152",
+       "BLKGRP": "1",
+       "AREALAND": 1740189,
+       "INTPTLON": "-073.7500591",
+       "MTFCC": "G5030",
+       "COUNTY": "001"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "104",
+       "CENTLAT": "+42.9541907",
+       "AREAWATER": 527559528,
+       "BASENAME": "Albany-Schenectady, NY",
+       "OID": "2619034687907970",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.9589719",
+       "NAME": "Albany-Schenectady, NY CSA",
+       "OBJECTID": 132,
+       "CSA": "104",
+       "CENTLON": "-073.9003745",
+       "INTPTLON": "-073.8869630",
+       "AREALAND": 15652498068,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "01000",
+       "GEOID": "3600101000",
+       "CENTLAT": "+42.6663936",
+       "AREAWATER": 1377120,
+       "STATE": "36",
+       "BASENAME": "Albany",
+       "OID": "27690735617573",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+42.6657453",
+       "NAME": "Albany city",
+       "OBJECTID": 27376,
+       "CENTLON": "-073.7986632",
+       "COUSUBCC": "C5",
+       "AREALAND": 55435347,
+       "INTPTLON": "-073.7983532",
+       "MTFCC": "G4040",
+       "COUSUBNS": "00978659",
+       "COUNTY": "001"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "36046",
+       "CENTLAT": "+42.7464254",
+       "AREAWATER": 48259712,
+       "STATE": "36",
+       "BASENAME": "46",
+       "OID": "2129042438898128",
+       "SLDU": "046",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.7480992",
+       "NAME": "State Senate District 46",
+       "OBJECTID": 1157,
+       "CENTLON": "-074.1836362",
+       "LSY": "2026",
+       "AREALAND": 2703701154,
+       "INTPTLON": "-074.1824433",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+41.8513398",
+       "AREAWATER": 26186689150,
+       "BASENAME": "Middle Atlantic",
+       "OID": "2739020719811",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8451925",
+       "DIVISION": "2",
+       "REGION": "1",
+       "NAME": "Middle Atlantic Division",
+       "OBJECTID": 7,
+       "CENTLON": "-076.4757049",
+       "AREALAND": 256980916061,
+       "INTPTLON": "-076.4760328",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 6750786651.145676,
+       "CD120": "20",
+       "GEOID": "3620",
+       "CENTLAT": "+42.7843073",
+       "CDSESSN": "120",
+       "AREAWATER": 96131156,
+       "STATE": "36",
+       "BASENAME": "20",
+       "OID": "2119042973234060",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.7892269",
+       "NAME": "Congressional District 20",
+       "OBJECTID": 377,
+       "CENTLON": "-073.8951154",
+       "STGEOMETRY_Length": 524331.6226796145,
+       "AREALAND": 3538042534,
+       "INTPTLON": "-073.8980014",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "36109",
+       "CENTLAT": "+42.6492281",
+       "SLDL": "109",
+       "AREAWATER": 4798831,
+       "STATE": "36",
+       "BASENAME": "109",
+       "OID": "2139042447503798",
+       "LSADC": "L3",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+42.6475368",
+       "NAME": "Assembly District 109",
+       "OBJECTID": 1507,
+       "CENTLON": "-073.9263432",
+       "LSY": "2026",
+       "AREALAND": 317188763,
+       "INTPTLON": "-073.9270905",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "1",
+       "CENTLAT": "+42.7754036",
+       "AREAWATER": 50257795201,
+       "BASENAME": "Northeast",
+       "OID": "2729020719824",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7778249",
+       "REGION": "1",
+       "NAME": "Northeast Region",
+       "OBJECTID": 3,
+       "CENTLON": "-074.2183092",
+       "AREALAND": 419357207693,
+       "INTPTLON": "-074.2123732",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "10580",
+       "CENTLAT": "+42.7880322",
+       "AREAWATER": 171996750,
+       "BASENAME": "Albany-Schenectady-Troy, NY",
+       "OID": "2629034687907045",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7879202",
+       "NAME": "Albany-Schenectady-Troy, NY Metro Area",
+       "CSA": "104",
+       "OBJECTID": 200,
+       "CENTLON": "-073.9426920",
+       "CBSA": "10580",
+       "AREALAND": 7282571624,
+       "INTPTLON": "-073.9423479",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "36001001100",
+       "CENTLAT": "+42.6524481",
+       "AREAWATER": 264496,
+       "STATE": "36",
+       "BASENAME": "11",
+       "OID": "20790735748137",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.6525522",
+       "NAME": "Census Tract 11",
+       "OBJECTID": 20896,
+       "TRACT": "001100",
+       "CENTLON": "-073.7509152",
+       "AREALAND": 1740189,
+       "INTPTLON": "-073.7500591",
+       "MTFCC": "G5020",
+       "COUNTY": "001"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -73.753433260928,
+     "y": 42.650030466677
+    },
+    "addressComponents": {
+     "zip": "12207",
+     "streetName": "STATE",
+     "preType": "",
+     "city": "ALBANY",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "112",
+     "state": "NY",
+     "suffixType": "ST",
+     "toAddress": "90",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "100 STATE ST, ALBANY, NY, 12207"
+   }
+  ]
+ }
+}

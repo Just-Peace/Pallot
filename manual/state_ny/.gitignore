@@ -1,0 +1,4 @@
+# The saved certification stays on this machine: only its parsed candidates are committed (bundles/data/state_ny.json).
+*
+!.gitignore
+!README.md

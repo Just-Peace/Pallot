@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "400 ROBERT D RAY DR, DES MOINES, IA 50309"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "65783737"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "1901503",
+       "CENTLAT": "+41.5835345",
+       "AREAWATER": 6550578,
+       "BASENAME": "Des Moines City",
+       "STATE": "19",
+       "OID": "2177029550526167",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.5822685",
+       "NAME": "Des Moines City PUMA",
+       "OBJECTID": 2226,
+       "CENTLON": "-093.6156497",
+       "AREALAND": 163570937,
+       "INTPTLON": "-093.6163863",
+       "MTFCC": "G6120",
+       "PUMA": "01503"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "50309",
+       "CENTLAT": "+41.5844777",
+       "AREAWATER": 476390,
+       "BASENAME": "50309",
+       "OID": "221704258281141",
+       "ZCTA5": "50309",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.5841916",
+       "NAME": "ZCTA5 50309",
+       "OBJECTID": 7408,
+       "CENTLON": "-093.6215602",
+       "AREALAND": 7028212,
+       "INTPTLON": "-093.6219978",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "23743",
+       "CENTLAT": "+41.6210477",
+       "AREAWATER": 7854751,
+       "BASENAME": "Des Moines, IA",
+       "OID": "27021369285313",
+       "UA": "23743",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.6209977",
+       "NAME": "Des Moines, IA Urban Area",
+       "OBJECTID": 1788,
+       "CENTLON": "-093.6653832",
+       "AREALAND": 581480973,
+       "INTPTLON": "-093.6652328",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 420120821.86835283,
+       "NECTAPCI": "N",
+       "GEOID": "1921000",
+       "CENTLAT": "+41.5725014",
+       "AREAWATER": 6608904,
+       "BASENAME": "Des Moines",
+       "STATE": "19",
+       "OID": "27890369256859",
+       "LSADC": "25",
+       "PLACE": "21000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+41.5725898",
+       "NAME": "Des Moines city",
+       "OBJECTID": 32106,
+       "PLACECC": "C1",
+       "CENTLON": "-093.6104328",
+       "STGEOMETRY_Length": 161887.91600223543,
+       "CBSAPCI": "Y",
+       "AREALAND": 228332320,
+       "INTPTLON": "-093.6102428",
+       "PLACENS": "02394522",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "19153",
+       "CENTLAT": "+41.6853128",
+       "AREAWATER": 49645905,
+       "STATE": "19",
+       "BASENAME": "Polk",
+       "OID": "27590369222758",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+41.6842756",
+       "NAME": "Polk County",
+       "OBJECTID": 1795,
+       "CENTLON": "-093.5733953",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00465265",
+       "AREALAND": 1483337984,
+       "INTPTLON": "-093.5682448",
+       "MTFCC": "G4020",
+       "COUNTY": "153"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "1908970",
+       "CENTLAT": "+41.5726137",
+       "AREAWATER": 6672128,
+       "STATE": "19",
+       "BASENAME": "Des Moines Independent Community School District",
+       "OID": "28490369297895",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+41.5716593",
+       "SDUNI": "08970",
+       "NAME": "Des Moines Independent Community School District",
+       "OBJECTID": 10141,
+       "CENTLON": "-093.6186494",
+       "HIGRADE": "12",
+       "AREALAND": 210267005,
+       "INTPTLON": "-093.6187644",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "191530051021027",
+       "CENTLAT": "+41.5890726",
+       "BLOCK": "1027",
+       "AREAWATER": 0,
+       "STATE": "19",
+       "BASENAME": "1027",
+       "OID": "210701001319478",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.5890726",
+       "NAME": "Block 1027",
+       "OBJECTID": 515918,
+       "TRACT": "005102",
+       "CENTLON": "-093.6166713",
+       "BLKGRP": "1",
+       "AREALAND": 8490,
+       "INTPTLON": "-093.6166713",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "153"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779785",
+       "GEOID": "19",
+       "CENTLAT": "+42.0753617",
+       "AREAWATER": 1085212217,
+       "STATE": "19",
+       "BASENAME": "Iowa",
+       "STUSAB": "IA",
+       "OID": "2749058169487",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+42.0700227",
+       "DIVISION": "4",
+       "NAME": "Iowa",
+       "REGION": "2",
+       "OBJECTID": 47,
+       "CENTLON": "-093.4958521",
+       "AREALAND": 144660475854,
+       "INTPTLON": "-093.4933492",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "191530051021",
+       "CENTLAT": "+41.5908615",
+       "AREAWATER": 68487,
+       "STATE": "19",
+       "BASENAME": "1",
+       "OID": "2089015485099066",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.5903920",
+       "NAME": "Block Group 1",
+       "OBJECTID": 233198,
+       "TRACT": "005102",
+       "CENTLON": "-093.6079250",
+       "BLKGRP": "1",
+       "AREALAND": 1569941,
+       "INTPTLON": "-093.6068619",
+       "MTFCC": "G5030",
+       "COUNTY": "153"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "218",
+       "CENTLAT": "+41.6192007",
+       "AREAWATER": 142033418,
+       "BASENAME": "Des Moines-West Des Moines-Ames, IA",
+       "OID": "2619034687908011",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.6188860",
+       "NAME": "Des Moines-West Des Moines-Ames, IA CSA",
+       "OBJECTID": 79,
+       "CSA": "218",
+       "CENTLON": "-093.5769874",
+       "INTPTLON": "-093.5790272",
+       "AREALAND": 15231730191,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "92409",
+       "GEOID": "1915392409",
+       "CENTLAT": "+41.5927327",
+       "AREAWATER": 3171254,
+       "STATE": "19",
+       "BASENAME": "Lee",
+       "OID": "27690369245731",
+       "LSADC": "44",
+       "FUNCSTAT": "G",
+       "INTPTLAT": "+41.5928795",
+       "NAME": "Lee township",
+       "OBJECTID": 8767,
+       "CENTLON": "-093.5701536",
+       "COUSUBCC": "Z1",
+       "AREALAND": 63433296,
+       "INTPTLON": "-093.5691911",
+       "MTFCC": "G4040",
+       "COUSUBNS": "00468201",
+       "COUNTY": "153"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "19017",
+       "CENTLAT": "+41.6107918",
+       "AREAWATER": 875579,
+       "STATE": "19",
+       "BASENAME": "17",
+       "OID": "2129042393386412",
+       "SLDU": "017",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.6108315",
+       "NAME": "State Senate District 17",
+       "OBJECTID": 412,
+       "CENTLON": "-093.6155860",
+       "LSY": "2026",
+       "AREALAND": 36659078,
+       "INTPTLON": "-093.6112024",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+42.7660395",
+       "AREAWATER": 33031368091,
+       "BASENAME": "West North Central",
+       "OID": "2739020719810",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7654797",
+       "DIVISION": "4",
+       "REGION": "2",
+       "NAME": "West North Central Division",
+       "OBJECTID": 9,
+       "CENTLON": "-097.0814964",
+       "AREALAND": 1314703193437,
+       "INTPTLON": "-097.0630087",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 49136387264.74729,
+       "CD120": "03",
+       "GEOID": "1903",
+       "CENTLAT": "+41.1421835",
+       "CDSESSN": "120",
+       "AREAWATER": 195186858,
+       "STATE": "19",
+       "BASENAME": "3",
+       "OID": "2119042393277855",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.1394008",
+       "NAME": "Congressional District 3",
+       "OBJECTID": 64,
+       "CENTLON": "-093.9694613",
+       "STGEOMETRY_Length": 1324943.3865650324,
+       "AREALAND": 27643870876,
+       "INTPTLON": "-093.9713985",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "19033",
+       "CENTLAT": "+41.6099503",
+       "SLDL": "033",
+       "AREAWATER": 268954,
+       "STATE": "19",
+       "BASENAME": "33",
+       "OID": "2139042393386503",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.6106636",
+       "NAME": "State House District 33",
+       "OBJECTID": 4573,
+       "CENTLON": "-093.5922687",
+       "LSY": "2026",
+       "AREALAND": 19749318,
+       "INTPTLON": "-093.5933515",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "19780",
+       "CENTLAT": "+41.5761627",
+       "AREAWATER": 82884507,
+       "BASENAME": "Des Moines-West Des Moines, IA",
+       "OID": "2629034687907261",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.5770501",
+       "NAME": "Des Moines-West Des Moines, IA Metro Area",
+       "CSA": "218",
+       "OBJECTID": 678,
+       "CENTLON": "-093.7618988",
+       "CBSA": "19780",
+       "AREALAND": 9356738819,
+       "INTPTLON": "-093.7597124",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "19153005102",
+       "CENTLAT": "+41.5908615",
+       "AREAWATER": 68487,
+       "STATE": "19",
+       "BASENAME": "51.02",
+       "OID": "2079015485099086",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.5903920",
+       "NAME": "Census Tract 51.02",
+       "OBJECTID": 16477,
+       "TRACT": "005102",
+       "CENTLON": "-093.6079250",
+       "AREALAND": 1569941,
+       "INTPTLON": "-093.6068619",
+       "MTFCC": "G5020",
+       "COUNTY": "153"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -93.61614536017,
+     "y": 41.588721801727
+    },
+    "addressComponents": {
+     "zip": "50309",
+     "streetName": "ROBERT D RAY",
+     "preType": "",
+     "city": "DES MOINES",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "400",
+     "state": "IA",
+     "suffixType": "DR",
+     "toAddress": "498",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "400 ROBERT D RAY DR, DES MOINES, IA, 50309"
+   }
+  ]
+ }
+}

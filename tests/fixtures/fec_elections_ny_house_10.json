@@ -1,0 +1,108 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 6,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2NY10308",
+   "candidate_name": "GOLDMAN, DANIEL",
+   "candidate_pcc_id": "C00816660",
+   "candidate_pcc_name": "DAN GOLDMAN FOR NEW YORK",
+   "cash_on_hand_end_period": 12358.21,
+   "committee_ids": [
+    "C00816660"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 9619370.69,
+   "total_receipts": 8699480.02
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NY10176",
+   "candidate_name": "LANDER, BRAD MR.",
+   "candidate_pcc_id": "C00930123",
+   "candidate_pcc_name": "LANDER FOR CONGRESS",
+   "cash_on_hand_end_period": 80536.2,
+   "committee_ids": [
+    "C00930123"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 2705430.72,
+   "total_receipts": 2785966.92
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2NY10134",
+   "candidate_name": "HAMDAN, BENINE",
+   "candidate_pcc_id": "C00780759",
+   "candidate_pcc_name": "BENINE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00780759"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 20000.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NY10143",
+   "candidate_name": "MAJID, SAVAIL",
+   "candidate_pcc_id": "C00918938",
+   "candidate_pcc_name": "NEW YORKERS FOR SAVAIL",
+   "cash_on_hand_end_period": 3925.97,
+   "committee_ids": [
+    "C00918938"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1633.46,
+   "total_receipts": 4842.83
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NY10218",
+   "candidate_name": "MOORE, JENNIFER E",
+   "candidate_pcc_id": "C00954669",
+   "candidate_pcc_name": "JEM FOR CONGRESS",
+   "cash_on_hand_end_period": 1525.67,
+   "committee_ids": [
+    "C00954669"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1167.79,
+   "total_receipts": 2693.46
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NY10184",
+   "candidate_name": "KANE, NICKIE MS.",
+   "candidate_pcc_id": "C00931501",
+   "candidate_pcc_name": "NICKIE KANE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00931501"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

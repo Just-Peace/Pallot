@@ -441,7 +441,8 @@ def create_app(
 
     @app.get("/api/key-dates.ics")
     async def key_dates_calendar(request: Request, date: dt.date, event: ics.EventId | None = None,
-                                 state: Literal["TX", "MI", "CA", "AZ", "NV", "GA", "WI", "OH"] = "TX") -> Response:
+                                 state: Literal["TX", "MI", "CA", "AZ", "NV", "GA", "WI", "OH", "IA", "NJ", "NY"]
+                                 = "TX") -> Response:
         """The key dates of the election on ``date`` in ``state`` as a calendar file: the one
         ``event``, or every date still to come (see ics.calendar). Texas's and California's from
         their SOS's pages, other states' worked out by rule. A link, so it carries no choice of
@@ -461,7 +462,7 @@ def create_app(
         if not body:
             raise HTTPException(404, f"The {guide.source} lists no such date for this election." if not guide.computed
                                 else f"{guide.name} has no such date for a statewide election.")
-        name = f"{guide.name.lower()}-election-{date.isoformat()}{f'-{event}' if event else ''}.ics"
+        name = f"{guide.name.lower().replace(' ', '-')}-election-{date.isoformat()}{f'-{event}' if event else ''}.ics"
         return Response(body, media_type="text/calendar; charset=utf-8",
                         headers={"Content-Disposition": f'attachment; filename="{name}"'})
 

@@ -28,6 +28,15 @@ fourth Monday before through the Friday before, and on the second and third Satu
 (21-2-385(d)(1)), but not on an observed state holiday, so it starts the next day when that
 Monday is Columbus Day; polls are open 7 a.m. to 7 p.m. (21-2-403).
 
+Iowa's, for its general election (Iowa Code 39.1: the first Tuesday after the first Monday of
+November in an even year), checked on legis.iowa.gov (Iowa Code 2026) on 2026-10-24:
+pre-registration closes at 5 p.m. fifteen days before (48A.9), then voters register at the polls
+on Election Day with ID and proof of residence (48A.7A); any voter can vote absentee, the written
+application reaching the county auditor by 5 p.m. on that same day (53.2(1)(b)), and the ballot
+must reach the auditor before the polls close (53.17); absentee voting in person at the auditor's
+office starts twenty days before (53.10) and goes on any day but Election Day (53.2(1)(a)); polls
+are open 7 a.m. to 8 p.m. (49.73).
+
 Ohio's, for its general election (ORC 3501.01(A): the first Tuesday after the first Monday of
 November), checked on codes.ohio.gov on 2026-10-22: registration closes the thirtieth day before
 (3503.19), always a Sunday, so the next day that's neither a Sunday nor a legal holiday (1.14,
@@ -45,6 +54,22 @@ November in an even year): registration by mail or online closes the third Wedne
 asking by mail or online by 5 p.m. the fifth day before, or in person at the clerk's office from
 the fourteenth day before through the Sunday before (6.86(1)(b)), and the ballot must reach the
 polling place by 8 p.m. on Election Day (6.87(6)); polls are open 7 a.m. to 8 p.m. (6.78(1m)).
+
+New York's, for its general election (Election Law 8-100(1)(c): the Tuesday after the first Monday
+of November, every year), checked on nysenate.gov on 2026-10-24: a registration must reach the
+county board by the tenth day before (5-210(3)); early voting runs from the tenth day before
+through the second day before (8-600(1)); an absentee or early mail ballot application online or
+by mail must reach the board by the tenth day before, in person by the day before (8-400); a
+mailed ballot must be postmarked by Election Day and reach the board within seven days after
+(8-412); polls are open 6 a.m. to 9 p.m. (8-100(2)).
+
+New Jersey's, for its general election (N.J.S.A. 19:2-3: the Tuesday after the first Monday of
+November): registration closes the twenty-first day before (19:31-6.3); early voting in person
+runs from the tenth day before through the second day before (19:15A-1); any voter can vote by
+mail, applying by mail so the county clerk has it by the seventh day before, or in person at the
+clerk's office until 3 p.m. the day before (19:63-3), and a mailed ballot must be postmarked by
+Election Day and reach the county board of elections within 144 hours after the polls close
+(19:63-22); polls are open 6 a.m. to 8 p.m. (19:15-2).
 """
 
 from __future__ import annotations
@@ -184,6 +209,25 @@ GEORGIA = Guide(
     credit="Dates worked out from Georgia's election law; more from the Georgia Secretary of State",
 )
 
+IOWA = Guide(
+    name="Iowa",
+    source="Iowa Secretary of State",
+    url="https://sos.iowa.gov/general-election",
+    computed=True,
+    registration_url="https://sos.iowa.gov/elections-voting",
+    mail_url="https://sos.iowa.gov/elections-voting",
+    register="The last day to pre-register for {election} in Iowa, by 5 p.m. After it, you can still register at "
+             "your polling place on Election Day, with ID and proof of where you live.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, your request must reach your county auditor by 5 p.m. today. Your "
+         "ballot must reach the auditor before the polls close at 8 p.m. on Election Day; one that arrives later "
+         "isn't counted. Any voter can vote absentee; how to ask:",
+    early_where="Your county auditor's office, and any satellite sites your county opens; the auditor lists the "
+                "places and hours.",
+    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates worked out from Iowa's election law; more from the Iowa Secretary of State",
+)
+
 OHIO = Guide(
     name="Ohio",
     source="Ohio Secretary of State",
@@ -221,9 +265,47 @@ WISCONSIN = Guide(
     credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
 )
 
+NEW_YORK = Guide(
+    name="New York",
+    source="New York State Board of Elections",
+    url="https://elections.ny.gov/",
+    computed=True,
+    registration_url="https://elections.ny.gov/register-vote",
+    mail_url="https://absenteeballot.elections.ny.gov/",
+    register="The last day for your registration to reach your county board of elections for {election} in New York.",
+    mail_summary="Early mail or absentee ballot application due",
+    mail="If you vote by mail in {election}, an application made online or by mail must reach your county board of "
+         "elections today; in person, you can apply until the day before Election Day. Your ballot must be "
+         "postmarked by Election Day and reach the board within 7 days after. Any voter can vote early by mail; "
+         "how to apply:",
+    early_where="Your county board of elections sets the places and hours.",
+    polls="Polls are open 6 a.m. to 9 p.m.; if you're in line at 9, you can vote.",
+    credit="Dates worked out from New York's Election Law; more from the New York State Board of Elections",
+)
+
+NEW_JERSEY = Guide(
+    name="New Jersey",
+    source="New Jersey Division of Elections",
+    url="https://www.nj.gov/state/elections/",
+    computed=True,
+    registration_url="https://voter.svrs.nj.gov/register",
+    mail_url="https://www.nj.gov/state/elections/vote-by-mail.shtml",
+    register="The last day to register to vote in {election} in New Jersey, online, by mail or in person. There's no "
+             "registration on Election Day.",
+    mail_summary="Mail-in ballot application due by mail",
+    mail="If you vote by mail in {election}, an application sent by mail must reach your county clerk today. In "
+         "person, you can apply at the clerk's office until 3 p.m. the day before Election Day. Your ballot must be "
+         "postmarked by Election Day and reach your county board of elections within six days, or be dropped in a "
+         "drop box by 8 p.m. on Election Day. Any voter can vote by mail; how to apply:",
+    early_where="Your county lists the places. Early voting is open 10 a.m. to 8 p.m. Monday to Saturday, and 10 a.m. "
+                "to 6 p.m. on Sunday.",
+    polls="Polls are open 6 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
+)
+
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO,
+    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK,
 }
 
 
@@ -300,6 +382,22 @@ def georgia(day: dt.date) -> Deadlines | None:
     )
 
 
+def iowa(day: dt.date) -> Deadlines | None:
+    """The dates of Iowa's general election on ``day``, or None when there's none: pre-register
+    and ask for an absentee ballot by the fifteenth day before, vote absentee in person from the
+    twentieth day before through the day before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=15),
+        mail_apply_by=day - dt.timedelta(days=15),
+        early_start=day - dt.timedelta(days=20),
+        early_end=day - dt.timedelta(days=1),
+        state="IA",
+    )
+
+
 def ohio(day: dt.date) -> Deadlines | None:
     """The dates of Ohio's general election on ``day``, or None when there's none: register by
     the thirtieth day before, moved past a Sunday or Columbus Day, early voting from the day after
@@ -335,8 +433,41 @@ def wisconsin(day: dt.date) -> Deadlines | None:
     )
 
 
+def new_jersey(day: dt.date) -> Deadlines | None:
+    """The dates of New Jersey's general election on ``day``, or None when there's none: register
+    by the twenty-first day before, apply by mail for a mail-in ballot by the seventh day before,
+    early voting the tenth day before through the second day before."""
+    if day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=21),
+        mail_apply_by=day - dt.timedelta(days=7),
+        early_start=day - dt.timedelta(days=10),
+        early_end=day - dt.timedelta(days=2),
+        state="NJ",
+    )
+
+
+def new_york(day: dt.date) -> Deadlines | None:
+    """The dates of New York's general election on ``day``, or None when there's none: register and
+    apply to vote by mail by the tenth day before, early voting the tenth day before through the
+    second day before."""
+    if day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=10),
+        mail_apply_by=day - dt.timedelta(days=10),
+        early_start=day - dt.timedelta(days=10),
+        early_end=day - dt.timedelta(days=2),
+        state="NY",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
-    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio,
+    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
+    "NY": new_york,
 }
 
 

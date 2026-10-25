@@ -123,6 +123,14 @@
    "last_refresh": "2026-10-24T13:18:11+00:00",
    "races": 271
   },
+  "state_ia": {
+   "answers": 1,
+   "answers_hash": "cb6da669b7e6626fd69ebc48f7bb6569083222b7a87af9ea12edea0407860cc1",
+   "candidates": 245,
+   "last_checked": "2026-10-25T04:07:40+00:00",
+   "last_refresh": "2026-10-25T04:07:40+00:00",
+   "races": 137
+  },
   "state_mi": {
    "answers": 1,
    "answers_hash": "d9910775be0df09f46dcea3bf135556f81c3edc434f55bc334683e250370bb4c",
@@ -139,6 +147,14 @@
    "last_refresh": "2026-10-17T08:04:59+00:00",
    "races": 1324
   },
+  "state_nj": {
+   "answers": 3,
+   "answers_hash": "7b3716512b86ccaf488d700ba6ba4e9078179b5b42407cbc0ed9096ab39dd884",
+   "candidates": 39,
+   "last_checked": "2026-10-25T04:15:19+00:00",
+   "last_refresh": "2026-10-25T04:15:19+00:00",
+   "races": 13
+  },
   "state_nv": {
    "answers": 1,
    "answers_hash": "3364a8c09993b7e79b33b5938b3e9bdfc768d8be355bbf519a2790ef15842364",
@@ -146,6 +162,14 @@
    "last_checked": "2026-10-22T12:20:25+00:00",
    "last_refresh": "2026-10-22T12:20:25+00:00",
    "races": 364
+  },
+  "state_ny": {
+   "answers": 1,
+   "answers_hash": "bbbed9591d191960d0dd70dac955c371067f5cbdf4bf6d100334c15e9f4711f7",
+   "candidates": 502,
+   "last_checked": "2026-10-25T04:13:59+00:00",
+   "last_refresh": "2026-10-25T04:13:59+00:00",
+   "races": 253
   },
   "state_oh": {
    "answers": 1,

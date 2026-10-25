@@ -1,0 +1,60 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 3,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H8NY21203",
+   "candidate_name": "TONKO, PAUL DAVID",
+   "candidate_pcc_id": "C00450049",
+   "candidate_pcc_name": "PAUL TONKO FOR CONGRESS",
+   "cash_on_hand_end_period": 490736.0,
+   "committee_ids": [
+    "C00450049"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1355968.23,
+   "total_receipts": 1247202.32
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NY20225",
+   "candidate_name": "AMBROSIO, RALPH",
+   "candidate_pcc_id": "C00935965",
+   "candidate_pcc_name": "RALPH AMBROSIO FOR CONGRESS",
+   "cash_on_hand_end_period": 7342.65,
+   "committee_ids": [
+    "C00935965"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 54202.52,
+   "total_receipts": 61545.17
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NY20233",
+   "candidate_name": "FU, JACK",
+   "candidate_pcc_id": "C00949305",
+   "candidate_pcc_name": "FU CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00949305"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "NO PARTY AFFILIATION",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

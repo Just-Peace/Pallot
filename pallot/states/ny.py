@@ -1,0 +1,193 @@
+"""New York: the State Board of Elections' certification of the candidates for a general election,
+a PDF saved by hand (manual/state_ny), since elections.ny.gov answers scripts with Cloudflare's
+challenge and Pallot never asks it.
+
+Each race is a block: its Office, District, Counties and Vote For, then a Party / Candidate Name
+table with a row per party line. A candidate on several lines (fusion) is one candidate with
+every line they're on, in the table's order; a line with no name after it is empty. A row's party
+and name can wrap onto the next line, and the Governor's ticket puts both first names on one line
+and both last names on the next.
+
+The statewide offices come under the state, Congress, the State Senate and the Assembly by their
+districts, and a Supreme Court judicial district reaches the whole counties it lists.
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Any
+
+from ..sources.fec import race_name
+from . import Filing, ManualList, ordinal, party, pdf_lines
+from .key_dates import first_tuesday_after_first_monday
+
+STATEWIDE = {"GOVERNOR AND LT. GOVERNOR": "Governor and Lieutenant Governor", "COMPTROLLER": "Comptroller",
+             "ATTORNEY GENERAL": "Attorney General"}
+LEGISLATURE = {"STATE SENATOR": ("sd", "STATE SENATE", "State Senate"),
+               "MEMBER OF ASSEMBLY": ("hd", "STATE ASSEMBLY", "State Assembly")}
+COUNTY_NAMES = {"SAINT LAWRENCE": "ST. LAWRENCE"}
+MINIMUM = {"cd": (26, "Congress"), "hd": (150, "Assembly")}
+_TITLE = re.compile(r"November\s+\d{1,2},\s*(\d{4})\s+General Election")
+_FIELD = re.compile(r"^(Office|District|Counties|Vote For):?\s*(.*)$")
+_FOOTER = re.compile(r"Page\s+\d+\s+of\s+\d+")
+_PARTY_COLUMN = 10
+
+
+def _text(value: str) -> str:
+    return re.sub(r"(?<=\w) ?- ?(?=\w)", "-", " ".join(value.split()))
+
+
+def _counties(text: str) -> tuple[tuple[str, ...], bool]:
+    """(the counties, in capitals, whether any is only part) of a Counties field: "Albany, Columbia & Ulster"."""
+    names = [name.strip() for name in re.split(r",|&", text) if name.strip()]
+    part = any(name.upper().startswith("PART OF ") for name in names)
+    names = [re.sub(r"(?i)^part of ", "", name).upper() for name in names]
+    return tuple(COUNTY_NAMES.get(name, name) for name in names), part
+
+
+def _kind(office: str, district: str, counties: str) -> dict[str, Any]:
+    """The race of a block, as Filing's fields: its id, shown name, family, group, reach, district and counties."""
+    upper, area = " ".join(office.upper().split()), " ".join(district.split())
+    race = {"office_id": f"{upper} {area}".strip(), "office": " ".join(office.split()), "family": upper,
+            "district": None, "counties": ()}
+    if upper in STATEWIDE:
+        return {**race, "office_id": upper, "office": STATEWIDE[upper], "group": "state", "reach": "state"}
+    if not area.isdigit():
+        return {**race, "group": "state", "reach": "unplaced"}
+    number = int(area)
+    if upper == "REPRESENTATIVE IN CONGRESS":
+        return {**race, "office": race_name("NY", number), "family": "US HOUSE", "group": "federal", "reach": "cd",
+                "district": str(number)}
+    if upper in LEGISLATURE:
+        reach, family, label = LEGISLATURE[upper]
+        return {**race, "office": f"{label} District {number}", "family": family, "group": "legislature",
+                "reach": reach, "district": str(number)}
+    if upper == "SUPREME COURT JUSTICE":
+        names, part = _counties(counties)
+        return {**race, "office": f"Supreme Court Justice, {ordinal(number)} Judicial District", "group": "judicial",
+                "reach": "part_county" if part else "counties", "district": str(number), "counties": names}
+    return {**race, "group": "state", "reach": "unplaced"}
+
+
+def _row(lines: list[str], ticket: bool) -> tuple[str, str]:
+    """(party, name) of a row's lines: the party's words from the left column, the name's from the
+    rest; a ticket's two names, column by column, joined with "and"."""
+    parties: list[str] = []
+    names: list[list[str]] = [[], []]
+    for line in lines:
+        indent = len(line) - len(line.lstrip())
+        cells = re.split(r"\s{3,}", line.strip())
+        if indent < _PARTY_COLUMN:
+            parties.append(cells.pop(0))
+        if ticket:
+            for column, cell in zip(names, cells):
+                column.append(cell)
+        else:
+            names[0] += cells
+    name = " and ".join(_text(" ".join(column)) for column in names if column)
+    return _text(" ".join(parties)), name
+
+
+def _merge(block: dict[str, Any], rows: list[tuple[str, str]], day: str, order: int) -> list[Filing]:
+    """A block's candidates, one per person with every line they're on, told apart by their letters
+    alone ("Karen M.Wilutis" on one line is "Karen M. Wilutis" on the next) and named as spaced out
+    best: the first line with a code gives the party, and the lines' names show when there's more
+    than one."""
+    people: dict[str, tuple[list[str], list[str]]] = {}
+    for label, name in rows:
+        if name:
+            names, labels = people.setdefault(re.sub(r"\W", "", name.upper()), ([], []))
+            names.append(name)
+            labels.append(label)
+    filings = []
+    for index, (names, labels) in enumerate(people.values()):
+        labels = list(dict.fromkeys(labels))
+        codes = [party(label) for label in labels]
+        code = next((found for found, _ in codes if found), None)
+        named = " / ".join(labels) if len(labels) > 1 else codes[0][1]
+        filings.append(Filing(day=day, name=max(names, key=lambda name: name.count(" ")), party=code,
+                              party_name=named, seats=block["seats"], order=order * 100 + index, **block["race"]))
+    return filings
+
+
+def parse_lines(lines: list[str]) -> list[Filing]:
+    """Every candidate in the certification, from pdf_lines' layout; ValueError for a file that isn't
+    it (no title, no races, a race without its fields)."""
+    year = next((int(found.group(1)) for line in lines if (found := _TITLE.search(line))), None)
+    if year is None:
+        raise ValueError("no general election's title")
+    day = first_tuesday_after_first_monday(year, 11).isoformat()
+    blocks: list[dict[str, Any]] = []
+    fields: dict[str, str] = {}
+    rows: list[list[str]] = []
+    current: list[str] = []
+    for line in [*lines, ""]:
+        if _FOOTER.search(line):
+            continue
+        if "Office:" in line:
+            fields = {"Office": line.split("Office:", 1)[1].strip()}
+            rows = []
+            blocks.append({"fields": fields, "rows": rows})
+            current = []
+            continue
+        if not blocks:
+            continue
+        found = _FIELD.match(line)
+        if found and "Vote For" not in fields:
+            fields[found.group(1)] = found.group(2).strip()
+            continue
+        if "Vote For" not in fields:
+            if line.strip() and "Counties" in fields:
+                fields["Counties"] += " " + line.strip()
+            continue
+        if not line.strip():
+            if current:
+                rows.append(current)
+            current = []
+        elif not re.match(r"\s*(Party\b|Candidate Name\b)", line):
+            current.append(line)
+    if not blocks:
+        raise ValueError("no races")
+    filings: list[Filing] = []
+    for order, block in enumerate(blocks):
+        fields = block["fields"]
+        missing = [name for name in ("District", "Counties", "Vote For") if name not in fields]
+        if missing or not fields["Vote For"].isdigit():
+            raise ValueError(f"a race without its {', '.join(missing) or 'Vote For'}: {fields['Office']}")
+        race = _kind(fields["Office"], fields["District"], fields["Counties"])
+        ticket = race["family"] == "GOVERNOR AND LT. GOVERNOR"
+        filings += _merge({"race": race, "seats": int(fields["Vote For"])},
+                          [_row(row, ticket) for row in block["rows"]], day, order)
+    if not filings:
+        raise ValueError("no candidates")
+    return filings
+
+
+def check(filings: list[Filing]) -> list[Filing]:
+    """The whole certification, or ValueError for one missing races: every Congress and Assembly district is up."""
+    for reach, (least, name) in MINIMUM.items():
+        found = len({f.office_id for f in filings if f.reach == reach})
+        if found < least:
+            raise ValueError(f"only {found} of {least} {name} races")
+    return filings
+
+
+class NyList(ManualList):
+    state = "NY"
+    source = "state_ny"
+    label = "New York State Board of Elections"
+    page = "https://elections.ny.gov/ballot-certifications-elections"
+    description = ("New York's official certification of the candidates on its ballot, from the statewide offices to "
+                   "its Supreme Court, from its State Board of Elections, imported by hand.")
+    folder = "manual/state_ny"
+    binary = True
+    challenge = ("Just a moment...", "challenges.cloudflare.com", "cf-browser-verification")
+
+    @classmethod
+    def parse(cls, raw: Any) -> list[Filing]:
+        if not isinstance(raw, bytes):
+            raise ValueError("not a PDF")
+        return check(parse_lines(pdf_lines(raw)))
+
+    def missing(self, when: str) -> str:
+        return f"Pallot doesn't have the {self.label}' certification of the candidates for {when} yet"

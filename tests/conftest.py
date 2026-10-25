@@ -61,6 +61,10 @@ ADDRESSES = {
     "lasvegas": "495 S Main St, Las Vegas, NV 89101",  # Nevada's PDF list, imported by hand (states/nv.py)
     "madison": "2 E Main St, Madison, WI 53703",  # Wisconsin's CSV list, imported by hand (states/wi.py)
     "columbus": "90 W Broad St, Columbus, OH 43215",  # Ohio's statewide races, transcribed by hand (states/oh.py); OH-15
+    "desmoines": "400 Robert D Ray Dr, Des Moines, IA 50309",  # Iowa's PDF list, imported by hand (states/ia.py)
+    "trenton": "125 W State St, Trenton, NJ 08608",  # New Jersey's Senate and House PDFs (states/nj.py); NJ-12
+    "manhattan": "260 Broadway, New York, NY 10007",  # New York's certification, imported by hand (states/ny.py); NY-10
+    "albany": "100 State St, Albany, NY 12207",  # upstate New York: NY-20, the 3rd Judicial District
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -74,6 +78,7 @@ STATE_LISTS = {
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
     "www.elections.virginia.gov": "state_va.html", "elections.cdn.sos.ca.gov": "state_ca.pdf",
 }  # host -> its recorded list
+NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 
 
 @functools.cache
@@ -326,7 +331,7 @@ class Upstream:
         self.feed_page_status: int | None = None  # e.g. 403 when the page with a feed's token refuses us
         self.feed_pages: dict[str, str] = {}  # feed source id -> its page, in place of the recorded one
         self.feed_tokens: list[str | None] = []  # the token each request to a feed that wants one carried
-        self.state_lists: dict[str, str] = {}  # host -> its list's answer, in place of the recorded one
+        self.state_lists: dict[str, str] = {}  # host (or host and path) -> its list's answer, in place of the recorded one
         self.ca_key_dates: str | None = None  # California SOS's election dates page, in place of the recorded one
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
@@ -437,6 +442,11 @@ class Upstream:
             text = self.state_lists.get(url.host)
             body = text.encode() if text is not None else fixture_bytes(STATE_LISTS[url.host])
             return httpx.Response(200, content=body, headers={"content-type": "text/plain; charset=utf-8"})
+        if url.host == "www.nj.gov":
+            name = next((name for part, name in NJ_FILES.items() if part in url.path), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
                 return _file("state_ga_elections.json")

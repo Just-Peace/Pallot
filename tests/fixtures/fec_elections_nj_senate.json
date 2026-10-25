@@ -1,0 +1,172 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 10,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4NJ00185",
+   "candidate_name": "BOOKER, CORY A.",
+   "candidate_pcc_id": "C00540500",
+   "candidate_pcc_name": "CORY BOOKER FOR SENATE",
+   "cash_on_hand_end_period": 22899410.72,
+   "committee_ids": [
+    "C00540500"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 18897771.7,
+   "total_receipts": 35910076.13
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NJ00438",
+   "candidate_name": "LEBOVICS, ROBERT",
+   "candidate_pcc_id": "C00941534",
+   "candidate_pcc_name": "LEBOVICS FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00941534"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 178218.82,
+   "total_receipts": 178218.82
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4NJ00532",
+   "candidate_name": "MURPHY, JUSTIN MICHAEL LL.M.",
+   "candidate_pcc_id": "C00865808",
+   "candidate_pcc_name": "THE COMMITTEE TO ELECT JUSTIN MURPHY 2024",
+   "cash_on_hand_end_period": 10190.62,
+   "committee_ids": [
+    "C00865808"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 57102.19,
+   "total_receipts": 68188.87
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NJ00412",
+   "candidate_name": "ZDAN, ALEX",
+   "candidate_pcc_id": "C00939132",
+   "candidate_pcc_name": "ALEX ZDAN FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00939132"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 48208.01,
+   "total_receipts": 48208.01
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NJ00420",
+   "candidate_name": "TABOR, RICHARD JEROME SR",
+   "candidate_pcc_id": "C00940783",
+   "candidate_pcc_name": "TABOR FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00940783"
+   ],
+   "coverage_end_date": "2026-07-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 27190.0,
+   "total_receipts": 27190.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0NJ00258",
+   "candidate_name": "FERNANDEZ, VERONICA",
+   "candidate_pcc_id": "C00953778",
+   "candidate_pcc_name": "VERONICA C FERNANDEZ FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00953778"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4NJ00342",
+   "candidate_name": "CARDUCCI, NICHOLAS MATTHEW",
+   "candidate_pcc_id": "C00818757",
+   "candidate_pcc_name": "NICHOLAS CARDUCCI FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00818757"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NJ00396",
+   "candidate_name": "RIVERA, NATALIE",
+   "candidate_pcc_id": "C00937409",
+   "candidate_pcc_name": "NATALIE RIVERA FOR US SENATE 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00937409"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NJ00404",
+   "candidate_name": "FIELDS, CHRIS",
+   "candidate_pcc_id": "C00923003",
+   "candidate_pcc_name": "CHRIS FIELDS FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00923003"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NJ00446",
+   "candidate_name": "MALDONADO, JUSTIN JUAN",
+   "candidate_pcc_id": "C00950949",
+   "candidate_pcc_name": "JUSTIN MALDONADO FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00950949"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}
