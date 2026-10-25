@@ -83,6 +83,14 @@
    "last_refresh": "2026-10-18T19:24:30+00:00",
    "server_errors": 0
   },
+  "state_ak": {
+   "answers": 3,
+   "answers_hash": "d387d7f18b8559e813bacd9cf8135227b8587e3f04c92354fb428710744d2978",
+   "candidates": 155,
+   "last_checked": "2026-10-25T15:35:51+00:00",
+   "last_refresh": "2026-10-25T15:35:51+00:00",
+   "races": 74
+  },
   "state_az": {
    "answers": 1,
    "answers_hash": "183d08bed4cffa0020d73fa9f20c7545a04b6514864bb4ac9e476456dbf74774",

@@ -66,6 +66,7 @@ ADDRESSES = {
     "manhattan": "260 Broadway, New York, NY 10007",  # New York's certification, imported by hand (states/ny.py); NY-10
     "albany": "100 State St, Albany, NY 12207",  # upstate New York: NY-20, the 3rd Judicial District
     "denver": "1437 Bannock St, Denver, CO 80202",  # Colorado's spreadsheet (states/co.py); CO-1, SD 31, HD 5
+    "anchorage": "632 W 6th Ave, Anchorage, AK 99501",  # Alaska's list, three pages (states/ak.py); Senate I, House 17
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -448,6 +449,13 @@ class Upstream:
             name = next((name for part, name in NJ_FILES.items() if part in url.path), None)
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.elections.alaska.gov":
+            page = next((value for name, value in params.items() if name.startswith("frm-page-")), "1")
+            text = self.state_lists.get(f"{url.host}#{page}")
+            body = text.encode() if text is not None else fixture_bytes(f"state_ak_{page}.html")
+            if params.get("election") != "26genr" and text is None:
+                body = fixture_bytes("state_ak_none.html")
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):

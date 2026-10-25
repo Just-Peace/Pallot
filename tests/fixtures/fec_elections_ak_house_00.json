@@ -1,0 +1,124 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 7,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2AK01083",
+   "candidate_name": "BEGICH, NICHOLAS III",
+   "candidate_pcc_id": "C00792341",
+   "candidate_pcc_name": "ALASKANS FOR NICK BEGICH",
+   "cash_on_hand_end_period": 1782866.69,
+   "committee_ids": [
+    "C00792341"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 4760366.88,
+   "total_receipts": 6438903.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AK01092",
+   "candidate_name": "HILL, BILL",
+   "candidate_pcc_id": "C00935437",
+   "candidate_pcc_name": "BILL HILL FOR ALASKANS",
+   "cash_on_hand_end_period": 117732.32,
+   "committee_ids": [
+    "C00935437"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 2513060.55,
+   "total_receipts": 2630792.87
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2AK01158",
+   "candidate_name": "PELTOLA, MARY",
+   "candidate_pcc_id": "C00812388",
+   "candidate_pcc_name": "MARY PELTOLA FOR ALASKA",
+   "cash_on_hand_end_period": 3483.06,
+   "committee_ids": [
+    "C00812388"
+   ],
+   "coverage_end_date": "2026-02-13",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 232791.29,
+   "total_receipts": 152304.86
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4AK00164",
+   "candidate_name": "ERIC, HAFNER",
+   "candidate_pcc_id": "C00953869",
+   "candidate_pcc_name": "ERIC HAFNER FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00953869"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AK01068",
+   "candidate_name": "WILLIAMS, JOHN BRENDAN",
+   "candidate_pcc_id": "C00910075",
+   "candidate_pcc_name": "WILLIAMS FOR CONGRESS 26",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00910075"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AK01118",
+   "candidate_name": "SALAZAR, MELANIE A.",
+   "candidate_pcc_id": "C00954859",
+   "candidate_pcc_name": "MELANIE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00954859"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "NON-PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AK01134",
+   "candidate_name": "AMBROSE, DAVID II",
+   "candidate_pcc_id": "C00822163",
+   "candidate_pcc_name": "AMBROSE FOR AK",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00822163"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "UNAFFILIATED",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

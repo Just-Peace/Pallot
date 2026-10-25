@@ -216,11 +216,14 @@ class StateList:
     description: ClassVar[str]  # its Settings line
     max_bytes: ClassVar[int] = 0  # a list that's a file this big at most (a PDF): kept as its filings alone
     scope_note: ClassVar[str] = ""  # the ballot's note on what a list covering only part of the ballot leaves out
+    cafile: ClassVar[Path | None] = None  # a certificate its server leaves out of its chain (HttpCache.trust)
 
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
         self._read: tuple[Any, list[Filing]] | None = None
+        if self.cafile:
+            cache.trust(self.source, self.cafile)
         cache.pause_on(self.source, ttl.state_list_backoff)
         cache.check_answers(self.source, self.check)
         if self.max_bytes:

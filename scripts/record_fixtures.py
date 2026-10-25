@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_ak, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -45,7 +45,9 @@ Trenton address, the Division of Elections' page cut down to its links, and the 
 lists it links, rewritten as small text PDFs without the candidates' addresses. New York's (state_ny) takes a
 Manhattan and an Albany address and the certification saved by hand in manual/state_ny (--pdf
 another copy), never downloaded, cut down to some races' text lines. Colorado's (state_co) takes a
-Denver address and the SOS's candidate spreadsheet as served (it has no contact details). The TrackAIPAC, Vote for Peace and Texas Ethics
+Denver address and the SOS's candidate spreadsheet as served (it has no contact details). Alaska's (state_ak)
+takes an Anchorage address and the Division of Elections' list, its three pages one at a time, without the
+candidates' contact details. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -61,6 +63,7 @@ import io
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 import httpx
@@ -69,6 +72,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from pallot.config import DEMO_KEY, load_config  # noqa: E402
+from pallot.http_cache import trusting  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
     ca_key_dates, census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
@@ -79,7 +83,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ca, co, fl, ga, ia, mi, nc, nj, ordinal, pa, pdf_lines, va  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, ia, mi, nc, nj, ordinal, pa, pdf_lines, va  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -131,6 +135,7 @@ IA_ADDRESS = ("desmoines", "400 Robert D Ray Dr, Des Moines, IA 50309")  # City 
 IA_CONTACT = "PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com"  # made up
 NJ_ADDRESS = ("trenton", "125 W State St, Trenton, NJ 08608")  # the State House: NJ-12, an open seat in 2026
 CO_ADDRESS = ("denver", "1437 Bannock St, Denver, CO 80202")  # the City and County Building: CO-1
+AK_ADDRESS = ("anchorage", "632 W 6th Ave, Anchorage, AK 99501")  # City Hall: Senate District I, up in 2026
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -736,6 +741,69 @@ def record_co(client: httpx.Client, key: str) -> None:
                               and m["terms"][-1].get("district") in (None, place.cd)])
 
 
+def without_contacts(text: str) -> str:
+    """A page of Alaska's list with only what Pallot reads: its title, the election, each race's
+    heading and each row's first cell (name, registration, status), and the links to its pages;
+    never the campaign's address, phone, email or website."""
+    title = '<h1 class="entry-title" itemprop="headline">Candidates</h1>'
+    election = re.search(r'<div class="election-info">.*?</div>', text, re.S)
+    races = []
+    for section in re.findall(r'<section class="candidates-table">.*?</section>', text, re.S):
+        heading = re.search(r"<h4>.*?</h4>", section, re.S).group(0)
+        cells = [re.search(r"<td[^>]*>.*?</td>", row, re.S).group(0)
+                 for row in re.findall(r"<tr>(?:(?!</tr>).)*?<td.*?</tr>", section, re.S)]
+        races.append(f'<section class="candidates-table">{heading}\n<table><tbody>\n'
+                     + "".join(f"<tr>{' '.join(cell.split())}</tr>\n" for cell in cells) + "</tbody></table></section>")
+    pages = sorted(set(re.findall(r"<a href=\"[^\"]*frm-page-\d+=\d+\"[^>]*>[^<]*</a>", text)))
+    return "\n".join(["<html><body>", title, election.group(0) if election else "", *races, *pages, "</body></html>"]) + "\n"
+
+
+def record_ak(client: httpx.Client, key: str) -> None:
+    """Alaska: AK_ADDRESS's Census answer; the Division of Elections' list's pages, one at a time,
+    without the candidates' contact details (without_contacts), and the next even year's page,
+    which has no list yet; its FEC filers for U.S. Senate and House, its legislators, and its
+    members of Congress added to officeholders_congress.json."""
+    name, address = AK_ADDRESS
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    with httpx.Client(timeout=90, headers=client.headers, follow_redirects=True,
+                      verify=trusting(ak.AkList.cafile)) as alaska:
+        urls = [ak.URL.format(year=FEC_CYCLE % 100)]
+        for number, url in enumerate(urls, 1):
+            time.sleep(2)
+            response = alaska.get(url)
+            response.raise_for_status()
+            (FIXTURES / f"state_ak_{number}.html").write_text(without_contacts(response.text), encoding="utf-8", newline="")
+            kept = ak.read_page((FIXTURES / f"state_ak_{number}.html").read_text(encoding="utf-8"))
+            print(f"state_ak_{number}.html: {len(kept['filings'])} candidates")
+            if number == 1:
+                urls += kept["pages"]
+        time.sleep(2)
+        response = alaska.get(ak.URL.format(year=(FEC_CYCLE + 2) % 100))
+        response.raise_for_status()
+        (FIXTURES / "state_ak_none.html").write_text(without_contacts(response.text), encoding="utf-8", newline="")
+    for office in ("senate", "house"):
+        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+            "state": "AK", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+            "office": office, **({"district": "00"} if office == "house" else {})})
+        response.raise_for_status()
+        save(f"fec_elections_ak_{office}{'_00' if office == 'house' else ''}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="ak"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    out = io.StringIO()
+    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
+    writer_csv.writeheader()
+    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_ak.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "AK"]
+    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "AK"])
+
+
 GA_PLACES = {
     ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
     ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
@@ -1094,7 +1162,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_ak", "polls", "key_dates", "officeholders",
                                            "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1137,6 +1205,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ny(client, config.fec_api_key, args.pdf if only == "state_ny" else None)
         if only in (None, "state_co"):
             record_co(client, config.fec_api_key)
+        if only in (None, "state_ak"):
+            record_ak(client, config.fec_api_key)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

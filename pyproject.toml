@@ -14,6 +14,7 @@ dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
     "httpx>=0.27",
+    "certifi",  # httpx's own roots, plus a state's missing intermediate certificate (Alaska's)
     # for trackaipac_cache, which lives in this repo
     "html2text>=2020.1.16",
     "tomli>=2; python_version < '3.11'",  # sources.toml, where Python has no tomllib
@@ -39,6 +40,7 @@ version = { attr = "pallot.__version__" }
 
 [tool.setuptools.package-data]
 pallot = ["sources.toml", "static/*.html", "static/*.svg", "static/css/*.css", "static/js/*.js", "static/vendor/*/*", "endorsements/*.json", "data/*.zip", "data/*.json"]
+"pallot.states" = ["certs/*.pem"]
 trackaipac_cache = ["data/*.json"]
 tec_cache = ["data/*.json"]
 voteforpeace_cache = ["data/*.json"]

@@ -71,6 +71,15 @@ clerk's office until 3 p.m. the day before (19:63-3), and a mailed ballot must b
 Election Day and reach the county board of elections within 144 hours after the polls close
 (19:63-22); polls are open 6 a.m. to 8 p.m. (19:15-2).
 
+Alaska's, for its general election (AS 15.15.020: the Tuesday after the first Monday of November in
+an even year), checked on akleg.gov on 2026-10-25: a registration must be made in person, or
+postmarked or sent electronically, at least 30 days before (15.07.070(c), (d)); early voting runs
+for the 15 days before and on Election Day (15.20.064(a)); any voter can vote absentee, an
+application for a ballot by mail reaching the Division of Elections at least 10 days before
+(15.20.081(b)), and a mailed ballot must be postmarked by Election Day and reach the election
+supervisor by the close of business on the 10th day after (15.20.081(e)); polls are open 7 a.m.
+to 8 p.m.
+
 Colorado's, for its general election (C.R.S. 1-4-201: the Tuesday after the first Monday of
 November in an even year): every active voter is mailed a ballot, sent from the twenty-second day
 before (1-7.5-107(3)); registering online or by mail by the eighth day before still gets one
@@ -311,6 +320,24 @@ NEW_JERSEY = Guide(
     credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
 )
 
+ALASKA = Guide(
+    name="Alaska",
+    source="Alaska Division of Elections",
+    url="https://www.elections.alaska.gov/",
+    computed=True,
+    registration_url="https://voterregistration.alaska.gov/",
+    mail_url="https://absenteeballotapplication.alaska.gov/",
+    register="The last day to register to vote in {election} in Alaska: in person, online, or by mail postmarked "
+             "today. There's no registration on Election Day.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee by mail in {election}, your application must reach the Division of Elections today. "
+         "Your ballot must be postmarked by Election Day and reach the Division within 10 days after. Any voter can "
+         "vote absentee; how to apply:",
+    early_where="The Division of Elections lists the places and hours. Early voting goes on through Election Day.",
+    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates worked out from Alaska's election law; more from the Alaska Division of Elections",
+)
+
 COLORADO = Guide(
     name="Colorado",
     source="Colorado Secretary of State",
@@ -334,7 +361,7 @@ COLORADO = Guide(
 
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO,
+    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO, "AK": ALASKA,
 }
 
 
@@ -510,9 +537,24 @@ def colorado(day: dt.date) -> Deadlines | None:
     )
 
 
+def alaska(day: dt.date) -> Deadlines | None:
+    """The dates of Alaska's general election on ``day``, or None when there's none: register by
+    the thirtieth day before, apply for an absentee ballot by mail by the tenth day before, early
+    voting from the fifteenth day before through Election Day."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=30),
+        mail_apply_by=day - dt.timedelta(days=10),
+        early_start=day - dt.timedelta(days=15),
+        state="AK",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
     "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
-    "NY": new_york, "CO": colorado,
+    "NY": new_york, "CO": colorado, "AK": alaska,
 }
 
 
