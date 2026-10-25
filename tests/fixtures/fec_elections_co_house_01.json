@@ -1,0 +1,204 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 12,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01141",
+   "candidate_name": "DEGETTE, DIANA L",
+   "candidate_pcc_id": "C00311639",
+   "candidate_pcc_name": "DIANA DEGETTE FOR CONGRESS",
+   "cash_on_hand_end_period": 8859.88,
+   "committee_ids": [
+    "C00311639"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1957335.69,
+   "total_receipts": 1696726.39
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01273",
+   "candidate_name": "KIROS, MELAT",
+   "candidate_pcc_id": "C00909481",
+   "candidate_pcc_name": "KIROS FOR CONGRESS",
+   "cash_on_hand_end_period": 75724.4,
+   "committee_ids": [
+    "C00909481"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1232803.19,
+   "total_receipts": 1308527.59
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01299",
+   "candidate_name": "JAMES, WANDA",
+   "candidate_pcc_id": "C00919951",
+   "candidate_pcc_name": "WANDA JAMES FOR CONGRESS",
+   "cash_on_hand_end_period": 11332.39,
+   "committee_ids": [
+    "C00919951"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 292969.22,
+   "total_receipts": 304301.61
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01356",
+   "candidate_name": "BLAU, SHIMON",
+   "candidate_pcc_id": "C00956516",
+   "candidate_pcc_name": "DR SHIMON BLAU FOR CONGRESS",
+   "cash_on_hand_end_period": 59760.12,
+   "committee_ids": [
+    "C00956516"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "UNAFFILIATED",
+   "total_disbursements": 144600.48,
+   "total_receipts": 204360.6
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01331",
+   "candidate_name": "PETERSON, CHRISTY",
+   "candidate_pcc_id": "C00946152",
+   "candidate_pcc_name": "CHRISTY PETERSON FOR AMERICA",
+   "cash_on_hand_end_period": 7392.92,
+   "committee_ids": [
+    "C00946152"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2053.4,
+   "total_receipts": 9446.32
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01307",
+   "candidate_name": "PALOMINO, SANTIAGO EMMANUEL",
+   "candidate_pcc_id": "C00920413",
+   "candidate_pcc_name": "SANTIAGO PALOMINO FOR CONGRESS",
+   "cash_on_hand_end_period": -300.0,
+   "committee_ids": [
+    "C00920413"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6309.47,
+   "total_receipts": 6637.37
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01224",
+   "candidate_name": "CAPOBIANCO, AMANDA",
+   "candidate_pcc_id": "C00894105",
+   "candidate_pcc_name": "AMANDA CAPOBIANCO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00894105"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01232",
+   "candidate_name": "CAPOBIANCO, AMANDA",
+   "candidate_pcc_id": "C00894105",
+   "candidate_pcc_name": "AMANDA CAPOBIANCO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00894105"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01257",
+   "candidate_name": "RODGERS, TIFFANY",
+   "candidate_pcc_id": "C00900670",
+   "candidate_pcc_name": "TIFFANY RODGERS US REPRESENTATIVE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00900670"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01265",
+   "candidate_name": "MILLER, OLIVIA",
+   "candidate_pcc_id": "C00908632",
+   "candidate_pcc_name": "OLIVIA FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00908632"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01281",
+   "candidate_name": "HANSON, CARTER",
+   "candidate_pcc_id": "C00911693",
+   "candidate_pcc_name": "CARTERADO CAMPAIGN COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00911693"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6CO01315",
+   "candidate_name": "OLDFIELD, CHRISTOPHER",
+   "candidate_pcc_id": "C00929471",
+   "candidate_pcc_name": "OLDFIELD NEW MISSION",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929471"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

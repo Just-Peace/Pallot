@@ -18,10 +18,12 @@ import dataclasses
 import datetime as dt
 import io
 import re
+import zipfile
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, ClassVar
+from xml.etree import ElementTree
 
 from pypdf import PdfReader
 
@@ -133,6 +135,47 @@ def pdf_lines(raw: bytes, *, layout: bool = True) -> list[str]:
     except Exception as exc:
         raise ValueError(f"not a PDF it can read ({type(exc).__name__})") from exc
     return [line.rstrip() for text in pages for line in text.splitlines()]
+
+
+_XLSX = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+
+
+def sheet_rows(raw: bytes) -> tuple[str, list[list[str]]]:
+    """A spreadsheet's (.xlsx) first sheet: its name and each row's cells as text, an empty
+    cell's as "", with runs of spaces made one. ValueError for a file that isn't one it can read."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw)) as book:
+            names = book.namelist()
+            shared = [
+                "".join(t.text or "" for t in item.iter(f"{_XLSX}t"))
+                for item in ElementTree.fromstring(book.read("xl/sharedStrings.xml")).iter(f"{_XLSX}si")
+            ] if "xl/sharedStrings.xml" in names else []
+            sheet = ElementTree.fromstring(book.read("xl/workbook.xml")).find(f"{_XLSX}sheets/{_XLSX}sheet")
+            first = min((n for n in names if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", n)),
+                        key=lambda n: int(re.sub(r"\D", "", n)))
+            cells = ElementTree.fromstring(book.read(first))
+    except (zipfile.BadZipFile, KeyError, ValueError, ElementTree.ParseError) as exc:
+        raise ValueError(f"not a spreadsheet it can read ({type(exc).__name__})") from exc
+    rows = []
+    for row in cells.iter(f"{_XLSX}row"):
+        out: list[str] = []
+        for cell in row.iter(f"{_XLSX}c"):
+            column = re.match(r"[A-Z]+", cell.get("r") or "")
+            if column:
+                at = 0
+                for letter in column.group():
+                    at = at * 26 + ord(letter) - 64
+                out += [""] * (at - 1 - len(out))
+            kind, value = cell.get("t"), cell.findtext(f"{_XLSX}v")
+            if kind == "s" and value is not None:
+                text = shared[int(value)]
+            elif kind == "inlineStr":
+                text = "".join(t.text or "" for t in cell.iter(f"{_XLSX}t"))
+            else:
+                text = value or ""
+            out.append(" ".join(text.split()))
+        rows.append(out)
+    return (sheet.get("name", "") if sheet is not None else ""), rows
 
 
 def ordinal(number: int) -> str:

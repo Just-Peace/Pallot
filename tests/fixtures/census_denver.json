@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1437 BANNOCK ST, DENVER, CO 80202"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "606055981"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "0801701",
+       "CENTLAT": "+39.7597255",
+       "AREAWATER": 962793,
+       "BASENAME": "Downtown Denver",
+       "STATE": "08",
+       "OID": "2177029922598940",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7602141",
+       "NAME": "Downtown Denver PUMA",
+       "OBJECTID": 1945,
+       "CENTLON": "-105.0149390",
+       "AREALAND": 48287826,
+       "INTPTLON": "-105.0151556",
+       "MTFCC": "G6120",
+       "PUMA": "01701"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "80202",
+       "CENTLAT": "+39.7515262",
+       "AREAWATER": 0,
+       "BASENAME": "80202",
+       "OID": "221704258471146",
+       "ZCTA5": "80202",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7515262",
+       "NAME": "ZCTA5 80202",
+       "OBJECTID": 16587,
+       "CENTLON": "-104.9976734",
+       "AREALAND": 2994750,
+       "INTPTLON": "-104.9976734",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "23527",
+       "CENTLAT": "+39.7322622",
+       "AREAWATER": 29192135,
+       "BASENAME": "Denver--Aurora, CO",
+       "OID": "27021700481587",
+       "UA": "23527",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7321492",
+       "NAME": "Denver--Aurora, CO Urban Area",
+       "OBJECTID": 334,
+       "CENTLON": "-104.9595324",
+       "AREALAND": 1669540605,
+       "INTPTLON": "-104.9593876",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 679002659.9438984,
+       "NECTAPCI": "N",
+       "GEOID": "0820000",
+       "CENTLAT": "+39.7619818",
+       "AREAWATER": 4275565,
+       "BASENAME": "Denver",
+       "STATE": "08",
+       "OID": "27890700461499",
+       "LSADC": "25",
+       "PLACE": "20000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+39.7618502",
+       "NAME": "Denver city",
+       "OBJECTID": 32042,
+       "PLACECC": "C1",
+       "CENTLON": "-104.8760036",
+       "STGEOMETRY_Length": 339358.05820468185,
+       "CBSAPCI": "Y",
+       "AREALAND": 396460168,
+       "INTPTLON": "-104.8811054",
+       "PLACENS": "02410324",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "08031",
+       "CENTLAT": "+39.7619818",
+       "AREAWATER": 4275565,
+       "STATE": "08",
+       "BASENAME": "Denver",
+       "OID": "27590700234321",
+       "LSADC": "06",
+       "FUNCSTAT": "C",
+       "INTPTLAT": "+39.7618502",
+       "NAME": "Denver County",
+       "OBJECTID": 1640,
+       "CENTLON": "-104.8760036",
+       "COUNTYCC": "H6",
+       "COUNTYNS": "00198131",
+       "AREALAND": 396460168,
+       "INTPTLON": "-104.8811054",
+       "MTFCC": "G4020",
+       "COUNTY": "031"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "0803360",
+       "CENTLAT": "+39.7619818",
+       "AREAWATER": 4275565,
+       "STATE": "08",
+       "BASENAME": "Denver County School District 1",
+       "OID": "28490700495611",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+39.7618502",
+       "SDUNI": "03360",
+       "NAME": "Denver County School District 1",
+       "OBJECTID": 5421,
+       "CENTLON": "-104.8760036",
+       "HIGRADE": "12",
+       "AREALAND": 396460168,
+       "INTPTLON": "-104.8811054",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "080310020001009",
+       "CENTLAT": "+39.7392246",
+       "BLOCK": "1009",
+       "AREAWATER": 0,
+       "STATE": "08",
+       "BASENAME": "1009",
+       "OID": "210701002341971",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7392246",
+       "NAME": "Block 1009",
+       "OBJECTID": 4804142,
+       "TRACT": "002000",
+       "CENTLON": "-104.9909483",
+       "BLKGRP": "1",
+       "AREALAND": 20991,
+       "INTPTLON": "-104.9909483",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "031"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779779",
+       "GEOID": "08",
+       "CENTLAT": "+38.9976180",
+       "AREAWATER": 1185174048,
+       "STATE": "08",
+       "BASENAME": "Colorado",
+       "STUSAB": "CO",
+       "OID": "2749086215995",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.9937536",
+       "DIVISION": "8",
+       "NAME": "Colorado",
+       "REGION": "4",
+       "OBJECTID": 18,
+       "CENTLON": "-105.5478280",
+       "AREALAND": 268419335627,
+       "INTPTLON": "-105.5087407",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "080310020001",
+       "CENTLAT": "+39.7385938",
+       "AREAWATER": 0,
+       "STATE": "08",
+       "BASENAME": "1",
+       "OID": "20890703718835",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7385938",
+       "NAME": "Block Group 1",
+       "OBJECTID": 197478,
+       "TRACT": "002000",
+       "CENTLON": "-104.9938499",
+       "BLKGRP": "1",
+       "AREALAND": 222213,
+       "INTPTLON": "-104.9938499",
+       "MTFCC": "G5030",
+       "COUNTY": "031"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "216",
+       "CENTLAT": "+39.8135789",
+       "AREAWATER": 267928106,
+       "BASENAME": "Denver-Aurora-Greeley, CO",
+       "OID": "2619034687908010",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.8208240",
+       "NAME": "Denver-Aurora-Greeley, CO CSA",
+       "OBJECTID": 170,
+       "CSA": "216",
+       "CENTLON": "-104.7704284",
+       "INTPTLON": "-104.7654979",
+       "AREALAND": 33815113693,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "91007",
+       "GEOID": "0803191007",
+       "CENTLAT": "+39.7619818",
+       "AREAWATER": 4275565,
+       "STATE": "08",
+       "BASENAME": "Denver",
+       "OID": "27690700457251",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7618502",
+       "NAME": "Denver CCD",
+       "OBJECTID": 26429,
+       "CENTLON": "-104.8760036",
+       "COUSUBCC": "Z5",
+       "AREALAND": 396460168,
+       "INTPTLON": "-104.8811054",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01935444",
+       "COUNTY": "031"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "08031",
+       "CENTLAT": "+39.7222919",
+       "AREAWATER": 54418,
+       "STATE": "08",
+       "BASENAME": "31",
+       "OID": "2129042579651588",
+       "SLDU": "031",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.7217509",
+       "NAME": "State Senate District 31",
+       "OBJECTID": 684,
+       "CENTLON": "-104.9427879",
+       "LSY": "2026",
+       "AREALAND": 47961728,
+       "INTPTLON": "-104.9431499",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "8",
+       "CENTLAT": "+40.2023972",
+       "AREAWATER": 18692985514,
+       "BASENAME": "Mountain",
+       "OID": "2739020719805",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1987470",
+       "DIVISION": "8",
+       "REGION": "4",
+       "NAME": "Mountain Division",
+       "OBJECTID": 5,
+       "CENTLON": "-110.2308131",
+       "AREALAND": 2217926739752,
+       "INTPTLON": "-110.2279740",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 682632207.1785982,
+       "CD120": "01",
+       "GEOID": "0801",
+       "CENTLAT": "+39.7615772",
+       "CDSESSN": "120",
+       "AREAWATER": 4281289,
+       "STATE": "08",
+       "BASENAME": "1",
+       "OID": "2119042393277351",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.7618502",
+       "NAME": "Congressional District 1",
+       "OBJECTID": 163,
+       "CENTLON": "-104.8763474",
+       "STGEOMETRY_Length": 309896.88207901875,
+       "AREALAND": 398601233,
+       "INTPTLON": "-104.8811054",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "08005",
+       "CENTLAT": "+39.7527340",
+       "SLDL": "005",
+       "AREAWATER": 73261,
+       "STATE": "08",
+       "BASENAME": "5",
+       "OID": "2139042579651612",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.7528232",
+       "NAME": "State House District 5",
+       "OBJECTID": 2141,
+       "CENTLON": "-104.9931540",
+       "LSY": "2026",
+       "AREALAND": 39619546,
+       "INTPTLON": "-104.9936243",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "19740",
+       "CENTLAT": "+39.4343987",
+       "AREAWATER": 149209768,
+       "BASENAME": "Denver-Aurora-Centennial, CO",
+       "OID": "2629034687907259",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.4347719",
+       "NAME": "Denver-Aurora-Centennial, CO Metro Area",
+       "CSA": "216",
+       "OBJECTID": 443,
+       "CENTLON": "-104.8963055",
+       "CBSA": "19740",
+       "AREALAND": 21612696490,
+       "INTPTLON": "-104.9010718",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "08031002000",
+       "CENTLAT": "+39.7353735",
+       "AREAWATER": 0,
+       "STATE": "08",
+       "BASENAME": "20",
+       "OID": "20790703830936",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.7353735",
+       "NAME": "Census Tract 20",
+       "OBJECTID": 83208,
+       "TRACT": "002000",
+       "CENTLON": "-104.9911970",
+       "AREALAND": 787299,
+       "INTPTLON": "-104.9911970",
+       "MTFCC": "G5020",
+       "COUNTY": "031"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -104.990311950936,
+     "y": 39.739040016914
+    },
+    "addressComponents": {
+     "zip": "80202",
+     "streetName": "BANNOCK",
+     "preType": "",
+     "city": "DENVER",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "1401",
+     "state": "CO",
+     "suffixType": "ST",
+     "toAddress": "1499",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1437 BANNOCK ST, DENVER, CO, 80202"
+   }
+  ]
+ }
+}

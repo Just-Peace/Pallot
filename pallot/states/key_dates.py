@@ -70,6 +70,14 @@ mail, applying by mail so the county clerk has it by the seventh day before, or 
 clerk's office until 3 p.m. the day before (19:63-3), and a mailed ballot must be postmarked by
 Election Day and reach the county board of elections within 144 hours after the polls close
 (19:63-22); polls are open 6 a.m. to 8 p.m. (19:15-2).
+
+Colorado's, for its general election (C.R.S. 1-4-201: the Tuesday after the first Monday of
+November in an even year): every active voter is mailed a ballot, sent from the twenty-second day
+before (1-7.5-107(3)); registering online or by mail by the eighth day before still gets one
+(1-2-201(3)), and after that a voter registers and votes in person at a voter service and polling
+center through Election Day (1-2-217.7); the centers open the fifteenth day before (1-5-102.9); a
+ballot must reach the county clerk by 7 p.m. on Election Day (1-7.5-107(4)); polls and centers are
+open 7 a.m. to 7 p.m. on Election Day.
 """
 
 from __future__ import annotations
@@ -303,9 +311,30 @@ NEW_JERSEY = Guide(
     credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
 )
 
+COLORADO = Guide(
+    name="Colorado",
+    source="Colorado Secretary of State",
+    url="https://www.coloradosos.gov/pubs/elections/main.html",
+    computed=True,
+    registration_url="https://www.govotecolorado.gov/",
+    mail_url="https://www.govotecolorado.gov/",
+    register="The last day to register online or by mail for {election} in Colorado and still be mailed a ballot. "
+             "After it, you can still register and vote in person at a voter service and polling center, through "
+             "Election Day.",
+    mail_summary="Mail ballots go out",
+    mail="Every active voter in Colorado is mailed a ballot for {election}. Your county clerk must have it back by "
+         "7 p.m. on Election Day, by mail or in a drop box or at a voter service and polling center; a postmark "
+         "doesn't count. More:",
+    early_where="Your county clerk lists the voter service and polling centers and their hours; you can register and "
+                "vote there in person.",
+    polls="Voter service and polling centers are open 7 a.m. to 7 p.m. on Election Day; if you're in line at 7, you "
+          "can vote.",
+    credit="Dates worked out from Colorado's election law; more from the Colorado Secretary of State",
+)
+
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK,
+    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO,
 }
 
 
@@ -465,9 +494,25 @@ def new_york(day: dt.date) -> Deadlines | None:
     )
 
 
+def colorado(day: dt.date) -> Deadlines | None:
+    """The dates of Colorado's general election on ``day``, or None when there's none: register
+    online or by mail and still be mailed a ballot by the eighth day before, voter service and
+    polling centers open from the fifteenth day before. Every voter is mailed a ballot, so there's
+    no application to make."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=8),
+        early_start=day - dt.timedelta(days=15),
+        early_end=day - dt.timedelta(days=1),
+        state="CO",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
     "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
-    "NY": new_york,
+    "NY": new_york, "CO": colorado,
 }
 
 
