@@ -43,7 +43,8 @@ const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
 // office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
-// Ohio's, Iowa's, New Jersey's, New York's, Colorado's and Wyoming's registration, mail voting and poll hours, and Texas's print tips.
+// Ohio's, Iowa's, New Jersey's, New York's, Colorado's, Wyoming's and Illinois's registration, mail voting
+// and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -167,6 +168,23 @@ export const STATES = {
       + "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
     mailDeadline: "Your application must reach your county board by the close of business on ",
     pollHours: "6:30 a.m. – 7:30 p.m.",
+  },
+  IL: {
+    site: { label: siteLabel(SITES.IL), url: SITES.IL },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://ova.elections.il.gov/RegistrationLookup.aspx",
+      hint: "Illinois's voter registration lookup (State Board of Elections): your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://ova.elections.il.gov/RegistrationLookup.aspx",
+      hint: "The registration lookup: your polling place; your election authority lists its early voting sites",
+    },
+    localOffice: "Your election authority (county clerk or board of election commissioners)",
+    mailApply: { label: "How to apply", url: SITES.IL },
+    mailEligibility: "Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+      + "Election Day and reach your election authority within 14 days after.",
+    mailDeadline: "An application sent by mail must reach your election authority by ",
+    pollHours: "6 a.m. – 7 p.m.",
   },
   NJ: {
     site: { label: siteLabel(SITES.NJ), url: SITES.NJ },

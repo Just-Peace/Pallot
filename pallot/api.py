@@ -442,7 +442,7 @@ def create_app(
     @app.get("/api/key-dates.ics")
     async def key_dates_calendar(request: Request, date: dt.date, event: ics.EventId | None = None,
                                  state: Literal["TX", "MI", "CA", "AZ", "NV", "GA", "WI", "OH", "IA", "NJ", "NY", "CO",
-                                                "WY"]
+                                                "WY", "IL"]
                                  = "TX") -> Response:
         """The key dates of the election on ``date`` in ``state`` as a calendar file: the one
         ``event``, or every date still to come (see ics.calendar). Texas's and California's from

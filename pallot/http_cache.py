@@ -31,7 +31,10 @@ it, never the key, so a key changed in .env is asked at once.
 A source whose site hands out a token it rotates (headers_from_page) has a page fetched just
 before each of its requests is sent, and the headers read from it sent with that request; the
 page is never stored, and the headers are kept out of the stored request and the key, as
-``source_headers`` are. A stored answer that's still fresh fetches no page.
+``source_headers`` are. A stored answer that's still fresh fetches no page. A source whose
+requests are ASP.NET postbacks (form_from_page) has the request's own address fetched the same
+way, and the hidden fields read from it (``__VIEWSTATE``) sent with the form, kept out of the
+stored request and the key too.
 
 Cached values are shared between callers: treat them as read-only.
 """
@@ -336,6 +339,7 @@ class HttpCache:
         self._keys: dict[str, _Keys] = {}
         self._checks: dict[str, Callable[[Any], str | None]] = {}
         self._pages: dict[str, tuple[RequestSpec, Callable[[str], dict[str, str]]]] = {}
+        self._forms: dict[str, Callable[[str], dict[str, str]]] = {}
         self._daily: dict[str, int] = {}
         self._files: dict[str, tuple[Path, Callable[[Path], Any], int]] = {}
 
@@ -421,6 +425,7 @@ class HttpCache:
         """download()'s request, throttled and counted, written into ``path``; its size."""
         written = 0
         headers = await self._headers(source, spec)
+        spec = await self._filled(source, spec, headers)
         await self._throttle(source)
         stats = current_calls()
         if stats:
@@ -591,6 +596,22 @@ class HttpCache:
         never stored either: a token the site rotates. ``read`` raises Unreadable when it finds none."""
         self._pages[source] = (page, read)
 
+    def form_from_page(self, source: str, read: Callable[[str], dict[str, str]]) -> None:
+        """Before each request of ``source`` with a form is sent, GET its own address (paused,
+        throttled and counted as the source's, never stored) and send the fields ``read`` finds in
+        its text with the form, under the request's own: an ASP.NET page's ``__VIEWSTATE`` and
+        ``__EVENTVALIDATION``, which change with the site, so they're never stored or part of the
+        key either. ``read`` raises Unreadable when it finds none."""
+        self._forms[source] = read
+
+    async def _filled(self, source: str, spec: RequestSpec, headers: dict[str, str] | None) -> RequestSpec:
+        """``spec`` with the fields form_from_page reads from its page added to its form."""
+        read = self._forms.get(source)
+        if read is None or spec.form is None:
+            return spec
+        page = await self._send(source, RequestSpec("GET", spec.url, params=spec.params), headers)
+        return replace(spec, form={**read(page.text), **spec.form})
+
     def check_answers(self, source: str, check: Callable[[Any], str | None]) -> None:
         """Refuse an answer of ``source`` that ``check`` finds wrong (it returns why, or None
         for a good one), as if the request had failed."""
@@ -648,7 +669,8 @@ class HttpCache:
     async def _request(self, source: str, spec: RequestSpec) -> Any:
         if source in self._files:
             return await self._read_file(source, spec)
-        response = await self._send(source, spec, await self._headers(source, spec))
+        headers = await self._headers(source, spec)
+        response = await self._send(source, await self._filled(source, spec, headers), headers)
         if spec.as_bytes:
             return base64.b64encode(response.content).decode("ascii")
         return response.text if spec.as_text else response.json()

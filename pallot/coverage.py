@@ -58,6 +58,7 @@ COVERED = {
     "NY": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "CO": LIST,
     "WY": LIST,
+    "IL": LIST,
 }
 
 # Sources that only know some states.
