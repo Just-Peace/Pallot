@@ -318,6 +318,7 @@ class Upstream:
         self.ballot_orders: dict[tuple[int, int], Any] = {}  # (election id, county id) -> its ballot order, in place of the recorded one
         self.ballot_order_status: int | None = None  # e.g. 403 when Texas SOS refuses a ballot order
         self.ballot_orders_down: set[tuple[int, int]] = set()  # (election id, county id) whose ballot order answers HTTP 500
+        self.ballot_orders_blip: set[tuple[int, int]] = set()  # the same, but only the first time it's asked
         self.county_status: int | None = None  # e.g. 403 when a county's map server refuses us
         self.feed_status: int | None = None  # e.g. 429 when an organization's website refuses us
         self.feed_answers: dict[str, Any] = {}  # feed source id -> its answer, in place of the recorded one
@@ -397,6 +398,9 @@ class Upstream:
                 if self.ballot_order_status:
                     return httpx.Response(self.ballot_order_status)
                 if (body["electionId"], body["countyId"]) in self.ballot_orders_down:
+                    return httpx.Response(500)
+                if (body["electionId"], body["countyId"]) in self.ballot_orders_blip:
+                    self.ballot_orders_blip.discard((body["electionId"], body["countyId"]))
                     return httpx.Response(500)
                 if (body["electionId"], body["countyId"]) in self.ballot_orders:
                     return httpx.Response(200, json=self.ballot_orders[body["electionId"], body["countyId"]])

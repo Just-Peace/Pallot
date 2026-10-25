@@ -71,6 +71,12 @@ def plain_text(value: Any) -> str | None:
     return "\n".join(filter(None, (" ".join(line.split()) for line in lines))) or None
 
 
+def _objects(value: Any) -> list[dict[str, Any]]:
+    """The objects in a list the site sends; anything else in it is skipped. In October 2026 the site
+    sent bare strings among a candidate's endorsements for a few days."""
+    return [item for item in value if isinstance(item, dict)] if isinstance(value, list) else []
+
+
 def _record(entry: dict[str, Any], section: dict[str, Any]) -> ParsedRecord:
     state_slug, slug = _text(section.get("stateSlug")), _text(entry.get("slug"))
     state = _text(entry.get("state_abbr")) or _text(section.get("key"))
@@ -100,12 +106,12 @@ def _record(entry: dict[str, Any], section: dict[str, Any]) -> ParsedRecord:
                 notes=plain_text(item.get("notes")),
                 link=_text(item.get("link")),
             )
-            for item in entry.get("endorsement_details") or ()
+            for item in _objects(entry.get("endorsement_details"))
             if _text(item.get("organization_name"))
         ),
         articles=tuple(
             Article(title=_text(item.get("title")), url=_text(item.get("url")), description=plain_text(item.get("description")))
-            for item in entry.get("articles") or ()
+            for item in _objects(entry.get("articles"))
         ),
     )
 
