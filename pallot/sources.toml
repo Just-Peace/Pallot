@@ -35,6 +35,7 @@ state_nv = true             # Nevada Secretary of State (its list is imported by
 state_ga = true             # Georgia Secretary of State (its primary results, and its qualified list imported by hand)
 state_wi = true             # Wisconsin Elections Commission (its list is imported by hand)
 state_oh = true             # Ohio Secretary of State (its statewide races, transcribed by hand from its sample ballot)
+state_ia = true             # Iowa Secretary of State (its list is imported by hand)
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
