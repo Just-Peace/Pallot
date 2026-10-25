@@ -1,14 +1,14 @@
 {
-  "content_hash": "5001794f38b50c87036d203b65a0feaedc7b4f1df9db7be26d872fd279a192f8",
+  "content_hash": "55fd2527c704ed8f15ce929926238fc68ea118f7f1aaaa986c9a5da19d16bf38",
   "counts": {
-    "contribs": 803075,
-    "dce": 9679,
+    "contribs": 803415,
+    "dce": 9815,
     "filers": 10625,
-    "reports": 8291,
-    "snapshot_filers": 2153
+    "reports": 8316,
+    "snapshot_filers": 2154
   },
-  "last_checked": "2026-10-18T20:09:39+00:00",
-  "last_refresh": "2026-10-18T20:09:39+00:00",
+  "last_checked": "2026-10-25T14:26:16+00:00",
+  "last_refresh": "2026-10-25T14:26:16+00:00",
   "members": {
     "contribs_100.csv": {
       "crc": 4049114134,
@@ -21,12 +21,12 @@
       "last": "20261005"
     },
     "contribs_102.csv": {
-      "crc": 2718039508,
+      "crc": 3181354489,
       "first": "20260715",
       "last": "20261005"
     },
     "contribs_103.csv": {
-      "crc": 1814462188,
+      "crc": 1168043358,
       "first": "20260805",
       "last": "20261006"
     },
@@ -41,14 +41,14 @@
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 922776880,
+      "crc": 1947698018,
       "first": "20260929",
-      "last": "20261006"
+      "last": "20261024"
     },
     "contribs_107.csv": {
-      "crc": 1494835679,
+      "crc": 2351291987,
       "first": "20261001",
-      "last": "20261013"
+      "last": "20261024"
     },
     "contribs_108.csv": {
       "crc": 1827220130,
@@ -61,14 +61,14 @@
       "last": "20261005"
     },
     "contribs_110.csv": {
-      "crc": 281672188,
+      "crc": 1254215078,
       "first": "20261005",
-      "last": "20261014"
+      "last": "20261024"
     },
     "contribs_111.csv": {
-      "crc": 1896634228,
+      "crc": 3100351181,
       "first": "20261005",
-      "last": "20261018"
+      "last": "20261024"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -181,7 +181,7 @@
       "last": "20260703"
     },
     "contribs_96.csv": {
-      "crc": 3759055499,
+      "crc": 3649292522,
       "first": "20260113",
       "last": "20260714"
     },
@@ -202,11 +202,11 @@
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-10-18",
+  "snapshot": "2026-10-25",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"335e55c93c5aa7b38342f10a12fde339-127\"",
-    "last_modified": "Sun, 18 Oct 2026 10:35:03 GMT",
-    "size": 1063031051
+    "etag": "\"75575b0d90936f5529aba9a337d4ed16-127\"",
+    "last_modified": "Sun, 25 Oct 2026 10:35:03 GMT",
+    "size": 1063397293
   }
 }
