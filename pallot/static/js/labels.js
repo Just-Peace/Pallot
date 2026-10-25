@@ -43,7 +43,7 @@ const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
 // office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
-// Ohio's and Iowa's registration, mail voting and poll hours, and Texas's print tips.
+// Ohio's, Iowa's and New Jersey's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -167,6 +167,23 @@ export const STATES = {
       + "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
     mailDeadline: "Your application must reach your county board by the close of business on ",
     pollHours: "6:30 a.m. – 7:30 p.m.",
+  },
+  NJ: {
+    site: { label: siteLabel(SITES.NJ), url: SITES.NJ },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://voter.svrs.nj.gov/registration-check",
+      hint: "New Jersey's voter registration check (Division of Elections)",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://voter.svrs.nj.gov/polling-place-search",
+      hint: "New Jersey's polling place search; your county lists its early voting places",
+    },
+    localOffice: "Your county clerk",
+    mailApply: { label: "How to apply", url: "https://www.nj.gov/state/elections/vote-by-mail.shtml" },
+    mailEligibility: "Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+      + "Election Day and reach your county within six days, or be dropped in a drop box by 8 p.m. on Election Day.",
+    mailDeadline: "An application sent by mail must reach your county clerk by ",
+    pollHours: "6 a.m. – 8 p.m.",
   },
   WI: {
     site: { label: siteLabel(SITES.WI), url: SITES.WI },

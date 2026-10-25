@@ -147,6 +147,14 @@
    "last_refresh": "2026-10-17T08:04:59+00:00",
    "races": 1324
   },
+  "state_nj": {
+   "answers": 3,
+   "answers_hash": "7b3716512b86ccaf488d700ba6ba4e9078179b5b42407cbc0ed9096ab39dd884",
+   "candidates": 39,
+   "last_checked": "2026-10-25T04:15:19+00:00",
+   "last_refresh": "2026-10-25T04:15:19+00:00",
+   "races": 13
+  },
   "state_nv": {
    "answers": 1,
    "answers_hash": "3364a8c09993b7e79b33b5938b3e9bdfc768d8be355bbf519a2790ef15842364",

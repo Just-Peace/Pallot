@@ -1,0 +1,316 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 19,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12417",
+   "candidate_name": "HAMAWY, ADAM",
+   "candidate_pcc_id": "C00934588",
+   "candidate_pcc_name": "HAMAWY FOR NEW JERSEY",
+   "cash_on_hand_end_period": 239845.31,
+   "committee_ids": [
+    "C00934588"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1753311.27,
+   "total_receipts": 1993156.58
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12268",
+   "candidate_name": "COHEN, BRAD",
+   "candidate_pcc_id": "C00926352",
+   "candidate_pcc_name": "BRAD COHEN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00926352"
+   ],
+   "coverage_end_date": "2026-08-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 866523.18,
+   "total_receipts": 866523.18
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12433",
+   "candidate_name": "ALTMAN, SUSAN COPIUS",
+   "candidate_pcc_id": "C00937730",
+   "candidate_pcc_name": "ALTMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00937730"
+   ],
+   "coverage_end_date": "2026-10-20",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 604420.05,
+   "total_receipts": 604420.05
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12391",
+   "candidate_name": "WANG, SAMUEL S.-H. MR.",
+   "candidate_pcc_id": "C00936385",
+   "candidate_pcc_name": "SAM WANG FOR CONGRESS",
+   "cash_on_hand_end_period": 10830.13,
+   "committee_ids": [
+    "C00936385"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 588502.59,
+   "total_receipts": 599332.72
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12284",
+   "candidate_name": "SERVANCE, SQUIRE",
+   "candidate_pcc_id": "C00927996",
+   "candidate_pcc_name": "SERVANCE FOR CONGRESS INC.",
+   "cash_on_hand_end_period": 2642.96,
+   "committee_ids": [
+    "C00927996"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 563389.16,
+   "total_receipts": 566032.12
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12326",
+   "candidate_name": "MAPP, ADRIAN O MR",
+   "candidate_pcc_id": "C00930008",
+   "candidate_pcc_name": "MAPP FOR CONGRESS",
+   "cash_on_hand_end_period": 25685.64,
+   "committee_ids": [
+    "C00930008"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 484286.87,
+   "total_receipts": 509972.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12318",
+   "candidate_name": "VAINGANKAR, JAY",
+   "candidate_pcc_id": "C00929802",
+   "candidate_pcc_name": "JAY VAINGANKAR FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929802"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 410100.1,
+   "total_receipts": 410100.1
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12300",
+   "candidate_name": "REYNOLDS-JACKSON, VERLINA",
+   "candidate_pcc_id": "C00928838",
+   "candidate_pcc_name": "VERLINA FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00928838"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 364557.6,
+   "total_receipts": 364557.6
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12276",
+   "candidate_name": "ROBINSON, SHANEL Y",
+   "candidate_pcc_id": "C00927111",
+   "candidate_pcc_name": "SHANEL FOR CONGRESS",
+   "cash_on_hand_end_period": 78.77,
+   "committee_ids": [
+    "C00927111"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 160116.72,
+   "total_receipts": 160195.49
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12292",
+   "candidate_name": "SINGH, SUJIT",
+   "candidate_pcc_id": "C00928796",
+   "candidate_pcc_name": "SUJIT SINGH FOR CONGRESS",
+   "cash_on_hand_end_period": 5253.72,
+   "committee_ids": [
+    "C00928796"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 136685.2,
+   "total_receipts": 141939.61
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12383",
+   "candidate_name": "MORALES, RICHARD",
+   "candidate_pcc_id": "C00935635",
+   "candidate_pcc_name": "RICK MORALES FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00935635"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 125130.0,
+   "total_receipts": 125130.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2NJ06210",
+   "candidate_name": "MELE, GREGG",
+   "candidate_pcc_id": "C00796649",
+   "candidate_pcc_name": "GREGG MELE FOR AMERICA",
+   "cash_on_hand_end_period": 13565.94,
+   "committee_ids": [
+    "C00796649"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 87955.05,
+   "total_receipts": 101520.99
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12367",
+   "candidate_name": "ADAMS, MATTHEW MARK",
+   "candidate_pcc_id": "C00932277",
+   "candidate_pcc_name": "MATT ADAMS FOR CONGRESS",
+   "cash_on_hand_end_period": 1491.98,
+   "committee_ids": [
+    "C00932277"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 86519.12,
+   "total_receipts": 88011.1
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12250",
+   "candidate_name": "LITTLE, KYLE D",
+   "candidate_pcc_id": "C00903526",
+   "candidate_pcc_name": "KYLE LITTLE FOR CONGRESS",
+   "cash_on_hand_end_period": 156.98,
+   "committee_ids": [
+    "C00903526"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 37733.63,
+   "total_receipts": 32054.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12359",
+   "candidate_name": "DIXON, ELIJAH",
+   "candidate_pcc_id": "C00930263",
+   "candidate_pcc_name": "ELIJAH DIXON FOR CONGRESS",
+   "cash_on_hand_end_period": 915.21,
+   "committee_ids": [
+    "C00930263"
+   ],
+   "coverage_end_date": "2026-05-13",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 7889.79,
+   "total_receipts": 8805.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12409",
+   "candidate_name": "ANDERSON, MICHAEL",
+   "candidate_pcc_id": "C00927046",
+   "candidate_pcc_name": "MIKE FOR NJ",
+   "cash_on_hand_end_period": 984.69,
+   "committee_ids": [
+    "C00927046"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 290.31,
+   "total_receipts": 1275.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2NJ12127",
+   "candidate_name": "MAYFIELD, DARIUS",
+   "candidate_pcc_id": "C00766519",
+   "candidate_pcc_name": "DARIUS MAYFIELD FOR AMERICA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00766519"
+   ],
+   "coverage_end_date": "2025-01-23",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 432.0,
+   "total_receipts": 300.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12342",
+   "candidate_name": "HECK, RAYMOND",
+   "candidate_pcc_id": "C00931857",
+   "candidate_pcc_name": "RAYMOND HECK FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00931857"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NJ12425",
+   "candidate_name": "THOMPSON, IZIAH",
+   "candidate_pcc_id": "C00928416",
+   "candidate_pcc_name": "THOMPSON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00928416"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}
