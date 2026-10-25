@@ -124,7 +124,7 @@ def _retention(heading: str, name: str, day: str, order: int) -> Filing:
     if text == "SUPREME COURT":
         return Filing(day=day, office_id=f"SUPREME COURT {name.upper()}", office=f"Retain Supreme Court Justice {name}",
                       family="SUPREME COURT", group="judicial", reach="state", district=None, name=name,
-                      incumbent=True, order=order)
+                      incumbent=True, retention=True, order=order)
     court, number = re.fullmatch(r"STATE (SUPERIOR|DISTRICT) COURT (\d+)", text).groups()
     district = int(number)
     if district not in _JUDICIAL:
@@ -132,7 +132,7 @@ def _retention(heading: str, name: str, day: str, order: int) -> Filing:
     return Filing(day=day, office_id=f"{court} COURT {district} {name.upper()}",
                   office=f"Retain {_COURTS[court]} {name}, {ordinal(district)} Judicial District",
                   family=f"{court} COURT", group="judicial", reach="counties", district=str(district), name=name,
-                  counties=_JUDICIAL[district], incumbent=True, order=order)
+                  counties=_JUDICIAL[district], incumbent=True, retention=True, order=order)
 
 
 def _registration(text: str) -> tuple[str | None, str | None]:

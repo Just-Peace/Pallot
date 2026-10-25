@@ -324,7 +324,7 @@ export const UNBACKED = "no longer endorsed by a chosen endorser";
 
 export function plan(races, rule, picks, { replace = false } = {}) {
   const rows = [];
-  for (const race of races) {
+  for (const race of races.filter((r) => !r.retention)) { // a retention question's Yes or No is the voter's own
     const { active, matches, avoid } = judge(race, rule);
     const before = picks.picked(race.key);
     const made = picks.auto ? picks.auto(race.key) : [];
@@ -439,7 +439,7 @@ export function endorserPlan(races, bar, picks, added = null) {
   const rows = [];
   let many = 0;
   let kept = 0;
-  for (const race of races) {
+  for (const race of races.filter((r) => !r.retention)) {
     const before = picks.picked(race.key);
     const made = picks.auto(race.key).filter((key) => before.includes(key));
     const own = before.filter((key) => !made.includes(key));

@@ -66,7 +66,8 @@ def _race(office: str, name: str) -> dict[str, Any]:
     if found := _JUDGE.fullmatch(upper):
         court, judge = found.group(1), {"SC": "SUPREME COURT", "CHC": "CHANCERY COURT", "DC": "DISTRICT COURT",
                                        "CC": "CIRCUIT COURT"}[found.group(1)]
-        retain = {**race, "office_id": f"{upper} {name.upper()}", "family": judge, "group": "judicial", "incumbent": True}
+        retain = {**race, "office_id": f"{upper} {name.upper()}", "family": judge, "group": "judicial", "incumbent": True,
+                  "retention": True}
         if court in ("SC", "CHC"):
             shown = "Supreme Court Justice" if court == "SC" else "Chancery Court Judge"
             return {**retain, "office": f"Retain {shown} {name}", "reach": "state"}

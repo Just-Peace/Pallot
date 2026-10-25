@@ -3,7 +3,7 @@
 
 import { formatDate } from "./format.js";
 import { GROUP_LABELS, GROUP_ORDER, coverageOf, partyName } from "./labels.js";
-import { WRITE_IN } from "./picks.js";
+import { ANSWERS, WRITE_IN } from "./picks.js";
 
 const ELECTION_DAY = { weekday: "long", month: "long", day: "numeric", year: "numeric" };
 const SHORT_DAY = { month: "short", day: "numeric" };
@@ -26,11 +26,12 @@ export function ballotSections(ballot) {
 }
 
 // A label per pick in a race: "Jane Doe (write-in)" for a declared write-in, and the voter's own
-// write-in by its typed name, or ``unnamed``. ``party``: "name" adds the candidate's party
-// ("John Roe (Democratic)"), "letter" its letter where there's one, for the wallet card.
+// write-in by its typed name, or ``unnamed``; a retention question's "Yes" or "No". ``party``: "name"
+// adds the candidate's party ("John Roe (Democratic)"), "letter" its letter where there's one, for the wallet card.
 export function pickLabels(race, keys, picks, { unnamed, party = null }) {
   return keys
     .map((key) => {
+      if (race.retention) return ANSWERS.find(([answer]) => answer === key)?.[1] ?? null;
       if (key === WRITE_IN) return picks.writeInLabel(race.key, unnamed);
       const candidate = race.candidates.find((c) => c.key === key);
       if (!candidate) return null;
