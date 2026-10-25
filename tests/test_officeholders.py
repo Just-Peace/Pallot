@@ -80,6 +80,10 @@ def test_the_lists_are_read():
     assert len({h.seat for h in legislature}) == len(legislature)
     hinojosa = next(h for h in legislature if h.seat == "STATESEN:27")
     assert (hinojosa.name, hinojosa.party, hinojosa.party_name) == ("Adam Hinojosa", "R", "Republican")
+    alaska = {h.seat: h.name for h in legislature_holders(fixture_bytes("officeholders_ak.csv").decode())}
+    assert (alaska["STATESEN:I"], alaska["STATEREP:17"]) == ("Löki Tobin", "Zack Fields")
+    padded = "name,current_party,current_district,current_chamber\nJane Roe,Democratic,07,lower\n"
+    assert [h.seat for h in legislature_holders(padded)] == ["STATEREP:7"]
 
 
 def test_the_senator_up_is_the_one_whose_term_ends_after_the_election():

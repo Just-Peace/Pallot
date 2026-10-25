@@ -62,7 +62,7 @@ from .sources.tec import Tec
 from .sources.tigerweb import Tigerweb
 from .sources.trackaipac import TrackAipac
 from .sources.voteforpeace import VoteForPeace
-from .states import StateList
+from .states import StateList, district_key
 from .states import key_dates as state_key_dates
 from .states import place as state_place
 from .text import display_office, display_person, display_time
@@ -325,7 +325,7 @@ def placement(scope: OfficeScope, districts: Districts) -> str:
         mine = getattr(districts, scope.kind)
         if mine is None:
             return "unconfirmed" if scope.kind in DISTRICT_KINDS else "precinct"
-        return "include" if mine == scope.number else "skip"
+        return "include" if district_key(mine) == scope.district_key else "skip"
     if scope.kind == "precinct_other":
         return "precinct"
     return "include"
@@ -408,7 +408,7 @@ class _Builder:
         self.sos_error: str | None = None  # why Texas SOS didn't answer, for the error when there's no ballot
         self.ballot_rows: dict[str, dict[str, Any]] = {}  # candidate key -> its SOS row
         self.scopes: dict[str, OfficeScope] = {}  # SOS race key -> what its office covers
-        self.included: set[tuple[str, int | None]] = set()  # (kind, number) of SOS races kept
+        self.included: set[tuple[str, str | None]] = set()  # (kind, district key) of SOS races kept
         self.unlisted: set[str] = set()  # SOS race keys with only write-ins, so not on the county's ballot order
         self.maybe: dict[str, list[Race]] = {key: [] for key in MAYBE_SECTIONS}
         self.waiting: Counter[str] = Counter()  # the left-out races, by what would settle them (WAITING_ORDER)
@@ -926,7 +926,7 @@ class _Builder:
                     candidates=[self._sos_candidate(election, row, data.lookups) for row in ordered],
                 )
                 if where == "include":
-                    self.included.add((scope.kind, scope.number))
+                    self.included.add((scope.kind, scope.district_key))
                     entries.append((_sort_key(first, scope.name), race))
                 else:
                     self.maybe[where].append(race)
@@ -971,12 +971,12 @@ class _Builder:
         that aren't up (shown in Your districts), and U.S. House and State House races that
         should be in a general election but weren't found (a warning)."""
         districts.not_up = [
-            kind for kind in ("sd", "sboe") if getattr(districts, kind) and (kind, getattr(districts, kind)) not in self.included
+            kind for kind in ("sd", "sboe") if getattr(districts, kind) and (kind, district_key(getattr(districts, kind))) not in self.included
         ]
         if any(e.type == "GE" for e in elections):
             for kind in ("cd", "hd"):  # every one of these seats is up in a general election
                 number = getattr(districts, kind)
-                if number and (kind, number) not in self.included:
+                if number and (kind, district_key(number)) not in self.included:
                     self.warnings.append(
                         f"Couldn't find the {KIND_LABELS[kind]} District {number} race on your county's ballot. "
                         "Double-check with your county elections office."

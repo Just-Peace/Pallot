@@ -9,16 +9,16 @@ COUNTIES = {"TRAVIS", "HARRIS"}
 
 
 @pytest.mark.parametrize(
-    ("name", "office_type", "kind", "number", "unexpired"),
+    ("name", "office_type", "kind", "district", "unexpired"),
     [
         ("U. S. SENATOR ", "FD", "us_senate", None, False),
-        ("U. S. REPRESENTATIVE DISTRICT 10", "FD", "cd", 10, False),
-        ("STATE SENATOR, DISTRICT 21", "SR", "sd", 21, False),
-        ("STATE REPRESENTATIVE DISTRICT 93 - UNEXPIRED TERM", "SR", "hd", 93, True),
-        ("MEMBER, STATE BOARD OF EDUCATION, DISTRICT 4 - UNEXPIRED TERM", "SR", "sboe", 4, True),
-        ("COUNTY COMMISSIONER PRECINCT 2", "CR", "commissioner", 2, False),
-        ("JUSTICE OF THE PEACE PRECINCT 1, PLACE 2", "CR", "jp", 1, False),
-        ("COUNTY CONSTABLE PRECINCT 4 - UNEXPIRED TERM", "CR", "constable", 4, True),
+        ("U. S. REPRESENTATIVE DISTRICT 10", "FD", "cd", "10", False),
+        ("STATE SENATOR, DISTRICT 21", "SR", "sd", "21", False),
+        ("STATE REPRESENTATIVE DISTRICT 093 - UNEXPIRED TERM", "SR", "hd", "93", True),
+        ("MEMBER, STATE BOARD OF EDUCATION, DISTRICT 4 - UNEXPIRED TERM", "SR", "sboe", "4", True),
+        ("COUNTY COMMISSIONER PRECINCT 2", "CR", "commissioner", "2", False),
+        ("JUSTICE OF THE PEACE PRECINCT 1, PLACE 2", "CR", "jp", "1", False),
+        ("COUNTY CONSTABLE PRECINCT 4 - UNEXPIRED TERM", "CR", "constable", "4", True),
         ("TRAVIS - COUNTY JUDGE", "CW", "countywide", None, False),
         ("DISTRICT JUDGE, 147TH JUDICIAL DISTRICT", "SR", "whole_county", None, False),
         ("CHIEF JUSTICE, 15TH COURT OF APPEALS DISTRICT", "SR", "whole_county", None, False),
@@ -26,9 +26,9 @@ COUNTIES = {"TRAVIS", "HARRIS"}
         ("HARRIS COUNTY DEPARTMENT OF EDUCATION, PLACE 5", "CW", "countywide", None, False),
     ],
 )
-def test_classify_real_office_names(name, office_type, kind, number, unexpired):
+def test_classify_real_office_names(name, office_type, kind, district, unexpired):
     scope = classify(name, office_type, COUNTIES)
-    assert (scope.kind, scope.number, scope.unexpired) == (kind, number, unexpired)
+    assert (scope.kind, scope.district_key, scope.unexpired) == (kind, district, unexpired)
 
 
 def test_county_prefix_is_only_dropped_for_real_counties():

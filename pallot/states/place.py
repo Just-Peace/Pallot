@@ -108,7 +108,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
                 for f in sorted(found, key=lambda f: (f.order, f.name))
             ],
         )
-        if first.reach in ("sd", "hd") and first.district and first.district.isdigit():
-            placed.scopes[key] = OfficeScope(first.reach, int(first.district), first.unexpired, first.office.upper())
+        if first.reach in ("sd", "hd") and first.district:
+            placed.scopes[key] = OfficeScope(first.reach, district_key(first.district), first.unexpired, first.office.upper())
         (placed.races if verdict == "include" else placed.unconfirmed).append(race)
     return placed
