@@ -45,6 +45,14 @@ November in an even year): registration by mail or online closes the third Wedne
 asking by mail or online by 5 p.m. the fifth day before, or in person at the clerk's office from
 the fourteenth day before through the Sunday before (6.86(1)(b)), and the ballot must reach the
 polling place by 8 p.m. on Election Day (6.87(6)); polls are open 7 a.m. to 8 p.m. (6.78(1m)).
+
+New York's, for its general election (Election Law 8-100(1)(c): the Tuesday after the first Monday
+of November, every year), checked on nysenate.gov on 2026-10-24: a registration must reach the
+county board by the tenth day before (5-210(3)); early voting runs from the tenth day before
+through the second day before (8-600(1)); an absentee or early mail ballot application online or
+by mail must reach the board by the tenth day before, in person by the day before (8-400); a
+mailed ballot must be postmarked by Election Day and reach the board within seven days after
+(8-412); polls are open 6 a.m. to 9 p.m. (8-100(2)).
 """
 
 from __future__ import annotations
@@ -221,9 +229,27 @@ WISCONSIN = Guide(
     credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
 )
 
+NEW_YORK = Guide(
+    name="New York",
+    source="New York State Board of Elections",
+    url="https://elections.ny.gov/",
+    computed=True,
+    registration_url="https://elections.ny.gov/register-vote",
+    mail_url="https://absenteeballot.elections.ny.gov/",
+    register="The last day for your registration to reach your county board of elections for {election} in New York.",
+    mail_summary="Early mail or absentee ballot application due",
+    mail="If you vote by mail in {election}, an application made online or by mail must reach your county board of "
+         "elections today; in person, you can apply until the day before Election Day. Your ballot must be "
+         "postmarked by Election Day and reach the board within 7 days after. Any voter can vote early by mail; "
+         "how to apply:",
+    early_where="Your county board of elections sets the places and hours.",
+    polls="Polls are open 6 a.m. to 9 p.m.; if you're in line at 9, you can vote.",
+    credit="Dates worked out from New York's Election Law; more from the New York State Board of Elections",
+)
+
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO,
+    "OH": OHIO, "NY": NEW_YORK,
 }
 
 
@@ -335,8 +361,24 @@ def wisconsin(day: dt.date) -> Deadlines | None:
     )
 
 
+def new_york(day: dt.date) -> Deadlines | None:
+    """The dates of New York's general election on ``day``, or None when there's none: register and
+    apply to vote by mail by the tenth day before, early voting the tenth day before through the
+    second day before."""
+    if day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=10),
+        mail_apply_by=day - dt.timedelta(days=10),
+        early_start=day - dt.timedelta(days=10),
+        early_end=day - dt.timedelta(days=2),
+        state="NY",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
-    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio,
+    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "NY": new_york,
 }
 
 

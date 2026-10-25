@@ -53,6 +53,7 @@ COVERED = {
     "GA": LIST,
     "WI": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "OH": Coverage("list", ("cd",), precincts=False, outlines=False),  # its statewide races; the House race from the FEC
+    "NY": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
 }
 
 # Sources that only know some states.

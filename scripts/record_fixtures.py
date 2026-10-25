@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ny, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -38,7 +38,9 @@ year's primary, recount and runoff, cut down to a few races. Wisconsin's (state_
 Madison address and the contests and candidates saved by hand in manual/state_wi (--csv another
 copy), never downloaded, cut down to the state's rows and a few counties'. Ohio's (state_oh) takes
 a Columbus address and the statewide list transcribed by hand into manual/state_oh (--json another
-copy), never downloaded, with the address's House seat's FEC filers. The TrackAIPAC, Vote for Peace and Texas Ethics
+copy), never downloaded, with the address's House seat's FEC filers. New York's (state_ny) takes a
+Manhattan and an Albany address and the certification saved by hand in manual/state_ny (--pdf
+another copy), never downloaded, cut down to some races' text lines. The TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
 updating ELECTIONS below and the tests' expectations.
@@ -72,7 +74,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ca, fl, ga, mi, nc, ordinal, pa, va  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ca, fl, ga, mi, nc, ordinal, pa, pdf_lines, va  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -111,6 +113,15 @@ WI_ADDRESS = ("madison", "2 E Main St, Madison, WI 53703")  # the State Capitol
 WI_JURISDICTIONS = ("DANE COUNTY", "WOOD COUNTY", "PRICE COUNTY", "IRON COUNTY", "JEFFERSON COUNTY", "WALWORTH COUNTY",
                     "MULTIPLE COUNTIES")
 OH_ADDRESS = ("columbus", "90 W Broad St, Columbus, OH 43215")  # City Hall
+NY_ADDRESSES = {"manhattan": "260 Broadway, New York, NY 10007", "albany": "100 State St, Albany, NY 12207"}
+# New York's races kept besides the statewide ones and the addresses' districts: wrapped names and
+# counties, a "Counties" without its colon, "SteOffice:", one-off party lines, and the Supreme Court
+# districts of the two addresses, Brooklyn's (split over a page) and Long Island's.
+NY_RACES = (("REPRESENTATIVE IN CONGRESS", "1"), ("REPRESENTATIVE IN CONGRESS", "21"), ("STATE SENATOR", "12"),
+            ("STATE SENATOR", "54"), ("MEMBER OF ASSEMBLY", "61"), ("MEMBER OF ASSEMBLY", "74"),
+            ("MEMBER OF ASSEMBLY", "75"), ("MEMBER OF ASSEMBLY", "97"), ("MEMBER OF ASSEMBLY", "123"),
+            ("MEMBER OF ASSEMBLY", "137"), ("SUPREME COURT JUSTICE", "1"), ("SUPREME COURT JUSTICE", "2"),
+            ("SUPREME COURT JUSTICE", "3"), ("SUPREME COURT JUSTICE", "10"))
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -672,6 +683,57 @@ def record_wi(client: httpx.Client, key: str, saved: Path | None) -> None:
                                  and m["terms"][-1].get("district") in (None, place.cd)])
 
 
+def record_ny(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """New York: NY_ADDRESSES' Census answers; the State Board's certification, never downloaded (its
+    site blocks scripts): ``saved``, or the PDF in manual/state_ny, cut down to its title and the
+    races in NY_RACES and the addresses' districts, as text lines; their seats' FEC filers, the
+    state's legislators, and their representatives added to officeholders_congress.json."""
+    path = saved or next(iter(sorted((ROOT / "manual" / "state_ny").glob("*.pdf"))), None)
+    if path is None:
+        raise SystemExit("state_ny: save New York's certification in manual/state_ny (see its README), or pass --pdf")
+    races, seats = set(NY_RACES), set()
+    for name, address in NY_ADDRESSES.items():
+        response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+        response.raise_for_status()
+        save(f"census_{name}.json", response.json())
+        match = response.json()["result"]["addressMatches"][0]
+        place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+        races |= {("REPRESENTATIVE IN CONGRESS", str(place.cd)), ("STATE SENATOR", str(place.sd)),
+                  ("MEMBER OF ASSEMBLY", str(place.hd))}
+        seats.add(place.cd)
+    lines = pdf_lines(path.read_bytes())
+    starts = [i for i, line in enumerate(lines) if "Office:" in line] + [len(lines)]
+    kept = lines[:1]
+    for start, end in zip(starts, starts[1:]):
+        office = " ".join(lines[start].split("Office:", 1)[1].upper().split())
+        district = next((line.split(":", 1)[1].strip() for line in lines[start:end] if line.startswith("District:")), "")
+        if office in ("GOVERNOR AND LT. GOVERNOR", "COMPTROLLER", "ATTORNEY GENERAL") or (office, district) in races:
+            kept += lines[start:end]
+    (FIXTURES / "state_ny.txt").write_text("\n".join(kept) + "\n", encoding="utf-8", newline="\n")
+    print(f"state_ny.txt: {(FIXTURES / 'state_ny.txt').stat().st_size:,} bytes")
+
+    for cd in sorted(seats):
+        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+            "state": "NY", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+            "office": "house", "district": f"{cd:02d}"})
+        response.raise_for_status()
+        save(f"fec_elections_ny_house_{cd:02d}.json", response.json())
+    response = client.get(officeholders.LEGISLATURE.format(state="ny"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    legislators = io.StringIO()
+    writer = csv.DictWriter(legislators, columns, extrasaction="ignore", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_ny.csv").write_text(legislators.getvalue(), encoding="utf-8", newline="")
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    members = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(members.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "NY"]
+    save(members.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "NY"
+                                 and m["terms"][-1].get("district") in seats])
+
+
 def record_polls(client: httpx.Client) -> None:
     """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
     polls plus a few from other states."""
@@ -843,11 +905,12 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "polls", "key_dates", "officeholders", "wikidata",
-                                           "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ny", "polls", "key_dates", "officeholders",
+                                           "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
-                                                 "state_nv: Nevada's, instead of the one saved in manual/state_nv")
+                                                 "state_nv: Nevada's, instead of the one saved in manual/state_nv; "
+                                                 "state_ny: New York's, instead of the one saved in manual/state_ny")
     parser.add_argument("--json", type=Path, help="state_ga: Georgia's qualifying list, instead of the one saved in "
                                                   "manual/state_ga; state_oh: Ohio's, instead of manual/state_oh/ohio.json")
     parser.add_argument("--csv", type=Path, help="state_wi: Wisconsin's contests and candidates, instead of the one "
@@ -876,6 +939,8 @@ def main(argv: list[str] | None = None) -> int:
             record_wi(client, config.fec_api_key, args.csv)
         if only in (None, "state_oh"):
             record_oh(client, config.fec_api_key, args.json if only == "state_oh" else None)
+        if only in (None, "state_ny"):
+            record_ny(client, config.fec_api_key, args.pdf if only == "state_ny" else None)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):

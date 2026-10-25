@@ -40,7 +40,7 @@ def test_sources_overview(client):
                                                        "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
                                                        "mupac", "fec", "tec", "polls", "state_nc", "state_mi", "state_pa",
                                                        "state_fl", "state_va", "state_ca", "state_az", "state_nv",
-                                                       "state_ga", "state_wi", "state_oh", "key_dates_ca"]
+                                                       "state_ga", "state_wi", "state_oh", "state_ny", "key_dates_ca"]
     (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, holders, tracker, peace, _, _, example, _,
      fec, tec, polls, *_) = overview["sources"]  # no Google key: its rows (Google, suggestions) are left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
@@ -142,7 +142,7 @@ def test_sources_are_grouped(client):
         "address": ["geocoding", "election_precincts", "county_precincts", "tigerweb", "osm_tiles"],
         "official": ["sos", "key_dates", "fec", "tec"],
         "states": ["state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "state_az", "state_nv",
-                   "state_ga", "state_wi", "state_oh", "key_dates_ca"],
+                   "state_ga", "state_wi", "state_oh", "state_ny", "key_dates_ca"],
         "ballot": ["wikidata", "officeholders"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],

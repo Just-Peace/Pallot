@@ -147,6 +147,14 @@
    "last_refresh": "2026-10-22T12:20:25+00:00",
    "races": 364
   },
+  "state_ny": {
+   "answers": 1,
+   "answers_hash": "bbbed9591d191960d0dd70dac955c371067f5cbdf4bf6d100334c15e9f4711f7",
+   "candidates": 502,
+   "last_checked": "2026-10-25T04:13:59+00:00",
+   "last_refresh": "2026-10-25T04:13:59+00:00",
+   "races": 253
+  },
   "state_oh": {
    "answers": 1,
    "answers_hash": "59c998e6bb21bb73f43876e9c3a375966bc8c0f390efe6b98ac2dcacc56292e9",

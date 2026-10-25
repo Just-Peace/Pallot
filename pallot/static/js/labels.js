@@ -42,8 +42,8 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's and
-// Ohio's registration, mail voting and poll hours, and Texas's print tips.
+// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
+// Ohio's and New York's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -184,6 +184,23 @@ export const STATES = {
       + "polling place or clerk by 8 p.m. on Election Day.",
     mailDeadline: "Mailed or online requests must reach your clerk by 5 p.m. on ",
     pollHours: "7 a.m. – 8 p.m.",
+  },
+  NY: {
+    site: { label: siteLabel(SITES.NY), url: SITES.NY },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://voterlookup.elections.ny.gov/",
+      hint: "New York State Board of Elections' voter lookup: your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://voterlookup.elections.ny.gov/",
+      hint: "The voter lookup: your polling place; your county board of elections publishes its early voting places",
+    },
+    localOffice: "Your county board of elections",
+    mailApply: { label: "How to apply", url: "https://absenteeballot.elections.ny.gov/" },
+    mailEligibility: "Any registered voter can vote early by mail, no reason needed. Your ballot must be postmarked "
+      + "by Election Day and reach your county board within 7 days after.",
+    mailDeadline: "Online or mailed applications must reach your county board by ",
+    pollHours: "6 a.m. – 9 p.m.",
   },
 };
 
