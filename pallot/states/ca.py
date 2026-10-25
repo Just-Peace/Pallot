@@ -170,7 +170,7 @@ def _retention(lines: list[str], day: str, start: int) -> list[Filing]:
             day=day, office_id=" ".join(filter(None, (family, district, name.upper()))),
             office=f"{'Retain' if sitting else 'Elect'} {name}, {title}", family=family, group="judicial",
             reach="counties" if district else "state", district=district, name=name,
-            counties=tuple(sorted(where.get(number, ()))), incumbent=sitting, order=(start + rank) * 100,
+            counties=tuple(sorted(where.get(number, ()))), incumbent=sitting, retention=True, order=(start + rank) * 100,
         ))
     return filings
 

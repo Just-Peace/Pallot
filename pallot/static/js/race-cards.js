@@ -9,7 +9,7 @@ import { $, autosave, extLink, h, initials, safeUrl, slug } from "./dom.js";
 import { plural } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
-import { WRITE_IN } from "./picks.js";
+import { ANSWERS, WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
 import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
 import { hideToast, showToast } from "./toast.js";
@@ -154,9 +154,10 @@ function raceCard(race) {
   ].filter(Boolean).join(" · ");
   const candRows = race.candidates.map((c) => candidateRow(race, c));
   const quiet = quietWriteIns(race, candRows);
-  const rows = [...candRows, writeInRow(race)];
+  const rows = [...candRows, race.retention ? answersRow(race) : writeInRow(race)];
   const body = h("fieldset", { class: "race-options" },
-    h("legend", { class: "sr-only" }, `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
+    h("legend", { class: "sr-only" }, race.retention ? `${race.name}: vote yes or no`
+      : `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
   const compare = () => openCompare($("#compare"), race);
@@ -196,6 +197,7 @@ function raceCard(race) {
       const on = picked.includes(row.dataset.cand);
       row.classList.toggle("picked", on);
       const input = row.querySelector(".pick-input");
+      if (!input) continue; // a retention question's judge, answered Yes or No below
       input.checked = on;
       if (multi) input.disabled = !on && picked.length >= race.seats;
       const note = row.querySelector(".write-in-note");
@@ -315,12 +317,13 @@ function banButton(candidate) {
     } } }, icon("ban"), word);
 }
 
-// A candidate's row, and ``sync``, which puts its saved note in the note box.
+// A candidate's row, and ``sync``, which puts its saved note in the note box. A retention question's
+// judge has no radio of their own: the question's Yes and No (answersRow) are the picks.
 function candidateRow(race, candidate) {
   const multi = race.seats > 1;
   const id = slug(candidate.key);
-  const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id: `pick-${id}`, class: "pick-input",
-    on: { change: (event) => choose(race, candidate.key, event.target.checked) } });
+  const input = race.retention ? null : h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`,
+    id: `pick-${id}`, class: "pick-input", on: { change: (event) => choose(race, candidate.key, event.target.checked) } });
 
   const textarea = h("textarea", { id: `note-${id}-text`, rows: "2", placeholder: "Your thoughts on this candidate…" });
   const saved = h("span", { class: "saved", "aria-live": "polite" });
@@ -405,7 +408,7 @@ function candidateRow(race, candidate) {
     // and Note and Search to the side (beside Profile, on a phone).
     h("div", { class: "cand-main cand-grid" },
       input,
-      h("label", { for: `pick-${id}`, class: "cand-label" },
+      h(input ? "label" : "span", { for: input ? `pick-${id}` : null, class: "cand-label" },
         photo.nodes,
         h("span", { class: "cand-text" },
           h("span", { class: "cand-name" }, candidate.name),
@@ -475,6 +478,25 @@ function writeInRow(race) {
     hint ? h("p", { class: "fine write-in-note", hidden: true }, hint) : null,
   );
   return { row, sync: () => syncBox(name, page.picks.writeIn(race.key)) };
+}
+
+// The last row of a retention question, in place of the write-in: Yes and No side by side, each
+// picked as a candidate is. ``sync`` checks the saved answer.
+function answersRow(race) {
+  const answers = ANSWERS.map(([key, word]) => {
+    const id = `${key}-${slug(race.key)}`;
+    const input = h("input", { type: "radio", name: `race-${slug(race.key)}`, id, class: "pick-input",
+      on: { change: (event) => choose(race, key, event.target.checked) } });
+    return { key, input, label: h("label", { for: id, class: "answer" }, input, word) };
+  });
+  const sync = () => {
+    const picked = page.picks.picked(race.key);
+    for (const { key, input, label } of answers) {
+      input.checked = picked.includes(key);
+      label.classList.toggle("picked", input.checked);
+    }
+  };
+  return { row: h("li", { class: "answers" }, answers.map((answer) => answer.label)), sync };
 }
 
 // ---- picking ------------------------------------------------------------------------

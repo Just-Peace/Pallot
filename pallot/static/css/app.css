@@ -1048,6 +1048,10 @@ button.badge-btn:hover { text-decoration: underline; filter: brightness(0.96); }
 .write-in-label { font-weight: 650; cursor: pointer; }
 .write-in-name { flex: 1 1 220px; min-width: 0; max-width: 360px; padding: 6px 10px; }
 .write-in-note { margin: 8px 0 0 30px; }
+.answers { display: flex; gap: 8px; }
+.answer { display: flex; align-items: center; gap: 10px; flex: 0 1 160px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line);
+  border-radius: var(--radius-sm); background: var(--panel-2); font-weight: 650; cursor: pointer; }
+.answer.picked { border-color: var(--pick); box-shadow: inset 4px 0 0 var(--pick); }
 
 .note { margin: 10px 0 0 30px; }
 .note label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
@@ -1619,6 +1623,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   :root:not([data-view-mode="detailed"]) .cand:not(.actions-open) .cand-grid > .cand-actions { display: none; }
   :root[data-view-mode="detailed"] .cand-grid > .cand-actions { flex: none; order: 1; margin-left: auto; }
   .writeins-line { padding: 4px 2px 4px 10px; }
+  .answers { padding: 8px 2px 0 10px; }
+  .answer { flex: 1 1 0; }
   .party { padding: 1px 7px; }
   .pill { padding: 1px 7px; }
   .badges { gap: 5px; }

@@ -13,10 +13,13 @@ party and race are read, so the cache and the bundle hold the parsed filings and
 elections alone. Apostrophes come escaped as SQL ("O' + Char(39) + 'Brien").
 
 The statewide offices come under the state, Congress, the State Senate and the State House by
-their districts, and a Cook County circuit judge or a First District appellate judge (the First
-District is Cook County) the whole county. Subcircuits, other circuits and appellate districts,
-and the regional superintendents of schools can't be placed from the address; retention
-questions are left out.
+their districts, a Cook County circuit judge or a First District appellate judge (the First
+District is Cook County) the whole county, and another circuit's or appellate district's judge
+its counties. A subcircuit's vacancy and the regional superintendents of schools can't be placed
+from the address. The judges standing for retention (ballot groups RB and RC) are each a yes-or-no
+question, in their whole circuit, a subcircuit's judge's too. A downstate appellate judge's isn't
+placed: since the districts were redrawn in 2021, a judge elected before then stands for
+retention in the old district or the new one, as they chose (705 ILCS 23/5), and the file doesn't say which.
 """
 
 from __future__ import annotations
@@ -43,15 +46,49 @@ HOUSE_RACES = 17  # a list with fewer Congress races isn't the whole list
 STATEWIDE = {"GOVERNOR AND LIEUTENANT GOVERNOR": "Governor and Lieutenant Governor", "ATTORNEY GENERAL": "Attorney General",
              "SECRETARY OF STATE": "Secretary of State", "COMPTROLLER": "Comptroller", "TREASURER": "Treasurer"}
 TICKET = "GOVERNOR AND LIEUTENANT GOVERNOR"
-_BALLOT = ("A", "B", "F", "J", "LB", "LC", "LD", "K")  # the file's ballot groups in the ballot's order
+_BALLOT = ("A", "B", "F", "J", "LB", "LC", "LD", "K", "RB", "RC")  # the file's ballot groups in the ballot's order
 _ELECTION = re.compile(
     r"""href=["']([^"']*CandidateFilingSearch\.aspx\?ID=([^"'&]+))["'][^>]*>\s*GENERAL ELECTION\s*</a>\s*</td>\s*"""
     r"""<td[^>]*>\s*(\d{1,2}/\d{1,2}/\d{4})\s*<""", re.I)
 _LEGISLATURE = re.compile(r"^(\d+)(?:ST|ND|RD|TH) (CONGRESS|SENATE|REPRESENTATIVE)$")
 _APPELLATE = re.compile(r"^(\d+)(?:ST|ND|RD|TH) APPELLATE - (.+) VACANCY$", re.I)
-_COOK = re.compile(r"^COOK CIRCUIT - (.+) VACANCY$", re.I)
+_CIRCUIT = re.compile(r"^(COOK|\d+)(?:ST|ND|RD|TH)? CIRCUIT - (.+) VACANCY$", re.I)
+_RETAIN = re.compile(r"^(COOK|\d+)(?:ST|ND|RD|TH)? (CIRCUIT|APPELLATE) - (?:.+ - )?RETAIN .+$", re.I)
 _NAMES = {"INDEPENDENT": "Independent"}
 _MIXED = re.compile(r"^([A-Z][a-z]+)([A-Z][A-Z'.,]+)$")
+_CIRCUITS = {  # 705 ILCS 35/1, with the 24th split from the 20th since December 5, 2022
+    1: ("ALEXANDER", "JACKSON", "JOHNSON", "MASSAC", "POPE", "PULASKI", "SALINE", "UNION", "WILLIAMSON"),
+    2: ("CRAWFORD", "EDWARDS", "FRANKLIN", "GALLATIN", "HAMILTON", "HARDIN", "JEFFERSON", "LAWRENCE", "RICHLAND",
+        "WABASH", "WAYNE", "WHITE"),
+    3: ("BOND", "MADISON"),
+    4: ("CHRISTIAN", "CLAY", "CLINTON", "EFFINGHAM", "FAYETTE", "JASPER", "MARION", "MONTGOMERY", "SHELBY"),
+    5: ("CLARK", "COLES", "CUMBERLAND", "EDGAR", "VERMILION"),
+    6: ("CHAMPAIGN", "DE WITT", "DOUGLAS", "MACON", "MOULTRIE", "PIATT"),
+    7: ("GREENE", "JERSEY", "MACOUPIN", "MORGAN", "SANGAMON", "SCOTT"),
+    8: ("ADAMS", "BROWN", "CALHOUN", "CASS", "MASON", "MENARD", "PIKE", "SCHUYLER"),
+    9: ("FULTON", "HANCOCK", "HENDERSON", "KNOX", "MCDONOUGH", "WARREN"),
+    10: ("MARSHALL", "PEORIA", "PUTNAM", "STARK", "TAZEWELL"),
+    11: ("FORD", "LIVINGSTON", "LOGAN", "MCLEAN", "WOODFORD"),
+    12: ("WILL",),
+    13: ("BUREAU", "GRUNDY", "LASALLE"),
+    14: ("HENRY", "MERCER", "ROCK ISLAND", "WHITESIDE"),
+    15: ("CARROLL", "JO DAVIESS", "LEE", "OGLE", "STEPHENSON"),
+    16: ("KANE",),
+    17: ("BOONE", "WINNEBAGO"),
+    18: ("DUPAGE",),
+    19: ("LAKE",),
+    20: ("ST. CLAIR",),
+    21: ("IROQUOIS", "KANKAKEE"),
+    22: ("MCHENRY",),
+    23: ("DEKALB", "KENDALL"),
+    24: ("MONROE", "PERRY", "RANDOLPH", "WASHINGTON"),
+}
+_APPEALS = {  # the Judicial Districts Act of 2021 (705 ILCS 23/15 to 23/30), by their circuits
+    2: (16, 19, 22, 23),
+    3: (12, 13, 18, 21),
+    4: (7, 8, 9, 10, 11, 14, 15, 17),
+    5: (1, 2, 3, 4, 5, 6, 20, 24),
+}
 
 
 def elections(text: str) -> dict[str, Any]:
@@ -70,8 +107,11 @@ def _text(value: str | None) -> str:
 
 
 def _capitalized(text: str) -> str:
-    """A name in capitals as written ("O'MALLEY" is "O'Malley", "5TH" is "5th", "McDADE" is "McDade")."""
+    """A name in capitals as written ("O'MALLEY" is "O'Malley", "5TH" is "5th", "McDADE" is "McDade",
+    "III" stays)."""
     def word(text: str) -> str:
+        if text.rstrip(",.") in ("II", "III", "IV"):
+            return text
         if text.isupper():
             return text.lower() if text[0].isdigit() else text.title()
         mixed = _MIXED.match(text)
@@ -80,13 +120,35 @@ def _capitalized(text: str) -> str:
     return " ".join(word(part) for part in text.split())
 
 
-def _kind(shown: str) -> dict[str, Any] | None:
+def _court(place: str, court: str) -> tuple[str, dict[str, Any]] | None:
+    """A court's name and its judges' Filing fields (family, reach, district, counties), from the
+    office's "COOK" or number and "CIRCUIT" or "APPELLATE"; None for a number it doesn't know."""
+    if place == "COOK" or court == "APPELLATE" and place == "1":
+        circuit = court == "CIRCUIT"
+        return ("the Circuit Court of Cook County" if circuit else "the Appellate Court, 1st District",
+                {"family": "COOK CIRCUIT JUDGE" if circuit else "APPELLATE JUDGE", "reach": "county",
+                 "district": None if circuit else "1", "counties": ("COOK",)})
+    number = int(place)
+    circuits = (number,) if court == "CIRCUIT" else _APPEALS.get(number, ())
+    if not circuits or not all(circuit in _CIRCUITS for circuit in circuits):
+        return None
+    name = f"the Circuit Court, {ordinal(number)} Circuit" if court == "CIRCUIT" else \
+        f"the Appellate Court, {ordinal(number)} District"
+    return name, {"family": f"{court} JUDGE", "reach": "counties", "district": str(number),
+                  "counties": tuple(sorted(county for circuit in circuits for county in _CIRCUITS[circuit]))}
+
+
+def _kind(shown: str, name: str) -> dict[str, Any]:
     """The race of an office, as Filing's fields: its id, shown name, family, group, reach, district
-    and counties; None for a retention question."""
+    and counties, and for a retention question, ``name``'s, the judge's."""
     office = shown.upper()
     race = {"office_id": office, "office": _capitalized(shown), "family": office, "district": None, "counties": ()}
-    if "RETAIN" in office.split():
-        return None
+    if found := _RETAIN.match(office):
+        court = _court(found.group(1), found.group(2))
+        retain = {**race, "office": f"Retain {name}" + (f", Judge of {court[0]}" if court else ""), "group": "judicial",
+                  "reach": "unplaced", "incumbent": True, "retention": True}
+        return {**retain, **court[1]} if court and (found.group(2) == "CIRCUIT" or court[1]["reach"] == "county") \
+            else retain
     if office == "UNITED STATES SENATOR":
         return {**race, "office": race_name("IL", None), "family": "US SENATE", "group": "federal", "reach": "state"}
     if office in STATEWIDE:
@@ -100,16 +162,13 @@ def _kind(shown: str) -> dict[str, Any] | None:
         return {**race, "office": f"State {'Senator' if senate else 'Representative'} District {number}",
                 "family": "STATE SENATE" if senate else "STATE HOUSE", "group": "legislature",
                 "reach": "sd" if senate else "hd", "district": str(number)}
-    if found := _APPELLATE.match(shown):
-        number = int(found.group(1))
-        return {**race, "office": f"Judge of the Appellate Court, {ordinal(number)} District "
-                                  f"({_capitalized(found.group(2))} vacancy)",
-                "family": "APPELLATE JUDGE", "group": "judicial", "district": str(number),
-                **({"reach": "county", "counties": ("COOK",)} if number == 1 else {"reach": "unplaced"})}
-    if (found := _COOK.match(shown)) and "SUBCIRCUIT" not in office:
-        return {**race, "office": f"Judge of the Circuit Court of Cook County ({_capitalized(found.group(1))} vacancy)",
-                "family": "COOK CIRCUIT JUDGE", "group": "judicial", "reach": "county", "counties": ("COOK",)}
-    group = "judicial" if "CIRCUIT" in office else "state"
+    for pattern, kind in ((_APPELLATE, "APPELLATE"), (_CIRCUIT, "CIRCUIT")):
+        found = pattern.match(shown)
+        court = found and " - " not in found.group(2) and _court(found.group(1).upper(), kind)
+        if court:
+            return {**race, "office": f"Judge of {court[0]} ({_capitalized(found.group(2))} vacancy)",
+                    "group": "judicial", **court[1]}
+    group = "judicial" if "CIRCUIT" in office or "APPELLATE" in office else "state"
     return {**race, "group": group, "reach": "unplaced"}
 
 
@@ -131,14 +190,15 @@ def parse(raw: str) -> list[Filing]:
             mates.setdefault(row["BracketID"], []).append(_text(f"{row['FirstName']} {row['LastName']}"))
     filings = []
     for row in rows:
-        race = _kind(_text(row["OfficeName"]))
-        if race is None or race["office_id"] == TICKET and row["BracketID"] not in ("", "0", row["CandidateID"]):
+        office = _text(row["OfficeName"])
+        if office == TICKET and row["BracketID"] not in ("", "0", row["CandidateID"]):
             continue
         try:
             day = dt.datetime.strptime(_text(row["ElecDate"]), "%m/%d/%Y").date().isoformat()
         except ValueError:
             continue
         name = " and ".join([_text(f"{row['FirstName']} {row['LastName']}"), *mates.get(row["CandidateID"], [])])
+        race = _kind(office, name)
         group = _text(row["BallotGroup"])
         code, party_name = party(_capitalized(_text(row["PartyName"])), _NAMES)
         rank = _BALLOT.index(group) if group in _BALLOT else len(_BALLOT)
@@ -165,8 +225,8 @@ class IlList(StateList):
     source = "state_il"
     label = "Illinois State Board of Elections"
     page = INDEX
-    description = ("Illinois's candidates for state and federal offices, Cook County's judges among them, from its State "
-                   "Board of Elections' candidate filings.")
+    description = ("Illinois's candidates for state and federal offices and its judges, and the judges standing for "
+                   "retention, from its State Board of Elections' candidate filings.")
     max_bytes = 16 << 20
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:

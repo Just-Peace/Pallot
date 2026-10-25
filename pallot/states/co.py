@@ -155,7 +155,7 @@ def parse_rows(day: str, rows: list[list[str]]) -> list[Filing]:
         filings.append(Filing(
             day=day, office_id=office_id, office=shown, family=family, group=group, reach=reach, district=seat,
             name=name, party=code, party_name=party_name, counties=where, write_in=write_in.upper() == "Y",
-            incumbent=group == "judicial", order=index,
+            incumbent=group == "judicial", retention=group == "judicial", order=index,
         ))
     house = {f.district for f in filings if f.reach == "cd" and f.group == "federal"}
     if len(house) < HOUSE_RACES:

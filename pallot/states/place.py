@@ -97,6 +97,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
             group=first.group,
             seats=max(f.seats for f in found),
             unexpired=first.unexpired,
+            retention=first.retention,
             seat=(None if first.group != "federal" else f"{state}-SEN" if first.reach == "state"
                   else f"{state}-{int(first.district):02d}" if first.reach == "cd" and first.district else None),
             source=source,

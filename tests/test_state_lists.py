@@ -250,6 +250,8 @@ def test_a_florida_ballot_has_its_courts_retention_for_the_voters_county(client,
                  "Retain 1st District Court of Appeal Judge Tim Osterhaus"):
         assert find_race(ballot, name), name
     assert not any("2nd District Court of Appeal" in race["name"] for race in ballot["races"])
+    assert find_race(ballot, "Retain Supreme Court Justice Carlos G. Muniz")["retention"]
+    assert not any(race["retention"] for race in ballot["races"] if not race["name"].startswith("Retain "))
     governor = find_race(ballot, "Governor")
     assert [c["name"] for c in governor["candidates"] if c["write_in"]] == ["Kathy Anderson", "Erik Morris"]
     assert "POST dos.elections.myflorida.com/candidates/extractCanList.asp" in upstream.calls
@@ -324,6 +326,7 @@ def test_californias_court_pages_are_read_through_their_spacing_wraps_and_order(
     yegan, sapp, rodriguez = courts
     assert (yegan.reach, yegan.incumbent) == ("state", True)
     assert sapp.office == "Elect David B. Sapp, Associate Justice, Court of Appeal, Third District" and not sapp.incumbent
+    assert all(f.retention for f in courts)  # confirming a judge the Governor named is a yes-or-no question too
     assert {"SHASTA", "SAN JOAQUIN", "SUTTER"} <= set(sapp.counties) and "SAN DIEGO" not in sapp.counties
     assert (rodriguez.district, rodriguez.office.split(",")[0]) == ("4", "Elect Lisa Rodriguez")
     assert "SAN BERNARDINO" in rodriguez.counties
@@ -351,6 +354,7 @@ def test_a_california_ballot_comes_from_its_pdf_kept_only_as_its_candidates(clie
     assert any("4 Board of Equalization races" in note for note in ballot["notes"])
     evans = find_race(ballot, "Retain Kelli M. Evans, Associate Justice of the Supreme Court")
     assert [(c["name"], c["party"], c["incumbent"]) for c in evans["candidates"]] == [("Kelli M. Evans", None, True)]
+    assert evans["retention"] and not find_race(ballot, "Governor")["retention"]
     data = tmp_path / "data"
     assert upstream.count("elections.cdn.sos.ca.gov") == 1 and not list(data.glob(".*.part"))
     with sqlite3.connect(data / "cache.sqlite3") as db:

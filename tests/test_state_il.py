@@ -13,7 +13,9 @@ from collections import Counter
 import pytest
 from fastapi.testclient import TestClient
 
-from pallot.states import il
+from pallot import counties
+from pallot.models import Districts, Location
+from pallot.states import il, place
 from pallot.states import key_dates as state_key_dates
 from pallot.states.il import IlList
 
@@ -40,13 +42,12 @@ def test_the_list_of_elections_gives_each_general_elections_page():
 
 def test_illinoiss_file_has_its_active_candidates_and_the_parties_nominees():
     filings = il.parse(FILE)
-    assert len(filings) == 370 and {f.day for f in filings} == {"2026-11-03"}
+    assert len(filings) == 501 and {f.day for f in filings} == {"2026-11-03"}
     reach = Counter(f.reach for f in filings)
-    assert (reach["state"], reach["cd"], reach["county"]) == (14, 36, 6)
+    assert (reach["state"], reach["cd"], reach["county"], reach["counties"]) == (14, 36, 66, 93)
     assert {f.district for f in filings if f.reach == "cd"} == {str(n) for n in range(1, 18)}
     assert all({"D", "R"} <= {f.party for f in filings if f.district == str(n) and f.reach == "cd"} for n in range(1, 18))
     assert not any("Macias" in f.name or "Sigcho" in f.name for f in filings)  # removed from the ballot
-    assert not any("RETAIN" in f.office_id for f in filings)
     governor = sorted((f for f in filings if f.office == "Governor and Lieutenant Governor"), key=lambda f: f.order)
     assert [(f.name, f.party, f.party_name) for f in governor] == [
         ("JB Pritzker and Christian Mitchell", "D", None), ("Darren Bailey and Aaron B. Del Mar", "R", None),
@@ -64,9 +65,61 @@ def test_illinoiss_file_has_its_active_candidates_and_the_parties_nominees():
     assert cook["Judge of the Appellate Court, 1st District (Hoffman vacancy)"].counties == ("COOK",)
     assert "Judge of the Circuit Court of Cook County (Burke vacancy)" in cook
     unplaced = {f.office_id for f in filings if f.reach == "unplaced"}
-    assert "COOK CIRCUIT - 1ST SUBCIRCUIT - BALANOFF VACANCY" in unplaced and "3RD APPELLATE - MCDADE VACANCY" in unplaced
-    assert "Judge of the Appellate Court, 3rd District (McDade vacancy)" in {f.office for f in filings}
+    assert "COOK CIRCUIT - 1ST SUBCIRCUIT - BALANOFF VACANCY" in unplaced
+    assert "12TH CIRCUIT - 1ST SUBCIRCUIT - CARLSON VACANCY" in unplaced
     assert any("SUPERINTENDENT" in office for office in unplaced)
+    assert not any(f.retention for f in filings if "VACANCY" in f.office_id)
+
+
+def test_downstate_circuit_and_appellate_vacancies_are_placed_in_their_counties():
+    filings = {f.office_id: f for f in il.parse(FILE)}
+    adrian = filings["8TH CIRCUIT - ADRIAN VACANCY"]
+    assert (adrian.office, adrian.family, adrian.reach, adrian.district) == (
+        "Judge of the Circuit Court, 8th Circuit (Adrian vacancy)", "CIRCUIT JUDGE", "counties", "8")
+    assert adrian.counties == ("ADAMS", "BROWN", "CALHOUN", "CASS", "MASON", "MENARD", "PIKE", "SCHUYLER")
+    assert filings["11TH CIRCUIT - FEENEY, III VACANCY"].office == "Judge of the Circuit Court, 11th Circuit (Feeney, III vacancy)"
+    mcdade = filings["3RD APPELLATE - MCDADE VACANCY"]  # the Third District since 2021: DuPage and Will joined it
+    assert (mcdade.office, mcdade.family, mcdade.reach, mcdade.district) == (
+        "Judge of the Appellate Court, 3rd District (McDade vacancy)", "APPELLATE JUDGE", "counties", "3")
+    assert mcdade.counties == ("BUREAU", "DUPAGE", "GRUNDY", "IROQUOIS", "KANKAKEE", "LASALLE", "WILL")
+    assert len(filings["5TH APPELLATE - WELCH VACANCY"].counties) == 48
+    assert {county for names in il._CIRCUITS.values() for county in names} == {
+        c.name.upper() for c in counties.counties("IL") if c.name != "Cook"}
+    assert sum(len(names) for names in il._CIRCUITS.values()) == 101  # no county in two circuits
+    assert sorted(c for circuits in il._APPEALS.values() for c in circuits) == list(range(1, 25))
+
+
+def test_the_judges_standing_for_retention_are_yes_or_no_questions_in_their_circuit():
+    filings = il.parse(FILE)
+    retained = {f.office_id: f for f in filings if f.retention}
+    assert len(retained) == 131 and all(f.incumbent and f.group == "judicial" for f in retained.values())
+    assert "COOK CIRCUIT - RETAIN MAHONEY" not in retained  # withdrawn
+    nixon = retained["COOK CIRCUIT - RETAIN NIXON"]
+    assert (nixon.office, nixon.name, nixon.reach, nixon.counties) == (
+        "Retain Lewis Nixon, Judge of the Circuit Court of Cook County", "Lewis Nixon", "county", ("COOK",))
+    lampkin = retained["1ST APPELLATE - RETAIN LAMPKIN"]
+    assert (lampkin.office, lampkin.reach, lampkin.counties) == (
+        "Retain Bertina E. Lampkin, Judge of the Appellate Court, 1st District", "county", ("COOK",))
+    lorton = retained["7TH CIRCUIT - RETAIN LORTON"]
+    assert (lorton.office, lorton.reach, lorton.district, lorton.counties) == (
+        "Retain Allison Lorton, Judge of the Circuit Court, 7th Circuit", "counties", "7", il._CIRCUITS[7])
+    # A downstate appellate judge stands in their old district or the new one, as they chose: unknown here.
+    knecht = retained["4TH APPELLATE - RETAIN KNECHT"]
+    assert (knecht.office, knecht.reach) == ("Retain James A. Knecht, Judge of the Appellate Court, 4th District", "unplaced")
+    assert Counter(f.reach for f in retained.values()) == {"county": 60, "counties": 69, "unplaced": 2}
+
+
+def test_a_springfield_voter_has_the_7th_circuits_vacancies_and_retention_but_not_cooks():
+    location = Location(matched_address=None, lat=None, lon=None, state="IL", state_name="Illinois", county="Sangamon",
+                        city="Springfield", school_district=None, geocoder=None)
+    placed = place.races(il.parse(FILE), location, Districts(cd=13, sd=48, hd=96), state="IL", source="state_il", url="")
+    judges = [race for race in placed.races if race.group == "judicial"]
+    assert [race.name for race in judges] == [
+        f"Retain {name}, Judge of the Circuit Court, 7th Circuit"
+        for name in ("Christopher E. \"Chris\" Reif", "John M. \"Mo\" Madonia", "Adam Giganti", "Raylene Grischow",
+                     "Gail L. Noll", "Allison Lorton", "Zachary A. Schmidt")]
+    assert all(race.retention and len(race.candidates) == 1 for race in judges)
+    assert not placed.unconfirmed
 
 
 def test_a_file_short_of_congress_or_that_isnt_one_is_refused():
@@ -93,6 +146,12 @@ def test_a_chicago_ballot_has_the_statewide_races_its_districts_and_cook_countys
     assert "Judge of the Circuit Court of Cook County (Burke vacancy)" in names
     assert "Judge of the Appellate Court, 1st District (Hoffman vacancy)" in names
     assert not any("Subcircuit" in name or "Superintendent" in name.title() for name in names)
+    retained = [race for race in ballot["races"] if race["retention"]]
+    assert len(retained) == 60 and all(len(race["candidates"]) == 1 for race in retained)
+    assert retained[0]["name"] == "Retain Bertina E. Lampkin, Judge of the Appellate Court, 1st District"
+    assert "Retain Lewis Nixon, Judge of the Circuit Court of Cook County" in names
+    assert not any("Circuit Court," in name or "Knecht" in name for name in names)  # downstate's
+    assert not find_race(ballot, "Judge of the Circuit Court of Cook County (Burke vacancy)")["retention"]
     assert {race["source"] for race in ballot["races"]} == {"state_il"}
     house = find_race(ballot, "U.S. Representative District 7")
     assert house["seat"] == "IL-07" and candidate_names(house) == ["La Shawn K. Ford", "Chad Koppie"]
@@ -153,7 +212,7 @@ def test_a_list_of_elections_without_this_ones_yet_leaves_the_fecs_races(client,
 def test_illinoiss_bundled_list_serves_a_lookup_without_asking(tmp_path, upstream, make_app):
     outcome = build(tmp_path, "state_il")
     assert outcome.status == "updated" and outcome.answers == 2
-    assert outcome.counts == {"races": 260, "candidates": 370}
+    assert outcome.counts == {"races": 391, "candidates": 501}
     bundled = (tmp_path / "bundles" / "state_il.json").read_text(encoding="utf-8")
     assert "VIEWSTATE" not in bundled and "Address1" not in bundled and il_calls(upstream) == 3
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:

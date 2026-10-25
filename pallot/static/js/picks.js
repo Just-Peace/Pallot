@@ -4,6 +4,7 @@
 import { COLLAPSED, ENDORSER_BAR, PICKS, PICK_RULE, SETTINGS_CHANGED, readJson, removeRaw, restoreRaw, storedKeys, writeJson } from "./storage.js";
 
 export const WRITE_IN = "write-in"; // the pick key for a name the voter types in
+export const ANSWERS = [["yes", "Yes"], ["no", "No"]]; // a retention question's pick keys, with their words
 
 const UNDATED = "undated";
 const KEEP_DAYS = 90; // an election's picks, notes and folded races are forgotten this long after it
