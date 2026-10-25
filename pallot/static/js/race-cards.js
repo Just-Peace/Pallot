@@ -2,11 +2,11 @@
 // collapsible, with its candidates, notes and write-in.
 // Picking here saves to ``page.picks``; ballot.js hands over the context (initRaceCards).
 
-import { ballotSections, pickLabels } from "./ballot-shared.js";
+import { ballotSections, pickLabels, raceFilled } from "./ballot-shared.js";
 import { banMatches, banName, isBanned, restoreBans, unbanName } from "./ban-list.js";
 import { openCompare } from "./compare.js";
 import { $, autosave, extLink, h, initials, safeUrl, slug } from "./dom.js";
-import { plural } from "./format.js";
+import { ordinal, plural } from "./format.js";
 import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { ANSWERS, WRITE_IN } from "./picks.js";
@@ -91,7 +91,7 @@ export function cardFor(key) {
 // strip while its card scrolls by. Collapsed, it's one line: the race on the left, the pick
 // ("✓ James Talarico") on the right; the pick shows expanded too, once there is one. ✕ Clear,
 // next to it, takes the pick back, with Undo. ``tools``: more buttons after it (Compare).
-function collapsibleCard(key, { title, meta, body, tools = null }) {
+function collapsibleCard(key, { title, meta, body, tools = null, noun = "pick" }) {
   const bodyId = `body-${slug(key)}`;
   const status = h("span", { class: "race-status" });
   const metaLine = h("span", { class: "race-meta", hidden: !meta }, meta);
@@ -109,7 +109,7 @@ function collapsibleCard(key, { title, meta, body, tools = null }) {
     page.picks.set(key, []);
     refresh(key);
     toggle.focus();
-    showToast(`Cleared your pick for ${title}.`, {
+    showToast(`Cleared your ${noun} for ${title}.`, {
       label: "Undo",
       run: () => {
         page.picks.set(key, before);
@@ -118,7 +118,7 @@ function collapsibleCard(key, { title, meta, body, tools = null }) {
     });
   };
   const clear = h("button", { type: "button", class: "icon-btn with-icon clear-pick", hidden: true,
-    "aria-label": `Clear your pick for ${title}`, title: "Clear pick", on: { click: clearPick } }, icon("x"), "Clear");
+    "aria-label": `Clear your ${noun} for ${title}`, title: `Clear ${noun}`, on: { click: clearPick } }, icon("x"), "Clear");
   const bodyElement = h("div", { class: "race-body", id: bodyId }, body);
   const article = h("article", { class: "race", "data-race": key },
     h("header", { class: "race-head" }, h("h3", {}, toggle), clear, tools),
@@ -145,8 +145,9 @@ function collapsibleCard(key, { title, meta, body, tools = null }) {
 
 function raceCard(race) {
   const multi = race.seats > 1;
+  const ranked = race.ranked_choice;
   const meta = () => [
-    multi ? `Vote for up to ${race.seats}` : null,
+    ranked ? "Rank in order of choice" : multi ? `Vote for up to ${race.seats}` : null,
     race.open_seat ? "Open seat" : null,
     race.unexpired ? "Unexpired term" : null,
     race.election_name && !/general election/i.test(race.election_name) ? race.election_name : null,
@@ -157,6 +158,7 @@ function raceCard(race) {
   const rows = [...candRows, race.retention ? answersRow(race) : writeInRow(race)];
   const body = h("fieldset", { class: "race-options" },
     h("legend", { class: "sr-only" }, race.retention ? `${race.name}: vote yes or no`
+      : ranked ? `${race.name}: rank the candidates, checking your 1st choice first, then your 2nd, and so on`
       : `${race.name}: vote for ${multi ? `up to ${race.seats}` : "1"}`),
     race.candidates.length ? null : h("p", { class: "muted" }, "No candidates listed yet."),
     h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
@@ -171,6 +173,7 @@ function raceCard(race) {
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
   const card = collapsibleCard(race.key, {
     title: race.name, meta: meta(), body: [...notes, money.nodes, body], tools: [headCompare.nodes],
+    noun: ranked ? "ranking" : "pick",
   });
   parts.push({ headCompare });
   for (const candRow of candRows) {
@@ -187,11 +190,13 @@ function raceCard(race) {
 
   redraw.set(race.key, () => {
     const picked = page.picks.picked(race.key);
-    // Colour the race by its pick's party (neutral when the picks are from different parties).
-    const parties = new Set(picked.map((key) => race.candidates.find((c) => c.key === key)?.party || "none"));
+    // Colour the race by its pick's party (neutral when the picks are from different parties), a
+    // ranked race by its 1st choice's.
+    const parties = new Set((ranked ? picked.slice(0, 1) : picked).map((key) => race.candidates.find((c) => c.key === key)?.party || "none"));
     if (parties.size === 1) card.article.dataset.pickParty = [...parties][0];
     else delete card.article.dataset.pickParty;
-    const text = picked.length ? pickLabels(race, picked, page.picks, { unnamed: "Write-in (no name yet)" }).join(", ") : "Not picked yet";
+    const text = picked.length ? pickLabels(race, picked, page.picks, { unnamed: "Write-in (no name yet)" }).join(", ")
+      : ranked ? "Not ranked yet" : "Not picked yet";
     card.show(text, picked.length > 0);
     for (const row of card.article.querySelectorAll(".cand")) {
       const on = picked.includes(row.dataset.cand);
@@ -199,7 +204,8 @@ function raceCard(race) {
       const input = row.querySelector(".pick-input");
       if (!input) continue; // a retention question's judge, answered Yes or No below
       input.checked = on;
-      if (multi) input.disabled = !on && picked.length >= race.seats;
+      if (ranked) showRank(row, picked.indexOf(row.dataset.cand));
+      else if (multi) input.disabled = !on && picked.length >= race.seats;
       const note = row.querySelector(".write-in-note");
       if (note) note.hidden = !on;
     }
@@ -320,9 +326,9 @@ function banButton(candidate) {
 // A candidate's row, and ``sync``, which puts its saved note in the note box. A retention question's
 // judge has no radio of their own: the question's Yes and No (answersRow) are the picks.
 function candidateRow(race, candidate) {
-  const multi = race.seats > 1;
+  const ranked = race.ranked_choice;
   const id = slug(candidate.key);
-  const input = race.retention ? null : h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`,
+  const input = race.retention ? null : h("input", { type: race.seats > 1 || ranked ? "checkbox" : "radio", name: `race-${slug(race.key)}`,
     id: `pick-${id}`, class: "pick-input", on: { change: (event) => choose(race, candidate.key, event.target.checked) } });
 
   const textarea = h("textarea", { id: `note-${id}-text`, rows: "2", placeholder: "Your thoughts on this candidate…" });
@@ -407,13 +413,13 @@ function candidateRow(race, candidate) {
     // The name with its pills beside it, Profile under them (outside the label, so it doesn't pick),
     // and Note and Search to the side (beside Profile, on a phone).
     h("div", { class: "cand-main cand-grid" },
-      input,
+      ranked ? rankBox(input) : input,
       h(input ? "label" : "span", { for: input ? `pick-${id}` : null, class: "cand-label" },
         photo.nodes,
         h("span", { class: "cand-text" },
-          h("span", { class: "cand-name" }, candidate.name),
+          h("span", { class: "cand-name" }, candidate.name, ranked ? h("span", { class: "sr-only rank-said" }) : null),
           h("span", { class: "cand-sub" }, pills.nodes))),
-      h("div", { class: "cand-profile" }, profile.nodes),
+      h("div", { class: "cand-profile" }, ranked ? rankUpButton(race, candidate.key, candidate.name) : null, profile.nodes),
       moreButton,
       h("div", { class: "cand-actions", id: `actions-${id}` },
         noteButton, ban.nodes, searchLink(race, candidate, "icon-btn", `${searchWord()} ↗`))),
@@ -447,8 +453,9 @@ function part(build) {
 // it; emptying the box takes the pick back. ``sync`` puts the saved name in the box.
 function writeInRow(race) {
   const multi = race.seats > 1;
+  const ranked = race.ranked_choice;
   const id = `writein-${slug(race.key)}`;
-  const input = h("input", { type: multi ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id, class: "pick-input" });
+  const input = h("input", { type: multi || ranked ? "checkbox" : "radio", name: `race-${slug(race.key)}`, id, class: "pick-input" });
   const name = h("input", {
     type: "text", id: `${id}-name`, class: "write-in-name", maxlength: "80", autocomplete: "off",
     placeholder: "Someone else's name", "aria-label": `Write-in name for ${race.name}`,
@@ -472,9 +479,10 @@ function writeInRow(race) {
     "li",
     { class: "cand write-in", "data-cand": WRITE_IN },
     h("div", { class: "cand-main" },
-      input,
-      h("label", { for: id, class: "write-in-label" }, "Write-in"),
-      name),
+      ranked ? rankBox(input) : input,
+      h("label", { for: id, class: "write-in-label" }, "Write-in", ranked ? h("span", { class: "sr-only rank-said" }) : null),
+      name,
+      ranked ? rankUpButton(race, WRITE_IN, "your write-in") : null),
     hint ? h("p", { class: "fine write-in-note", hidden: true }, hint) : null,
   );
   return { row, sync: () => syncBox(name, page.picks.writeIn(race.key)) };
@@ -501,13 +509,52 @@ function answersRow(race) {
 
 // ---- picking ------------------------------------------------------------------------
 
+// In a ranked-choice race a pick is the next rank, and taking one back moves those after it up.
 export function choose(race, key, checked) {
   const { picks } = page;
   let keys = picks.picked(race.key).filter((k) => k !== key);
-  if (checked) keys = race.seats > 1 ? [...keys, key] : [key];
+  if (checked) keys = race.seats > 1 || race.ranked_choice ? [...keys, key] : [key];
   picks.set(race.key, keys);
   // A write-in doesn't fold the race: its name box would go while the voter types.
-  settle(race.key, checked && key !== WRITE_IN && keys.length >= race.seats);
+  settle(race.key, checked && key !== WRITE_IN && raceFilled(race, keys));
+}
+
+// ---- ranking ------------------------------------------------------------------------
+
+// A ranked-choice race's pick box: the check box drawn as a circle, with the voter's rank in it.
+function rankBox(input) {
+  return h("span", { class: "rank-box" }, input, h("span", { class: "rank-num", "aria-hidden": "true" }));
+}
+
+// A ranked row's Move up, which swaps it with the one ranked just above; shown from the 2nd on.
+function rankUpButton(race, key, name) {
+  return h("button", { type: "button", class: "icon-btn rank-up", hidden: true, "data-name": name,
+    on: { click: () => rankUp(race, key) } }, "↑ Move up");
+}
+
+// A ranked row's rank, ``at`` (-1 when unranked): in its circle, read with its name, and on its Move up.
+function showRank(row, at) {
+  row.querySelector(".rank-num").textContent = at < 0 ? "" : String(at + 1);
+  row.querySelector(".rank-said").textContent = at < 0 ? "" : `, your ${ordinal(at + 1)} choice`;
+  const up = row.querySelector(".rank-up");
+  up.hidden = at < 1;
+  if (at > 0) {
+    const label = `Move ${up.dataset.name} up to your ${ordinal(at)} choice`;
+    up.setAttribute("aria-label", label);
+    up.title = label;
+  }
+}
+
+// Once moved to 1st, its Move up goes, so the focus goes to its circle.
+function rankUp(race, key) {
+  const keys = [...page.picks.picked(race.key)];
+  const at = keys.indexOf(key);
+  if (at < 1) return;
+  keys.splice(at - 1, 2, key, keys[at - 1]);
+  page.picks.set(race.key, keys);
+  refresh(race.key);
+  const row = cardFor(race.key)?.querySelector(`.cand[data-cand="${CSS.escape(key)}"]`);
+  if (at === 1) row?.querySelector(".pick-input").focus();
 }
 
 function refresh(key) {

@@ -125,6 +125,16 @@ def test_an_anchorage_ballot_has_its_races_from_the_list(client, upstream, logge
     assert logged_calls() == 0 and upstream.count(HOST) == 3
 
 
+def test_alaskas_races_are_ranked_choice_but_its_retention_questions_arent(client, upstream):
+    ballot = get_ballot(client, "anchorage")
+    ranked = {race["name"]: race["ranked_choice"] for race in ballot["races"]}
+    assert all(ranked[name] for name in ["U.S. Senator", "U.S. Representative At Large",
+                                         "Governor and Lieutenant Governor", "State Senator District I",
+                                         "State Representative District 17"])
+    retain = [on for name, on in ranked.items() if name.startswith("Retain ")]
+    assert retain and not any(retain)
+
+
 def test_an_alaska_page_it_cant_read_or_a_list_short_of_a_race_leaves_the_fecs_races(client, upstream):
     upstream.state_lists[f"{HOST}#2"] = "<html><body>Service Unavailable</body></html>"
     ballot = get_ballot(client, "anchorage")

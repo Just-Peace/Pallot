@@ -37,6 +37,13 @@ export function percent(share) {
 // "1 race", "1,204 donations"
 export const plural = (count, word) => `${COUNT.format(count)} ${word}${count === 1 ? "" : "s"}`;
 
+// "1st", "2nd", "3rd", "11th"
+export function ordinal(n) {
+  const ends = ["th", "st", "nd", "rd"];
+  const last = n % 100;
+  return `${n}${ends[(last - 20) % 10] || ends[last] || ends[0]}`;
+}
+
 // "U.S. House, State House and SBOE"
 export const listed = (names) => LIST.format(names);
 

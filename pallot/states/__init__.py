@@ -29,6 +29,7 @@ from pypdf import PdfReader
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec
+from ..models import Race
 
 # Where a race is on the ballot, which placement (place.py) checks against the voter's address.
 REACHES = (
@@ -274,6 +275,11 @@ class StateList:
     def missing(self, when: str) -> str:
         """The ballot's note when the list has no candidates for the election on ``when``."""
         return f"The {self.label} hasn't published its list of candidates for {when} yet"
+
+    @classmethod
+    def ranked_choice(cls, race: Race) -> bool:
+        """Whether the voter ranks the candidates in ``race`` instead of picking."""
+        return False
 
 
 class ManualList(StateList):
