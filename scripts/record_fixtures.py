@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_il, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -45,7 +45,8 @@ Trenton address, the Division of Elections' page cut down to its links, and the 
 lists it links, rewritten as small text PDFs without the candidates' addresses. New York's (state_ny) takes a
 Manhattan and an Albany address and the certification saved by hand in manual/state_ny (--pdf
 another copy), never downloaded, cut down to some races' text lines. Colorado's (state_co) takes a
-Denver address and the SOS's candidate spreadsheet as served (it has no contact details). Illinois's
+Denver address and the SOS's candidate spreadsheet as served (it has no contact details). Wyoming's (state_wy) takes the
+SOS's candidates data file with every candidate's contact details made up, and its legislators. Illinois's
 (state_il) takes a Chicago address, the State Board's list of elections cut down to its table, the
 election's download page cut down to its form, and the candidate data file it posts back for, with
 its contact columns emptied. The TrackAIPAC, Vote for Peace and Texas Ethics
@@ -82,7 +83,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ca, co, fl, ga, ia, il, mi, nc, nj, ordinal, pa, pdf_lines, va  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ca, co, fl, ga, ia, il, mi, nc, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -134,6 +135,9 @@ IA_ADDRESS = ("desmoines", "400 Robert D Ray Dr, Des Moines, IA 50309")  # City 
 IA_CONTACT = "PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com"  # made up
 NJ_ADDRESS = ("trenton", "125 W State St, Trenton, NJ 08608")  # the State House: NJ-12, an open seat in 2026
 CO_ADDRESS = ("denver", "1437 Bannock St, Denver, CO 80202")  # the City and County Building: CO-1
+WY_CONTACT = {"Mailing Address": "PO Box 1", "Mailing City State & Zip": "CHEYENNE WY 82001",
+              "Campaign Telephone": "307-555-0100", "Email Address": "CANDIDATE@EXAMPLE.COM",
+              "Web Address": "EXAMPLE.COM"}  # made up
 IL_ADDRESS = ("chicago", "121 N LaSalle St, Chicago, IL 60602")  # City Hall: Cook County
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
@@ -983,6 +987,29 @@ def record_ny(client: httpx.Client, key: str, saved: Path | None) -> None:
                                  and m["terms"][-1].get("district") in seats])
 
 
+def record_wy(client: httpx.Client) -> None:
+    """Wyoming: the Secretary of State's General Election Candidates data file, every candidate's
+    address, phone, email and website made up (WY_CONTACT); and its legislators. Cheyenne's Census
+    answer and its FEC filers are the ballots' and the nationwide ones'."""
+    response = client.get(wy.URL.format(year=FEC_CYCLE))
+    response.raise_for_status()
+    rows = list(csv.DictReader(io.StringIO(response.content.decode("utf-8-sig"))))
+    out = io.StringIO()
+    writer = csv.DictWriter(out, list(rows[0]), quoting=csv.QUOTE_ALL, lineterminator="\r\n")
+    writer.writeheader()
+    writer.writerows({**row, **{column: WY_CONTACT.get(column, value) for column, value in row.items()}} for row in rows)
+    (FIXTURES / "state_wy.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_wy.csv: {len(wy.WyList.parse(out.getvalue()))} candidates")
+    response = client.get(officeholders.LEGISLATURE.format(state="wy"))
+    response.raise_for_status()
+    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+    legislators = io.StringIO()
+    writer = csv.DictWriter(legislators, columns, extrasaction="ignore", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / "officeholders_wy.csv").write_text(legislators.getvalue(), encoding="utf-8", newline="")
+
+
 def record_polls(client: httpx.Client) -> None:
     """FiftyPlusOne's Senate, House and Governor lists (all their pages), cut down to the Texas
     polls plus a few from other states."""
@@ -1154,7 +1181,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_il", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "polls", "key_dates", "officeholders",
                                            "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1197,6 +1224,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ny(client, config.fec_api_key, args.pdf if only == "state_ny" else None)
         if only in (None, "state_co"):
             record_co(client, config.fec_api_key)
+        if only in (None, "state_wy"):
+            record_wy(client)
         if only in (None, "state_il"):
             record_il(client, config.fec_api_key)
         if only in (None, "polls"):
