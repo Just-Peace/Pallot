@@ -43,7 +43,7 @@ const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
 // office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
-// Ohio's, Iowa's, New Jersey's and New York's registration, mail voting and poll hours, and Texas's print tips.
+// Ohio's, Iowa's, New Jersey's, New York's and Colorado's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -235,6 +235,23 @@ export const STATES = {
       + "county auditor before the polls close at 8 p.m. on Election Day.",
     mailDeadline: "Your request must reach your county auditor by 5 p.m. on ",
     pollHours: "7 a.m. – 8 p.m.",
+  },
+  CO: {
+    site: { label: siteLabel(SITES.CO), url: SITES.CO },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://www.govotecolorado.gov/",
+      hint: "GoVoteColorado (Colorado Secretary of State): your registration, your ballot's status and where to vote",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://www.govotecolorado.gov/",
+      hint: "GoVoteColorado: your county's voter service and polling centers and drop boxes",
+    },
+    localOffice: "Your county clerk",
+    mailApply: { label: "Track your ballot", url: "https://www.govotecolorado.gov/" },
+    mailEligibility: "Every active voter is mailed a ballot, from 22 days before Election Day. It must reach your "
+      + "county clerk by 7 p.m. on Election Day, by mail, in a drop box or at a voter service and polling center; "
+      + "a postmark doesn't count.",
+    pollHours: "7 a.m. – 7 p.m.",
   },
 };
 

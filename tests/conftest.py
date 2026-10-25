@@ -65,6 +65,7 @@ ADDRESSES = {
     "trenton": "125 W State St, Trenton, NJ 08608",  # New Jersey's Senate and House PDFs (states/nj.py); NJ-12
     "manhattan": "260 Broadway, New York, NY 10007",  # New York's certification, imported by hand (states/ny.py); NY-10
     "albany": "100 State St, Albany, NY 12207",  # upstate New York: NY-20, the 3rd Judicial District
+    "denver": "1437 Bannock St, Denver, CO 80202",  # Colorado's spreadsheet (states/co.py); CO-1, SD 31, HD 5
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -77,6 +78,7 @@ STATE_LISTS = {
     "s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html",
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
     "www.elections.virginia.gov": "state_va.html", "elections.cdn.sos.ca.gov": "state_ca.pdf",
+    "www.coloradosos.gov": "state_co.xlsx",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 

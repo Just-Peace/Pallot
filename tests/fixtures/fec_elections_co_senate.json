@@ -1,0 +1,317 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 19,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0CO00575",
+   "candidate_name": "HICKENLOOPER, JOHN W.",
+   "candidate_pcc_id": "C00716720",
+   "candidate_pcc_name": "HICKENLOOPER FOR COLORADO",
+   "cash_on_hand_end_period": 1558827.9,
+   "committee_ids": [
+    "C00716720"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 11778528.18,
+   "total_receipts": 11695273.06
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00549",
+   "candidate_name": "CHEW, ROBERT",
+   "candidate_pcc_id": "C00944298",
+   "candidate_pcc_name": "BOB CHEW FOR SENATE",
+   "cash_on_hand_end_period": 235007.35,
+   "committee_ids": [
+    "C00944298"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": null,
+   "total_disbursements": 3368847.14,
+   "total_receipts": 3603854.49
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00556",
+   "candidate_name": "CHEW, BOB",
+   "candidate_pcc_id": "C00944298",
+   "candidate_pcc_name": "BOB CHEW FOR SENATE",
+   "cash_on_hand_end_period": 235007.35,
+   "committee_ids": [
+    "C00944298"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "OTHER",
+   "total_disbursements": 3368847.14,
+   "total_receipts": 3603854.49
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00499",
+   "candidate_name": "GONZALES, JULIE",
+   "candidate_pcc_id": "C00929794",
+   "candidate_pcc_name": "JULIE FOR COLORADO",
+   "cash_on_hand_end_period": 19404.4,
+   "committee_ids": [
+    "C00929794"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 959023.46,
+   "total_receipts": 978427.86
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00440",
+   "candidate_name": "JOSHI, JANAK",
+   "candidate_pcc_id": "C00910794",
+   "candidate_pcc_name": "JANAK JOSHI FOR COLORADO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00910794"
+   ],
+   "coverage_end_date": "2026-07-17",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 485987.2,
+   "total_receipts": 485987.2
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00424",
+   "candidate_name": "MARKERT, GEORGE WASHINGTON MR V",
+   "candidate_pcc_id": "C00903443",
+   "candidate_pcc_name": "MARKERT FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00903443"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 315360.14,
+   "total_receipts": 315360.14
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00408",
+   "candidate_name": "BRESLIN, KAREN",
+   "candidate_pcc_id": "C00897488",
+   "candidate_pcc_name": "BRESLIN FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00897488"
+   ],
+   "coverage_end_date": "2026-10-13",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 165311.66,
+   "total_receipts": 165311.66
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00507",
+   "candidate_name": "BAISLEY, MARK",
+   "candidate_pcc_id": "C00932848",
+   "candidate_pcc_name": "BAISLEY FOR SENATE",
+   "cash_on_hand_end_period": 27709.93,
+   "committee_ids": [
+    "C00892034",
+    "C00932848"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 110837.45,
+   "total_receipts": 138210.47
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00515",
+   "candidate_name": "POND, SEAN M.",
+   "candidate_pcc_id": "C00933259",
+   "candidate_pcc_name": "SEAN M. POND FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00933259"
+   ],
+   "coverage_end_date": "2026-06-10",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "CONSTITUTION PARTY",
+   "total_disbursements": 31226.78,
+   "total_receipts": 31226.78
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00473",
+   "candidate_name": "HASLEY, BRASHAD D",
+   "candidate_pcc_id": "C00916403",
+   "candidate_pcc_name": "BRASHAD HASLEY FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00916403"
+   ],
+   "coverage_end_date": "2026-02-11",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 20335.73,
+   "total_receipts": 20335.73
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00432",
+   "candidate_name": "WOOD, MATTHEW",
+   "candidate_pcc_id": "C00908962",
+   "candidate_pcc_name": "COMMITTEE TO ELECT MATTHEW WOOD",
+   "cash_on_hand_end_period": 752.5,
+   "committee_ids": [
+    "C00908962"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 3385.0,
+   "total_receipts": 4545.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00465",
+   "candidate_name": "ZIMPFER, ANTHONY JACOB",
+   "candidate_pcc_id": "C00914416",
+   "candidate_pcc_name": "ZIMPFER FOR COLORADO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00914416"
+   ],
+   "coverage_end_date": "2026-06-22",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 4307.68,
+   "total_receipts": 4307.68
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00481",
+   "candidate_name": "JONES, DATHAN CHARLES",
+   "candidate_pcc_id": "C00923219",
+   "candidate_pcc_name": "DATHAN C JONES FOR US SENATE",
+   "cash_on_hand_end_period": 1.97,
+   "committee_ids": [
+    "C00923219"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1098.03,
+   "total_receipts": 25.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4CO00452",
+   "candidate_name": "DALE, CLINTON ROOSEVELT",
+   "candidate_pcc_id": "C00816520",
+   "candidate_pcc_name": "COMMITTEE TO ELECT CLINTON R. DALE TO US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00816520"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00390",
+   "candidate_name": "KUEBLER, JOSHUA WILLIAM",
+   "candidate_pcc_id": "C00880112",
+   "candidate_pcc_name": "JOSHUA KUEBLER SENATE RACE CANDIDATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00880112"
+   ],
+   "coverage_end_date": "2024-08-10",
+   "incumbent_challenge_full": null,
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00416",
+   "candidate_name": "MINER, NICHOLE",
+   "candidate_pcc_id": "C00899609",
+   "candidate_pcc_name": "NICHOLE MINER FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00899609"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00457",
+   "candidate_name": "SCANLON, MICHAEL",
+   "candidate_pcc_id": "C00913442",
+   "candidate_pcc_name": "SCANLON FOR COLORADO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00913442"
+   ],
+   "coverage_end_date": "2025-08-05",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00523",
+   "candidate_name": "CALDERON, AMANDA J JILLIAN MRS",
+   "candidate_pcc_id": "C00933754",
+   "candidate_pcc_name": "AMANDA CALDERON FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00933754"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6CO00531",
+   "candidate_name": "WILLIAMS, JESSICA",
+   "candidate_pcc_id": "C00895599",
+   "candidate_pcc_name": "JESSICA WILLIAMS FOR AMERICA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00895599"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

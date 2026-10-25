@@ -16149,5 +16149,341 @@
     "phone": "202-225-7944"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "B001267",
+   "thomas": "01965",
+   "lis": "S330",
+   "govtrack": 412330,
+   "opensecrets": "N00030608",
+   "votesmart": 110942,
+   "fec": [
+    "S0CO00211"
+   ],
+   "cspan": 1031622,
+   "wikipedia": "Michael Bennet",
+   "ballotpedia": "Michael Bennet",
+   "maplight": 1092,
+   "icpsr": 40910,
+   "wikidata": "Q554792",
+   "google_entity_id": "kg:/m/05b60qf",
+   "pictorial": 13409
+  },
+  "name": {
+   "first": "Michael",
+   "middle": "F.",
+   "last": "Bennet",
+   "official_full": "Michael F. Bennet"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1964-11-28"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2009-01-22",
+    "end": "2011-01-03",
+    "state": "CO",
+    "class": 3,
+    "party": "Democrat",
+    "url": "http://bennet.senate.gov/",
+    "how": "appointment"
+   },
+   {
+    "type": "sen",
+    "start": "2011-01-05",
+    "end": "2017-01-03",
+    "state": "CO",
+    "class": 3,
+    "party": "Democrat",
+    "url": "https://www.bennet.senate.gov",
+    "address": "261 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-5852",
+    "fax": "202-228-5097",
+    "contact_form": "http://www.bennet.senate.gov/contact/email",
+    "office": "261 Russell Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.bennet.senate.gov/rss/feeds/?type=news"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "CO",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.bennet.senate.gov/public",
+    "rss_url": "http://www.bennet.senate.gov/rss/feeds/?type=news",
+    "address": "261 Russell Senate Office Building Washington DC 20510",
+    "office": "261 Russell Senate Office Building",
+    "phone": "202-224-5852",
+    "contact_form": "https://www.bennet.senate.gov/public/index.cfm/contact",
+    "fax": "202-228-5097"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "CO",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.bennet.senate.gov",
+    "rss_url": "http://www.bennet.senate.gov/rss/feeds/?type=news",
+    "contact_form": "https://www.bennet.senate.gov/public/index.cfm/contact",
+    "address": "261 Russell Senate Office Building Washington DC 20510",
+    "office": "261 Russell Senate Office Building",
+    "phone": "202-224-5852"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "D000197",
+   "thomas": "01479",
+   "govtrack": 400101,
+   "opensecrets": "N00006134",
+   "votesmart": 561,
+   "fec": [
+    "H6CO01141"
+   ],
+   "cspan": 90293,
+   "wikipedia": "Diana DeGette",
+   "house_history": 12076,
+   "ballotpedia": "Diana DeGette",
+   "maplight": 214,
+   "icpsr": 29710,
+   "wikidata": "Q437159",
+   "google_entity_id": "kg:/m/024z95",
+   "pictorial": 12967
+  },
+  "name": {
+   "first": "Diana",
+   "middle": "L.",
+   "last": "DeGette",
+   "official_full": "Diana DeGette"
+  },
+  "bio": {
+   "birthday": "1957-07-29",
+   "gender": "F"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1997-01-07",
+    "end": "1999-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1999-01-06",
+    "end": "2001-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://www.house.gov/degette"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://www.house.gov/degette"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://www.house.gov/degette"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://www.house.gov/degette"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://www.house.gov/degette",
+    "address": "2335 Rayburn HOB; Washington DC 20515-0601",
+    "phone": "202-225-4431",
+    "fax": "202-225-5657",
+    "contact_form": "http://www.house.gov/formdegette/zip_auth.htm",
+    "office": "2335 Rayburn House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "CO",
+    "party": "Democrat",
+    "district": 1,
+    "url": "http://degette.house.gov",
+    "address": "2368 Rayburn HOB; Washington DC 20515-0601",
+    "phone": "202-225-4431",
+    "fax": "202-225-5657",
+    "contact_form": "https://degette.house.gov/contact/send-me-an-email/email-me",
+    "office": "2368 Rayburn House Office Building",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "CO",
+    "party": "Democrat",
+    "district": 1,
+    "url": "http://degette.house.gov",
+    "address": "2368 Rayburn HOB; Washington DC 20515-0601",
+    "phone": "202-225-4431",
+    "fax": "202-225-5657",
+    "contact_form": "https://degette.house.gov/contact/send-me-an-email/email-me",
+    "office": "2368 Rayburn House Office Building",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "phone": "202-225-4431",
+    "url": "https://degette.house.gov",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw",
+    "address": "2111 Rayburn House Office Building; Washington DC 20515-0601",
+    "office": "2111 Rayburn House Office Building",
+    "fax": "202-225-5657"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "phone": "202-225-4431",
+    "address": "2111 Rayburn House Office Building Washington DC 20515-0601",
+    "office": "2111 Rayburn House Office Building",
+    "url": "https://degette.house.gov",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://degette.house.gov",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw",
+    "address": "2111 Rayburn House Office Building Washington DC 20515-0601",
+    "office": "2111 Rayburn House Office Building",
+    "phone": "202-225-4431"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://degette.house.gov",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw",
+    "address": "2111 Rayburn House Office Building Washington DC 20515-0601",
+    "office": "2111 Rayburn House Office Building",
+    "phone": "202-225-4431"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "CO",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://degette.house.gov",
+    "rss_url": "http://degette.house.gov/index.php?option=com_ninjarsssyndicator&amp;feed_id=1&amp;format=raw",
+    "address": "2111 Rayburn House Office Building Washington DC 20515-0601",
+    "office": "2111 Rayburn House Office Building",
+    "phone": "202-225-4431"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H000273",
+   "lis": "S408",
+   "fec": [
+    "S0CO00575"
+   ],
+   "opensecrets": "N00044206",
+   "govtrack": 456797,
+   "wikidata": "Q430518",
+   "wikipedia": "John Hickenlooper",
+   "google_entity_id": "kg:/m/04g_1z",
+   "ballotpedia": "John Hickenlooper",
+   "pictorial": 13433
+  },
+  "name": {
+   "first": "John",
+   "middle": "Wright",
+   "last": "Hickenlooper",
+   "official_full": "John W. Hickenlooper"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1952-02-07"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "CO",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.hickenlooper.senate.gov",
+    "contact_form": "https://www.hickenlooper.senate.gov/contact/",
+    "address": "316 Hart Senate Office Building Washington DC 20510",
+    "office": "316 Hart Senate Office Building",
+    "phone": "202-224-5941",
+    "fax": "202-224-3115"
+   }
+  ]
  }
 ]

@@ -25,6 +25,7 @@ from pallot.sources.endorsement_feeds import make_feeds
 from pallot.sources.sboe import _inside
 from pallot import counties
 from pallot.states.ca import CaList
+from pallot.states.co import CoList
 from pallot.states.ga import GaList
 from pallot.states.nj import NjList
 
@@ -228,6 +229,26 @@ async def test_california_list_live(tmp_path):
     assert {county for f in found for county in f.counties} == {c.name.upper() for c in counties.counties("CA")}
     assert not list(tmp_path.glob(".*.part"))
 
+
+@pytest.mark.anyio
+async def test_colorado_list_live(tmp_path):
+    """Colorado's spreadsheet is still where the year's URL says and reads whole: every House
+    district and the Governors' tickets, kept as its candidates alone; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = CoList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.filings(day)
+            stats = track_calls()
+            again = await lists.filings(day)
+        finally:
+            cache.close()
+    assert found and again == found and stats.external_calls == 0
+    assert {f.district for f in found if f.family == "US HOUSE"} == {str(n) for n in range(1, 9)}
+    assert any(f.family == "GOVERNOR" and " and " in f.name for f in found)
+    assert not list(tmp_path.glob(".*.part"))
 
 @pytest.mark.anyio
 async def test_new_jersey_lists_live(tmp_path):
