@@ -24,6 +24,7 @@ from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import FIRST_LAST, FULL, NameIndex
 from ..models import Race, SeatHolder
 from ..offices import OfficeScope
+from ..states import district_key
 from . import CardSet, SeatInfo
 from .tec import tec_seat
 
@@ -94,17 +95,18 @@ def congress_holders(members: list[dict[str, Any]], state: str | None) -> list[H
 
 
 def legislature_holders(text: str) -> list[Holder]:
-    """A Legislature's members, at "STATESEN:9" or "STATEREP:26" (numbered districts only)."""
+    """A Legislature's members, at "STATESEN:9", "STATEREP:26" or "STATESEN:I", the district as
+    district_key spells it, so "09" is 9."""
     out = []
     for row in csv.DictReader(io.StringIO(text)):
-        chamber, district = _CHAMBERS.get(row.get("current_chamber") or ""), (row.get("current_district") or "").strip()
-        if not chamber or not district.isdigit() or not row.get("name"):
+        chamber, district = _CHAMBERS.get(row.get("current_chamber") or ""), district_key(row.get("current_district"))
+        if not chamber or not district or not row.get("name"):
             continue
         names = [row["name"]]
         if row.get("given_name") and row.get("family_name"):
             names.append(f"{row['given_name']} {row['family_name']}")
         code, party_name = _party(row.get("current_party"))
-        out.append(Holder(seat=f"{chamber}:{int(district)}", name=row["name"], names=names, party=code, party_name=party_name))
+        out.append(Holder(seat=f"{chamber}:{district}", name=row["name"], names=names, party=code, party_name=party_name))
     return out
 
 
