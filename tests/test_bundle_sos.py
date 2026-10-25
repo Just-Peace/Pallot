@@ -89,14 +89,25 @@ def test_ballot_orders_stop_at_the_first_refusal_and_write_nothing(tmp_path, ups
     assert not (tmp_path / "bundles").exists()
 
 
-def test_a_county_texas_sos_errs_on_is_left_out_up_to_a_limit(tmp_path, upstream):
+def test_a_county_texas_sos_errs_on_is_left_out_up_to_a_limit(tmp_path, upstream, monkeypatch):
+    monkeypatch.setattr(sos_bundle, "RETRY_WAIT", 0)
     upstream.ballot_orders_down = {(53815, 227)}
     outcome = build_ballot_orders(tmp_path)
     assert outcome.status == "updated" and outcome.counts["server_errors"] == 1
     assert [ballot_order_key(a) for a in answers(tmp_path, "sos_ballot_order")] == [(53815, 101)]
+    regions = len(json.loads((PROJECT_DIR / "tests" / "fixtures" / "sos_regions.json").read_text()))
+    assert len(goelect_calls(upstream, "getCandidateBallotOrder")) == outcome.counts["elections"] * regions + sos_bundle.ROUNDS
     upstream.ballot_orders_down = {(66618, county) for county in range(1, sos_bundle.MAX_SERVER_ERRORS + 2)}
     failed = build_ballot_orders(tmp_path)
-    assert failed.status == "failed" and "HTTP 500" in failed.detail
+    assert failed.status == "failed" and "HTTP 500" in failed.detail and "still failed" in failed.detail
+
+
+def test_a_ballot_order_texas_sos_errs_on_once_is_asked_again(tmp_path, upstream, monkeypatch):
+    monkeypatch.setattr(sos_bundle, "RETRY_WAIT", 0)
+    upstream.ballot_orders_blip = {(53815, 227)} | {(66618, county) for county in range(1, sos_bundle.MAX_SERVER_ERRORS + 2)}
+    outcome = build_ballot_orders(tmp_path)
+    assert outcome.status == "updated" and outcome.counts["server_errors"] == 0
+    assert sorted(map(ballot_order_key, answers(tmp_path, "sos_ballot_order"))) == [(53815, 101), (53815, 227)]
 
 
 def test_a_build_asks_texas_sos_a_request_a_second_and_a_lookup_unthrottled():

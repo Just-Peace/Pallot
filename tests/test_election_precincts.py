@@ -293,13 +293,23 @@ async def test_the_first_lookup_goes_on_while_the_map_downloads(tmp_path, upstre
 
 
 @pytest.mark.anyio
-async def test_one_download_for_everyone(tmp_path, upstream):
+async def test_one_download_for_everyone(tmp_path, upstream, monkeypatch):
+    looked_up = threading.Event()
+    unzip = ElectionPrecincts._unzip
+
+    def held(self, resource, part):  # the map isn't in place before both lookups answer, however slow the runner
+        looked_up.wait(5)
+        unzip(self, resource, part)
+
+    monkeypatch.setattr(ElectionPrecincts, "_unzip", held)
     async with service(tmp_path, first_wait=0) as precincts:
+        update = asyncio.ensure_future(precincts.update())
         got = await asyncio.gather(
             precincts.at(TRAVIS, *census_points("capitol")), precincts.at(TRAVIS, *census_points("ut")),
-            precincts.update(), return_exceptions=True,
+            return_exceptions=True,
         )
-        assert [type(g) for g in got[:2]] == [StillDownloading] * 2 and got[2].startswith("Downloaded the precinct map")
+        looked_up.set()
+        assert [type(g) for g in got] == [StillDownloading] * 2 and (await update).startswith("Downloaded the precinct map")
     assert zips(upstream) == 1
 
 
