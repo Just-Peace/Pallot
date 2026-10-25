@@ -49,7 +49,7 @@ ADDRESSES = {
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
     "atlanta": "55 Trinity Ave SW, Atlanta, GA 30303",  # Georgia's nominees and qualified list (states/ga.py); GA-05
-    "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat
+    "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat; its CSV list (states/wy.py)
     "pr": "1 Calle Fortaleza, San Juan, PR 00901",  # made up: DC's geography, in Puerto Rico
     "raleigh": "1 E Edenton St, Raleigh, NC 27601",  # North Carolina's official list (states/nc.py)
     "lansing": "100 N Capitol Ave, Lansing, MI 48933",  # Michigan's (states/mi.py)
@@ -78,7 +78,7 @@ STATE_LISTS = {
     "s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html",
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
     "www.elections.virginia.gov": "state_va.html", "elections.cdn.sos.ca.gov": "state_ca.pdf",
-    "www.coloradosos.gov": "state_co.xlsx",
+    "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 

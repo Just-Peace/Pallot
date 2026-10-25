@@ -19,11 +19,12 @@ TEXAS_ONLY_HOSTS = ("goelect.txelections.civixapps.com", "data.capitol.texas.gov
 
 @pytest.fixture(autouse=True)
 def georgia_without_its_list(monkeypatch):
-    """Georgia stands in here for a state without an official list or key dates, whose FEC filers
-    are recorded; its own ballot is test_state_ga's."""
-    monkeypatch.delitem(coverage.COVERED, "GA")
-    monkeypatch.delitem(ADAPTERS, "GA")
-    monkeypatch.delitem(state_key_dates.RULES, "GA")
+    """Georgia and Wyoming stand in here for states without an official list or key dates, whose
+    FEC filers are recorded; their own ballots are test_state_ga's and test_state_wy's."""
+    for state in ("GA", "WY"):
+        monkeypatch.delitem(coverage.COVERED, state)
+        monkeypatch.delitem(ADAPTERS, state)
+        monkeypatch.delitem(state_key_dates.RULES, state)
 
 
 def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):

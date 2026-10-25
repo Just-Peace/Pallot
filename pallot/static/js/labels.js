@@ -43,7 +43,7 @@ const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
 // office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
-// Ohio's, Iowa's, New Jersey's, New York's and Colorado's registration, mail voting and poll hours, and Texas's print tips.
+// Ohio's, Iowa's, New Jersey's, New York's, Colorado's and Wyoming's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -251,6 +251,23 @@ export const STATES = {
     mailEligibility: "Every active voter is mailed a ballot, from 22 days before Election Day. It must reach your "
       + "county clerk by 7 p.m. on Election Day, by mail, in a drop box or at a voter service and polling center; "
       + "a postmark doesn't count.",
+    pollHours: "7 a.m. – 7 p.m.",
+  },
+  WY: {
+    site: { label: siteLabel(SITES.WY), url: SITES.WY },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://sos.wyo.gov/Elections/State/RegisteringToVote.aspx",
+      hint: "Wyoming Secretary of State: how to register; your county clerk can check your registration",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx",
+      hint: "Every county clerk's website (Wyoming Secretary of State); yours publishes your polling place",
+    },
+    localOffice: "Your county clerk",
+    mailApply: { label: "How to ask", url: "https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county clerk by 7 p.m. on Election Day.",
+    mailDeadline: "Ask your county clerk for your ballot by ",
     pollHours: "7 a.m. – 7 p.m.",
   },
 };

@@ -21,10 +21,11 @@ from .oh import OhList
 from .pa import PaList
 from .va import VaList
 from .wi import WiList
+from .wy import WyList
 
 ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
-                             IaList, NjList, NyList, CoList)
+                             IaList, NjList, NyList, CoList, WyList)
 }
 
 
