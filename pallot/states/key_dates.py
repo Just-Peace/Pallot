@@ -78,6 +78,14 @@ before (1-7.5-107(3)); registering online or by mail by the eighth day before st
 center through Election Day (1-2-217.7); the centers open the fifteenth day before (1-5-102.9); a
 ballot must reach the county clerk by 7 p.m. on Election Day (1-7.5-107(4)); polls and centers are
 open 7 a.m. to 7 p.m. on Election Day.
+
+Wyoming's, for its general election (W.S. 22-2-104: the Tuesday after the first Monday of November
+in an even year), as its Secretary of State's 2026 Key Election Dates give them: registration by
+mail or at the county clerk's closes the fifteenth day before (22-3-102), then voters register in
+person at the clerk's while voting absentee, or at the polls on Election Day (22-3-104); absentee
+voting, by mail or in person at the clerk's, runs from the twenty-eighth day before through the
+day before (22-9-125), a ballot can be asked for any time before Election Day, and it must reach
+the clerk by 7 p.m. on Election Day (22-9-119); polls are open 7 a.m. to 7 p.m.
 """
 
 from __future__ import annotations
@@ -311,6 +319,25 @@ NEW_JERSEY = Guide(
     credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
 )
 
+WYOMING = Guide(
+    name="Wyoming",
+    source="Wyoming Secretary of State",
+    url="https://sos.wyo.gov/Elections/",
+    computed=True,
+    registration_url="https://sos.wyo.gov/Elections/State/RegisteringToVote.aspx",
+    mail_url="https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx",
+    register="The last day to register by mail or at your county clerk's office for {election} in Wyoming. After it, "
+             "you can still register in person at the clerk's office while voting absentee, or at your polling place "
+             "on Election Day.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, ask your county clerk for your ballot by today. Your ballot must reach "
+         "the clerk by 7 p.m. on Election Day; one that arrives later isn't counted. Any voter can vote absentee; how "
+         "to ask:",
+    early_where="Your county clerk's office: vote absentee in person there. The clerk lists the places and hours.",
+    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates worked out from Wyoming's election law; more from the Wyoming Secretary of State",
+)
+
 COLORADO = Guide(
     name="Colorado",
     source="Colorado Secretary of State",
@@ -334,7 +361,7 @@ COLORADO = Guide(
 
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO,
+    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO, "WY": WYOMING,
 }
 
 
@@ -510,9 +537,25 @@ def colorado(day: dt.date) -> Deadlines | None:
     )
 
 
+def wyoming(day: dt.date) -> Deadlines | None:
+    """The dates of Wyoming's general election on ``day``, or None when there's none: register by
+    mail or at the clerk's by the fifteenth day before, ask for an absentee ballot by the day before,
+    vote absentee in person from the twenty-eighth day before through the day before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=15),
+        mail_apply_by=day - dt.timedelta(days=1),
+        early_start=day - dt.timedelta(days=28),
+        early_end=day - dt.timedelta(days=1),
+        state="WY",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
     "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
-    "NY": new_york, "CO": colorado,
+    "NY": new_york, "CO": colorado, "WY": wyoming,
 }
 
 

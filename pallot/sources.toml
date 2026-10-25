@@ -39,6 +39,7 @@ state_ia = true             # Iowa Secretary of State (its list is imported by h
 state_nj = true             # New Jersey Division of Elections
 state_ny = true             # New York State Board of Elections (its certification is imported by hand)
 state_co = true             # Colorado Secretary of State
+state_wy = true             # Wyoming Secretary of State
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
