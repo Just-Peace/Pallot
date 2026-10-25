@@ -1,0 +1,42 @@
+For change requests, contact elections@sos.iowa.gov
+or 515-281-0145.                                                                                                           Candidate List
+                                                                                                             November 3, 2026 General Election
+               For the Office Of…                       Party               Ballot Name(s)                                           Address                                     Phone                              Email                            Filing Date
+United States Senator                               Republican      Ashley Hinson                      PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/11/2026
+                                                    Democratic      Josh Turek                         PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/12/2026
+                                                    Libertarian     Thomas Laehn                       PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          6/2/2026
+United States Representative District 1             Republican      Mariannette Miller-Meeks           PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/6/2026
+                                                    Democratic      Christina Bohannan                 PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          2/25/2026
+                                                    No Party        Michael Bridgford                  PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          6/1/2026
+United States Representative District 2             Republican      Joe Mitchell                       PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/6/2026
+                                                    Democratic      Lindsay James                      PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/5/2026
+                                                    Libertarian     Rick Stewart                       PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          6/2/2026
+                                                    No Party        Dave Bushaw                        PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          6/1/2026
+United States Representative District 3             Republican      Zach Nunn                          PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          2/23/2026
+                                                    Democratic      Sarah Trone Garriott               PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/12/2026
+United States Representative District 4             Republican      Chris McGowan                      PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/11/2026
+                                                    Democratic      Dave Dawson                        PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/6/2026
+Governor                                            Republican      Zach Lahn                          PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/13/2026
+                                                    Democratic      Rob Sand                           PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/9/2026
+Lieutenant Governor                                 Republican      Derek Wulf                         PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          6/15/2026
+                                                    Democratic      Dave Muhlbauer                     PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          6/22/2026
+Secretary of State                                  Republican      Paul D. Pate                       PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/10/2026
+                                                    Democratic      Ryan Peterman                      PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/11/2026
+Auditor of State                                    Republican      Chris Cournoyer                    PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/6/2026
+                                                    Democratic      Taylor Wettach                     PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/11/2026
+Treasurer of State                                  Republican      Roby Smith                         PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/11/2026
+                                                    Democratic      John Norwood                       PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/12/2026
+Secretary of Agriculture                            Republican      Mike Naig                          PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/5/2026
+                                                    Democratic      Chris Jones                        PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          2/24/2026
+Attorney General                                    Republican      Brenna Bird                        PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/4/2026
+                                                    Democratic      Nate Willems                       PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/5/2026
+State Senator District 15                           Republican      --
+                                                    Democratic      Tony Bisignano                     PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/12/2026
+State Senator District 17                           Republican      Ronald Langston                    PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/13/2026
+                                                    Democratic      Samy El-Baroudi                    PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/4/2026
+State Senator District 19                           Republican      Barb Kniff McCulla                 PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/4/2026
+                                                    Democratic      Zachary Mecham                     PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/3/2026
+State Representative District 33                    Republican      Lynn Hammel                        PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/12/2026
+                                                    Democratic      Ivette Muhammad                    PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          2/24/2026
+State Representative District 34                    Republican      --
+                                                    Democratic      Rob Johnson                        PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com          3/11/2026

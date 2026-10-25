@@ -1,0 +1,156 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 9,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00298",
+   "candidate_name": "TUREK, JOSHUA",
+   "candidate_pcc_id": "C00915645",
+   "candidate_pcc_name": "JOSH TUREK FOR IOWA",
+   "cash_on_hand_end_period": 3072851.0,
+   "committee_ids": [
+    "C00915645"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 21217670.1,
+   "total_receipts": 24290521.1
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00314",
+   "candidate_name": "ARENHOLZ, ASHLEY HINSON",
+   "candidate_pcc_id": "C00706267",
+   "candidate_pcc_name": "ASHLEY FOR IOWA",
+   "cash_on_hand_end_period": 2172988.59,
+   "committee_ids": [
+    "C00706267"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 13903059.38,
+   "total_receipts": 14147972.57
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00256",
+   "candidate_name": "SAGE, NATHAN",
+   "candidate_pcc_id": "C00902494",
+   "candidate_pcc_name": "SAGE FOR SENATE",
+   "cash_on_hand_end_period": 8.88,
+   "committee_ids": [
+    "C00902494"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1433534.77,
+   "total_receipts": 1433543.65
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00249",
+   "candidate_name": "CARLIN, JAMES",
+   "candidate_pcc_id": "C00898148",
+   "candidate_pcc_name": "JIM CARLIN FOR US SENATE",
+   "cash_on_hand_end_period": 5266.22,
+   "committee_ids": [
+    "C00898148"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 489153.91,
+   "total_receipts": 494420.13
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00280",
+   "candidate_name": "NORRIS, JACKIE",
+   "candidate_pcc_id": "C00914747",
+   "candidate_pcc_name": "JACKIE NORRIS FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00914747"
+   ],
+   "coverage_end_date": "2026-03-20",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 363563.01,
+   "total_receipts": 363563.01
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00264",
+   "candidate_name": "SCHOLTEN, JAMES",
+   "candidate_pcc_id": "C00907170",
+   "candidate_pcc_name": "SCHOLTEN FOR IOWA",
+   "cash_on_hand_end_period": 8144.3,
+   "committee_ids": [
+    "C00907170"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 205271.15,
+   "total_receipts": 213415.45
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00181",
+   "candidate_name": "LAEHN, THOMAS RAYMOND DR.",
+   "candidate_pcc_id": "C00872903",
+   "candidate_pcc_name": "THOMAS LAEHN EXPLORATORY COMMITTEE, INCORPORATED",
+   "cash_on_hand_end_period": 9035.08,
+   "committee_ids": [
+    "C00872903"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 74632.11,
+   "total_receipts": 83667.19
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00199",
+   "candidate_name": "BERMAN, JOHN",
+   "candidate_pcc_id": "C00776807",
+   "candidate_pcc_name": "BERMAN4CONGRESS2MAKE AMERICA GEEKY AGAIN",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00776807"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IA00207",
+   "candidate_name": "SMITH, JOSHUA DANIEL",
+   "candidate_pcc_id": "C00952457",
+   "candidate_pcc_name": "COMMITTEE TO ELECT JOSHUA SMITH 2028",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00952457"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "125 W STATE ST, TRENTON, NJ 08608"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "648478364"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "3402301",
+       "CENTLAT": "+40.2507551",
+       "AREAWATER": 2450692,
+       "BASENAME": "Mercer County (West Central)--Trenton City",
+       "STATE": "34",
+       "OID": "217704486329451",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2506684",
+       "NAME": "Mercer County (West Central)--Trenton City PUMA",
+       "OBJECTID": 2016,
+       "CENTLON": "-074.7879133",
+       "AREALAND": 59085922,
+       "INTPTLON": "-074.7872416",
+       "MTFCC": "G6120",
+       "PUMA": "02301"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "08608",
+       "CENTLAT": "+40.2194411",
+       "AREAWATER": 172233,
+       "BASENAME": "08608",
+       "OID": "221704257716338",
+       "ZCTA5": "08608",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2189927",
+       "NAME": "ZCTA5 08608",
+       "OBJECTID": 31780,
+       "CENTLON": "-074.7668532",
+       "AREALAND": 818732,
+       "INTPTLON": "-074.7665887",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "88462",
+       "CENTLAT": "+40.2452508",
+       "AREAWATER": 6461626,
+       "BASENAME": "Trenton, NJ",
+       "OID": "27021294352549",
+       "UA": "88462",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2455877",
+       "NAME": "Trenton, NJ Urban Area",
+       "OBJECTID": 2155,
+       "CENTLON": "-074.6772080",
+       "AREALAND": 344878734,
+       "INTPTLON": "-074.6764271",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 36490544.26240005,
+       "NECTAPCI": "N",
+       "GEOID": "3474000",
+       "CENTLAT": "+40.2236964",
+       "AREAWATER": 1548923,
+       "BASENAME": "Trenton",
+       "STATE": "34",
+       "OID": "27890294290115",
+       "LSADC": "25",
+       "PLACE": "74000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.2238406",
+       "NAME": "Trenton city",
+       "OBJECTID": 27479,
+       "PLACECC": "C5",
+       "CENTLON": "-074.7640021",
+       "STGEOMETRY_Length": 37838.27311815657,
+       "CBSAPCI": "Y",
+       "AREALAND": 19700263,
+       "INTPTLON": "-074.7636236",
+       "PLACENS": "00885421",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "34021",
+       "CENTLAT": "+40.2834212",
+       "AREAWATER": 11327994,
+       "STATE": "34",
+       "BASENAME": "Mercer",
+       "OID": "27590294160922",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.2825026",
+       "NAME": "Mercer County",
+       "OBJECTID": 2502,
+       "CENTLON": "-074.7016810",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00882229",
+       "AREALAND": 581404582,
+       "INTPTLON": "-074.7037240",
+       "MTFCC": "G4020",
+       "COUNTY": "021"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "KG",
+       "GEOID": "3416290",
+       "CENTLAT": "+40.2236964",
+       "AREAWATER": 1548923,
+       "STATE": "34",
+       "BASENAME": "Trenton City School District",
+       "OID": "28490294355929",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+40.2238406",
+       "SDUNI": "16290",
+       "NAME": "Trenton City School District",
+       "OBJECTID": 4826,
+       "CENTLON": "-074.7640021",
+       "HIGRADE": "12",
+       "AREALAND": 19700263,
+       "INTPTLON": "-074.7636236",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "340210011012007",
+       "CENTLAT": "+40.2197800",
+       "BLOCK": "2007",
+       "AREAWATER": 0,
+       "STATE": "34",
+       "BASENAME": "2007",
+       "OID": "210701004615960",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2197800",
+       "NAME": "Block 2007",
+       "OBJECTID": 1237118,
+       "TRACT": "001101",
+       "CENTLON": "-074.7707497",
+       "BLKGRP": "2",
+       "AREALAND": 168910,
+       "INTPTLON": "-074.7707497",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "021"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779795",
+       "GEOID": "34",
+       "CENTLAT": "+40.1048602",
+       "AREAWATER": 3533153027,
+       "STATE": "34",
+       "BASENAME": "New Jersey",
+       "STUSAB": "NJ",
+       "OID": "27490286138606",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.1072744",
+       "DIVISION": "2",
+       "NAME": "New Jersey",
+       "REGION": "1",
+       "OBJECTID": 7,
+       "CENTLON": "-074.6583832",
+       "AREALAND": 19049451361,
+       "INTPTLON": "-074.6652012",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "340210011012",
+       "CENTLAT": "+40.2207861",
+       "AREAWATER": 267661,
+       "STATE": "34",
+       "BASENAME": "2",
+       "OID": "208903716867615",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2207885",
+       "NAME": "Block Group 2",
+       "OBJECTID": 50129,
+       "TRACT": "001101",
+       "CENTLON": "-074.7745142",
+       "BLKGRP": "2",
+       "AREALAND": 502549,
+       "INTPTLON": "-074.7746803",
+       "MTFCC": "G5030",
+       "COUNTY": "021"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "408",
+       "CENTLAT": "+41.0491309",
+       "AREAWATER": 7424870228,
+       "BASENAME": "New York-Newark, NY-NJ-CT-PA",
+       "OID": "2619034687908093",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.0492719",
+       "NAME": "New York-Newark, NY-NJ-CT-PA CSA",
+       "OBJECTID": 8,
+       "CSA": "408",
+       "CENTLON": "-073.9734379",
+       "INTPTLON": "-073.9729499",
+       "AREALAND": 29218858152,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "74000",
+       "GEOID": "3402174000",
+       "CENTLAT": "+40.2236964",
+       "AREAWATER": 1548923,
+       "STATE": "34",
+       "BASENAME": "Trenton",
+       "OID": "27690294270240",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+40.2238406",
+       "NAME": "Trenton city",
+       "OBJECTID": 11594,
+       "CENTLON": "-074.7640021",
+       "COUSUBCC": "C5",
+       "AREALAND": 19700263,
+       "INTPTLON": "-074.7636236",
+       "MTFCC": "G4040",
+       "COUSUBNS": "00885421",
+       "COUNTY": "021"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "34015",
+       "CENTLAT": "+40.3750827",
+       "AREAWATER": 11388824,
+       "STATE": "34",
+       "BASENAME": "15",
+       "OID": "2129042411616827",
+       "SLDU": "015",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+40.3624479",
+       "NAME": "State Senate District 15",
+       "OBJECTID": 1730,
+       "CENTLON": "-074.8409390",
+       "LSY": "2026",
+       "AREALAND": 658812895,
+       "INTPTLON": "-074.8403330",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+41.8513398",
+       "AREAWATER": 26186689150,
+       "BASENAME": "Middle Atlantic",
+       "OID": "2739020719811",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8451925",
+       "DIVISION": "2",
+       "REGION": "1",
+       "NAME": "Middle Atlantic Division",
+       "OBJECTID": 7,
+       "CENTLON": "-076.4757049",
+       "AREALAND": 256980916061,
+       "INTPTLON": "-076.4760328",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 1992641248.6786842,
+       "CD120": "12",
+       "GEOID": "3412",
+       "CENTLAT": "+40.3926162",
+       "CDSESSN": "120",
+       "AREAWATER": 19305147,
+       "STATE": "34",
+       "BASENAME": "12",
+       "OID": "2119042393278307",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+40.3908013",
+       "NAME": "Congressional District 12",
+       "OBJECTID": 246,
+       "CENTLON": "-074.5809108",
+       "STGEOMETRY_Length": 379111.0967161164,
+       "AREALAND": 1135301458,
+       "INTPTLON": "-074.5851828",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "34015",
+       "CENTLAT": "+40.3750827",
+       "SLDL": "015",
+       "AREAWATER": 11388824,
+       "STATE": "34",
+       "BASENAME": "15",
+       "OID": "2139042416627726",
+       "LSADC": "L3",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+40.3624479",
+       "NAME": "Assembly District 15",
+       "OBJECTID": 1528,
+       "CENTLON": "-074.8409390",
+       "LSY": "2026",
+       "AREALAND": 658812895,
+       "INTPTLON": "-074.8403330",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "1",
+       "CENTLAT": "+42.7754036",
+       "AREAWATER": 50257795201,
+       "BASENAME": "Northeast",
+       "OID": "2729020719824",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7778249",
+       "REGION": "1",
+       "NAME": "Northeast Region",
+       "OBJECTID": 3,
+       "CENTLON": "-074.2183092",
+       "AREALAND": 419357207693,
+       "INTPTLON": "-074.2123732",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "45940",
+       "CENTLAT": "+40.2834212",
+       "AREAWATER": 11327994,
+       "BASENAME": "Trenton-Princeton, NJ",
+       "OID": "2629034687907884",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2825026",
+       "NAME": "Trenton-Princeton, NJ Metro Area",
+       "CSA": "408",
+       "OBJECTID": 642,
+       "CENTLON": "-074.7016810",
+       "CBSA": "45940",
+       "AREALAND": 581404582,
+       "INTPTLON": "-074.7037240",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "34021001101",
+       "CENTLAT": "+40.2224964",
+       "AREAWATER": 365623,
+       "STATE": "34",
+       "BASENAME": "11.01",
+       "OID": "207903716867498",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.2237889",
+       "NAME": "Census Tract 11.01",
+       "OBJECTID": 20253,
+       "TRACT": "001101",
+       "CENTLON": "-074.7775210",
+       "AREALAND": 749837,
+       "INTPTLON": "-074.7780081",
+       "MTFCC": "G5020",
+       "COUNTY": "021"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -74.769385552456,
+     "y": 40.220782400971
+    },
+    "addressComponents": {
+     "zip": "08608",
+     "streetName": "STATE",
+     "preType": "",
+     "city": "TRENTON",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "125",
+     "state": "NJ",
+     "suffixType": "ST",
+     "toAddress": "143",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "125 W STATE ST, TRENTON, NJ, 08608"
+   }
+  ]
+ }
+}

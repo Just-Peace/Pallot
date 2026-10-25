@@ -1,0 +1,108 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 6,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IA03268",
+   "candidate_name": "TRONE GARRIOTT, SARAH",
+   "candidate_pcc_id": "C00904086",
+   "candidate_pcc_name": "SARAH FOR IOWA",
+   "cash_on_hand_end_period": 1153589.5,
+   "committee_ids": [
+    "C00904086"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6916812.01,
+   "total_receipts": 8070401.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2IA03119",
+   "candidate_name": "NUNN, ZACH",
+   "candidate_pcc_id": "C00784389",
+   "candidate_pcc_name": "IOWANS FOR ZACH NUNN",
+   "cash_on_hand_end_period": 620758.9,
+   "committee_ids": [
+    "C00784389"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 5555814.52,
+   "total_receipts": 6123740.03
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IA03276",
+   "candidate_name": "KONFRST, JENNIFER",
+   "candidate_pcc_id": "C00904573",
+   "candidate_pcc_name": "JENNIFER KONFRST FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00904573"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 607944.06,
+   "total_receipts": 607944.06
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4IA03156",
+   "candidate_name": "LIMON, TRACY L MFT",
+   "candidate_pcc_id": "C00835470",
+   "candidate_pcc_name": "TRACY LIMON",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00835470"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IA03284",
+   "candidate_name": "CARRIGAN, MICHAEL XAVIER MR.",
+   "candidate_pcc_id": "C00913988",
+   "candidate_pcc_name": "XAVIER CARRIGAN FOR IOWA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00913988"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IA03300",
+   "candidate_name": "WOLFE, EASTON",
+   "candidate_pcc_id": "C00929364",
+   "candidate_pcc_name": "WOLFE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00929364"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

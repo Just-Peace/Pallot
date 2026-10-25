@@ -43,7 +43,7 @@ const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
 // office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
-// Ohio's and New York's registration, mail voting and poll hours, and Texas's print tips.
+// Ohio's, Iowa's, New Jersey's and New York's registration, mail voting and poll hours, and Texas's print tips.
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
@@ -168,6 +168,23 @@ export const STATES = {
     mailDeadline: "Your application must reach your county board by the close of business on ",
     pollHours: "6:30 a.m. – 7:30 p.m.",
   },
+  NJ: {
+    site: { label: siteLabel(SITES.NJ), url: SITES.NJ },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://voter.svrs.nj.gov/registration-check",
+      hint: "New Jersey's voter registration check (Division of Elections)",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://voter.svrs.nj.gov/polling-place-search",
+      hint: "New Jersey's polling place search; your county lists its early voting places",
+    },
+    localOffice: "Your county clerk",
+    mailApply: { label: "How to apply", url: "https://www.nj.gov/state/elections/vote-by-mail.shtml" },
+    mailEligibility: "Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+      + "Election Day and reach your county within six days, or be dropped in a drop box by 8 p.m. on Election Day.",
+    mailDeadline: "An application sent by mail must reach your county clerk by ",
+    pollHours: "6 a.m. – 8 p.m.",
+  },
   WI: {
     site: { label: siteLabel(SITES.WI), url: SITES.WI },
     registration: {
@@ -201,6 +218,23 @@ export const STATES = {
       + "by Election Day and reach your county board within 7 days after.",
     mailDeadline: "Online or mailed applications must reach your county board by ",
     pollHours: "6 a.m. – 9 p.m.",
+  },
+  IA: {
+    site: { label: siteLabel(SITES.IA), url: SITES.IA },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: SITES.IA,
+      hint: "Iowa Secretary of State: check your registration and find your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: SITES.IA,
+      hint: "Iowa Secretary of State: your polling place, and your county auditor's office for voting early",
+    },
+    localOffice: "Your county auditor",
+    mailApply: { label: "How to ask", url: SITES.IA },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+      + "county auditor before the polls close at 8 p.m. on Election Day.",
+    mailDeadline: "Your request must reach your county auditor by 5 p.m. on ",
+    pollHours: "7 a.m. – 8 p.m.",
   },
 };
 

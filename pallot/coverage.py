@@ -53,6 +53,8 @@ COVERED = {
     "GA": LIST,
     "WI": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "OH": Coverage("list", ("cd",), precincts=False, outlines=False),  # its statewide races; the House race from the FEC
+    "IA": LIST,
+    "NJ": Coverage("list", ("cd",), precincts=False, outlines=False),  # only U.S. Senate and House in 2026
     "NY": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
 }
 
