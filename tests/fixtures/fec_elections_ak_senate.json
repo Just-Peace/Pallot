@@ -1,0 +1,140 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 8,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00276",
+   "candidate_name": "PELTOLA, MARY",
+   "candidate_pcc_id": "C00933978",
+   "candidate_pcc_name": "ALASKANS FOR MARY",
+   "cash_on_hand_end_period": 4102125.93,
+   "committee_ids": [
+    "C00933978"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 32785383.22,
+   "total_receipts": 36887509.15
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4AK00214",
+   "candidate_name": "SULLIVAN, DAN",
+   "candidate_pcc_id": "C00570994",
+   "candidate_pcc_name": "ALASKANS FOR DAN SULLIVAN",
+   "cash_on_hand_end_period": 2839757.54,
+   "committee_ids": [
+    "C00570994"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 11999190.88,
+   "total_receipts": 14107205.4
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00326",
+   "candidate_name": "SULLIVAN, DANIEL J",
+   "candidate_pcc_id": "C00956326",
+   "candidate_pcc_name": "DANIEL J. SULLIVAN FOR SENATE",
+   "cash_on_hand_end_period": 1901.51,
+   "committee_ids": [
+    "C00956326"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 28654.11,
+   "total_receipts": 30555.62
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00235",
+   "candidate_name": "DIENER, ANN",
+   "candidate_pcc_id": "C00894113",
+   "candidate_pcc_name": "ANN DIENER FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00894113"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00284",
+   "candidate_name": "HAFNER, CAROL",
+   "candidate_pcc_id": "C00947523",
+   "candidate_pcc_name": "CAROL HAFNER FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00947523"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00292",
+   "candidate_name": "MCELWAIN, HEATHER G",
+   "candidate_pcc_id": "C00952119",
+   "candidate_pcc_name": "MCELWAIN FOR ALASKA COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00952119"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": null,
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00300",
+   "candidate_name": "LESLIE, DAVID BRYAN",
+   "candidate_pcc_id": "C00955427",
+   "candidate_pcc_name": "DAVID LESLIE FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00955427"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AK00318",
+   "candidate_name": "ROBERTS, REECE",
+   "candidate_pcc_id": "C00954750",
+   "candidate_pcc_name": "REECE ROBERTS FOR A LESS AWFUL WORLD",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00954750"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "NON-PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

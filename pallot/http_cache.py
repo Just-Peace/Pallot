@@ -36,6 +36,9 @@ requests are ASP.NET postbacks (form_from_page) has the request's own address fe
 way, and the hidden fields read from it (``__VIEWSTATE``) sent with the form, kept out of the
 stored request and the key too.
 
+A source whose server leaves an intermediate certificate out of the chain it sends (trust) is
+asked through a client of its own that also trusts that certificate; verification stays on.
+
 Cached values are shared between callers: treat them as read-only.
 """
 
@@ -49,6 +52,7 @@ import hashlib
 import json
 import logging
 import sqlite3
+import ssl
 import threading
 import time
 import uuid
@@ -57,6 +61,7 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Callable, Collection, Iterable, Iterator, Mapping, Sequence
 
+import certifi
 import httpx
 
 from .text import iso_utc
@@ -205,6 +210,14 @@ REFRESH_TRIES = 3  # how many times refresh() asks a request whose keys were all
 DECODED_PER_BYTE = 3  # decoded JSON takes 2.4–4.5 times its text in memory, measured on the largest answers
 
 
+def trusting(cafile: Path) -> ssl.SSLContext:
+    """A verifying context that trusts ``cafile``'s certificates besides the usual roots
+    (certifi's, as httpx's own): for a server whose chain is missing its intermediate."""
+    context = ssl.create_default_context(cafile=certifi.where())
+    context.load_verify_locations(cafile=str(cafile))
+    return context
+
+
 @contextlib.contextmanager
 def offline() -> Iterator[None]:
     """Requests made inside (refresh's, a bundled snapshot's) go at their keys' ``refresh_limit``:
@@ -342,9 +355,27 @@ class HttpCache:
         self._forms: dict[str, Callable[[str], dict[str, str]]] = {}
         self._daily: dict[str, int] = {}
         self._files: dict[str, tuple[Path, Callable[[Path], Any], int]] = {}
+        self._clients: dict[str, httpx.AsyncClient] = {}
 
     def close(self) -> None:
         self._db.close()
+
+    async def aclose(self) -> None:
+        """close(), and the clients trust() opened."""
+        for client in self._clients.values():
+            await client.aclose()
+        self._clients.clear()
+        self.close()
+
+    def trust(self, source: str, cafile: Path) -> None:
+        """Ask ``source`` through a client that also trusts ``cafile`` (trusting)."""
+        client = self._client
+        self._clients[source] = httpx.AsyncClient(
+            verify=trusting(cafile), timeout=client.timeout, headers=client.headers, follow_redirects=client.follow_redirects
+        )
+
+    def _client_of(self, source: str) -> httpx.AsyncClient:
+        return self._clients.get(source, self._client)
 
     async def get_json(
         self,
@@ -430,7 +461,7 @@ class HttpCache:
         stats = current_calls()
         if stats:
             stats.external_calls += 1
-        async with self._client.stream(
+        async with self._client_of(source).stream(
             spec.method, spec.url, params=spec.params, json=spec.json, data=spec.form, headers=headers
         ) as response:
             response.raise_for_status()
@@ -698,7 +729,7 @@ class HttpCache:
             stats = current_calls()
             if stats:
                 stats.external_calls += 1
-            response = await self._client.request(spec.method, spec.url, params=spec.params, json=spec.json,
+            response = await self._client_of(source).request(spec.method, spec.url, params=spec.params, json=spec.json,
                                                   data=spec.form, headers=sent)
             if keys and response.status_code in keys.rest_on:
                 self.set_flag(_key_flag(source, key, response.status_code), source, keys.rest_on[response.status_code])

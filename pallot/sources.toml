@@ -37,6 +37,7 @@ state_wi = true             # Wisconsin Elections Commission (its list is import
 state_oh = true             # Ohio Secretary of State (its statewide races, transcribed by hand from its sample ballot)
 state_ia = true             # Iowa Secretary of State (its list is imported by hand)
 state_nj = true             # New Jersey Division of Elections
+state_ak = true             # Alaska Division of Elections
 state_ny = true             # New York State Board of Elections (its certification is imported by hand)
 state_co = true             # Colorado Secretary of State
 state_wy = true             # Wyoming Secretary of State

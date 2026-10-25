@@ -146,4 +146,4 @@ async def open_services(
             yield svc
         finally:
             await election_precincts.aclose()  # before the client closes under a download
-            cache.close()
+            await cache.aclose()

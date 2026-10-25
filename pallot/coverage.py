@@ -59,6 +59,7 @@ COVERED = {
     "CO": LIST,
     "WY": LIST,
     "IL": LIST,
+    "AK": LIST,  # its State Senate districts are letters
 }
 
 # Sources that only know some states.

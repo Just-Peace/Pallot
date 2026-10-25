@@ -254,6 +254,23 @@ export const STATES = {
     mailDeadline: "Your request must reach your county auditor by 5 p.m. on ",
     pollHours: "7 a.m. – 8 p.m.",
   },
+  AK: {
+    site: { label: siteLabel(SITES.AK), url: SITES.AK },
+    registration: {
+      label: "Am I registered?", short: "Registered?", url: "https://myvoterinformation.alaska.gov/",
+      hint: "Alaska Division of Elections' My Voter Information: your registration and your polling place",
+    },
+    countyOffices: {
+      label: "Where to vote", short: "Where", url: "https://www.elections.alaska.gov/voter-information/absentee-and-early-voting/",
+      hint: "Alaska Division of Elections: early and in-person absentee voting places",
+    },
+    localOffice: "The Division of Elections' regional office",
+    mailApply: { label: "How to apply", url: "https://absenteeballotapplication.alaska.gov/" },
+    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must be postmarked "
+      + "by Election Day and reach the Division of Elections within 10 days after.",
+    mailDeadline: "Your application must reach the Division of Elections by ",
+    pollHours: "7 a.m. – 8 p.m.",
+  },
   CO: {
     site: { label: siteLabel(SITES.CO), url: SITES.CO },
     registration: {

@@ -17005,5 +17005,211 @@
     "phone": "202-224-2854"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "M001153",
+   "thomas": "01694",
+   "lis": "S288",
+   "govtrack": 300075,
+   "opensecrets": "N00026050",
+   "votesmart": 15841,
+   "fec": [
+    "S4AK00099"
+   ],
+   "cspan": 1004138,
+   "wikipedia": "Lisa Murkowski",
+   "house_history": 18778,
+   "ballotpedia": "Lisa Murkowski",
+   "maplight": 595,
+   "icpsr": 40300,
+   "wikidata": "Q22360",
+   "google_entity_id": "kg:/m/0202kt",
+   "pictorial": 13345
+  },
+  "name": {
+   "first": "Lisa",
+   "middle": "A.",
+   "last": "Murkowski",
+   "official_full": "Lisa Murkowski"
+  },
+  "bio": {
+   "birthday": "1957-05-22",
+   "gender": "F"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "how": "appointment",
+    "state": "AK",
+    "class": 3,
+    "party": "Republican",
+    "url": "http://murkowski.senate.gov/"
+   },
+   {
+    "type": "sen",
+    "start": "2005-01-04",
+    "end": "2011-01-03",
+    "state": "AK",
+    "class": 3,
+    "party": "Republican",
+    "url": "http://murkowski.senate.gov/"
+   },
+   {
+    "type": "sen",
+    "start": "2011-01-05",
+    "end": "2017-01-03",
+    "state": "AK",
+    "class": 3,
+    "party": "Republican",
+    "url": "https://www.murkowski.senate.gov",
+    "address": "709 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-6665",
+    "fax": "202-224-5301",
+    "contact_form": "http://www.murkowski.senate.gov/public/index.cfm?p=EMailLisa",
+    "office": "709 Hart Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.murkowski.senate.gov/public/?a=rss.feed"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "AK",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.murkowski.senate.gov",
+    "rss_url": "http://www.murkowski.senate.gov/public/?a=rss.feed",
+    "address": "522 Hart Senate Office Building Washington DC 20510",
+    "office": "522 Hart Senate Office Building",
+    "phone": "202-224-6665",
+    "contact_form": "https://www.murkowski.senate.gov/public/index.cfm/contact",
+    "fax": "202-224-5301"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "AK",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.murkowski.senate.gov",
+    "rss_url": "http://www.murkowski.senate.gov/public/?a=rss.feed",
+    "contact_form": "https://www.murkowski.senate.gov/public/index.cfm/contact",
+    "address": "522 Hart Senate Office Building Washington DC 20510",
+    "office": "522 Hart Senate Office Building",
+    "phone": "202-224-6665"
+   }
+  ],
+  "family": [
+   {
+    "name": "Frank Hughes Murkowski",
+    "relation": "daughter"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001198",
+   "thomas": "02290",
+   "fec": [
+    "S4AK00214"
+   ],
+   "govtrack": 412665,
+   "opensecrets": "N00035774",
+   "lis": "S383",
+   "maplight": 2121,
+   "wikidata": "Q5218668",
+   "wikipedia": "Dan Sullivan (U.S. senator)",
+   "google_entity_id": "kg:/m/07s4r4q",
+   "votesmart": 114964,
+   "cspan": 1023262,
+   "icpsr": 41500,
+   "ballotpedia": "Daniel S. Sullivan",
+   "pictorial": 13368
+  },
+  "name": {
+   "first": "Dan",
+   "last": "Sullivan",
+   "official_full": "Dan Sullivan"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1964-11-13"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "AK",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.sullivan.senate.gov",
+    "address": "302 Hart Senate Office Building Washington DC 20510",
+    "office": "302 Hart Senate Office Building",
+    "phone": "202-224-3004",
+    "contact_form": "https://www.sullivan.senate.gov/contact/email"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "AK",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.sullivan.senate.gov",
+    "contact_form": "https://www.sullivan.senate.gov/contact/email",
+    "address": "706 Hart Senate Office Building Washington DC 20510",
+    "office": "706 Hart Senate Office Building",
+    "phone": "202-224-3004"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001323",
+   "fec": [
+    "H2AK01083"
+   ],
+   "govtrack": 456970,
+   "opensecrets": "N00049408",
+   "wikipedia": "Nick Begich III",
+   "wikidata": "Q113676482",
+   "google_entity_id": "kg:/g/11tc3qp2lx",
+   "votesmart": 207684,
+   "ballotpedia": "Nicholas Begich"
+  },
+  "name": {
+   "first": "Nicholas",
+   "middle": "Joseph",
+   "last": "Begich",
+   "suffix": "III",
+   "official_full": "Nicholas J. Begich III"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1977-10-21"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "AK",
+    "district": 0,
+    "party": "Republican",
+    "address": "153 Cannon House Office Building Washington DC 20515-0200",
+    "office": "153 Cannon House Office Building",
+    "phone": "202-225-5765",
+    "url": "https://begich.house.gov"
+   }
+  ]
  }
 ]

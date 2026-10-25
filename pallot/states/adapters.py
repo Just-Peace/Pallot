@@ -6,6 +6,7 @@ from __future__ import annotations
 from ..config import Ttls
 from ..http_cache import HttpCache
 from . import StateList
+from .ak import AkList
 from .ca import CaList
 from .az import AzList
 from .co import CoList
@@ -26,7 +27,8 @@ from .wy import WyList
 
 ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
-                             IaList, NjList, NyList, CoList, WyList, IlList)
+                             IaList, NjList, NyList, CoList, WyList, IlList,
+                             AkList)
 }
 
 

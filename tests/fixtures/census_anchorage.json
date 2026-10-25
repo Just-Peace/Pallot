@@ -1,0 +1,447 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "632 W 6TH AVE, ANCHORAGE, AK 99501"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "190796716"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "0200101",
+       "CENTLAT": "+61.2550083",
+       "AREAWATER": 176418156,
+       "BASENAME": "Anchorage Municipality (North)",
+       "STATE": "02",
+       "OID": "217704485274772",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.2992720",
+       "NAME": "Anchorage Municipality (North) PUMA",
+       "OBJECTID": 211,
+       "CENTLON": "-149.0854128",
+       "AREALAND": 2675035510,
+       "INTPTLON": "-149.0212019",
+       "MTFCC": "G6120",
+       "PUMA": "00101"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "99501",
+       "CENTLAT": "+61.2200570",
+       "AREAWATER": 415628,
+       "BASENAME": "99501",
+       "OID": "221704258437715",
+       "ZCTA5": "99501",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.2199983",
+       "NAME": "ZCTA5 99501",
+       "OBJECTID": 10549,
+       "CENTLON": "-149.8586263",
+       "AREALAND": 17407314,
+       "INTPTLON": "-149.8578403",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "02305",
+       "CENTLAT": "+61.1686562",
+       "AREAWATER": 2698344,
+       "BASENAME": "Anchorage, AK",
+       "OID": "2702145413700",
+       "UA": "02305",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.1698789",
+       "NAME": "Anchorage, AK Urban Area",
+       "OBJECTID": 976,
+       "CENTLON": "-149.8546039",
+       "AREALAND": 237670718,
+       "INTPTLON": "-149.8541664",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 21552116162.695873,
+       "NECTAPCI": "N",
+       "GEOID": "0203000",
+       "CENTLAT": "+61.1481849",
+       "AREAWATER": 615674126,
+       "BASENAME": "Anchorage",
+       "STATE": "02",
+       "OID": "2789045412869",
+       "LSADC": "37",
+       "PLACE": "03000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+61.1742503",
+       "NAME": "Anchorage municipality",
+       "OBJECTID": 31985,
+       "PLACECC": "C1",
+       "CENTLON": "-149.1880455",
+       "STGEOMETRY_Length": 688723.1813724206,
+       "CBSAPCI": "Y",
+       "AREALAND": 4420579222,
+       "INTPTLON": "-149.2843294",
+       "PLACENS": "02419025",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Alaska Native Regional Corporations": [
+      {
+       "ANRC": "17140",
+       "ANRCCC": "E7",
+       "GEOID": "0217140",
+       "CENTLAT": "+61.1203520",
+       "AREAWATER": 20429653190,
+       "BASENAME": "Cook Inlet",
+       "STATE": "02",
+       "OID": "2599045104037",
+       "LSADC": "77",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+61.0994247",
+       "NAME": "Cook Inlet Alaska Native Regional Corporation",
+       "OBJECTID": 5,
+       "CENTLON": "-151.3668370",
+       "FSRFLG": "F",
+       "AREALAND": 96350460607,
+       "INTPTLON": "-151.3389090",
+       "MTFCC": "G2200",
+       "ANRCNS": "02418878"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "02020",
+       "CENTLAT": "+61.1481849",
+       "AREAWATER": 615674126,
+       "STATE": "02",
+       "BASENAME": "Anchorage",
+       "OID": "2759045412859",
+       "LSADC": "12",
+       "FUNCSTAT": "C",
+       "INTPTLAT": "+61.1742503",
+       "NAME": "Anchorage Municipality",
+       "OBJECTID": 1701,
+       "CENTLON": "-149.1880455",
+       "COUNTYCC": "H6",
+       "COUNTYNS": "01416061",
+       "AREALAND": 4420579222,
+       "INTPTLON": "-149.2843294",
+       "MTFCC": "G4020",
+       "COUNTY": "020"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "0200180",
+       "CENTLAT": "+61.1481849",
+       "AREAWATER": 615674126,
+       "STATE": "02",
+       "BASENAME": "Anchorage School District",
+       "OID": "2849045413702",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+61.1742503",
+       "SDUNI": "00180",
+       "NAME": "Anchorage School District",
+       "OBJECTID": 10162,
+       "CENTLON": "-149.1880455",
+       "HIGRADE": "12",
+       "AREALAND": 4420579222,
+       "INTPTLON": "-149.2843294",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "020200011001047",
+       "CENTLAT": "+61.2160924",
+       "BLOCK": "1047",
+       "AREAWATER": 0,
+       "STATE": "02",
+       "BASENAME": "1047",
+       "OID": "210701000397563",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.2160924",
+       "NAME": "Block 1047",
+       "OBJECTID": 5178609,
+       "TRACT": "001100",
+       "CENTLON": "-149.8945041",
+       "BLKGRP": "1",
+       "AREALAND": 12053,
+       "INTPTLON": "-149.8945041",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "020"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01785533",
+       "GEOID": "02",
+       "CENTLAT": "+63.4136458",
+       "AREAWATER": 244276695297,
+       "STATE": "02",
+       "BASENAME": "Alaska",
+       "STUSAB": "AK",
+       "OID": "2749045059742",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+63.3469818",
+       "DIVISION": "9",
+       "NAME": "Alaska",
+       "REGION": "4",
+       "OBJECTID": 27,
+       "CENTLON": "-152.8788722",
+       "AREALAND": 1479942808337,
+       "INTPTLON": "-152.8385657",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "020200011001",
+       "CENTLAT": "+61.2177089",
+       "AREAWATER": 0,
+       "STATE": "02",
+       "BASENAME": "1",
+       "OID": "2089045412373",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.2177089",
+       "NAME": "Block Group 1",
+       "OBJECTID": 207127,
+       "TRACT": "001100",
+       "CENTLON": "-149.8912614",
+       "BLKGRP": "1",
+       "AREALAND": 1196916,
+       "INTPTLON": "-149.8912614",
+       "MTFCC": "G5030",
+       "COUNTY": "020"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "03050",
+       "GEOID": "0202003050",
+       "CENTLAT": "+61.1481849",
+       "AREAWATER": 615674126,
+       "STATE": "02",
+       "BASENAME": "Anchorage",
+       "OID": "2769045412861",
+       "LSADC": "23",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.1742503",
+       "NAME": "Anchorage census subarea",
+       "OBJECTID": 19150,
+       "CENTLON": "-149.1880455",
+       "COUSUBCC": "Z5",
+       "AREALAND": 4420579222,
+       "INTPTLON": "-149.2843294",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01939927",
+       "COUNTY": "020"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "0200I",
+       "CENTLAT": "+61.2605541",
+       "AREAWATER": 29568545,
+       "STATE": "02",
+       "BASENAME": "I",
+       "OID": "2129042206721872",
+       "SLDU": "00I",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+61.2534092",
+       "NAME": "State Senate District I",
+       "OBJECTID": 615,
+       "CENTLON": "-149.7983528",
+       "LSY": "2026",
+       "AREALAND": 106689905,
+       "INTPTLON": "-149.8107709",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "9",
+       "CENTLAT": "+56.3785915",
+       "AREAWATER": 295057188152,
+       "BASENAME": "Pacific",
+       "OID": "2739020719804",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "DIVISION": "9",
+       "REGION": "4",
+       "NAME": "Pacific Division",
+       "OBJECTID": 4,
+       "CENTLON": "-138.8914236",
+       "AREALAND": 2321006265148,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 9016848350080.48,
+       "CD120": "00",
+       "GEOID": "0200",
+       "CENTLAT": "+63.4136458",
+       "CDSESSN": "120",
+       "AREAWATER": 244276695297,
+       "STATE": "02",
+       "BASENAME": "Congressional District (at Large)",
+       "OID": "2119042206721804",
+       "LSADC": "C1",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+63.3469818",
+       "NAME": "Congressional District (at Large)",
+       "OBJECTID": 209,
+       "CENTLON": "-152.8788722",
+       "STGEOMETRY_Length": 36028525.9383604,
+       "AREALAND": 1479942808337,
+       "INTPTLON": "-152.8385657",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "02017",
+       "CENTLAT": "+61.2081653",
+       "SLDL": "017",
+       "AREAWATER": 301831,
+       "STATE": "02",
+       "BASENAME": "17",
+       "OID": "2139042206721903",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+61.2087032",
+       "NAME": "State House District 17",
+       "OBJECTID": 4275,
+       "CENTLON": "-149.8811534",
+       "LSY": "2026",
+       "AREALAND": 10275843,
+       "INTPTLON": "-149.8811324",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "11260",
+       "CENTLAT": "+62.2226795",
+       "AREAWATER": 2078093514,
+       "BASENAME": "Anchorage, AK",
+       "OID": "2629034687907064",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+62.2127844",
+       "NAME": "Anchorage, AK Metro Area",
+       "CSA": "",
+       "OBJECTID": 332,
+       "CENTLON": "-149.5714525",
+       "CBSA": "11260",
+       "AREALAND": 68401092916,
+       "INTPTLON": "-149.6782218",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "02020001100",
+       "CENTLAT": "+61.2177089",
+       "AREAWATER": 0,
+       "STATE": "02",
+       "BASENAME": "11",
+       "OID": "2079045413498",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+61.2177089",
+       "NAME": "Census Tract 11",
+       "OBJECTID": 73124,
+       "TRACT": "001100",
+       "CENTLON": "-149.8912614",
+       "AREALAND": 1196916,
+       "INTPTLON": "-149.8912614",
+       "MTFCC": "G5020",
+       "COUNTY": "020"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -149.894190583773,
+     "y": 61.216526962748
+    },
+    "addressComponents": {
+     "zip": "99501",
+     "streetName": "6TH",
+     "preType": "",
+     "city": "ANCHORAGE",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "600",
+     "state": "AK",
+     "suffixType": "AVE",
+     "toAddress": "698",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "632 W 6TH AVE, ANCHORAGE, AK, 99501"
+   }
+  ]
+ }
+}

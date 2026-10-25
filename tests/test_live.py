@@ -24,6 +24,7 @@ from pallot.sources.election_precincts import ElectionPrecincts, read_dbf
 from pallot.sources.endorsement_feeds import make_feeds
 from pallot.sources.sboe import _inside
 from pallot import counties
+from pallot.states.ak import AkList
 from pallot.states.ca import CaList
 from pallot.states.co import CoList
 from pallot.states.ga import GaList
@@ -312,6 +313,29 @@ async def test_illinois_list_live(tmp_path):
     assert found and again == found and stats.external_calls == 0
     assert {f.district for f in found if f.reach == "cd"} == {str(n) for n in range(1, 18)}
     assert {"D", "R"} <= {f.party for f in found if f.reach == "cd" and f.district == "1"}
+    assert not list(tmp_path.glob(".*.part"))
+
+
+@pytest.mark.anyio
+async def test_alaska_list_live(tmp_path):
+    """Alaska's server still needs the intermediate Pallot ships, and its list reads whole through
+    it: the at-large House race and every State House district, kept as its candidates and its
+    pages' links alone; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = AkList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.filings(day)
+            stats = track_calls()
+            again = await lists.filings(day)
+        finally:
+            await cache.aclose()
+    assert found and again == found and stats.external_calls == 0
+    assert {f.district for f in found if f.reach == "cd"} == {"0"}
+    assert {f.district for f in found if f.reach == "hd"} == {str(n) for n in range(1, 41)}
+    assert {f.reach for f in found if f.group == "judicial"} <= {"state", "counties"}
     assert not list(tmp_path.glob(".*.part"))
 
 

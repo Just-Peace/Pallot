@@ -84,7 +84,7 @@ async def build(entry: Bundle, config: Config, today: Callable[[], dt.date],
                         value = entry.shape(kept.value) if entry.shape else kept.value
                         answers.append({"request": json_request(spec), "value": value})
             finally:
-                cache.close()
+                await cache.aclose()
     if not answers:
         raise BundleError("the builder got no answers to bundle")
     answers.sort(key=store.request_order)
