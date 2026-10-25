@@ -63,6 +63,8 @@ ADDRESSES = {
     "columbus": "90 W Broad St, Columbus, OH 43215",  # Ohio's statewide races, transcribed by hand (states/oh.py); OH-15
     "desmoines": "400 Robert D Ray Dr, Des Moines, IA 50309",  # Iowa's PDF list, imported by hand (states/ia.py)
     "trenton": "125 W State St, Trenton, NJ 08608",  # New Jersey's Senate and House PDFs (states/nj.py); NJ-12
+    "manhattan": "260 Broadway, New York, NY 10007",  # New York's certification, imported by hand (states/ny.py); NY-10
+    "albany": "100 State St, Albany, NY 12207",  # upstate New York: NY-20, the 3rd Judicial District
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
