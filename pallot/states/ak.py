@@ -25,6 +25,7 @@ from typing import Any
 from urllib.parse import urljoin
 
 from ..http_cache import RequestSpec, UpstreamError
+from ..models import Race
 from ..sources.fec import race_name
 from . import Filing, StateList, filings_json, from_json, ordinal, party
 
@@ -221,6 +222,11 @@ class AkList(StateList):
 
     def spec(self, day: dt.date) -> RequestSpec:
         return RequestSpec("GET", URL.format(year=day.year % 100))
+
+    @classmethod
+    def ranked_choice(cls, race: Race) -> bool:
+        """Every race but the judges' retention questions (AS 15.15.350)."""
+        return race.group != "judicial"
 
     @classmethod
     def read_file(cls, path: Path) -> dict[str, Any]:

@@ -177,6 +177,7 @@ class Race(BaseModel):
     group: str
     seats: int = 1
     unexpired: bool = False
+    ranked_choice: bool = False  # the voter ranks the candidates 1st, 2nd, 3rd… (Alaska) instead of picking
     seat: str | None = None  # "TX-10" / "TX-SEN" for congressional races
     holder: SeatHolder | None = None  # who holds the seat now, where the seat holders source covers it
     open_seat: bool = False  # the holder isn't running here, or the seat is vacant

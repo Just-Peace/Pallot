@@ -1,7 +1,7 @@
 // What the ballot page and the print sheet both work out from a ballot: its sections in order,
 // the labels of a race's picks, and the election line (long and short).
 
-import { formatDate } from "./format.js";
+import { formatDate, ordinal } from "./format.js";
 import { GROUP_LABELS, GROUP_ORDER, coverageOf, partyName } from "./labels.js";
 import { WRITE_IN } from "./picks.js";
 
@@ -25,11 +25,16 @@ export function ballotSections(ballot) {
   return sections;
 }
 
+// Whether a pick leaves nothing more to pick in the race, so it may fold: never in a ranked-choice
+// race, where the voter may rank more.
+export const raceFilled = (race, keys) => !race.ranked_choice && keys.length >= race.seats;
+
 // A label per pick in a race: "Jane Doe (write-in)" for a declared write-in, and the voter's own
 // write-in by its typed name, or ``unnamed``. ``party``: "name" adds the candidate's party
-// ("John Roe (Democratic)"), "letter" its letter where there's one, for the wallet card.
+// ("John Roe (Democratic)"), "letter" its letter where there's one, for the wallet card. In a
+// ranked-choice race each is led by its rank: "1st Jane Doe".
 export function pickLabels(race, keys, picks, { unnamed, party = null }) {
-  return keys
+  const labels = keys
     .map((key) => {
       if (key === WRITE_IN) return picks.writeInLabel(race.key, unnamed);
       const candidate = race.candidates.find((c) => c.key === key);
@@ -39,6 +44,7 @@ export function pickLabels(race, keys, picks, { unnamed, party = null }) {
       return party && named && named !== "Nonpartisan" ? `${candidate.name} (${named})` : candidate.name;
     })
     .filter(Boolean);
+  return race.ranked_choice ? labels.map((label, i) => `${ordinal(i + 1)} ${label}`) : labels;
 }
 
 // "November 3, 2026 · 2026 November General Election", under the ballot's heading and on the

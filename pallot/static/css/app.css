@@ -971,6 +971,14 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
 .cand.picked { border-color: var(--pick); box-shadow: inset 4px 0 0 var(--pick); }
 .cand-main { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .pick-input { width: 20px; height: 20px; margin: 0; accent-color: var(--pick); flex: none; cursor: pointer; }
+/* a ranked-choice race's circle (rankBox), the voter's rank in it, and Move up beside Profile */
+.rank-box { position: relative; display: inline-grid; place-items: center; width: 20px; height: 20px; flex: none; }
+.rank-box > .pick-input { appearance: none; width: 20px; height: 20px; border: 2px solid var(--line-strong); border-radius: 50%; background: var(--panel); }
+.rank-box > .pick-input:checked { border-color: var(--pick); }
+.rank-box > .pick-input:focus-visible { border-radius: 50%; }
+.rank-num { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; font-size: 0.8rem;
+  font-weight: 700; color: var(--pick-text); }
+.cand-profile .rank-up { margin-right: 6px; }
 .cand-label { display: flex; align-items: center; gap: 10px; flex: 1 1 240px; cursor: pointer; font-weight: 400; min-width: 0; }
 .cand-text { display: flex; flex-direction: column; min-width: 0; }
 .cand-name { font-weight: 650; font-size: 1rem; }
@@ -981,7 +989,7 @@ button.badge-open { border-radius: 999px; padding-right: 6px; box-shadow: inset 
    and name still pick while Profile, outside the label, doesn't. */
 .cand-grid { display: grid; grid-template-columns: 20px auto minmax(0, 1fr) auto; column-gap: 10px; row-gap: 4px;
   grid-template-areas: "pick photo name actions" "pick photo profile actions"; align-items: center; }
-.cand-grid > .pick-input { grid-area: pick; }
+.cand-grid > :is(.pick-input, .rank-box) { grid-area: pick; }
 .cand-grid > .cand-label { display: contents; }
 .cand-grid .avatar { grid-area: photo; cursor: pointer; }
 .cand-grid .cand-text { grid-area: name; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 8px; cursor: pointer; }
@@ -1611,7 +1619,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-grid .avatar { width: 32px; height: 32px; font-size: var(--fs-fine); }
   .cand-name { font-size: var(--fs-body); }
   .cand-actions .icon-btn, .breakdown-head .icon-btn, .race-head .clear-pick { padding: 4px 9px; font-size: var(--fs-control); }
-  .cand-profile .profile-btn { position: relative; padding: 2px 9px; font-size: var(--fs-fine); line-height: 1.4; }
+  .cand-profile .profile-btn, .icon-btn.rank-up { position: relative; padding: 2px 9px; font-size: var(--fs-fine); line-height: 1.4; }
+  .cand-grid > .rank-box { flex: none; }
   .cand-profile .profile-btn::after { content: ""; position: absolute; inset: -8px -4px; }  /* outside Detailed, Note, Avoid and Search wait behind "…", at the end of the second line, and open
      on a line of their own; in Detailed they take its place */
   :root:not([data-view-mode="detailed"]) .cand-grid > .icon-btn.row-more { display: inline-flex; align-items: center;
@@ -1730,8 +1739,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
   /* the small buttons in a box's corner and a candidate's row (Compare, a source's link, Profile, "…")
      keep their drawn size, with the 44px hit area around them, so they don't swell into big pills */
-  :is(.box-links, .box-foot, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more { position: relative; min-height: 0; }
-  :is(.box-links, .box-foot, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after { content: "";
+  :is(.box-links, .box-foot, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more, .icon-btn.rank-up { position: relative; min-height: 0; }
+  :is(.box-links, .box-foot, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after, .icon-btn.rank-up::after { content: "";
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* More's chips, segments and buttons too: drawn at their usual size, the 44px hit area around them */
   .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn), .details-head :is(.btn, .icon-btn) { position: relative; min-height: 0; }

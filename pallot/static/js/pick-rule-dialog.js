@@ -5,7 +5,7 @@
 // rule. Opened from Help me pick's More conditions…; Apply to chooses every race, a section or one
 // race. ballot.js hands over ``page``.
 
-import { pickLabels } from "./ballot-shared.js";
+import { pickLabels, raceFilled } from "./ballot-shared.js";
 import { $, closeOnBackdrop, dialogHead, h } from "./dom.js";
 import { COUNT, plural } from "./format.js";
 import { helpLink } from "./help.js";
@@ -262,7 +262,7 @@ function draw(rule, options, startScope) {
     const changes = Object.fromEntries(changed.map((row) => [row.race.key, row.after]));
     const auto = Object.fromEntries(changed.map((row) => [row.race.key, row.auto]));
     const folded = viewPref("collapseOnPick")
-      ? changed.filter((row) => row.outcome === "pick" && row.after.length >= row.race.seats && !page.picks.isCollapsed(row.race.key))
+      ? changed.filter((row) => row.outcome === "pick" && raceFilled(row.race, row.after) && !page.picks.isCollapsed(row.race.key))
         .map((row) => row.race.key)
       : [];
     const { picked, takenBack } = result;

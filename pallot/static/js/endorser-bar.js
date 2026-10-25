@@ -11,6 +11,7 @@
 // (pick-rule-dialog.js), whose choices these are too, kept in its saved rule in this browser
 // (loadBar), and another tab follows them.
 
+import { raceFilled } from "./ballot-shared.js";
 import { $, h } from "./dom.js";
 import { listed, plural } from "./format.js";
 import { helpLink } from "./help.js";
@@ -56,7 +57,7 @@ function changeEndorsers(bar, { added = null, words }) {
   const result = endorserPlan(page.ballot ? allRaces(page.ballot) : [], bar, page.picks, added);
   const { rows } = result;
   const folded = viewPref("collapseOnPick")
-    ? rows.filter((row) => row.outcome === "pick" && row.after.length >= row.race.seats && !page.picks.isCollapsed(row.race.key))
+    ? rows.filter((row) => row.outcome === "pick" && raceFilled(row.race, row.after) && !page.picks.isCollapsed(row.race.key))
       .map((row) => row.race.key)
     : [];
   const changed = rows.length

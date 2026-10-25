@@ -6,6 +6,7 @@
 
 import { isBanned } from "./ban-list.js";
 import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
+import { ordinal } from "./format.js";
 import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
 import { avatar, avoidWords, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
@@ -45,11 +46,19 @@ export function showDetails(race, index, focus = null, at = "profile") {
   };
   const multiFull = race.seats > 1 && !picks.isPicked(race.key, candidate.key) && picks.picked(race.key).length >= race.seats;
   const pickButtons = [0, 1].map(() => h("button", { type: "button", class: "btn small primary with-icon", disabled: multiFull, on: { click: pickOrUndo } }));
+  // In a ranked-choice race, Rank (at the next rank: "Rank 2nd") and Unrank.
   const syncPickButtons = () => {
-    const on = picks.isPicked(race.key, candidate.key);
-    const name = on ? `Unpick ${candidate.name}` : `Pick ${candidate.name}`;
+    const keys = picks.picked(race.key);
+    const on = keys.includes(candidate.key);
+    let text = on ? "Unpick" : "Pick";
+    let name = `${text} ${candidate.name}`;
+    if (race.ranked_choice) {
+      text = on ? "Unrank" : `Rank ${ordinal(keys.length + 1)}`;
+      name = on ? `Unrank ${candidate.name}, your ${ordinal(keys.indexOf(candidate.key) + 1)} choice`
+        : `Rank ${candidate.name} your ${ordinal(keys.length + 1)} choice`;
+    }
     for (const button of pickButtons) {
-      button.replaceChildren(icon(on ? "reset" : "check"), word(on ? "Unpick" : "Pick"));
+      button.replaceChildren(icon(on ? "reset" : "check"), word(text));
       button.setAttribute("aria-label", name);
       button.title = name;
       button.classList.toggle("ghost", on);

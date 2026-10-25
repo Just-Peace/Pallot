@@ -572,6 +572,8 @@ class _Builder:
         if not any(f.reach == "cd" for f in filings):
             house = await self._fec_house(location, districts.cd, day)
             found.races = sorted(found.races + house, key=lambda race: GROUPS.index(race.group))
+        for race in found.races + found.unconfirmed:
+            race.ranked_choice = lists.ranked_choice(race)
         if not (found.races or found.unconfirmed):
             raise BallotError(404, f"The {lists.label} lists no races for this {self.where}.")
         if found.unplaced:
