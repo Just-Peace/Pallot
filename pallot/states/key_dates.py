@@ -54,6 +54,14 @@ November in an even year): registration by mail or online closes the third Wedne
 asking by mail or online by 5 p.m. the fifth day before, or in person at the clerk's office from
 the fourteenth day before through the Sunday before (6.86(1)(b)), and the ballot must reach the
 polling place by 8 p.m. on Election Day (6.87(6)); polls are open 7 a.m. to 8 p.m. (6.78(1m)).
+
+New Jersey's, for its general election (N.J.S.A. 19:2-3: the Tuesday after the first Monday of
+November): registration closes the twenty-first day before (19:31-6.3); early voting in person
+runs from the tenth day before through the second day before (19:15A-1); any voter can vote by
+mail, applying by mail so the county clerk has it by the seventh day before, or in person at the
+clerk's office until 3 p.m. the day before (19:63-3), and a mailed ballot must be postmarked by
+Election Day and reach the county board of elections within 144 hours after the polls close
+(19:63-22); polls are open 6 a.m. to 8 p.m. (19:15-2).
 """
 
 from __future__ import annotations
@@ -249,9 +257,29 @@ WISCONSIN = Guide(
     credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
 )
 
+NEW_JERSEY = Guide(
+    name="New Jersey",
+    source="New Jersey Division of Elections",
+    url="https://www.nj.gov/state/elections/",
+    computed=True,
+    registration_url="https://voter.svrs.nj.gov/register",
+    mail_url="https://www.nj.gov/state/elections/vote-by-mail.shtml",
+    register="The last day to register to vote in {election} in New Jersey, online, by mail or in person. There's no "
+             "registration on Election Day.",
+    mail_summary="Mail-in ballot application due by mail",
+    mail="If you vote by mail in {election}, an application sent by mail must reach your county clerk today. In "
+         "person, you can apply at the clerk's office until 3 p.m. the day before Election Day. Your ballot must be "
+         "postmarked by Election Day and reach your county board of elections within six days, or be dropped in a "
+         "drop box by 8 p.m. on Election Day. Any voter can vote by mail; how to apply:",
+    early_where="Your county lists the places. Early voting is open 10 a.m. to 8 p.m. Monday to Saturday, and 10 a.m. "
+                "to 6 p.m. on Sunday.",
+    polls="Polls are open 6 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
+    credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
+)
+
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO, "IA": IOWA,
+    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY,
 }
 
 
@@ -379,8 +407,24 @@ def wisconsin(day: dt.date) -> Deadlines | None:
     )
 
 
+def new_jersey(day: dt.date) -> Deadlines | None:
+    """The dates of New Jersey's general election on ``day``, or None when there's none: register
+    by the twenty-first day before, apply by mail for a mail-in ballot by the seventh day before,
+    early voting the tenth day before through the second day before."""
+    if day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=21),
+        mail_apply_by=day - dt.timedelta(days=7),
+        early_start=day - dt.timedelta(days=10),
+        early_end=day - dt.timedelta(days=2),
+        state="NJ",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
-    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa,
+    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
 }
 
 

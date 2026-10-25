@@ -26,6 +26,7 @@ from pallot.sources.sboe import _inside
 from pallot import counties
 from pallot.states.ca import CaList
 from pallot.states.ga import GaList
+from pallot.states.nj import NjList
 
 from .conftest import census_points, switch
 
@@ -225,6 +226,26 @@ async def test_california_list_live(tmp_path):
     reaches = {reach: len({f.office_id for f in found if f.reach == reach}) for reach in ("cd", "sd", "hd", "counties")}
     assert reaches["cd"] == 52 and reaches["sd"] >= 19 and reaches["hd"] == 80 and reaches["counties"] >= 30
     assert {county for f in found for county in f.counties} == {c.name.upper() for c in counties.counties("CA")}
+    assert not list(tmp_path.glob(".*.part"))
+
+
+@pytest.mark.anyio
+async def test_new_jersey_lists_live(tmp_path):
+    """New Jersey's page still links its official U.S. Senate and House lists, and they read whole:
+    every House district, kept as their candidates and the page's links alone; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = NjList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.filings(day)
+            stats = track_calls()
+            again = await lists.filings(day)
+        finally:
+            cache.close()
+    assert found and again == found and stats.external_calls == 0
+    assert {f.district for f in found if f.reach == "cd"} == {str(n) for n in range(1, 13)}
     assert not list(tmp_path.glob(".*.part"))
 
 

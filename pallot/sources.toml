@@ -36,6 +36,7 @@ state_ga = true             # Georgia Secretary of State (its primary results, a
 state_wi = true             # Wisconsin Elections Commission (its list is imported by hand)
 state_oh = true             # Ohio Secretary of State (its statewide races, transcribed by hand from its sample ballot)
 state_ia = true             # Iowa Secretary of State (its list is imported by hand)
+state_nj = true             # New Jersey Division of Elections
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
