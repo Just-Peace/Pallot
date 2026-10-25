@@ -21,7 +21,7 @@ import struct
 import zipfile
 from pathlib import Path
 from typing import Any
-from urllib.parse import unquote
+from urllib.parse import parse_qsl, unquote
 
 import httpx
 import pytest
@@ -66,6 +66,7 @@ ADDRESSES = {
     "manhattan": "260 Broadway, New York, NY 10007",  # New York's certification, imported by hand (states/ny.py); NY-10
     "albany": "100 State St, Albany, NY 12207",  # upstate New York: NY-20, the 3rd Judicial District
     "denver": "1437 Bannock St, Denver, CO 80202",  # Colorado's spreadsheet (states/co.py); CO-1, SD 31, HD 5
+    "chicago": "121 N LaSalle St, Chicago, IL 60602",  # Illinois's candidate data file (states/il.py); IL-7, Cook County
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -81,6 +82,7 @@ STATE_LISTS = {
     "www.coloradosos.gov": "state_co.xlsx",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
+IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 
 
 @functools.cache
@@ -334,6 +336,7 @@ class Upstream:
         self.feed_pages: dict[str, str] = {}  # feed source id -> its page, in place of the recorded one
         self.feed_tokens: list[str | None] = []  # the token each request to a feed that wants one carried
         self.state_lists: dict[str, str] = {}  # host (or host and path) -> its list's answer, in place of the recorded one
+        self.il_forms: list[dict[str, str]] = []  # the form each request to Illinois's download page carried
         self.ca_key_dates: str | None = None  # California SOS's election dates page, in place of the recorded one
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
@@ -353,6 +356,25 @@ class Upstream:
 
     def count(self, host_part: str) -> int:
         return sum(host_part in call for call in self.calls)
+
+    def _il(self, request: httpx.Request) -> httpx.Response:
+        """Illinois's State Board: its list of elections, and the download page, which hands out the
+        candidate file only to a postback of its own form (the recorded hidden fields) and is
+        served again to any other."""
+        url = request.url
+        text = self.state_lists.get(f"{url.host}{url.path}")
+        if url.path.endswith("/CandidateOfficeFilingSearch.aspx"):
+            body = text.encode() if text is not None else fixture_bytes("state_il.html")
+        elif url.path.endswith("/DownloadCandidates.aspx") and url.params.get("ID") == IL_ELECTION:
+            form = dict(parse_qsl(request.content.decode())) if request.method == "POST" else {}
+            self.il_forms.append(form)
+            if form.get("__VIEWSTATE") == "VIEWSTATE-recorded" and form.get("__EVENTTARGET", "").endswith("$btnText"):
+                body = text.encode() if text is not None else fixture_bytes("state_il.tsv")
+            else:
+                body = fixture_bytes("state_il_download.html")
+        else:
+            return httpx.Response(404)
+        return httpx.Response(200, content=body)
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         url = request.url
@@ -449,6 +471,8 @@ class Upstream:
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.elections.il.gov":
+            return self._il(request)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
                 return _file("state_ga_elections.json")

@@ -1,0 +1,468 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "121 N LASALLE ST, CHICAGO, IL 60602"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "111768728"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "1703160",
+       "CENTLAT": "+41.8812945",
+       "AREAWATER": 4694306,
+       "BASENAME": "Chicago City (Central)--Near North Side, Loop & Near South Side",
+       "STATE": "17",
+       "OID": "2177029550566465",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8826164",
+       "NAME": "Chicago City (Central)--Near North Side, Loop & Near South Side PUMA",
+       "OBJECTID": 783,
+       "CENTLON": "-087.6238981",
+       "AREALAND": 15334508,
+       "INTPTLON": "-087.6235554",
+       "MTFCC": "G6120",
+       "PUMA": "03160"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "60602",
+       "CENTLAT": "+41.8830405",
+       "AREAWATER": 0,
+       "BASENAME": "60602",
+       "OID": "221704258284042",
+       "ZCTA5": "60602",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8830405",
+       "NAME": "ZCTA5 60602",
+       "OBJECTID": 26387,
+       "CENTLON": "-087.6290785",
+       "AREALAND": 213430,
+       "INTPTLON": "-087.6290785",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "16264",
+       "CENTLAT": "+41.8288025",
+       "AREAWATER": 100555659,
+       "BASENAME": "Chicago, IL--IN",
+       "OID": "27021134695568",
+       "UA": "16264",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8300858",
+       "NAME": "Chicago, IL--IN Urban Area",
+       "OBJECTID": 1488,
+       "CENTLON": "-087.9067314",
+       "AREALAND": 6055763154,
+       "INTPTLON": "-087.9090754",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 1095091041.575854,
+       "NECTAPCI": "N",
+       "GEOID": "1714000",
+       "CENTLAT": "+41.8369615",
+       "AREAWATER": 17575507,
+       "BASENAME": "Chicago",
+       "STATE": "17",
+       "OID": "27890197911298",
+       "LSADC": "25",
+       "PLACE": "14000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+41.8370453",
+       "NAME": "Chicago city",
+       "OBJECTID": 32079,
+       "PLACECC": "C5",
+       "CENTLON": "-087.6849220",
+       "STGEOMETRY_Length": 320353.0156707295,
+       "CBSAPCI": "Y",
+       "AREALAND": 589839438,
+       "INTPTLON": "-087.6849386",
+       "PLACENS": "00428803",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "17031",
+       "CENTLAT": "+41.8952148",
+       "AREAWATER": 1786340631,
+       "STATE": "17",
+       "BASENAME": "Cook",
+       "OID": "27590197905492",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+41.8947869",
+       "NAME": "Cook County",
+       "OBJECTID": 1074,
+       "CENTLON": "-087.6461541",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01784766",
+       "AREALAND": 2447357158,
+       "INTPTLON": "-087.6453877",
+       "MTFCC": "G4020",
+       "COUNTY": "031"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "1709930",
+       "CENTLAT": "+41.8364743",
+       "AREAWATER": 17575507,
+       "STATE": "17",
+       "BASENAME": "Chicago Public School District 299",
+       "OID": "28490197985098",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+41.8369369",
+       "SDUNI": "09930",
+       "NAME": "Chicago Public School District 299",
+       "OBJECTID": 7842,
+       "CENTLON": "-087.6843854",
+       "HIGRADE": "12",
+       "AREALAND": 588928764,
+       "INTPTLON": "-087.6819350",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "170318391001041",
+       "CENTLAT": "+41.8838424",
+       "BLOCK": "1041",
+       "AREAWATER": 0,
+       "STATE": "17",
+       "BASENAME": "1041",
+       "OID": "210701006319267",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8838424",
+       "NAME": "Block 1041",
+       "OBJECTID": 405895,
+       "TRACT": "839100",
+       "CENTLON": "-087.6316707",
+       "BLKGRP": "1",
+       "AREALAND": 17530,
+       "INTPTLON": "-087.6316707",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "031"
+      }
+     ],
+     "Metropolitan Divisions": [
+      {
+       "POP100": "",
+       "GEOID": "1698016984",
+       "CENTLAT": "+41.7927635",
+       "AREAWATER": 1894793753,
+       "BASENAME": "Chicago-Naperville-Schaumburg, IL",
+       "OID": "2639034687908159",
+       "LSADC": "M3",
+       "METDIV": "16984",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.7921868",
+       "NAME": "Chicago-Naperville-Schaumburg, IL Metro Division",
+       "CSA": "176",
+       "OBJECTID": 23,
+       "CENTLON": "-087.9711562",
+       "CBSA": "16980",
+       "AREALAND": 8107357381,
+       "INTPTLON": "-087.9717839",
+       "HU100": "",
+       "MTFCC": "G3120"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779784",
+       "GEOID": "17",
+       "CENTLAT": "+40.1006068",
+       "AREAWATER": 6215328684,
+       "STATE": "17",
+       "BASENAME": "Illinois",
+       "STUSAB": "IL",
+       "OID": "27490100360203",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+40.1028754",
+       "DIVISION": "3",
+       "NAME": "Illinois",
+       "REGION": "2",
+       "OBJECTID": 55,
+       "CENTLON": "-089.1500794",
+       "AREALAND": 143779392240,
+       "INTPTLON": "-089.1526108",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "170318391001",
+       "CENTLAT": "+41.8826721",
+       "AREAWATER": 63678,
+       "STATE": "17",
+       "BASENAME": "1",
+       "OID": "208903711030121",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8828966",
+       "NAME": "Block Group 1",
+       "OBJECTID": 11035,
+       "TRACT": "839100",
+       "CENTLON": "-087.6323491",
+       "BLKGRP": "1",
+       "AREALAND": 777682,
+       "INTPTLON": "-087.6316474",
+       "MTFCC": "G5030",
+       "COUNTY": "031"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "176",
+       "CENTLAT": "+41.6973467",
+       "AREAWATER": 6300666139,
+       "BASENAME": "Chicago-Naperville, IL-IN-WI",
+       "OID": "2619034687907999",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.6991406",
+       "NAME": "Chicago-Naperville, IL-IN-WI CSA",
+       "OBJECTID": 143,
+       "CSA": "176",
+       "CENTLON": "-088.0058328",
+       "INTPTLON": "-088.0040875",
+       "AREALAND": 27542517606,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "14000",
+       "GEOID": "1703114000",
+       "CENTLAT": "+41.8353846",
+       "AREAWATER": 17561749,
+       "STATE": "17",
+       "BASENAME": "Chicago",
+       "OID": "27690197910765",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+41.8357728",
+       "NAME": "Chicago city",
+       "OBJECTID": 22885,
+       "CENTLON": "-087.6821247",
+       "COUSUBCC": "C5",
+       "AREALAND": 582978344,
+       "INTPTLON": "-087.6812028",
+       "MTFCC": "G4040",
+       "COUSUBNS": "00428803",
+       "COUNTY": "031"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "17003",
+       "CENTLAT": "+41.8045882",
+       "AREAWATER": 219074,
+       "STATE": "17",
+       "BASENAME": "3",
+       "OID": "2129042393386044",
+       "SLDU": "003",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.8041071",
+       "NAME": "State Senate District 3",
+       "OBJECTID": 1921,
+       "CENTLON": "-087.6385211",
+       "LSY": "2026",
+       "AREALAND": 40968825,
+       "INTPTLON": "-087.6385628",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+42.6527032",
+       "AREAWATER": 151233658750,
+       "BASENAME": "East North Central",
+       "OID": "2739020719809",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.8441768",
+       "DIVISION": "3",
+       "REGION": "2",
+       "NAME": "East North Central Division",
+       "OBJECTID": 8,
+       "CENTLON": "-086.8359814",
+       "AREALAND": 629311863266,
+       "INTPTLON": "-085.6604907",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 323689512.7339285,
+       "CD120": "07",
+       "GEOID": "1707",
+       "CENTLAT": "+41.8602455",
+       "CDSESSN": "120",
+       "AREAWATER": 2189439,
+       "STATE": "17",
+       "BASENAME": "7",
+       "OID": "2119042393277778",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.8784633",
+       "NAME": "Congressional District 7",
+       "OBJECTID": 52,
+       "CENTLON": "-087.7460944",
+       "STGEOMETRY_Length": 178613.57160797974,
+       "AREALAND": 177223783,
+       "INTPTLON": "-087.8406513",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "17006",
+       "CENTLAT": "+41.8020326",
+       "SLDL": "006",
+       "AREAWATER": 190302,
+       "STATE": "17",
+       "BASENAME": "6",
+       "OID": "2139042393386053",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+41.8026171",
+       "NAME": "State House District 6",
+       "OBJECTID": 4354,
+       "CENTLON": "-087.6530274",
+       "LSY": "2026",
+       "AREALAND": 23310819,
+       "INTPTLON": "-087.6529625",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "16980",
+       "CENTLAT": "+41.7579285",
+       "AREAWATER": 4924025638,
+       "BASENAME": "Chicago-Naperville-Elgin, IL-IN",
+       "OID": "2629034687907196",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.7587800",
+       "NAME": "Chicago-Naperville-Elgin, IL-IN Metro Area",
+       "CSA": "176",
+       "OBJECTID": 572,
+       "CENTLON": "-087.8428554",
+       "CBSA": "16980",
+       "AREALAND": 17931324885,
+       "INTPTLON": "-087.8418871",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "17031839100",
+       "CENTLAT": "+41.8810280",
+       "AREAWATER": 84111,
+       "STATE": "17",
+       "BASENAME": "8391",
+       "OID": "207903704496799",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+41.8809857",
+       "NAME": "Census Tract 8391",
+       "OBJECTID": 23881,
+       "TRACT": "839100",
+       "CENTLON": "-087.6327458",
+       "AREALAND": 1101768,
+       "INTPTLON": "-087.6330703",
+       "MTFCC": "G5020",
+       "COUNTY": "031"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -87.632335272385,
+     "y": 41.883377755162
+    },
+    "addressComponents": {
+     "zip": "60602",
+     "streetName": "LA SALLE",
+     "preType": "",
+     "city": "CHICAGO",
+     "preDirection": "N",
+     "suffixDirection": "",
+     "fromAddress": "101",
+     "state": "IL",
+     "suffixType": "ST",
+     "toAddress": "199",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "121 N LA SALLE ST, CHICAGO, IL, 60602"
+   }
+  ]
+ }
+}

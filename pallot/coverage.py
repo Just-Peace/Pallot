@@ -57,6 +57,7 @@ COVERED = {
     "NJ": Coverage("list", ("cd",), precincts=False, outlines=False),  # only U.S. Senate and House in 2026
     "NY": Coverage("list", ("cd", "sd", "hd"), precincts=False, outlines=False, labels={"hd": "State Assembly"}),
     "CO": LIST,
+    "IL": LIST,
 }
 
 # Sources that only know some states.

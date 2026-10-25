@@ -1,0 +1,444 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 27,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00482",
+   "candidate_name": "KRISHNAMOORTHI, S",
+   "candidate_pcc_id": "C00904466",
+   "candidate_pcc_name": "RAJA FOR ILLINOIS",
+   "cash_on_hand_end_period": 32897.51,
+   "committee_ids": [
+    "C00904466"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 31528045.13,
+   "total_receipts": 31560942.64
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00458",
+   "candidate_name": "STRATTON, JULIANA",
+   "candidate_pcc_id": "C00903252",
+   "candidate_pcc_name": "JULIANA FOR ILLINOIS",
+   "cash_on_hand_end_period": 1541584.8,
+   "committee_ids": [
+    "C00903252"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 5688991.72,
+   "total_receipts": 7230576.52
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00615",
+   "candidate_name": "TRACY, DON",
+   "candidate_pcc_id": "C00917120",
+   "candidate_pcc_name": "DON TRACY FOR ILLINOIS, NFP",
+   "cash_on_hand_end_period": 483017.38,
+   "committee_ids": [
+    "C00917120"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 4431346.07,
+   "total_receipts": 4914363.45
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00474",
+   "candidate_name": "KELLY, ROBIN",
+   "candidate_pcc_id": "C00904300",
+   "candidate_pcc_name": "ROBIN KELLY FOR SENATE",
+   "cash_on_hand_end_period": 4193.98,
+   "committee_ids": [
+    "C00904300"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3505725.02,
+   "total_receipts": 3509919.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00672",
+   "candidate_name": "EVANS, JEANNIE",
+   "candidate_pcc_id": "C00921759",
+   "candidate_pcc_name": "JEANNIE FOR ILLINOIS",
+   "cash_on_hand_end_period": 3335.82,
+   "committee_ids": [
+    "C00921759"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1305174.35,
+   "total_receipts": 1308510.17
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00656",
+   "candidate_name": "BOTSFORD, STEVE",
+   "candidate_pcc_id": "C00920348",
+   "candidate_pcc_name": "BOTSFORD FOR ILLINOIS",
+   "cash_on_hand_end_period": 100.17,
+   "committee_ids": [
+    "C00920348"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 372618.2,
+   "total_receipts": 372718.37
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00466",
+   "candidate_name": "CHLEBEK, CASIMER MR.",
+   "candidate_pcc_id": "C00903823",
+   "candidate_pcc_name": "CASEY CHLEBEK FOR US SENATE",
+   "cash_on_hand_end_period": 27.46,
+   "committee_ids": [
+    "C00903823"
+   ],
+   "coverage_end_date": "2026-07-27",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 201972.54,
+   "total_receipts": 202000.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00680",
+   "candidate_name": "HARRINGTON, WHITFIELD MR JR",
+   "candidate_pcc_id": "C00931428",
+   "candidate_pcc_name": "FRIENDS OF WHITFIELD HARRINGTON",
+   "cash_on_hand_end_period": 19484.15,
+   "committee_ids": [
+    "C00931428"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 123897.47,
+   "total_receipts": 143381.62
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00581",
+   "candidate_name": "RYAN, KEVIN",
+   "candidate_pcc_id": "C00907774",
+   "candidate_pcc_name": "PEOPLE OF ILLINOIS & KEVIN RYAN",
+   "cash_on_hand_end_period": -3837.7,
+   "committee_ids": [
+    "C00907774"
+   ],
+   "coverage_end_date": "2026-10-15",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 142848.33,
+   "total_receipts": 139010.63
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00623",
+   "candidate_name": "DEAN, JONATHAN",
+   "candidate_pcc_id": "C00915280",
+   "candidate_pcc_name": "DEAN FOR ILLINOIS",
+   "cash_on_hand_end_period": 38.55,
+   "committee_ids": [
+    "C00915280"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 123815.52,
+   "total_receipts": 123854.07
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00607",
+   "candidate_name": "DELGADO, ADAM",
+   "candidate_pcc_id": "C00914390",
+   "candidate_pcc_name": "COMMITTEE TO ELECT ADAM DELGADO FOR US SENATE",
+   "cash_on_hand_end_period": 3282.3,
+   "committee_ids": [
+    "C00914390"
+   ],
+   "coverage_end_date": "2026-04-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 55778.58,
+   "total_receipts": 59060.88
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00565",
+   "candidate_name": "BUSTOS, AWISI",
+   "candidate_pcc_id": "C00907931",
+   "candidate_pcc_name": "FRIENDS OF AWISI",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00907931"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 46453.58,
+   "total_receipts": 42028.81
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00425",
+   "candidate_name": "GOODMAN, JOHN",
+   "candidate_pcc_id": "C00897652",
+   "candidate_pcc_name": "GOODMAN FOR ILLINOIS",
+   "cash_on_hand_end_period": 5699.51,
+   "committee_ids": [
+    "C00897652"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 22855.91,
+   "total_receipts": 28555.42
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00540",
+   "candidate_name": "LONG, PAMELA",
+   "candidate_pcc_id": "C00904516",
+   "candidate_pcc_name": "LONG FOR SENATE 2026",
+   "cash_on_hand_end_period": 1885.28,
+   "committee_ids": [
+    "C00904516"
+   ],
+   "coverage_end_date": "2026-04-09",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 22829.78,
+   "total_receipts": 24715.06
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00649",
+   "candidate_name": "MAXWELL, BRYAN",
+   "candidate_pcc_id": "C00918466",
+   "candidate_pcc_name": "BRYAN MAXWELL FOR US SENATE",
+   "cash_on_hand_end_period": 1362.16,
+   "committee_ids": [
+    "C00918466"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 20613.84,
+   "total_receipts": 21976.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00409",
+   "candidate_name": "SWANN, CHRISTOPHER ALEXANDER",
+   "candidate_pcc_id": "C00867523",
+   "candidate_pcc_name": "NEIGHBORS FOR CHRISTOPHER SWANN",
+   "cash_on_hand_end_period": -408.8,
+   "committee_ids": [
+    "C00867523"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 17458.64,
+   "total_receipts": 17642.57
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00490",
+   "candidate_name": "CAPPARELLI, R CARY",
+   "candidate_pcc_id": "C00911628",
+   "candidate_pcc_name": "CAPPARELLI FOR US SENATE",
+   "cash_on_hand_end_period": 828.5,
+   "committee_ids": [
+    "C00911628"
+   ],
+   "coverage_end_date": "2026-04-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 12643.39,
+   "total_receipts": 13471.89
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00391",
+   "candidate_name": "BENNETT, DOUGLAS",
+   "candidate_pcc_id": "C00634808",
+   "candidate_pcc_name": "FRIENDS OF DOUG BENNETT",
+   "cash_on_hand_end_period": 1547.62,
+   "committee_ids": [
+    "C00634808"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 16153.68,
+   "total_receipts": 13000.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00730",
+   "candidate_name": "BROWN, SEAN AMEDEE",
+   "candidate_pcc_id": "C00914846",
+   "candidate_pcc_name": "COMMITTEE TO ELECT SEAN BROWN",
+   "cash_on_hand_end_period": 538.49,
+   "committee_ids": [
+    "C00914846"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": null,
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 9678.5,
+   "total_receipts": 10216.99
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00698",
+   "candidate_name": "SCHWARTZBERG, STEVEN J",
+   "candidate_pcc_id": "C00942805",
+   "candidate_pcc_name": "STEVE SCHWARTZBERG FOR US SENATE CAMPAIGN COMMITTEE, INC.",
+   "cash_on_hand_end_period": 5987.87,
+   "committee_ids": [
+    "C00942805"
+   ],
+   "coverage_end_date": "2026-04-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": null,
+   "total_disbursements": 33.25,
+   "total_receipts": 6021.12
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00599",
+   "candidate_name": "SHEPHERD, JUMP WESLEY",
+   "candidate_pcc_id": "C00907360",
+   "candidate_pcc_name": "JUMP SHEPHERD FOR U.S. SENATE",
+   "cash_on_hand_end_period": -7594.07,
+   "committee_ids": [
+    "C00907360"
+   ],
+   "coverage_end_date": "2026-02-01",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 11760.93,
+   "total_receipts": 4166.86
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00631",
+   "candidate_name": "RODRIQUEZ, ADAIR",
+   "candidate_pcc_id": "C00917260",
+   "candidate_pcc_name": "ADAIR FOR ILLINOIS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00917260"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 148.48,
+   "total_receipts": 236.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00433",
+   "candidate_name": "LEAVELL, STANLEY MR.",
+   "candidate_pcc_id": "C00899799",
+   "candidate_pcc_name": "STANLEY LEAVELL FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00899799"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00532",
+   "candidate_name": "BARTZIS, PANAGIOTI JOHN MR",
+   "candidate_pcc_id": "C00906784",
+   "candidate_pcc_name": "FRIENDS OF PANO BARTZIS FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00906784"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00557",
+   "candidate_name": "MUHAMMAD, TYRONE",
+   "candidate_pcc_id": "C00908665",
+   "candidate_pcc_name": "CITIZEN FOR TYRONE MUHAMMAD",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00908665"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6IL00664",
+   "candidate_name": "JONES, LLOYD",
+   "candidate_pcc_id": "C00921718",
+   "candidate_pcc_name": "CITIZENS FOR LLOYD JONES",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00921718"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8IL00215",
+   "candidate_name": "MINK, AUSTIN JAMES",
+   "candidate_pcc_id": "C00859579",
+   "candidate_pcc_name": "MINK FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00859579"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

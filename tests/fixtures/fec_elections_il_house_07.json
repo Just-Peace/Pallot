@@ -1,0 +1,349 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 21,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07339",
+   "candidate_name": "FRIEDMAN, JASON",
+   "candidate_pcc_id": "C00902692",
+   "candidate_pcc_name": "FRIEDMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 385804.01,
+   "committee_ids": [
+    "C00902692"
+   ],
+   "coverage_end_date": "2026-02-25",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 2121254.15,
+   "total_receipts": 2507058.16
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07438",
+   "candidate_name": "FISHER, THOMAS DR.",
+   "candidate_pcc_id": "C00915652",
+   "candidate_pcc_name": "THOMAS FISHER FOR CONGRESS",
+   "cash_on_hand_end_period": 52747.87,
+   "committee_ids": [
+    "C00915652"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 874868.06,
+   "total_receipts": 927615.93
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4IL07177",
+   "candidate_name": "CONYEARS-ERVIN, MELISSA",
+   "candidate_pcc_id": "C00838144",
+   "candidate_pcc_name": "MELISSA CONYEARS-ERVIN FOR CONGRESS",
+   "cash_on_hand_end_period": 10589.66,
+   "committee_ids": [
+    "C00838144"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 822996.83,
+   "total_receipts": 824853.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07354",
+   "candidate_name": "FORD, LA SHAWN K",
+   "candidate_pcc_id": "C00905893",
+   "candidate_pcc_name": "LA SHAWN K FORD FOR CONGRESS",
+   "cash_on_hand_end_period": 93472.06,
+   "committee_ids": [
+    "C00905893"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 725848.5,
+   "total_receipts": 819320.56
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07370",
+   "candidate_name": "BOYKIN, RICHARD",
+   "candidate_pcc_id": "C00911388",
+   "candidate_pcc_name": "RICHARD BOYKIN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00911388"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 453444.78,
+   "total_receipts": 456944.78
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07503",
+   "candidate_name": "SHOWALTER, REED",
+   "candidate_pcc_id": "C00919837",
+   "candidate_pcc_name": "REED SHOWALTER FOR CONGRESS",
+   "cash_on_hand_end_period": 288.36,
+   "committee_ids": [
+    "C00919837"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 368059.15,
+   "total_receipts": 368347.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07495",
+   "candidate_name": "MENDOZA, ANABEL",
+   "candidate_pcc_id": "C00918789",
+   "candidate_pcc_name": "ANABEL FOR CONGRESS",
+   "cash_on_hand_end_period": 175.72,
+   "committee_ids": [
+    "C00918789"
+   ],
+   "coverage_end_date": "2026-07-01",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 294252.69,
+   "total_receipts": 294428.41
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07420",
+   "candidate_name": "DRIVER, ANTHONY JR.",
+   "candidate_pcc_id": "C00914580",
+   "candidate_pcc_name": "DRIVER FOR CHANGE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00914580"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 248729.21,
+   "total_receipts": 248729.21
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07396",
+   "candidate_name": "HOSKINS, RORY E.",
+   "candidate_pcc_id": "C00912659",
+   "candidate_pcc_name": "HOSKINS FOR IL 7",
+   "cash_on_hand_end_period": -3292.17,
+   "committee_ids": [
+    "C00912659"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 218611.07,
+   "total_receipts": 215318.9
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2IL08203",
+   "candidate_name": "KOPPIE, CHAD",
+   "candidate_pcc_id": "C00911453",
+   "candidate_pcc_name": "CHAD KOPPIE FOR CONGRESS",
+   "cash_on_hand_end_period": 42.2,
+   "committee_ids": [
+    "C00873083",
+    "C00911453"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 60366.61,
+   "total_receipts": 60408.81
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07511",
+   "candidate_name": "COLLINS, KINA I",
+   "candidate_pcc_id": "C00923185",
+   "candidate_pcc_name": "FRIENDS OF KINA COLLINS",
+   "cash_on_hand_end_period": 2412.78,
+   "committee_ids": [
+    "C00923185"
+   ],
+   "coverage_end_date": "2026-02-25",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 52440.89,
+   "total_receipts": 54853.67
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07487",
+   "candidate_name": "ROBINSON, JAZMIN J. MRS.",
+   "candidate_pcc_id": "C00917211",
+   "candidate_pcc_name": "JAZMIN J ROBINSON FOR THE PEOPLE",
+   "cash_on_hand_end_period": 4899.0,
+   "committee_ids": [
+    "C00917211"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 16315.59,
+   "total_receipts": 21214.59
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07545",
+   "candidate_name": "EHRLICH, DAVID",
+   "candidate_pcc_id": "C00926436",
+   "candidate_pcc_name": "COMMITTEE TO ELECT DAVE EHRLICH TO CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00926436"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 11320.36,
+   "total_receipts": 11690.18
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07404",
+   "candidate_name": "LEIGH, DANICA DAVID",
+   "candidate_pcc_id": "C00912725",
+   "candidate_pcc_name": "DANICA FOR ILLINOIS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00912725"
+   ],
+   "coverage_end_date": "2025-09-29",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 9830.0,
+   "total_receipts": 9830.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07347",
+   "candidate_name": "MCCOMBS, JOHN",
+   "candidate_pcc_id": "C00905166",
+   "candidate_pcc_name": "JOHN4THEPEOPLE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00905166"
+   ],
+   "coverage_end_date": "2025-10-17",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 9315.84,
+   "total_receipts": 9315.84
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07479",
+   "candidate_name": "TELLO, FELIX",
+   "candidate_pcc_id": "C00917930",
+   "candidate_pcc_name": "FELIX FOR CONGRESS",
+   "cash_on_hand_end_period": 6512.34,
+   "committee_ids": [
+    "C00917930"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1897.66,
+   "total_receipts": 8410.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07321",
+   "candidate_name": "WASHINGTON SOVIEGN, EMELIA ROSIE",
+   "candidate_pcc_id": null,
+   "candidate_pcc_name": null,
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00895631"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "NONE",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07388",
+   "candidate_name": "MARTINEZ, TEKITA",
+   "candidate_pcc_id": "C00912253",
+   "candidate_pcc_name": "KITA FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00912253"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07453",
+   "candidate_name": "VOLNY, WILLIAM",
+   "candidate_pcc_id": "C00914812",
+   "candidate_pcc_name": "CITIZENS FOR WILLIAM VOLNY",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00914812"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07537",
+   "candidate_name": "EASLEY, PATRICIA P RAE",
+   "candidate_pcc_id": "C00926154",
+   "candidate_pcc_name": "PATRONS FOR P RAE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00926154"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IL07552",
+   "candidate_name": "TAYLOR, JABARI L",
+   "candidate_pcc_id": "C00936930",
+   "candidate_pcc_name": "TAYLOR FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00936930"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

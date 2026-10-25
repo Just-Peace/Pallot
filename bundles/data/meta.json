@@ -139,6 +139,14 @@
    "last_refresh": "2026-10-25T04:07:40+00:00",
    "races": 137
   },
+  "state_il": {
+   "answers": 2,
+   "answers_hash": "2423cd6be26a8486571b25d643cc5cb1fae2e2a4964b1c5e20e7077bc6847c05",
+   "candidates": 370,
+   "last_checked": "2026-10-25T15:30:29+00:00",
+   "last_refresh": "2026-10-25T15:30:29+00:00",
+   "races": 260
+  },
   "state_mi": {
    "answers": 1,
    "answers_hash": "d9910775be0df09f46dcea3bf135556f81c3edc434f55bc334683e250370bb4c",

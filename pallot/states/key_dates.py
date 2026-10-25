@@ -71,6 +71,16 @@ clerk's office until 3 p.m. the day before (19:63-3), and a mailed ballot must b
 Election Day and reach the county board of elections within 144 hours after the polls close
 (19:63-22); polls are open 6 a.m. to 8 p.m. (19:15-2).
 
+Illinois's, for its general election (10 ILCS 5/2A-1.1: the Tuesday after the first Monday of
+November in an even year): registration by mail or in person closes the twenty-eighth day before
+(5/4-6, 5/6-29), online the sixteenth day before (5/1A-16.5), then grace-period registration and
+voting goes on in person through Election Day (5/4-50); early voting runs at the election
+authority's offices from the fortieth day before, at its permanent polling places from the
+fifteenth, through the day before (5/19A-15); any voter can vote by mail, an application by mail
+reaching the election authority by the fifth day before (5/19-2), and the ballot must be
+postmarked by Election Day and reach it within fourteen days after (5/19-8); polls are open
+6 a.m. to 7 p.m. (5/17-1).
+
 Colorado's, for its general election (C.R.S. 1-4-201: the Tuesday after the first Monday of
 November in an even year): every active voter is mailed a ballot, sent from the twenty-second day
 before (1-7.5-107(3)); registering online or by mail by the eighth day before still gets one
@@ -311,6 +321,26 @@ NEW_JERSEY = Guide(
     credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
 )
 
+ILLINOIS = Guide(
+    name="Illinois",
+    source="Illinois State Board of Elections",
+    url="https://www.elections.il.gov/",
+    computed=True,
+    registration_url="https://ova.elections.il.gov/",
+    mail_url="https://www.elections.il.gov/",
+    register="The last day to register online for {election} in Illinois; by mail, registration closed 12 days "
+             "earlier. After it, you can still register and vote in person, with two forms of ID, at your election "
+             "authority's office or an early voting site, through Election Day.",
+    mail_summary="Vote-by-mail application by mail due",
+    mail="If you vote by mail in {election}, an application sent by mail must reach your election authority today. "
+         "Your ballot must be postmarked by Election Day and reach the election authority within 14 days after. Any "
+         "voter can vote by mail; how to apply:",
+    early_where="Your election authority's offices from the first day; its other early voting sites from 15 days "
+                "before Election Day. Your election authority lists the places and hours.",
+    polls="Polls are open 6 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
+    credit="Dates worked out from Illinois's Election Code; more from the Illinois State Board of Elections",
+)
+
 COLORADO = Guide(
     name="Colorado",
     source="Colorado Secretary of State",
@@ -334,7 +364,7 @@ COLORADO = Guide(
 
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
-    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO,
+    "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO, "IL": ILLINOIS,
 }
 
 
@@ -510,9 +540,25 @@ def colorado(day: dt.date) -> Deadlines | None:
     )
 
 
+def illinois(day: dt.date) -> Deadlines | None:
+    """The dates of Illinois's general election on ``day``, or None when there's none: register
+    online by the sixteenth day before, apply by mail to vote by mail by the fifth day before, early
+    voting the fortieth day before through the day before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=16),
+        mail_apply_by=day - dt.timedelta(days=5),
+        early_start=day - dt.timedelta(days=40),
+        early_end=day - dt.timedelta(days=1),
+        state="IL",
+    )
+
+
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
     "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
-    "NY": new_york, "CO": colorado,
+    "NY": new_york, "CO": colorado, "IL": illinois,
 }
 
 

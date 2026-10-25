@@ -16485,5 +16485,525 @@
     "fax": "202-224-3115"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "D000563",
+   "thomas": "00326",
+   "lis": "S253",
+   "govtrack": 300038,
+   "opensecrets": "N00004981",
+   "votesmart": 26847,
+   "icpsr": 15021,
+   "fec": [
+    "S6IL00151",
+    "H2IL20026"
+   ],
+   "cspan": 6741,
+   "wikipedia": "Dick Durbin",
+   "house_history": 12527,
+   "ballotpedia": "Dick Durbin",
+   "maplight": 563,
+   "wikidata": "Q434804",
+   "google_entity_id": "kg:/m/01xcd1"
+  },
+  "name": {
+   "first": "Richard",
+   "middle": "J.",
+   "last": "Durbin",
+   "official_full": "Richard J. Durbin"
+  },
+  "bio": {
+   "birthday": "1944-11-21",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2005-01-04",
+    "end": "2007-01-03"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2007-01-04",
+    "end": "2009-01-06"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2009-01-06",
+    "end": "2011-01-05"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2011-01-05",
+    "end": "2013-01-03"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2013-01-03",
+    "end": "2015-01-03"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2015-01-03",
+    "end": "2017-01-03"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2017-01-03",
+    "end": "2019-01-03"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2019-01-03",
+    "end": "2021-01-03"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2021-01-03",
+    "end": "2021-01-20"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2021-01-20",
+    "end": "2023-01-03"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1983-01-03",
+    "end": "1985-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1985-01-03",
+    "end": "1987-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1987-01-06",
+    "end": "1989-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1989-01-03",
+    "end": "1991-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1991-01-03",
+    "end": "1993-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1993-01-05",
+    "end": "1995-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1995-01-04",
+    "end": "1997-01-03",
+    "state": "IL",
+    "district": 20,
+    "party": "Democrat"
+   },
+   {
+    "type": "sen",
+    "start": "1997-01-07",
+    "end": "2003-01-03",
+    "state": "IL",
+    "class": 2,
+    "party": "Democrat"
+   },
+   {
+    "type": "sen",
+    "start": "2003-01-07",
+    "end": "2009-01-03",
+    "state": "IL",
+    "class": 2,
+    "party": "Democrat",
+    "url": "http://durbin.senate.gov"
+   },
+   {
+    "type": "sen",
+    "start": "2009-01-06",
+    "end": "2015-01-03",
+    "state": "IL",
+    "class": 2,
+    "party": "Democrat",
+    "url": "http://www.durbin.senate.gov",
+    "address": "711 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-2152",
+    "fax": "202-228-0400",
+    "contact_form": "http://www.durbin.senate.gov/public/index.cfm/contact",
+    "office": "711 Hart Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://durbin.senate.gov/public/index.cfm/rss/feed"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "IL",
+    "class": 2,
+    "party": "Democrat",
+    "url": "https://www.durbin.senate.gov",
+    "address": "711 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-2152",
+    "fax": "202-228-0400",
+    "contact_form": "https://www.durbin.senate.gov/contact/",
+    "office": "711 Hart Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://durbin.senate.gov/public/index.cfm/rss/feed"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "IL",
+    "class": 2,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.durbin.senate.gov",
+    "rss_url": "http://durbin.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.durbin.senate.gov/contact/",
+    "address": "711 Hart Senate Office Building Washington DC 20510",
+    "office": "711 Hart Senate Office Building",
+    "phone": "202-224-2152"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "D000096",
+   "thomas": "01477",
+   "govtrack": 400093,
+   "opensecrets": "N00004884",
+   "votesmart": 233,
+   "fec": [
+    "H4IL07037"
+   ],
+   "cspan": 44325,
+   "wikipedia": "Danny Davis (Illinois politician)",
+   "house_history": 11949,
+   "ballotpedia": "Danny K. Davis",
+   "maplight": 209,
+   "icpsr": 29717,
+   "wikidata": "Q1164657",
+   "google_entity_id": "kg:/m/0256k7",
+   "pictorial": 13039
+  },
+  "name": {
+   "first": "Danny",
+   "middle": "K.",
+   "last": "Davis",
+   "official_full": "Danny K. Davis"
+  },
+  "bio": {
+   "birthday": "1941-09-06",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1997-01-07",
+    "end": "1999-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1999-01-06",
+    "end": "2001-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/davis"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/davis"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/davis"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/davis"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/davis",
+    "address": "2159 Rayburn HOB; Washington DC 20515-1307",
+    "phone": "202-225-5006",
+    "fax": "202-225-5641",
+    "contact_form": "https://forms.house.gov/davis/webforms/issue_subscribe.htm",
+    "office": "2159 Rayburn House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "IL",
+    "party": "Democrat",
+    "district": 7,
+    "url": "http://www.davis.house.gov",
+    "address": "2159 Rayburn HOB; Washington DC 20515-1307",
+    "phone": "202-225-5006",
+    "fax": "202-225-5641",
+    "contact_form": "https://davis.house.gov/email-me",
+    "office": "2159 Rayburn House Office Building",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "IL",
+    "party": "Democrat",
+    "district": 7,
+    "url": "http://davis.house.gov",
+    "address": "2159 Rayburn HOB; Washington DC 20515-1307",
+    "phone": "202-225-5006",
+    "fax": "202-225-5641",
+    "contact_form": "https://davis.house.gov/email-me",
+    "office": "2159 Rayburn House Office Building",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "phone": "202-225-5006",
+    "url": "https://davis.house.gov",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss",
+    "address": "2159 Rayburn House Office Building; Washington DC 20515-1307",
+    "office": "2159 Rayburn House Office Building",
+    "fax": "202-225-5641"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "phone": "202-225-5006",
+    "address": "2159 Rayburn House Office Building Washington DC 20515-1307",
+    "office": "2159 Rayburn House Office Building",
+    "url": "https://davis.house.gov",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://davis.house.gov",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss",
+    "address": "2159 Rayburn House Office Building Washington DC 20515-1307",
+    "office": "2159 Rayburn House Office Building",
+    "phone": "202-225-5006"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://davis.house.gov",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss",
+    "address": "2159 Rayburn House Office Building Washington DC 20515-1307",
+    "office": "2159 Rayburn House Office Building",
+    "phone": "202-225-5006"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "IL",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://davis.house.gov",
+    "rss_url": "http://davis.house.gov/index.php?format=feed&type=rss",
+    "address": "2159 Rayburn House Office Building Washington DC 20515-1307",
+    "office": "2159 Rayburn House Office Building",
+    "phone": "202-225-5006"
+   }
+  ]
+ },
+ {
+  "id": {
+   "govtrack": 412533,
+   "bioguide": "D000622",
+   "thomas": "02123",
+   "cspan": 94484,
+   "opensecrets": "N00027860",
+   "votesmart": 57442,
+   "wikipedia": "Tammy Duckworth",
+   "fec": [
+    "H6IL06141",
+    "S6IL00292"
+   ],
+   "ballotpedia": "Tammy Duckworth",
+   "maplight": 1757,
+   "icpsr": 21325,
+   "house_history": 15032387037,
+   "wikidata": "Q3036410",
+   "google_entity_id": "kg:/m/09vqjr",
+   "lis": "S386",
+   "pictorial": 13439
+  },
+  "name": {
+   "first": "Tammy",
+   "last": "Duckworth",
+   "official_full": "Tammy Duckworth"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1968-03-12"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "IL",
+    "party": "Democrat",
+    "district": 8,
+    "office": "104 Cannon House Office Building",
+    "address": "104 Cannon HOB; Washington DC 20515-1308",
+    "phone": "202-225-3711",
+    "url": "http://duckworth.house.gov",
+    "rss_url": "http://duckworth.house.gov/rss.xml",
+    "contact_form": "https://duckworth.house.gov/contact/email-me"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "IL",
+    "party": "Democrat",
+    "district": 8,
+    "office": "104 Cannon House Office Building",
+    "address": "104 Cannon HOB; Washington DC 20515-1308",
+    "phone": "202-225-3711",
+    "url": "http://duckworth.house.gov",
+    "rss_url": "http://duckworth.house.gov/rss.xml",
+    "contact_form": "https://duckworth.house.gov/contact/email-me"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "IL",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "address": "524 Hart Senate Office Building Washington DC 20510",
+    "office": "524 Hart Senate Office Building",
+    "phone": "202-224-2854",
+    "url": "https://www.duckworth.senate.gov",
+    "contact_form": "https://www.duckworth.senate.gov/content/contact-senator"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "IL",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.duckworth.senate.gov",
+    "contact_form": "https://www.duckworth.senate.gov/content/contact-senator",
+    "address": "524 Hart Senate Office Building Washington DC 20510",
+    "office": "524 Hart Senate Office Building",
+    "phone": "202-224-2854"
+   }
+  ]
  }
 ]
