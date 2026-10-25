@@ -50,6 +50,12 @@ def test_a_candidate_without_a_name_is_reported(page):
     assert len(result.records) == 196 and result.unnamed == ["a896e435-6bf9-4893-b4cd-ffbdaa942f31"]
 
 
+def test_a_string_among_the_endorsements_is_skipped(page):
+    before = [r.endorsements for r in parse_page(page).records]
+    result = parse_page(edit(page, '"endorsement_details":[{', '"endorsement_details":["Muslims United PAC",{'))
+    assert len(result.records) == 197 and [r.endorsements for r in result.records] == before
+
+
 @pytest.mark.parametrize("broken, message", [
     ("<html><body>Maintenance</body></html>", "no Next.js data"),
     ('<script>self.__next_f.push([1,"0:{}"])</script>', "no candidate sections"),

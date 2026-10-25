@@ -28,7 +28,9 @@ from pallot.states.ak import AkList
 from pallot.states.ca import CaList
 from pallot.states.co import CoList
 from pallot.states.ga import GaList
+from pallot.states.il import IlList
 from pallot.states.nj import NjList
+from pallot.states.wy import WyList
 
 from .conftest import census_points, switch
 
@@ -268,6 +270,49 @@ async def test_new_jersey_lists_live(tmp_path):
             cache.close()
     assert found and again == found and stats.external_calls == 0
     assert {f.district for f in found if f.reach == "cd"} == {str(n) for n in range(1, 13)}
+    assert not list(tmp_path.glob(".*.part"))
+
+
+@pytest.mark.anyio
+async def test_wyoming_list_live(tmp_path):
+    """Wyoming's candidates data file still reads whole: every State House race, kept as its
+    candidates alone, without their contact details; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = WyList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.filings(day)
+            stats = track_calls()
+            again = await lists.filings(day)
+        finally:
+            cache.close()
+    assert found and again == found and stats.external_calls == 0
+    assert {f.district for f in found if f.reach == "hd"} == {str(n) for n in range(1, 63)}
+    assert {f.district for f in found if f.reach == "cd"} == {"0"}
+    assert not list(tmp_path.glob(".*.part"))
+
+
+@pytest.mark.anyio
+async def test_illinois_list_live(tmp_path):
+    """Illinois's list of elections still has the general election's page, and its download page
+    still hands out the candidate data file to a postback of its own form: every Congress race,
+    with both parties' nominees, kept as its candidates alone; asked again, from the cache."""
+    async with httpx.AsyncClient(headers={"User-Agent": load_config().user_agent}, follow_redirects=True,
+                                 timeout=120) as client:
+        cache = HttpCache(tmp_path / "cache.sqlite3", client, min_interval=dict(MIN_INTERVAL))
+        lists = IlList(cache, Ttls())
+        day = fec.general_day(dt.date.today())
+        try:
+            found = await lists.filings(day)
+            stats = track_calls()
+            again = await lists.filings(day)
+        finally:
+            cache.close()
+    assert found and again == found and stats.external_calls == 0
+    assert {f.district for f in found if f.reach == "cd"} == {str(n) for n in range(1, 18)}
+    assert {"D", "R"} <= {f.party for f in found if f.reach == "cd" and f.district == "1"}
     assert not list(tmp_path.glob(".*.part"))
 
 

@@ -40,6 +40,8 @@ state_nj = true             # New Jersey Division of Elections
 state_ak = true             # Alaska Division of Elections
 state_ny = true             # New York State Board of Elections (its certification is imported by hand)
 state_co = true             # Colorado Secretary of State
+state_wy = true             # Wyoming Secretary of State
+state_il = true             # Illinois State Board of Elections
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

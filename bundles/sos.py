@@ -4,16 +4,19 @@ for each upcoming election; each answer kept for its own bundle lifetime."""
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from pallot.config import Ttls
 from pallot.http_cache import RequestSpec, UpstreamError, value_is_empty
-from pallot.sources.sos import CBP, SYSTEM, Sos
+from pallot.sources.sos import CBP, SYSTEM, Election, Sos
 
 from .entry import BundleError, Context
 
 BALLOT_ORDER = f"{CBP}/getCandidateBallotOrder"
 MAX_SERVER_ERRORS = 10  # ballot orders a build may leave out after an HTTP 5xx before it gives up
+ROUNDS = 2  # how many more times the ballot orders that answered HTTP 5xx are asked, after RETRY_WAIT
+RETRY_WAIT = 30.0  # seconds before each of those rounds
 LIFETIMES = {  # endpoint -> the Ttls field of its answers' bundle lifetime
     f"{CBP}/getElectionsByYear/": "sos_elections_bundle",
     f"{SYSTEM}/getAllRegions": "sos_reference_bundle",
@@ -65,24 +68,36 @@ async def build(ctx: Context) -> dict[str, int]:
 async def build_ballot_orders(ctx: Context) -> dict[str, int]:
     """Every county's ballot order for each upcoming election, one request after another (at the
     build's pace for Texas SOS, refresh.BUILD_INTERVAL). It stops at the first refusal (which pauses
-    Texas SOS) or other failure, except a server error: Texas SOS answers HTTP 500 now and then for
-    one county, which is then left out and asked live, up to MAX_SERVER_ERRORS of them. Counts the
-    elections, the published ballot orders and the ones left out."""
+    Texas SOS) or other failure, except a server error: Texas SOS answers HTTP 500 now and then, so
+    those are asked again in up to ROUNDS more rounds, and what still fails is left out and asked
+    live, up to MAX_SERVER_ERRORS of them. Counts the elections, the published ballot orders and
+    the ones left out."""
     sos = Sos(ctx.cache, ctx.config.ttl, ctx.today)
-    count = errors = 0
+    count = 0
     try:
         elections = [e for day in (await sos.upcoming()).values() for e in day]
         counties = sorted((await sos.counties()).values())
-        for election in elections:
-            for county_id in counties:
+        todo = [(election, county_id) for election in elections for county_id in counties]
+        for round_ in range(ROUNDS + 1):
+            if round_ and todo:
+                await asyncio.sleep(RETRY_WAIT)
+            failed: list[tuple[Election, int, UpstreamError]] = []
+            for election, county_id in todo:
                 try:
                     count += published((await sos.ballot_order(election, county_id)).value)
                 except UpstreamError as exc:
-                    if (exc.status or 0) < 500 or exc.until is not None or errors >= MAX_SERVER_ERRORS:
+                    if (exc.status or 0) < 500 or exc.until is not None:
                         raise
-                    errors += 1
+                    failed.append((election, county_id, exc))
+            todo = [(election, county_id) for election, county_id, _ in failed]
+        if len(failed) > MAX_SERVER_ERRORS:
+            election, county_id, exc = failed[0]
+            raise BundleError(f"{len(failed)} ballot orders still failed after {ROUNDS} more rounds, "
+                              f"e.g. election {election.id}, county {county_id}: {exc}")
+    except BundleError:
+        raise
     except Exception as exc:
         raise BundleError(f"couldn't load Texas SOS's ballot orders: {exc}") from exc
     if not elections or not counties:
         raise BundleError("Texas SOS lists no upcoming election or no county")
-    return {"elections": len(elections), "ballot_orders": count, "server_errors": errors}
+    return {"elections": len(elections), "ballot_orders": count, "server_errors": len(failed)}

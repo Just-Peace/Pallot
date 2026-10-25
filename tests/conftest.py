@@ -21,7 +21,7 @@ import struct
 import zipfile
 from pathlib import Path
 from typing import Any
-from urllib.parse import unquote
+from urllib.parse import parse_qsl, unquote
 
 import httpx
 import pytest
@@ -49,7 +49,7 @@ ADDRESSES = {
     "dc": "1600 Pennsylvania Ave NW, Washington, DC 20500",
     "hd93": "93 Test Lane, Austin, TX 78701",  # made up: the Capitol's geography, but State House District 93
     "atlanta": "55 Trinity Ave SW, Atlanta, GA 30303",  # Georgia's nominees and qualified list (states/ga.py); GA-05
-    "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat
+    "cheyenne": "200 W 24th St, Cheyenne, WY 82001",  # Wyoming's one, at-large seat; its CSV list (states/wy.py)
     "pr": "1 Calle Fortaleza, San Juan, PR 00901",  # made up: DC's geography, in Puerto Rico
     "raleigh": "1 E Edenton St, Raleigh, NC 27601",  # North Carolina's official list (states/nc.py)
     "lansing": "100 N Capitol Ave, Lansing, MI 48933",  # Michigan's (states/mi.py)
@@ -66,6 +66,7 @@ ADDRESSES = {
     "manhattan": "260 Broadway, New York, NY 10007",  # New York's certification, imported by hand (states/ny.py); NY-10
     "albany": "100 State St, Albany, NY 12207",  # upstate New York: NY-20, the 3rd Judicial District
     "denver": "1437 Bannock St, Denver, CO 80202",  # Colorado's spreadsheet (states/co.py); CO-1, SD 31, HD 5
+    "chicago": "121 N LaSalle St, Chicago, IL 60602",  # Illinois's candidate data file (states/il.py); IL-7, Cook County
     "anchorage": "632 W 6th Ave, Anchorage, AK 99501",  # Alaska's list, three pages (states/ak.py); Senate I, House 17
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
@@ -79,9 +80,10 @@ STATE_LISTS = {
     "s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html",
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
     "www.elections.virginia.gov": "state_va.html", "elections.cdn.sos.ca.gov": "state_ca.pdf",
-    "www.coloradosos.gov": "state_co.xlsx",
+    "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
+IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 
 
 @functools.cache
@@ -328,6 +330,7 @@ class Upstream:
         self.ballot_orders: dict[tuple[int, int], Any] = {}  # (election id, county id) -> its ballot order, in place of the recorded one
         self.ballot_order_status: int | None = None  # e.g. 403 when Texas SOS refuses a ballot order
         self.ballot_orders_down: set[tuple[int, int]] = set()  # (election id, county id) whose ballot order answers HTTP 500
+        self.ballot_orders_blip: set[tuple[int, int]] = set()  # the same, but only the first time it's asked
         self.county_status: int | None = None  # e.g. 403 when a county's map server refuses us
         self.feed_status: int | None = None  # e.g. 429 when an organization's website refuses us
         self.feed_answers: dict[str, Any] = {}  # feed source id -> its answer, in place of the recorded one
@@ -335,6 +338,7 @@ class Upstream:
         self.feed_pages: dict[str, str] = {}  # feed source id -> its page, in place of the recorded one
         self.feed_tokens: list[str | None] = []  # the token each request to a feed that wants one carried
         self.state_lists: dict[str, str] = {}  # host (or host and path) -> its list's answer, in place of the recorded one
+        self.il_forms: list[dict[str, str]] = []  # the form each request to Illinois's download page carried
         self.ca_key_dates: str | None = None  # California SOS's election dates page, in place of the recorded one
         # A county's ArcGIS server: host -> path -> its answer, a dict as is or a layer's features, paged as ArcGIS
         # pages them. The lists of services are recorded; the lists of precincts are made up, from the made-up map.
@@ -354,6 +358,25 @@ class Upstream:
 
     def count(self, host_part: str) -> int:
         return sum(host_part in call for call in self.calls)
+
+    def _il(self, request: httpx.Request) -> httpx.Response:
+        """Illinois's State Board: its list of elections, and the download page, which hands out the
+        candidate file only to a postback of its own form (the recorded hidden fields) and is
+        served again to any other."""
+        url = request.url
+        text = self.state_lists.get(f"{url.host}{url.path}")
+        if url.path.endswith("/CandidateOfficeFilingSearch.aspx"):
+            body = text.encode() if text is not None else fixture_bytes("state_il.html")
+        elif url.path.endswith("/DownloadCandidates.aspx") and url.params.get("ID") == IL_ELECTION:
+            form = dict(parse_qsl(request.content.decode())) if request.method == "POST" else {}
+            self.il_forms.append(form)
+            if form.get("__VIEWSTATE") == "VIEWSTATE-recorded" and form.get("__EVENTTARGET", "").endswith("$btnText"):
+                body = text.encode() if text is not None else fixture_bytes("state_il.tsv")
+            else:
+                body = fixture_bytes("state_il_download.html")
+        else:
+            return httpx.Response(404)
+        return httpx.Response(200, content=body)
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         url = request.url
@@ -408,6 +431,9 @@ class Upstream:
                     return httpx.Response(self.ballot_order_status)
                 if (body["electionId"], body["countyId"]) in self.ballot_orders_down:
                     return httpx.Response(500)
+                if (body["electionId"], body["countyId"]) in self.ballot_orders_blip:
+                    self.ballot_orders_blip.discard((body["electionId"], body["countyId"]))
+                    return httpx.Response(500)
                 if (body["electionId"], body["countyId"]) in self.ballot_orders:
                     return httpx.Response(200, json=self.ballot_orders[body["electionId"], body["countyId"]])
                 return _file(f"sos_ballot_{body['electionId']}_{body['countyId']}.json", default=[])
@@ -450,6 +476,8 @@ class Upstream:
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.elections.il.gov":
+            return self._il(request)
         if url.host == "www.elections.alaska.gov":
             page = next((value for name, value in params.items() if name.startswith("frm-page-")), "1")
             text = self.state_lists.get(f"{url.host}#{page}")
