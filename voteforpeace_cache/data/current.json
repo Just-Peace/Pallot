@@ -1530,7 +1530,7 @@
       "jurisdiction": null,
       "level": "statewide",
       "name": "Dr. Teresa Ruiz",
-      "notes": null,
+      "notes": "No public stance exists for this candidate.",
       "office_title": "Superintendent of Public Instruction",
       "party": null,
       "rating": "neutral",
@@ -4164,6 +4164,35 @@
       "slug": "rod-daus-magbual-2",
       "state": "CA",
       "url": "https://voteforpeace.info/california/rod-daus-magbual-2"
+    },
+    {
+      "articles": [],
+      "candidate_id": "08b0d219-241d-405c-a855-ebec2afd6815",
+      "district": "1",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Redlands",
+      "level": "local",
+      "name": "Denise Davis",
+      "notes": "This candidates' stance on militarism and AIPAC are not known. However, they are endorsed by Working Families Party, an organization that supports candidates who refuse to take money from corporate and special interest groups.",
+      "office_title": "City Council Member, Redlands",
+      "party": null,
+      "rating": "neutral",
+      "section": "California",
+      "slug": "denise-davis",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/denise-davis"
     },
     {
       "articles": [],
@@ -7903,10 +7932,10 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Dave Min",
-      "notes": "This candidate currently takes DMFI money; however, he has most recently signed onto the Block the Bombs Act, making him one of only 63 members of Congress to do so. Some voters are opting to support him and to continue to advocate for improvement on his stances given his recent shift",
+      "notes": "Ratings are mixed for this candidate:\nOrange County Justice for Palestine: Reject\nCAIR Action: Preferred, not endorsed\nThis candidate took DMFI money in the 2025-2026 cycle; however, he has most recently signed onto the Block the Bombs Act, making him one of only 63 members of Congress to do so. In a most recent forum in Irvine, he declined to call what is happening in Gaza a genocide.",
       "office_title": "U.S. Representative",
       "party": "Democrat",
-      "rating": "vote",
+      "rating": "neutral",
       "section": "California",
       "slug": "dave-min",
       "state": "CA",
@@ -9072,6 +9101,28 @@
       "slug": "kashef-qaadri-2",
       "state": "CA",
       "url": "https://voteforpeace.info/california/kashef-qaadri-2"
+    },
+    {
+      "articles": [],
+      "candidate_id": "c01c092e-1c4e-482d-9821-f2d90f8d7236",
+      "district": "47",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Jenny Rae Le Roux",
+      "notes": "This candidate has taken a strongly pro-Israel position. She describes Israel as the United States’ greatest ally in the Middle East and says American support must be unwavering.\nShe opposes the BDS movement, supports writing the IHRA definition of antisemitism into federal law, says she’ll never allow a nuclear Iran, and wants the Abraham Accords expanded to include Saudi Arabia and other regional partners. The Israeli-American Civic Action Network (ICAN) has endorsed her, citing those same commitments",
+      "office_title": "U.S. Representative",
+      "party": null,
+      "rating": "reject",
+      "section": "California",
+      "slug": "jenny-rae-le-roux",
+      "state": "CA",
+      "url": "https://voteforpeace.info/california/jenny-rae-le-roux"
     },
     {
       "articles": [],
@@ -43825,5 +43876,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-24"
+  "snapshot": "2026-10-25"
 }

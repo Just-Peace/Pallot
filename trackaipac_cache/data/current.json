@@ -16515,6 +16515,52 @@
       "state": "MO"
     },
     {
+      "candidate_id": "mo-missi-hesketh",
+      "categories": [
+        "endorsed"
+      ],
+      "chamber": "house",
+      "district": "07",
+      "listings": [
+        {
+          "campaign_url": "https://www.missiformo.com/",
+          "candidate_id": "mo-missi-hesketh",
+          "category": "endorsed",
+          "chamber": "house",
+          "district": "07",
+          "donate_url": "https://secure.actblue.com/donate/missi-rejects-aipac?refcode=website-endorsement",
+          "donations": null,
+          "election_date": "2026-11-03",
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "[Candidate for U.S. House](https://www.missiformo.com/)",
+            "MO-07 [D]",
+            "General Election",
+            "November 3, 2026",
+            "[Support Missi](https://secure.actblue.com/donate/missi-rejects-aipac?refcode=website-endorsement)"
+          ],
+          "name": "Missi Hesketh",
+          "notes": [
+            "General Election"
+          ],
+          "pacs": [],
+          "party": "D",
+          "seat": "MO-07",
+          "seat_text": "MO-07 [D]",
+          "section": "Candidates Endorsed By Citizens Against AIPAC COrruption",
+          "source": "endorsements",
+          "state": "MO",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Missi Hesketh",
+      "party": "D",
+      "seat": "MO-07",
+      "state": "MO"
+    },
+    {
       "candidate_id": "mo-sam-graves",
       "categories": [
         "congress"
@@ -32685,5 +32731,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-24"
+  "snapshot": "2026-10-25"
 }

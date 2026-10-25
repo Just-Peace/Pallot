@@ -2232,6 +2232,13 @@
     "party": "R",
     "state": "MO"
   },
+  "mo-missi-hesketh": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Missi Hesketh",
+    "party": "D",
+    "state": "MO"
+  },
   "mo-sam-graves": {
     "chamber": "house",
     "district": "06",
