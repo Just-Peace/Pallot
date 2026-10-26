@@ -314,13 +314,22 @@ async def test_one_download_for_everyone(tmp_path, upstream, monkeypatch):
 
 
 @pytest.mark.anyio
-async def test_a_newer_map_downloads_in_the_background(tmp_path, upstream):
+async def test_a_newer_map_downloads_in_the_background(tmp_path, upstream, monkeypatch):
+    looked_up = threading.Event()
+    unzip = ElectionPrecincts._unzip
+
+    def held(self, resource, part):  # the newer map isn't in place before the lookup answers, however fast the runner
+        looked_up.wait(5)
+        unzip(self, resource, part)
+
     async with service(tmp_path) as precincts:
         await precincts.at(TRAVIS, *census_points("capitol"))
         old = precincts.stored()
         precincts.cache.clear(ep.SOURCE)  # the week-old index expires
         upstream.precinct_index = precincts_index(len(election_precincts_zip()), newer=newer_map(len(election_precincts_zip())))
+        monkeypatch.setattr(ElectionPrecincts, "_unzip", held)
         answer = await precincts.at(TRAVIS, *census_points("capitol"))
+        looked_up.set()
         assert answer.found.label == LABEL  # from the map kept, meanwhile
         await settled(precincts)
         assert precincts.stored().resource.name == "Precincts26G.zip"
