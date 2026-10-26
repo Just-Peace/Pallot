@@ -32,6 +32,12 @@ function calendarLink(iso, at, event, label) {
     : null;
 }
 
+// Early voting's last day: with a start and no end, it goes on through Election Day (Alaska's,
+// California's).
+function earlyEnd(dates) {
+  return dates.early_voting_end || (dates.early_voting_start ? dates.election_day : null);
+}
+
 // A date (and ``extra`` after it), with its calendar link.
 function dateWithCalendar(iso, at, event, what, extra = "") {
   return [formatDate(iso, DAY) + extra, calendarLink(iso, at, event, `Add “${what}” to your calendar`)];
@@ -47,11 +53,11 @@ function dateRows(dates, state, at) {
       value: dateWithCalendar(dates.register_by, at, "register", "Last day to register"),
     },
     (dates.early_voting_start || dates.early_voting_end) && {
-      label: "Early voting", first: dates.early_voting_start || dates.early_voting_end, last: dates.early_voting_end || dates.early_voting_start,
+      label: "Early voting", first: dates.early_voting_start || dates.early_voting_end, last: earlyEnd(dates),
       value: [
         dates.early_voting_start ? dateWithCalendar(dates.early_voting_start, at, "early_start", "Early voting begins") : null,
-        dates.early_voting_start && dates.early_voting_end ? " – " : null,
-        dates.early_voting_end ? dateWithCalendar(dates.early_voting_end, at, "early_end", "Last day of early voting") : null,
+        dates.early_voting_start ? " – " : null,
+        dates.early_voting_end ? dateWithCalendar(dates.early_voting_end, at, "early_end", "Last day of early voting") : formatDate(day, DAY),
       ],
     },
     {
@@ -131,10 +137,11 @@ export function keyDatesSummary(ballot) {
   const dates = ballot.key_dates;
   if (!dates) return "Registration and where to vote";
   const start = dates.early_voting_start || dates.early_voting_end;
-  const end = dates.early_voting_end || start;
+  const end = earlyEnd(dates) || start;
   const early = end && daysUntil(end) >= 0
-    ? `Early voting ${formatDate(start, SHORT_DAY)}${start === end ? ""
-      : start.slice(0, 7) === end.slice(0, 7) ? `–${Number(end.slice(8))}` : ` – ${formatDate(end, SHORT_DAY)}`}`
+    ? !dates.early_voting_end ? `Early voting from ${formatDate(start, SHORT_DAY)}`
+      : `Early voting ${formatDate(start, SHORT_DAY)}${start === end ? ""
+        : start.slice(0, 7) === end.slice(0, 7) ? `–${Number(end.slice(8))}` : ` – ${formatDate(end, SHORT_DAY)}`}`
     : null;
   return [early, `Election Day ${formatDate(dates.election_day, SHORT_DAY)}`].filter(Boolean).join(" · ");
 }
@@ -143,7 +150,7 @@ export function keyDatesSummary(ballot) {
 // Oct 19 – Oct 30", for the wallet card), or null.
 export function earlyVotingText(ballot, { short = false } = {}) {
   const dates = ballot.key_dates;
-  if (!dates?.early_voting_start || !dates.early_voting_end) return null;
+  if (!dates?.early_voting_start) return null;
   const format = short ? SHORT_DAY : DAY;
-  return `Early voting${short ? "" : ":"} ${formatDate(dates.early_voting_start, format)} – ${formatDate(dates.early_voting_end, format)}`;
+  return `Early voting${short ? "" : ":"} ${formatDate(dates.early_voting_start, format)} – ${formatDate(earlyEnd(dates), format)}`;
 }

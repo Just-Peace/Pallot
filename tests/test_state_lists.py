@@ -378,7 +378,7 @@ def test_a_california_list_it_cant_read_keeps_the_last_good_copy(make_app, upstr
 def test_californias_key_dates_come_from_its_secretary_of_states_page():
     [found] = ca_key_dates.parse(recorded("key_dates_ca.html"))
     assert found == Deadlines(dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 19),
-                              mail_apply_by=dt.date(2026, 10, 27), state="CA")
+                              mail_apply_by=dt.date(2026, 10, 27), early_start=dt.date(2026, 10, 5), state="CA")
     assert ca_key_dates.no_elections(recorded("key_dates_ca.html")) is None
     assert ca_key_dates.no_elections("<html><body><h1>Site maintenance</h1></body></html>")
 
@@ -387,7 +387,7 @@ def test_a_california_ballot_has_its_key_dates_and_their_calendar(client, upstre
     ballot = get_ballot(client, "losangeles")
     assert ballot["key_dates"] == {
         "election": "General Election", "election_day": "2026-11-03", "register_by": "2026-10-19",
-        "mail_apply_by": "2026-10-27", "early_voting_start": None, "early_voting_end": None,
+        "mail_apply_by": "2026-10-27", "early_voting_start": "2026-10-05", "early_voting_end": None,
         "source": "California Secretary of State", "source_url": ca_key_dates.URL, "computed": False,
     }
     response = client.get("/api/key-dates.ics", params={"date": "2026-11-03", "state": "CA"})
