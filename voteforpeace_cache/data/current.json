@@ -12463,7 +12463,7 @@
     {
       "articles": [],
       "candidate_id": "b2ea9b8e-2ba5-4418-8523-5408236fba31",
-      "district": "8",
+      "district": "7",
       "election_date": "Nov 3, 2026",
       "election_label": "General: Nov 3, 2026",
       "election_result": "pending",
@@ -22840,6 +22840,12 @@
           "notes": null,
           "organization": "Working Families Party",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -30362,6 +30368,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Ohio Divest Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -30447,12 +30459,6 @@
         {
           "link": null,
           "notes": null,
-          "organization": "Ohio Divests Campaign",
-          "type": "endorsed"
-        },
-        {
-          "link": null,
-          "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
         },
@@ -30460,6 +30466,12 @@
           "link": null,
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Ohio Divest Coalition",
           "type": "endorsed"
         }
       ],
@@ -30629,6 +30641,28 @@
     },
     {
       "articles": [],
+      "candidate_id": "d92435e3-8ac5-4fc1-a7ab-6cf3c7b2d9c8",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Sherrod Brown",
+      "notes": "This candidate's platform has focused on opposing the war in Iran. He remains a staunch ally of unconditional military aid to Israel.\nVoters should note that this is a battleground race between Democrat Sherod Brown and Republican candidate Hutsted and that this race is expected to be close.",
+      "office_title": "U.S. Senator",
+      "party": "Democrat",
+      "rating": "neutral",
+      "section": "Ohio",
+      "slug": "sherrod-brown",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/sherrod-brown"
+    },
+    {
+      "articles": [],
       "candidate_id": "5e2559fb-a798-4ea8-8cbe-5a0b04fc0910",
       "district": "11",
       "election_date": "Nov 3, 2026",
@@ -30716,6 +30750,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Ohio Divest Coalition",
           "type": "endorsed"
         }
       ],
@@ -30850,35 +30890,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "cc0973ee-6747-4b93-8522-dc46746328d8",
-      "district": "44",
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": "https://cairaction.org/",
-          "notes": "Endorsed",
-          "organization": "CAIR Action (Endorsed)",
-          "type": "endorsed"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": null,
-      "level": "state_legislature",
-      "name": "Dave Fournier",
-      "notes": null,
-      "office_title": "State Representative",
-      "party": null,
-      "rating": "vote",
-      "section": "Ohio",
-      "slug": "dave-fournier",
-      "state": "OH",
-      "url": "https://voteforpeace.info/ohio/dave-fournier"
-    },
-    {
-      "articles": [],
       "candidate_id": "efb20197-302e-4328-838a-61b0c19197c8",
       "district": "44",
       "election_date": "Nov 3, 2026",
@@ -30992,6 +31003,28 @@
       "slug": "latyna-humphrey",
       "state": "OH",
       "url": "https://voteforpeace.info/ohio/latyna-humphrey"
+    },
+    {
+      "articles": [],
+      "candidate_id": "f73da161-4d6b-44b5-bf4a-45a168acc116",
+      "district": null,
+      "election_date": "May 5, 2026",
+      "election_label": "Primary: May 5, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Jon Husted",
+      "notes": "This candidate has a track record of supporting endless wars in the Middle East, including the current war in Iran, and unconditional military aid to Israel.\nVoters should note that this is a battleground race between Democrat Sherod Brown and Republican candidate Hutsted and that this race is expected to be close.",
+      "office_title": "U.S. Senator",
+      "party": "Republican",
+      "rating": "reject",
+      "section": "Ohio",
+      "slug": "jon-husted",
+      "state": "OH",
+      "url": "https://voteforpeace.info/ohio/jon-husted"
     },
     {
       "articles": [],
@@ -31193,6 +31226,12 @@
           "notes": null,
           "organization": "Vote for Peace Questionnaire",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Ohio Divest Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -31385,6 +31424,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Ohio Divest Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -31449,7 +31494,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Greg Levy",
-      "notes": null,
+      "notes": "Levy is running as an independent.\nVoters should note that this is a battleground race between Democrat Sherod Brown and Republican candidate and that this race is expected to be close.",
       "office_title": "U.S. Senator",
       "party": null,
       "rating": "vote",
@@ -31663,6 +31708,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Ohio Divest Coalition",
           "type": "endorsed"
         }
       ],
@@ -32039,7 +32090,7 @@
         {
           "link": null,
           "notes": null,
-          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "organization": "Ohio Divest Coalition",
           "type": "endorsed"
         }
       ],
@@ -36326,35 +36377,6 @@
     },
     {
       "articles": [],
-      "candidate_id": "95f0fa4a-ac47-4255-8916-5832c592cfd3",
-      "district": "30",
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": "https://cairaction.org/",
-          "notes": "Endorsed",
-          "organization": "CAIR Action (Endorsed)",
-          "type": "endorsed"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": null,
-      "level": "federal",
-      "name": "Frederick Haynes",
-      "notes": null,
-      "office_title": "U.S. Representative",
-      "party": null,
-      "rating": "vote",
-      "section": "Texas",
-      "slug": "frederick-haynes",
-      "state": "TX",
-      "url": "https://voteforpeace.info/texas/frederick-haynes"
-    },
-    {
-      "articles": [],
       "candidate_id": "4a776265-9dc1-4d22-975b-4695a18275b7",
       "district": "310",
       "election_date": "Nov 3, 2026",
@@ -36500,35 +36522,6 @@
       "slug": "gina-hinojosa",
       "state": "TX",
       "url": "https://voteforpeace.info/texas/gina-hinojosa"
-    },
-    {
-      "articles": [],
-      "candidate_id": "1a4b6a90-9ba1-485a-b6f1-6a3982ca691f",
-      "district": null,
-      "election_date": "Nov 3, 2026",
-      "election_label": "General: Nov 3, 2026",
-      "election_result": "pending",
-      "election_stage": "general",
-      "endorsements": [
-        {
-          "link": "https://cairaction.org/",
-          "notes": "Preferred",
-          "organization": "CAIR Action (Preferred, not Endorsed)",
-          "type": "preferred"
-        }
-      ],
-      "featured_text": null,
-      "jurisdiction": null,
-      "level": "statewide",
-      "name": "Gina Hinojosa",
-      "notes": null,
-      "office_title": "Governor",
-      "party": null,
-      "rating": "vote",
-      "section": "Texas",
-      "slug": "gina-hinajosa",
-      "state": "TX",
-      "url": "https://voteforpeace.info/texas/gina-hinajosa"
     },
     {
       "articles": [],
@@ -38165,6 +38158,28 @@
       "slug": "surendran-pattel",
       "state": "TX",
       "url": "https://voteforpeace.info/texas/surendran-pattel"
+    },
+    {
+      "articles": [],
+      "candidate_id": "5852569c-97c0-4c8a-a287-89653da31802",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "federal",
+      "name": "Ken Paxton",
+      "notes": "Paxton's platform is one of complete and unconditional continuation of US support for Israel.\nAs attorney general, he has issued guidance on enforcing the Texas law that bars state contracts with companies that boycott Israel. He joined a 12-state effort to pressure Unilever over Ben & Jerry’s decision to boycott Israel.",
+      "office_title": "U.S. Senator",
+      "party": "Republican",
+      "rating": "reject",
+      "section": "Texas",
+      "slug": "ken-paxton",
+      "state": "TX",
+      "url": "https://voteforpeace.info/texas/ken-paxton"
     },
     {
       "articles": [],
@@ -43876,5 +43891,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-25"
+  "snapshot": "2026-10-26"
 }

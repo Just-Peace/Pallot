@@ -1,9 +1,9 @@
 {
-  "last_checked": "2026-10-25T14:26:07+00:00",
-  "last_refresh": "2026-10-25T14:26:07+00:00",
+  "last_checked": "2026-10-26T03:30:16+00:00",
+  "last_refresh": "2026-10-26T03:30:16+00:00",
   "schema_version": 2,
   "source_hashes": {
-    "candidates": "98d19d356aadbaf87a663cc3dd718e83a91b6d73f1275e0ab3d16553c116fc40",
+    "candidates": "adb12dc5ed516f1f23c8bd0e603d8053ca6d41a960e5a8c699fd65ce2fbc58db",
     "congress": "d5fe30aa20286125d56be53c3c2ff0b7d0db7cc676bdca14924ca6c4de2d5c56",
     "endorsements": "5f5bc239f76b4b40cb544ea416dca56235ca52b1a11281ebc79026d1ebdb1c77"
   }
