@@ -252,13 +252,13 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-26 |
 | Arizona Secretary of State candidate list | **232** | 91 races | 2026-10-26 | 2026-10-26 |
 | Nevada Secretary of State candidate list | **633** | 364 races | 2026-10-22 | 2026-10-22 |
-| Georgia Secretary of State candidate list | **292** | 184 races | 2026-10-22 | 2026-10-22 |
+| Georgia Secretary of State candidate list | **292** | 184 races | 2026-10-26 | 2026-10-26 |
 | Georgia Secretary of State party nominees | **451** | 271 races | 2026-10-25 | 2026-10-25 |
-| Wisconsin Elections Commission candidate list | **445** | 293 races | 2026-10-22 | 2026-10-22 |
+| Wisconsin Elections Commission candidate list | **445** | 293 races | 2026-10-26 | 2026-10-26 |
 | Ohio Secretary of State candidate list | **20** | 8 races | 2026-10-26 | 2026-10-26 |
-| Iowa Secretary of State candidate list | **245** | 137 races | 2026-10-25 | 2026-10-25 |
+| Iowa Secretary of State candidate list | **245** | 137 races | 2026-10-26 | 2026-10-26 |
 | New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-26 | 2026-10-26 |
-| New York State Board of Elections candidate list | **502** | 253 races | 2026-10-25 | 2026-10-25 |
+| New York State Board of Elections candidate list | **502** | 253 races | 2026-10-26 | 2026-10-26 |
 | Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-26 |
 | Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-26 |
 | Illinois State Board of Elections candidate list | **501** | 391 races | 2026-10-26 | 2026-10-26 |

@@ -115,7 +115,7 @@ def test_every_bundle_ships_with_pallot_and_has_a_lifetime():
 
 # Lists imported by hand before a field their adapter never sets, so its default is right: the
 # next import adds it, and then the entry goes.
-PREDATES = {name: {"retention"} for name in ("state_ga", "state_ia", "state_nv", "state_ny", "state_wi")}
+PREDATES = {"state_nv": {"retention"}}
 
 
 @pytest.mark.parametrize("name", sorted(path.stem for path in store.PACKAGE_DATA_DIR.glob("state_*.json")))
