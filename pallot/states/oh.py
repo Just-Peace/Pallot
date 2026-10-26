@@ -11,14 +11,14 @@ and the Legislature's and the county's races aren't shown.
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import json
 import re
 from typing import Any
 
-from ..sources.fec import race_name
 from ..text import display_person
-from . import Filing, ManualList, party
+from . import Filing, ManualList, Office, party, us_senate
 
 PAGE = "https://www.ohiosos.gov/assets/dir2026-45-official-sample-ballot-november-3-2026.pdf"
 SCOPE = "statewide_offices_only"
@@ -34,14 +34,15 @@ _OFFICES = (
 )
 
 
-def _office(text: str) -> tuple[str, str, str]:
-    """(race id, group, shown) for a contest's office; an office it doesn't know keeps its own name."""
+def _office(text: str) -> Office:
+    """A contest's office, statewide; an office it doesn't know keeps its own name."""
     if re.match(r"U\.?\s*S\.?\s*Senat", text, re.I):
-        return "US SENATE", "federal", race_name("OH", None)
+        return us_senate("OH")
     for pattern, race, group, shown in _OFFICES:
         if re.match(pattern, text, re.I):
-            return race, group, shown
-    return " ".join(text.upper().split()), "state", " ".join(text.split())
+            return Office(race, shown, race, group, "state")
+    upper = " ".join(text.upper().split())
+    return Office(upper, " ".join(text.split()), upper, "state", "state")
 
 
 def _term(contest: dict[str, Any]) -> str | None:
@@ -86,30 +87,32 @@ class OhList(ManualList):
         if not contests:
             raise ValueError("no contests with candidates")
         offices = [_office(str(c.get("office") or "")) for c in contests]
-        repeated = {race for race, _, _ in offices if sum(r == race for r, _, _ in offices) > 1}
+        ids = [office.office_id for office in offices]
         filings = []
-        for number, (contest, (family, group, shown)) in enumerate(zip(contests, offices)):
+        for number, (contest, office) in enumerate(zip(contests, offices)):
             if not contest.get("office"):
                 raise ValueError(f"contest {number + 1} has no office")
-            race = family
-            if family in repeated:
+            race = dataclasses.replace(
+                office, seats=int(contest.get("vote_for") or 1),
+                unexpired=office.family == "US SENATE"
+                or "unexpired" in f"{contest.get('office')} {contest.get('term')}".lower(),
+            )
+            if ids.count(office.office_id) > 1:
                 term = _term(contest)
-                race = f"{family} {term.upper() if term else number + 1}"
-                shown = f"{shown} (term beginning {term})" if term else f"{shown} ({number + 1})"
-            unexpired = family == "US SENATE" or "unexpired" in f"{contest.get('office')} {contest.get('term')}".lower()
+                race = dataclasses.replace(
+                    race, office_id=f"{office.family} {term.upper() if term else number + 1}",
+                    office=f"{office.office} (term beginning {term})" if term else f"{office.office} ({number + 1})",
+                )
             for index, candidate in enumerate(contest["candidates"]):
                 name = " ".join(str(candidate.get("name") or "").split())
                 if not name:
-                    raise ValueError(f"a candidate without a name under {shown}")
+                    raise ValueError(f"a candidate without a name under {race.office}")
                 name = display_person(name)
                 if mate := " ".join(str(candidate.get("running_mate") or "").split()):
                     name = f"{name} and {display_person(mate)}"
                 code, party_name = party(candidate.get("party"), _PARTY_NAMES)
-                filings.append(Filing(
-                    day=day, office_id=race, office=shown, family=family, group=group, reach="state",
-                    district=None, name=name, party=code, party_name=party_name,
-                    seats=int(contest.get("vote_for") or 1), unexpired=unexpired,
-                    write_in=bool(candidate.get("write_in")), incumbent=bool(candidate.get("incumbent")),
-                    order=number * 100 + index,
+                filings.append(race.filing(
+                    day=day, name=name, party=code, party_name=party_name, write_in=bool(candidate.get("write_in")),
+                    incumbent=bool(candidate.get("incumbent")), order=number * 100 + index,
                 ))
         return filings

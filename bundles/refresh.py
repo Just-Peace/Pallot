@@ -96,19 +96,9 @@ def refresh_one(entry: Bundle, root: Path, *, force: bool, dry_run: bool, config
     """Rebuild one source's bundle. Its answers are written only when they changed (or ``force``);
     its last_checked is updated either way, unless ``dry_run``. Raises BundleError without writing."""
     answers, counts = asyncio.run(build(entry, config, today, min_interval))
-    digest = store.answers_hash(answers)
-    meta = store.read_meta(root).get(entry.name, {})
-    stamp = now.isoformat(timespec="seconds")
-    if meta.get("answers_hash") == digest and (root / f"{entry.name}.json").exists() and not force:
-        if not dry_run:
-            store.write_meta(root, entry.name, {**meta, "last_checked": stamp})
-        return Outcome(entry.name, "no_changes", len(answers), counts)
-    if dry_run:
-        return Outcome(entry.name, "would_update", len(answers), counts)
-    store.write_answers(root / f"{entry.name}.json", answers)
-    store.write_meta(root, entry.name, {"last_refresh": stamp, "last_checked": stamp, "answers_hash": digest,
-                                        "answers": len(answers), **counts})
-    return Outcome(entry.name, "updated", len(answers), counts)
+    status = store.record(root, entry.name, answers, counts, now.isoformat(timespec="seconds"), force=force,
+                          dry_run=dry_run)
+    return Outcome(entry.name, status, len(answers), counts)
 
 
 def refresh(

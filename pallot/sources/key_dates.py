@@ -42,15 +42,15 @@ class Deadlines:
     state: str = "TX"  # whose: states/key_dates.py works out other states'
 
 
-def first_date(text: str) -> dt.date | None:
-    """The first "Monday, October 5, 2026" in the text."""
-    match = _DATE.search(text)
-    if not match:
-        return None
-    try:
-        return dt.datetime.strptime(" ".join(match.groups()), "%B %d %Y").date()
-    except ValueError:
-        return None
+def first_date(text: str, pattern: re.Pattern[str] = _DATE) -> dt.date | None:
+    """The first real date ``pattern`` (month, day, year) finds in the text: "Monday, October 5,
+    2026" by default."""
+    for match in pattern.finditer(text):
+        try:
+            return dt.datetime.strptime(" ".join(match.groups()), "%B %d %Y").date()
+        except ValueError:
+            continue
+    return None
 
 
 def _field(label: str) -> str | None:
@@ -143,17 +143,31 @@ def no_elections(page: object) -> str | None:
 
 
 class KeyDatesPage:
+    """A state election office's page of key dates, asked as text under ``source``. A subclass
+    names its source and address and reads its page (``elections``, ``no_elections``)."""
+
+    source = SOURCE
+    url = URL
+
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
-        cache.pause_on(SOURCE, ttl.key_dates_backoff)
-        cache.check_answers(SOURCE, no_elections)
+        cache.pause_on(self.source, ttl.key_dates_backoff)
+        cache.check_answers(self.source, self.no_elections)
+
+    @staticmethod
+    def elections(html: str) -> list[Deadlines]:
+        return elections(html)
+
+    @staticmethod
+    def no_elections(page: object) -> str | None:
+        return no_elections(page)
 
     async def deadlines(self) -> list[Deadlines]:
         """Every election on the page, parsed once per fetched copy. UpstreamError when the
         page can't be had, or has no elections, and no good copy is cached."""
-        got = await self.cache.get_text(SOURCE, RequestSpec("GET", URL), ttl=self.ttl.key_dates)
-        return elections(got.value)
+        got = await self.cache.get_text(self.source, RequestSpec("GET", self.url), ttl=self.ttl.key_dates)
+        return self.elections(got.value)
 
     async def on(self, day: dt.date) -> Deadlines | None:
         return next((found for found in await self.deadlines() if found.day == day), None)

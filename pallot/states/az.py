@@ -17,20 +17,18 @@ its State House district, which is the same number.
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import re
 from collections import Counter
-from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import Any
 
-from ..sources.fec import race_name
 from ..text import display_person
-from . import Filing, ManualList, party
+from . import MONTH_DAY_YEAR, Filing, ManualList, Office, legislator, party, statewide, us_house, us_senate
 
 PAGE = "https://apps.arizona.vote/electioninfo/Election/69"
-_DATE = re.compile(r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December) "
-                   r"\d{1,2}, \d{4}\b")
+_DATE = re.compile(rf"\b{MONTH_DAY_YEAR}\b")
 _DISTRICT = r"District\s*(?:No\.?\s*)?(\d+)"
 _CANDIDATE = re.compile(r"(?P<name>.+?)\s*\((?P<party>[A-Za-z ]+)\)")
 _PARTY_NAMES = {"NOL": "No Labels Party", "IND": "Independent", "INDEPENDENT": "Independent"}
@@ -42,18 +40,6 @@ _APPEALS = {  # A.R.S. 12-120: the counties each division of the Court of Appeal
     "I": ("One", ("MARICOPA", "YUMA", "LA PAZ", "MOHAVE", "COCONINO", "YAVAPAI", "NAVAJO", "APACHE")),
     "II": ("Two", ("PIMA", "PINAL", "COCHISE", "SANTA CRUZ", "GREENLEE", "GRAHAM", "GILA")),
 }
-
-
-@dataclass(frozen=True)
-class _Office:
-    race: str  # the race's id: "STATE HOUSE 11"
-    group: str
-    reach: str
-    district: str | None
-    shown: str
-    seats: int | None = None  # None: as many as a party nominated (the Corporation Commission's seats)
-    counties: tuple[str, ...] = ()
-    retention: bool = False  # a judge standing for retention: each name its own race
 
 
 class _Page(HTMLParser):
@@ -93,31 +79,31 @@ class _Page(HTMLParser):
             self._open[1].append(data)
 
 
-def _office(heading: str) -> _Office | None:
-    """The office a heading names; None for one Pallot doesn't place (a proposition)."""
+def _office(heading: str) -> Office | None:
+    """The office a heading names; None for one Pallot doesn't place (a proposition). Its seats
+    are 0 where they're as many as a party nominated (the Corporation Commission's), and a judge
+    standing for retention is a race of their own, under this office's name."""
     if re.match(r"U\.?S\.? Senator", heading, re.I):
-        return _Office("US SENATE", "federal", "state", None, race_name("AZ", None), 1)
+        return us_senate("AZ")
     if re.match(r"U\.?S\.? Representative", heading, re.I) and (found := re.search(_DISTRICT, heading, re.I)):
-        number = str(int(found.group(1)))
-        return _Office(f"US HOUSE {number}", "federal", "cd", number, race_name("AZ", int(number)), 1)
+        return us_house("AZ", int(found.group(1)))
     if re.match(r"State Senator", heading, re.I) and (found := re.search(_DISTRICT, heading, re.I)):
-        number = str(int(found.group(1)))
-        return _Office(f"STATE SENATE {number}", "legislature", "sd", number,
-                       f"State Senator, Legislative District {number}", 1)
+        number = int(found.group(1))
+        return legislator("sd", number, office=f"State Senator, Legislative District {number}")
     if re.match(r"State Representative", heading, re.I) and (found := re.search(_DISTRICT, heading, re.I)):
-        number = str(int(found.group(1)))
-        return _Office(f"STATE HOUSE {number}", "legislature", "hd", number,
-                       f"State Representative, Legislative District {number}", 2)
+        number = int(found.group(1))
+        return dataclasses.replace(legislator("hd", number, office=f"State Representative, Legislative District {number}"),
+                                   seats=2)
     for office in _STATEWIDE:
         if heading.lower() == office.lower():
-            return _Office(office.upper(), "state", "state", None, office, None)
+            return dataclasses.replace(statewide(office), seats=0)
     if re.match(r"Justice of the (?:Arizona )?Supreme Court", heading, re.I):
-        return _Office("SUPREME COURT", "judicial", "state", None, "Supreme Court Justice", 1, retention=True)
+        return Office("SUPREME COURT", "Supreme Court Justice", "SUPREME COURT", "judicial", "state", retention=True)
     if (found := re.fullmatch(r"Judge of the Court of Appeals,? Division (I|II)", heading, re.I)) \
             and found.group(1).upper() in _APPEALS:
         word, counties = _APPEALS[found.group(1).upper()]
-        return _Office(f"COURT OF APPEALS {found.group(1).upper()}", "judicial", "counties", found.group(1).upper(),
-                       f"Court of Appeals Division {word} Judge", 1, counties, retention=True)
+        return Office(f"COURT OF APPEALS {found.group(1).upper()}", f"Court of Appeals Division {word} Judge",
+                      "COURT OF APPEALS", "judicial", "counties", found.group(1).upper(), counties, retention=True)
     return None
 
 
@@ -156,7 +142,7 @@ class AzList(ManualList):
             raise ValueError("no general election's heading with its date")
         day = dt.datetime.strptime(found.group(0), "%B %d, %Y").date().isoformat()
         rows: list[dict[str, Any]] = []
-        office: _Office | None = None
+        office: Office | None = None
         for index, (tag, text) in enumerate(reader.items[start + 1:]):
             if tag in ("h2", "h3", "tab"):
                 office = _office(text) if tag == "h3" else None
@@ -170,7 +156,7 @@ class AzList(ManualList):
             if tag == "h4":
                 candidate = _CANDIDATE.fullmatch(text)
                 if candidate is None:
-                    raise ValueError(f"a candidate without a party under {office.shown}: {text!r}")
+                    raise ValueError(f"a candidate without a party under {office.office}: {text!r}")
                 rows.append({"office": office, "name": _name(candidate.group("name")), "order": index,
                              "party": candidate.group("party").strip().upper()})
             elif tag == "p" and rows and rows[-1]["office"] is office:
@@ -181,19 +167,18 @@ class AzList(ManualList):
         rows = [row for row in rows if not row.get("withdrawn")]
         if not any(row["office"].reach == "cd" for row in rows):
             raise ValueError("no candidates for Congress under the offices' headings")
-        nominated = Counter((row["office"].race, row["party"]) for row in rows if not row.get("write_in"))
+        nominated = Counter((row["office"].office_id, row["party"]) for row in rows if not row.get("write_in"))
         filings = []
         for row in rows:
             office = row["office"]
             code, party_name = party(row["party"], _PARTY_NAMES)
-            seats = office.seats or max([n for (race, _), n in nominated.items() if race == office.race] or [1])
-            race, shown = office.race, office.shown
+            seats = office.seats or max([n for (race, _), n in nominated.items() if race == office.office_id] or [1])
+            race = dataclasses.replace(office, seats=seats)
             if office.retention:
-                race, shown = f"{office.race} {row['name'].upper()}", f"Retain {office.shown} {row['name']}"
-            filings.append(Filing(
-                day=day, office_id=race, office=shown, family=office.race.rstrip("0123456789I "), group=office.group,
-                reach=office.reach, district=office.district, name=row["name"], party=code, party_name=party_name,
-                counties=office.counties, seats=seats, write_in=bool(row.get("write_in")), retention=office.retention,
+                race = dataclasses.replace(race, office_id=f"{office.office_id} {row['name'].upper()}",
+                                           office=f"Retain {office.office} {row['name']}")
+            filings.append(race.filing(
+                day=day, name=row["name"], party=code, party_name=party_name, write_in=bool(row.get("write_in")),
                 order=row["order"],
             ))
         return filings

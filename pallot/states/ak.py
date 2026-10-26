@@ -26,16 +26,17 @@ from urllib.parse import urljoin
 
 from ..http_cache import RequestSpec, UpstreamError
 from ..models import Race
-from ..sources.fec import race_name
-from . import Filing, StateList, filings_json, from_json, ordinal, party
+from . import (
+    SUFFIXES, Filing, Office, StateList, filings_json, from_json, legislator, ordinal, party, require, statewide,
+    us_house, us_senate,
+)
 
 BASE = "https://www.elections.alaska.gov/candidates/"
 URL = BASE + "?election={year:02d}genr"
-HOUSE_RACES = 40
+MINIMUM = {"hd": 40}
 _ELECTION = re.compile(r"<h2>\s*(\d{4}) General Election\s*</h2>.*?Election Date\s+([A-Z][a-z]+ \d{1,2}, \d{4})", re.S)
 _PAGES = re.compile(r"""href=["']([^"']*\?election=(\d{2}genr)&(?:amp;)?frm-page-\d+=(\d+))["']""")
 _TITLE = re.compile(r"""class=["']entry-title["'][^>]*>\s*Candidates\s*</h1>""")  # the page, with or without a list
-_SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}
 _PARENS = re.compile(r"\(([^()]*)\)")
 # Each judicial district's boroughs and census areas (AS 22.10.010), as the Census names them.
 _JUDICIAL = {
@@ -99,41 +100,39 @@ class _Page(HTMLParser):
             self._cell["name" if "strong" in self._open else "small" if "small" in self._open else "note"].append(data)
 
 
-def _race(heading: str) -> tuple[str, str, str, str | None, str] | None:
-    """(race id, group, reach, district, shown name) of a race's heading; None for a court's,
-    whose judges are races of their own (_retention). ValueError for a heading it doesn't know."""
+def _race(heading: str) -> Office | None:
+    """A race's heading's race; None for a court's, whose judges are races of their own
+    (_retention). ValueError for a heading it doesn't know."""
     text = heading.upper()
     if text == "GOVERNOR / LIEUTENANT GOVERNOR":
-        return "GOVERNOR", "state", "state", None, "Governor and Lieutenant Governor"
+        return statewide("Governor and Lieutenant Governor", "GOVERNOR")
     if text == "UNITED STATES SENATOR":
-        return "US SENATE", "federal", "state", None, race_name("AK", None)
+        return us_senate("AK")
     if text == "UNITED STATES REPRESENTATIVE":
-        return "US HOUSE", "federal", "cd", "0", race_name("AK", 0)
+        return us_house("AK", 0, "US HOUSE")
     if found := re.fullmatch(r"SENATE DISTRICT ([A-T])", text):
-        return text, "legislature", "sd", found.group(1), f"State Senator District {found.group(1)}"
+        return legislator("sd", found.group(1), text)
     if found := re.fullmatch(r"HOUSE DISTRICT (\d{1,2})", text):
-        number = str(int(found.group(1)))
-        return f"HOUSE DISTRICT {number}", "legislature", "hd", number, f"State Representative District {number}"
+        number = int(found.group(1))
+        return legislator("hd", number, f"HOUSE DISTRICT {number}")
     if text == "SUPREME COURT" or re.fullmatch(r"STATE (SUPERIOR|DISTRICT) COURT \d{1,2}", text):
         return None
     raise ValueError(f"a race it doesn't know: {heading}")
 
 
-def _retention(heading: str, name: str, day: str, order: int) -> Filing:
+def _retention(heading: str, name: str) -> Office:
     """A judge's retention question, a race of its own with the judge as its one candidate."""
     text = heading.upper()
     if text == "SUPREME COURT":
-        return Filing(day=day, office_id=f"SUPREME COURT {name.upper()}", office=f"Retain Supreme Court Justice {name}",
-                      family="SUPREME COURT", group="judicial", reach="state", district=None, name=name,
-                      incumbent=True, retention=True, order=order)
+        return Office(f"SUPREME COURT {name.upper()}", f"Retain Supreme Court Justice {name}", "SUPREME COURT",
+                      "judicial", "state", incumbent=True, retention=True)
     court, number = re.fullmatch(r"STATE (SUPERIOR|DISTRICT) COURT (\d+)", text).groups()
     district = int(number)
     if district not in _JUDICIAL:
         raise ValueError(f"no judicial district {district}")
-    return Filing(day=day, office_id=f"{court} COURT {district} {name.upper()}",
-                  office=f"Retain {_COURTS[court]} {name}, {ordinal(district)} Judicial District",
-                  family=f"{court} COURT", group="judicial", reach="counties", district=str(district), name=name,
-                  counties=_JUDICIAL[district], incumbent=True, retention=True, order=order)
+    return Office(f"{court} COURT {district} {name.upper()}",
+                  f"Retain {_COURTS[court]} {name}, {ordinal(district)} Judicial District", f"{court} COURT",
+                  "judicial", "counties", str(district), _JUDICIAL[district], incumbent=True, retention=True)
 
 
 def _registration(text: str) -> tuple[str | None, str | None]:
@@ -152,7 +151,7 @@ def _person(text: str) -> str:
     if not first:
         return last
     words = first.split()
-    suffix = [words.pop()] if len(words) > 1 and words[-1].strip(".,").upper() in _SUFFIXES else []
+    suffix = [words.pop()] if len(words) > 1 and words[-1].strip(".,").upper() in SUFFIXES else []
     return " ".join([*words, last, *suffix])
 
 
@@ -186,17 +185,15 @@ def read_page(text: str) -> dict[str, Any]:
             if found[-1].strip() != "Certified":
                 continue
             if race is None:
-                filings.append(_retention(heading, " ".join(row["name"].split()), day, order))
+                name = " ".join(row["name"].split())
+                filings.append(_retention(heading, name).filing(day=day, name=name, order=order))
                 continue
-            race_id, group, reach, district, shown = race
             if len(found) < 2:
                 raise ValueError(f"no registration for {row['name']} under {heading}")
             code, party_name = _registration(found[0])
             name = " and ".join(_person(part) for part in re.split(r"\s*/\s*", row["name"]))
-            filings.append(Filing(
-                day=day, office_id=race_id, office=shown, family={"sd": "STATE SENATE", "hd": "STATE HOUSE"}.get(reach, race_id),
-                group=group, reach=reach, district=district, name=name,
-                party=code, party_name=party_name, write_in="Write-In" in row["note"],
+            filings.append(race.filing(
+                day=day, name=name, party=code, party_name=party_name, write_in="Write-In" in row["note"],
                 incumbent="Incumbent" in row["note"], order=order,
             ))
     return {**filings_json(filings), "pages": pages}
@@ -206,9 +203,7 @@ def whole(filings: list[Filing]) -> None:
     """ValueError for a list short of the U.S. House race or of a State House district."""
     if not any(f.reach == "cd" for f in filings):
         raise ValueError("no U.S. House race")
-    house = {f.district for f in filings if f.reach == "hd"}
-    if len(house) < HOUSE_RACES:
-        raise ValueError(f"{len(house)} State House races, not {HOUSE_RACES}")
+    require(filings, MINIMUM)
 
 
 class AkList(StateList):
@@ -219,6 +214,7 @@ class AkList(StateList):
     description = "Alaska's list of the candidates on its general election ballot, from its Division of Elections."
     max_bytes = 8 << 20
     cafile = Path(__file__).parent / "certs" / "ak.pem"
+    index_key = "pages"  # its first page, which also has the first part of the list
 
     def spec(self, day: dt.date) -> RequestSpec:
         return RequestSpec("GET", URL.format(year=day.year % 100))
@@ -229,8 +225,8 @@ class AkList(StateList):
         return not race.retention
 
     @classmethod
-    def read_file(cls, path: Path) -> dict[str, Any]:
-        return read_page(path.read_bytes().decode("utf-8", "replace"))
+    def read_index(cls, raw: bytes) -> dict[str, Any] | None:
+        return read_page(raw.decode("utf-8", "replace"))
 
     @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
@@ -240,29 +236,20 @@ class AkList(StateList):
             raise ValueError("not a page")
         return from_json(read_page(raw))
 
-    def check(self, value: Any) -> str | None:
-        if isinstance(value, dict) and isinstance(value.get("pages"), list):
-            try:
-                self.read(value)
-            except (TypeError, ValueError) as exc:
-                return f"can't read its list of candidates: {exc}"
+    def follow(self, index: dict[str, Any], day: dt.date) -> list[RequestSpec] | None:
+        if not self.on(index, day):
             return None
-        return super().check(value)
+        return [RequestSpec("GET", url) for url in index["pages"]]
 
-    async def filings(self, day: dt.date) -> list[Filing] | None:
-        first = await self.cache.get_json(self.source, self.spec(day), ttl=self.ttl.state_list)
-        found = [f for f in self.read(first.value) if f.day == day.isoformat()]
-        if not found:
-            return None
-        for number, url in enumerate(first.value["pages"], 1):
-            got = await self.cache.get_json(self.source, RequestSpec("GET", url), ttl=self.ttl.state_list)
-            found += [dataclasses.replace(f, order=f.order + number * 100_000)
-                      for f in self.read(got.value) if f.day == day.isoformat()]
+    def combine(self, lists: list[list[Filing]]) -> list[Filing]:
+        """The pages' filings in their order, each court's judges once (they come on every page);
+        UpstreamError for a list that isn't whole."""
         kept, seen = [], set()
-        for filing in found:  # the courts come on every page
-            if (filing.office_id, filing.name) not in seen:
-                seen.add((filing.office_id, filing.name))
-                kept.append(filing)
+        for number, found in enumerate(lists):
+            for filing in found:
+                if (filing.office_id, filing.name) not in seen:
+                    seen.add((filing.office_id, filing.name))
+                    kept.append(dataclasses.replace(filing, order=filing.order + number * 100_000))
         try:
             whole(kept)
         except ValueError as exc:

@@ -22,14 +22,15 @@ import zipfile
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Mapping
 from xml.etree import ElementTree
 
 from pypdf import PdfReader
 
 from ..config import Ttls
-from ..http_cache import HttpCache, RequestSpec
+from ..http_cache import HttpCache, RequestSpec, hidden_fields
 from ..models import Race
+from ..sources.fec import race_name
 
 # Where a race is on the ballot, which placement (place.py) checks against the voter's address.
 REACHES = (
@@ -67,6 +68,87 @@ class Filing:
     order: int = 0  # where the race and the candidate come in the list (ballot order where it gives one)
 
 
+@dataclass(frozen=True)
+class Office:
+    """A race as a list names it: Filing's fields but its candidates'. An adapter reads each
+    office into one (us_senate, us_house, legislator, statewide, or its own), then each candidate
+    into a Filing (filing)."""
+
+    office_id: str
+    office: str
+    family: str
+    group: str
+    reach: str
+    district: str | None = None
+    counties: tuple[str, ...] = ()
+    city: str | None = None
+    seats: int = 1
+    unexpired: bool = False
+    incumbent: bool = False  # a retention question's judge
+    retention: bool = False
+
+    def filing(self, **candidate: Any) -> Filing:
+        """A candidate in this race: ``candidate`` gives Filing's other fields (day, name, party…)."""
+        return Filing(**{**dataclasses.asdict(self), **candidate})
+
+
+def us_senate(state: str, office_id: str = "US SENATE") -> Office:
+    return Office(office_id, race_name(state, None), "US SENATE", "federal", "state")
+
+
+def us_house(state: str, number: int, office_id: str | None = None) -> Office:
+    """A U.S. House district's race (0 for an at-large seat)."""
+    return Office(office_id or f"US HOUSE {number}", race_name(state, number), "US HOUSE", "federal", "cd", str(number))
+
+
+def legislator(reach: str, district: int | str, office_id: str | None = None, office: str | None = None) -> Office:
+    """A State Senate (``reach`` "sd") or State House ("hd") district's race: "State Senator District 9"."""
+    family = "STATE SENATE" if reach == "sd" else "STATE HOUSE"
+    title = "State Senator" if reach == "sd" else "State Representative"
+    return Office(office_id or f"{family} {district}", office or f"{title} District {district}", family,
+                  "legislature", reach, str(district))
+
+
+def statewide(office: str, office_id: str | None = None) -> Office:
+    """A statewide office's race ("Attorney General"), its id and family the office in capitals."""
+    key = office_id or office.upper()
+    return Office(key, office, key, "state", "state")
+
+
+def counties_of(districts: Mapping[int, tuple[str, ...]], numbers: tuple[int, ...]) -> tuple[str, ...]:
+    """The counties of judicial ``districts`` (a circuit's counties, by its number) ``numbers``
+    cover together, sorted: an appeals court's, made of circuits."""
+    return tuple(sorted(county for number in numbers for county in districts.get(number, ())))
+
+
+REACH_NAMES = {"cd": "U.S. House", "sd": "State Senate", "hd": "State House"}
+
+
+def require(filings: list[Filing], minimum: Mapping[str, int]) -> list[Filing]:
+    """``filings``, or ValueError when they have fewer districts of a reach than ``minimum``
+    gives ({"cd": 52}): a list short of them isn't the whole list. A "cd" counts U.S. House
+    races only, not a board elected by congressional district."""
+    for reach, least in minimum.items():
+        found = len({f.district for f in filings if f.reach == reach and (reach != "cd" or f.group == "federal")})
+        if found < least:
+            raise ValueError(f"{found} {REACH_NAMES[reach]} races, not {least}")
+    return filings
+
+
+SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}  # a name's last word that isn't the surname
+MONTH_DAY_YEAR = (r"(?:January|February|March|April|May|June|July|August|September|October|November|December) "
+                  r"\d{1,2}, \d{4}")  # "November 3, 2026", as a regex
+WITHDRAWN = re.compile(r"withdr|deceas|disqualif|remov|ineligib", re.I)  # a list's note on a candidate who's off it
+
+
+def decoded(raw: bytes) -> str:
+    """A text file's text: UTF-8 (a byte-order mark dropped), or Windows-1252 where it isn't."""
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return raw.decode("cp1252", "replace")
+
+
 def filings_json(filings: list[Filing]) -> dict[str, Any]:
     return {"filings": [dataclasses.asdict(f) for f in filings]}
 
@@ -83,6 +165,15 @@ _PARTIES = {
 }
 
 
+PARTY_ORDER = {"D": 0, "R": 1, "L": 2, "G": 3}
+
+
+def party_rank(code: str | None, name: str | None) -> int:
+    """Where a candidate's party comes in a race the list doesn't order: D, R, L, G, another
+    party, then no party."""
+    return PARTY_ORDER.get(code or "", 4 if name else 5)
+
+
 def party(text: str | None, names: dict[str, str] | None = None) -> tuple[str | None, str | None]:
     """(code, name) for a list's party: D/R/L/G with no name, or no code and the party's own
     name ("Working Class Party", from ``names`` for a code like "CST"); (None, None) for none."""
@@ -96,22 +187,27 @@ def party(text: str | None, names: dict[str, str] | None = None) -> tuple[str | 
 
 
 class Rows(HTMLParser):
-    """Each table row's cells, as text, empty ones included."""
+    """Each table row's cells (``cells``: td, or th too), as text, empty ones included; with
+    ``breaks``, a br or p inside a cell is a space."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, cells: tuple[str, ...] = ("td",), breaks: bool = False) -> None:
         super().__init__(convert_charrefs=True)
         self.rows: list[list[str]] = []
+        self._cells = cells
+        self._breaks = breaks
         self._row: list[str] | None = None
         self._cell: list[str] | None = None
 
     def handle_starttag(self, tag: str, attrs: Any) -> None:
         if tag == "tr":
             self._row = []
-        elif tag == "td" and self._row is not None:
+        elif tag in self._cells and self._row is not None:
             self._cell = []
+        elif tag in ("br", "p") and self._breaks and self._cell is not None:
+            self._cell.append(" ")
 
     def handle_endtag(self, tag: str) -> None:
-        if tag == "td" and self._row is not None and self._cell is not None:
+        if tag in self._cells and self._row is not None and self._cell is not None:
             self._row.append(" ".join("".join(self._cell).split()))
             self._cell = None
         elif tag == "tr" and self._row is not None:
@@ -219,6 +315,10 @@ class StateList:
     max_bytes: ClassVar[int] = 0  # a list that's a file this big at most (a PDF): kept as its filings alone
     scope_note: ClassVar[str] = ""  # the ballot's note on what a list covering only part of the ballot leaves out
     cafile: ClassVar[Path | None] = None  # a certificate its server leaves out of its chain (HttpCache.trust)
+    postback: ClassVar[bool] = False  # its requests with a form are ASP.NET postbacks (HttpCache.form_from_page)
+    # A list asked in two steps: spec(day) answers an index (a page of links, a list of elections)
+    # kept as a dict under this key, and follow() gives the requests for the list itself.
+    index_key: ClassVar[str | None] = None
 
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
@@ -226,6 +326,8 @@ class StateList:
         self._read: tuple[Any, list[Filing]] | None = None
         if self.cafile:
             cache.trust(self.source, self.cafile)
+        if self.postback:
+            cache.form_from_page(self.source, hidden_fields)
         cache.pause_on(self.source, ttl.state_list_backoff)
         cache.check_answers(self.source, self.check)
         if self.max_bytes:
@@ -233,8 +335,25 @@ class StateList:
 
     @classmethod
     def read_file(cls, path: Path) -> dict[str, Any]:
-        """A list fetched as a file (``max_bytes``) as it's stored: its filings, never the file."""
-        return filings_json(cls.parse(path.read_bytes()))
+        """A list fetched as a file (``max_bytes``) as it's stored: its filings, never the file;
+        or its index (read_index)."""
+        raw = path.read_bytes()
+        index = cls.read_index(raw) if cls.index_key else None
+        return index if index is not None else filings_json(cls.parse(raw))
+
+    @classmethod
+    def read_index(cls, raw: bytes) -> dict[str, Any] | None:
+        """A two-step list's index as kept, or None when ``raw`` is the list itself."""
+        raise NotImplementedError
+
+    def follow(self, index: dict[str, Any], day: dt.date) -> list[RequestSpec] | None:
+        """The requests for a two-step list's election on ``day``, from its index; None while the
+        index has none."""
+        raise NotImplementedError
+
+    def combine(self, lists: list[list[Filing]]) -> list[Filing]:
+        """One list from each answer's filings (the index's first): all of them, by default."""
+        return [f for found in lists for f in found]
 
     def spec(self, day: dt.date) -> RequestSpec:
         raise NotImplementedError
@@ -259,18 +378,31 @@ class StateList:
         return filings
 
     def check(self, value: Any) -> str | None:
+        index = self.index_key and isinstance(value, dict) and self.index_key in value
+        if index and not isinstance(value[self.index_key], (dict, list)):
+            return "its index isn't one"
         try:
             filings = self.read(value)
-        except ValueError as exc:
+        except (TypeError, ValueError) as exc:
             return f"can't read its list of candidates: {exc}"
-        return None if filings else "its list has no candidates"
+        return None if filings or index else "its list has no candidates"
+
+    def on(self, value: Any, day: dt.date) -> list[Filing]:
+        """The filings in a stored answer for the election on ``day``."""
+        return [f for f in self.read(value) if f.day == day.isoformat()]
 
     async def filings(self, day: dt.date) -> list[Filing] | None:
         """The candidates on the ballot of the general election on ``day``, or None while the
         list doesn't have that election yet. UpstreamError when it can't be had."""
         got = await self.cache.get_json(self.source, self.spec(day), ttl=self.ttl.state_list)
-        found = [f for f in self.read(got.value) if f.day == day.isoformat()]
-        return found or None
+        lists = [self.on(got.value, day)]
+        if self.index_key:
+            specs = self.follow(got.value, day)
+            if specs is None:
+                return None
+            for spec in specs:
+                lists.append(self.on((await self.cache.get_json(self.source, spec, ttl=self.ttl.state_list)).value, day))
+        return self.combine(lists) or None
 
     def missing(self, when: str) -> str:
         """The ballot's note when the list has no candidates for the election on ``when``."""
@@ -280,6 +412,9 @@ class StateList:
     def ranked_choice(cls, race: Race) -> bool:
         """Whether the voter ranks the candidates in ``race`` instead of picking."""
         return False
+
+
+IMPORTED = "manual:"  # the scheme of an imported list's key (ManualList.spec)
 
 
 class ManualList(StateList):
@@ -295,12 +430,16 @@ class ManualList(StateList):
     @classmethod
     def spec(cls, day: dt.date) -> RequestSpec:  # type: ignore[override]
         """The imported copy's key: not an address, so nothing can ever ask the state's site for it."""
-        return RequestSpec("GET", f"manual:{cls.source}", params={"day": day.isoformat()})
+        return RequestSpec("GET", f"{IMPORTED}{cls.source}", params={"day": day.isoformat()})
+
+    @staticmethod
+    def imported(spec: RequestSpec) -> bool:
+        """Whether ``spec`` is an imported copy's key (spec), not a request of what's fetched."""
+        return spec.url.startswith(IMPORTED)
 
     async def filings(self, day: dt.date) -> list[Filing] | None:
         kept = self.cache.peek(self.spec(day))
-        found = [f for f in self.read(kept.value) if f.day == day.isoformat()] if kept else []
-        return found or None
+        return (self.on(kept.value, day) if kept else []) or None
 
     def missing(self, when: str) -> str:
         return f"Pallot doesn't have the {self.label}'s list of candidates for {when} yet"

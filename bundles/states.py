@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from typing import Awaitable, Callable
 
-from pallot.http_cache import RequestSpec
 from pallot.sources.fec import general_day
 from pallot.states import ManualList, StateList
 from pallot.states.adapters import ADAPTERS
@@ -41,20 +40,17 @@ def imported(cls: type[ManualList]) -> Callable[[Context], Awaitable[dict[str, i
     return build
 
 
-def _manual(spec: RequestSpec) -> bool:
-    return spec.url.startswith("manual:")
-
-
 def _bundles(cls: type[StateList]) -> tuple[Bundle, ...]:
     if not issubclass(cls, ManualList):
         return (Bundle(cls.source, builder(cls), "daily", lifetime=lambda ttl, _spec: ttl.state_list_bundle,
                        shape=cls.shape),)
     manual = Bundle(cls.source, imported(cls), "manual", lifetime=lambda ttl, _spec: ttl.state_list_imported,
-                    include=_manual, shape=cls.shape)
+                    include=ManualList.imported, shape=cls.shape)
     if not cls.fetched:
         return (manual,)
     return manual, Bundle(cls.source, builder(cls), "daily", lifetime=lambda ttl, _spec: ttl.state_list_bundle,
-                          name=f"{cls.source}_results", include=lambda spec: not _manual(spec), shape=cls.shape)
+                          name=f"{cls.source}_results", include=lambda spec: not ManualList.imported(spec),
+                          shape=cls.shape)
 
 
 BUNDLES = tuple(bundle for cls in ADAPTERS.values() for bundle in _bundles(cls))

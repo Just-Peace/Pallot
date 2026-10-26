@@ -18,55 +18,47 @@ import datetime as dt
 import re
 from typing import Any
 
-from ..sources.fec import race_name
-from . import Filing, ManualList, party, pdf_lines
+from . import (
+    MONTH_DAY_YEAR, WITHDRAWN, Filing, ManualList, Office, legislator, party, pdf_lines, require, statewide, us_house,
+    us_senate,
+)
 
 STATEWIDE = ("Governor", "Lieutenant Governor", "Secretary of State", "Auditor of State", "Treasurer of State",
              "Secretary of Agriculture", "Attorney General")
-MIN_US_HOUSE = 4
-MIN_STATE_HOUSE = 100
-_TITLE = re.compile(r"\b((?:January|February|March|April|May|June|July|August|September|October|November|December) "
-                    r"\d{1,2}, \d{4}) General Election\b")
+MINIMUM = {"cd": 4, "hd": 100}
+_TITLE = re.compile(rf"\b({MONTH_DAY_YEAR}) General Election\b")
 _DATE = re.compile(r"\d{1,2}/\d{1,2}/\d{4}")
 _NOISE = re.compile(r"\s*(?:For change requests\b|or \d{3}-\d{3}-\d{4}|Candidate List\b|For the Office Of\b|"
                     r"Filing period\b|Ballot vacancies\b|\w+ \d{1,2}, \d{4} General Election\b)")
-_GONE = re.compile(r"withdr|deceas|disqualif|remov|ineligib", re.I)
 _PARTIES = {"NO PARTY": None}
 
 
-def _kind(office: str) -> dict[str, Any]:
-    """The race an office names, as Filing's fields; ValueError for one the list never had."""
+def _kind(office: str) -> Office:
+    """The race an office names; ValueError for one the list never had."""
     upper = office.upper()
-    race = {"office_id": upper, "office": office, "family": upper, "district": None}
     if upper == "UNITED STATES SENATOR":
-        return {**race, "office": race_name("IA", None), "family": "US SENATE", "group": "federal", "reach": "state"}
+        return us_senate("IA", upper)
     if found := re.fullmatch(r"UNITED STATES REPRESENTATIVE DISTRICT (\d+)", upper):
-        number = int(found.group(1))
-        return {**race, "office": race_name("IA", number), "family": "US HOUSE", "group": "federal", "reach": "cd",
-                "district": str(number)}
-    for pattern, reach, family, label in ((r"STATE SENATOR DISTRICT (\d+)", "sd", "STATE SENATE", "State Senator"),
-                                          (r"STATE REPRESENTATIVE DISTRICT (\d+)", "hd", "STATE HOUSE",
-                                           "State Representative")):
+        return us_house("IA", int(found.group(1)), upper)
+    for pattern, reach in ((r"STATE SENATOR DISTRICT (\d+)", "sd"), (r"STATE REPRESENTATIVE DISTRICT (\d+)", "hd")):
         if found := re.fullmatch(pattern, upper):
-            number = str(int(found.group(1)))
-            return {**race, "office": f"{label} District {number}", "family": family, "group": "legislature",
-                    "reach": reach, "district": number}
+            return legislator(reach, int(found.group(1)), upper)
     for name in STATEWIDE:
         if upper == name.upper():
-            return {**race, "office": name, "group": "state", "reach": "state"}
+            return statewide(name, upper)
     raise ValueError(f"an office it doesn't know: {office}")
 
 
 def parse_lines(lines: list[str]) -> list[Filing]:
     """Every candidate on the list, from pdf_lines' layout; ValueError for a file that isn't the
     list (no title, a row it can't split into its columns, an office it doesn't know) or isn't all
-    of it (fewer than MIN_US_HOUSE races for Congress or MIN_STATE_HOUSE for the State House)."""
+    of it (MINIMUM)."""
     title = next((found.group(1) for line in lines if (found := _TITLE.search(line))), None)
     if title is None:
         raise ValueError("no general election's title")
     day = dt.datetime.strptime(title, "%B %d, %Y").date().isoformat()
     filings: list[Filing] = []
-    race: dict[str, Any] | None = None
+    race: Office | None = None
     for index, line in enumerate(lines):
         if not line.strip() or _NOISE.match(line):
             continue
@@ -80,15 +72,11 @@ def parse_lines(lines: list[str]) -> list[Filing]:
             continue
         if len(cells) < 3 or not _DATE.fullmatch(cells[-1]) or _DATE.search(label) or any(c.isdigit() for c in name):
             raise ValueError(f"a row it can't split into the list's columns: {' '.join(line.split())[:80]}")
-        if _GONE.search(line):
+        if WITHDRAWN.search(line):
             continue
         code, party_name = (_PARTIES[label.upper()], None) if label.upper() in _PARTIES else party(label)
-        filings.append(Filing(day=day, name=name, party=code, party_name=party_name, order=index, **race))
-    for reach, least, what in (("cd", MIN_US_HOUSE, "U.S. House"), ("hd", MIN_STATE_HOUSE, "State House")):
-        found = len({f.office_id for f in filings if f.reach == reach})
-        if found < least:
-            raise ValueError(f"only {found} {what} races, not the whole list")
-    return filings
+        filings.append(race.filing(day=day, name=name, party=code, party_name=party_name, order=index))
+    return require(filings, MINIMUM)
 
 
 class IaList(ManualList):

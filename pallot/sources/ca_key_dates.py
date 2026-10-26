@@ -14,11 +14,9 @@ from __future__ import annotations
 import datetime as dt
 import functools
 import re
-from html.parser import HTMLParser
 
-from ..config import Ttls
-from ..http_cache import HttpCache, RequestSpec
-from .key_dates import Deadlines
+from ..states import Rows
+from .key_dates import Deadlines, KeyDatesPage, first_date
 
 SOURCE = "key_dates_ca"
 DESCRIPTION = "California's registration and mail-ballot dates and Election Day, from its Secretary of State."
@@ -31,45 +29,9 @@ _DATE = re.compile(r"\b([A-Z][a-z]+)\s+(\d{1,2}),\s+(\d{4})")
 _NAME = re.compile(r"(?:[A-Z][A-Za-z]*\s+)*Election\b")
 
 
-def _date(text: str) -> dt.date | None:
-    """The first "October 19, 2026" in the text."""
-    for found in _DATE.finditer(text):
-        try:
-            return dt.datetime.strptime(" ".join(found.groups()), "%B %d %Y").date()
-        except ValueError:
-            continue
-    return None
-
-
-class _Rows(HTMLParser):
-    """Each table row's cells (th or td), as text, whitespace collapsed."""
-
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.rows: list[list[str]] = []
-        self._cell: list[str] | None = None
-
-    def handle_starttag(self, tag: str, attrs: object) -> None:
-        if tag == "tr":
-            self.rows.append([])
-        elif tag in ("td", "th") and self.rows:
-            self._cell = []
-        elif tag in ("br", "p") and self._cell is not None:
-            self._cell.append(" ")
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag in ("td", "th") and self._cell is not None:
-            self.rows[-1].append(" ".join("".join(self._cell).split()))
-            self._cell = None
-
-    def handle_data(self, data: str) -> None:
-        if self._cell is not None:
-            self._cell.append(data)
-
-
 def parse(html: str) -> list[Deadlines]:
     """Every election row of the page's deadlines table; ValueError without the table's headings."""
-    reader = _Rows()
+    reader = Rows(cells=("td", "th"), breaks=True)
     reader.feed(html)
     reader.close()
     header = next((row for row in reader.rows if row and row[0].lower().startswith("election date")), None)
@@ -79,7 +41,7 @@ def parse(html: str) -> list[Deadlines]:
               for key in ("registration", "replacement")}
     found = []
     for row in reader.rows[reader.rows.index(header) + 1:]:
-        day = _date(row[0]) if row else None
+        day = first_date(row[0], _DATE) if row else None
         if day is None:
             continue
         rest = _DATE.sub("", row[0])
@@ -87,7 +49,7 @@ def parse(html: str) -> list[Deadlines]:
 
         def at(key: str) -> dt.date | None:
             index = column[key]
-            return _date(row[index]) if index is not None and index < len(row) else None
+            return first_date(row[index], _DATE) if index is not None and index < len(row) else None
 
         found.append(Deadlines(day, named.group(0).strip() if named else "Election", register_by=at("registration"),
                                mail_apply_by=at("replacement"), state="CA"))
@@ -108,15 +70,14 @@ def no_elections(page: object) -> str | None:
     return None if isinstance(page, str) and elections(page) else "the page lists no elections"
 
 
-class CaKeyDatesPage:
-    def __init__(self, cache: HttpCache, ttl: Ttls):
-        self.cache = cache
-        self.ttl = ttl
-        cache.pause_on(SOURCE, ttl.key_dates_backoff)
-        cache.check_answers(SOURCE, no_elections)
+class CaKeyDatesPage(KeyDatesPage):
+    source = SOURCE
+    url = URL
 
-    async def on(self, day: dt.date) -> Deadlines | None:
-        """The dates of the election on ``day``, or None when the page doesn't list it.
-        UpstreamError when the page can't be had and no good copy is kept."""
-        got = await self.cache.get_text(SOURCE, RequestSpec("GET", URL), ttl=self.ttl.key_dates)
-        return next((found for found in elections(got.value) if found.day == day), None)
+    @staticmethod
+    def elections(html: str) -> list[Deadlines]:
+        return elections(html)
+
+    @staticmethod
+    def no_elections(page: object) -> str | None:
+        return no_elections(page)

@@ -7,7 +7,7 @@
 import { extLink, h, phoneWords } from "./dom.js";
 import { formatDate } from "./format.js";
 import { icon } from "./icons.js";
-import { STATES } from "./labels.js";
+import { stateInfo } from "./labels.js";
 import { sourceNote } from "./view.js";
 
 const DAY = { weekday: "short", month: "short", day: "numeric" };
@@ -89,7 +89,7 @@ function mailVoting(dates, state, at) {
 // The card's contents, or null when Pallot has nothing for the address's state. A state with only
 // its election office's site gets the link: its registration, dates and polling places are there.
 export function keyDatesCard(ballot) {
-  const state = STATES[ballot.location.state];
+  const state = stateInfo(ballot);
   if (!state) return null;
   if (!state.registration) {
     return [

@@ -19,7 +19,7 @@ from typing import Any
 from ..http_cache import RequestSpec
 from ..sources.fec import race_name
 from ..text import display_office, display_person
-from . import Filing, StateList, party
+from . import Filing, Office, StateList, party, party_rank
 
 URL = "https://www.pavoterservices.pa.gov/ElectionInfo/ElectionInfo.aspx"
 COLUMNS = ("CandidateName", "PartyName", "CandidateStatusValue", "CandidateTypeValue", "OfficeName", "DistrictName",
@@ -27,30 +27,33 @@ COLUMNS = ("CandidateName", "PartyName", "CandidateStatusValue", "CandidateTypeV
 _DATA = re.compile(r"""<input[^>]*id=['"]dataJson['"][^>]*value='([^']*)'""")
 _ELECTION = re.compile(r'<option selected="selected" value="\d+">[^<(]*\((\d{2}/\d{2}/\d{4})\)')
 _NUMBERED = re.compile(r"(\d+)\w\w (?:Congressional|Senatorial|Legislative) District")
-_PARTY_ORDER = {"D": 0, "R": 1, "L": 2, "G": 3}
 
 
-def _kind(office: str, district: str) -> tuple[str, str, str | None, str, tuple[str, ...]] | None:
-    """(group, reach, district, shown name, counties) of an office, or None for one that isn't
-    on the general ballot (a party's committee seat)."""
+def _kind(office: str, district: str) -> Office | None:
+    """An office's race, its id the office and district, or None for one that isn't on the
+    general ballot (a party's committee seat)."""
     number = found.group(1) if (found := _NUMBERED.fullmatch(district)) else None
+
+    def race(shown: str, group: str, reach: str, seat: str | None = None, counties: tuple[str, ...] = ()) -> Office:
+        return Office(f"{office} {district}", shown, office, group, reach, seat, counties)
+
     if office == "UNITED STATES SENATOR":
-        return "federal", "state", None, race_name("PA", None), ()
+        return race(race_name("PA", None), "federal", "state")
     if office == "REPRESENTATIVE IN CONGRESS" and number:
-        return "federal", "cd", number, race_name("PA", int(number)), ()
+        return race(race_name("PA", int(number)), "federal", "cd", number)
     if office == "SENATOR IN THE GENERAL ASSEMBLY" and number:
-        return "legislature", "sd", number, f"State Senator District {number}", ()
+        return race(f"State Senator District {number}", "legislature", "sd", number)
     if office == "REPRESENTATIVE IN THE GENERAL ASSEMBLY" and number:
-        return "legislature", "hd", number, f"State Representative District {number}", ()
+        return race(f"State Representative District {number}", "legislature", "hd", number)
     if "COMMITTEE" in office or "DELEGATE" in office:
         return None
     judicial = "JUDGE" in office or "JUSTICE" in office
     if district == "Statewide":
-        return "judicial" if judicial else "state", "state", None, display_office(office), ()
+        return race(display_office(office), "judicial" if judicial else "state", "state")
     if county := re.fullmatch(r"(.+?) ?County", district):
-        name = county.group(1).upper()
-        return "judicial" if judicial else "county", "county", None, f"{county.group(1)} County {display_office(office)}", (name,)
-    return ("judicial", "unplaced", None, display_office(office), ()) if judicial else None
+        return race(f"{county.group(1)} County {display_office(office)}", "judicial" if judicial else "county", "county",
+                    counties=(county.group(1).upper(),))
+    return race(display_office(office), "judicial", "unplaced") if judicial else None
 
 
 class PaList(StateList):
@@ -94,14 +97,13 @@ class PaList(StateList):
         position = {race: i for i, race in enumerate(sorted({key[:2] for key in merged}))}
         filings = []
         for (office, district, name), entry in merged.items():
-            group, reach, number, shown, counties = entry["kind"]
+            race = entry["kind"]
             parties = list(dict.fromkeys(p.strip() for p in entry["parties"] if p and p.strip()))
             code, party_name = party(parties[0]) if len(parties) == 1 else (None, " / ".join(parties) or None)
-            rank = {"state": 0, "cd": 1, "sd": 0, "hd": 1}.get(reach, 2)
-            filings.append(Filing(
-                day=day, office_id=f"{office} {district}", office=shown, family=office, group=group, reach=reach,
-                district=number, name=name, party=code, party_name=party_name, counties=counties,
+            rank = {"state": 0, "cd": 1, "sd": 0, "hd": 1}.get(race.reach, 2)
+            filings.append(race.filing(
+                day=day, name=name, party=code, party_name=party_name,
                 order=(rank * 10_000 + position[(office, district)]) * 10
-                + _PARTY_ORDER.get(code or "", 4 if party_name else 5),
+                + party_rank(code, party_name),
             ))
         return filings

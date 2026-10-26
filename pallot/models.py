@@ -276,6 +276,25 @@ class KeyDates(BaseModel):
     computed: bool = False  # worked out by rule, so the source explains the rules rather than lists the dates
 
 
+class VoterLink(BaseModel):
+    label: str
+    url: str
+    short: str | None = None  # the label on a phone
+    hint: str | None = None  # what's there, on hover
+
+
+class VoterInfo(BaseModel):
+    """How to vote in the voter's state, for "When to vote" (states/key_dates.py's Guide)."""
+
+    registration: VoterLink  # where to check your registration
+    county_offices: VoterLink  # where to find where to vote
+    mail_apply: VoterLink  # how to vote by mail
+    mail_eligibility: str
+    mail_deadline: str | None = None  # the words before the mail-ballot deadline, where they aren't the usual
+    local_office: str | None = None  # who sets where and when you vote, where it isn't the county elections office
+    poll_hours: str  # "7 a.m. – 8 p.m."
+
+
 class Outline(BaseModel):
     """One district's shape for the map: rings of (lon, lat), outer rings and holes alike."""
 
@@ -319,6 +338,7 @@ class Ballot(BaseModel):
     election_date: str | None
     elections: list[ElectionRef]
     key_dates: KeyDates | None = None  # none when the source is off, or has no election on this date
+    voter_info: VoterInfo | None = None  # how to vote there, for the states Pallot knows the details of
     location: Location
     districts: Districts
     races: list[Race]

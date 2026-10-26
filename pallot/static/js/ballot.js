@@ -27,7 +27,7 @@ import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, read
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
-import { STATES, coverageOf } from "./labels.js";
+import { STATES, coverageOf, stateInfo } from "./labels.js";
 import { hideBanner, initRules, openRules, syncRuleBanner } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
@@ -374,7 +374,7 @@ function renderAddress() {
 }
 
 function renderHeader() {
-  const state = STATES[page.ballot.location.state];
+  const state = stateInfo(page.ballot);
   const site = state?.registration ? null : state?.site;
   $("#ballot-sub").replaceChildren(
     ...phoneWords(electionLine(page.ballot), shortElectionLine(page.ballot)),

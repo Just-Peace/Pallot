@@ -69,6 +69,7 @@ import re
 import sys
 import time
 from pathlib import Path
+from typing import Collection
 
 import httpx
 
@@ -76,7 +77,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from pallot.config import DEMO_KEY, load_config  # noqa: E402
-from pallot.http_cache import trusting  # noqa: E402
+from pallot.http_cache import hidden_fields, trusting  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
     ca_key_dates, census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
@@ -156,6 +157,51 @@ def save(name: str, data: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print(f"{name}: {path.stat().st_size:,} bytes")
+
+
+LEGISLATOR_COLUMNS = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
+
+
+def record_census(client: httpx.Client, name: str, address: str) -> census.Place:
+    """``address``'s Census answer, saved as census_<name>.json; the place it gives."""
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
+    response.raise_for_status()
+    save(f"census_{name}.json", response.json())
+    match = response.json()["result"]["addressMatches"][0]
+    return census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+
+
+def record_filers(client: httpx.Client, key: str, state: str, district: int | None = None) -> None:
+    """The FEC's filers for ``state``'s U.S. Senate race, or for its House ``district`` (0 at large)."""
+    house = {} if district is None else {"district": f"{district:02d}"}
+    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
+        "state": state, "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
+        "office": "senate" if district is None else "house", **house})
+    response.raise_for_status()
+    save(f"fec_elections_{state.lower()}_{'senate' if district is None else f'house_{district:02d}'}.json",
+         response.json())
+
+
+def record_legislators(client: httpx.Client, state: str) -> None:
+    """``state``'s Open States legislators, the columns officeholders.py reads."""
+    response = client.get(officeholders.LEGISLATURE.format(state=state.lower()))
+    response.raise_for_status()
+    out = io.StringIO()
+    writer = csv.DictWriter(out, LEGISLATOR_COLUMNS, extrasaction="ignore", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(csv.DictReader(io.StringIO(response.text)))
+    (FIXTURES / f"officeholders_{state.lower()}.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+
+
+def record_members(client: httpx.Client, state: str, districts: Collection[int | None] | None = None) -> None:
+    """``state``'s members of Congress (those of ``districts`` only, a senator's None) in place of
+    the ones officeholders_congress.json had."""
+    response = client.get(officeholders.CONGRESS)
+    response.raise_for_status()
+    path = FIXTURES / "officeholders_congress.json"
+    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != state]
+    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == state
+                              and (districts is None or m["terms"][-1].get("district") in districts)])
 
 
 def record_ballots(client: httpx.Client) -> None:
@@ -357,11 +403,7 @@ def record_state_lists(client: httpx.Client, key: str) -> None:
     added to officeholders_congress.json."""
     seats, places = [], {}
     for name, address in STATE_ADDRESSES.items():
-        response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-        response.raise_for_status()
-        save(f"census_{name}.json", response.json())
-        match = response.json()["result"]["addressMatches"][0]
-        place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+        place = record_census(client, name, address)
         places[place.state] = place
         seats += [f"{place.state}-SEN", f"{place.state}-{place.cd:02d}"]
 
@@ -400,15 +442,8 @@ def record_state_lists(client: httpx.Client, key: str) -> None:
         print("The FEC's hourly limit ran out; its state-list fixtures were not all recorded.")
 
     states = {seat.partition("-")[0] for seat in seats}
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
     for state in states:
-        response = client.get(officeholders.LEGISLATURE.format(state=state.lower()))
-        response.raise_for_status()
-        out = io.StringIO()
-        writer = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(csv.DictReader(io.StringIO(response.text)))
-        (FIXTURES / f"officeholders_{state.lower()}.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+        record_legislators(client, state)
     response = client.get(officeholders.CONGRESS)
     response.raise_for_status()
     path = FIXTURES / "officeholders_congress.json"
@@ -424,11 +459,7 @@ def record_ca(client: httpx.Client, key: str, pdf: Path | None) -> None:
     its table of deadlines; its seat's FEC filers, its legislators
     (the columns officeholders.py reads), and its senators and representative added to officeholders_congress.json."""
     name, address = CA_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     if pdf is None:
         response = client.get(ca.URL.format(year=FEC_CYCLE))
         response.raise_for_status()
@@ -463,25 +494,9 @@ def record_ca(client: httpx.Client, key: str, pdf: Path | None) -> None:
                                                 encoding="utf-8", newline="")
     print(f"key_dates_ca.html: {len(ca_key_dates.parse(table)):,} elections")
 
-    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-        "state": "CA", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-        "office": "house", "district": f"{place.cd:02d}"})
-    response.raise_for_status()
-    save(f"fec_elections_ca_house_{place.cd:02d}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="ca"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_ca.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "CA"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "CA"
-                              and m["terms"][-1].get("district") in (None, place.cd)])
+    record_filers(client, key, "CA", place.cd)
+    record_legislators(client, "ca")
+    record_members(client, "CA", (None, place.cd))
 
 
 def record_nv(client: httpx.Client, key: str, pdf: Path | None) -> None:
@@ -490,11 +505,7 @@ def record_nv(client: httpx.Client, key: str, pdf: Path | None) -> None:
     column headings and the statewide races) and the pages with the address's county or city; its
     seat's FEC filers, its legislators, and its representative added to officeholders_congress.json."""
     name, address = NV_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     saved = pdf or next(iter(sorted((ROOT / "manual" / "state_nv").glob("*.pdf"))), None)
     if saved is None:
         raise SystemExit("state_nv: save Nevada's certified list in manual/state_nv (see its README), or pass --pdf")
@@ -512,25 +523,9 @@ def record_nv(client: httpx.Client, key: str, pdf: Path | None) -> None:
         writer.write(fh)
     print(f"state_nv.pdf: pages {kept}, {(FIXTURES / 'state_nv.pdf').stat().st_size:,} bytes")
 
-    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-        "state": "NV", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-        "office": "house", "district": f"{place.cd:02d}"})
-    response.raise_for_status()
-    save(f"fec_elections_nv_house_{place.cd:02d}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="nv"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_nv.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "NV"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "NV"
-                              and m["terms"][-1].get("district") in (None, place.cd)])
+    record_filers(client, key, "NV", place.cd)
+    record_legislators(client, "nv")
+    record_members(client, "NV", (None, place.cd))
 
 
 def record_oh(client: httpx.Client, key: str, saved: Path | None) -> None:
@@ -539,34 +534,14 @@ def record_oh(client: httpx.Client, key: str, saved: Path | None) -> None:
     it is (it holds only offices, names and parties); its House seat's FEC filers, its legislators,
     and its members of Congress added to officeholders_congress.json."""
     name, address = OH_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     saved = saved or ROOT / "manual" / "state_oh" / "ohio.json"
     if not saved.exists():
         raise SystemExit("state_oh: save Ohio's list as manual/state_oh/ohio.json (see its README), or pass --json")
     save("state_oh.json", json.loads(saved.read_text(encoding="utf-8")))
-    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-        "state": "OH", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-        "office": "house", "district": f"{place.cd:02d}"})
-    response.raise_for_status()
-    save(f"fec_elections_oh_house_{place.cd:02d}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="oh"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_oh.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "OH"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "OH"
-                              and m["terms"][-1].get("district") in (None, place.cd)])
+    record_filers(client, key, "OH", place.cd)
+    record_legislators(client, "oh")
+    record_members(client, "OH", (None, place.cd))
 
 
 def record_ia(client: httpx.Client, key: str, pdf: Path | None) -> None:
@@ -576,11 +551,7 @@ def record_ia(client: httpx.Client, key: str, pdf: Path | None) -> None:
     a party's "--", with every candidate's address, phone and email made up (IA_CONTACT); its
     seats' FEC filers, its legislators, and its members of Congress added to officeholders_congress.json."""
     name, address = IA_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     path = pdf or next(iter(sorted((ROOT / "manual" / "state_ia").glob("*.pdf"))), None)
     if path is None:
         raise SystemExit("state_ia: save Iowa's candidate list in manual/state_ia (see its README), or pass --pdf")
@@ -601,27 +572,10 @@ def record_ia(client: httpx.Client, key: str, pdf: Path | None) -> None:
                      f"{shown:<52}{cells[0]:<16}{cells[1]:<35}{IA_CONTACT}          {cells[-1]}")
     (FIXTURES / "state_ia.txt").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="")
     print(f"state_ia.txt: {(FIXTURES / 'state_ia.txt').stat().st_size:,} bytes")
-    for office, district in (("senate", None), ("house", f"{place.cd:02d}")):
-        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-            "state": "IA", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-            "office": office, **({"district": district} if district else {})})
-        response.raise_for_status()
-        save(f"fec_elections_ia_{office}.json" if district is None else f"fec_elections_ia_house_{district}.json",
-             response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="ia"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_ia.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    members = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(members.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "IA"]
-    save(members.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "IA"
-                                 and m["terms"][-1].get("district") in (None, place.cd)])
+    for district in (None, place.cd):
+        record_filers(client, key, "IA", district)
+    record_legislators(client, "ia")
+    record_members(client, "IA", (None, place.cd))
 
 
 def text_pdf(pages: list[list[str]]) -> bytes:
@@ -674,11 +628,7 @@ def record_nj(client: httpx.Client, key: str) -> None:
     House lists it links, rewritten without the candidates' addresses; the address's FEC filers for
     U.S. Senate and House, its legislators, and its members of Congress added to officeholders_congress.json."""
     name, address = NJ_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     response = client.get(nj.URL.format(year=FEC_CYCLE))
     response.raise_for_status()
     title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
@@ -692,61 +642,25 @@ def record_nj(client: httpx.Client, key: str) -> None:
         response.raise_for_status()
         (FIXTURES / f"state_nj_{kind}.pdf").write_bytes(text_pdf(without_addresses(response.content)))
         print(f"state_nj_{kind}.pdf: {len(nj.NjList.parse((FIXTURES / f'state_nj_{kind}.pdf').read_bytes()))} candidates")
-    for office, district in (("senate", None), ("house", place.cd)):
-        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-            "state": "NJ", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-            "office": office, **({"district": f"{district:02d}"} if district else {})})
-        response.raise_for_status()
-        save(f"fec_elections_nj_{office}{f'_{district:02d}' if district else ''}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="nj"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_nj.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "NJ"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "NJ"
-                              and m["terms"][-1].get("district") in (None, place.cd)])
+    for district in (None, place.cd):
+        record_filers(client, key, "NJ", district)
+    record_legislators(client, "nj")
+    record_members(client, "NJ", (None, place.cd))
 
 def record_co(client: httpx.Client, key: str) -> None:
     """Colorado: CO_ADDRESS's Census answer; the SOS's candidate spreadsheet, kept as served (it has
     no contact details); the address's FEC filers for U.S. Senate and House, its legislators, and
     its members of Congress added to officeholders_congress.json."""
     name, address = CO_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     response = client.get(co.URL.format(year=FEC_CYCLE))
     response.raise_for_status()
     (FIXTURES / "state_co.xlsx").write_bytes(response.content)
     print(f"state_co.xlsx: {len(co.CoList.parse(response.content))} candidates")
-    for office, district in (("senate", None), ("house", place.cd)):
-        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-            "state": "CO", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-            "office": office, **({"district": f"{district:02d}"} if district else {})})
-        response.raise_for_status()
-        save(f"fec_elections_co_{office}{f'_{district:02d}' if district else ''}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="co"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_co.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "CO"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "CO"
-                              and m["terms"][-1].get("district") in (None, place.cd)])
+    for district in (None, place.cd):
+        record_filers(client, key, "CO", district)
+    record_legislators(client, "co")
+    record_members(client, "CO", (None, place.cd))
 
 
 def record_il(client: httpx.Client, key: str) -> None:
@@ -756,11 +670,7 @@ def record_il(client: httpx.Client, key: str) -> None:
     FEC filers for U.S. Senate and House, its legislators, and its members of Congress added to
     officeholders_congress.json."""
     name, address = IL_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     response = client.get(il.INDEX)
     response.raise_for_status()
     table = re.search(r"<table[^>]*id=\"ContentPlaceHolder1_gvElections\".*?</table>", response.text, re.S).group(0)
@@ -768,7 +678,7 @@ def record_il(client: httpx.Client, key: str) -> None:
     url = il.DOWNLOAD.format(id=il.elections(response.text)["elections"][general_day(dt.date.today()).isoformat()])
     response = client.get(url)
     response.raise_for_status()
-    fields = il.hidden_fields(response.text)
+    fields = hidden_fields(response.text)
     inputs = "\n".join(f'<input type="hidden" name="{field}" id="{field}" value="{field.strip("_")}-recorded" />'
                        for field in fields)
     (FIXTURES / "state_il_download.html").write_text(
@@ -783,26 +693,10 @@ def record_il(client: httpx.Client, key: str) -> None:
                    for line in lines[:1] + [line for line in lines[1:] if line.strip()])
     (FIXTURES / "state_il.tsv").write_text(text, encoding="utf-8", newline="")
     print(f"state_il.tsv: {len(il.parse(text))} active candidates")
-    for office, district in (("senate", None), ("house", place.cd)):
-        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-            "state": "IL", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-            "office": office, **({"district": f"{district:02d}"} if district else {})})
-        response.raise_for_status()
-        save(f"fec_elections_il_{office}{f'_{district:02d}' if district else ''}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="il"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_il.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "IL"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "IL"
-                              and m["terms"][-1].get("district") in (None, place.cd)])
+    for district in (None, place.cd):
+        record_filers(client, key, "IL", district)
+    record_legislators(client, "il")
+    record_members(client, "IL", (None, place.cd))
 
 
 def without_contacts(text: str) -> str:
@@ -847,25 +741,10 @@ def record_ak(client: httpx.Client, key: str) -> None:
         response = alaska.get(ak.URL.format(year=(FEC_CYCLE + 2) % 100))
         response.raise_for_status()
         (FIXTURES / "state_ak_none.html").write_text(without_contacts(response.text), encoding="utf-8", newline="")
-    for office in ("senate", "house"):
-        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-            "state": "AK", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-            "office": office, **({"district": "00"} if office == "house" else {})})
-        response.raise_for_status()
-        save(f"fec_elections_ak_{office}{'_00' if office == 'house' else ''}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="ak"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_ak.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    path = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(path.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "AK"]
-    save(path.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "AK"])
+    for district in (None, 0):
+        record_filers(client, key, "AK", district)
+    record_legislators(client, "ak")
+    record_members(client, "AK")
 
 
 GA_PLACES = {
@@ -943,20 +822,13 @@ def record_ga(client: httpx.Client, saved: Path | None) -> None:
         for item in data["ballotItems"]:
             contest = ga._CONTEST.fullmatch(ga._text(item["name"]))
             office = ga.state_office(contest.group("office")) if contest else None
-            if (office and office.race in GA_RACES) or ga._text(item["name"]) in GA_SKIPPED:
+            if (office and office.office_id in GA_RACES) or ga._text(item["name"]) in GA_SKIPPED:
                 items.append({"name": item["name"], "summaryResults": {"ballotOptions": [
                     {key: option.get(key) for key in ("name", "voteCount", "isWriteIn", "party")}
                     for option in item["summaryResults"]["ballotOptions"]]}})
         save(f"state_ga_{election}.json", {"election": {key: data["election"].get(key) for key in ("name", "electionDate")},
                                            "ballotItems": items})
-    response = client.get(officeholders.LEGISLATURE.format(state="ga"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    out = io.StringIO()
-    writer_csv = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_ga.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    record_legislators(client, "ga")
 
 
 def record_wi(client: httpx.Client, key: str, saved: Path | None) -> None:
@@ -965,11 +837,7 @@ def record_wi(client: httpx.Client, key: str, saved: Path | None) -> None:
     to the state's rows and WI_JURISDICTIONS'; its seat's FEC filers, its legislators, and its
     representative added to officeholders_congress.json."""
     name, address = WI_ADDRESS
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
-    place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+    place = record_census(client, name, address)
     path = saved or next(iter(sorted((ROOT / "manual" / "state_wi").glob("*.csv"))), None)
     if path is None:
         raise SystemExit("state_wi: save Wisconsin's contests and candidates in manual/state_wi (see its README), or pass --csv")
@@ -983,25 +851,9 @@ def record_wi(client: httpx.Client, key: str, saved: Path | None) -> None:
     (FIXTURES / "state_wi.csv").write_text("﻿" + out.getvalue(), encoding="utf-8", newline="")
     print(f"state_wi.csv: {(FIXTURES / 'state_wi.csv').stat().st_size:,} bytes")
 
-    response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-        "state": "WI", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-        "office": "house", "district": f"{place.cd:02d}"})
-    response.raise_for_status()
-    save(f"fec_elections_wi_house_{place.cd:02d}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="wi"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    legislators = io.StringIO()
-    writer_csv = csv.DictWriter(legislators, columns, extrasaction="ignore", lineterminator="\n")
-    writer_csv.writeheader()
-    writer_csv.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_wi.csv").write_text(legislators.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    members = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(members.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "WI"]
-    save(members.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "WI"
-                                 and m["terms"][-1].get("district") in (None, place.cd)])
+    record_filers(client, key, "WI", place.cd)
+    record_legislators(client, "wi")
+    record_members(client, "WI", (None, place.cd))
 
 
 def record_ny(client: httpx.Client, key: str, saved: Path | None) -> None:
@@ -1014,11 +866,7 @@ def record_ny(client: httpx.Client, key: str, saved: Path | None) -> None:
         raise SystemExit("state_ny: save New York's certification in manual/state_ny (see its README), or pass --pdf")
     races, seats = set(NY_RACES), set()
     for name, address in NY_ADDRESSES.items():
-        response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-        response.raise_for_status()
-        save(f"census_{name}.json", response.json())
-        match = response.json()["result"]["addressMatches"][0]
-        place = census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
+        place = record_census(client, name, address)
         races |= {("REPRESENTATIVE IN CONGRESS", str(place.cd)), ("STATE SENATOR", str(place.sd)),
                   ("MEMBER OF ASSEMBLY", str(place.hd))}
         seats.add(place.cd)
@@ -1034,25 +882,9 @@ def record_ny(client: httpx.Client, key: str, saved: Path | None) -> None:
     print(f"state_ny.txt: {(FIXTURES / 'state_ny.txt').stat().st_size:,} bytes")
 
     for cd in sorted(seats):
-        response = client.get(f"{fec.API}/elections/", headers={"X-Api-Key": key}, params={
-            "state": "NY", "cycle": str(FEC_CYCLE), "election_full": "true", "per_page": "100", "sort": "-total_receipts",
-            "office": "house", "district": f"{cd:02d}"})
-        response.raise_for_status()
-        save(f"fec_elections_ny_house_{cd:02d}.json", response.json())
-    response = client.get(officeholders.LEGISLATURE.format(state="ny"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    legislators = io.StringIO()
-    writer = csv.DictWriter(legislators, columns, extrasaction="ignore", lineterminator="\n")
-    writer.writeheader()
-    writer.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_ny.csv").write_text(legislators.getvalue(), encoding="utf-8", newline="")
-    response = client.get(officeholders.CONGRESS)
-    response.raise_for_status()
-    members = FIXTURES / "officeholders_congress.json"
-    others = [m for m in json.loads(members.read_text(encoding="utf-8")) if m["terms"][-1].get("state") != "NY"]
-    save(members.name, others + [m for m in response.json() if m["terms"][-1].get("state") == "NY"
-                                 and m["terms"][-1].get("district") in seats])
+        record_filers(client, key, "NY", cd)
+    record_legislators(client, "ny")
+    record_members(client, "NY", seats)
 
 
 def record_wy(client: httpx.Client) -> None:
@@ -1068,14 +900,7 @@ def record_wy(client: httpx.Client) -> None:
     writer.writerows({**row, **{column: WY_CONTACT.get(column, value) for column, value in row.items()}} for row in rows)
     (FIXTURES / "state_wy.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
     print(f"state_wy.csv: {len(wy.WyList.parse(out.getvalue()))} candidates")
-    response = client.get(officeholders.LEGISLATURE.format(state="wy"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    legislators = io.StringIO()
-    writer = csv.DictWriter(legislators, columns, extrasaction="ignore", lineterminator="\n")
-    writer.writeheader()
-    writer.writerows(csv.DictReader(io.StringIO(response.text)))
-    (FIXTURES / "officeholders_wy.csv").write_text(legislators.getvalue(), encoding="utf-8", newline="")
+    record_legislators(client, "wy")
 
 
 def record_polls(client: httpx.Client) -> None:
@@ -1118,16 +943,8 @@ def record_officeholders(client: httpx.Client) -> None:
     nationwide = {seat.partition("-")[0] for seat in NATIONWIDE_RACES} | {"NC", "MI"}  # and STATE_ADDRESSES' states
     others += [m for m in members if m["terms"][-1].get("state") in nationwide and m not in others]
     save("officeholders_congress.json", texas + others)
-    response = client.get(officeholders.LEGISLATURE.format(state="tx"))
-    response.raise_for_status()
-    columns = ("id", "name", "current_party", "current_district", "current_chamber", "given_name", "family_name")
-    rows = list(csv.DictReader(io.StringIO(response.text)))
-    out = io.StringIO()
-    writer = csv.DictWriter(out, columns, extrasaction="ignore", lineterminator="\n")
-    writer.writeheader()
-    writer.writerows(rows)
+    record_legislators(client, "tx")
     path = FIXTURES / "officeholders_tx.csv"
-    path.write_text(out.getvalue(), encoding="utf-8", newline="")
     print(f"{path.name}: {path.stat().st_size:,} bytes")
 
 

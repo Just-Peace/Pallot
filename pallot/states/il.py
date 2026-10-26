@@ -25,16 +25,18 @@ retention in the old district or the new one, as they chose (705 ILCS 23/5), and
 from __future__ import annotations
 
 import csv
+import dataclasses
 import datetime as dt
 import html
 import io
 import re
-from pathlib import Path
 from typing import Any
 
-from ..http_cache import RequestSpec, Unreadable
-from ..sources.fec import race_name
-from . import Filing, StateList, filings_json, ordinal, party
+from ..http_cache import RequestSpec
+from . import (
+    Filing, Office, StateList, counties_of, decoded, legislator, ordinal, party, require, statewide, us_house,
+    us_senate,
+)
 
 BASE = "https://www.elections.il.gov/ElectionOperations/"
 INDEX = BASE + "CandidateOfficeFilingSearch.aspx"
@@ -42,7 +44,7 @@ DOWNLOAD = BASE + "DownloadCandidates.aspx?ID={id}"
 FORM = {"__EVENTTARGET": "ctl00$ContentPlaceHolder1$btnText", "__EVENTARGUMENT": ""}
 COLUMNS = ("CandidateID", "BracketID", "LastName", "FirstName", "CandidateStatus", "ElecDate", "ElectionType",
            "PartyName", "PartySequence", "OfficeName", "BallotGroup", "OfficeSequence", "Sequence")
-HOUSE_RACES = 17  # a list with fewer Congress races isn't the whole list
+MINIMUM = {"cd": 17}  # a list with fewer Congress races isn't the whole list
 STATEWIDE = {"GOVERNOR AND LIEUTENANT GOVERNOR": "Governor and Lieutenant Governor", "ATTORNEY GENERAL": "Attorney General",
              "SECRETARY OF STATE": "Secretary of State", "COMPTROLLER": "Comptroller", "TREASURER": "Treasurer"}
 TICKET = "GOVERNOR AND LIEUTENANT GOVERNOR"
@@ -135,41 +137,35 @@ def _court(place: str, court: str) -> tuple[str, dict[str, Any]] | None:
     name = f"the Circuit Court, {ordinal(number)} Circuit" if court == "CIRCUIT" else \
         f"the Appellate Court, {ordinal(number)} District"
     return name, {"family": f"{court} JUDGE", "reach": "counties", "district": str(number),
-                  "counties": tuple(sorted(county for circuit in circuits for county in _CIRCUITS[circuit]))}
+                  "counties": counties_of(_CIRCUITS, circuits)}
 
 
-def _kind(shown: str, name: str) -> dict[str, Any]:
-    """The race of an office, as Filing's fields: its id, shown name, family, group, reach, district
-    and counties, and for a retention question, ``name``'s, the judge's."""
+def _kind(shown: str, name: str) -> Office:
+    """The race of an office, and for a retention question, ``name``'s, the judge's."""
     office = shown.upper()
-    race = {"office_id": office, "office": _capitalized(shown), "family": office, "district": None, "counties": ()}
     if found := _RETAIN.match(office):
         court = _court(found.group(1), found.group(2))
-        retain = {**race, "office": f"Retain {name}" + (f", Judge of {court[0]}" if court else ""), "group": "judicial",
-                  "reach": "unplaced", "incumbent": True, "retention": True}
-        return {**retain, **court[1]} if court and (found.group(2) == "CIRCUIT" or court[1]["reach"] == "county") \
-            else retain
+        retain = Office(office, f"Retain {name}" + (f", Judge of {court[0]}" if court else ""), office, "judicial",
+                        "unplaced", incumbent=True, retention=True)
+        placed = court and (found.group(2) == "CIRCUIT" or court[1]["reach"] == "county")
+        return dataclasses.replace(retain, **court[1]) if placed else retain
     if office == "UNITED STATES SENATOR":
-        return {**race, "office": race_name("IL", None), "family": "US SENATE", "group": "federal", "reach": "state"}
+        return us_senate("IL", office)
     if office in STATEWIDE:
-        return {**race, "office": STATEWIDE[office], "group": "state", "reach": "state"}
+        return statewide(STATEWIDE[office], office)
     if found := _LEGISLATURE.match(office):
         number, kind = int(found.group(1)), found.group(2)
         if kind == "CONGRESS":
-            return {**race, "office": race_name("IL", number), "family": "US HOUSE", "group": "federal", "reach": "cd",
-                    "district": str(number)}
-        senate = kind == "SENATE"
-        return {**race, "office": f"State {'Senator' if senate else 'Representative'} District {number}",
-                "family": "STATE SENATE" if senate else "STATE HOUSE", "group": "legislature",
-                "reach": "sd" if senate else "hd", "district": str(number)}
+            return us_house("IL", number, office)
+        return legislator("sd" if kind == "SENATE" else "hd", number, office)
     for pattern, kind in ((_APPELLATE, "APPELLATE"), (_CIRCUIT, "CIRCUIT")):
         found = pattern.match(shown)
         court = found and " - " not in found.group(2) and _court(found.group(1).upper(), kind)
         if court:
-            return {**race, "office": f"Judge of {court[0]} ({_capitalized(found.group(2))} vacancy)",
-                    "group": "judicial", **court[1]}
+            return Office(office, f"Judge of {court[0]} ({_capitalized(found.group(2))} vacancy)", group="judicial",
+                          **court[1])
     group = "judicial" if "CIRCUIT" in office or "APPELLATE" in office else "state"
-    return {**race, "group": group, "reach": "unplaced"}
+    return Office(office, _capitalized(shown), office, group, "unplaced")
 
 
 def _number(text: str | None) -> int:
@@ -202,22 +198,12 @@ def parse(raw: str) -> list[Filing]:
         group = _text(row["BallotGroup"])
         code, party_name = party(_capitalized(_text(row["PartyName"])), _NAMES)
         rank = _BALLOT.index(group) if group in _BALLOT else len(_BALLOT)
-        filings.append(Filing(
+        filings.append(race.filing(
             day=day, name=name, party=code, party_name=party_name,
             order=((rank * 100_000 + _number(row["OfficeSequence"])) * 1000 + _number(row["PartySequence"])) * 100
-            + _number(row["Sequence"]), **race,
+            + _number(row["Sequence"]),
         ))
-    races = {f.district for f in filings if f.reach == "cd"}
-    if len(races) < HOUSE_RACES:
-        raise ValueError(f"{len(races)} U.S. House races, not {HOUSE_RACES}")
-    return filings
-
-
-def _decoded(raw: bytes) -> str:
-    try:
-        return raw.decode("utf-8")
-    except UnicodeDecodeError:
-        return raw.decode("cp1252", "replace")
+    return require(filings, MINIMUM)
 
 
 class IlList(StateList):
@@ -228,10 +214,8 @@ class IlList(StateList):
     description = ("Illinois's candidates for state and federal offices and its judges, and the judges standing for "
                    "retention, from its State Board of Elections' candidate filings.")
     max_bytes = 16 << 20
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.cache.form_from_page(self.source, hidden_fields)
+    postback = True
+    index_key = "elections"
 
     def spec(self, day: dt.date) -> RequestSpec:
         return RequestSpec("GET", INDEX)
@@ -241,43 +225,18 @@ class IlList(StateList):
         return RequestSpec("POST", DOWNLOAD.format(id=key), form=FORM)
 
     @classmethod
-    def read_file(cls, path: Path) -> dict[str, Any]:
-        text = _decoded(path.read_bytes())
-        if text.lstrip("﻿").startswith("CandidateID\t"):
-            return filings_json(cls.parse(text))
-        return elections(text)
+    def read_index(cls, raw: bytes) -> dict[str, Any] | None:
+        text = decoded(raw)
+        return None if text.startswith("CandidateID\t") else elections(text)
+
+    def follow(self, index: dict[str, Any], day: dt.date) -> list[RequestSpec] | None:
+        key = index["elections"].get(day.isoformat())
+        return None if key is None else [self.download(key)]
 
     @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
+        if isinstance(raw, bytes):
+            raw = decoded(raw)
         if not isinstance(raw, str):
             raise ValueError("not a candidate data file")
         return parse(raw)
-
-    def check(self, value: Any) -> str | None:
-        if isinstance(value, dict) and "elections" in value:
-            return None if isinstance(value["elections"], dict) else "its list of elections isn't one"
-        return super().check(value)
-
-    async def filings(self, day: dt.date) -> list[Filing] | None:
-        index = await self.cache.get_json(self.source, self.spec(day), ttl=self.ttl.state_list)
-        key = index.value["elections"].get(day.isoformat())
-        if key is None:
-            return None
-        got = await self.cache.get_json(self.source, self.download(key), ttl=self.ttl.state_list)
-        return [f for f in self.read(got.value) if f.day == day.isoformat()] or None
-
-
-_HIDDEN = re.compile(r"""<input[^>]*type=["']hidden["'][^>]*>""", re.I)
-_ATTR = re.compile(r"""(name|value)=["']([^"']*)["']""", re.I)
-
-
-def hidden_fields(text: str) -> dict[str, str]:
-    """An ASP.NET page's hidden fields (``__VIEWSTATE``, ``__EVENTVALIDATION``), for its postback."""
-    fields = {}
-    for tag in _HIDDEN.findall(text):
-        attrs = {name.lower(): html.unescape(value) for name, value in _ATTR.findall(tag)}
-        if "name" in attrs:
-            fields[attrs["name"]] = attrs.get("value", "")
-    if "__VIEWSTATE" not in fields:
-        raise Unreadable("the download page has no form to post")
-    return fields

@@ -18,12 +18,13 @@ of it, so those are unconfirmed. A city spanning counties ("- MULTIPLE COUNTIES"
 from __future__ import annotations
 
 import csv
+import dataclasses
+import functools
 import io
 import re
 from typing import Any
 
-from ..sources.fec import race_name
-from . import Filing, ManualList, party
+from . import Filing, ManualList, Office, legislator, party, us_house
 from .key_dates import first_tuesday_after_first_monday
 
 COLUMNS = ("Election", "IsReferendum", "Name On Ballot", "Political Party", "Jurisdiction", "Contest", "District",
@@ -53,44 +54,38 @@ def _number(value: str | None) -> int:
     return int(text) if text.isdigit() else 0
 
 
-def _kind(jurisdiction: str, contest: str, district: str) -> dict[str, Any]:
-    """The race of a row's contest, as Filing's fields: its id, shown name, family, group, reach,
-    district, counties and city."""
+def _kind(jurisdiction: str, contest: str, district: str) -> Office:
+    """The race of a row's contest."""
     where, upper, area = jurisdiction.upper(), contest.upper(), district.upper()
-    race = {"office_id": f"{upper} ({where})", "office": contest, "family": upper, "district": None, "counties": (),
-            "city": None}
     group = "judicial" if _JUDICIAL.search(upper) else "local"
     if where == "STATE OF WISCONSIN":
-        race["office_id"] = upper
         if found := _CONGRESS.fullmatch(upper):
-            number = int(found.group(1))
-            return {**race, "office": race_name("WI", number), "family": "US HOUSE", "group": "federal", "reach": "cd",
-                    "district": str(number)}
+            return us_house("WI", int(found.group(1)), upper)
         for pattern, reach, family, label in LEGISLATURE:
             if found := re.fullmatch(pattern, upper):
-                number = str(int(found.group(1)))
-                return {**race, "office": f"{label} District {number}", "family": family, "group": "legislature",
-                        "reach": reach, "district": number}
+                number = int(found.group(1))
+                return dataclasses.replace(legislator(reach, number, upper, f"{label} District {number}"), family=family)
         if area == "WISCONSIN":
-            return {**race, "office": STATEWIDE.get(upper, contest), "group": "judicial" if group == "judicial" else "state",
-                    "reach": "state"}
-        return {**race, "group": "state", "reach": "unplaced"}
+            return Office(upper, STATEWIDE.get(upper, contest), upper, "judicial" if group == "judicial" else "state",
+                          "state")
+        return Office(upper, contest, upper, "state", "unplaced")
+    race = functools.partial(Office, f"{upper} ({where})", contest, upper, group)
     if found := _MUNICIPALITY.fullmatch(where):
         kind, name, county = found.groups()
         if not (counted := _COUNTY.fullmatch(county)):
-            return {**race, "group": group, "reach": "unplaced"}
+            return race("unplaced")
         counties = (counted.group(1),)
         if kind == "TOWN":
-            return {**race, "group": group, "reach": "part_county", "counties": counties}
+            return race("part_county", counties=counties)
         whole = area == f"{kind} OF {name}"
-        return {**race, "group": group, "reach": "city" if whole else "part_city", "city": name, "counties": counties}
+        return race("city" if whole else "part_city", city=name, counties=counties)
     if found := _COUNTY.fullmatch(where):
         county = found.group(1)
         if area == where:
-            return {**race, "family": re.sub(rf"^{re.escape(county)}(?: COUNTY)? ", "", upper),
-                    "group": "judicial" if group == "judicial" else "county", "reach": "county", "counties": (county,)}
-        return {**race, "group": group, "reach": "part_county", "counties": (county,)}
-    return {**race, "group": group, "reach": "unplaced"}
+            return Office(f"{upper} ({where})", contest, re.sub(rf"^{re.escape(county)}(?: COUNTY)? ", "", upper),
+                          "judicial" if group == "judicial" else "county", "county", counties=(county,))
+        return race("part_county", counties=(county,))
+    return race("unplaced")
 
 
 def parse_rows(text: str) -> list[Filing]:
@@ -110,9 +105,9 @@ def parse_rows(text: str) -> list[Filing]:
         race = _kind(_text(row["Jurisdiction"]), _text(row["Contest"]), _text(row["District"]))
         label = _text(row["Political Party"])
         code, party_name = _PARTIES.get(label.upper()) or party(label)
-        filings.append(Filing(day=day, name=name, party=code, party_name=party_name,
-                              order=_number(row["Contest Ballot Position"]) * 100
-                              + _number(row["Candidate Ballot Position"]), **race))
+        filings.append(race.filing(day=day, name=name, party=code, party_name=party_name,
+                                   order=_number(row["Contest Ballot Position"]) * 100
+                                   + _number(row["Candidate Ballot Position"])))
     if not filings:
         raise ValueError("no candidates")
     return filings
