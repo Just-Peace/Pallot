@@ -100,7 +100,7 @@ function renderSidebar(sidebar) {
 
 // ---- the footer and Back to top -----------------------------------------------------------
 
-// The running version as `git describe` writes it (v1.3.1-g1a2b3c4): in the footer, and in any
+// The running version as `git describe` writes it (v1.4.0-g1a2b3c4): in the footer, and in any
 // element marked data-version (About's credits).
 const VERSION_LABEL = COMMIT ? `v${VERSION}-g${COMMIT}` : `v${VERSION}`;
 const REPO = "https://github.com/Just-Peace/Pallot";

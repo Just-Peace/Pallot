@@ -1,3 +1,3 @@
 """Pallot: a voter's personal ballot, with each candidate enriched from several sources."""
 
-__version__ = "1.3.1"
+__version__ = "1.4.0"
