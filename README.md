@@ -244,20 +244,20 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
 | CAIR Action | **1,355** · Texas: 391 | — | 2026-10-25 | 2026-10-25 |
 | Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
-| NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-17 | 2026-10-25 |
-| Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-17 | 2026-10-25 |
-| Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-17 | 2026-10-25 |
+| NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-26 | 2026-10-26 |
+| Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-26 | 2026-10-26 |
+| Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-26 | 2026-10-26 |
 | Florida Division of Elections candidate list | **369** | 169 races | 2026-10-26 | 2026-10-26 |
-| Virginia Department of Elections candidate list | **38** | 12 races | 2026-10-17 | 2026-10-25 |
+| Virginia Department of Elections candidate list | **38** | 12 races | 2026-10-26 | 2026-10-26 |
 | California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-26 |
 | Arizona Secretary of State candidate list | **232** | 91 races | 2026-10-26 | 2026-10-26 |
 | Nevada Secretary of State candidate list | **633** | 364 races | 2026-10-22 | 2026-10-22 |
 | Georgia Secretary of State candidate list | **292** | 184 races | 2026-10-22 | 2026-10-22 |
 | Georgia Secretary of State party nominees | **451** | 271 races | 2026-10-25 | 2026-10-25 |
 | Wisconsin Elections Commission candidate list | **445** | 293 races | 2026-10-22 | 2026-10-22 |
-| Ohio Secretary of State candidate list | **20** | 8 races | 2026-10-22 | 2026-10-22 |
+| Ohio Secretary of State candidate list | **20** | 8 races | 2026-10-26 | 2026-10-26 |
 | Iowa Secretary of State candidate list | **245** | 137 races | 2026-10-25 | 2026-10-25 |
-| New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-25 | 2026-10-25 |
+| New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-26 | 2026-10-26 |
 | New York State Board of Elections candidate list | **502** | 253 races | 2026-10-25 | 2026-10-25 |
 | Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-26 |
 | Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-26 |

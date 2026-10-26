@@ -157,26 +157,26 @@
   },
   "state_mi": {
    "answers": 1,
-   "answers_hash": "d9910775be0df09f46dcea3bf135556f81c3edc434f55bc334683e250370bb4c",
+   "answers_hash": "8ec669ec215da9750b07f12f00894f2889d23c8d2696fb63be3eb45445743d21",
    "candidates": 707,
-   "last_checked": "2026-10-25T13:41:46+00:00",
-   "last_refresh": "2026-10-17T08:04:59+00:00",
+   "last_checked": "2026-10-26T02:52:14+00:00",
+   "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 331
   },
   "state_nc": {
    "answers": 1,
-   "answers_hash": "2f8fedcb0fdfe31cb94dcb2f271a333417d1f5e5b21e8edfd6e768b8d16e1dec",
+   "answers_hash": "775b880ba14817215fd9d9e32022fa8ce778e7fd034bf02bf011231014376297",
    "candidates": 2484,
-   "last_checked": "2026-10-25T13:41:46+00:00",
-   "last_refresh": "2026-10-17T08:04:59+00:00",
+   "last_checked": "2026-10-26T02:52:14+00:00",
+   "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 1324
   },
   "state_nj": {
    "answers": 3,
-   "answers_hash": "7b3716512b86ccaf488d700ba6ba4e9078179b5b42407cbc0ed9096ab39dd884",
+   "answers_hash": "08c194f997a8af885ea2cb26324a227e87135010d1a1b8bdd657c9ea5c1d2dda",
    "candidates": 39,
-   "last_checked": "2026-10-25T04:15:19+00:00",
-   "last_refresh": "2026-10-25T04:15:19+00:00",
+   "last_checked": "2026-10-26T02:52:14+00:00",
+   "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 13
   },
   "state_nv": {
@@ -197,26 +197,26 @@
   },
   "state_oh": {
    "answers": 1,
-   "answers_hash": "59c998e6bb21bb73f43876e9c3a375966bc8c0f390efe6b98ac2dcacc56292e9",
+   "answers_hash": "4da4c63d6a8b7f82e50839a5028c1c6761679d4ac394ab3e6d93c471d6c957d1",
    "candidates": 20,
-   "last_checked": "2026-10-22T22:48:11+00:00",
-   "last_refresh": "2026-10-22T22:48:11+00:00",
+   "last_checked": "2026-10-26T02:52:30+00:00",
+   "last_refresh": "2026-10-26T02:52:30+00:00",
    "races": 8
   },
   "state_pa": {
    "answers": 1,
-   "answers_hash": "57cbc4cb30922ab17951d1ef4f8f37d1affd9669aabdff4558547d7267b2f616",
+   "answers_hash": "998c9996ea8c04c1d17629739617b75d43ade55d7fe82765301e21e217e82f82",
    "candidates": 436,
-   "last_checked": "2026-10-25T13:41:46+00:00",
-   "last_refresh": "2026-10-17T15:56:17+00:00",
+   "last_checked": "2026-10-26T02:52:14+00:00",
+   "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 247
   },
   "state_va": {
    "answers": 1,
-   "answers_hash": "cddd9ab9f2586af0c801fd45ae455d44dd07b523a75e479bf9584abe944a72d8",
+   "answers_hash": "a42027f47c5bcb73167ea8584154ccd632fbda6b7c10b542aac8037ee738d6ab",
    "candidates": 38,
-   "last_checked": "2026-10-25T13:41:46+00:00",
-   "last_refresh": "2026-10-17T15:56:17+00:00",
+   "last_checked": "2026-10-26T02:52:14+00:00",
+   "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 12
   },
   "state_wi": {
