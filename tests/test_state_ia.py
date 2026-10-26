@@ -34,7 +34,7 @@ def row(office: str, party: str, name: str, date: str = "3/2/2026") -> str:
             f"candidate@example.com          {date}")
 
 
-def ia_lines(house: int = ia.MIN_STATE_HOUSE) -> list[str]:
+def ia_lines(house: int = ia.MINIMUM["hd"]) -> list[str]:
     """The fixture's lines, and a made-up candidate for each State House district up to ``house`` it leaves out."""
     lines = LINES.read_text(encoding="utf-8").splitlines()
     have = {line.split("District ")[1].split()[0] for line in lines if line.startswith("State Representative")}
@@ -105,10 +105,10 @@ def test_an_iowa_list_it_cant_read_or_that_isnt_all_of_it_is_refused():
         ia.parse_lines([TITLE, "                                                    Republican      Pat Roe"])
     with pytest.raises(ValueError, match="can't split"):
         ia.parse_lines([TITLE, row("Governor", "Republican", "Pat Roe").rsplit(" ", 1)[0]])
-    with pytest.raises(ValueError, match="only 99 State House races"):
+    with pytest.raises(ValueError, match="99 State House races, not 100"):
         ia.parse_lines(ia_lines(house=99))
     lines = [line for line in ia_lines() if "United States Representative District 4" not in line]
-    with pytest.raises(ValueError, match="only 3 U.S. House races"):
+    with pytest.raises(ValueError, match="3 U.S. House races, not 4"):
         ia.parse_lines(lines)
     with pytest.raises(ValueError, match="not a PDF"):
         ia.IaList.parse(CLOUDFLARE)

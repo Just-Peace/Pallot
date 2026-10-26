@@ -19,35 +19,38 @@ from typing import Any
 from ..http_cache import RequestSpec
 from ..sources.fec import race_name
 from ..text import display_office
-from . import Filing, StateList, party
+from . import Filing, Office, StateList, party, party_rank
 
 URL = "https://s3.amazonaws.com/dl.ncsbe.gov/Elections/{year}/Candidate%20Filing/Candidate_Listing_{year}.csv"
 COLUMNS = ("election_dt", "county_name", "contest_name", "name_on_ballot", "party_candidate", "is_unexpired",
            "is_partisan", "vote_for")
 
 _PART = re.compile(r"\b(?:DISTRICT|DIST|SEAT|WARD|AREA|ZONE|TOWNSHIP|PRECINCT)\b(?!\s*AT-LARGE)|\((?:NORTH|SOUTH|EAST|WEST)\)")
-_PARTY_ORDER = {"D": 0, "R": 1, "L": 2, "G": 3}
 
 
-def _kind(contest: str, county: str) -> tuple[str, str, str, str | None, str | None]:
-    """(group, reach, family, district, city) of a contest, from its name and a county it has rows in."""
+def _kind(contest: str, county: str) -> Office:
+    """A contest's race, its id the contest, from its name and a county it has rows in."""
+    def race(group: str, reach: str, family: str, district: str | None = None, city: str | None = None) -> Office:
+        return Office(contest, _office(contest, reach, district), family, group, reach, district, city=city)
+
     if contest == "US SENATE":
-        return "federal", "state", "US SENATE", None, None
+        return race("federal", "state", "US SENATE")
     if found := re.fullmatch(r"US HOUSE OF REPRESENTATIVES DISTRICT (\d+)", contest):
-        return "federal", "cd", "US HOUSE", str(int(found.group(1))), None
+        return race("federal", "cd", "US HOUSE", str(int(found.group(1))))
     if found := re.fullmatch(r"NC STATE SENATE DISTRICT (\d+)", contest):
-        return "legislature", "sd", "NC STATE SENATE", str(int(found.group(1))), None
+        return race("legislature", "sd", "NC STATE SENATE", str(int(found.group(1))))
     if found := re.fullmatch(r"NC HOUSE OF REPRESENTATIVES DISTRICT (\d+)", contest):
-        return "legislature", "hd", "NC HOUSE", str(int(found.group(1))), None
+        return race("legislature", "hd", "NC HOUSE", str(int(found.group(1))))
     if contest.startswith(("NC SUPREME COURT", "NC COURT OF APPEALS")):
-        return "judicial", "state", contest, None, None
+        return race("judicial", "state", contest)
     if found := re.match(r"(NC SUPERIOR COURT JUDGE|NC DISTRICT COURT JUDGE|DISTRICT ATTORNEY) DISTRICT (\w+)", contest):
-        return "judicial", "counties", found.group(1), found.group(2), None
+        return race("judicial", "counties", found.group(1), found.group(2))
     if found := re.match(r"(?:CITY|TOWN|VILLAGE) OF (.+)", contest):
-        return "local", "part_city" if _PART.search(contest) else "city", contest, None, found.group(1)
+        return race("local", "part_city" if _PART.search(contest) else "city", contest, city=found.group(1))
     if contest.startswith(f"{county} COUNTY ") or contest.startswith(f"{county} SOIL AND WATER CONSERVATION"):
-        return "county", "part_county" if _PART.search(contest.removeprefix(f"{county} SOIL AND WATER CONSERVATION DISTRICT")) else "county", contest, None, None
-    return "local", "part_county", contest, None, None
+        part = _PART.search(contest.removeprefix(f"{county} SOIL AND WATER CONSERVATION DISTRICT"))
+        return race("county", "part_county" if part else "county", contest)
+    return race("local", "part_county", contest)
 
 
 def _office(contest: str, reach: str, district: str | None) -> str:
@@ -96,16 +99,14 @@ class NcList(StateList):
         position = {contest: i for i, contest in enumerate(sorted({key[1] for key in merged}))}
         filings = []
         for (day, contest, name), found in merged.items():
-            group, reach, family, district, city = _kind(contest, found["county"])
+            race = _kind(contest, found["county"])
             code, party_name = party(found["row"]["party_candidate"]) if found["partisan"] else (None, None)
             seats = found["row"]["vote_for"].strip()
-            filings.append(Filing(
-                day=day, office_id=contest, office=_office(contest, reach, district), family=family, group=group,
-                reach=reach, district=district, name=name, party=code, party_name=party_name,
-                counties=tuple(sorted(found["counties"])), city=city,
+            filings.append(race.filing(
+                day=day, name=name, party=code, party_name=party_name, counties=tuple(sorted(found["counties"])),
                 seats=int(seats) if seats.isdigit() and int(seats) > 0 else 1,
                 unexpired=found["row"]["is_unexpired"].strip().upper() == "TRUE" or "(UNEXPIRED)" in contest,
-                order=(_rank(group, reach) * 10_000 + position[contest]) * 10
-                + _PARTY_ORDER.get(code or "", 4 if party_name else 5),
+                order=(_rank(race.group, race.reach) * 10_000 + position[contest]) * 10
+                + party_rank(code, party_name),
             ))
         return filings

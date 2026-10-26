@@ -14,6 +14,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from pallot import counties
+from pallot.http_cache import hidden_fields
 from pallot.models import Districts, Location
 from pallot.states import il, place
 from pallot.states import key_dates as state_key_dates
@@ -130,9 +131,9 @@ def test_a_file_short_of_congress_or_that_isnt_one_is_refused():
     with pytest.raises(ValueError, match="no CandidateStatus column"):
         il.parse(FILE.replace("CandidateStatus", "Status", 1))
     with pytest.raises(ValueError, match="not a candidate data file"):
-        IlList.parse(b"CandidateID")
+        IlList.parse(None)
     with pytest.raises(ValueError, match="no form to post"):
-        il.hidden_fields("<html><body>Just a moment...</body></html>")
+        hidden_fields("<html><body>Just a moment...</body></html>")
 
 
 def test_a_chicago_ballot_has_the_statewide_races_its_districts_and_cook_countys_judges(client, upstream, logged_calls,

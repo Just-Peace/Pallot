@@ -27,14 +27,12 @@ from __future__ import annotations
 import datetime as dt
 import json
 import re
-from dataclasses import dataclass
 from typing import Any
 
 from .. import counties
 from ..http_cache import RequestSpec
-from ..sources.fec import race_name
 from ..text import display_person
-from . import Filing, ManualList, party
+from . import Filing, ManualList, Office, legislator, party, statewide, us_house, us_senate
 from .key_dates import first_tuesday_after_first_monday
 
 RESULTS_API = "https://results.sos.ga.gov/results/public/api"
@@ -64,19 +62,6 @@ _NO_PARTY = ("", "INDEPENDENT", "NON-PARTISAN", "NONPARTISAN", "OTHER")
 _YEAR = re.compile(r"\b(20\d\d)\b")
 
 
-@dataclass(frozen=True)
-class _Office:
-    race: str  # the race's id: "STATE HOUSE 58", "SHERIFF (TOWNS)"
-    shown: str
-    family: str
-    group: str
-    reach: str
-    district: str | None = None
-    counties: tuple[str, ...] = ()
-    city: str | None = None
-    unexpired: bool = False
-
-
 def _text(value: Any) -> str:
     """The English text of the results site's [{"languageId", "text"}]."""
     texts = [row.get("text") or "" for row in value or [] if isinstance(row, dict)]
@@ -98,34 +83,33 @@ def _tidy(office: str) -> str:
     return _title(" ".join(_MARKS.sub("", " ".join(office.split())).split()))
 
 
-def state_office(text: str) -> _Office | None:
+def state_office(text: str) -> Office | None:
     """A race the state runs, as either source names it ("US House of Representatives - District 5",
     "U.S House of Representatives, District 14"); None for any other."""
     upper = " ".join(re.sub(r"\(NP\)|\.", " ", _MARKS.sub("", text.split("/")[0])).upper().split())
     if upper == "US SENATE":
-        return _Office("US SENATE", race_name("GA", None), "US SENATE", "federal", "state")
+        return us_senate("GA")
     if found := re.fullmatch(r"US HOUSE(?: OF REPRESENTATIVES)?\W+DISTRICT (\d+)", upper):
-        number = str(int(found.group(1)))
-        return _Office(f"US HOUSE {number}", race_name("GA", int(number)), "US HOUSE", "federal", "cd", number)
-    for pattern, reach, family, label in (
-        (r"STATE SENATE\W+DISTRICT (\d+)", "sd", "STATE SENATE", "State Senate"),
-        (r"STATE HOUSE(?: OF REPRESENTATIVES)?\W+DISTRICT (\d+)", "hd", "STATE HOUSE", "State House"),
+        return us_house("GA", int(found.group(1)))
+    for pattern, reach, label in (
+        (r"STATE SENATE\W+DISTRICT (\d+)", "sd", "State Senate"),
+        (r"STATE HOUSE(?: OF REPRESENTATIVES)?\W+DISTRICT (\d+)", "hd", "State House"),
     ):
         if found := re.fullmatch(pattern, upper):
-            number = str(int(found.group(1)))
-            return _Office(f"{family} {number}", f"{label} District {number}", family, "legislature", reach, number)
+            number = int(found.group(1))
+            return legislator(reach, number, office=f"{label} District {number}")
     if found := re.fullmatch(r"(?:PSC|PUBLIC SERVICE COMMISSION(?:ER)?)\W+DISTRICT (\d+)", upper):
         number = str(int(found.group(1)))
-        return _Office(f"PUBLIC SERVICE COMMISSION {number}", f"Public Service Commission District {number}",
-                       "PUBLIC SERVICE COMMISSION", "state", "state", number)
+        return Office(f"PUBLIC SERVICE COMMISSION {number}", f"Public Service Commission District {number}",
+                      "PUBLIC SERVICE COMMISSION", "state", "state", number)
     if upper in STATEWIDE:
-        return _Office(STATEWIDE[upper].upper(), STATEWIDE[upper], STATEWIDE[upper].upper(), "state", "state")
+        return statewide(STATEWIDE[upper])
     if found := re.fullmatch(r"(SPECIAL (?:PRIMARY )?)?DISTRICT ATTORNEY\W+(.+?) JUDICIAL CIRCUIT\b.*", upper):
         circuit = found.group(2).title()
         special = bool(found.group(1))
-        return _Office(f"{'SPECIAL ' if special else ''}DISTRICT ATTORNEY {circuit.upper()}",
-                       f"District Attorney, {circuit} Judicial Circuit{' (special election)' if special else ''}",
-                       "District Attorney", "county", "unplaced", unexpired=special)
+        return Office(f"{'SPECIAL ' if special else ''}DISTRICT ATTORNEY {circuit.upper()}",
+                      f"District Attorney, {circuit} Judicial Circuit{' (special election)' if special else ''}",
+                      "District Attorney", "county", "unplaced", unexpired=special)
     return None
 
 
@@ -155,7 +139,7 @@ def stages(elections: dict[str, Any], day: dt.date) -> list[tuple[str, bool]]:
             for date, _, kind, election_id in sorted(found) if date >= primary]
 
 
-def contests(data: dict[str, Any]) -> list[tuple[_Office, str, list[tuple[str, int, bool]]]]:
+def contests(data: dict[str, Any]) -> list[tuple[Office, str, list[tuple[str, int, bool]]]]:
     """Each party's contest for a race the state runs: (office, party code, [(name, votes,
     incumbent)]), write-ins left out. ValueError for an answer without its contests."""
     items = data.get("ballotItems")
@@ -193,16 +177,14 @@ def nominees(counts: list[tuple[bool, dict[str, Any]]], day: str) -> list[Filing
     """Each party's nominee for each race, from the counts in stages()' order, each a runoff's or
     not: a later count settles a contest an earlier one did, and a contest no count settled has
     no nominee."""
-    decided: dict[tuple[str, str], tuple[_Office, tuple[str, int, bool] | None, int]] = {}
+    decided: dict[tuple[str, str], tuple[Office, tuple[str, int, bool] | None, int]] = {}
     for runoff, data in counts:
         for office, code, options in contests(data):
-            key = (office.race, code)
+            key = (office.office_id, code)
             at = decided[key][2] if key in decided else len(decided)
             decided[key] = (office, _winner(options, runoff), at)
     return [
-        Filing(day=day, office_id=office.race, office=office.shown, family=office.family, group=office.group,
-               reach=office.reach, district=office.district, name=winner[0], party=code, incumbent=winner[2],
-               unexpired=office.unexpired, order=at * 10 + (0 if code == "R" else 1))
+        office.filing(day=day, name=winner[0], party=code, incumbent=winner[2], order=at * 10 + (0 if code == "R" else 1))
         for (_, code), (office, winner, at) in decided.items() if winner
     ]
 
@@ -271,14 +253,14 @@ def _group(upper: str, municipal: bool) -> str:
     return "county"
 
 
-def _local(kind: str, place: str, name: str, rows: list[dict[str, Any]]) -> _Office:
+def _local(kind: str, place: str, name: str, rows: list[dict[str, Any]]) -> Office:
     """The race of an office the qualifying list files under ``kind`` and ``place``."""
     if kind in ("Federal", "Statewide", "State Race"):
         found = state_office(name)
         if found:
             return found
         shown = _tidy(name)
-        return _Office(shown.upper(), shown, shown.upper(), "state", "unplaced")
+        return Office(shown.upper(), shown, shown.upper(), "state", "unplaced")
     shown = _tidy(name)
     unexpired = bool(_UNEXPIRED.search(name))
     if kind in ("Countywide", "County Level"):
@@ -288,15 +270,15 @@ def _local(kind: str, place: str, name: str, rows: list[dict[str, Any]]) -> _Off
         else:
             reach = "county" if kind == "Countywide" and not _NUMBERED.search(shown) else "part_county"
         upper = shown.upper()
-        return _Office(f"{upper} ({county})", shown, upper, _group(upper, False), reach, counties=(county,),
-                       unexpired=unexpired)
+        return Office(f"{upper} ({county})", shown, upper, _group(upper, False), reach, counties=(county,),
+                      unexpired=unexpired)
     city, homes = _city(place, rows)
     if city.lower() not in shown.lower():
         shown = f"{shown}, City of {city.title()}"
     upper = shown.upper()
     reach = "city" if kind == "Municipalwide" and not _PART_CITY.search(upper) else "part_city"
-    return _Office(f"{upper} ({city})", shown, upper.split(",")[0], _group(upper, True), reach, counties=homes,
-                   city=city, unexpired=unexpired)
+    return Office(f"{upper} ({city})", shown, upper.split(",")[0], _group(upper, True), reach, counties=homes,
+                  city=city, unexpired=unexpired)
 
 
 def qualified(text: str) -> list[Filing]:
@@ -317,19 +299,16 @@ def qualified(text: str) -> list[Filing]:
         raise ValueError("no qualifying dates")
     day = first_tuesday_after_first_monday(max(years), 11).isoformat()
     filings = []
-    races: dict[tuple[str, str, str], _Office] = {}
+    races: dict[tuple[str, str, str], Office] = {}
     for index, (kind, place, name, row) in enumerate(rows):
         if not str(row.get("Declaration__c") or "").startswith("Qualified"):
             continue
         if (kind, place, name) not in races:
             races[kind, place, name] = _local(kind, place, name, groups[kind][place][name])
-        office = races[kind, place, name]
         code, party_name = _party(row)
-        filings.append(Filing(
-            day=day, office_id=office.race, office=office.shown, family=office.family, group=office.group,
-            reach=office.reach, district=office.district, name=_name(" ".join(str(row.get("Name_on_Ballot__c")).split())),
-            party=code, party_name=party_name, counties=office.counties, city=office.city, unexpired=office.unexpired,
-            incumbent=bool(row.get("Incumbent__c")), order=10_000 + index,
+        filings.append(races[kind, place, name].filing(
+            day=day, name=_name(" ".join(str(row.get("Name_on_Ballot__c")).split())), party=code,
+            party_name=party_name, incumbent=bool(row.get("Incumbent__c")), order=10_000 + index,
         ))
     if not filings:
         raise ValueError("no qualified candidates")

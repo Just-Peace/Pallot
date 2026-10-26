@@ -23,6 +23,7 @@ import zipfile
 from collections import Counter
 from dataclasses import dataclass, field, replace
 from typing import Any, Callable
+from urllib.parse import urlparse
 
 from bundles.store import Seeded
 
@@ -31,7 +32,7 @@ from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .models import (
     GROUPS, Ballot, BallotRequest, Candidate, CountySource, Districts, ElectionDate, ElectionPrecinct, ElectionRef,
-    KeyDates, LeftOut, Location, MaybeSection, PrecinctSource, Race,
+    KeyDates, LeftOut, Location, MaybeSection, PrecinctSource, Race, VoterInfo,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Sources
@@ -39,7 +40,6 @@ from .sources import county_precincts as county_precincts_source
 from .sources import election_precincts as election_precincts_source
 from .sources import fec as fec_source
 from .sources import google as google_source
-from .sources import ca_key_dates as ca_key_dates_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.census import TEXAS_FIPS, Census, Place
@@ -121,6 +121,12 @@ class Services:
     today: Callable[[], dt.date] = dt.date.today
     bundles: dict[str, Seeded] = field(default_factory=dict)  # what came with Pallot, by bundle (Settings)
 
+    def key_date_page(self, state: str | None) -> KeyDatesPage | None:
+        """The page ``state``'s key dates are read from (states/key_dates.PAGES), or None for a
+        state whose dates are worked out by rule."""
+        pages = {page.source: page for page in (self.key_dates, self.ca_key_dates)}
+        return pages.get(state_key_dates.PAGES.get(state or "", ""))
+
 
 @dataclass
 class SosData:
@@ -160,6 +166,11 @@ def key_dates_of(found: Deadlines) -> KeyDates:
 def computed_key_dates(state: str | None, day: dt.date) -> KeyDates | None:
     found = state_key_dates.computed(state, day)
     return key_dates_of(found) if found else None
+
+
+def voter_info(state: str | None) -> VoterInfo | None:
+    guide = state_key_dates.GUIDES.get(state or "")
+    return guide.voter_info() if guide else None
 
 
 async def election_dates(sos: Sos) -> list[ElectionDate]:
@@ -516,6 +527,7 @@ class _Builder:
             election_date=day.isoformat() if day else None,
             elections=[election_ref(e) for e, _ in sos_data.orders if e.id in used],
             key_dates=key_dates_of(found) if found else None,
+            voter_info=voter_info(location.state),
             location=location,
             districts=districts,
             races=races,
@@ -604,6 +616,7 @@ class _Builder:
             election_date=day.isoformat(),
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
             key_dates=await self._state_key_dates(location.state, day),
+            voter_info=voter_info(location.state),
             location=location,
             districts=districts,
             races=found.races,
@@ -678,6 +691,7 @@ class _Builder:
             election_date=day.isoformat(),
             elections=[ElectionRef(name=f"{day.year} General Election", type="GE", date=day.isoformat())],
             key_dates=await self._state_key_dates(location.state, day),
+            voter_info=voter_info(location.state),
             location=location,
             districts=Districts(cd=cd),
             races=races,
@@ -849,18 +863,21 @@ class _Builder:
             return None
 
     async def _state_key_dates(self, state: str, day: dt.date) -> KeyDates | None:
-        """Another state's dates for the election on ``day``: California's from its SOS's page
-        while that source is on, a state's whose deadlines are counts of days worked out by rule."""
-        if state != "CA":
+        """Another state's dates for the election on ``day``: from its office's page while that
+        source is on (states/key_dates.PAGES: California's), else worked out by rule."""
+        page = self.svc.key_date_page(state)
+        if page is None:
             return computed_key_dates(state, day)
-        if not self.sources.enabled(ca_key_dates_source.SOURCE):
+        if not self.sources.enabled(page.source):
             return None
         try:
-            found = await self.svc.ca_key_dates.on(day)
+            found = await page.on(day)
         except UpstreamError as exc:
             log.warning("%s", exc)
-            self.notes.append("Couldn't load the key dates (registration, mail ballots) from the California Secretary "
-                              "of State; see sos.ca.gov.")
+            guide = state_key_dates.GUIDES[state]
+            site = (urlparse(guide.url).hostname or "").removeprefix("www.")
+            self.notes.append(f"Couldn't load the key dates (registration, mail ballots) from the {guide.source}; "
+                              f"see {site}.")
             return None
         return key_dates_of(found) if found else None
 

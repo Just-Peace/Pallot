@@ -49,8 +49,10 @@ import base64
 import contextlib
 import contextvars
 import hashlib
+import html
 import json
 import logging
+import re
 import sqlite3
 import ssl
 import threading
@@ -208,6 +210,23 @@ _refreshing: contextvars.ContextVar[bool] = contextvars.ContextVar("pallot_refre
 REFRESH_WAITS = 10 * 60  # refresh() waits out a pause of a source's keys that ends within this
 REFRESH_TRIES = 3  # how many times refresh() asks a request whose keys were all resting
 DECODED_PER_BYTE = 3  # decoded JSON takes 2.4–4.5 times its text in memory, measured on the largest answers
+
+
+_HIDDEN = re.compile(r"""<input[^>]*type=["']hidden["'][^>]*>""", re.I)
+_ATTR = re.compile(r"""(name|value)=["']([^"']*)["']""", re.I)
+
+
+def hidden_fields(text: str) -> dict[str, str]:
+    """An ASP.NET page's hidden fields (``__VIEWSTATE``, ``__EVENTVALIDATION``), for its postback
+    (form_from_page); Unreadable for a page without them."""
+    fields = {}
+    for tag in _HIDDEN.findall(text):
+        attrs = {name.lower(): html.unescape(value) for name, value in _ATTR.findall(tag)}
+        if "name" in attrs:
+            fields[attrs["name"]] = attrs.get("value", "")
+    if "__VIEWSTATE" not in fields:
+        raise Unreadable("the page has no form to post")
+    return fields
 
 
 def trusting(cafile: Path) -> ssl.SSLContext:

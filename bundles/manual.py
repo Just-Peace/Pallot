@@ -50,12 +50,4 @@ def import_list(state: str, path: str | Path, *, data_dir: str | Path | None = N
     counts = {"races": len({f.office_id for f in found}), "candidates": len(found)}
     root = Path(data_dir) if data_dir else store.PACKAGE_DATA_DIR
     stamp = (now or dt.datetime.now(dt.timezone.utc)).astimezone(dt.timezone.utc).isoformat(timespec="seconds")
-    digest = store.answers_hash(answers)
-    meta = store.read_meta(root).get(cls.source, {})
-    unchanged = meta.get("answers_hash") == digest and (root / f"{cls.source}.json").exists()
-    if not unchanged:
-        store.write_answers(root / f"{cls.source}.json", answers)
-    store.write_meta(root, cls.source, {
-        "last_refresh": meta.get("last_refresh", stamp) if unchanged else stamp, "last_checked": stamp,
-        "answers_hash": digest, "answers": len(answers), **counts})
-    return Outcome(cls.source, "no_changes" if unchanged else "updated", len(answers), counts)
+    return Outcome(cls.source, store.record(root, cls.source, answers, counts, stamp), len(answers), counts)

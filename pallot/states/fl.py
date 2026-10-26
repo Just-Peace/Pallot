@@ -13,12 +13,13 @@ from __future__ import annotations
 
 import csv
 import datetime as dt
+import functools
 import io
 from typing import Any
 
 from ..http_cache import RequestSpec
 from ..sources.fec import race_name
-from . import Filing, StateList, ordinal, party
+from . import Filing, Office, StateList, counties_of, ordinal, party
 
 URL = "https://dos.elections.myflorida.com/candidates/extractCanList.asp"
 COLUMNS = ("ElectionID", "OfficeCode", "OfficeDesc", "Juris1num", "Juris2num", "StatusCode", "PartyCode", "PartyDesc",
@@ -61,39 +62,46 @@ def form(day: dt.date) -> dict[str, str]:
 
 
 def _counties(circuits: tuple[int, ...]) -> tuple[str, ...]:
-    return tuple(sorted(county for circuit in circuits for county in _CIRCUITS.get(circuit, ())))
+    return counties_of(_CIRCUITS, circuits)
 
 
 def _number(text: str) -> int | None:
     return int(text) if text.strip().isdigit() else None
 
 
-def _kind(row: dict[str, str], name: str) -> tuple[str, str, str, str | None, str, tuple[str, ...]] | None:
-    """(race, group, reach, district, shown name, counties) of a candidate's row, or None for an
-    office the list doesn't place (a special district's)."""
+def _kind(row: dict[str, str], name: str) -> Office | None:
+    """A candidate's row's race, its family the list's office, or None for an office the list
+    doesn't place (a special district's)."""
     code, first, second = row["OfficeCode"], _number(row["Juris1num"]), _number(row["Juris2num"])
+
+    def race(office_id: str, shown: str, group: str, reach: str, district: int | None = None,
+             counties: tuple[str, ...] = ()) -> Office:
+        return Office(office_id, shown, row["OfficeDesc"].upper(), group, reach,
+                      str(district) if district else None, counties, retention=code in ("SCJ", "DCA"))
+
+    judge = functools.partial(race, group="judicial", reach="counties", district=first)
     if code == "USS":
-        return code, "federal", "state", None, race_name("FL", None), ()
+        return race(code, race_name("FL", None), "federal", "state")
     if code == "USR" and first:
-        return f"{code} {first}", "federal", "cd", str(first), race_name("FL", first), ()
+        return race(f"{code} {first}", race_name("FL", first), "federal", "cd", first)
     if code == "STS" and first:
-        return f"{code} {first}", "legislature", "sd", str(first), f"State Senator District {first}", ()
+        return race(f"{code} {first}", f"State Senator District {first}", "legislature", "sd", first)
     if code == "STR" and first:
-        return f"{code} {first}", "legislature", "hd", str(first), f"State Representative District {first}", ()
+        return race(f"{code} {first}", f"State Representative District {first}", "legislature", "hd", first)
     if code in _STATEWIDE:
-        return code, "state", "state", None, _STATEWIDE[code], ()
+        return race(code, _STATEWIDE[code], "state", "state")
     if code == "SCJ":
-        return f"{code} {name}", "judicial", "state", None, f"Retain Supreme Court Justice {name}", ()
+        return race(f"{code} {name}", f"Retain Supreme Court Justice {name}", "judicial", "state")
     if code == "DCA" and first in _APPEALS:
-        return (f"{code} {first} {name}", "judicial", "counties", str(first),
-                f"Retain {ordinal(first)} District Court of Appeal Judge {name}", _counties(_APPEALS[first]))
+        return judge(f"{code} {first} {name}", f"Retain {ordinal(first)} District Court of Appeal Judge {name}",
+                     counties=_counties(_APPEALS[first]))
     if code == "CTJ" and first in _CIRCUITS:
-        return (f"{code} {first} {second}", "judicial", "counties", str(first),
-                f"Circuit Judge, {ordinal(first)} Circuit" + (f", Group {second}" if second else ""), _counties((first,)))
+        return judge(f"{code} {first} {second}",
+                     f"Circuit Judge, {ordinal(first)} Circuit" + (f", Group {second}" if second else ""),
+                     counties=_counties((first,)))
     if code in ("STA", "PUB") and first in _CIRCUITS:
-        return (f"{code} {first}", "judicial", "counties", str(first),
-                f"{'State Attorney' if code == 'STA' else 'Public Defender'}, {ordinal(first)} Circuit",
-                _counties((first,)))
+        return judge(f"{code} {first}", f"{'State Attorney' if code == 'STA' else 'Public Defender'}, "
+                     f"{ordinal(first)} Circuit", counties=_counties((first,)))
     return None
 
 
@@ -126,17 +134,16 @@ class FlList(StateList):
             if kind is None or not name:
                 continue
             kept.append((index, day, name, row, kind))
-        races = {(row["OfficeCode"], kind[0]) for *_, row, kind in kept}
+        races = {(row["OfficeCode"], kind.office_id) for *_, row, kind in kept}
         position = {race: i for i, (_, race) in enumerate(sorted(races, key=lambda r: (_BALLOT.index(r[0]), r[1])))}
         filings = []
-        for index, day, name, row, (race, group, reach, district, shown, counties) in kept:
+        for index, day, name, row, race in kept:
             write_in = row["PartyCode"] == "WRI"
             code = _PARTIES.get(row["PartyCode"])
             party_name = None if code or write_in or row["PartyCode"] in ("NPA", "NOP") else party(row["PartyDesc"])[1]
             listed = 6 if write_in else _PARTY_ORDER.get(code or "", 4 if party_name else 5)
-            filings.append(Filing(
-                day=day, office_id=race, office=shown, family=row["OfficeDesc"].upper(), group=group, reach=reach,
-                district=district, name=name, party=code, party_name=party_name, counties=counties, write_in=write_in,
-                retention=row["OfficeCode"] in ("SCJ", "DCA"), order=(position[race] * 10 + listed) * 10_000 + index,
+            filings.append(race.filing(
+                day=day, name=name, party=code, party_name=party_name, write_in=write_in,
+                order=(position[race.office_id] * 10 + listed) * 10_000 + index,
             ))
         return filings

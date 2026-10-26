@@ -19,7 +19,7 @@ import traceback
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, AsyncIterator, Callable, Collection, Literal, Mapping, Sequence
+from typing import Any, AsyncIterator, Callable, Collection, Mapping, Sequence
 from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
@@ -441,20 +441,22 @@ def create_app(
 
     @app.get("/api/key-dates.ics")
     async def key_dates_calendar(request: Request, date: dt.date, event: ics.EventId | None = None,
-                                 state: Literal["TX", "MI", "CA", "AZ", "NV", "GA", "WI", "OH", "IA", "NJ", "NY", "CO",
-                                                "WY", "IL", "AK"]
-                                 = "TX") -> Response:
-        """The key dates of the election on ``date`` in ``state`` as a calendar file: the one
-        ``event``, or every date still to come (see ics.calendar). Texas's and California's from
-        their SOS's pages, other states' worked out by rule. A link, so it carries no choice of
-        sources: the page only offers it with the key dates on."""
+                                 state: str = "TX") -> Response:
+        """The key dates of the election on ``date`` in ``state`` (one of state_key_dates.GUIDES)
+        as a calendar file: the one ``event``, or every date still to come (see ics.calendar).
+        Read from the state's office's page where there's one (state_key_dates.PAGES), else worked
+        out by rule. A link, so it carries no choice of sources: the page only offers it with the
+        key dates on."""
         svc = services(request)
-        guide = state_key_dates.GUIDES[state]
-        if state in state_key_dates.RULES:
+        guide = state_key_dates.GUIDES.get(state)
+        if guide is None:
+            raise HTTPException(422, "Pallot has no key dates for that state.")
+        page = svc.key_date_page(state)
+        if page is None:
             found = state_key_dates.computed(state, date)
         else:
             try:
-                found = await (svc.ca_key_dates if state == "CA" else svc.key_dates).on(date)
+                found = await page.on(date)
             except UpstreamError as exc:
                 log.warning("%s", exc)
                 raise HTTPException(502, f"The {guide.source}'s website isn't answering right now. Try again "

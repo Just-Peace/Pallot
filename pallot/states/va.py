@@ -13,13 +13,11 @@ import re
 from typing import Any
 
 from ..http_cache import RequestSpec
-from ..sources.fec import race_name
-from . import Filing, Rows, StateList, party
+from . import Filing, Rows, StateList, party, party_rank, us_house, us_senate
 
 URL = "https://www.elections.virginia.gov/casting-a-ballot/candidate-list/november-{day}-{year}-gen-elect-federal-offices/"
 COLUMNS = ("Office Title", "District", "Candidate Party", "Candidate Name", "Incumbent")
 _DAY = re.compile(r"<h1>\s*(November \d{1,2}, \d{4})")
-_PARTY_ORDER = {"D": 0, "R": 1, "L": 2, "G": 3}
 
 
 class VaList(StateList):
@@ -49,17 +47,15 @@ class VaList(StateList):
             office, district, label, name, incumbent = row[:len(COLUMNS)]
             number = re.fullmatch(r"(\d+)\w\w District", district)
             if office == "Member, United States Senate":
-                race, reach, seat = "US SENATE", "state", None
+                race = us_senate("VA")
             elif office == "Member, House of Representatives" and number:
-                race, reach, seat = f"US HOUSE {int(number.group(1))}", "cd", str(int(number.group(1)))
+                race = us_house("VA", int(number.group(1)))
             else:
                 continue
             code, party_name = party(label)
-            filings.append(Filing(
-                day=day, office_id=race, office=race_name("VA", int(seat) if seat else None),
-                family=race.rstrip("0123456789 "), group="federal", reach=reach, district=seat, name=name,
-                party=code, party_name=party_name, incumbent=incumbent.strip().lower() == "yes",
-                order=(0 if reach == "state" else 1 + int(seat or 0)) * 1_000
-                + _PARTY_ORDER.get(code or "", 4 if party_name else 5) * 100 + index,
+            filings.append(race.filing(
+                day=day, name=name, party=code, party_name=party_name, incumbent=incumbent.strip().lower() == "yes",
+                order=(0 if race.reach == "state" else 1 + int(race.district or 0)) * 1_000
+                + party_rank(code, party_name) * 100 + index,
             ))
         return filings

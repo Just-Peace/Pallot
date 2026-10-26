@@ -10,14 +10,16 @@ cover, so they're left out, with a note.
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
+import functools
 import re
 from typing import Any
 
 from ..http_cache import RequestSpec
 from ..matching import last_first
 from ..sources.fec import race_name
-from . import Filing, Rows, StateList, party
+from . import Filing, Office, Rows, StateList, party
 
 URL = "https://mi-boe.entellitrak.com/etk-mi-boe-prod/page.request.do"
 _DATE = re.compile(r"^\d{2}/\d{2}/\d{4}$")
@@ -31,24 +33,25 @@ _STATEWIDE = (
 )
 
 
-def _kind(office: str) -> tuple[str, str, str | None, str, tuple[str, ...]]:
-    """(group, reach, district, shown name, counties) of an office heading."""
+def _kind(office: str) -> Office:
+    """An office heading's race, its id and family the heading's office."""
+    race = functools.partial(Office, office)
     if office == "U.S. Senate":
-        return "federal", "state", None, race_name("MI", None), ()
+        return race(race_name("MI", None), office, "federal", "state")
     if found := re.fullmatch(r"(\d+)\w\w District Representative in Congress", office):
-        return "federal", "cd", found.group(1), race_name("MI", int(found.group(1))), ()
+        return race(race_name("MI", int(found.group(1))), office, "federal", "cd", found.group(1))
     if found := re.fullmatch(r"(\d+)\w\w District State Senator", office):
-        return "legislature", "sd", found.group(1), f"State Senator District {found.group(1)}", ()
+        return race(f"State Senator District {found.group(1)}", office, "legislature", "sd", found.group(1))
     if found := re.fullmatch(r"(\d+)\w\w District Representative in State Legislature", office):
-        return "legislature", "hd", found.group(1), f"State Representative District {found.group(1)}", ()
+        return race(f"State Representative District {found.group(1)}", office, "legislature", "hd", found.group(1))
     if office in _STATEWIDE:
-        return "state", "state", None, office, ()
+        return race(office, office, "state", "state")
     if office == "Justice of Supreme Court":
-        return "judicial", "state", None, "Justice of the Supreme Court", ()
+        return race("Justice of the Supreme Court", office, "judicial", "state")
     if found := re.fullmatch(r"([A-Z][A-Z. ]+) Judge of Probate Court", office):
         county = found.group(1).strip()
-        return "judicial", "county", None, f"{county.title()} County Judge of Probate", (county,)
-    return "judicial" if "Judge" in office else "state", "unplaced", None, office, ()
+        return race(f"{county.title()} County Judge of Probate", office, "judicial", "county", counties=(county,))
+    return race(office, office, "judicial" if "Judge" in office else "state", "unplaced")
 
 
 class MiList(StateList):
@@ -91,18 +94,16 @@ class MiList(StateList):
             status = row[dated - 4] if dated >= 4 else ""
             if status.upper() in ("WITHD", "DISQ"):
                 continue
-            office = heading.group("office")
-            group, reach, district, shown, counties = _kind(office)
+            race = dataclasses.replace(_kind(heading.group("office")), seats=int(heading.group("seats")),
+                                       unexpired=heading.group("term").startswith("Partial"))
+            if seat := heading.group("seat"):
+                race = dataclasses.replace(race, office_id=f"{race.office_id} ({seat})",
+                                           office=f"{race.office}, {seat.lower()} position")
             label = row[dated - 2]
             code, party_name = party(None if label.upper() == "INCUMBENT" else label)
             name = " / ".join(last_first(part) for part in row[dated - 1].split(" / "))
-            office_id = office if not heading.group("seat") else f"{office} ({heading.group('seat')})"
-            filings.append(Filing(
-                day=day.isoformat(), office_id=office_id,
-                office=shown if not heading.group("seat") else f"{shown}, {heading.group('seat').lower()} position",
-                family=office, group=group, reach=reach, district=district, name=name, party=code,
-                party_name=party_name, counties=counties, seats=int(heading.group("seats")),
-                unexpired=heading.group("term").startswith("Partial"), incumbent=label.upper() == "INCUMBENT",
-                order=index,
+            filings.append(race.filing(
+                day=day.isoformat(), name=name, party=code, party_name=party_name,
+                incumbent=label.upper() == "INCUMBENT", order=index,
             ))
         return filings

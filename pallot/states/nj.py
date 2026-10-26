@@ -16,18 +16,16 @@ from __future__ import annotations
 
 import datetime as dt
 import re
-from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin
 
 from ..http_cache import RequestSpec
-from ..sources.fec import race_name
 from ..text import display_person
-from . import _ORDINALS, Filing, StateList, filings_json, party, pdf_lines
+from . import _ORDINALS, Filing, StateList, party, pdf_lines, require, us_house, us_senate
 
 BASE = "https://www.nj.gov/state/elections/"
 URL = BASE + "election-information-{year}.shtml"
-HOUSE_RACES = 12  # a House list with fewer districts isn't the whole list
+MINIMUM = {"cd": 12}  # a House list with fewer districts isn't the whole list
 _LINK = re.compile(r"""href=["']([^"']*/(\d{4})-official-general-candidates-us-(senate|house)(?:-\d+)?\.pdf)["']""", re.I)
 _TITLE = re.compile(r"<title>[^<]*\b(\d{4}) Election Information", re.I)
 _DAY = re.compile(r"GENERALELECTION(\d{2}/\d{2}/\d{4})")
@@ -85,19 +83,14 @@ def parse_lines(lines: list[str]) -> list[Filing]:
         name, label = cells[0], " ".join(cells[-1].split())
         code, party_name = party(label, _NAMES)
         listed += 1
-        filings.append(Filing(
-            day=day, office_id=f"US HOUSE {district}" if house else "US SENATE",
-            office=race_name("NJ", district if house else None), family="US HOUSE" if house else "US SENATE",
-            group="federal", reach="cd" if house else "state", district=str(district) if house else None,
-            name=display_person(" ".join(name.rstrip("*").split())), party=code, party_name=party_name,
+        race = us_house("NJ", district) if house else us_senate("NJ")
+        filings.append(race.filing(
+            day=day, name=display_person(" ".join(name.rstrip("*").split())), party=code, party_name=party_name,
             incumbent=name.endswith("*"), order=(district or 0) * 100 + listed,
         ))
     if not total or total != len(filings):
         raise ValueError(f"{len(filings)} candidates, not the {total or 'no'} its totals say")
-    races = {f.district for f in filings}
-    if house and len(races) < HOUSE_RACES:
-        raise ValueError(f"{len(races)} U.S. House races, not {HOUSE_RACES}")
-    return filings
+    return require(filings, MINIMUM) if house else filings
 
 
 class NjList(StateList):
@@ -107,36 +100,23 @@ class NjList(StateList):
     page = "https://www.nj.gov/state/elections/election-information.shtml"
     description = "New Jersey's official lists of the candidates for U.S. Senate and House, from its Division of Elections."
     max_bytes = 16 << 20
+    index_key = "links"
 
     def spec(self, day: dt.date) -> RequestSpec:
         return RequestSpec("GET", URL.format(year=day.year))
 
     @classmethod
-    def read_file(cls, path: Path) -> dict[str, Any]:
-        raw = path.read_bytes()
-        if raw.startswith(b"%PDF"):
-            return filings_json(cls.parse(raw))
-        return links(raw.decode("utf-8", "replace"))
+    def read_index(cls, raw: bytes) -> dict[str, Any] | None:
+        return None if raw.startswith(b"%PDF") else links(raw.decode("utf-8", "replace"))
+
+    def follow(self, index: dict[str, Any], day: dt.date) -> list[RequestSpec] | None:
+        found = index["links"]
+        if "house" not in found:
+            return None
+        return [RequestSpec("GET", found[kind]) for kind in ("senate", "house") if kind in found]
 
     @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
         if not isinstance(raw, bytes):
             raise ValueError("not a PDF")
         return parse_lines(pdf_lines(raw))
-
-    def check(self, value: Any) -> str | None:
-        if isinstance(value, dict) and "links" in value:
-            return None if isinstance(value["links"], dict) else "its page's links aren't a list"
-        return super().check(value)
-
-    async def filings(self, day: dt.date) -> list[Filing] | None:
-        page = await self.cache.get_json(self.source, self.spec(day), ttl=self.ttl.state_list)
-        found = page.value["links"]
-        if "house" not in found:
-            return None
-        filings = []
-        for kind in ("senate", "house"):
-            if kind in found:
-                got = await self.cache.get_json(self.source, RequestSpec("GET", found[kind]), ttl=self.ttl.state_list)
-                filings += [f for f in self.read(got.value) if f.day == day.isoformat()]
-        return filings or None

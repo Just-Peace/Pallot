@@ -5,7 +5,7 @@ import { ballotSections, electionLine, pickLabels } from "./ballot-shared.js";
 import { h } from "./dom.js";
 import { formatDate } from "./format.js";
 import { earlyVotingText } from "./key-dates.js";
-import { STATES, coverageOf, districtLine } from "./labels.js";
+import { coverageOf, districtLine, stateInfo } from "./labels.js";
 
 // ``short``: parties as one letter where there's one, for the wallet card.
 function pickText(race, keys, picks, { short = false } = {}) {
@@ -14,7 +14,7 @@ function pickText(race, keys, picks, { short = false } = {}) {
 
 // "Early voting: Mon, Oct 19 – Fri, Oct 30 · Polls open 7 a.m. – 7 p.m. on Election Day"
 function whenLine(ballot) {
-  const hours = STATES[ballot.location.state]?.pollHours;
+  const hours = stateInfo(ballot)?.pollHours;
   return [earlyVotingText(ballot), hours && `Polls open ${hours} on Election Day`].filter(Boolean).join(" · ");
 }
 
@@ -88,7 +88,7 @@ export function buildPrintSheet(ballot, picks, { includeNotes, includeBlank, wal
     );
   });
 
-  const state = STATES[ballot.location.state];
+  const state = stateInfo(ballot);
   const tips = state?.printTips ?? ["Bring this sheet with you: many polling places don't allow phones in the voting booth."];
   const districts = districtLine(ballot.districts,
     { precinct: " Pct", state: ballot.location.state, labels: coverageOf(ballot).labels });

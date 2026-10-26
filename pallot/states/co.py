@@ -19,13 +19,14 @@ from typing import Any
 
 from .. import counties
 from ..http_cache import RequestSpec
-from ..sources.fec import race_name
-from . import Filing, StateList, ordinal, party, sheet_rows
+from . import (
+    Filing, Office, StateList, legislator, ordinal, party, require, sheet_rows, statewide, us_house, us_senate,
+)
 from .key_dates import first_tuesday_after_first_monday
 
 URL = "https://www.coloradosos.gov/pubs/elections/vote/files/{year}/{year}GeneralCandidateListOfficial.xlsx"
 COLUMNS = ("Candidate Name", "Office", "District", "Party", "Write In?")
-HOUSE_RACES = 8  # a list with fewer U.S. House races isn't the whole list
+MINIMUM = {"cd": 8}  # a list with fewer U.S. House races isn't the whole list
 _SHEET = re.compile(r"(\d{4})\s*General", re.I)
 _STATEWIDE = {"Secretary of State": "Secretary of State", "State Treasurer": "State Treasurer",
               "Attorney General": "Attorney General"}
@@ -58,66 +59,64 @@ def _number(district: str, office: str) -> int:
     return int(district)
 
 
-def _race(office: str, district: str, name: str) -> tuple[str, str, str, str, str | None, str, tuple[str, ...]] | None:
-    """(race id, family, group, reach, district, shown, counties) of a row's office; None for one
-    that isn't a race on the ballot here (the Lieutenant Governor, the Governor's running mate)."""
-    statewide = district.upper() in ("STATE", "AT LARGE", "AT-LARGE", "")
+def _race(office: str, district: str, name: str) -> Office | None:
+    """A row's race; None for one that isn't a race on the ballot here (the Lieutenant Governor,
+    the Governor's running mate)."""
+    at_large = district.upper() in ("STATE", "AT LARGE", "AT-LARGE", "")
     if office == "US Senate":
-        return "US SENATE", "US SENATE", "federal", "state", None, race_name("CO", None), ()
+        return us_senate("CO")
     if office == "US House of Representatives":
-        seat = _number(district, office)
-        return f"US HOUSE {seat}", "US HOUSE", "federal", "cd", str(seat), race_name("CO", seat), ()
+        return us_house("CO", _number(district, office))
     if office == "Governor":
-        return "GOVERNOR", "GOVERNOR", "state", "state", None, "Governor and Lieutenant Governor", ()
+        return statewide("Governor and Lieutenant Governor", "GOVERNOR")
     if office == "Lt. Governor":
         return None
     if office in _STATEWIDE:
-        return office.upper(), office.upper(), "state", "state", None, _STATEWIDE[office], ()
+        return statewide(_STATEWIDE[office], office.upper())
     if office in _BOARDS:
         family = office.upper()
-        if statewide:
-            return f"{family} AT LARGE", family, "state", "state", None, f"{_BOARDS[office]} At Large", ()
+        if at_large:
+            return Office(f"{family} AT LARGE", f"{_BOARDS[office]} At Large", family, "state", "state")
         seat = _number(district, office)
-        return f"{family} {seat}", family, "state", "cd", str(seat), f"{_BOARDS[office]} District {seat}", ()
+        return Office(f"{family} {seat}", f"{_BOARDS[office]} District {seat}", family, "state", "cd", str(seat))
     if office == "State Senate":
-        seat = _number(district, office)
-        return f"STATE SENATE {seat}", "STATE SENATE", "legislature", "sd", str(seat), f"State Senator District {seat}", ()
+        return legislator("sd", _number(district, office))
     if office == "State House of Representatives":
-        seat = _number(district, office)
-        return (f"STATE HOUSE {seat}", "STATE HOUSE", "legislature", "hd", str(seat),
-                f"State Representative District {seat}", ())
+        return legislator("hd", _number(district, office))
     if office == "RTD Board of Directors":
-        return (f"RTD {district.upper()}", "RTD", "local", "unplaced", district.upper(),
-                f"RTD Board of Directors District {district.upper()}", ())
+        seat = district.upper()
+        return Office(f"RTD {seat}", f"RTD Board of Directors District {seat}", "RTD", "local", "unplaced", seat)
     return _court(office, district, name)
 
 
-def _court(office: str, district: str, name: str) -> tuple[str, str, str, str, str | None, str, tuple[str, ...]]:
+def _court(office: str, district: str, name: str) -> Office:
     """A judge's retention question, a race of its own; ValueError for an office it doesn't know."""
     key = name.upper()
+
+    def retain(office_id: str, shown: str, family: str, reach: str, seat: str | None = None,
+               where: tuple[str, ...] = ()) -> Office:
+        return Office(office_id, f"Retain {name}, {shown}", family, "judicial", reach, seat, where, incumbent=True,
+                      retention=True)
+
     if office == "Colorado Supreme Court":
-        return (f"SUPREME COURT {key}", "SUPREME COURT", "judicial", "state", None,
-                f"Retain {name}, Justice of the Colorado Supreme Court", ())
+        return retain(f"SUPREME COURT {key}", "Justice of the Colorado Supreme Court", "SUPREME COURT", "state")
     if office == "Colorado Court of Appeals":
-        return (f"COURT OF APPEALS {key}", "COURT OF APPEALS", "judicial", "state", None,
-                f"Retain {name}, Judge of the Colorado Court of Appeals", ())
+        return retain(f"COURT OF APPEALS {key}", "Judge of the Colorado Court of Appeals", "COURT OF APPEALS", "state")
     if re.match(r"Dist[ri]+ct Court\b", office):
         for word, court in _DENVER_COURTS:
             if word in office:
-                family = court.upper()
-                return (f"{family} {key}", family, "judicial", "county", None, f"Retain {name}, Judge of the {court}",
-                        (_county("Denver"),))
+                return retain(f"{court.upper()} {key}", f"Judge of the {court}", court.upper(), "county",
+                              where=(_county("Denver"),))
         number = _number(district, office)
         if number not in _JUDICIAL:
             raise ValueError(f"no judicial district {number}")
-        return (f"DISTRICT COURT {number} {key}", "DISTRICT COURT", "judicial", "counties", str(number),
-                f"Retain {name}, District Court Judge, {ordinal(number)} Judicial District",
-                tuple(sorted(_county(county) for county in _JUDICIAL[number])))
+        return retain(f"DISTRICT COURT {number} {key}", f"District Court Judge, {ordinal(number)} Judicial District",
+                      "DISTRICT COURT", "counties", str(number),
+                      tuple(sorted(_county(county) for county in _JUDICIAL[number])))
     if office in ("County Court", "Associate County Court"):
         county = _county(district)
-        family = office.upper()
-        return (f"{family} {county} {key}", family, "judicial", "county", None,
-                f"Retain {name}, {county.title()} {office} Judge", (county,))
+        return retain(f"{office.upper()} {county} {key}", f"{county.title()} {office} Judge", office.upper(), "county",
+                      where=(county,))
     raise ValueError(f"an office it doesn't know: {office!r}")
 
 
@@ -148,19 +147,12 @@ def parse_rows(day: str, rows: list[list[str]]) -> list[Filing]:
         race = _race(office, district, name)
         if race is None:
             continue
-        office_id, family, group, reach, seat, shown, where = race
         if mate := tickets.get(id(row)):
             name = f"{name} and {mate[0].strip()}"
         code, party_name = party(label)
-        filings.append(Filing(
-            day=day, office_id=office_id, office=shown, family=family, group=group, reach=reach, district=seat,
-            name=name, party=code, party_name=party_name, counties=where, write_in=write_in.upper() == "Y",
-            incumbent=group == "judicial", retention=group == "judicial", order=index,
-        ))
-    house = {f.district for f in filings if f.reach == "cd" and f.group == "federal"}
-    if len(house) < HOUSE_RACES:
-        raise ValueError(f"{len(house)} U.S. House races, not {HOUSE_RACES}")
-    return filings
+        filings.append(race.filing(day=day, name=name, party=code, party_name=party_name,
+                                   write_in=write_in.upper() == "Y", order=index))
+    return require(filings, MINIMUM)
 
 
 class CoList(StateList):

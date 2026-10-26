@@ -42,27 +42,13 @@ const SITES = {
 const siteLabel = (url) => new URL(url).hostname.replace(/^www\./, "");
 
 // Details that differ by state, keyed by the address's postal code: every state's election
-// office (``site``), Texas's, Michigan's, California's, Arizona's, Nevada's, Georgia's, Wisconsin's,
-// Ohio's, Iowa's, New Jersey's, New York's, Colorado's, Wyoming's and Illinois's registration, mail voting
-// and poll hours, and Texas's print tips.
+// office (``site``), and Texas's phones, district counts, write-ins and print tips. Registration,
+// where to vote, mail voting and poll hours come with the ballot (stateInfo).
 export const STATES = {
   ...Object.fromEntries(Object.entries(SITES).map(([state, url]) => [state, { site: { label: siteLabel(url), url } }])),
   TX: {
     site: { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
     noPhones: true, // phones can't be used at the voting station
-    // My Voter Portal: a login with name and date of birth, which also shows the voter's polling place
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://goelect.txelections.civixapps.com/ivis-mvp-ui/#/login",
-      hint: "My Voter Portal (Texas SOS): your registration, and your polling place once you log in",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://www.votetexas.gov/voting/where.html",
-      hint: "Every county's elections office (Texas SOS); yours publishes where and when you can vote",
-    },
-    mailApply: { label: "How to apply", url: "https://www.sos.state.tx.us/elections/voter/reqabbm.shtml" },
-    mailEligibility: "Only if you're 65 or older, sick or disabled, away from your county for all of early voting and "
-      + "Election Day, expecting to give birth around Election Day, or in jail but still eligible to vote.",
-    pollHours: "7 a.m. – 7 p.m.",
     districtCounts: { cd: 38, sd: 31, hd: 150, sboe: 15, commissioner: 4, jp: 99 }, // the highest number of each
     writeInNote: "In Texas, a write-in vote only counts for someone who filed as a write-in candidate.",
     printTips: [
@@ -70,242 +56,25 @@ export const STATES = {
       "Texas has no straight-ticket option: vote each race.",
     ],
   },
-  MI: {
-    site: { label: siteLabel(SITES.MI), url: SITES.MI },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://mvic.sos.state.mi.us/Voter/Index",
-      hint: "Michigan Voter Information Center: your registration and your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://mvic.sos.state.mi.us/Voter/Index#yourclerk",
-      hint: "Your city or township clerk (Michigan Voter Information Center), who publishes where and when you can vote early",
-    },
-    localOffice: "Your city or township clerk",
-    mailApply: { label: "How to apply", url: "https://www.michigan.gov/sos/elections/voting/absentee-voting" },
-    mailEligibility: "Any registered voter can vote absentee, no reason needed. You can also apply in person at your "
-      + "clerk's office until 4 p.m. the day before Election Day.",
-    mailDeadline: "Online and mailed applications must reach your clerk by 5 p.m. on ",
-    pollHours: "7 a.m. – 8 p.m.",
-  },
-  CA: {
-    site: { label: siteLabel(SITES.CA), url: SITES.CA },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://voterstatus.sos.ca.gov/",
-      hint: "My Voter Status (California SOS): your registration, and where your mail ballot is",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://www.sos.ca.gov/elections/voting-resources/county-elections-offices",
-      hint: "Every county's elections office (California SOS); yours lists its vote centers, polling places and drop boxes",
-    },
-    mailApply: { label: "Voting by mail", url: "https://www.sos.ca.gov/elections/voter-registration/vote-mail" },
-    mailEligibility: "Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must reach "
-      + "your county within 7 days), or drop it off by 8 p.m. on Election Day.",
-    mailDeadline: "If yours is lost or damaged, the Secretary of State recommends asking your county for a new one by ",
-    pollHours: "7 a.m. – 8 p.m.",
-  },
-  AZ: {
-    site: { label: siteLabel(SITES.AZ), url: SITES.AZ },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://my.arizona.vote/",
-      hint: "Arizona.Vote (Arizona Secretary of State): your registration, your polling place and your ballot's status",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://my.arizona.vote/",
-      hint: "Arizona.Vote: your polling place; Maricopa and Pima counties also have their own lookups",
-    },
-    localOffice: "Your county recorder",
-    mailApply: { label: "How to ask", url: "https://my.arizona.vote/" },
-    mailEligibility: "Any registered voter can vote early by mail, no reason needed. Early ballots go out from "
-      + "October 7; ask your county recorder for yours, or join the Active Early Voting List.",
-    pollHours: "6 a.m. – 7 p.m.",
-  },
-  NV: {
-    site: { label: siteLabel(SITES.NV), url: SITES.NV },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://www.nvsos.gov/votersearch/",
-      hint: "Nevada Secretary of State's voter search: your registration and your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: SITES.NV,
-      hint: "Nevada Secretary of State's elections page; your county clerk publishes where and when you can vote",
-    },
-    localOffice: "Your county clerk",
-    mailApply: { label: "More on voting by mail", url: SITES.NV },
-    mailEligibility: "Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must arrive "
-      + "by 5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on Election Day.",
-    mailDeadline: "To still be mailed one, register or update your registration by ",
-    pollHours: "7 a.m. – 7 p.m.",
-  },
-  GA: {
-    site: { label: siteLabel(SITES.GA), url: SITES.GA },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://mvp.sos.ga.gov/s/",
-      hint: "My Voter Page (Georgia Secretary of State): your registration, your polling place and your sample ballot",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://mvp.sos.ga.gov/s/",
-      hint: "My Voter Page: your polling place and your county's early voting places",
-    },
-    localOffice: "Your county's board of registrars",
-    mailApply: { label: "How to apply", url: "https://securemyabsenteeballot.sos.ga.gov/s/" },
-    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
-      + "county by 7 p.m. on Election Day.",
-    pollHours: "7 a.m. – 7 p.m.",
-  },
-  OH: {
-    site: { label: siteLabel(SITES.OH), url: SITES.OH },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://voterlookup.ohiosos.gov/voterlookup.aspx",
-      hint: "Ohio Secretary of State's voter lookup: your registration and your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://www.ohiosos.gov/elections/county-boards-of-elections-directory",
-      hint: "Every county board of elections (Ohio Secretary of State); yours publishes where and when you can vote early",
-    },
-    localOffice: "Your county board of elections",
-    mailApply: { label: "How to apply", url: "https://www.ohiosos.gov/elections/request-an-absentee-ballot" },
-    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
-      + "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
-    mailDeadline: "Your application must reach your county board by the close of business on ",
-    pollHours: "6:30 a.m. – 7:30 p.m.",
-  },
-  IL: {
-    site: { label: siteLabel(SITES.IL), url: SITES.IL },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://ova.elections.il.gov/RegistrationLookup.aspx",
-      hint: "Illinois's voter registration lookup (State Board of Elections): your registration and your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://ova.elections.il.gov/RegistrationLookup.aspx",
-      hint: "The registration lookup: your polling place; your election authority lists its early voting sites",
-    },
-    localOffice: "Your election authority (county clerk or board of election commissioners)",
-    mailApply: { label: "How to apply", url: SITES.IL },
-    mailEligibility: "Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
-      + "Election Day and reach your election authority within 14 days after.",
-    mailDeadline: "An application sent by mail must reach your election authority by ",
-    pollHours: "6 a.m. – 7 p.m.",
-  },
-  NJ: {
-    site: { label: siteLabel(SITES.NJ), url: SITES.NJ },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://voter.svrs.nj.gov/registration-check",
-      hint: "New Jersey's voter registration check (Division of Elections)",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://voter.svrs.nj.gov/polling-place-search",
-      hint: "New Jersey's polling place search; your county lists its early voting places",
-    },
-    localOffice: "Your county clerk",
-    mailApply: { label: "How to apply", url: "https://www.nj.gov/state/elections/vote-by-mail.shtml" },
-    mailEligibility: "Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
-      + "Election Day and reach your county within six days, or be dropped in a drop box by 8 p.m. on Election Day.",
-    mailDeadline: "An application sent by mail must reach your county clerk by ",
-    pollHours: "6 a.m. – 8 p.m.",
-  },
-  WI: {
-    site: { label: siteLabel(SITES.WI), url: SITES.WI },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://myvote.wi.gov/",
-      hint: "MyVote Wisconsin (Wisconsin Elections Commission): your registration, your polling place and your ballot",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://myvote.wi.gov/",
-      hint: "MyVote Wisconsin: your polling place, and your municipal clerk's office for voting early",
-    },
-    localOffice: "Your municipal clerk",
-    mailApply: { label: "How to apply", url: "https://myvote.wi.gov/" },
-    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
-      + "polling place or clerk by 8 p.m. on Election Day.",
-    mailDeadline: "Mailed or online requests must reach your clerk by 5 p.m. on ",
-    pollHours: "7 a.m. – 8 p.m.",
-  },
-  NY: {
-    site: { label: siteLabel(SITES.NY), url: SITES.NY },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://voterlookup.elections.ny.gov/",
-      hint: "New York State Board of Elections' voter lookup: your registration and your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://voterlookup.elections.ny.gov/",
-      hint: "The voter lookup: your polling place; your county board of elections publishes its early voting places",
-    },
-    localOffice: "Your county board of elections",
-    mailApply: { label: "How to apply", url: "https://absenteeballot.elections.ny.gov/" },
-    mailEligibility: "Any registered voter can vote early by mail, no reason needed. Your ballot must be postmarked "
-      + "by Election Day and reach your county board within 7 days after.",
-    mailDeadline: "Online or mailed applications must reach your county board by ",
-    pollHours: "6 a.m. – 9 p.m.",
-  },
-  IA: {
-    site: { label: siteLabel(SITES.IA), url: SITES.IA },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: SITES.IA,
-      hint: "Iowa Secretary of State: check your registration and find your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: SITES.IA,
-      hint: "Iowa Secretary of State: your polling place, and your county auditor's office for voting early",
-    },
-    localOffice: "Your county auditor",
-    mailApply: { label: "How to ask", url: SITES.IA },
-    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
-      + "county auditor before the polls close at 8 p.m. on Election Day.",
-    mailDeadline: "Your request must reach your county auditor by 5 p.m. on ",
-    pollHours: "7 a.m. – 8 p.m.",
-  },
-  AK: {
-    site: { label: siteLabel(SITES.AK), url: SITES.AK },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://myvoterinformation.alaska.gov/",
-      hint: "Alaska Division of Elections' My Voter Information: your registration and your polling place",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://www.elections.alaska.gov/voter-information/absentee-and-early-voting/",
-      hint: "Alaska Division of Elections: early and in-person absentee voting places",
-    },
-    localOffice: "The Division of Elections' regional office",
-    mailApply: { label: "How to apply", url: "https://absenteeballotapplication.alaska.gov/" },
-    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must be postmarked "
-      + "by Election Day and reach the Division of Elections within 10 days after.",
-    mailDeadline: "Your application must reach the Division of Elections by ",
-    pollHours: "7 a.m. – 8 p.m.",
-  },
-  CO: {
-    site: { label: siteLabel(SITES.CO), url: SITES.CO },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://www.govotecolorado.gov/",
-      hint: "GoVoteColorado (Colorado Secretary of State): your registration, your ballot's status and where to vote",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://www.govotecolorado.gov/",
-      hint: "GoVoteColorado: your county's voter service and polling centers and drop boxes",
-    },
-    localOffice: "Your county clerk",
-    mailApply: { label: "Track your ballot", url: "https://www.govotecolorado.gov/" },
-    mailEligibility: "Every active voter is mailed a ballot, from 22 days before Election Day. It must reach your "
-      + "county clerk by 7 p.m. on Election Day, by mail, in a drop box or at a voter service and polling center; "
-      + "a postmark doesn't count.",
-    pollHours: "7 a.m. – 7 p.m.",
-  },
-  WY: {
-    site: { label: siteLabel(SITES.WY), url: SITES.WY },
-    registration: {
-      label: "Am I registered?", short: "Registered?", url: "https://sos.wyo.gov/Elections/State/RegisteringToVote.aspx",
-      hint: "Wyoming Secretary of State: how to register; your county clerk can check your registration",
-    },
-    countyOffices: {
-      label: "Where to vote", short: "Where", url: "https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx",
-      hint: "Every county clerk's website (Wyoming Secretary of State); yours publishes your polling place",
-    },
-    localOffice: "Your county clerk",
-    mailApply: { label: "How to ask", url: "https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx" },
-    mailEligibility: "Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
-      + "county clerk by 7 p.m. on Election Day.",
-    mailDeadline: "Ask your county clerk for your ballot by ",
-    pollHours: "7 a.m. – 7 p.m.",
-  },
 };
+
+// The voter's state's details: STATES' own, with how to register, where to vote, mail voting and
+// poll hours as the ballot gives them (``voter_info``, for the states Pallot knows them for).
+export function stateInfo(ballot) {
+  const base = STATES[ballot.location.state];
+  const info = ballot.voter_info;
+  if (!info) return base;
+  return {
+    ...base,
+    registration: info.registration,
+    countyOffices: info.county_offices,
+    localOffice: info.local_office,
+    mailApply: info.mail_apply,
+    mailEligibility: info.mail_eligibility,
+    mailDeadline: info.mail_deadline,
+    pollHours: info.poll_hours,
+  };
+}
 
 // The districts and precincts the voter can see and change, in the voter registration
 // certificate's order: ``short`` on the card, the map's buttons and the print sheet, ``long``

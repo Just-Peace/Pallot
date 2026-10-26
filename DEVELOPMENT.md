@@ -101,12 +101,13 @@ Each source contributes `SourceCard`s; the page draws them by `kind` (`money`, `
 
 A state goes from Congress only (the FEC's filers) to its own official list with:
 
-1. An adapter in `pallot/states/` that reads the list into one filing per candidate in a race, leaving out the withdrawn and disqualified, asked for in one request through `HttpCache`, and its class in `ADAPTERS` (`states/adapters.py`). Its row in Settings and its bundle follow from that.
+1. An adapter in `pallot/states/` that reads the list into one filing per candidate in a race, leaving out the withdrawn and disqualified, asked for through `HttpCache`, and its class in `ADAPTERS` (`states/adapters.py`). Its row in Settings and its bundle follow from that. Build it from the shared pieces in `states/__init__.py`: an `Office` per race (`us_senate`, `us_house`, `legislator`, `statewide`), `require` to refuse a list short of its races, `index_key` and `follow` for a list found through an index page first, `postback` for an ASP.NET form.
 2. Its entry in `COVERED` (`coverage.py`): which districts its races need.
-3. Its switch in `pallot/sources.toml`.
-4. Its fixture in `record_fixtures.py --only state_lists`, and tests of the adapter and of a ballot there.
-5. Run `uv run pallot-bundle refresh --only state_<st>` once and commit `bundles/data/`.
-6. The state in README's "Where it covers" and "Bundled snapshots", About's "Where it covers" and Sources, the FAQ's "Which addresses and elections does Pallot cover?", and Privacy's list of what's downloaded whole.
+3. Its `Guide` in `states/key_dates.py`, which gives "When to vote" and the calendar file, and its dates: a `Counts` when each deadline is a count of days before Election Day, a function in `RULES` when it isn't, or its office's page in `PAGES`.
+4. Its switch in `pallot/sources.toml`.
+5. Its fixture in `record_fixtures.py` (its own `--only state_<st>`, built from `record_census`, `record_filers`, `record_legislators` and `record_members`), and tests of the adapter and of a ballot there.
+6. Run `uv run pallot-bundle refresh --only state_<st>` once and commit `bundles/data/`.
+7. The state in README's "Where it covers" and "Bundled snapshots", About's "Where it covers" and Sources, the FAQ's "Which addresses and elections does Pallot cover?", and Privacy's list of what's downloaded whole.
 
 ## Endorsement lists
 

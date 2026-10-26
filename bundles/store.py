@@ -77,6 +77,25 @@ def write_meta(data_dir: Path, source: str, entry: dict[str, Any]) -> None:
                                               indent=1, sort_keys=True, ensure_ascii=False) + "\n")
 
 
+def record(data_dir: Path, name: str, answers: list[dict[str, Any]], counts: dict[str, int], stamp: str, *,
+           force: bool = False, dry_run: bool = False) -> str:
+    """Write bundle ``name``'s answers when they changed (or ``force``), and its meta.json entry:
+    checked at ``stamp`` either way, refreshed then only when written; nothing with ``dry_run``.
+    The outcome: "updated", "no_changes" or "would_update"."""
+    digest = answers_hash(answers)
+    meta = read_meta(data_dir).get(name, {})
+    if meta.get("answers_hash") == digest and (data_dir / f"{name}.json").exists() and not force:
+        if not dry_run:
+            write_meta(data_dir, name, {**meta, "last_checked": stamp})
+        return "no_changes"
+    if dry_run:
+        return "would_update"
+    write_answers(data_dir / f"{name}.json", answers)
+    write_meta(data_dir, name, {"last_refresh": stamp, "last_checked": stamp, "answers_hash": digest,
+                                "answers": len(answers), **counts})
+    return "updated"
+
+
 def answers_hash(answers: list[dict[str, Any]]) -> str:
     return hashlib.sha256(json.dumps(answers, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 

@@ -20,12 +20,11 @@ from typing import Any
 
 from .. import counties
 from ..http_cache import RequestSpec
-from ..sources.fec import race_name
 from ..text import display_person
-from . import _ORDINALS, Filing, StateList, party, pdf_lines
+from . import _ORDINALS, Filing, Office, StateList, party, pdf_lines, require, statewide, us_house, us_senate
 
 URL = "https://elections.cdn.sos.ca.gov/statewide-elections/{year}-general/cert-list-candidates.pdf"
-HOUSE_RACES = 52  # a list with fewer U.S. House races isn't the whole list
+MINIMUM = {"cd": 52}  # a list with fewer U.S. House races isn't the whole list
 STATEWIDE = ("Governor", "Lieutenant Governor", "Secretary of State", "Controller", "Treasurer", "Attorney General",
               "Insurance Commissioner", "Superintendent of Public Instruction")
 _DISTRICTS = (
@@ -46,22 +45,19 @@ _DIVISIONS = {"ONE": 1, "TWO": 2, "THREE": 3, "FOUR": 4, "FIVE": 5, "SIX": 6, "S
 _QUESTION = re.compile(r"Shall (.*?)\s*\b((?:[A-Z][A-Z.'’-]*\s+)*[A-Z][A-Z.'’-]*) be elected\b")
 
 
-def _statewide(heading: str) -> tuple[str, str, str, str | None] | None:
-    """(group, reach, family, district) of a candidates' heading; None for one it doesn't know."""
+def _race(heading: str) -> Office | None:
+    """A candidates' heading's race; None for one it doesn't know."""
     if heading in STATEWIDE:
-        return "state", "state", heading.upper(), None
+        return statewide(heading)
     if heading.startswith("United States Senator"):
-        return "federal", "state", "US SENATE", None
+        return us_senate("CA", heading.upper())
     for pattern, group, reach, family in _DISTRICTS:
         if found := pattern.fullmatch(heading):
-            return group, reach, family, str(int(found.group(1)))
+            number = int(found.group(1))
+            if reach == "cd":
+                return us_house("CA", number, heading.upper())
+            return Office(heading.upper(), heading, family, group, reach, str(number))
     return None
-
-
-def _office(heading: str, reach: str, district: str | None) -> str:
-    if reach == "cd" or heading.startswith("United States Senator"):
-        return race_name("CA", int(district) if district else None)
-    return heading
 
 
 def _candidates(lines: list[str]) -> tuple[str | None, list[Filing]]:
@@ -82,21 +78,16 @@ def _candidates(lines: list[str]) -> tuple[str | None, list[Filing]]:
         indent = len(line) - len(line.lstrip())
         candidate = _CANDIDATE.fullmatch(line.strip())
         if indent >= _HEADING and not candidate:
-            kind = _statewide(text)
-            races, listed = races + 1, 0
-            race = (races, text, *kind) if kind else None
+            races, listed, race = races + 1, 0, _race(text)
             continue
         if race is None or not candidate or not indent or day is None:
             continue
         listed += 1
-        position, heading, group, reach, family, district = race
         name, label = candidate.group(1).strip(), " ".join(candidate.group(2).split())
-        incumbent = name.endswith("*")
         code, party_name = (None, None) if label.upper() in _NO_PARTY else party(label)
-        filings.append(Filing(
-            day=day, office_id=heading.upper(), office=_office(heading, reach, district), family=family, group=group,
-            reach=reach, district=district, name=" ".join(name.rstrip("*").split()), party=code,
-            party_name=party_name, incumbent=incumbent, order=position * 100 + listed,
+        filings.append(race.filing(
+            day=day, name=" ".join(name.rstrip("*").split()), party=code, party_name=party_name,
+            incumbent=name.endswith("*"), order=races * 100 + listed,
         ))
     return day, filings
 
@@ -166,12 +157,11 @@ def _retention(lines: list[str], day: str, start: int) -> list[Filing]:
             raise ValueError(f"no counties for appellate district {number}")
         family, district = ("COURT OF APPEAL", str(number)) if number else ("SUPREME COURT", None)
         sitting = "Justice" in found.group(1)
-        filings.append(Filing(
-            day=day, office_id=" ".join(filter(None, (family, district, name.upper()))),
-            office=f"{'Retain' if sitting else 'Elect'} {name}, {title}", family=family, group="judicial",
-            reach="counties" if district else "state", district=district, name=name,
-            counties=tuple(sorted(where.get(number, ()))), incumbent=sitting, retention=True, order=(start + rank) * 100,
-        ))
+        race = Office(" ".join(filter(None, (family, district, name.upper()))),
+                      f"{'Retain' if sitting else 'Elect'} {name}, {title}", family, "judicial",
+                      "counties" if district else "state", district, tuple(sorted(where.get(number, ()))),
+                      incumbent=sitting, retention=True)
+        filings.append(race.filing(day=day, name=name, order=(start + rank) * 100))
     return filings
 
 
@@ -181,9 +171,7 @@ def parse_lines(layout: list[str], plain: list[str]) -> list[Filing]:
     day, filings = _candidates(layout)
     if day is None:
         raise ValueError("no general election date")
-    house = {f.district for f in filings if f.reach == "cd"}
-    if len(house) < HOUSE_RACES:
-        raise ValueError(f"{len(house)} U.S. House races, not {HOUSE_RACES}")
+    require(filings, MINIMUM)
     return filings + _retention(plain, day, max((f.order // 100 for f in filings), default=0) + 1)
 
 

@@ -18,11 +18,14 @@ unconfirmed.
 
 from __future__ import annotations
 
+import dataclasses
+import functools
 import re
 from typing import Any
 
-from ..sources.fec import race_name
-from . import _ORDINALS, Filing, ManualList, party, pdf_lines
+from . import (
+    _ORDINALS, SUFFIXES, WITHDRAWN, Filing, ManualList, Office, legislator, party, pdf_lines, us_house,
+)
 from .key_dates import first_tuesday_after_first_monday
 
 COLUMNS = {
@@ -44,9 +47,9 @@ STATEWIDE = ("Governor", "Lieutenant Governor", "Secretary of State", "State Tre
              "Attorney General")
 _TITLE = re.compile(r"\b(\d{4}) General Election\b")
 _DATE = re.compile(r"\d{1,2}/\d{1,2}/\d{4}")
-_GONE = re.compile(r"withdr|challeng|deceas|disqualif|remov|ineligib", re.I)
+_GONE = re.compile(rf"challeng|{WITHDRAWN.pattern}", re.I)
 _PARTIES = {"LIBERTARIAN PARTY OF NEVADA": "L", "NO POLITICAL PARTY": None, "NONPARTISAN": None}
-_SUFFIXES = {"JR", "SR", "II", "III", "IV", "V", "ESQ"}
+_SUFFIXES = SUFFIXES | {"ESQ"}
 _WHOLE_COUNTY = re.compile(
     r"(?:COUNTY )?(?:ASSESSOR|CLERK|TREASURER|RECORDER|AUDITOR|SHERIFF|DISTRICT ATTORNEY|PUBLIC ADMINISTRATOR|"
     r"COMMISSIONER|COUNTY COMMISSIONER|SCHOOL BOARD TRUSTEE)(?: ?[-/] ?(?:RECORDER|TREASURER|AUDITOR))?"
@@ -87,53 +90,51 @@ def _place(filed: str) -> tuple[str | None, str | None]:
     return None, None
 
 
-def _kind(office: str, filed: str, near: str | None = None) -> dict[str, Any]:
-    """The race of an Office Sought filed with ``filed``, as Filing's fields: its id, shown name,
-    family, group, reach, district, counties, city, seats and whether it's an unexpired term. A
-    city's race is in its county (CITY_COUNTIES), or else ``near``, the county the list was on."""
+def _kind(office: str, filed: str, near: str | None = None) -> Office:
+    """The race of an Office Sought filed with ``filed``, with its seats and whether it's an
+    unexpired term. A city's race is in its county (CITY_COUNTIES), or else ``near``, the county
+    the list was on."""
     shown = _tidy(_SEATS.sub("", office))
     seats = int(found.group(1)) if (found := _SEATS.search(office)) else 1
     upper = shown.upper()
-    race = {"office_id": upper, "office": shown, "family": upper, "district": None, "counties": (), "city": None,
-            "seats": seats, "unexpired": "UNEXPIRED" in upper}
+    terms = {"seats": seats, "unexpired": "UNEXPIRED" in upper}
+    race = functools.partial(dataclasses.replace, Office(upper, shown, upper, "local", "unplaced", **terms))
     if found := re.fullmatch(r"REPRESENTATIVE IN CONGRESS, DISTRICT (\d+)", upper):
-        number = int(found.group(1))
-        return {**race, "office": race_name("NV", number), "family": "US HOUSE", "group": "federal", "reach": "cd",
-                "district": str(number)}
+        return dataclasses.replace(us_house("NV", int(found.group(1)), upper), **terms)
     for pattern, reach, family, label in ((r"STATE SENATE, DISTRICT (\d+)", "sd", "STATE SENATE", "State Senate"),
                                           (r"STATE ASSEMBLY, DISTRICT (\d+)", "hd", "STATE ASSEMBLY", "State Assembly")):
         if found := re.fullmatch(pattern, upper):
-            number = str(int(found.group(1)))
-            return {**race, "office": f"{label} District {number}", "family": family, "group": "legislature",
-                    "reach": reach, "district": number}
+            number = int(found.group(1))
+            return dataclasses.replace(legislator(reach, number, upper, f"{label} District {number}"), family=family,
+                                       **terms)
     if upper in (office.upper() for office in STATEWIDE):
-        return {**race, "group": "state", "reach": "state"}
+        return race(group="state", reach="state")
     if upper.startswith("JUSTICE OF THE SUPREME COURT"):
-        return {**race, "family": "JUSTICE OF THE SUPREME COURT", "group": "judicial", "reach": "state"}
+        return race(family="JUSTICE OF THE SUPREME COURT", group="judicial", reach="state")
     if found := re.match(r"DISTRICT COURT JUDGE, (\w+) JUDICIAL DISTRICT\b", upper):
         number = _ORDINALS.get(found.group(1))
         if number not in JUDICIAL_DISTRICTS:
             raise ValueError(f"no judicial district {found.group(1).title()}")
-        return {**race, "family": "DISTRICT COURT JUDGE", "group": "judicial", "reach": "counties",
-                "district": str(number), "counties": JUDICIAL_DISTRICTS[number]}
+        return race(family="DISTRICT COURT JUDGE", group="judicial", reach="counties", district=str(number),
+                    counties=JUDICIAL_DISTRICTS[number])
     county, city = _place(filed)
     local = f"{upper} ({' '.join(filed.upper().split())})"
     if upper.startswith("BOARD OF REGENT"):
-        return {**race, "office_id": local, "office": shown.replace("Board of Regent,", "Board of Regents,"),
-                "family": "Board of Regents", "group": "state",
-                "reach": "part_county" if county else "unplaced", "counties": (county,) if county else ()}
+        return race(office_id=local, office=shown.replace("Board of Regent,", "Board of Regents,"),
+                    family="Board of Regents", group="state", reach="part_county" if county else "unplaced",
+                    counties=(county,) if county else ())
     judicial = upper.startswith(("JUSTICE OF THE PEACE", "MUNICIPAL COURT", "JUSTICE AND MUNICIPAL COURT")) \
         or "MUNICIPAL COURT JUDGE" in upper
     group = "judicial" if judicial else "local"
     if city:
         home = CITY_COUNTIES.get(city, near)
-        return {**race, "office_id": local, "group": group, "city": city, "counties": (home,) if home else (),
-                "reach": "part_city" if re.search(r"\bWARD\b", upper) else "city"}
+        return race(office_id=local, group=group, city=city, counties=(home,) if home else (),
+                    reach="part_city" if re.search(r"\bWARD\b", upper) else "city")
     if county:
         whole = bool(_WHOLE_COUNTY.fullmatch(upper))
-        return {**race, "office_id": local, "group": "county" if whole and "SCHOOL" not in upper else group,
-                "counties": (county,), "reach": "county" if whole else "part_county"}
-    return {**race, "group": group, "reach": "unplaced"}
+        return race(office_id=local, group="county" if whole and "SCHOOL" not in upper else group,
+                    counties=(county,), reach="county" if whole else "part_county")
+    return race(group=group)
 
 
 def _columns(line: str) -> list[str] | None:
@@ -170,8 +171,8 @@ def parse_lines(lines: list[str]) -> list[Filing]:
         race = _kind(row["office"], row["filed"], near)
         label = " ".join(row["party"].split())
         code, party_name = (_PARTIES[label.upper()], None) if label.upper() in _PARTIES else party(label)
-        filings.append(Filing(day=day, name=ballot_name(row["name"]), party=code, party_name=party_name,
-                              order=index, **race))
+        filings.append(race.filing(day=day, name=ballot_name(row["name"]), party=code, party_name=party_name,
+                                   order=index))
     if not filings:
         raise ValueError("no candidates")
     return filings

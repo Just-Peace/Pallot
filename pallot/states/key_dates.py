@@ -110,9 +110,11 @@ the clerk by 7 p.m. on Election Day (22-9-119); polls are open 7 a.m. to 7 p.m.
 from __future__ import annotations
 
 import datetime as dt
+import functools
 from dataclasses import dataclass
 from typing import Callable
 
+from ..models import VoterInfo, VoterLink
 from ..sources import ca_key_dates as california
 from ..sources import key_dates as texas
 from ..sources.key_dates import Deadlines
@@ -120,21 +122,51 @@ from ..sources.key_dates import Deadlines
 
 @dataclass(frozen=True)
 class Guide:
-    """A state's wording for its key dates. ``register``, ``mail`` and the like are sentences
-    with an ``{election}`` ("the November 3, 2026 election") to fill in."""
+    """A state's wording for its key dates, and how to vote there. ``register``, ``mail`` and the
+    like are sentences with an ``{election}`` ("the November 3, 2026 election") to fill in; the
+    ``check_``, ``where_`` and ``mail_`` fields and ``poll_hours`` are what the ballot's "When to
+    vote" shows (voter_info)."""
 
     name: str
     source: str  # who the dates are from, or who explains the rules they're worked out by
     url: str
     computed: bool  # worked out from the state's election law, not read from a published list
-    registration_url: str
-    mail_url: str
+    registration_url: str  # how to register
+    mail_url: str  # how to vote by mail
     register: str
     mail_summary: str
     mail: str  # up to the colon before mail_url
     early_where: str
-    polls: str
     credit: str  # the calendar file's line before the url
+    poll_hours: str  # "7 a.m. – 8 p.m."
+    check_url: str  # where voters check their registration
+    check_hint: str
+    where_url: str  # where voters find where to vote
+    where_hint: str
+    mail_label: str  # the words of the link to mail_url
+    mail_eligibility: str  # who can vote by mail, and how the ballot gets back
+    mail_deadline: str | None = None  # the words before the mail_apply_by date, where they aren't the usual
+    local_office: str | None = None  # who sets where and when you vote, where it isn't the county elections office
+    polls_text: str | None = None  # Election Day's line in the calendar file, where it isn't the usual (polls)
+
+    @property
+    def polls(self) -> str:
+        """Election Day's line: "Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote."."""
+        if self.polls_text:
+            return self.polls_text
+        opens, closes = self.poll_hours.split(" – ")
+        return f"Polls are open {opens} to {closes}; if you're in line at {closes.removesuffix(' p.m.')}, you can vote."
+
+    def voter_info(self) -> VoterInfo:
+        return VoterInfo(
+            registration=VoterLink(label="Am I registered?", short="Registered?", url=self.check_url, hint=self.check_hint),
+            county_offices=VoterLink(label="Where to vote", short="Where", url=self.where_url, hint=self.where_hint),
+            mail_apply=VoterLink(label=self.mail_label, url=self.mail_url),
+            mail_eligibility=self.mail_eligibility,
+            mail_deadline=self.mail_deadline,
+            local_office=self.local_office,
+            poll_hours=self.poll_hours,
+        )
 
 
 TEXAS = Guide(
@@ -149,8 +181,15 @@ TEXAS = Guide(
     mail="If you vote by mail in {election}, your application must reach your county's early voting clerk today: "
          "received, not postmarked. Who can vote by mail, and how to apply:",
     early_where="Your county elections office lists the places and hours.",
-    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
     credit="Dates from the Texas Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url=texas.REGISTRATION_URL,
+    check_hint="My Voter Portal (Texas SOS): your registration, and your polling place once you log in",
+    where_url="https://www.votetexas.gov/voting/where.html",
+    where_hint="Every county's elections office (Texas SOS); yours publishes where and when you can vote",
+    mail_label="How to apply",
+    mail_eligibility="Only if you're 65 or older, sick or disabled, away from your county for all of early voting and "
+                     "Election Day, expecting to give birth around Election Day, or in jail but still eligible to vote.",
 )
 
 MICHIGAN = Guide(
@@ -168,8 +207,18 @@ MICHIGAN = Guide(
          "clerk by 5 p.m. today. In person, you can apply at the clerk's office until 4 p.m. the day before Election "
          "Day. Any voter can vote absentee; how to apply:",
     early_where="Your city or township clerk lists the places and hours, and may open early voting sooner.",
-    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
     credit="Dates worked out from Michigan's election law; more from the Michigan Department of State",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://mvic.sos.state.mi.us/Voter/Index",
+    check_hint="Michigan Voter Information Center: your registration and your polling place",
+    where_url="https://mvic.sos.state.mi.us/Voter/Index#yourclerk",
+    where_hint="Your city or township clerk (Michigan Voter Information Center), who publishes where and when you can "
+               "vote early",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee, no reason needed. You can also apply in person at your "
+                     "clerk's office until 4 p.m. the day before Election Day.",
+    mail_deadline="Online and mailed applications must reach your clerk by 5 p.m. on ",
+    local_office="Your city or township clerk",
 )
 
 CALIFORNIA = Guide(
@@ -186,8 +235,17 @@ CALIFORNIA = Guide(
     mail="Every active voter in California is mailed a ballot for {election}. If yours is lost or damaged, today is "
          "the Secretary of State's recommended last day to ask your county elections office for a new one:",
     early_where="Your county elections office lists the places and hours.",
-    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
     credit="Dates from the California Secretary of State",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url=california.REGISTRATION_URL,
+    check_hint="My Voter Status (California SOS): your registration, and where your mail ballot is",
+    where_url=california.COUNTY_OFFICES_URL,
+    where_hint="Every county's elections office (California SOS); yours lists its vote centers, polling places and drop "
+               "boxes",
+    mail_label="Voting by mail",
+    mail_eligibility="Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must reach your "
+                     "county within 7 days), or drop it off by 8 p.m. on Election Day.",
+    mail_deadline="If yours is lost or damaged, the Secretary of State recommends asking your county for a new one by ",
 )
 
 ARIZONA = Guide(
@@ -202,8 +260,17 @@ ARIZONA = Guide(
     mail="If you vote early by mail in {election}, ask your county recorder for your ballot in time for it to reach "
          "you and come back by Election Day. Any voter can vote early by mail; how to ask:",
     early_where="Your county recorder lists the places and hours.",
-    polls="Polls are open 6 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
     credit="Dates from the Arizona Secretary of State",
+    poll_hours="6 a.m. – 7 p.m.",
+    check_url="https://my.arizona.vote/",
+    check_hint="Arizona.Vote (Arizona Secretary of State): your registration, your polling place and your ballot's "
+               "status",
+    where_url="https://my.arizona.vote/",
+    where_hint="Arizona.Vote: your polling place; Maricopa and Pima counties also have their own lookups",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote early by mail, no reason needed. Early ballots go out from "
+                     "October 7; ask your county recorder for yours, or join the Active Early Voting List.",
+    local_office="Your county recorder",
 )
 
 NEVADA = Guide(
@@ -222,8 +289,18 @@ NEVADA = Guide(
          "clerk by 5 p.m. on the fourth day after; or drop it off at any polling place or drop box by 7 p.m. on "
          "Election Day. More:",
     early_where="Your county clerk lists the places and hours.",
-    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
     credit="Dates worked out from Nevada's election law; more from the Nevada Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://www.nvsos.gov/votersearch/",
+    check_hint="Nevada Secretary of State's voter search: your registration and your polling place",
+    where_url="https://www.nvsos.gov/sos/elections",
+    where_hint="Nevada Secretary of State's elections page; your county clerk publishes where and when you can vote",
+    mail_label="More on voting by mail",
+    mail_eligibility="Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must arrive by "
+                     "5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on "
+                     "Election Day.",
+    mail_deadline="To still be mailed one, register or update your registration by ",
+    local_office="Your county clerk",
 )
 
 GEORGIA = Guide(
@@ -240,8 +317,17 @@ GEORGIA = Guide(
          "vote absentee; how to apply:",
     early_where="Your county's board of registrars lists the places and hours. Early voting is on weekdays, and on "
                 "the second and third Saturdays before Election Day; some counties also open on Sundays.",
-    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
     credit="Dates worked out from Georgia's election law; more from the Georgia Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://mvp.sos.ga.gov/s/",
+    check_hint="My Voter Page (Georgia Secretary of State): your registration, your polling place and your sample "
+               "ballot",
+    where_url="https://mvp.sos.ga.gov/s/",
+    where_hint="My Voter Page: your polling place and your county's early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county by 7 p.m. on Election Day.",
+    local_office="Your county's board of registrars",
 )
 
 IOWA = Guide(
@@ -259,8 +345,17 @@ IOWA = Guide(
          "isn't counted. Any voter can vote absentee; how to ask:",
     early_where="Your county auditor's office, and any satellite sites your county opens; the auditor lists the "
                 "places and hours.",
-    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
     credit="Dates worked out from Iowa's election law; more from the Iowa Secretary of State",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://sos.iowa.gov/elections-voting",
+    check_hint="Iowa Secretary of State: check your registration and find your polling place",
+    where_url="https://sos.iowa.gov/elections-voting",
+    where_hint="Iowa Secretary of State: your polling place, and your county auditor's office for voting early",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county auditor before the polls close at 8 p.m. on Election Day.",
+    mail_deadline="Your request must reach your county auditor by 5 p.m. on ",
+    local_office="Your county auditor",
 )
 
 OHIO = Guide(
@@ -277,8 +372,18 @@ OHIO = Guide(
          "later isn't counted, even if it was mailed in time. Any voter can vote absentee; how to apply:",
     early_where="Your county board of elections lists the place and hours. Early voting ends at 5 p.m. on the Sunday "
                 "before Election Day.",
-    polls="Polls are open 6:30 a.m. to 7:30 p.m.; if you're in line at 7:30, you can vote.",
     credit="Dates worked out from Ohio's election law; more from the Ohio Secretary of State",
+    poll_hours="6:30 a.m. – 7:30 p.m.",
+    check_url="https://voterlookup.ohiosos.gov/voterlookup.aspx",
+    check_hint="Ohio Secretary of State's voter lookup: your registration and your polling place",
+    where_url="https://www.ohiosos.gov/elections/county-boards-of-elections-directory",
+    where_hint="Every county board of elections (Ohio Secretary of State); yours publishes where and when you can vote "
+               "early",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
+    mail_deadline="Your application must reach your county board by the close of business on ",
+    local_office="Your county board of elections",
 )
 
 WISCONSIN = Guide(
@@ -296,8 +401,18 @@ WISCONSIN = Guide(
          "5 p.m. today. Your ballot must reach your polling place or clerk by 8 p.m. on Election Day; one that "
          "arrives later isn't counted. Any voter can vote absentee; how to ask:",
     early_where="Your municipal clerk sets the places and hours, and may start later than the first day allowed.",
-    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
     credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://myvote.wi.gov/",
+    check_hint="MyVote Wisconsin (Wisconsin Elections Commission): your registration, your polling place and your "
+               "ballot",
+    where_url="https://myvote.wi.gov/",
+    where_hint="MyVote Wisconsin: your polling place, and your municipal clerk's office for voting early",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "polling place or clerk by 8 p.m. on Election Day.",
+    mail_deadline="Mailed or online requests must reach your clerk by 5 p.m. on ",
+    local_office="Your municipal clerk",
 )
 
 NEW_YORK = Guide(
@@ -314,8 +429,17 @@ NEW_YORK = Guide(
          "postmarked by Election Day and reach the board within 7 days after. Any voter can vote early by mail; "
          "how to apply:",
     early_where="Your county board of elections sets the places and hours.",
-    polls="Polls are open 6 a.m. to 9 p.m.; if you're in line at 9, you can vote.",
     credit="Dates worked out from New York's Election Law; more from the New York State Board of Elections",
+    poll_hours="6 a.m. – 9 p.m.",
+    check_url="https://voterlookup.elections.ny.gov/",
+    check_hint="New York State Board of Elections' voter lookup: your registration and your polling place",
+    where_url="https://voterlookup.elections.ny.gov/",
+    where_hint="The voter lookup: your polling place; your county board of elections publishes its early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote early by mail, no reason needed. Your ballot must be postmarked by "
+                     "Election Day and reach your county board within 7 days after.",
+    mail_deadline="Online or mailed applications must reach your county board by ",
+    local_office="Your county board of elections",
 )
 
 NEW_JERSEY = Guide(
@@ -334,8 +458,18 @@ NEW_JERSEY = Guide(
          "drop box by 8 p.m. on Election Day. Any voter can vote by mail; how to apply:",
     early_where="Your county lists the places. Early voting is open 10 a.m. to 8 p.m. Monday to Saturday, and 10 a.m. "
                 "to 6 p.m. on Sunday.",
-    polls="Polls are open 6 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
     credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
+    poll_hours="6 a.m. – 8 p.m.",
+    check_url="https://voter.svrs.nj.gov/registration-check",
+    check_hint="New Jersey's voter registration check (Division of Elections)",
+    where_url="https://voter.svrs.nj.gov/polling-place-search",
+    where_hint="New Jersey's polling place search; your county lists its early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+                     "Election Day and reach your county within six days, or be dropped in a drop box by 8 p.m. on "
+                     "Election Day.",
+    mail_deadline="An application sent by mail must reach your county clerk by ",
+    local_office="Your county clerk",
 )
 
 WYOMING = Guide(
@@ -353,8 +487,17 @@ WYOMING = Guide(
          "the clerk by 7 p.m. on Election Day; one that arrives later isn't counted. Any voter can vote absentee; how "
          "to ask:",
     early_where="Your county clerk's office: vote absentee in person there. The clerk lists the places and hours.",
-    polls="Polls are open 7 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
     credit="Dates worked out from Wyoming's election law; more from the Wyoming Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://sos.wyo.gov/Elections/State/RegisteringToVote.aspx",
+    check_hint="Wyoming Secretary of State: how to register; your county clerk can check your registration",
+    where_url="https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx",
+    where_hint="Every county clerk's website (Wyoming Secretary of State); yours publishes your polling place",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county clerk by 7 p.m. on Election Day.",
+    mail_deadline="Ask your county clerk for your ballot by ",
+    local_office="Your county clerk",
 )
 
 ILLINOIS = Guide(
@@ -373,8 +516,18 @@ ILLINOIS = Guide(
          "voter can vote by mail; how to apply:",
     early_where="Your election authority's offices from the first day; its other early voting sites from 15 days "
                 "before Election Day. Your election authority lists the places and hours.",
-    polls="Polls are open 6 a.m. to 7 p.m.; if you're in line at 7, you can vote.",
     credit="Dates worked out from Illinois's Election Code; more from the Illinois State Board of Elections",
+    poll_hours="6 a.m. – 7 p.m.",
+    check_url="https://ova.elections.il.gov/RegistrationLookup.aspx",
+    check_hint="Illinois's voter registration lookup (State Board of Elections): your registration and your polling "
+               "place",
+    where_url="https://ova.elections.il.gov/RegistrationLookup.aspx",
+    where_hint="The registration lookup: your polling place; your election authority lists its early voting sites",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+                     "Election Day and reach your election authority within 14 days after.",
+    mail_deadline="An application sent by mail must reach your election authority by ",
+    local_office="Your election authority (county clerk or board of election commissioners)",
 )
 
 ALASKA = Guide(
@@ -391,8 +544,17 @@ ALASKA = Guide(
          "Your ballot must be postmarked by Election Day and reach the Division within 10 days after. Any voter can "
          "vote absentee; how to apply:",
     early_where="The Division of Elections lists the places and hours. Early voting goes on through Election Day.",
-    polls="Polls are open 7 a.m. to 8 p.m.; if you're in line at 8, you can vote.",
     credit="Dates worked out from Alaska's election law; more from the Alaska Division of Elections",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://myvoterinformation.alaska.gov/",
+    check_hint="Alaska Division of Elections' My Voter Information: your registration and your polling place",
+    where_url="https://www.elections.alaska.gov/voter-information/absentee-and-early-voting/",
+    where_hint="Alaska Division of Elections: early and in-person absentee voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must be postmarked "
+                     "by Election Day and reach the Division of Elections within 10 days after.",
+    mail_deadline="Your application must reach the Division of Elections by ",
+    local_office="The Division of Elections' regional office",
 )
 
 COLORADO = Guide(
@@ -411,9 +573,19 @@ COLORADO = Guide(
          "doesn't count. More:",
     early_where="Your county clerk lists the voter service and polling centers and their hours; you can register and "
                 "vote there in person.",
-    polls="Voter service and polling centers are open 7 a.m. to 7 p.m. on Election Day; if you're in line at 7, you "
-          "can vote.",
     credit="Dates worked out from Colorado's election law; more from the Colorado Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://www.govotecolorado.gov/",
+    check_hint="GoVoteColorado (Colorado Secretary of State): your registration, your ballot's status and where to vote",
+    where_url="https://www.govotecolorado.gov/",
+    where_hint="GoVoteColorado: your county's voter service and polling centers and drop boxes",
+    mail_label="Track your ballot",
+    mail_eligibility="Every active voter is mailed a ballot, from 22 days before Election Day. It must reach your county "
+                     "clerk by 7 p.m. on Election Day, by mail, in a drop box or at a voter service and polling center; "
+                     "a postmark doesn't count.",
+    local_office="Your county clerk",
+    polls_text="Voter service and polling centers are open 7 a.m. to 7 p.m. on Election Day; if you're in line at 7, "
+               "you can vote.",
 )
 
 GUIDES = {
@@ -455,20 +627,43 @@ def arizona(day: dt.date) -> Deadlines | None:
     return ARIZONA_DATES.get(day)
 
 
-def nevada(day: dt.date) -> Deadlines | None:
-    """The dates of Nevada's general election on ``day``, or None when there's none: register by
-    mail or in person the fourth Tuesday before, still be mailed a ballot 14 days before, early
-    voting the third Saturday before through the Friday before."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=28),
-        mail_apply_by=day - dt.timedelta(days=14),
-        early_start=day - dt.timedelta(days=17),
-        early_end=day - dt.timedelta(days=4),
-        state="NV",
-    )
+@dataclass(frozen=True)
+class Counts:
+    """A state whose deadlines are each a fixed count of days before its general election (the
+    module's docstring gives each state's law): None where there's no such date (no application
+    to make, early voting through Election Day)."""
+
+    register: int
+    mail: int | None
+    early_start: int
+    early_end: int | None
+    every_year: bool = False  # a general election every November, not only in even years
+
+    def on(self, state: str, day: dt.date) -> Deadlines | None:
+        """The dates of the general election on ``day``, or None when there's none."""
+        if (day.year % 2 and not self.every_year) or day != first_tuesday_after_first_monday(day.year, 11):
+            return None
+
+        def before(days: int | None) -> dt.date | None:
+            return None if days is None else day - dt.timedelta(days=days)
+
+        return Deadlines(
+            day, "General Election", register_by=before(self.register), mail_apply_by=before(self.mail),
+            early_start=before(self.early_start), early_end=before(self.early_end), state=state,
+        )
+
+
+COUNTS = {
+    "NV": Counts(28, 14, 17, 4),  # mail: register by then to still be mailed a ballot
+    "IA": Counts(15, 15, 20, 1),
+    "WI": Counts(20, 5, 14, 2),
+    "NJ": Counts(21, 7, 10, 2, every_year=True),
+    "NY": Counts(10, 10, 10, 2, every_year=True),
+    "CO": Counts(8, None, 15, 1),  # every voter is mailed a ballot
+    "WY": Counts(15, 1, 28, 1),
+    "IL": Counts(16, 5, 40, 1),
+    "AK": Counts(30, 10, 15, None),
+}
 
 
 def columbus_day(year: int) -> dt.date:
@@ -496,22 +691,6 @@ def georgia(day: dt.date) -> Deadlines | None:
     )
 
 
-def iowa(day: dt.date) -> Deadlines | None:
-    """The dates of Iowa's general election on ``day``, or None when there's none: pre-register
-    and ask for an absentee ballot by the fifteenth day before, vote absentee in person from the
-    twentieth day before through the day before."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=15),
-        mail_apply_by=day - dt.timedelta(days=15),
-        early_start=day - dt.timedelta(days=20),
-        early_end=day - dt.timedelta(days=1),
-        state="IA",
-    )
-
-
 def ohio(day: dt.date) -> Deadlines | None:
     """The dates of Ohio's general election on ``day``, or None when there's none: register by
     the thirtieth day before, moved past a Sunday or Columbus Day, early voting from the day after
@@ -531,121 +710,11 @@ def ohio(day: dt.date) -> Deadlines | None:
     )
 
 
-def wisconsin(day: dt.date) -> Deadlines | None:
-    """The dates of Wisconsin's general election on ``day``, or None when there's none: register
-    online or by mail by the third Wednesday before, ask for an absentee ballot by the fifth day
-    before, vote absentee in person from the fourteenth day before through the Sunday before."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=20),
-        mail_apply_by=day - dt.timedelta(days=5),
-        early_start=day - dt.timedelta(days=14),
-        early_end=day - dt.timedelta(days=2),
-        state="WI",
-    )
-
-
-def new_jersey(day: dt.date) -> Deadlines | None:
-    """The dates of New Jersey's general election on ``day``, or None when there's none: register
-    by the twenty-first day before, apply by mail for a mail-in ballot by the seventh day before,
-    early voting the tenth day before through the second day before."""
-    if day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=21),
-        mail_apply_by=day - dt.timedelta(days=7),
-        early_start=day - dt.timedelta(days=10),
-        early_end=day - dt.timedelta(days=2),
-        state="NJ",
-    )
-
-
-def new_york(day: dt.date) -> Deadlines | None:
-    """The dates of New York's general election on ``day``, or None when there's none: register and
-    apply to vote by mail by the tenth day before, early voting the tenth day before through the
-    second day before."""
-    if day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=10),
-        mail_apply_by=day - dt.timedelta(days=10),
-        early_start=day - dt.timedelta(days=10),
-        early_end=day - dt.timedelta(days=2),
-        state="NY",
-    )
-
-
-def colorado(day: dt.date) -> Deadlines | None:
-    """The dates of Colorado's general election on ``day``, or None when there's none: register
-    online or by mail and still be mailed a ballot by the eighth day before, voter service and
-    polling centers open from the fifteenth day before. Every voter is mailed a ballot, so there's
-    no application to make."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=8),
-        early_start=day - dt.timedelta(days=15),
-        early_end=day - dt.timedelta(days=1),
-        state="CO",
-    )
-
-
-def wyoming(day: dt.date) -> Deadlines | None:
-    """The dates of Wyoming's general election on ``day``, or None when there's none: register by
-    mail or at the clerk's by the fifteenth day before, ask for an absentee ballot by the day before,
-    vote absentee in person from the twenty-eighth day before through the day before."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=15),
-        mail_apply_by=day - dt.timedelta(days=1),
-        early_start=day - dt.timedelta(days=28),
-        early_end=day - dt.timedelta(days=1),
-        state="WY",
-    )
-
-
-def illinois(day: dt.date) -> Deadlines | None:
-    """The dates of Illinois's general election on ``day``, or None when there's none: register
-    online by the sixteenth day before, apply by mail to vote by mail by the fifth day before, early
-    voting the fortieth day before through the day before."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=16),
-        mail_apply_by=day - dt.timedelta(days=5),
-        early_start=day - dt.timedelta(days=40),
-        early_end=day - dt.timedelta(days=1),
-        state="IL",
-    )
-
-
-def alaska(day: dt.date) -> Deadlines | None:
-    """The dates of Alaska's general election on ``day``, or None when there's none: register by
-    the thirtieth day before, apply for an absentee ballot by mail by the tenth day before, early
-    voting from the fifteenth day before through Election Day."""
-    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    return Deadlines(
-        day, "General Election",
-        register_by=day - dt.timedelta(days=30),
-        mail_apply_by=day - dt.timedelta(days=10),
-        early_start=day - dt.timedelta(days=15),
-        state="AK",
-    )
-
-
 RULES: dict[str, Callable[[dt.date], Deadlines | None]] = {
-    "MI": michigan, "AZ": arizona, "NV": nevada, "GA": georgia, "WI": wisconsin, "OH": ohio, "IA": iowa, "NJ": new_jersey,
-    "NY": new_york, "CO": colorado, "WY": wyoming, "IL": illinois, "AK": alaska,
+    "MI": michigan, "AZ": arizona, "GA": georgia, "OH": ohio,
+    **{state: functools.partial(counts.on, state) for state, counts in COUNTS.items()},
 }
+PAGES = {"TX": texas.SOURCE, "CA": california.SOURCE}  # the states whose dates are read from their office's page
 
 
 def computed(state: str | None, day: dt.date) -> Deadlines | None:

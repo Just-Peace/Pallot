@@ -14,7 +14,7 @@ from bundles import store
 from bundles.entry import BundleError
 from bundles.manual import import_list
 from pallot.states import key_dates as state_key_dates
-from pallot.states import ny
+from pallot.states import ny, require
 
 from .bundling import build
 from .conftest import FIXTURES, TODAY, candidate_names, find_race, get_ballot
@@ -119,8 +119,8 @@ def test_wrapped_names_and_party_lines_are_read_whole_and_empty_lines_skipped():
 
 
 def test_a_new_york_certification_it_cant_read_is_refused():
-    with pytest.raises(ValueError, match="only 4 of 26 Congress races"):
-        ny.check(ny.parse_lines(LINES))
+    with pytest.raises(ValueError, match="4 U.S. House races, not 26"):
+        require(ny.parse_lines(LINES), ny.MINIMUM)
     with pytest.raises(ValueError, match="no general election's title"):
         ny.parse_lines(["Office: Comptroller"])
     with pytest.raises(ValueError, match="no races"):
@@ -170,7 +170,7 @@ def test_the_import_refuses_cloudflares_page_and_a_partial_certification(tmp_pat
         import_list("ny", saved, data_dir=tmp_path / "bundles", today=lambda: TODAY)
     monkeypatch.setattr(ny, "pdf_lines", lambda raw: LINES)
     saved.write_bytes(b"%PDF-1.7 part of it")
-    with pytest.raises(BundleError, match="reader understands: only 4 of 26 Congress races"):
+    with pytest.raises(BundleError, match="reader understands: 4 U.S. House races, not 26"):
         import_list("ny", saved, data_dir=tmp_path / "bundles", today=lambda: TODAY)
     assert not (tmp_path / "bundles" / "state_ny.json").exists()
 
