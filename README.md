@@ -236,20 +236,20 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | FEC race lists, other states | — | 431 races · 50 states | 2026-10-25 | 2026-10-25 |
 | Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-25 | 2026-10-25 |
 | Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-18 | 2026-10-25 |
-| Seat holders | — | 539 members of Congress (+500) · 2,292 state legislators (+2,114) | 2026-10-25 | 2026-10-25 |
+| Seat holders | — | 539 members of Congress · 2,292 state legislators | 2026-10-25 | 2026-10-25 |
 | Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-20 | 2026-10-20 |
-| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-18 |
-| County precinct records | — | 7 counties | 2026-10-18 | 2026-10-18 |
-| FiftyPlusOne polls | — | 548 Senate polls · 338 House polls (+1) · 580 Governor polls (+1) | 2026-10-25 | 2026-10-25 |
+| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-18 ⚠ overdue (weekly) |
+| County precinct records | — | 7 counties | 2026-10-18 | 2026-10-18 ⚠ overdue (weekly) |
+| FiftyPlusOne polls | — | 548 Senate polls · 338 House polls · 580 Governor polls | 2026-10-25 | 2026-10-25 |
 | Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
 | CAIR Action | **1,355** · Texas: 391 | — | 2026-10-25 | 2026-10-25 |
 | Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
 | NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-17 | 2026-10-25 |
 | Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-17 | 2026-10-25 |
 | Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-17 | 2026-10-25 |
-| Florida Division of Elections candidate list | **369** | 169 races | 2026-10-23 | 2026-10-25 |
+| Florida Division of Elections candidate list | **369** | 169 races | 2026-10-26 | 2026-10-26 |
 | Virginia Department of Elections candidate list | **38** | 12 races | 2026-10-17 | 2026-10-25 |
-| California Secretary of State candidate list | **388** | 228 races | 2026-10-21 | 2026-10-25 |
+| California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-26 |
 | Arizona Secretary of State candidate list | **232** | 91 races | 2026-10-22 | 2026-10-22 |
 | Nevada Secretary of State candidate list | **633** | 364 races | 2026-10-22 | 2026-10-22 |
 | Georgia Secretary of State candidate list | **292** | 184 races | 2026-10-22 | 2026-10-22 |
@@ -259,9 +259,13 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | Iowa Secretary of State candidate list | **245** | 137 races | 2026-10-25 | 2026-10-25 |
 | New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-25 | 2026-10-25 |
 | New York State Board of Elections candidate list | **502** | 253 races | 2026-10-25 | 2026-10-25 |
-| TrackAIPAC | **630** (+1) · Texas: 56 · House: 513 (+1) · Other: 1 · Senate: 116 | — | 2026-10-25 | 2026-10-25 |
-| Vote for Peace | **1,423** (+2) · Texas: 194 · State legislature: 500 · Federal: 274 (+1) · County: 268 · Local: 178 (+1) · Statewide: 92 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-25 | 2026-10-25 |
-| Texas Ethics Commission | **2,154** | 803,415 contributions (+219) · 8,316 reports (+14) | 2026-10-25 | 2026-10-25 |
+| Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-26 |
+| Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-26 |
+| Illinois State Board of Elections candidate list | **501** (+131) | 391 races (+131) | 2026-10-26 | 2026-10-26 |
+| Alaska Division of Elections candidate list | **155** | 74 races | 2026-10-26 | 2026-10-26 |
+| TrackAIPAC | **630** · Texas: 56 · House: 513 · Other: 1 · Senate: 116 | — | 2026-10-25 | 2026-10-25 |
+| Vote for Peace | **1,423** · Texas: 194 · State legislature: 500 · Federal: 274 · County: 268 · Local: 178 · Statewide: 92 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-25 | 2026-10-25 |
+| Texas Ethics Commission | **2,154** | 803,415 contributions · 8,316 reports | 2026-10-25 | 2026-10-25 |
 <!-- source-stats:end -->
 
 ## Configuration
