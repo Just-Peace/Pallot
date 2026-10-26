@@ -40,5 +40,10 @@ def test_early_voting_goes_once_its_over():
     assert _summary(dates) == "Election Day Nov 3"
 
 
+def test_early_voting_through_election_day_says_from_and_stays_until_then():
+    dates = {"early_voting_start": "2000-10-19", "early_voting_end": None, "election_day": "2099-11-03"}
+    assert _summary(dates) == "Early voting from Oct 19 · Election Day Nov 3"
+
+
 def test_no_dates():
     assert _summary(None) == "Registration and where to vote"

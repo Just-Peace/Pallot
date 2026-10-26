@@ -5,8 +5,11 @@ The page is plain HTML with one table, a row per upcoming statewide election, it
 known by their headings: the election (its date, poll hours and name), voter registration
 ("Online or Postmark by" a date), the replacement vote-by-mail application's recommended date,
 and when completed ballots must arrive. California mails every active voter a ballot and its
-counties set their own in-person voting, so the page gives no early voting dates, and none are
-shown. A page without a row Pallot can read is refused, so the last good copy keeps serving.
+counties set their own in-person voting, so the page gives no early voting dates. Every county's
+elections office takes ballots in person from the 29th day before (Elections Code 3018), through
+Election Day, so that's early voting's start, with no end; vote centers, where a county has them,
+open at least 10 days before (4005). A page without a row Pallot can read is refused, so the last
+good copy keeps serving.
 """
 
 from __future__ import annotations
@@ -52,7 +55,7 @@ def parse(html: str) -> list[Deadlines]:
             return first_date(row[index], _DATE) if index is not None and index < len(row) else None
 
         found.append(Deadlines(day, named.group(0).strip() if named else "Election", register_by=at("registration"),
-                               mail_apply_by=at("replacement"), state="CA"))
+                               mail_apply_by=at("replacement"), early_start=day - dt.timedelta(days=29), state="CA"))
     return found
 
 

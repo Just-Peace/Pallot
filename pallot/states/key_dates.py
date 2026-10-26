@@ -2,7 +2,8 @@
 whose deadlines are fixed counts of days from Election Day, the dates worked out from that day
 alone, with nothing fetched. Texas's come from its SOS's page (sources/key_dates.py) instead, and
 California's from its SOS's (sources/ca_key_dates.py).
-Arizona's are entered by hand from its Secretary of State's list, whose site blocks scripts.
+Arizona's are entered by hand from its Secretary of State's list, whose site blocks scripts; early
+voting in person ends at 5 p.m. the Friday before Election Day (A.R.S. 16-542(E)).
 
 Michigan's rules, as its Department of State gives them: registration online or by mail closes
 15 days before Election Day, then it's in person at the clerk's office with proof of residency
@@ -234,7 +235,8 @@ CALIFORNIA = Guide(
     mail_summary="Ask for a replacement mail ballot",
     mail="Every active voter in California is mailed a ballot for {election}. If yours is lost or damaged, today is "
          "the Secretary of State's recommended last day to ask your county elections office for a new one:",
-    early_where="Your county elections office lists the places and hours.",
+    early_where="Your county elections office takes ballots in person through Election Day; where your county has "
+                "vote centers, they open at least 10 days before. Your county lists the places and hours.",
     credit="Dates from the California Secretary of State",
     poll_hours="7 a.m. – 8 p.m.",
     check_url=california.REGISTRATION_URL,
@@ -617,7 +619,7 @@ def michigan(day: dt.date) -> Deadlines | None:
 ARIZONA_DATES = {
     dt.date(2026, 11, 3): Deadlines(
         dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 5),
-        early_start=dt.date(2026, 10, 7), state="AZ",
+        early_start=dt.date(2026, 10, 7), early_end=dt.date(2026, 10, 30), state="AZ",
     ),
 }
 
