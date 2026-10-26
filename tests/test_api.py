@@ -111,19 +111,17 @@ def test_a_header_that_cant_be_read_leaves_the_defaults(client):
         assert next(s for s in rows if s["id"] == "key_dates")["enabled"] is True, header
 
 
-@pytest.mark.shipped_defaults
-def test_vote_for_peace_starts_off(client):
+def test_vote_for_peace_starts_on(client):
     enabled = {s["id"]: s["enabled"] for s in client.get("/api/sources").json()["sources"]}
-    assert enabled["voteforpeace"] is False
-    assert all(on for source, on in enabled.items() if source != "voteforpeace")
+    assert all(enabled.values())
     ballot = get_ballot(client)
-    assert not any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
-                   for card in c["cards"])
+    assert any(card["source"] == "voteforpeace" for race in ballot["races"] for c in race["candidates"]
+               for card in c["cards"])
 
 
-@pytest.mark.shipped_defaults
 def test_the_ballot_names_the_sources_pick_by_rule_uses_that_are_off(client):
     switch(client, "suggestions", False)
+    switch(client, "voteforpeace", False)
     first, done = stream_ballot(client)
     assert [s["id"] for s in first["ballot"]["sources_off"]] == ["voteforpeace"]
     assert done["ballot"]["sources_off"] == [{"id": "voteforpeace", "label": "Vote for Peace"}]

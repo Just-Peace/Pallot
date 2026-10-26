@@ -52,4 +52,4 @@ polls = true                # FiftyPlusOne
 
 # Third-party endorsements
 trackaipac = true
-voteforpeace = false        # used with Organize for Peace's permission; turned on per voter
+voteforpeace = true         # Vote for Peace: Allies and Opposed, used with Organize for Peace's permission

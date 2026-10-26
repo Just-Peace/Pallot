@@ -30,7 +30,6 @@ from fastapi.testclient import TestClient
 
 from pallot import maintain
 from pallot.api import create_app
-from pallot import settings
 from pallot.settings import HEADER
 from pallot.config import Config
 from pallot.sources import fec, suggestions
@@ -623,14 +622,6 @@ def upstream():
 class FakeTecResult:
     def summary(self) -> str:
         return "updated snapshot 2026-09-27: 2 candidates and officeholders with reports since Nov 6, 2024 (read the zip)"
-
-
-@pytest.fixture(autouse=True)
-def sources_on(request, monkeypatch):
-    """Vote for Peace is off until the voter turns it on, but many tests are about it, so it
-    starts on here; a test marked shipped_defaults sees the defaults Pallot ships with."""
-    if "shipped_defaults" not in request.keywords:
-        monkeypatch.setitem(settings.DEFAULT_SOURCES, "voteforpeace", True)
 
 
 PAGE_HEADERS = {"Sec-Fetch-Site": "same-origin", HEADER: "{}"}
