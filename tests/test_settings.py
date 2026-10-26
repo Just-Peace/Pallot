@@ -20,10 +20,9 @@ def test_the_defaults_file_names_every_source_that_can_be_turned_off():
     assert set(read_sources_file(DEFAULTS_FILE)) == {info.id for info in SOURCES if info.toggleable}
 
 
-@pytest.mark.shipped_defaults
 def test_the_defaults_come_from_the_file():
     assert DEFAULT_SOURCES == read_sources_file(DEFAULTS_FILE)
-    assert DEFAULT_SOURCES["voteforpeace"] is False
+    assert DEFAULT_SOURCES["voteforpeace"] is True
     assert DEFAULT_SOURCES["sos"] is True
 
 

@@ -29,7 +29,7 @@ uv run pallot-bundle stats                # the snapshots' counts, as README's "
 - **In parallel.** `pytest-xdist` runs one worker per CPU (`-n auto --dist loadgroup`). Each test has its own data folder under `tmp_path`.
 - **The live tests, one at a time.** They share one worker (`xdist_group("live")`), so a real service never gets two calls at once.
 - **No throttling waits.** The tests' `make_app` passes `min_interval={}`; `test_calls_to_one_source_are_spaced_out` checks the throttling itself.
-- **Sources on.** Vote for Peace starts off for the voter, but many tests are about it, so `conftest.py`'s autouse `sources_on` turns it on. A test marked `shipped_defaults` sees the shipped defaults. `switch(client, id, on)` flips a source for that client's later requests, by the header the page sends.
+- **Sources on.** Tests see the shipped defaults (`pallot/sources.toml`), so every source starts on unless a test switches it. `switch(client, id, on)` flips a source for that client's later requests, by the header the page sends.
 - **`make_app` allows `testserver`**, TestClient's host name, past the Host middleware.
 - **As Pallot's pages.** `/api/*` answers only Pallot's own pages, so `conftest.py`'s autouse `as_pallots_pages` gives every TestClient the headers the page sends (`Sec-Fetch-Site: same-origin` and `X-Pallot-Sources`). A test of other callers changes or deletes them.
 - **pallot-cache beside the app.** `make_app.cache_command("refresh", "sos")` runs `maintain.run` on the test's data folder, as the command does beside a running server, and returns the exit status and what it printed.
