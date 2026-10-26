@@ -22363,6 +22363,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "f0cfd05c-e5dc-47c2-8a86-e7e93a7f36cc",
+      "district": null,
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": "https://cairaction.org/",
+          "notes": "Endorsed",
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Shereef Akeel",
+      "notes": "Nominated at convention",
+      "office_title": "Wayne State Board of Governors",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "shereef-akeel",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/shereef-akeel"
+    },
+    {
+      "articles": [],
       "candidate_id": "75efbeb7-7412-4758-bdc3-6228ba3ffca5",
       "district": "2",
       "election_date": "Nov 3, 2026",
@@ -22608,6 +22643,12 @@
           "notes": "Endorsed",
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -22636,6 +22677,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
@@ -22781,6 +22828,12 @@
           "link": "https://cairaction.org/",
           "notes": "Endorsed",
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
@@ -23343,6 +23396,47 @@
     },
     {
       "articles": [],
+      "candidate_id": "a6669e46-ec4f-4e6d-9c53-5a0c02afdc0a",
+      "district": "58",
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Katrina Manetta",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "katrina-manetta",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/katrina-manetta"
+    },
+    {
+      "articles": [],
       "candidate_id": "89e1cb57-3ae7-40e9-a9ca-0b5f118e06b3",
       "district": null,
       "election_date": "Nov 3, 2026",
@@ -23723,6 +23817,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -24049,6 +24149,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
