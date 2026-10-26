@@ -3,11 +3,13 @@ Each source's builder is tested in its own test_bundle_<source>.py."""
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import sys
 import time
 
 import httpx
+import pytest
 from fastapi.testclient import TestClient
 
 from bundles import registry, store
@@ -16,6 +18,7 @@ from bundles.entry import Bundle, BundleError
 from bundles.refresh import refresh
 from pallot.config import DAY, PROJECT_DIR, Config, Ttls
 from pallot.http_cache import HttpCache, RequestSpec
+from pallot.states import Filing
 
 from .bundling import NOW, came_with
 
@@ -108,3 +111,19 @@ def test_every_bundle_ships_with_pallot_and_has_a_lifetime():
                 assert entry.ttl(Ttls(), spec) >= DAY and entry.wants(spec, answer["value"])
                 assert "headers" not in answer["request"]  # never a key or a page's token
             assert store.answers_hash(loaded.answers) == store.read_meta(store.PACKAGE_DATA_DIR)[entry.name]["answers_hash"]
+
+
+# Lists imported by hand before a field their adapter never sets, so its default is right: the
+# next import adds it, and then the entry goes.
+PREDATES = {"state_nv": {"retention"}}
+
+
+@pytest.mark.parametrize("name", sorted(path.stem for path in store.PACKAGE_DATA_DIR.glob("state_*.json")))
+def test_every_bundled_state_list_has_every_field_a_filing_has(name):
+    """A list is kept as its parsed filings, and a field they don't have reads as its default:
+    a new Filing field needs the lists rebuilt (pallot-bundle refresh, or import-list)."""
+    fields = {field.name for field in dataclasses.fields(Filing)}
+    rows = [row for answer in store.load(name).answers if isinstance(answer["value"], dict)
+            for row in answer["value"].get("filings") or ()]
+    missing = {field for row in rows for field in fields - row.keys()}
+    assert missing == PREDATES.get(name, set()), f"{name} predates Filing's {sorted(missing)}"

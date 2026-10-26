@@ -109,6 +109,8 @@ A state goes from Congress only (the FEC's filers) to its own official list with
 6. Run `uv run pallot-bundle refresh --only state_<st>` once and commit `bundles/data/`.
 7. The state in README's "Where it covers" and "Bundled snapshots", About's "Where it covers" and Sources, the FAQ's "Which addresses and elections does Pallot cover?", and Privacy's list of what's downloaded whole.
 
+The bundled lists keep each candidate's filing as it was read, so a list read before a new field on a filing doesn't have it, and reads as if it were off. With a new field, rebuild every list in the same change: `uv run pallot-bundle refresh --only state_<st> …` for the fetched ones, and save and import again those imported by hand. A test fails while a bundled list is missing one. A list imported by hand whose adapter never sets the field reads right without it, so it can wait for its next import: name it in the test's `PREDATES`.
+
 ## Endorsement lists
 
 A frozen, one-time copy of an organization's list: one JSON file in `pallot/endorsements/`, found at startup. Each file becomes its own source (a switch, a card, a Help me pick Trust chip, a row on About and the FAQ) with no code naming it. Every state is kept; a lookup matches only its own state.
