@@ -8378,6 +8378,100 @@
       "state": "GA"
     },
     {
+      "candidate_id": "ga-jim-kingston",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "01",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "ga-jim-kingston",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "01",
+          "donate_url": null,
+          "donations": 8500,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 8500,
+          "lines": [
+            "Candidate for U.S. House",
+            "GA-01 [R]",
+            "Israel Lobby Total: $8,500",
+            "Donations: $8,500",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Jim Kingston",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "GA-01",
+          "seat_text": "GA-01 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "GA",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Jim Kingston",
+      "party": "R",
+      "seat": "GA-01",
+      "state": "GA"
+    },
+    {
+      "candidate_id": "ga-john-cowan",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "11",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "ga-john-cowan",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "11",
+          "donate_url": null,
+          "donations": 26300,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 26300,
+          "lines": [
+            "Candidate for U.S. House",
+            "GA-11 [R]",
+            "Israel Lobby Total: $26,300",
+            "Donations: $26,300",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "John Cowan",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "GA-11",
+          "seat_text": "GA-11 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "GA",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "John Cowan",
+      "party": "R",
+      "seat": "GA-11",
+      "state": "GA"
+    },
+    {
       "candidate_id": "ga-jon-ossoff",
       "categories": [
         "congress"
@@ -12413,23 +12507,26 @@
           "chamber": "house",
           "district": "06",
           "donate_url": null,
-          "donations": 3000,
+          "donations": 70693,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 3000,
+          "israel_lobby_total": 70693,
           "lines": [
             "Candidate for U.S. House",
             "KY-06 [R]",
-            "Israel Lobby Total: $3,000",
-            "Donations: $3,000",
+            "Israel Lobby Total: $70,693",
+            "Donations: $70,693",
             "IE: $0",
-            "GCSC"
+            "AIPAC, GCSC, NORPAC, RJC"
           ],
           "name": "Ralph Alvarado",
           "notes": [],
           "pacs": [
-            "GCSC"
+            "AIPAC",
+            "GCSC",
+            "NORPAC",
+            "RJC"
           ],
           "party": "R",
           "seat": "KY-06",
@@ -16214,6 +16311,53 @@
       "state": "MO"
     },
     {
+      "candidate_id": "mo-chris-stigall",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "06",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "mo-chris-stigall",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "06",
+          "donate_url": null,
+          "donations": 5000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5000,
+          "lines": [
+            "Candidate for U.S. House",
+            "MO-06 [R]",
+            "Israel Lobby Total: $5,000",
+            "Donations: $5,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Chris Stigall",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "MO-06",
+          "seat_text": "MO-06 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "MO",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Chris Stigall",
+      "party": "R",
+      "seat": "MO-06",
+      "state": "MO"
+    },
+    {
       "candidate_id": "mo-emanuel-cleaver",
       "categories": [
         "congress"
@@ -16995,22 +17139,23 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 110,
+          "donations": 106691,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 110,
+          "israel_lobby_total": 106691,
           "lines": [
             "Candidate for U.S. Senate",
             "Montana [R]",
-            "Israel Lobby Total: $110",
-            "Donations: $110",
+            "Israel Lobby Total: $106,691",
+            "Donations: $106,691",
             "IE: $0",
-            "NORPAC, RJC"
+            "AIPAC, NORPAC, RJC"
           ],
           "name": "Kurt Alme",
           "notes": [],
           "pacs": [
+            "AIPAC",
             "NORPAC",
             "RJC"
           ],
@@ -20251,23 +20396,25 @@
           "chamber": "house",
           "district": "02",
           "donate_url": null,
-          "donations": null,
+          "donations": 8550,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 1000,
+          "israel_lobby_total": 8550,
           "lines": [
             "Candidate for U.S. House",
             "NV-02 [R]",
-            "Israel Lobby Total: $1,000",
+            "Israel Lobby Total: $8,550",
+            "Donations: $8,550",
             "IE: $0",
-            "AIPAC, AMP"
+            "AIPAC, AMP, RJC"
           ],
           "name": "David Flippo",
           "notes": [],
           "pacs": [
             "AIPAC",
-            "AMP"
+            "AMP",
+            "RJC"
           ],
           "party": "R",
           "seat": "NV-02",
@@ -26000,6 +26147,53 @@
       "state": "SC"
     },
     {
+      "candidate_id": "sc-wes-climer",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "05",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "sc-wes-climer",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "05",
+          "donate_url": null,
+          "donations": 25000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 25000,
+          "lines": [
+            "Candidate for U.S. House",
+            "SC-05 [R]",
+            "Israel Lobby Total: $25,000",
+            "Donations: $25,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Wes Climer",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "SC-05",
+          "seat_text": "SC-05 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "SC",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Wes Climer",
+      "party": "R",
+      "seat": "SC-05",
+      "state": "SC"
+    },
+    {
       "candidate_id": "sc-william-timmons",
       "categories": [
         "congress"
@@ -26564,6 +26758,53 @@
       "state": "TN"
     },
     {
+      "candidate_id": "tn-johnny-garrett",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "06",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tn-johnny-garrett",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "06",
+          "donate_url": null,
+          "donations": 10000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 10000,
+          "lines": [
+            "Candidate for U.S. House",
+            "TN-06 [R]",
+            "Israel Lobby Total: $10,000",
+            "Donations: $10,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Johnny Garrett",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "TN-06",
+          "seat_text": "TN-06 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "TN",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Johnny Garrett",
+      "party": "R",
+      "seat": "TN-06",
+      "state": "TN"
+    },
+    {
       "candidate_id": "tn-justin-j-pearson",
       "categories": [
         "endorsed"
@@ -26957,6 +27198,54 @@
       "state": "TX"
     },
     {
+      "candidate_id": "tx-alex-mealer",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "09",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tx-alex-mealer",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "09",
+          "donate_url": null,
+          "donations": 31035,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 31035,
+          "lines": [
+            "Candidate for U.S. House",
+            "TX-09 [R]",
+            "Israel Lobby Total: $31,035",
+            "Donations: $31,035",
+            "IE: $0",
+            "AIPAC, RJC"
+          ],
+          "name": "Alex Mealer",
+          "notes": [],
+          "pacs": [
+            "AIPAC",
+            "RJC"
+          ],
+          "party": "R",
+          "seat": "TX-09",
+          "seat_text": "TX-09 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "TX",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Alex Mealer",
+      "party": "R",
+      "seat": "TX-09",
+      "state": "TX"
+    },
+    {
       "candidate_id": "tx-august-pfluger",
       "categories": [
         "congress"
@@ -27070,22 +27359,25 @@
           "chamber": "house",
           "district": "15",
           "donate_url": null,
-          "donations": null,
+          "donations": 62663,
           "election_date": null,
-          "ie": null,
+          "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": null,
+          "israel_lobby_total": 62663,
           "lines": [
             "Candidate for U.S. House",
             "TX-15 [D]",
-            "Israel Lobby Total: TBD",
-            "Endorsed by DMFI"
+            "Israel Lobby Total: $62,663",
+            "Donations: $62,663",
+            "IE: $0",
+            "DMFI, JSTREET"
           ],
           "name": "Bobby Pulido",
-          "notes": [
-            "Endorsed by DMFI"
+          "notes": [],
+          "pacs": [
+            "DMFI",
+            "JSTREET"
           ],
-          "pacs": [],
           "party": "D",
           "seat": "TX-15",
           "seat_text": "TX-15 [D]",
@@ -27248,6 +27540,54 @@
       "state": "TX"
     },
     {
+      "candidate_id": "tx-chris-gober",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "10",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tx-chris-gober",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "10",
+          "donate_url": null,
+          "donations": 15030,
+          "election_date": null,
+          "ie": 15030,
+          "incumbent": false,
+          "israel_lobby_total": 15030,
+          "lines": [
+            "Candidate for U.S House",
+            "TX-10 [D]",
+            "Israel Lobby Total: $15,030",
+            "Donations: $15,030",
+            "IE: $15,030",
+            "AIPAC, RJC"
+          ],
+          "name": "Chris Gober",
+          "notes": [],
+          "pacs": [
+            "AIPAC",
+            "RJC"
+          ],
+          "party": "D",
+          "seat": "TX-10",
+          "seat_text": "TX-10 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "TX",
+          "title": "Candidate for U.S House"
+        }
+      ],
+      "name": "Chris Gober",
+      "party": "D",
+      "seat": "TX-10",
+      "state": "TX"
+    },
+    {
       "candidate_id": "tx-christian-menefee",
       "categories": [
         "congress"
@@ -27308,16 +27648,16 @@
           "chamber": "house",
           "district": "33",
           "donate_url": null,
-          "donations": 692559,
+          "donations": 695295,
           "election_date": null,
           "ie": 5722,
           "incumbent": false,
-          "israel_lobby_total": 698281,
+          "israel_lobby_total": 701017,
           "lines": [
             "Candidate for U.S. House",
             "TX-33 [D]",
-            "Israel Lobby Total: $698,281",
-            "Donations: $692,559",
+            "Israel Lobby Total: $701,017",
+            "Donations: $695,295",
             "IE: $5,722",
             "AIPAC, DMFI, JAC, JSTREET, MDACC, PIA, SUNPAC"
           ],
@@ -27733,15 +28073,16 @@
           "chamber": "house",
           "district": "32",
           "donate_url": null,
-          "donations": null,
+          "donations": 15000,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 10000,
+          "israel_lobby_total": 15000,
           "lines": [
             "Candidate for U.S. House",
             "TX-32 [R]",
-            "Israel Lobby Total: $10,000",
+            "Israel Lobby Total: $15,000",
+            "Donations: $15,000",
             "IE: $0",
             "AIPAC"
           ],
@@ -27829,7 +28170,7 @@
           "israel_lobby_total": 0,
           "lines": [
             "Candidate for U.S. Senate",
-            "TX [D]",
+            "Texas [D]",
             "Israel Lobby Total: $0",
             "Endorsed by JAC",
             "[This candidate is pro-israel.](/james-talarico)"
@@ -27842,7 +28183,7 @@
           "pacs": [],
           "party": "D",
           "seat": "TX-SEN",
-          "seat_text": "TX [D]",
+          "seat_text": "Texas [D]",
           "section": null,
           "source": "candidates",
           "state": "TX",
@@ -29430,21 +29771,23 @@
           "chamber": "house",
           "district": "19",
           "donate_url": null,
-          "donations": 30,
+          "donations": 20032,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": null,
+          "israel_lobby_total": 20032,
           "lines": [
             "Candidate for U.S. House",
             "TX-19 [R]",
-            "Donations: $30",
+            "Israel Lobby Total: $20,032",
+            "Donations: $20,032",
             "IE: $0",
-            "RJC"
+            "AIPAC, RJC"
           ],
           "name": "Tom Sell",
           "notes": [],
           "pacs": [
+            "AIPAC",
             "RJC"
           ],
           "party": "R",
@@ -31102,6 +31445,53 @@
       "state": "WA"
     },
     {
+      "candidate_id": "wa-amanda-mckinney",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "04",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "wa-amanda-mckinney",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "04",
+          "donate_url": null,
+          "donations": 5000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5000,
+          "lines": [
+            "Candidate for U.S. House",
+            "WA-04 [R]",
+            "Israel Lobby Total: $5,000",
+            "Donations: $5,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Amanda McKinney",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "WA-04",
+          "seat_text": "WA-04 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "WA",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Amanda McKinney",
+      "party": "R",
+      "seat": "WA-04",
+      "state": "WA"
+    },
+    {
       "candidate_id": "wa-dan-newhouse",
       "categories": [
         "congress"
@@ -32049,6 +32439,53 @@
       "state": "WI"
     },
     {
+      "candidate_id": "wi-michael-alfonso",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "07",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "wi-michael-alfonso",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "07",
+          "donate_url": null,
+          "donations": 5000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5000,
+          "lines": [
+            "Candidate for U.S. House",
+            "WI-07 [R]",
+            "Israel Lobby Total: $5,000",
+            "Donations: $5,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Michael Alfonso",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "WI-07",
+          "seat_text": "WI-07 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "WI",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Michael Alfonso",
+      "party": "R",
+      "seat": "WI-07",
+      "state": "WI"
+    },
+    {
       "candidate_id": "wi-rebecca-cooke",
       "categories": [
         "watchlist"
@@ -32731,5 +33168,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-25"
+  "snapshot": "2026-10-26"
 }

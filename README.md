@@ -238,8 +238,8 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-18 | 2026-10-25 |
 | Seat holders | — | 539 members of Congress · 2,292 state legislators | 2026-10-25 | 2026-10-25 |
 | Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-20 | 2026-10-20 |
-| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-18 ⚠ overdue (weekly) |
-| County precinct records | — | 7 counties | 2026-10-18 | 2026-10-18 ⚠ overdue (weekly) |
+| TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-26 |
+| County precinct records | — | 7 counties | 2026-10-26 | 2026-10-26 |
 | FiftyPlusOne polls | — | 548 Senate polls · 338 House polls · 580 Governor polls | 2026-10-25 | 2026-10-25 |
 | Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
 | CAIR Action | **1,355** · Texas: 391 | — | 2026-10-25 | 2026-10-25 |
@@ -263,9 +263,9 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-26 |
 | Illinois State Board of Elections candidate list | **501** | 391 races | 2026-10-26 | 2026-10-26 |
 | Alaska Division of Elections candidate list | **155** | 74 races | 2026-10-26 | 2026-10-26 |
-| TrackAIPAC | **630** · Texas: 56 · House: 513 · Other: 1 · Senate: 116 | — | 2026-10-25 | 2026-10-25 |
-| Vote for Peace | **1,423** · Texas: 194 · State legislature: 500 · Federal: 274 · County: 268 · Local: 178 · Statewide: 92 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-25 | 2026-10-25 |
-| Texas Ethics Commission | **2,154** | 803,415 contributions · 8,316 reports | 2026-10-25 | 2026-10-25 |
+| TrackAIPAC | **639** (+9) · Texas: 58 (+2) · House: 522 (+9) · Other: 1 · Senate: 116 | — | 2026-10-26 | 2026-10-26 |
+| Vote for Peace | **1,423** · Texas: 193 (-1) · State legislature: 499 (-1) · Federal: 276 (+2) · County: 268 · Local: 178 · Statewide: 91 (-1) · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-26 | 2026-10-26 |
+| Texas Ethics Commission | **2,154** | 803,415 contributions · 8,316 reports | 2026-10-25 | 2026-10-26 |
 <!-- source-stats:end -->
 
 ## Configuration

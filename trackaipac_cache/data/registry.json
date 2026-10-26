@@ -1161,6 +1161,20 @@
     "party": "R",
     "state": "GA"
   },
+  "ga-jim-kingston": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Jim Kingston",
+    "party": "R",
+    "state": "GA"
+  },
+  "ga-john-cowan": {
+    "chamber": "house",
+    "district": "11",
+    "name": "John Cowan",
+    "party": "R",
+    "state": "GA"
+  },
   "ga-jon-ossoff": {
     "chamber": "senate",
     "district": null,
@@ -2187,6 +2201,13 @@
     "chamber": "house",
     "district": "03",
     "name": "Bob Onder",
+    "party": "R",
+    "state": "MO"
+  },
+  "mo-chris-stigall": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Chris Stigall",
     "party": "R",
     "state": "MO"
   },
@@ -3513,6 +3534,13 @@
     "party": "R",
     "state": "SC"
   },
+  "sc-wes-climer": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Wes Climer",
+    "party": "R",
+    "state": "SC"
+  },
   "sc-william-timmons": {
     "chamber": "house",
     "district": "04",
@@ -3590,6 +3618,13 @@
     "party": "R",
     "state": "TN"
   },
+  "tn-johnny-garrett": {
+    "chamber": "house",
+    "district": "06",
+    "name": "Johnny Garrett",
+    "party": "R",
+    "state": "TN"
+  },
   "tn-justin-j-pearson": {
     "chamber": "house",
     "district": "09",
@@ -3646,6 +3681,13 @@
     "party": "D",
     "state": "TX"
   },
+  "tx-alex-mealer": {
+    "chamber": "house",
+    "district": "09",
+    "name": "Alex Mealer",
+    "party": "R",
+    "state": "TX"
+  },
   "tx-august-pfluger": {
     "chamber": "house",
     "district": "11",
@@ -3686,6 +3728,13 @@
     "district": "21",
     "name": "Chip Roy",
     "party": "R",
+    "state": "TX"
+  },
+  "tx-chris-gober": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Chris Gober",
+    "party": "D",
     "state": "TX"
   },
   "tx-christian-menefee": {
@@ -4213,6 +4262,13 @@
     "party": "D",
     "state": "WA"
   },
+  "wa-amanda-mckinney": {
+    "chamber": "house",
+    "district": "04",
+    "name": "Amanda McKinney",
+    "party": "R",
+    "state": "WA"
+  },
   "wa-dan-newhouse": {
     "chamber": "house",
     "district": "04",
@@ -4330,6 +4386,13 @@
     "district": "02",
     "name": "Mark Pocan",
     "party": "D",
+    "state": "WI"
+  },
+  "wi-michael-alfonso": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Michael Alfonso",
+    "party": "R",
     "state": "WI"
   },
   "wi-rebecca-cooke": {
