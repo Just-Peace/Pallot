@@ -6976,6 +6976,52 @@
       "state": "FL"
     },
     {
+      "candidate_id": "fl-jim-schwartzel",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "19",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-jim-schwartzel",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "19",
+          "donate_url": null,
+          "donations": 5000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-19 [R]",
+            "Donations: $5,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Jim Schwartzel",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "FL-19",
+          "seat_text": "FL-19 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Jim Schwartzel",
+      "party": "R",
+      "seat": "FL-19",
+      "state": "FL"
+    },
+    {
       "candidate_id": "fl-jimmy-patronis",
       "categories": [
         "congress"
@@ -7021,6 +7067,53 @@
       "name": "Jimmy Patronis",
       "party": "R",
       "seat": "FL-01",
+      "state": "FL"
+    },
+    {
+      "candidate_id": "fl-joe-strada",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "11",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-joe-strada",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "11",
+          "donate_url": null,
+          "donations": 5000,
+          "election_date": null,
+          "ie": 5000,
+          "incumbent": false,
+          "israel_lobby_total": 5000,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-11 [R]",
+            "Israel Lobby Total: $5,000",
+            "Donations: $5,000",
+            "IE: $5,000",
+            "AIPAC"
+          ],
+          "name": "Joe Strada",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "FL-11",
+          "seat_text": "FL-11 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Joe Strada",
+      "party": "R",
+      "seat": "FL-11",
       "state": "FL"
     },
     {
@@ -25732,25 +25825,27 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 0,
+          "donations": 13190,
           "election_date": null,
           "ie": 0,
           "incumbent": null,
-          "israel_lobby_total": 0,
+          "israel_lobby_total": 13190,
           "lines": [
             "SC-SEN [R]",
-            "Lobby Total: $0",
-            "PACs: $0",
+            "Lobby Total: $13,190",
+            "PACs: $13,190",
             "IE: $0",
-            "Endorsed by RJC",
-            "Appointed by Gov. Henry McMaster"
+            "AIPAC, RJC",
+            "Appointed by Gov. Henry McMaster. 2026 Republican Nominee for Senate."
           ],
           "name": "Darline Graham",
           "notes": [
-            "Endorsed by RJC",
-            "Appointed by Gov. Henry McMaster"
+            "Appointed by Gov. Henry McMaster. 2026 Republican Nominee for Senate."
           ],
-          "pacs": [],
+          "pacs": [
+            "AIPAC",
+            "RJC"
+          ],
           "party": "R",
           "seat": "SC-SEN",
           "seat_text": "SC-SEN [R]",
@@ -26530,16 +26625,16 @@
           "chamber": "house",
           "district": "09",
           "donate_url": null,
-          "donations": 6500,
+          "donations": 10000,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 6500,
+          "israel_lobby_total": 10000,
           "lines": [
             "Candidate for U.S. House",
             "TN-09 [R]",
-            "Israel Lobby Total: $6,500",
-            "Donations: $6,500",
+            "Israel Lobby Total: $10,000",
+            "Donations: $10,000",
             "IE: $0",
             "AIPAC"
           ],
@@ -26560,6 +26655,55 @@
       "name": "Brent Taylor",
       "party": "R",
       "seat": "TN-09",
+      "state": "TN"
+    },
+    {
+      "candidate_id": "tn-charlie-hatcher",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "05",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tn-charlie-hatcher",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "05",
+          "donate_url": null,
+          "donations": null,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5000,
+          "lines": [
+            "Candidate for U.S. House",
+            "TN-05 [R]",
+            "Israel Lobby Total: $5,000",
+            "Donations; $5,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Charlie Hatcher",
+          "notes": [
+            "Donations; $5,000"
+          ],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "TN-05",
+          "seat_text": "TN-05 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "TN",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Charlie Hatcher",
+      "party": "R",
+      "seat": "TN-05",
       "state": "TN"
     },
     {
@@ -28244,6 +28388,55 @@
       "state": "TX"
     },
     {
+      "candidate_id": "tx-jessica-steinmann",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "08",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tx-jessica-steinmann",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "08",
+          "donate_url": null,
+          "donations": null,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 29502,
+          "lines": [
+            "Candidate for U.S. House",
+            "TX-08 [R]",
+            "Israel Lobby Total: $29,502",
+            "Donations; $29,502",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Jessica Steinmann",
+          "notes": [
+            "Donations; $29,502"
+          ],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "TX-08",
+          "seat_text": "TX-08 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "TX",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Jessica Steinmann",
+      "party": "R",
+      "seat": "TX-08",
+      "state": "TX"
+    },
+    {
       "candidate_id": "tx-joaquin-castro",
       "categories": [
         "congress"
@@ -28506,6 +28699,53 @@
       "name": "Johnny Garcia",
       "party": "D",
       "seat": "TX-35",
+      "state": "TX"
+    },
+    {
+      "candidate_id": "tx-jon-bonck",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "38",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tx-jon-bonck",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "38",
+          "donate_url": null,
+          "donations": 5000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5500,
+          "lines": [
+            "Candidate for U.S. House",
+            "TX-38 [R]",
+            "Israel Lobby Total: $5,500",
+            "Donations: $5,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Jon Bonck",
+          "notes": [],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": "R",
+          "seat": "TX-38",
+          "seat_text": "TX-38 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "TX",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Jon Bonck",
+      "party": "R",
+      "seat": "TX-38",
       "state": "TX"
     },
     {
@@ -30089,6 +30329,55 @@
         }
       ],
       "name": "Andrew Rice",
+      "party": null,
+      "seat": null,
+      "state": null
+    },
+    {
+      "candidate_id": "unk-marty-jackley",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": null,
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "unk-marty-jackley",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": null,
+          "donate_url": null,
+          "donations": 25000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 25000,
+          "lines": [
+            "Candidate for U.S. House",
+            "South Dakota - At Large [R]",
+            "Israel Lobby Total: $25,000",
+            "Donations: $25,000",
+            "IE: $0",
+            "AIPAC"
+          ],
+          "name": "Marty Jackley",
+          "notes": [
+            "South Dakota - At Large [R]"
+          ],
+          "pacs": [
+            "AIPAC"
+          ],
+          "party": null,
+          "seat": null,
+          "seat_text": null,
+          "section": null,
+          "source": "candidates",
+          "state": null,
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Marty Jackley",
       "party": null,
       "seat": null,
       "state": null
@@ -33168,5 +33457,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-26"
+  "snapshot": "2026-10-27"
 }

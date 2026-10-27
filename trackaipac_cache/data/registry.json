@@ -965,10 +965,24 @@
     "party": "D",
     "state": "FL"
   },
+  "fl-jim-schwartzel": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Jim Schwartzel",
+    "party": "R",
+    "state": "FL"
+  },
   "fl-jimmy-patronis": {
     "chamber": "house",
     "district": "01",
     "name": "Jimmy Patronis",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-joe-strada": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Joe Strada",
     "party": "R",
     "state": "FL"
   },
@@ -3590,6 +3604,13 @@
     "party": "R",
     "state": "TN"
   },
+  "tn-charlie-hatcher": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Charlie Hatcher",
+    "party": "R",
+    "state": "TN"
+  },
   "tn-chuck-fleischmann": {
     "chamber": null,
     "district": null,
@@ -3828,6 +3849,13 @@
     "party": "D",
     "state": "TX"
   },
+  "tx-jessica-steinmann": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Jessica Steinmann",
+    "party": "R",
+    "state": "TX"
+  },
   "tx-joaquin-castro": {
     "chamber": "house",
     "district": "20",
@@ -3861,6 +3889,13 @@
     "district": "35",
     "name": "Johnny Garcia",
     "party": "D",
+    "state": "TX"
+  },
+  "tx-jon-bonck": {
+    "chamber": "house",
+    "district": "38",
+    "name": "Jon Bonck",
+    "party": "R",
     "state": "TX"
   },
   "tx-julie-johnson": {
@@ -4084,6 +4119,13 @@
     "chamber": "house",
     "district": null,
     "name": "Andrew Rice",
+    "party": null,
+    "state": null
+  },
+  "unk-marty-jackley": {
+    "chamber": "house",
+    "district": null,
+    "name": "Marty Jackley",
     "party": null,
     "state": null
   },
