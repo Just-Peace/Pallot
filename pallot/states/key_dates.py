@@ -106,6 +106,40 @@ person at the clerk's while voting absentee, or at the polls on Election Day (22
 voting, by mail or in person at the clerk's, runs from the twenty-eighth day before through the
 day before (22-9-125), a ballot can be asked for any time before Election Day, and it must reach
 the clerk by 7 p.m. on Election Day (22-9-119); polls are open 7 a.m. to 7 p.m.
+
+Florida's, for its general election (F.S. 100.031: the first Tuesday after the first Monday of
+November in an even year): registration closes the twenty-ninth day before (97.055(1)(a)); any
+voter can vote by mail, a request reaching the Supervisor of Elections by 5 p.m. on the twelfth day
+before (101.62(2)), and the ballot must reach the Supervisor by 7 p.m. on Election Day (101.67);
+early voting runs from the tenth day before through the third day before, and a county may add
+days from the fifteenth day before or the second (101.657(1)(d)); polls are open 7 a.m. to 7 p.m.
+(100.011). There's no registration on Election Day.
+
+North Carolina's, for its general election (G.S. 163-1: the Tuesday after the first Monday of
+November in an even year): registration closes the twenty-fifth day before (163-82.6(d)), then
+voters register and vote the same day at an early voting site (163-82.6B), but not on Election
+Day; early voting runs from the third Thursday before through 3 p.m. on the last Saturday before
+(163-227.2(b)); any voter can vote absentee, the request reaching the county board by 5 p.m. on
+the second Tuesday before (163-230.1(a)), and the ballot must reach the board by 7:30 p.m. on
+Election Day (163-231(b)); polls are open 6:30 a.m. to 7:30 p.m. (163-166.01).
+
+Pennsylvania's, for its general election (25 P.S. 2753: the Tuesday after the first Monday of
+November in an even year; the odd years' is the municipal election): registration closes the
+fifteenth day before (25 Pa.C.S. 1326(b)); any voter can vote by mail, the application reaching
+the county board by 5 p.m. on the Tuesday before (25 P.S. 3150.12a), and the ballot must reach the
+board by 8 p.m. on Election Day (3150.16); there's no early voting, but a voter can apply for a
+mail ballot at the county election office and vote it there; polls are open 7 a.m. to 8 p.m.
+(3045). There's no registration on Election Day.
+
+Virginia's, for its general election (Va. Code 24.2-101: the Tuesday after the first Monday of
+November, every year): registration records close for the ten days before (24.2-416), so the last
+day is the eleventh day before, then voters register in person at the general registrar's office
+or the polling place through Election Day and vote a provisional ballot (24.2-420.1); early voting
+in person runs from the forty-fifth day before (24.2-701.1(A); the Department of Elections opens it
+on the Friday, the forty-sixth day) through 5 p.m. on the Saturday before; any voter can vote
+absentee by mail, the application reaching the general registrar by 5 p.m. on the eleventh day
+before (24.2-701(C)), and the ballot must be postmarked by Election Day and reach the registrar by
+noon on the third day after (24.2-709(B)); polls are open 6 a.m. to 7 p.m. (24.2-603).
 """
 
 from __future__ import annotations
@@ -605,10 +639,129 @@ COLORADO = Guide(
                       "Election Day",
 )
 
+FLORIDA = Guide(
+    name="Florida",
+    source="Florida Division of Elections",
+    url="https://dos.fl.gov/elections/",
+    computed=True,
+    registration_url="https://registertovoteflorida.gov/",
+    mail_url="https://dos.fl.gov/elections/for-voters/voting/vote-by-mail/",
+    register="The last day to register to vote in {election} in Florida. There's no registration on Election Day.",
+    mail_summary="Vote-by-mail request due",
+    mail="If you vote by mail in {election}, your request must reach your county Supervisor of Elections by 5 p.m. "
+         "today. Your ballot must reach the Supervisor by 7 p.m. on Election Day; one that arrives later isn't "
+         "counted. Any voter can vote by mail; how to ask:",
+    early_where="Your county Supervisor of Elections lists the places and hours, and may add days before or after "
+                "these.",
+    credit="Dates worked out from Florida's election law; more from the Florida Division of Elections",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://registration.elections.myflorida.com/CheckVoterStatus",
+    check_hint="Florida's voter information lookup (Division of Elections): your registration and your polling place",
+    where_url="https://dos.fl.gov/elections/contacts/supervisor-of-elections/",
+    where_hint="Every county's Supervisor of Elections (Florida Division of Elections); yours publishes where and when "
+               "you can vote",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed. Your ballot must reach your county "
+                     "Supervisor of Elections by 7 p.m. on Election Day.",
+    mail_deadline="Your request must reach your Supervisor of Elections by 5 p.m. on ",
+    local_office="Your county Supervisor of Elections",
+)
+
+NORTH_CAROLINA = Guide(
+    name="North Carolina",
+    source="North Carolina State Board of Elections",
+    url="https://www.ncsbe.gov/",
+    computed=True,
+    registration_url="https://www.ncsbe.gov/registering/how-register",
+    mail_url="https://votebymail.ncsbe.gov/",
+    register="The last day to register to vote in {election} in North Carolina, online, by mail (postmarked today) "
+             "or in person. After it, you can still register and vote the same day at an early voting site, until "
+             "early voting ends; not on Election Day.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, your request must reach your county board of elections by 5 p.m. "
+         "today. Your ballot must reach the board by 7:30 p.m. on Election Day; one that arrives later isn't "
+         "counted. Any voter can vote absentee; how to ask:",
+    early_where="Your county board of elections lists the places and hours. Early voting ends at 3 p.m. on the last "
+                "day.",
+    credit="Dates worked out from North Carolina's election law; more from the North Carolina State Board of Elections",
+    poll_hours="6:30 a.m. – 7:30 p.m.",
+    check_url="https://vt.ncsbe.gov/RegLkup/",
+    check_hint="North Carolina's voter search (State Board of Elections): your registration, your polling place and "
+               "your sample ballot",
+    where_url="https://vt.ncsbe.gov/RegLkup/",
+    where_hint="The voter search: your polling place; your county board of elections lists its early voting sites",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county board of elections by 7:30 p.m. on Election Day.",
+    mail_deadline="Your request must reach your county board by 5 p.m. on ",
+    local_office="Your county board of elections",
+    late_registration="After that, register and vote the same day at an early voting site, until early voting ends",
+)
+
+PENNSYLVANIA = Guide(
+    name="Pennsylvania",
+    source="Pennsylvania Department of State",
+    url="https://www.pa.gov/agencies/vote",
+    computed=True,
+    registration_url="https://www.pavoterservices.pa.gov/pages/VoterRegistrationApplication.aspx",
+    mail_url="https://www.pavoterservices.pa.gov/OnlineAbsenteeApplication/",
+    register="The last day to register to vote in {election} in Pennsylvania. There's no registration on Election "
+             "Day.",
+    mail_summary="Mail ballot application due",
+    mail="If you vote by mail in {election}, your application must reach your county board of elections by 5 p.m. "
+         "today. You can also apply at the county election office and vote your mail ballot there. Your ballot must "
+         "reach the board by 8 p.m. on Election Day; one that arrives later isn't counted, even if it was mailed in "
+         "time. Any voter can vote by mail; how to apply:",
+    early_where="There's no early voting at a polling place; you can apply for a mail ballot at your county election "
+                "office and vote it there.",
+    credit="Dates worked out from Pennsylvania's election law; more from the Pennsylvania Department of State",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://www.pavoterservices.pa.gov/pages/voterregistrationstatus.aspx",
+    check_hint="Pennsylvania's voter registration status (Department of State)",
+    where_url="https://www.pavoterservices.pa.gov/pages/pollingplaceinfo.aspx",
+    where_hint="Pennsylvania's polling place search (Department of State)",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed, or apply at the county election office "
+                     "and vote the ballot there. Your ballot must reach your county board by 8 p.m. on Election Day.",
+    mail_deadline="Your application must reach your county board by 5 p.m. on ",
+    local_office="Your county board of elections",
+)
+
+VIRGINIA = Guide(
+    name="Virginia",
+    source="Virginia Department of Elections",
+    url="https://www.elections.virginia.gov/",
+    computed=True,
+    registration_url="https://vote.elections.virginia.gov/Registration/Eligibility",
+    mail_url="https://vote.elections.virginia.gov/VoterInformation",
+    register="The last day to register to vote in {election} in Virginia. After it, you can still register in "
+             "person at your general registrar's office or your polling place, through Election Day, and vote a "
+             "provisional ballot.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee by mail in {election}, your application must reach your general registrar by 5 p.m. "
+         "today. Your ballot must be postmarked by Election Day and reach the registrar by noon on the third day "
+         "after. Any voter can vote absentee; how to apply:",
+    early_where="Your general registrar's office, and any satellite sites your locality opens; the registrar lists "
+                "the places and hours. Early voting ends at 5 p.m. on the Saturday before Election Day.",
+    credit="Dates worked out from the Code of Virginia; more from the Virginia Department of Elections",
+    poll_hours="6 a.m. – 7 p.m.",
+    check_url="https://vote.elections.virginia.gov/VoterInformation",
+    check_hint="Virginia's Citizen Portal (Department of Elections): your registration and your polling place",
+    where_url="https://vote.elections.virginia.gov/VoterInformation",
+    where_hint="The Citizen Portal: your polling place; your general registrar lists its early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must be postmarked "
+                     "by Election Day and reach your general registrar by noon on the third day after.",
+    mail_deadline="Your application must reach your general registrar by 5 p.m. on ",
+    local_office="Your general registrar",
+    late_registration="After that, register in person at your general registrar's office or polling place through "
+                      "Election Day, and vote a provisional ballot",
+)
+
 GUIDES = {
     "TX": TEXAS, "MI": MICHIGAN, "CA": CALIFORNIA, "AZ": ARIZONA, "NV": NEVADA, "GA": GEORGIA, "WI": WISCONSIN,
     "OH": OHIO, "IA": IOWA, "NJ": NEW_JERSEY, "NY": NEW_YORK, "CO": COLORADO, "WY": WYOMING, "IL": ILLINOIS,
-    "AK": ALASKA,
+    "AK": ALASKA, "FL": FLORIDA, "NC": NORTH_CAROLINA, "PA": PENNSYLVANIA, "VA": VIRGINIA,
 }
 
 
@@ -648,11 +801,11 @@ def arizona(day: dt.date) -> Deadlines | None:
 class Counts:
     """A state whose deadlines are each a fixed count of days before its general election (the
     module's docstring gives each state's law): None where there's no such date (no application
-    to make, early voting through Election Day)."""
+    to make, early voting through Election Day, or no early voting)."""
 
     register: int
     mail: int | None
-    early_start: int
+    early_start: int | None
     early_end: int | None
     every_year: bool = False  # a general election every November, not only in even years
 
@@ -680,6 +833,10 @@ COUNTS = {
     "WY": Counts(15, 1, 28, 1),
     "IL": Counts(16, 5, 40, 1),
     "AK": Counts(30, 10, 15, None),
+    "FL": Counts(29, 12, 10, 3),
+    "NC": Counts(25, 14, 19, 3),
+    "PA": Counts(15, 7, None, None),
+    "VA": Counts(11, 11, 46, 3, every_year=True),
 }
 
 
