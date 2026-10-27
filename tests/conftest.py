@@ -319,6 +319,7 @@ class Upstream:
         self.wikidata_elsewhere: dict[str, Any] = {"results": {"bindings": []}}  # another state's officeholders
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
+        self.tigerweb_wheres: list[str] = []  # the districts TIGERweb was asked for
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
         self.tile_agents: set[str | None] = set()  # the User-Agents the tile server was sent
         self.precincts_status: int | None = None  # e.g. 429 when the TLC's portal throttles us
@@ -532,8 +533,11 @@ class Upstream:
                 return httpx.Response(200, json=self.tigerweb_answer)
             if url.path.endswith("/MapServer"):
                 return _file("tigerweb_layers.json")
-            geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"]).group(1)
-            return _file(f"tigerweb_{geoid}.json", default={"features": []})
+            self.tigerweb_wheres.append(params["where"])
+            geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"])
+            if not geoid:
+                return httpx.Response(200, json={"features": []})
+            return _file(f"tigerweb_{geoid.group(1)}.json", default={"features": []})
         if url.host == "tile.openstreetmap.org":
             self.tile_agents.add(request.headers.get("user-agent"))
             if self.tiles_status:

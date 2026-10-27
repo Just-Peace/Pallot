@@ -47,6 +47,15 @@ def test_geoids():
     assert [tigerweb.geoid("cd", 10), tigerweb.geoid("cd", 1), tigerweb.geoid("sd", 14), tigerweb.geoid("hd", 49)] == [
         "4810", "4801", "48014", "48049",
     ]
+    assert [tigerweb.geoid("cd", 7, "CA"), tigerweb.geoid("cd", 0, "WY"), tigerweb.geoid("cd", 0, "DC"),
+            tigerweb.geoid("hd", 38, "NC")] == ["0607", "5600", "1198", "37038"]
+
+
+def test_a_district_named_or_lettered_is_asked_by_its_state_and_name():
+    assert tigerweb.where("sd", 14) == "GEOID='48014'"
+    assert tigerweb.where("sd", "A", "AK") == "STATE='02' AND BASENAME='A'"
+    assert tigerweb.where("hd", "Third Suffolk", "MA") == "STATE='25' AND BASENAME='Third Suffolk'"
+    assert tigerweb.where("hd", "St. Mary's", "MD") == "STATE='24' AND BASENAME='St. Mary''s'"
 
 
 def test_rings():
@@ -184,7 +193,19 @@ def test_a_refusal_pauses_tigerweb(client, upstream):
     assert status["notice"].startswith("Paused until") and status["notice_tone"] == "warn"
 
 
-@pytest.mark.parametrize("numbers", [{"cd": 39}, {"sd": 32}, {"hd": 0}, {"sboe": 16}, {"cd": "ten"}])
+def test_another_states_districts_are_asked_with_its_state(client, upstream):
+    got = outlines(client, state="AK", cd=0, sd="A", hd=1, sboe=5, election_precinct="0300", county=453)
+    assert set(upstream.tigerweb_wheres) == {"GEOID='0200'", "STATE='02' AND BASENAME='A'", "GEOID='02001'"}
+    assert got["notes"] == ["No outline found for U.S. House (at large).", "No outline found for State Senate District A.",
+                            "No outline found for State House District 1."]  # and no SBOE district or precinct
+    assert upstream.count("data.capitol.texas.gov") == 0
+    california = outlines(client, state="CA", hd=7)
+    assert california["notes"] == ["No outline found for State Assembly District 7."]
+    assert upstream.tigerweb_wheres[-1] == "GEOID='06007'"
+
+
+@pytest.mark.parametrize("numbers", [{"cd": 39}, {"sd": 32}, {"hd": 0}, {"sboe": 16}, {"cd": "ten"}, {"sd": "A"},
+                                     {"state": "PR", "cd": 1}, {"state": "tx", "cd": 1}, {"state": "CA", "cd": 54}])
 def test_numbers_out_of_range_are_refused(client, upstream, numbers):
     assert client.get("/api/district-outlines", params=numbers).status_code == 422
     assert upstream.calls == []

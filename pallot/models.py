@@ -331,7 +331,6 @@ class Coverage(BaseModel):
     ballot: Literal["state", "list", "fec"] = "state"  # Texas SOS's ballot, another state's official list, or the FEC's filers (unverified)
     districts: list[str] = ["cd", "sd", "hd", "sboe"]  # the district kinds found and shown
     precincts: bool = True  # election, commissioner and JP precincts
-    outlines: bool = True  # the districts' map
     labels: dict[str, str] = {}  # a district kind's name in this state where it isn't the usual one: {"hd": "State Assembly"}
 
 

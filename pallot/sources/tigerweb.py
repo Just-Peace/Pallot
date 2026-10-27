@@ -3,8 +3,10 @@
 TIGERweb's "Current" service serves the same district maps the geocoder answers from
 ("120th Congressional Districts", "2026 State Legislative Districts - Upper"), so a layer is
 found by name as census.py does, newest vintage first; each has a "… Labels" twin, skipped
-by matching the end of the name. One request per district, by GEOID, with the geometry
-simplified on the server to about 50 m. Only the district's number is sent.
+by matching the end of the name. One request per district, by GEOID (the state's FIPS code and
+the district's number), or by the state and the district's name where it isn't a number (Alaska's
+lettered State Senate districts, Massachusetts's "Third Suffolk"), with the geometry simplified on
+the server to about 50 m. Only the state and the district are sent.
 """
 
 from __future__ import annotations
@@ -14,7 +16,7 @@ from typing import Any
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec
 from . import arcgis_error
-from .census import TEXAS_FIPS, vintage
+from .census import STATE_FIPS, vintage
 from .sboe import Ring
 
 SOURCE = "tigerweb"
@@ -32,8 +34,18 @@ LAYERS = {
 }
 
 
-def geoid(kind: str, number: int) -> str:
-    return TEXAS_FIPS + str(number).zfill(LAYERS[kind][1])
+def geoid(kind: str, number: int, state: str = "TX") -> str:
+    """The district's GEOID: DC's delegate, district 0 as the FEC numbers it, is "98"."""
+    code = "98" if kind == "cd" and state == "DC" else str(number).zfill(LAYERS[kind][1])
+    return STATE_FIPS[state] + code
+
+
+def where(kind: str, number: int | str, state: str = "TX") -> str:
+    """The query for one district: by GEOID where it's a number, else by the state and its name."""
+    if isinstance(number, int):
+        return f"GEOID='{geoid(kind, number, state)}'"
+    name = number.replace("'", "''")
+    return f"STATE='{STATE_FIPS[state]}' AND BASENAME='{name}'"
 
 
 def layer_id(index: dict[str, Any], kind: str) -> int | None:
@@ -50,10 +62,10 @@ def index_spec() -> RequestSpec:
     return RequestSpec("GET", SERVICE, params={"f": "json"})
 
 
-def outline_spec(layer: int, kind: str, number: int) -> RequestSpec:
+def outline_spec(layer: int, kind: str, number: int | str, state: str = "TX") -> RequestSpec:
     """One district's shape in lon/lat, simplified to SIMPLIFY_DEG, with no other fields."""
     params = {
-        "where": f"GEOID='{geoid(kind, number)}'",
+        "where": where(kind, number, state),
         "outFields": "GEOID",
         "returnGeometry": "true",
         "outSR": "4326",
@@ -80,12 +92,12 @@ class Tigerweb:
         cache.pause_on(SOURCE, ttl.outlines_backoff)
         cache.check_answers(SOURCE, arcgis_error)
 
-    async def outline(self, kind: str, number: int) -> list[Ring] | None:
+    async def outline(self, kind: str, number: int | str, state: str = "TX") -> list[Ring] | None:
         """The district's rings in lon/lat; None when TIGERweb has no such layer or district.
         Raises UpstreamError when it can't be asked, or answers an error, and nothing is cached."""
         index = await self.cache.get_json(SOURCE, index_spec(), ttl=self.ttl.outlines)
         layer = layer_id(index.value, kind)
         if layer is None:
             return None
-        got = await self.cache.get_json(SOURCE, outline_spec(layer, kind, number), ttl=self.ttl.outlines)
+        got = await self.cache.get_json(SOURCE, outline_spec(layer, kind, number, state), ttl=self.ttl.outlines)
         return rings(got.value)

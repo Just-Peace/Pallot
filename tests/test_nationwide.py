@@ -32,7 +32,7 @@ def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):
 
     assert ballot["election_date"] == "2026-11-03"
     assert [e["name"] for e in ballot["elections"]] == ["2026 General Election"]
-    assert ballot["coverage"] == {"ballot": "fec", "districts": ["cd"], "precincts": False, "outlines": False, "labels": {}}
+    assert ballot["coverage"] == {"ballot": "fec", "districts": ["cd"], "precincts": False, "labels": {}}
     assert ballot["districts"]["cd"] == 5 and ballot["districts"]["sd"] is None and ballot["districts"]["sboe"] is None
     assert ballot["location"]["county_name"] == "Fulton County"
     assert ballot["key_dates"] is None and ballot["maybe"] == [] and ballot["left_out"] is None
@@ -97,7 +97,7 @@ def test_another_election_date_shows_the_general(client):
 
 def test_texas_keeps_its_full_coverage(client):
     assert get_ballot(client)["coverage"] == {"ballot": "state", "districts": ["cd", "sd", "hd", "sboe"],
-                                              "precincts": True, "outlines": True, "labels": {}}
+                                              "precincts": True, "labels": {}}
 
 
 def test_coverage_and_where_sources_work():

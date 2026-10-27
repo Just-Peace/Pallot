@@ -8,13 +8,15 @@
 // it never traps the page's scrolling. Its heading folds it away like a race's, remembered in
 // the browser (view.js, showMap: folded at first); nothing is fetched for it while it's folded.
 // A change of the switch elsewhere (Settings, another tab) applies with syncMapShown().
-// Where Pallot has no outlines (outside Texas) it's the street map alone, with the pin, and
-// nothing is asked of /api/district-outlines; with the street map off too, there's no map.
+// Every state's districts the ballot shows are outlined (outside Texas, asked with the state);
+// the SBOE district and the election precinct are Texas's alone. With no district known it's the
+// street map alone, with the pin, and nothing is asked of /api/district-outlines; with the street
+// map off too, there's no map.
 
 import { api } from "./api.js";
 import { h, svg } from "./dom.js";
 import { icon } from "./icons.js";
-import { DISTRICTS, coverageOf } from "./labels.js";
+import { coverageOf, districtName as kindName, houseText } from "./labels.js";
 import { setViewPref, viewPref } from "./view.js";
 
 const KINDS = ["cd", "sd", "hd", "sboe"]; // then the election precinct, asked by its map's code and county
@@ -58,8 +60,19 @@ function regionOf({ lat, lon }) {
     || REGIONS[0];
 }
 
+// The labels of a district on the map: its kind in the state's words, and its number ("At large").
+function kindLabel(kind, size) {
+  return kind === "election_precinct" ? "Precinct" : kindName(kind, coverageOf(ballot).labels, size);
+}
+
+function numberText(kind, number) {
+  return kind === "cd" ? houseText(number, ballot.location.state) : String(number);
+}
+
 function districtName(kind, number) {
-  return kind === "election_precinct" ? `Precinct ${number}` : `${DISTRICTS[kind].long} District ${number}`;
+  if (kind === "election_precinct") return `Precinct ${number}`;
+  return kind === "cd" && number === 0 ? `${kindLabel(kind, "long")} (${numberText(kind, number)})`
+    : `${kindLabel(kind, "long")} District ${number}`;
 }
 
 // A short line in the district's colour and dash.
@@ -77,13 +90,16 @@ export function syncMap(next) {
     new ResizeObserver(() => map?.invalidateSize()).observe(section);
   }
   const districts = next.districts || {};
-  const asked = KINDS.filter((kind) => districts[kind] != null).map((kind) => [kind, districts[kind]]);
+  const kinds = coverageOf(next).districts;
+  const asked = KINDS.filter((kind) => kinds.includes(kind) && districts[kind] != null && districts[kind] !== "")
+    .map((kind) => [kind, districts[kind]]);
   const precinct = districts.election_precinct;
   if (precinct) asked.push(["election_precinct", precinct.code], ["county", precinct.county]);
-  const { lat, lon } = next.location;
+  const { lat, lon, state } = next.location;
+  if (asked.length && state && state !== "TX") asked.push(["state", state]);
   const placed = lat != null; // not a voter card the map couldn't place
   const nextQuery = !placed ? ""
-    : coverageOf(next).outlines ? new URLSearchParams(asked).toString()
+    : asked.length ? new URLSearchParams(asked).toString()
       : next.street_map !== false ? `@${lat},${lon}` : "";
   section.hidden = !nextQuery;
   if (!nextQuery) {
@@ -250,7 +266,7 @@ function draw() {
       type: "button", class: ["map-pick", outline.kind, notUp.has(outline.kind) && "not-up"],
       "data-map-kind": outline.kind, "aria-pressed": String(outline.kind === highlight), title,
       on: { click: () => pickDistrict(outline.kind) },
-    }, swatch(outline.kind), DISTRICTS[outline.kind]?.short ?? "Precinct", " ", h("strong", {}, String(outline.number)));
+    }, swatch(outline.kind), kindLabel(outline.kind, "short"), " ", h("strong", {}, numberText(outline.kind, outline.number)));
   }));
   const fromCouncil = (outline) => outline.kind === "sboe" || outline.kind === "election_precinct";
   const sources = [
