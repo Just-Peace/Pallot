@@ -1,5 +1,5 @@
 // The web search behind each candidate's "Search" (or "Ask") and Issues links. The engine is a per-browser
-// choice on the Settings page; Google AI Mode unless changed. An AI assistant gets the same query as a prompt.
+// choice on the Settings page; Duck.ai unless changed. An AI assistant gets the same query as a prompt.
 
 import { setUiPref, uiPref } from "./storage.js";
 
@@ -17,10 +17,11 @@ export const ENGINES = [
   { id: "claude", label: "Claude", url: "https://claude.ai/new?q=", ai: true },
   { id: "copilot", label: "Microsoft Copilot", url: "https://copilot.microsoft.com/?q=", ai: true },
   { id: "google-ai", label: "Google AI Mode", url: "https://www.google.com/search?udm=50&q=", ai: true },
+  { id: "duck-ai", label: "Duck.ai", url: "https://duck.ai/?q=", ai: true },
   { id: "grok", label: "Grok", url: "https://grok.com/?q=", ai: true },
 ];
 
-const DEFAULT_ENGINE = "google-ai";
+const DEFAULT_ENGINE = "duck-ai";
 
 export function currentEngine() {
   const id = uiPref("searchEngine");

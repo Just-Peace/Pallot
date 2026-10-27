@@ -63,9 +63,14 @@ export function stancesPanel(candidate, base, empty) {
     return h("li", {}, extLink(searchHref(stanceQuery(base, candidate.name, topic)), [topic.label, h("span", { class: "badge-arrow" }, " ↗")],
       { class: "badge badge-link", title, "aria-label": `${title} (opens in a new tab)` }));
   };
+  const { ai, label } = currentEngine();
   return h("div", { class: "card-panel stances" },
     empty ? h("p", { class: "muted" }, "No source has details on this candidate yet.") : null,
-    h("p", { class: "notice notice-warn" }, `Pick an issue to search for ${candidate.name}'s stance. These are live search results, not Pallot's own, and we haven't checked them.`),
+    h("p", { class: "notice notice-warn" },
+      h("strong", {}, `This goes to ${label}, an outside ${ai ? "AI assistant" : "search engine"}.`), " ",
+      ai
+        ? `Pick an issue to ask it where ${candidate.name} stands. Its answers aren't Pallot's, and we haven't checked them.`
+        : `Pick an issue to search it for ${candidate.name}'s stance. Its results aren't Pallot's, and we haven't checked them.`),
     STANCES.map(({ group, topics }) => foldSection(group, null,
       h("ul", { class: "badges", "aria-label": group }, topics.map(link)))));
 }
