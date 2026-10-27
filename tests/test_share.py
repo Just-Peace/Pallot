@@ -120,6 +120,66 @@ return { path: link.pathname, search: link.search, packed: value[0], same: JSON.
     }
 
 
+def test_a_picks_file_is_locked_with_the_built_in_phrase_and_opens_without_asking():
+    assert _run("""
+const picks = new Picks("2026-11-03");
+picks.set("sos:1:sen", ["sos:1:a"]);
+picks.setNote("sos:1:a", "Secret note");
+const slate = m.buildSlate(ballot, picks, { title: "Nov 3" });
+const text = await m.picksFile(slate);
+const back = await m.readPicksFile(text, async () => { throw new Error("asked for a phrase"); });
+let damaged = null;
+try { await m.readPicksFile(JSON.stringify({ kind: "pallot-picks", version: 1, data: "bAAAA" }), null); } catch (error) { damaged = error.message; }
+return {
+  keys: Object.keys(JSON.parse(text)), mark: JSON.parse(text).data[0],
+  hidden: !/Ann Lee|Secret note|Senator/.test(text), same: JSON.stringify(back) === JSON.stringify(slate), damaged,
+};
+""") == {
+        "keys": ["kind", "version", "data"], "mark": "b", "hidden": True, "same": True,
+        "damaged": "This picks file couldn't be read.",
+    }
+
+
+def test_a_phrase_locks_a_link_or_file_until_the_right_phrase_is_given_and_cancel_gives_up():
+    assert _run("""
+const picks = new Picks("2026-11-03");
+picks.set("sos:1:sen", ["sos:1:a"]);
+const slate = m.buildSlate(ballot, picks);
+const link = new URL(await m.slateLink(slate, "http://127.0.0.1:8000/", "Right-Phrase-7"));
+const value = new URLSearchParams(link.hash.slice(1)).get(m.LINK_KEY);
+const tries = [];
+const back = await m.slateFromLink(value, async (open) => {
+  tries.push(await open("Wrong-Phrase-7"));
+  return open("Right-Phrase-7");
+});
+const cancelled = await m.slateFromLink(value, async () => null);
+const file = await m.picksFile(slate, "Right-Phrase-7");
+const fromFile = await m.readPicksFile(file, (open) => open("Right-Phrase-7"));
+return {
+  mark: value[0], wrong: tries, picks: back.races[0].picks, cancelled,
+  fileMark: JSON.parse(file).data[0], filePicks: fromFile.races[0].picks,
+};
+""") == {
+        "mark": "p", "wrong": [None], "picks": [{"key": "sos:1:a", "name": "Ann Lee"}], "cancelled": None,
+        "fileMark": "p", "filePicks": [{"key": "sos:1:a", "name": "Ann Lee"}],
+    }
+
+
+def test_a_phrase_needs_ten_characters_a_capital_a_small_letter_and_a_number():
+    assert _run("""
+const met = (phrase) => Object.fromEntries(m.phraseRules(phrase).map((rule) => [rule.id, rule.met]));
+return {
+  rules: m.phraseRules("").map((rule) => [rule.id, rule.required]),
+  some: met("Élan vital 9!"),
+  ready: ["Abcdefghi1", "Abcdefgh1", "abcdefghi1", "ABCDEFGHI1", "Abcdefghij"].map(m.phraseReady),
+};
+""") == {
+        "rules": [["length", True], ["upper", True], ["lower", True], ["number", True], ["special", False]],
+        "some": {"length": True, "upper": True, "lower": True, "number": True, "special": True},
+        "ready": [True, False, False, False, False],
+    }
+
+
 def test_opening_picks_matches_races_and_candidates_by_key_then_by_a_name_only_one_fits():
     assert _run("""
 const picks = new Picks("2026-11-03");

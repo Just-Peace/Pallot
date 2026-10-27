@@ -251,6 +251,18 @@
       <h2 id="share-title">Share your picks</h2>
       <p id="share-summary"></p>
       <div id="share-choices">
+        <div class="share-picks-lock" id="share-lock-choice">
+          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box"> Lock with a phrase, for the link and the file</label>
+          <div class="phrase-box" id="share-phrase-box" hidden>
+            <label for="share-phrase">Phrase</label>
+            <div class="phrase-field">
+              <input type="password" id="share-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-rules share-phrase-note">
+              <button class="btn ghost small" type="button" data-phrase-show aria-controls="share-phrase" aria-pressed="false">Show</button>
+            </div>
+            <ul class="phrase-rules" id="share-phrase-rules"></ul>
+            <p class="fine" id="share-phrase-note">Your phrase stays on this device. Pallot's server never sees it. Give it to them another way than the link, such as in person.</p>
+          </div>
+        </div>
         <section class="share-picks-part" aria-labelledby="share-link-title">
           <h3 id="share-link-title">Send a link</h3>
           <p class="notice notice-warn share-picks-warn" id="share-warn">A link shows who you picked to anyone who has it, and to anyone they pass it on to. Send it only to people you trust.</p>
@@ -275,9 +287,27 @@
         <input type="file" id="share-file" accept=".json,application/json" hidden>
       </div>
       <div class="button-row end">
-        <button class="btn ghost" value="">Done</button>
+        <button class="btn ghost" type="button" id="share-done">Done</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="phrase-dialog" class="small-dialog" aria-labelledby="phrase-title" aria-describedby="phrase-intro">
+    <div class="dialog-pad">
+      <h2 id="phrase-title">These picks are locked</h2>
+      <p id="phrase-intro">Type the phrase that came with them.</p>
+      <label for="phrase-input">Phrase</label>
+      <div class="phrase-field">
+        <input type="password" id="phrase-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true">
+        <button class="btn ghost small" type="button" data-phrase-show aria-controls="phrase-input" aria-pressed="false">Show</button>
+      </div>
+      <p class="status" id="phrase-status" role="status" aria-live="polite"></p>
+      <p class="fine">Your phrase stays on this device. Pallot's server never sees it.</p>
+      <div class="button-row end">
+        <button class="btn ghost" type="button" id="phrase-cancel">Cancel</button>
+        <button class="btn primary" type="button" id="phrase-open">Open</button>
+      </div>
+    </div>
   </dialog>
 
   <div id="print-sheet" class="print-sheet" aria-hidden="true"></div>

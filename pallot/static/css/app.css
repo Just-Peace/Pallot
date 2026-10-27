@@ -226,7 +226,7 @@ button, input, select, textarea { font: inherit; }
 .field.small { min-width: 150px; flex: 1 1 150px; }
 label { font-weight: 600; font-size: 0.9rem; }
 
-input[type="text"], input[type="search"], input[type="number"], select, textarea {
+input[type="text"], input[type="search"], input[type="number"], input[type="password"], select, textarea {
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line-strong);
@@ -1339,6 +1339,17 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .share-picks-part .fine { margin: 0 0 4px; }
 .share-picks-part > .btn { width: 100%; justify-content: center; min-height: 44px; }
 .share-picks-warn { margin: 0 0 4px; }
+.share-picks-lock { margin: 12px 0 0; }
+.phrase-box { margin: 4px 0 0; }
+.phrase-field { display: flex; gap: 8px; align-items: stretch; margin-top: 4px; }
+.phrase-field input { flex: 1 1 auto; min-width: 0; font-size: 16px; }
+.phrase-field .btn { flex: none; min-width: 64px; justify-content: center; }
+.phrase-rules { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; font-size: 0.85rem; color: var(--muted); }
+.phrase-rules li { display: flex; gap: 6px; align-items: center; }
+.phrase-rules li .icon { width: 14px; height: 14px; flex: none; }
+.phrase-rules li.met { color: var(--good); }
+.small-dialog .dialog-pad { padding: 20px; }
+.small-dialog .dialog-pad h2 { margin: 0 0 8px; font-size: 1.15rem; }
 .share-picks-url { width: 100%; margin-top: 8px; font-size: 16px; }
 .share-picks-open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 18px 0 14px; padding-top: 14px;
   border-top: 1px solid var(--line); }
@@ -1548,7 +1559,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   :root { --fs-title: 20px; --fs-sub: 14px; --fs-race: 15px; --fs-body: 15px; --fs-control: 14px; --fs-fine: 12px; --fs-input: 16px; }
   body { font-size: var(--fs-body); }
   h1 { font-size: var(--fs-title); }
-  input[type="text"], input[type="number"], select, textarea { font-size: var(--fs-input); }
+  input[type="text"], input[type="number"], input[type="password"], select, textarea { font-size: var(--fs-input); }
   .lede { font-size: var(--fs-sub); }
   .ballot-head p { font-size: var(--fs-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* the title and the election on one line: "Your ballot · Nov 3 · General Election" */
@@ -1739,7 +1750,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (pointer: coarse) {
   .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .switch, .check, .site-nav a, .jump-list a,
   .race-toggle, .box-toggle, .map-toggle, .entry-tab, .chip-menu > a, .chip-menu > .link-btn,
-  input[type="text"], input[type="search"], input[type="number"], select { min-height: 44px; }
+  input[type="text"], input[type="search"], input[type="number"], input[type="password"], select { min-height: 44px; }
   a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
   /* a segmented switch (Minimal / Simple / Detailed, Dollars / Share) drawn slim, its options 44px to a tap */
   .seg-option { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; }

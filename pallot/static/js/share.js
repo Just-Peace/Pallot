@@ -1,6 +1,7 @@
 // A picks file: the picks, write-ins and notes on the ballot shown, with the names they belong to, to
 // keep a copy, move them to another device or send them to someone. As a link it travels after
 // "#picks=" in the address, which the browser never sends to the server, so Pallot keeps none of it.
+// Both are compressed; a file is always locked, a link only with the voter's own phrase.
 // Opened on a ballot, its races and candidates are found by their keys, then by their names alone
 // where one name fits (a friend's ballot, or another lookup), and the rest left out.
 
@@ -148,28 +149,158 @@ function compresses() {
   }
 }
 
-// The link to ``page`` (the ballot page's address) that carries ``slate``, packed small: "z" and
-// the deflated JSON, or "j" and the JSON where the browser can't deflate.
-export async function slateLink(slate, page) {
+// ---- packing and locking ----------------------------------------------------------------
+
+// A slate as a mark and bytes: "z" and the deflated JSON, or "j" and the JSON where the browser can't deflate.
+async function pack(slate) {
   const bytes = new TextEncoder().encode(JSON.stringify(slate));
-  const packed = compresses() ? `z${toBase64Url(await through(bytes, new CompressionStream("deflate-raw")))}` : `j${toBase64Url(bytes)}`;
+  return compresses() ? ["z", await through(bytes, new CompressionStream("deflate-raw"))] : ["j", bytes];
+}
+
+// A link or file that's damaged, and one the phrase given doesn't open (or a file not locked by Pallot).
+class Unreadable extends Error {}
+class WrongPhrase extends Error {}
+
+async function unpack(mark, bytes) {
+  let text = null;
+  try {
+    if (mark === "z" && compresses()) text = new TextDecoder().decode(await through(bytes, new DecompressionStream("deflate-raw")));
+    else if (mark === "j" && bytes.length <= MAX_BYTES) text = new TextDecoder().decode(bytes);
+  } catch {
+    text = null;
+  }
+  if (text === null) throw new Unreadable();
+  return readSlate(text);
+}
+
+// Not a secret: Pallot's code is public. It keeps a picks file from reading as text to whatever
+// indexes or scans it (a mail or cloud drive) and protects nothing from anyone who opens it in
+// Pallot, so the voter is never told it protects anything. Only the voter's own phrase does. Never
+// change it, or files locked with it no longer open.
+const BUILT_IN = "pallot-picks-file-v1";
+const ROUNDS = 600_000; // PBKDF2-SHA-256 rounds for the voter's phrase, as OWASP advises
+const SALT = 16;
+const IV = 12;
+
+export const canLock = () => Boolean(globalThis.crypto?.subtle);
+
+async function builtInKey() {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(BUILT_IN));
+  return crypto.subtle.importKey("raw", digest, "AES-GCM", false, ["encrypt", "decrypt"]);
+}
+
+async function phraseKey(phrase, salt) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(phrase.normalize("NFC")), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: ROUNDS, hash: "SHA-256" }, base,
+    { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+
+// ``mark`` and ``bytes`` (pack's) locked with AES-GCM: the salt (a phrase's only), the IV, then the
+// sealed mark and bytes.
+async function lock(mark, bytes, phrase) {
+  const salt = phrase ? crypto.getRandomValues(new Uint8Array(SALT)) : new Uint8Array(0);
+  const iv = crypto.getRandomValues(new Uint8Array(IV));
+  const key = phrase ? await phraseKey(phrase, salt) : await builtInKey();
+  const plainBytes = new Uint8Array([mark.charCodeAt(0), ...bytes]);
+  const sealed = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plainBytes));
+  return new Uint8Array([...salt, ...iv, ...sealed]);
+}
+
+// What lock() sealed, as [mark, bytes]; throws a WrongPhrase where the phrase doesn't fit.
+async function unlock(locked, phrase) {
+  const salt = phrase ? locked.slice(0, SALT) : new Uint8Array(0);
+  const iv = locked.slice(salt.length, salt.length + IV);
+  const key = phrase ? await phraseKey(phrase, salt) : await builtInKey();
+  let opened;
+  try {
+    opened = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, locked.slice(salt.length + IV)));
+  } catch {
+    throw new WrongPhrase();
+  }
+  return [String.fromCharCode(opened[0]), opened.slice(1)];
+}
+
+// The voter's phrase: what it must have (``required``) and what's recommended, each ``met`` or not.
+export function phraseRules(phrase) {
+  return [
+    { id: "length", text: "10 or more characters", met: [...phrase].length >= 10, required: true },
+    { id: "upper", text: "A capital letter", met: /\p{Lu}/u.test(phrase), required: true },
+    { id: "lower", text: "A small letter", met: /\p{Ll}/u.test(phrase), required: true },
+    { id: "number", text: "A number", met: /\p{Nd}/u.test(phrase), required: true },
+    { id: "special", text: "A special character, such as ! or # (recommended)", met: /[^\p{L}\p{N}\s]/u.test(phrase), required: false },
+  ];
+}
+
+export const phraseReady = (phrase) => phraseRules(phrase).every((rule) => rule.met || !rule.required);
+
+// ``slate`` as text for a link or a file, a mark then base64url: "z" or "j" as is, "b" locked with
+// the built-in phrase (``hide``, for files), or "p" locked with the voter's ``phrase``. Where the
+// browser can't lock (plain HTTP, not localhost), it's left as is.
+async function encode(slate, { phrase = null, hide = false } = {}) {
+  const [mark, bytes] = await pack(slate);
+  if (phrase) return `p${toBase64Url(await lock(mark, bytes, phrase))}`;
+  if (hide && canLock()) return `b${toBase64Url(await lock(mark, bytes, null))}`;
+  return `${mark}${toBase64Url(bytes)}`;
+}
+
+// The slate ``value`` (encode's) holds, or null if the voter cancelled the phrase. ``askPhrase(open)``
+// asks the voter for a phrase: ``open(phrase)`` resolves to the slate, or to null when the phrase
+// doesn't fit; askPhrase resolves to the slate, or to null when the voter gives up. Throws an
+// Error with ``unreadable`` for the voter.
+async function decode(value, askPhrase, unreadable) {
+  if (typeof value !== "string" || value.length > MAX_BYTES * 2) throw new Error(unreadable);
+  let bytes;
+  try {
+    bytes = fromBase64Url(value.slice(1));
+  } catch {
+    throw new Error(unreadable);
+  }
+  const kind = value[0];
+  if ((kind === "b" || kind === "p") && !canLock()) {
+    throw new Error("This browser can only open these picks over HTTPS, or on the computer Pallot runs on.");
+  }
+  try {
+    if (kind === "b") return await unpack(...await unlock(bytes, null));
+    if (kind !== "p") return await unpack(kind, bytes);
+  } catch (error) {
+    throw error instanceof WrongPhrase || error instanceof Unreadable ? new Error(unreadable) : error;
+  }
+  return askPhrase(async (phrase) => {
+    try {
+      return await unpack(...await unlock(bytes, phrase));
+    } catch (error) {
+      if (error instanceof WrongPhrase) return null;
+      throw error instanceof Unreadable ? new Error(unreadable) : error;
+    }
+  });
+}
+
+// The link to ``page`` (the ballot page's address) that carries ``slate``, locked with ``phrase`` if given.
+export async function slateLink(slate, page, phrase = null) {
   const url = new URL(page);
-  url.hash = `${LINK_KEY}=${packed}`;
+  url.hash = `${LINK_KEY}=${await encode(slate, { phrase })}`;
   return url.href;
 }
 
-// The picks file a link's "#picks=" value carries. Throws an Error for the voter.
-export async function slateFromLink(value) {
-  let bytes;
+export const slateFromLink = (value, askPhrase) => decode(value, askPhrase, "This link's picks couldn't be read. Ask for the link again.");
+
+// A picks file's text: always locked, with the voter's ``phrase`` or else the built-in one.
+export async function picksFile(slate, phrase = null) {
+  return JSON.stringify({ kind: KIND, version: VERSION, data: await encode(slate, { phrase, hide: true }) }, null, 2);
+}
+
+// The slate a picks file holds, or null if the voter cancelled the phrase. A file written out by
+// hand as a slate is read as one.
+export async function readPicksFile(text, askPhrase) {
+  let data;
   try {
-    const packed = fromBase64Url(value.slice(1));
-    if (value[0] === "z" && compresses()) bytes = await through(packed, new DecompressionStream("deflate-raw"));
-    else if (value[0] === "j" && packed.length <= MAX_BYTES) bytes = packed;
+    data = JSON.parse(text);
   } catch {
-    bytes = null;
+    throw new Error("This isn't a Pallot picks file.");
   }
-  if (!bytes) throw new Error("This link's picks couldn't be read. Ask for the link again.");
-  return readSlate(new TextDecoder().decode(bytes));
+  if (!isObject(data) || data.kind !== KIND) throw new Error("This isn't a Pallot picks file.");
+  if (!(Number(data.version) <= VERSION)) throw new Error("This picks file was made by a newer Pallot.");
+  return typeof data.data === "string" ? decode(data.data, askPhrase, "This picks file couldn't be read.") : readSlate(data);
 }
 
 // ---- opening one on a ballot ------------------------------------------------------------
