@@ -116,7 +116,13 @@ def test_a_north_carolina_ballot_comes_from_its_official_list(client, upstream, 
     assert find_race(ballot, "Wake County Board of Commissioners District 1") is None
     assert ballot["left_out"]["races"] > 0 and ballot["maybe"] == []
     assert (ballot["districts"]["cd"], ballot["districts"]["sd"], ballot["districts"]["hd"]) == (2, 14, 38)
-    assert ballot["key_dates"] is None and upstream.count("goelect") == 0
+    assert ballot["key_dates"] == {
+        "election": "General Election", "election_day": "2026-11-03", "register_by": "2026-10-09",
+        "mail_apply_by": "2026-10-20", "early_voting_start": "2026-10-15", "early_voting_end": "2026-10-31",
+        "source": "North Carolina State Board of Elections", "source_url": "https://www.ncsbe.gov/", "computed": True,
+    }
+    assert ballot["voter_info"]["late_registration"]["url"] == "https://www.ncsbe.gov/registering/how-register"
+    assert upstream.count("goelect") == 0
     get_ballot(client, "raleigh")
     assert logged_calls() == 0
 
