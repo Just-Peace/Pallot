@@ -251,16 +251,23 @@
       <h2 id="share-title">Share your picks</h2>
       <p id="share-summary"></p>
       <div id="share-choices">
-        <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes" checked> Include my notes</label>
-        <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
-        <div class="button-row share-picks-actions">
+        <section class="share-picks-part" aria-labelledby="share-link-title">
+          <h3 id="share-link-title">Send a link</h3>
+          <p class="notice notice-warn share-picks-warn" id="share-warn">A link shows who you picked to anyone who has it, and to anyone they pass it on to. Send it only to people you trust.</p>
+          <label class="check notes-choice"><input type="checkbox" id="share-link-notes"> Include my notes in the link</label>
+          <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
           <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
+          <label for="share-url" class="sr-only">Link to your picks</label>
+          <input type="text" id="share-url" class="share-picks-url" readonly hidden>
+        </section>
+        <section class="share-picks-part" aria-labelledby="share-file-title">
+          <h3 id="share-file-title">Save a file</h3>
+          <p class="fine">A copy to keep, or to open on another device.</p>
+          <label class="check notes-choice"><input type="checkbox" id="share-file-notes" checked> Include my notes in the file</label>
           <button class="btn with-icon" type="button" id="share-save"><span data-icon="download"></span>Save file</button>
-        </div>
-        <label for="share-url" class="sr-only">Link to your picks</label>
-        <input type="text" id="share-url" class="share-picks-url" readonly hidden>
+        </section>
         <p class="status" id="share-status" role="status" aria-live="polite"></p>
-        <p class="fine">The link and the file hold your picks themselves; Pallot's server never sees them. Anyone you send them to can read them. <a href="faq.html#share-picks">More on sharing</a></p>
+        <p class="fine">Pallot's server never sees what you share. <a href="faq.html#share-picks">More on sharing</a></p>
       </div>
       <div class="share-picks-open">
         <p>Picks from someone else, or from another device?</p>

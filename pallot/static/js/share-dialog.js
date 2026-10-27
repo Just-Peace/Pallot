@@ -12,8 +12,10 @@ import { showToast } from "./toast.js";
 const dialog = $("#share-dialog");
 const summary = $("#share-summary");
 const choices = $("#share-choices");
-const notesChoice = $("#share-notes");
+const linkNotes = $("#share-link-notes");
+const fileNotes = $("#share-file-notes");
 const addressChoice = $("#share-address");
+const warning = $("#share-warn");
 const linkButton = $("#share-link");
 const saveButton = $("#share-save");
 const urlBox = $("#share-url");
@@ -27,9 +29,19 @@ let held = null; // picks from a link or file waiting for a ballot: { slate, fro
 
 const nativeShare = () => typeof navigator.share === "function" && matchMedia("(pointer: coarse)").matches;
 
-const slate = () => buildSlate(page.ballot, page.picks, {
-  request: page.request, title: electionLine(page.ballot), notes: notesChoice.checked, address: addressChoice.checked,
+// The link leaves the notes out unless the voter ticks them in; the file, a copy for themselves,
+// keeps them unless they tick them out. Only the link offers the address.
+const slate = (notes, address = false) => buildSlate(page.ballot, page.picks, {
+  request: page.request, title: electionLine(page.ballot), notes, address,
 });
+
+// The link's warning names everything the link would show.
+function syncWarning() {
+  urlBox.hidden = true;
+  const also = [linkNotes.checked && !linkNotes.closest("label").hidden && "your notes", addressChoice.checked && "your address"].filter(Boolean);
+  warning.textContent = `A link shows who you picked${also.length ? `, ${also.join(" and ")}` : ""} to anyone who has it, `
+    + "and to anyone they pass it on to. Send it only to people you trust.";
+}
 
 function openShare() {
   if (!page.ballot) return;
@@ -39,16 +51,16 @@ function openShare() {
     ? `Your picks in ${plural(counts.races, "race")}${counts.notes ? ` and ${plural(counts.notes, "note")}` : ""}, for ${electionLine(page.ballot)}.`
     : "You haven't picked anyone yet. Once you do, you can share your picks here.";
   choices.hidden = !any;
-  $("#share-notes-choice").hidden = !counts.notes;
+  for (const choice of document.querySelectorAll("#share-dialog .notes-choice")) choice.hidden = !counts.notes;
   $("#share-link-label").textContent = nativeShare() ? "Share link" : "Copy link";
-  urlBox.hidden = true;
+  syncWarning();
   setStatus(status, "");
   dialog.showModal();
   (any ? linkButton : $("#share-open")).focus();
 }
 
 async function shareLink() {
-  const url = await slateLink(slate(), location.origin + location.pathname);
+  const url = await slateLink(slate(linkNotes.checked, addressChoice.checked), location.origin + location.pathname);
   if (nativeShare()) {
     try {
       await navigator.share({ title: "My picks on Pallot", url });
@@ -78,7 +90,7 @@ function showUrl(url) {
 
 function saveFile() {
   const name = `pallot-picks-${page.ballot.election_date || "undated"}.json`;
-  const href = URL.createObjectURL(new Blob([JSON.stringify(slate(), null, 2)], { type: "application/json" }));
+  const href = URL.createObjectURL(new Blob([JSON.stringify(slate(fileNotes.checked), null, 2)], { type: "application/json" }));
   const link = h("a", { href, download: name, hidden: true });
   document.body.append(link);
   link.click();
@@ -183,8 +195,8 @@ export function initShare(shared) {
   saveButton.addEventListener("click", saveFile);
   $("#share-open").addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", openFile);
-  addressChoice.addEventListener("change", () => { urlBox.hidden = true; });
-  notesChoice.addEventListener("change", () => { urlBox.hidden = true; });
+  addressChoice.addEventListener("change", syncWarning);
+  linkNotes.addEventListener("change", syncWarning);
   window.addEventListener("hashchange", async () => {
     if (await takeLinkedPicks()) offerHeldPicks();
   });
