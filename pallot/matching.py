@@ -58,9 +58,10 @@ def last_first(name: str) -> str:
 
 
 def seats_in(text: str | None) -> set[str]:
-    """ "TX-35 (TX-37 2026)" -> {"TX-35", "TX-37"}."""
+    """ "TX-35 (TX-37 2026)" -> {"TX-35", "TX-37"}. An at-large seat, "VT-AL" to TrackAIPAC,
+    is "VT-00" as races number it."""
     return {
-        f"{state}-{int(seat):02d}" if seat.isdigit() else f"{state}-{seat}"
+        f"{state}-{int(seat):02d}" if seat.isdigit() else f"{state}-00" if seat == "AL" else f"{state}-{seat}"
         for state, seat in _SEAT.findall((text or "").upper())
     }
 
@@ -112,11 +113,9 @@ def match_unique(index: NameIndex, name: str) -> tuple[Any, Match] | None:
 def trackaipac_seats(person: dict[str, Any]) -> set[str]:
     """Every seat a TrackAIPAC entry mentions: its own, each listing's, and any in the
     listing's seat text (which is where a 2026 seat change shows up)."""
-    seats = {person["seat"]} if person.get("seat") else set()
+    seats = seats_in(person.get("seat"))
     for listing in person.get("listings", ()):
-        if listing.get("seat"):
-            seats.add(listing["seat"])
-        seats |= seats_in(listing.get("seat_text"))
+        seats |= seats_in(listing.get("seat")) | seats_in(listing.get("seat_text"))
     return seats
 
 
