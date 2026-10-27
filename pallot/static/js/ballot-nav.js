@@ -156,13 +156,6 @@ export function updateProgress() {
 function syncClearPicks() {
   const empty = !page?.picks || page.picks.isEmpty();
   for (const button of clearButtons) button.hidden = empty;
-  syncPicksSection();
-}
-
-// More's "Your picks" shows only while it holds Clear picks or the line saying why Print waits.
-let picksSection = null;
-function syncPicksSection() {
-  if (picksSection) picksSection.hidden = clearButtons[1].hidden && waitNotes[1].hidden;
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
@@ -187,7 +180,6 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
     button.title = waiting ? STILL_LOADING : title;
   }
   for (const note of waitNotes) note.hidden = !waiting;
-  syncPicksSection();
   maybeTip();
 }
 
@@ -403,16 +395,16 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections, in the order a voter reaches for them: Clear picks (with the line saying why the
-// strip's Print picks waits), Help me pick's controls, and the View menu's: detail and focuses (each with
+// More's sections, in the order a voter reaches for them: Share picks and Clear picks (with the line
+// saying why the strip's Print picks waits), Help me pick's controls, and the View menu's: detail and focuses (each with
 // its "?"), then Expand and Collapse all and Only races I haven't picked.
 // On a phone the toolbar is hidden and Print picks sits on the strip, so More is where the rest live.
 function fillMoreSheet() {
   for (const root of [moreView, moreFocus, moreHidePicked]) bindViewControls(root);
   bindThemeToggle(moreTheme);
   stripPrint.addEventListener("click", () => $("#print-btn").click());
-  picksSection = addMoreSection({ id: "picks", label: "Your picks" }, clearButtons[1], waitNotes[1]);
-  syncPicksSection();
+  addMoreSection({ id: "picks", label: "Your picks" },
+    moreAction("Share picks", "share", () => $("#share-btn").click()), clearButtons[1], waitNotes[1]);
   addMoreSection({ id: "help", label: ["Help me pick ", helpLink("endorsements", "Help me pick")] }, moreHelp);
   addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
   // Settings and the appearance beside Done, in the sheet's head

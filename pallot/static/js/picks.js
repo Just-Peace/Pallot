@@ -234,7 +234,21 @@ export class Picks {
     return { races, notes, writeIns, auto };
   }
 
-  // Puts back what clear() returned: "Undo" after "Clear picks".
+  // Puts in what a picks file or link brings (share.js's planImport) with one save, as the voter's
+  // own picks, and returns what was there, for restore().
+  merge({ races = {}, writeIns = {}, notes = {} }) {
+    const before = structuredClone({ races: this.data.races, notes: this.data.notes, writeIns: this.data.writeIns || {}, auto: this.data.auto || {} });
+    for (const [raceKey, keys] of Object.entries(races)) {
+      this.data.races[raceKey] = keys;
+      this.setAuto(raceKey, []);
+    }
+    this.data.writeIns = { ...this.data.writeIns, ...writeIns };
+    Object.assign(this.data.notes, notes);
+    saveBucket(this.key, this.data);
+    return before;
+  }
+
+  // Puts back what clear() or merge() returned: "Undo" after "Clear picks", or after opening picks.
   restore({ races, notes, writeIns, auto = {} }) {
     Object.assign(this.data, { races, notes, writeIns, auto });
     saveBucket(this.key, this.data);

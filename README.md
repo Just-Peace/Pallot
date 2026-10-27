@@ -93,9 +93,10 @@ The FAQ (linked from every page) explains the figures and the features in detail
 - **Help me pick**: **Trust** picks the candidates of the endorsers you trust, and **Avoid** marks the ones you won't vote for, from watchlists or your own list. **More conditions** picks across the ballot, or in one race, by party, endorsements, money or polls. It never guesses in a race with more matches than seats.
 - **Avoid** on a candidate adds them to your own list, which you can also fill by name or pattern in Settings. Trust never picks them.
 - **Print my picks** as a full page or a wallet card. Your address isn't printed.
+- **Share picks** as a link or a picks file, to keep a copy, move them to another device or send them to a friend. The picks travel in the link itself, so the server never sees them, though anyone given the link can; the dialog warns of that, and leaves notes out of links unless ticked in. Either can be locked with a phrase, which never leaves the browser. Opening one shows what it holds before anything changes.
 - On a phone, the left pane becomes a top bar, and the ballot's buttons are under **More**.
 
-Your picks, notes, write-ins, Help me pick choices, the people you avoid and your settings are kept in your browser's `localStorage`, never on the server.
+Your picks, notes, write-ins, Help me pick choices, the people you avoid and your settings are kept in your browser's `localStorage`, never on the server, even when you share them.
 
 ## Where the data comes from
 
