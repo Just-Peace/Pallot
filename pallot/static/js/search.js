@@ -4,24 +4,24 @@
 import { setUiPref, uiPref } from "./storage.js";
 
 export const ENGINES = [
-  { id: "google", label: "Google", url: "https://www.google.com/search?q=" },
   { id: "bing", label: "Bing", url: "https://www.bing.com/search?q=" },
-  { id: "duckduckgo", label: "DuckDuckGo", url: "https://duckduckgo.com/?q=" },
   { id: "brave", label: "Brave Search", url: "https://search.brave.com/search?q=" },
-  { id: "yahoo", label: "Yahoo", url: "https://search.yahoo.com/search?p=" },
-  { id: "startpage", label: "Startpage", url: "https://www.startpage.com/sp/search?query=" },
+  { id: "duckduckgo", label: "DuckDuckGo", url: "https://duckduckgo.com/?q=" },
   { id: "ecosia", label: "Ecosia", url: "https://www.ecosia.org/search?q=" },
+  { id: "google", label: "Google", url: "https://www.google.com/search?q=" },
   { id: "kagi", label: "Kagi", url: "https://kagi.com/search?q=" },
-  { id: "perplexity", label: "Perplexity", url: "https://www.perplexity.ai/search?q=", ai: true },
+  { id: "startpage", label: "Startpage", url: "https://www.startpage.com/sp/search?query=" },
+  { id: "yahoo", label: "Yahoo", url: "https://search.yahoo.com/search?p=" },
   { id: "chatgpt", label: "ChatGPT", url: "https://chatgpt.com/?hints=search&q=", ai: true },
   { id: "claude", label: "Claude", url: "https://claude.ai/new?q=", ai: true },
-  { id: "copilot", label: "Microsoft Copilot", url: "https://copilot.microsoft.com/?q=", ai: true },
-  { id: "google-ai", label: "Google AI Mode", url: "https://www.google.com/search?udm=50&q=", ai: true },
   { id: "duck-ai", label: "Duck.ai", url: "https://duck.ai/?q=", ai: true },
+  { id: "google-ai", label: "Google AI Mode", url: "https://www.google.com/search?udm=50&q=", ai: true },
   { id: "grok", label: "Grok", url: "https://grok.com/?q=", ai: true },
+  { id: "copilot", label: "Microsoft Copilot", url: "https://copilot.microsoft.com/?q=", ai: true },
+  { id: "perplexity", label: "Perplexity", url: "https://www.perplexity.ai/search?q=", ai: true },
 ];
 
-const DEFAULT_ENGINE = "duck-ai";
+export const DEFAULT_ENGINE = "duck-ai";
 
 export function currentEngine() {
   const id = uiPref("searchEngine");

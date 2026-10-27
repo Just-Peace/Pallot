@@ -15,7 +15,7 @@ import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
-import { ENGINES, currentEngine, setEngine } from "./search.js";
+import { DEFAULT_ENGINE, ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
 import { showToast } from "./toast.js";
 import { bindViewControls, focusChips, migrateView, onViewChange, showViewControls } from "./view.js";
@@ -172,8 +172,7 @@ async function load() {
 
 function initSearchEngine() {
   const selected = currentEngine().id;
-  const options = (ai) => ENGINES.filter((e) => !e.ai === !ai)
-    .map((e) => h("option", { value: e.id, selected: e.id === selected }, e.label));
+  const options = (ai) => ENGINES.filter((e) => !e.ai === !ai)    .map((e) => h("option", { value: e.id, selected: e.id === selected }, e.id === DEFAULT_ENGINE ? `${e.label} (default)` : e.label));
   searchSelect.replaceChildren(
     h("optgroup", { label: "Search engines" }, ...options(false)),
     h("optgroup", { label: "AI assistants" }, ...options(true)),
