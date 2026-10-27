@@ -1,8 +1,9 @@
 """The district outlines behind the map on Your districts (GET /api/district-outlines).
 
-U.S. House, State Senate and State House come from TIGERweb, one cached request each, the
-State Board of Education district from the PLANE2106 map Pallot already keeps, and the
-election precinct from the precinct map the ballot lookup downloaded (never downloaded here).
+U.S. House, State Senate and State House come from TIGERweb, one cached request each, in any
+state; in Texas, the State Board of Education district from the PLANE2106 map Pallot already
+keeps, and the election precinct from the precinct map the ballot lookup downloaded (never
+downloaded here).
 They are asked by the page once the ballot is on screen, so a ballot lookup never waits on them.
 A missing outline is a note, never a failed request: the map draws what it has.
 """
@@ -12,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import zipfile
 
+from . import coverage
 from .ballot import Services
 from .http_cache import UpstreamError, track_calls
 from .models import DistrictOutlines, Outline
@@ -23,19 +25,21 @@ LABELS = {"cd": "U.S. House", "sd": "State Senate", "hd": "State House", "sboe":
 
 
 async def district_outlines(
-    svc: Services, wanted: dict[str, int | None], precinct: tuple[int, str] | None = None,
-    sources: Sources | None = None,
+    svc: Services, wanted: dict[str, int | str | None], precinct: tuple[int, str] | None = None,
+    sources: Sources | None = None, state: str = "TX",
 ) -> DistrictOutlines:
-    """The districts in ``wanted`` (kind -> number), then the election precinct (county FIPS, the
-    map's code for it), with the sources the voter has on (by default, Pallot's defaults)."""
+    """The districts in ``wanted`` (kind -> number, or name) in ``state``, then the election
+    precinct (county FIPS, the map's code for it), with the sources the voter has on (by default,
+    Pallot's defaults)."""
     calls = track_calls()
     sources = sources or svc.sources
     use_tigerweb = sources.enabled(tigerweb.SOURCE)
+    labels = {**LABELS, **coverage.of(state).labels}
     notes: list[str] = []
 
-    async def one(kind: str, number: int) -> tuple[list[Ring] | None, str | None]:
+    async def one(kind: str, number: int | str) -> tuple[list[Ring] | None, str | None]:
         """The district's rings, or None and why."""
-        label = f"{LABELS[kind]} District {number}"
+        label = f"{labels[kind]} (at large)" if kind == "cd" and number == 0 else f"{labels[kind]} District {number}"
         if kind == "sboe":
             try:
                 found = await svc.sboe.outline(number, tigerweb.SIMPLIFY_DEG)
@@ -46,7 +50,7 @@ async def district_outlines(
                 return None, f"Couldn't load the State Board of Education map, so {label} isn't drawn."
         else:
             try:
-                found = await svc.tigerweb.outline(kind, number)
+                found = await svc.tigerweb.outline(kind, number, state)
             except UpstreamError as exc:
                 why = "is paused" if exc.until else "isn't responding"
                 return None, f"The US Census's map service {why}, so {label} isn't drawn."

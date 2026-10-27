@@ -64,6 +64,7 @@ SECURITY_HEADERS = {
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-Frame-Options": "DENY",
 }
+TEXAS_DISTRICTS = {"cd": 38, "sd": 31, "hd": 150}  # the highest number of each Texas district the map draws
 NDJSON = "application/x-ndjson"
 IMMUTABLE = "public, max-age=31536000, immutable"
 VERSION_JS = os.path.join("js", "version.js")
@@ -472,19 +473,30 @@ def create_app(
     @app.get("/api/district-outlines", response_model=DistrictOutlines)
     async def outlines(
         request: Request,
-        cd: int | None = Query(None, ge=1, le=38),
-        sd: int | None = Query(None, ge=1, le=31),
-        hd: int | None = Query(None, ge=1, le=150),
+        state: str = Query("TX", pattern="^[A-Z]{2}$"),
+        cd: int | None = Query(None, ge=0, le=53),
+        sd: str | None = Query(None, min_length=1, max_length=40),
+        hd: str | None = Query(None, min_length=1, max_length=40),
         sboe: int | None = Query(None, ge=1, le=15),
         election_precinct: str | None = Query(None, max_length=16),
         county: int | None = Query(None, ge=1, le=999),
     ) -> DistrictOutlines:
-        """The outlines of the voter's Texas districts, for the map on Your districts. The election
-        precinct is asked by the map's code for it ("0300") and the county's FIPS code; an
+        """The outlines of the voter's districts, for the map on Your districts. A State Senate or
+        State House district is its number or, where the state names them, its name ("A", "Third
+        Suffolk"). Texas's are held to its counts, and only Texas has an SBOE district and an
+        election precinct, asked by the map's code for it ("0300") and the county's FIPS code; an
         unknown one is a note, so it can't fail the other outlines."""
-        precinct = (county, election_precinct) if election_precinct and county else None
+        if state not in coverage.STATES:
+            raise HTTPException(422, "Pallot doesn't cover that state.")
+        texas = state == "TX"
+        legislative = {kind: int(value) if value and value.isdigit() else value for kind, value in (("sd", sd), ("hd", hd))}
+        wanted: dict[str, int | str | None] = {"cd": cd, **legislative}
+        if texas and any(not isinstance(value, int) or not 1 <= value <= TEXAS_DISTRICTS[kind]
+                         for kind, value in wanted.items() if value is not None):
+            raise HTTPException(422, "There's no such Texas district.")
+        precinct = (county, election_precinct) if texas and election_precinct and county else None
         return await district_outlines(
-            services(request), {"cd": cd, "sd": sd, "hd": hd, "sboe": sboe}, precinct, chosen(request)
+            services(request), {**wanted, "sboe": sboe if texas else None}, precinct, chosen(request), state,
         )
 
     @app.get("/api/tiles/{z}/{x}/{y}.png")
