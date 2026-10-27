@@ -181,6 +181,7 @@
               <div class="menu-panel" id="help-panel"></div>
             </details>
             <button class="btn ghost small quiet-danger with-icon" id="clear-picks" type="button" hidden><span data-icon="x"></span>Clear picks</button>
+            <button class="btn ghost small with-icon" id="share-btn" type="button" aria-haspopup="dialog" aria-controls="share-dialog"><span data-icon="share"></span>Share picks</button>
             <button class="btn primary small with-icon" id="print-btn" type="button"><span data-icon="printer"></span>Print my picks</button>
             </div>
             <p class="fine wait-note" id="wait-note" hidden>Profile, More conditions and Print wait for money, polls and endorsements.</p>
@@ -241,6 +242,33 @@
       <div class="button-row end">
         <button class="btn ghost" value="cancel">Cancel</button>
         <button class="btn primary" value="print">Print</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="share-dialog" class="small-dialog" aria-labelledby="share-title" aria-describedby="share-summary">
+    <form method="dialog">
+      <h2 id="share-title">Share your picks</h2>
+      <p id="share-summary"></p>
+      <div id="share-choices">
+        <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes" checked> Include my notes</label>
+        <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
+        <div class="button-row share-picks-actions">
+          <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
+          <button class="btn with-icon" type="button" id="share-save"><span data-icon="download"></span>Save file</button>
+        </div>
+        <label for="share-url" class="sr-only">Link to your picks</label>
+        <input type="text" id="share-url" class="share-picks-url" readonly hidden>
+        <p class="status" id="share-status" role="status" aria-live="polite"></p>
+        <p class="fine">The link and the file hold your picks themselves; Pallot's server never sees them. Anyone you send them to can read them. <a href="faq.html#share-picks">More on sharing</a></p>
+      </div>
+      <div class="share-picks-open">
+        <p>Picks from someone else, or from another device?</p>
+        <button class="btn small" type="button" id="share-open">Open a picks file</button>
+        <input type="file" id="share-file" accept=".json,application/json" hidden>
+      </div>
+      <div class="button-row end">
+        <button class="btn ghost" value="">Done</button>
       </div>
     </form>
   </dialog>

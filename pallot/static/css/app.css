@@ -1333,6 +1333,12 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-unpicked { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
 .print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
+.share-picks-actions { margin: 14px 0 4px; }
+.share-picks-actions .btn { flex: 1 1 10em; justify-content: center; min-height: 44px; }
+.share-picks-url { width: 100%; margin-top: 8px; font-size: 16px; }
+.share-picks-open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 18px 0 14px; padding-top: 14px;
+  border-top: 1px solid var(--line); }
+.share-picks-open p { flex: 1 1 14em; margin: 0; }
 
 /* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */
 .sheet { width: min(560px, 100%); max-width: none; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto auto 0;
