@@ -100,11 +100,19 @@
           </div>
         </details>
 
-        <details class="faq">
+        <details class="faq" id="official">
           <summary>Is this my official ballot?</summary>
           <div class="faq-body">
             <p>No. Pallot is an unofficial helper (see <a href="about.html#isnt">what it isn't</a>), and it can be wrong or miss something, for example when a source hasn't caught up with a late change, or when Pallot matches the wrong record. Check the official sample ballot from your county or state elections office before you vote.</p>
             <p>Pallot is provided as is, without warranty of any kind. Its makers and contributors aren't liable for any decision made with it, or for anything a source got wrong.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="wrong-candidate">
+          <summary>What if Pallot shows a wrong candidate on my ballot?</summary>
+          <div class="faq-body">
+            <p>Please tell us. Pallot can make mistakes: a source can be late or wrong, or Pallot can match the wrong record. Open an issue in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a> saying which state and race it's in, which candidate is wrong, and what your official sample ballot shows instead. You don't need to give your address. We fix mistakes quickly.</p>
+            <p>Until then, go by your official sample ballot (see <a href="#official">Is this my official ballot?</a>).</p>
           </div>
         </details>
 
@@ -353,6 +361,13 @@
             <p>Help me pick, a menu at the top of your ballot beside View (in More, on a phone), has two lists. <strong>Trust</strong> picks who the endorsers you trust endorse: choose any of TrackAIPAC, Vote for Peace (its Allies) and the lists that endorse someone on your ballot, each by its own name; "Pick" on a candidate's endorsement chip trusts that endorser too. Choosing one picks the candidates it endorses at once, in each race where it endorses someone, unless more of them match than the race has seats, or you've already picked there yourself; a message says what it picked, with Undo. With several chosen, a candidate any of them endorses counts. Unchoosing one takes back only the picks the endorsers made that none you still trust endorses; your own picks stay. <strong>Avoid</strong> only marks: choose TrackAIPAC's watchlist or Vote for Peace's Opposed, and those candidates get a dashed amber outline and "To avoid: …" at once; the people you've marked yourself (see <a href="#ban-list">How does Avoid work?</a>) show as "People I've marked", with how many are on your ballot. Trust never picks anyone you avoid, and nothing is taken back. In each race, the candidates who match get a ring and a line, "Matches: endorsed by …", and the others are dimmed but still readable and pickable. The race's heading says how many match, each section chip how many of its races have a match, and the menu's button how many you chose. "Only races with a match" hides the others. "Clear" clears your choices and takes back the endorsers' picks, with Undo. "More conditions…" picks by party, money, polls or incumbents, in every race or just one (see <a href="#pick-by-rule">Can Pallot pick for me?</a>), with the same choices: who you trust are its Endorsements chips, and the watchlists you avoid are its TrackAIPAC watchlist and Vote for Peace rows, so a change in either shows in the other. Your choices stay in this browser.</p>
             <ul><template data-endorsements="list"></template></ul>
             <p data-endorsements="none" hidden>This copy of Pallot comes with no endorsement lists yet.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="add-endorsements">
+          <summary>Can you add an organization's endorsements?</summary>
+          <div class="faq-body">
+            <p>Suggest it in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>: name the organization and link to where it publishes its endorsements. We'll review it, and add the list if its endorsements line up with Pallot's core values, justice and peace. An added list gets its own switch in Settings, like the others.</p>
           </div>
         </details>
 
@@ -623,6 +638,28 @@
       <section class="faq-group" aria-labelledby="running">
         <h2 class="group-title" id="running">About Pallot</h2>
 
+        <details class="faq" id="why-pallot">
+          <summary>Why does Pallot exist?</summary>
+          <div class="faq-body">
+            <p>To help people find their way through voting: to see the races on their ballot, learn about each candidate, and find the candidates who stand for justice and peace. The choice is always yours (see <a href="#neutral">Does Pallot endorse anyone?</a>).</p>
+          </div>
+        </details>
+
+        <details class="faq" id="supporters">
+          <summary>Who pays for Pallot, and do you take donations?</summary>
+          <div class="faq-body">
+            <p>Pallot is self-supported: we build and run it ourselves. We don't take donations. If you'd like to give, please donate to a charity of your choice instead.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="helping">
+          <summary>How can I help?</summary>
+          <div class="faq-body">
+            <p>Spread the word: send Pallot to your friends and family, and encourage people to vote for the change they'd like to see.</p>
+            <p>Pallot is open source, so you can also make it your own: run your own copy, change it, or help build it (see <a href="#sharing">Can I run my own Pallot?</a>). Problems and ideas go in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>.</p>
+          </div>
+        </details>
+
         <details class="faq" id="sharing">
           <summary>Can I run my own Pallot?</summary>
           <div class="faq-body">
@@ -630,10 +667,11 @@
           </div>
         </details>
 
-        <details class="faq">
-          <summary>Will it cover more of my state?</summary>
+        <details class="faq" id="more-coverage">
+          <summary>Can you add more of my state, or its local elections?</summary>
           <div class="faq-body">
-            <p>It already covers every state, with as much as Pallot has a source for (see <a href="#coverage">which addresses Pallot covers</a>). Each state that gets more needs its election office's own list of candidates, read its own way, so states are added one at a time. Tell us which you'd like next in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>.</p>
+            <p>Yes, and we'd like to. Pallot already covers every state, with as much as it has a source for (see <a href="#coverage">which addresses Pallot covers</a>, and <a href="#local-races">why you don't see local races</a>). Each state that gets more needs its election office's own list of candidates, read its own way, so states and their local elections are added one at a time.</p>
+            <p>Ask for yours in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>, naming your state and the races you're missing. We try to get to every request.</p>
           </div>
         </details>
       </section>
