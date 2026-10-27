@@ -37,12 +37,12 @@ def test_sources_overview(client):
     overview = client.get("/api/sources").json()
     assert [s["id"] for s in overview["sources"]] == ["geocoding", "election_precincts", "county_precincts",
                                                        "tigerweb", "osm_tiles", "sos", "key_dates", "wikidata",
-                                                       "officeholders", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
+                                                       "officeholders", "congress_gov", "trackaipac", "voteforpeace", "cair", "emgage", "examplepac",
                                                        "mupac", "fec", "tec", "polls", "state_nc", "state_mi", "state_pa",
                                                        "state_fl", "state_va", "state_ca", "state_az", "state_nv",
                                                        "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny",
                                                        "state_co", "state_wy", "state_il", "state_ak", "key_dates_ca"]
-    (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, holders, tracker, peace, _, _, example, _,
+    (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, holders, bills, tracker, peace, _, _, example, _,
      fec, tec, polls, *_) = overview["sources"]  # no Google key: its rows (Google, suggestions) are left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
         "Commissioner & JP precincts (counties)", True, True)
@@ -68,6 +68,7 @@ def test_sources_overview(client):
     assert (holders["label"], holders["toggleable"], holders["enabled"], holders["group"]) == (
         "Seat holders (congress-legislators, Open States)", True, True, "ballot")
     assert (wiki["label"], wiki["toggleable"], wiki["enabled"], wiki["group"]) == ("Wikidata", True, True, "ballot")
+    assert (bills["label"], bills["enabled"], bills["group"]) == ("Bills in Congress (Congress.gov)", True, "ballot")
     shown = [s["notice"] or "" for s in overview["sources"]] + [c for s in overview["sources"] for c in s["counts"]]
     assert not [text for text in shown if ISO_TIME.search(text)]
 
@@ -143,7 +144,7 @@ def test_sources_are_grouped(client):
         "states": ["state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "state_az", "state_nv",
                    "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co",
                    "state_wy", "state_il", "state_ak", "key_dates_ca"],
-        "ballot": ["wikidata", "officeholders"],
+        "ballot": ["wikidata", "officeholders", "congress_gov"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],
     }

@@ -1,0 +1,88 @@
+{
+    "pagination": {
+        "count": 1649,
+        "next": "https://api.congress.gov/v3/member/C001056/sponsored-legislation?offset=5&limit=5&format=json"
+    },
+    "request": {
+        "bioguideId": "c001056",
+        "contentType": "application/json",
+        "format": "json"
+    },
+    "sponsoredLegislation": [
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-30",
+            "latestAction": {
+                "actionDate": "2026-09-30",
+                "text": "Submitted in the Senate, considered, and agreed to without amendment and with a preamble by Unanimous Consent. (consideration: CR S5299; text: CR S5273-5274)"
+            },
+            "number": "948",
+            "policyArea": {
+                "name": "Education"
+            },
+            "title": "A resolution commending and congratulating Texas A&M University for 150 years of service to the State of Texas and the United States.",
+            "type": "SRES",
+            "url": "https://api.congress.gov/v3/bill/119/sres/948?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-30",
+            "latestAction": {
+                "actionDate": "2026-09-30",
+                "text": "Read twice and referred to the Committee on Energy and Natural Resources."
+            },
+            "number": "5677",
+            "policyArea": {
+                "name": null
+            },
+            "title": "A bill to establish the Lone Star Coastal National Recreation Area to conserve, protect, and promote the economic benefits of the natural, cultural, and recreational resources of the Upper and Middle Texas Gulf Coast as a unit of the National Park System.",
+            "type": "S",
+            "url": "https://api.congress.gov/v3/bill/119/s/5677?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-24",
+            "latestAction": {
+                "actionDate": "2026-09-24",
+                "text": "Read twice and referred to the Committee on the Judiciary."
+            },
+            "number": "5543",
+            "policyArea": {
+                "name": "Health"
+            },
+            "title": "STRONGER Act",
+            "type": "S",
+            "url": "https://api.congress.gov/v3/bill/119/s/5543?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-08-07",
+            "latestAction": {
+                "actionDate": "2026-08-07",
+                "text": "Submitted in the Senate, considered, and agreed to without amendment and with a preamble by Unanimous Consent. (consideration: CR S4553; text: CR S4568-4569)"
+            },
+            "number": "843",
+            "policyArea": {
+                "name": "Health"
+            },
+            "title": "A resolution expressing support for the designation of the first week of August 2026, as \"National Community Health Center Week\", encouraging all people of the United States to participate by visiting their local community health center, and celebrating the important partnership between community health centers and the communities they serve.",
+            "type": "SRES",
+            "url": "https://api.congress.gov/v3/bill/119/sres/843?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2025-02-04",
+            "latestAction": {
+                "actionDate": "2026-09-15",
+                "text": "Placed on Senate Legislative Calendar under General Orders. Calendar No. 616."
+            },
+            "number": "388",
+            "policyArea": {
+                "name": "Emergency Management"
+            },
+            "title": "Promoting Resilient Buildings Act",
+            "type": "S",
+            "url": "https://api.congress.gov/v3/bill/119/s/388?format=json"
+        }
+    ]
+}

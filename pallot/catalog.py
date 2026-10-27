@@ -11,7 +11,7 @@ from .ballot import Services
 from .models import SourceGroupInfo, SourceRef, SourcesOverview, SourceStatus, Tone
 from .settings import Sources
 from .sources import (
-    KeptSource, ca_key_dates, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
+    KeptSource, ca_key_dates, congress_gov, county_precincts, election_precincts, fec, google, key_dates, officeholders, osm_tiles,
     polls, sos, suggestions, tec, tigerweb, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementSource
@@ -149,6 +149,13 @@ SOURCES = (
         (officeholders.SOURCE,),
         group=BALLOT,
         pause=Pause("a list of seat holders was refused", "the lists already fetched still show"),
+    ),
+    SourceInfo(
+        congress_gov.SOURCE, "Bills in Congress (Congress.gov)", congress_gov.SETTINGS_DESCRIPTION, True,
+        (congress_gov.SOURCE,),
+        group=BALLOT,
+        pause=Pause("Congress.gov refused requests", "bills it sent in the last day still show"),
+        refreshable=False,
     ),
     SourceInfo(
         trackaipac.SOURCE,

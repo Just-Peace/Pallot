@@ -1,5 +1,5 @@
 // Details: a candidate's Profile (Texas SOS, then Wikidata), their Issues (stances.js), a tab per
-// other source, and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
+// other source (a member of Congress's bills in In Congress), and one Endorsements tab for TrackAIPAC, Vote for Peace and the endorsement lists,
 // each tab made of folding sections, in a dialog whose head has Search, Avoid and Pick beside ‹ › ✕. ‹ and ›
 // step through the race's other candidates, staying on the tab that's shown. On a phone, ‹, Pick and ›
 // sit in a bar at the bottom, in reach of a thumb, and a swipe sideways steps too.

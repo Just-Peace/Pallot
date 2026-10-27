@@ -501,20 +501,38 @@ function sourceLinks(card) {
   return items.length ? h("ul", { class: "links" }, items) : null;
 }
 
+// A list of a candidate's record (a member's bills): each entry's title linked to its page, what it
+// is and when, and where it stands; then how many of how many in all.
+function itemRows(list) {
+  return [
+    h("ul", { class: "item-list" }, list.items.map((item) => h("li", {},
+      safeUrl(item.url) ? webLink(item.url, item.title) : item.title,
+      item.meta ? h("p", { class: "fine" }, item.meta) : null,
+      item.note ? h("p", { class: "fine" }, item.note) : null))),
+    list.total > list.items.length
+      ? h("p", { class: "fine" }, `The newest ${list.items.length} of ${list.total.toLocaleString("en-US")}.`)
+      : null,
+  ];
+}
+
 // A source's tab in Details (a money source's, or any other drawn by cardPanel), matched as the
 // Profile tab is: its description and a likely match's reason (likelyLine), then its summary (titled
-// ``summaryTitle``) and each breakdown in a section of its own, the first with how it matched and the
-// day of the source's copy (sectionMeta), then its links (sourceLinks).
+// ``summaryTitle``), each breakdown and each list in a section of its own, the first with how it matched
+// and the day of the source's copy (sectionMeta), then its links (sourceLinks).
 function sourcePanel(card, className, summaryTitle) {
   const summary = cardSummary(card).filter(Boolean);
   const meta = sectionMeta(card);
   const head = summary.length ? foldSection(summaryTitle, meta, summary) : null;
+  const sections = [
+    ...(card.breakdowns || []).map((b) => [b.title, breakdownRows(b)]),
+    ...(card.lists || []).map((list) => [list.title, itemRows(list)]),
+  ];
   return h("div", { class: ["card-panel", className] },
     card.description ? h("p", { class: "muted" }, card.description) : null,
     likelyLine(card),
     head,
     cardQuotes(card),
-    (card.breakdowns || []).map((b, i) => foldSection(b.title, !head && i === 0 ? meta : null, breakdownRows(b))),
+    sections.map(([title, body], i) => foldSection(title, !head && i === 0 ? meta : null, body)),
     sourceLinks(card));
 }
 

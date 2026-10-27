@@ -46,6 +46,7 @@ state_il = true             # Illinois State Board of Elections
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
 officeholders = true        # congress-legislators and Open States: who holds each congressional and legislative seat
+congress_gov = true         # Congress.gov: the bills of a member of Congress running again (with the FEC's key)
 
 # Third-party polls
 polls = true                # FiftyPlusOne
