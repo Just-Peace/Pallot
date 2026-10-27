@@ -557,6 +557,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .key-date.passed dt, .key-date.passed dd { color: var(--muted); }
 .key-date .when { margin-left: 10px; font-size: 0.85rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
 .key-date.passed .when { color: inherit; font-weight: 400; }
+.key-date .late { display: block; font-size: 0.85rem; color: var(--text); }
 .cal-link { display: inline-flex; vertical-align: -2px; margin: -3.5px -3.5px -3.5px 1.5px; padding: 4.5px; color: var(--muted); }
 .cal-link:hover { color: var(--accent); }
 .cal-link .icon, .key-actions .icon { width: 15px; height: 15px; }

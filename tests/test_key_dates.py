@@ -259,6 +259,14 @@ def test_only_michigans_statewide_election_days_have_dates():
     assert state_key_dates.computed("TX", D(2026, 11, 3)) is None and state_key_dates.computed(None, D(2026, 11, 3)) is None
 
 
+def test_same_day_registration_states_say_how_to_register_after_the_deadline():
+    same_day = {state for state, guide in state_key_dates.GUIDES.items() if guide.late_registration}
+    assert same_day == {"MI", "CA", "NV", "IA", "WI", "CO", "WY", "IL"}
+    late = state_key_dates.GUIDES["MI"].voter_info().late_registration
+    assert late.url == state_key_dates.MICHIGAN.registration_url and "through Election Day" in late.label
+    assert state_key_dates.GUIDES["TX"].voter_info().late_registration is None
+
+
 def test_pallot_cache_refreshes_and_rebuilds_key_dates(client, make_app, upstream):
     get_ballot(client)
     assert make_app.cache_command("hard-refresh", "key_dates") == (0, "Key election dates (Texas SOS): Refreshed 1 saved response.")

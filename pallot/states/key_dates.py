@@ -149,6 +149,7 @@ class Guide:
     mail_deadline: str | None = None  # the words before the mail_apply_by date, where they aren't the usual
     local_office: str | None = None  # who sets where and when you vote, where it isn't the county elections office
     polls_text: str | None = None  # Election Day's line in the calendar file, where it isn't the usual (polls)
+    late_registration: str | None = None  # how to register once register_by is over, where the state allows it
 
     @property
     def polls(self) -> str:
@@ -167,6 +168,8 @@ class Guide:
             mail_deadline=self.mail_deadline,
             local_office=self.local_office,
             poll_hours=self.poll_hours,
+            late_registration=VoterLink(label=self.late_registration, url=self.registration_url)
+            if self.late_registration else None,
         )
 
 
@@ -220,6 +223,7 @@ MICHIGAN = Guide(
                      "clerk's office until 4 p.m. the day before Election Day.",
     mail_deadline="Online and mailed applications must reach your clerk by 5 p.m. on ",
     local_office="Your city or township clerk",
+    late_registration="After that, register in person at your clerk's office through Election Day",
 )
 
 CALIFORNIA = Guide(
@@ -248,6 +252,8 @@ CALIFORNIA = Guide(
     mail_eligibility="Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must reach your "
                      "county within 7 days), or drop it off by 8 p.m. on Election Day.",
     mail_deadline="If yours is lost or damaged, the Secretary of State recommends asking your county for a new one by ",
+    late_registration="After that, register and vote in person at your county elections office or a vote center "
+                      "through Election Day",
 )
 
 ARIZONA = Guide(
@@ -303,6 +309,7 @@ NEVADA = Guide(
                      "Election Day.",
     mail_deadline="To still be mailed one, register or update your registration by ",
     local_office="Your county clerk",
+    late_registration="After that, register online or at a polling place through Election Day",
 )
 
 GEORGIA = Guide(
@@ -358,6 +365,7 @@ IOWA = Guide(
                      "county auditor before the polls close at 8 p.m. on Election Day.",
     mail_deadline="Your request must reach your county auditor by 5 p.m. on ",
     local_office="Your county auditor",
+    late_registration="After that, register at your polling place on Election Day, with ID and proof of where you live",
 )
 
 OHIO = Guide(
@@ -415,6 +423,8 @@ WISCONSIN = Guide(
                      "polling place or clerk by 8 p.m. on Election Day.",
     mail_deadline="Mailed or online requests must reach your clerk by 5 p.m. on ",
     local_office="Your municipal clerk",
+    late_registration="After that, register in person at your clerk's office until the Friday before, or at your "
+                      "polling place on Election Day",
 )
 
 NEW_YORK = Guide(
@@ -500,6 +510,8 @@ WYOMING = Guide(
                      "county clerk by 7 p.m. on Election Day.",
     mail_deadline="Ask your county clerk for your ballot by ",
     local_office="Your county clerk",
+    late_registration="After that, register in person at your county clerk's office or at your polling place on "
+                      "Election Day",
 )
 
 ILLINOIS = Guide(
@@ -530,6 +542,7 @@ ILLINOIS = Guide(
                      "Election Day and reach your election authority within 14 days after.",
     mail_deadline="An application sent by mail must reach your election authority by ",
     local_office="Your election authority (county clerk or board of election commissioners)",
+    late_registration="After that, register and vote in person through Election Day, with two forms of ID",
 )
 
 ALASKA = Guide(
@@ -588,6 +601,8 @@ COLORADO = Guide(
     local_office="Your county clerk",
     polls_text="Voter service and polling centers are open 7 a.m. to 7 p.m. on Election Day; if you're in line at 7, "
                "you can vote.",
+    late_registration="After that, register and vote in person at a voter service and polling center through "
+                      "Election Day",
 )
 
 GUIDES = {
