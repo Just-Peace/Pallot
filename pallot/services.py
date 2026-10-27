@@ -19,8 +19,9 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import ca_key_dates, census, google, key_dates, nominatim, osm_tiles, sboe, suggestions
+from .sources import ca_key_dates, census, congress_gov, google, key_dates, nominatim, osm_tiles, sboe, suggestions
 from .sources.census import Census
+from .sources.congress_gov import CongressGov
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts
 from .sources.endorsement_feeds import FEEDS, make_feeds
@@ -43,20 +44,24 @@ from .states.adapters import ADAPTERS, open_lists
 
 MIN_INTERVAL = {
     "nominatim": 1.0, "suggestions": 0.5, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
-    "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, **{feed.source: 1.0 for feed in FEEDS},
+    "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, congress_gov.SOURCE: 0.25,
+    **{feed.source: 1.0 for feed in FEEDS},
     **{cls.source: 2.0 for cls in ADAPTERS.values()}, ca_key_dates.SOURCE: 2.0,
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
+SHORT_LIVED = frozenset({congress_gov.SOURCE})  # asked live and kept only while fresh: deleted at the first prune once expired
 MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
 ADDRESSES = (census.SOURCE, nominatim.SOURCE, google.SOURCE)  # an answer per address, capped
 
 
 def prune(cache: HttpCache, config: Config, *, vacuum: bool = True) -> int:
     """Delete what's no use even as a fallback (expired suggestions and tiles, addresses that
-    weren't found, expired flags), and keep the street map's tiles, the address suggestions and
-    each per-address source's answers under their caps, dropping the oldest first. Every other
-    source's answers stay, as the copy to show when it's down. Returns the rows deleted."""
-    return cache.prune(
+    weren't found, expired flags, and Congress.gov's answers as soon as they've expired), and keep the
+    street map's tiles, the address suggestions and each per-address source's answers under their caps,
+    dropping the oldest first. Every other source's answers stay, as the copy to show when it's down.
+    Returns the rows deleted."""
+    removed = cache.prune(SHORT_LIVED, (), 0, vacuum=False)
+    return removed + cache.prune(
         TRANSIENT, MISSES, config.ttl.prune_after,
         caps={osm_tiles.SOURCE: config.tiles_max_bytes, suggestions.SOURCE: config.suggest_max_bytes,
               **{source: config.addresses_max_bytes for source in ADDRESSES}},
@@ -130,6 +135,7 @@ async def open_services(
                 tec=Tec(config.tec_dir, refresh_fn=tec_refresh, bundled_dir=tec_bundled, user_agent=config.user_agent),
                 polls=Polls(cache, config.ttl, today),
                 officeholders=Officeholders(cache, config.ttl),
+                congress_gov=CongressGov(cache, config.ttl, config.fec_api_keys),
                 wikidata=Wikidata(cache, config.ttl),
                 key_dates=key_dates.KeyDatesPage(cache, config.ttl),
                 ca_key_dates=ca_key_dates.CaKeyDatesPage(cache, config.ttl),

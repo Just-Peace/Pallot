@@ -1,13 +1,14 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, polls, key_dates, officeholders, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
 the key dates one (the Texas SOS's Important Election Dates page, kept as served), the seat
 holders two (Congress's current members, cut down to Texas's and a few others, and Open States'
-Texas legislators, cut down to the columns Pallot reads), Wikidata two (its Texas officeholders,
+Texas legislators, cut down to the columns Pallot reads), Congress.gov two (one member's newest
+sponsored and cosponsored bills; DEMO_KEY allows 10 an hour), Wikidata two (its Texas officeholders,
 cut down to the recorded ballots' candidates and three others, and their details), the
 district outlines four (TIGERweb's layer list, and the Capitol's three districts), and the
 election precincts one (the Texas Legislative Council portal's list of precinct maps; the
@@ -80,8 +81,8 @@ from pallot.config import DEMO_KEY, load_config  # noqa: E402
 from pallot.http_cache import hidden_fields, trusting  # noqa: E402
 from pallot.offices import classify  # noqa: E402
 from pallot.sources import (  # noqa: E402
-    ca_key_dates, census, county_precincts, election_precincts, fec, google, key_dates, nominatim, officeholders, polls,
-    sos, suggestions, tigerweb, wikidata,
+    ca_key_dates, census, congress_gov, county_precincts, election_precincts, fec, google, key_dates, nominatim,
+    officeholders, polls, sos, suggestions, tigerweb, wikidata,
 )
 from pallot.matching import full_key  # noqa: E402
 from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
@@ -932,6 +933,16 @@ def record_key_dates(client: httpx.Client) -> None:
     print(f"{path.name}: {path.stat().st_size:,} bytes ({response.headers.get('content-type')})")
 
 
+def record_congress_gov(client: httpx.Client, key: str) -> None:
+    """John Cornyn's newest sponsored and cosponsored bills, as Pallot asks Congress.gov for them
+    (the tests make him the Senate race's Ken Paxton, so the holder is on the ballot)."""
+    for which, _ in congress_gov.LISTS:
+        response = client.get(f"{congress_gov.API}/member/C001056/{which}-legislation", headers={"X-Api-Key": key},
+                              params={"format": "json", "limit": str(congress_gov.NEWEST)})
+        response.raise_for_status()
+        save(f"congress_gov_C001056_{which}.json", response.json())
+
+
 def record_officeholders(client: httpx.Client) -> None:
     """Who holds each seat: Congress's members from Texas plus three others, and Texas's
     legislators with only the columns officeholders.py reads."""
@@ -1067,7 +1078,7 @@ def record_voteforpeace() -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
     parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "polls", "key_dates", "officeholders",
-                                           "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
+                                           "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
                                                  "state_nv: Nevada's, instead of the one saved in manual/state_nv; "
@@ -1121,6 +1132,8 @@ def main(argv: list[str] | None = None) -> int:
             record_key_dates(client)
         if only in (None, "officeholders"):
             record_officeholders(client)
+        if only in (None, "congress_gov"):
+            record_congress_gov(client, config.fec_api_key)
         if only in (None, "wikidata"):
             record_wikidata(client)
         if only in (None, "tigerweb"):

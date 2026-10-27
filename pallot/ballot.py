@@ -43,6 +43,7 @@ from .sources import google as google_source
 from .sources import key_dates as key_dates_source
 from .sources import sos as sos_source
 from .sources.census import TEXAS_FIPS, Census, Place
+from .sources.congress_gov import CongressGov
 from .sources.county_precincts import CountyPrecincts
 from .sources.election_precincts import ElectionPrecincts, StillDownloading
 from .sources.endorsement_feeds import EndorsementSource
@@ -112,6 +113,7 @@ class Services:
     tec: Tec
     polls: Polls
     officeholders: Officeholders
+    congress_gov: CongressGov
     wikidata: Wikidata
     key_dates: KeyDatesPage
     ca_key_dates: CaKeyDatesPage

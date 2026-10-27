@@ -19,7 +19,7 @@ import io
 import logging
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Iterator
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
@@ -205,9 +205,43 @@ def member_card(holder: Holder, key: str) -> SourceCard | None:
              for site, label, url in MEMBER_PAGES if site in holder.ids]
     if not links:
         return None
-    how = "FEC candidate ID" if key.removeprefix("fec:") in holder.fec_ids else "name"
-    return SourceCard(source=SOURCE, kind="profile", label=MEMBER_LABEL, match=Match(confidence="exact", method=how),
-                      links=links)
+    return SourceCard(source=SOURCE, kind="profile", label=MEMBER_LABEL, match=holder_match(holder, key), links=links)
+
+
+def holder_match(holder: Holder, key: str) -> Match:
+    """How the candidate ``key`` was found to be ``holder``: by FEC ID, or by name."""
+    return Match(confidence="exact", method="FEC candidate ID" if key.removeprefix("fec:") in holder.fec_ids else "name")
+
+
+def _claims(
+    races: list[Race], seats: dict[str, str], by_seat: dict[str, list[Holder]], day: dt.date,
+) -> Iterator[tuple[Race, SeatInfo, str | None, Holder | None]]:
+    """Each race whose seat's holder can be said (seat_info), with the candidate who surely is
+    them and the holder."""
+    for race in races:
+        seat = seats.get(race.key)
+        if not seat:
+            continue
+        found = by_seat.get(seat, [])
+        holder = _senator_up(found, day) if seat.endswith("-SEN") else (found[0] if len(found) == 1 else None)
+        if seat.endswith("-SEN") and holder is None and found:
+            continue  # no senator's term ends after this election: no claim
+        if len(found) > 1 and not seat.endswith("-SEN"):
+            continue  # two members for one seat: the list is mid-change
+        info, key = seat_info(race, holder, seat)
+        yield race, info, key, holder
+
+
+async def members(svc: Officeholders, races: list[Race], day: dt.date | None) -> dict[str, Holder]:
+    """The candidates who surely are the member of Congress holding their race's seat, by key, as
+    cards() finds them (Congress.gov's cards use it). UpstreamError if the list can't be had."""
+    seats = {race.key: race.seat for race in races if race.seat and "-" in race.seat}
+    if not seats:
+        return {}
+    by_seat: dict[str, list[Holder]] = {}
+    for holder in await svc.congress():
+        by_seat.setdefault(holder.seat, []).append(holder)
+    return {key: holder for _, _, key, holder in _claims(races, seats, by_seat, day or dt.date.today()) if key and holder}
 
 
 async def cards(
@@ -241,18 +275,8 @@ async def cards(
         for holder in holders:
             by_seat.setdefault(holder.seat, []).append(holder)
     covered = {"congress": "-", "legislature": ":"}
-    day = day or dt.date.today()
-    for race in races:
-        seat = seats.get(race.key)
-        if not seat or not any(mark in seat for name, mark in covered.items() if name in got):
-            continue
-        found = by_seat.get(seat, [])
-        holder = _senator_up(found, day) if seat.endswith("-SEN") else (found[0] if len(found) == 1 else None)
-        if seat.endswith("-SEN") and holder is None and found:
-            continue  # no senator's term ends after this election: no claim
-        if len(found) > 1 and not seat.endswith("-SEN"):
-            continue  # two members for one seat: the list is mid-change
-        info, key = seat_info(race, holder, seat)
+    seats = {key: seat for key, seat in seats.items() if any(mark in seat for name, mark in covered.items() if name in got)}
+    for race, info, key, holder in _claims(races, seats, by_seat, day or dt.date.today()):
         out.seats[race.key] = info
         if key:
             out.incumbents.add(key)

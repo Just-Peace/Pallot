@@ -1,0 +1,89 @@
+{
+    "cosponsoredLegislation": [
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-30",
+            "latestAction": {
+                "actionDate": "2026-09-30",
+                "text": "Read twice and referred to the Committee on Health, Education, Labor, and Pensions."
+            },
+            "number": "5676",
+            "policyArea": {
+                "name": "Education"
+            },
+            "title": "Strengthening Civics Education Act",
+            "type": "S",
+            "url": "https://api.congress.gov/v3/bill/119/s/5676?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-30",
+            "latestAction": {
+                "actionDate": "2026-09-30",
+                "text": "Read twice and referred to the Committee on Health, Education, Labor, and Pensions."
+            },
+            "number": "5671",
+            "policyArea": {
+                "name": "Health"
+            },
+            "title": "State Strategic Stockpile Act of 2026",
+            "type": "S",
+            "url": "https://api.congress.gov/v3/bill/119/s/5671?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-30",
+            "latestAction": {
+                "actionDate": "2026-09-30",
+                "text": "Referred to the Committee on the Judiciary. (text: CR S5267)"
+            },
+            "number": "934",
+            "policyArea": {
+                "name": "Sports and Recreation"
+            },
+            "title": "A resolution designating October 10, 2026, as \"American Girls in Sports Day\".",
+            "type": "SRES",
+            "url": "https://api.congress.gov/v3/bill/119/sres/934?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-29",
+            "latestAction": {
+                "actionDate": "2026-10-05",
+                "actionTime": "16:55:22",
+                "text": "Held at the desk."
+            },
+            "number": "5600",
+            "policyArea": {
+                "name": "Health"
+            },
+            "title": "Dennis John Benigno Traumatic Brain Injury Program Reauthorization Act of 2026",
+            "type": "S",
+            "url": "https://api.congress.gov/v3/bill/119/s/5600?format=json"
+        },
+        {
+            "congress": 119,
+            "introducedDate": "2026-09-29",
+            "latestAction": {
+                "actionDate": "2026-09-29",
+                "text": "Submitted in the Senate, considered, and agreed to without amendment and with a preamble by Unanimous Consent. (consideration: CR S5186)"
+            },
+            "number": "926",
+            "policyArea": {
+                "name": "Education"
+            },
+            "title": "A resolution designating September 2026 as \"National Literacy Month\".",
+            "type": "SRES",
+            "url": "https://api.congress.gov/v3/bill/119/sres/926?format=json"
+        }
+    ],
+    "pagination": {
+        "count": 4096,
+        "next": "https://api.congress.gov/v3/member/C001056/cosponsored-legislation?offset=5&limit=5&format=json"
+    },
+    "request": {
+        "bioguideId": "c001056",
+        "contentType": "application/json",
+        "format": "json"
+    }
+}

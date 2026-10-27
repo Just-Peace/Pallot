@@ -19,7 +19,7 @@ uv run pytest -n 0 --pdb                  # the same in one process, to use the 
 uv run pytest -m live                     # smoke tests against the real services (the FEC one needs an FEC key)
 uv run ruff check                         # pyflakes (unused imports and variables, undefined names) and syntax errors
 uv run pallot-cache check                 # what data/ keeps, and what's stale (also refresh, prune, hard-refresh, rebuild)
-uv run python scripts/record_fixtures.py  # re-record tests/fixtures from the live APIs (--only ballots|suggest|fec|nationwide|state_lists|polls|key_dates|officeholders|wikidata|tigerweb|election_precincts|county_precincts|endorsement_feeds|tec|trackaipac|voteforpeace)
+uv run python scripts/record_fixtures.py  # re-record tests/fixtures from the live APIs (--only ballots|suggest|fec|nationwide|state_lists|polls|key_dates|officeholders|congress_gov|wikidata|tigerweb|election_precincts|county_precincts|endorsement_feeds|tec|trackaipac|voteforpeace)
 uv run pallot-bundle refresh              # rebuild the bundled answers in bundles/data (--only, --due, --dry-run, --force)
 uv run pallot-bundle stats                # the snapshots' counts, as README's "What the snapshots hold"
 ```
@@ -79,6 +79,7 @@ What each outside service does that the code has to work around. AGENTS.md's "Be
   - The raw files carry candidates' addresses and phone numbers, so only the parsed candidates are bundled.
 - **FiftyPlusOne:** nationwide lists, 500 polls to a page, filtered to the ballot's state on the server (a poll names its state in full: "Texas").
 - **Seat holders:** congress-legislators' `legislators-current.json` (every state) and Open States' `tx.csv`. A state has two senators: the one up is the one whose term ends by the January after the election, which also finds an appointee whose seat is up in a special election.
+- **Congress.gov:** `/v3/member/{bioguide}/sponsored-legislation` and `/cosponsored-legislation`, newest first, with `pagination.count` the whole career's total (amendments included, which aren't listed). Takes an api.data.gov key in `X-Api-Key`; `DEMO_KEY` allows 10 requests an hour. Its member and bill pages redirect any name in the path to the right one. House votes come one roll call at a time (`/house-vote`) and there are no Senate votes, so a member's votes aren't read.
 - **Wikidata:** path expressions, `GROUP_CONCAT` and the label service made the `PEOPLE` query time out, hence flat rows. Most Texas House members have no district on their position, so their seat is `STATEREP:*`. The query is one per state, by the state's Wikidata item; only Texas's own offices and Congress's seats are read as seats, so elsewhere a match for a state office is only likely. The list is everyone who held an office in the state, not candidates, so only a full-name or first-and-last match with no party against it counts.
 - **Vote for Peace:** words offices its own way ("TX State Senator" with `sd-9`, "Harris District County Court Judge" with `228`); names the high courts without the place; files some county offices as statewide; some jurisdictions are cities. The page is a Next.js app: the data is read from its `self.__next_f.push` scripts, not the HTML.
 - **Live endorsement feeds:** see [Live endorsement feeds](#live-endorsement-feeds).
