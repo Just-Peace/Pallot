@@ -7,7 +7,8 @@ its candidates is an open seat; the holder's party's other candidates "hold the 
 party; and a candidate who is the holder by full name (or first and last name) is the
 incumbent, even where the state's filing doesn't say. A likely match (a first initial only, as
 Troy and Trever Nehls share) claims none of it. Statewide offices, the SBOE, courts and local
-races aren't covered.
+races aren't covered. An incumbent member of Congress gets a Profile section linking to their
+pages on other sites, by the ids congress-legislators keeps for them.
 """
 
 from __future__ import annotations
@@ -16,13 +17,14 @@ import csv
 import datetime as dt
 import io
 import logging
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, field
 from typing import Any
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, UpstreamError
 from ..matching import FIRST_LAST, FULL, NameIndex
-from ..models import Race, SeatHolder
+from ..models import Link, Match, Race, SeatHolder, SourceCard
 from ..offices import OfficeScope
 from ..states import district_key
 from . import CardSet, SeatInfo
@@ -33,7 +35,8 @@ log = logging.getLogger("uvicorn.error")
 SOURCE = "officeholders"
 LABEL = "Seat holders"
 DESCRIPTION = (
-    "Who holds each U.S. Congress and state Legislature seat now, from congress-legislators and Open States."
+    "Who holds each U.S. Congress and state Legislature seat now, from congress-legislators and Open States, "
+    "and links to a member of Congress's pages on Congress.gov, GovTrack, OpenSecrets and Vote Smart."
 )
 CONGRESS = "https://unitedstates.github.io/congress-legislators/legislators-current.json"
 LEGISLATURE = "https://data.openstates.org/people/current/{state}.csv"
@@ -43,6 +46,15 @@ REDRAWN = {"TX": (dt.date(2027, 1, 3), "Texas redrew its U.S. House map in 2025"
 _CHAMBERS = {"upper": "STATESEN", "lower": "STATEREP"}
 _PARTIES = (("REPUBLICAN", "R", "Republican"), ("DEMOCRAT", "D", "Democrat"), ("LIBERTARIAN", "L", "Libertarian"),
             ("GREEN", "G", "Green"), ("INDEPENDENT", "I", "Independent"))
+# A member's pages elsewhere, by the id congress-legislators gives each site, in the order shown.
+# Congress.gov goes by the Bioguide id alone and redirects any name in the path to the right one.
+MEMBER_PAGES = (
+    ("bioguide", "Congress.gov", "https://www.congress.gov/member/{slug}/{id}"),
+    ("govtrack", "GovTrack", "https://www.govtrack.us/congress/members/{id}"),
+    ("opensecrets", "OpenSecrets", "https://www.opensecrets.org/members-of-congress/summary?cid={id}"),
+    ("votesmart", "Vote Smart", "https://justfacts.votesmart.org/candidate/{id}"),
+)
+MEMBER_LABEL = "Member of Congress"
 
 
 @dataclass
@@ -55,6 +67,7 @@ class Holder:
     started: dt.date | None = None  # when their current term began
     ends: dt.date | None = None  # when it ends (a senator's)
     fec_ids: tuple[str, ...] = ()  # their FEC candidate IDs, as ballot_races keys candidates ("fec:<id>")
+    ids: dict[str, str] = field(default_factory=dict)  # a member's ids on other sites (MEMBER_PAGES)
 
 
 def _party(text: str | None) -> tuple[str | None, str | None]:
@@ -85,11 +98,13 @@ def congress_holders(members: list[dict[str, Any]], state: str | None) -> list[H
             names.append(f"{name['nickname']} {name['last']}")
         code, party_name = _party(term.get("party"))
         where = term["state"]
+        ids = member.get("id") or {}
         out.append(Holder(
             seat=f"{where}-SEN" if term["type"] == "sen" else f"{where}-{term['district']:02d}",
             name=full, names=names, party=code, party_name=party_name,
             started=_date(term.get("start")), ends=_date(term.get("end")),
-            fec_ids=tuple((member.get("id") or {}).get("fec") or ()),
+            fec_ids=tuple(ids.get("fec") or ()),
+            ids={site: str(ids[site]) for site, _, _ in MEMBER_PAGES if ids.get(site)},
         ))
     return out
 
@@ -181,6 +196,20 @@ def seat_info(race: Race, holder: Holder | None, seat: str) -> tuple[SeatInfo, s
     return SeatInfo(holder=info, open=False, party_holds=party_holds), key
 
 
+def member_card(holder: Holder, key: str) -> SourceCard | None:
+    """The Profile tab's section for the candidate who surely is a member of Congress: links to
+    their pages on Congress.gov, GovTrack, OpenSecrets and Vote Smart, by the ids congress-legislators
+    gives, so nothing is matched by name to another site. None for a legislator, who has no such ids."""
+    slug = re.sub(r"[^a-z0-9]+", "-", holder.name.lower()).strip("-")
+    links = [Link(label=label, url=url.format(slug=slug, id=holder.ids[site]))
+             for site, label, url in MEMBER_PAGES if site in holder.ids]
+    if not links:
+        return None
+    how = "FEC candidate ID" if key.removeprefix("fec:") in holder.fec_ids else "name"
+    return SourceCard(source=SOURCE, kind="profile", label=MEMBER_LABEL, match=Match(confidence="exact", method=how),
+                      links=links)
+
+
 async def cards(
     svc: Officeholders, races: list[Race], scopes: dict[str, OfficeScope], county: str | None,
     day: dt.date | None, state: str,
@@ -227,4 +256,6 @@ async def cards(
         out.seats[race.key] = info
         if key:
             out.incumbents.add(key)
+            if holder and (card := member_card(holder, key)):
+                out.candidates[key] = card
     return out
