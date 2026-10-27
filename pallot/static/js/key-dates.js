@@ -44,12 +44,13 @@ function dateWithCalendar(iso, at, event, what, extra = "") {
 }
 
 // The main list: register by, early voting, Election Day. The first that isn't over is the
-// next one, in bold with how far off it is.
+// next one, in bold with how far off it is. Once registration's deadline is over in a state that
+// still lets voters register (``state.lateRegistration``), the row says how instead of "passed".
 function dateRows(dates, state, at) {
   const day = dates.election_day;
   const rows = [
     dates.register_by && {
-      label: "Register by", first: dates.register_by, last: dates.register_by,
+      label: "Register by", first: dates.register_by, last: dates.register_by, late: state.lateRegistration,
       value: dateWithCalendar(dates.register_by, at, "register", "Last day to register"),
     },
     (dates.early_voting_start || dates.early_voting_end) && {
@@ -69,15 +70,18 @@ function dateRows(dates, state, at) {
   return rows.map((row) => {
     const [untilFirst, untilLast] = [daysUntil(row.first), daysUntil(row.last)];
     const passed = untilLast < 0;
+    const late = passed && row.late;
     const isNext = !passed && !next;
     if (isNext) next = row;
-    const when = passed ? "passed"
+    const when = late ? null
+      : passed ? "passed"
       : !isNext ? null
       : untilFirst <= 0 ? (row.first === row.last ? "today" : "open now")
       : untilFirst === 1 ? "tomorrow" : `in ${untilFirst} days`;
     return h("div", { class: ["key-date", passed && "passed", isNext && "next"] },
       h("dt", {}, row.label),
-      h("dd", {}, row.value, when ? h("span", { class: "when" }, when) : null));
+      h("dd", {}, row.value, when ? h("span", { class: "when" }, when) : null,
+        late ? h("span", { class: "late" }, extLink(late.url, late.label)) : null));
   });
 }
 

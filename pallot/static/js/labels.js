@@ -73,6 +73,7 @@ export function stateInfo(ballot) {
     mailEligibility: info.mail_eligibility,
     mailDeadline: info.mail_deadline,
     pollHours: info.poll_hours,
+    lateRegistration: info.late_registration,
   };
 }
 

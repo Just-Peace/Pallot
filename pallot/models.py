@@ -293,6 +293,7 @@ class VoterInfo(BaseModel):
     mail_deadline: str | None = None  # the words before the mail-ballot deadline, where they aren't the usual
     local_office: str | None = None  # who sets where and when you vote, where it isn't the county elections office
     poll_hours: str  # "7 a.m. – 8 p.m."
+    late_registration: VoterLink | None = None  # how to register once the deadline is over, in a same-day registration state
 
 
 class Outline(BaseModel):
