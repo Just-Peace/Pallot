@@ -1,6 +1,6 @@
 // The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the people the voter avoids; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
-// each with one line of what it holds and how old it is; the appearance; and Clear data, which clears what
+// each with one line of what it holds and how old it is; the appearance; and Your data, which saves the session as a Pallot file or opens one, and clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
 // from here. Changes that affect the ballot are marked with markSettingsChanged(), so an open
 // ballot page reloads when the voter goes back to it. It imports page.js first, which draws the
@@ -15,6 +15,7 @@ import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { savedIssuesPicker } from "./issues.js";
+import { offerSession, openPallotFile, saveSession } from "./pallot-file.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { DEFAULT_ENGINE, ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
@@ -301,6 +302,31 @@ function showBrowserData() {
   searchSelect.value = currentEngine().id;
   showBanList();
 }
+
+// Your session as a Pallot file, and a file opened here: a session is put back (and the ballot opens
+// on it); picks someone sent wait for the ballot, which offers them.
+const dataStatus = $("#data-status");
+
+$("#save-session").addEventListener("click", async () => {
+  try {
+    setStatus(dataStatus, `Saved ${await saveSession()} to your downloads.`, "ok");
+  } catch (error) {
+    setStatus(dataStatus, error.message || "Something went wrong. Try again.", "error");
+  }
+});
+
+$("#open-session").addEventListener("click", async () => {
+  let opened;
+  try {
+    opened = await openPallotFile();
+  } catch (error) {
+    setStatus(dataStatus, error.message, "error");
+    return;
+  }
+  if (!opened) return;
+  if (opened.session) offerSession(opened);
+  else setStatus(dataStatus, "This file has picks, not a session. Open it from Share picks on your ballot to see them there.", "info");
+});
 
 $("#clear-my-picks").addEventListener("click", async () => {
   const sure = await confirmDialog({

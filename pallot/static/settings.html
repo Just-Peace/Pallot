@@ -130,9 +130,23 @@
       </section>
 
       <section class="panel" aria-labelledby="data-title">
-        <h2 id="data-title">Clear data</h2>
-        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, use Share picks on your ballot. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
+        <h2 id="data-title">Your data</h2>
+        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, save your session. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
         <ul class="data-actions">
+          <li class="data-action">
+            <div class="data-action-text">
+              <h3>Save my session</h3>
+              <p>Saves a Pallot file with everything kept here: your picks for every election, notes, address, districts and settings. Open it on another device, or here later, to pick up where you left off. To lock it with a phrase of your own, save it from Share picks on your ballot.</p>
+            </div>
+            <button class="btn small" id="save-session" type="button">Save my session</button>
+          </li>
+          <li class="data-action">
+            <div class="data-action-text">
+              <h3>Open a Pallot file</h3>
+              <p>Puts a saved session back, replacing what's here or merged with it, with Undo. Picks someone sent you open on your ballot.</p>
+            </div>
+            <button class="btn small" id="open-session" type="button">Open a file</button>
+          </li>
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear my picks &amp; notes</h3>
@@ -148,6 +162,7 @@
             <button class="btn small danger" id="clear-browser-data" type="button">Clear browser data</button>
           </li>
         </ul>
+        <p class="status" id="data-status" role="status" aria-live="polite"></p>
       </section>
     </main>
   </div>

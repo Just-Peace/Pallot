@@ -94,6 +94,18 @@ function tidy(current, now = Date.now()) {
   if (changed) writeJson(PICKS, buckets);
 }
 
+// An election's cycle, kept with its picks and in a Pallot file, so a later election can tell which
+// one they were for: its date, state, and the elections on the ballot, with their kind and party.
+export function cycleOf(ballot) {
+  const elections = (ballot.elections || []).map((e) => Object.fromEntries(
+    Object.entries({ name: e.name, type: e.type, party: e.party }).filter(([, value]) => value)));
+  return {
+    ...(ballot.election_date ? { date: ballot.election_date } : {}),
+    ...(ballot.location?.state ? { state: ballot.location.state } : {}),
+    ...(elections.length ? { elections } : {}),
+  };
+}
+
 // Runs ``listener`` after every change of the picks in this tab: a pick, a note, a write-in.
 export function onPicksSaved(listener) {
   savedListeners.push(listener);
@@ -121,6 +133,49 @@ export class Picks {
     this.data = unsaved[this.key] || normalize(storedBuckets()[this.key]) || { races: {}, notes: {} };
   }
 
+  // The ballot drawn for this election: from now on each save keeps the election's cycle and the
+  // names behind each pick and note, so they can be found again once this ballot is gone.
+  describe(ballot) {
+    this.ballot = ballot;
+    if (!this.isEmpty()) this.save();
+  }
+
+  save() {
+    this.label();
+    saveBucket(this.key, this.data);
+  }
+
+  // ``names``: each picked race's name and seat, and each picked or noted candidate's name, party
+  // and race, as the drawn ballot has them; one no longer on it keeps what was kept before.
+  label() {
+    if (!this.ballot) return;
+    const races = [...this.ballot.races, ...this.ballot.maybe.flatMap((section) => section.races)];
+    const raceOf = new Map(races.map((race) => [race.key, race]));
+    const personOf = new Map(races.flatMap((race) => race.candidates.map((c) => [c.key, { c, race }])));
+    const old = isObject(this.data.names) ? this.data.names : {};
+    const names = { races: {}, people: {} };
+    const person = (key) => {
+      const found = personOf.get(key);
+      const entry = found
+        ? { name: found.c.name, ...(found.c.party ? { party: found.c.party } : {}), race: found.race.key }
+        : old.people?.[key];
+      if (entry) names.people[key] = entry;
+    };
+    for (const raceKey of new Set([...Object.keys(this.data.races), ...Object.keys(this.data.writeIns || {})])) {
+      const race = raceOf.get(raceKey);
+      const entry = race ? { name: race.name, ...(race.seat ? { seat: race.seat } : {}) } : old.races?.[raceKey];
+      if (entry) names.races[raceKey] = entry;
+      this.picked(raceKey).forEach(person);
+    }
+    Object.keys(this.data.notes).forEach(person);
+    for (const { race } of Object.values(names.people)) {
+      const found = raceOf.get(race);
+      if (found && !names.races[race]) names.races[race] = { name: found.name, ...(found.seat ? { seat: found.seat } : {}) };
+    }
+    this.data.names = names;
+    this.data.cycle = cycleOf(this.ballot);
+  }
+
   picked(raceKey) {
     return this.data.races[raceKey] || [];
   }
@@ -143,7 +198,7 @@ export class Picks {
     if (candidateKeys.length) this.data.races[raceKey] = candidateKeys;
     else delete this.data.races[raceKey];
     this.setAuto(raceKey, this.auto(raceKey).filter((key) => candidateKeys.includes(key)));
-    saveBucket(this.key, this.data);
+    this.save();
   }
 
   // The picks in a race that Help me pick's endorsers made, which dropping them takes back; any
@@ -165,7 +220,7 @@ export class Picks {
   setNote(candidateKey, text) {
     if (text.trim()) this.data.notes[candidateKey] = text;
     else delete this.data.notes[candidateKey];
-    saveBucket(this.key, this.data);
+    this.save();
   }
 
   writeIn(raceKey) {
@@ -182,7 +237,7 @@ export class Picks {
     this.data.writeIns ||= {};
     if (name.trim()) this.data.writeIns[raceKey] = name;
     else delete this.data.writeIns[raceKey];
-    saveBucket(this.key, this.data);
+    this.save();
   }
 
   // Sets several races' picks with one save (Pick by rule, Help me pick), and returns what they were,
@@ -197,7 +252,7 @@ export class Picks {
       else delete this.data.races[raceKey];
       this.setAuto(raceKey, auto ? auto[raceKey] || [] : this.auto(raceKey).filter((key) => keys.includes(key)));
     }
-    saveBucket(this.key, this.data);
+    this.save();
     return before;
   }
 
@@ -230,11 +285,11 @@ export class Picks {
     this.data.notes = {};
     this.data.writeIns = {};
     this.data.auto = {};
-    saveBucket(this.key, this.data);
+    this.save();
     return { races, notes, writeIns, auto };
   }
 
-  // Puts in what a picks file or link brings (share.js's planImport) with one save, as the voter's
+  // Puts in what a Pallot file or link brings (share.js's planImport) with one save, as the voter's
   // own picks, and returns what was there, for restore().
   merge({ races = {}, writeIns = {}, notes = {} }) {
     const before = structuredClone({ races: this.data.races, notes: this.data.notes, writeIns: this.data.writeIns || {}, auto: this.data.auto || {} });
@@ -244,14 +299,14 @@ export class Picks {
     }
     this.data.writeIns = { ...this.data.writeIns, ...writeIns };
     Object.assign(this.data.notes, notes);
-    saveBucket(this.key, this.data);
+    this.save();
     return before;
   }
 
   // Puts back what clear() or merge() returned: "Undo" after "Clear picks", or after opening picks.
   restore({ races, notes, writeIns, auto = {} }) {
     Object.assign(this.data, { races, notes, writeIns, auto });
-    saveBucket(this.key, this.data);
+    this.save();
   }
 
   // Whether there's anything for clear() to clear.

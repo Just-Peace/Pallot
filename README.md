@@ -93,7 +93,8 @@ The FAQ (linked from every page) explains the figures and the features in detail
 - **Help me pick**: **Trust** picks the candidates of the endorsers you trust, and **Avoid** marks the ones you won't vote for, from watchlists or your own list. **More conditions** picks across the ballot, or in one race, by party, endorsements, money or polls. It never guesses in a race with more matches than seats.
 - **Avoid** on a candidate adds them to your own list, which you can also fill by name or pattern in Settings. Trust never picks them.
 - **Print my picks** as a full page or a wallet card. Your address isn't printed.
-- **Share picks** as a link or a picks file, to keep a copy, move them to another device or send them to a friend. The picks travel in the link itself, so the server never sees them, though anyone given the link can; the dialog warns of that, and leaves notes out of links unless ticked in. Either can be locked with a phrase, which never leaves the browser. Opening one shows what it holds before anything changes.
+- **Save your session** as a `.pallot` file (picks for every election, notes, address and settings) and open it on another device to pick up where you left off, even on a first visit.
+- **Share picks** as a link or a Pallot file, to send them to a friend. The picks travel in the link itself, so the server never sees them, though anyone given the link can; the dialog warns of that, and leaves notes out of links unless ticked in. Either can be locked with a phrase, which never leaves the browser. Opening one shows what it holds before anything changes.
 - On a phone, the left pane becomes a top bar, and the ballot's buttons are under **More**.
 
 Your picks, notes, write-ins, Help me pick choices, the people you avoid and your settings are kept in your browser's `localStorage`, never on the server, even when you share them.
@@ -154,10 +155,10 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 
 ## Settings
 
-The **Settings** page has **Ballot view**, **Web search**, **People you avoid**, **Sources**, **Appearance** and **Clear data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
+The **Settings** page has **Ballot view**, **Web search**, **People you avoid**, **Sources**, **Appearance** and **Your data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
 
 - **Sources** lists every source in groups, with a switch for each (except the address lookup), a line on what it holds and how old it is, and a warning when it's paused or can't be used. Your switches travel with each request, so the server builds your ballot with them. A source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on)).
-- **Clear data** clears your picks and notes, or everything Pallot keeps in this browser, each with **Undo**.
+- **Your data** saves your session as a Pallot file or opens one, and clears your picks and notes, or everything Pallot keeps in this browser, each with **Undo**.
 
 Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).
 

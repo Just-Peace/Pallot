@@ -190,7 +190,13 @@ export function closeOnBackdrop(dialog) {
 // made the first time it's needed. A second question while one is open answers the first with false.
 let settleConfirm = null;
 
-export function confirmDialog({ title, body = null, confirm = "Continue", cancel = "Cancel", danger = false }) {
+export async function confirmDialog({ title, body = null, confirm = "Continue", cancel = "Cancel", danger = false }) {
+  return (await choiceDialog({ title, body, cancel, choices: [{ value: "confirm", label: confirm, danger }] })) === "confirm";
+}
+
+// The same question with several answers: ``choices``, each { value, label, danger }, the last drawn
+// as the main one. Resolves to the chosen one's value, or null.
+export function choiceDialog({ title, body = null, choices, cancel = "Cancel" }) {
   let dialog = document.getElementById("confirm-dialog");
   if (!dialog) {
     dialog = h("dialog", { id: "confirm-dialog", class: "small-dialog confirm-dialog", "aria-labelledby": "confirm-title", "aria-describedby": "confirm-body" });
@@ -198,18 +204,20 @@ export function confirmDialog({ title, body = null, confirm = "Continue", cancel
     dialog.addEventListener("close", () => {
       const settle = settleConfirm;
       settleConfirm = null;
-      settle?.(dialog.returnValue === "confirm");
+      settle?.(dialog.returnValue || null);
     });
     document.body.append(dialog);
   }
-  settleConfirm?.(false);
+  settleConfirm?.(null);
   const cancelButton = h("button", { class: "btn ghost", value: "" }, cancel);
   dialog.replaceChildren(h("form", { method: "dialog" },
     h("h2", { id: "confirm-title" }, title),
     h("div", { id: "confirm-body", class: "confirm-body" }, body),
     h("div", { class: "button-row end" },
       cancelButton,
-      h("button", { class: ["btn primary", danger && "danger"], value: "confirm" }, confirm))));
+      choices.map(({ value, label, danger = false }, i) => h("button", {
+        class: ["btn", i === choices.length - 1 ? "primary" : "ghost", danger && "danger"], value,
+      }, label)))));
   dialog.returnValue = "";
   return new Promise((resolve) => {
     settleConfirm = resolve;

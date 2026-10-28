@@ -1,19 +1,29 @@
-// A picks file: the picks, write-ins and notes on the ballot shown, with the names they belong to, to
-// keep a copy, move them to another device or send them to someone. As a link it travels after
-// "#picks=" in the address, which the browser never sends to the server, so Pallot keeps none of it.
-// Both are compressed; a file is always locked, a link only with the voter's own phrase.
-// Opened on a ballot, its races and candidates are found by their keys, then by their names alone
-// where one name fits (a friend's ballot, or another lookup), and the rest left out.
+// A Pallot file (.pallot): a whole session, everything Pallot keeps in this browser, to keep or move
+// to another device; or the picks, write-ins and notes on the ballot shown, with the names and parties
+// they belong to and the election's cycle, to send to someone. As a link it travels after "#picks=" in
+// the address, which the browser never sends to the server, so Pallot keeps none of it. A file and a
+// link are the same bytes: a header, then the compressed contents, a file always locked, a link only
+// with the voter's own phrase. Opened on a ballot, its races and candidates are found by their keys,
+// then by their names alone where one name fits (a friend's ballot, or another lookup), and the rest left out.
 
-import { ANSWERS, WRITE_IN } from "./picks.js";
+import { ANSWERS, WRITE_IN, cycleOf } from "./picks.js";
+import { LAST_DISTRICTS, LAST_LOOKUP, PICKS, SETTINGS_CHANGED } from "./storage.js";
 
 export const VERSION = 1;
 export const LINK_KEY = "picks";
-const KIND = "pallot-picks";
-const MAX_BYTES = 1_000_000; // a file or unpacked link larger than this isn't a picks file
+export const EXTENSION = ".pallot";
+const KIND = "pallot";
+const MAGIC = [0x50, 0x41, 0x4c, 0x4c, 0x4f, 0x54]; // "PALLOT"
+const HEAD = MAGIC.length + 2; // the mark, then the version and how it's locked
+const OPEN = 0;
+const LOCKED = 1; // with the built-in key
+const PHRASED = 2; // with the voter's phrase
+const MAX_BYTES = 1_000_000; // a file or unpacked link larger than this isn't a Pallot file
 const MAX_ENTRIES = 500;
 const MAX_TEXT = 5000;
+const MAX_KEYS = 50; // a session's stored keys
 const DATED = /^\d{4}-\d{2}-\d{2}$/;
+const DISTRICT_KINDS = ["state", "county", "cd", "sd", "hd", "sboe", "precinct", "commissioner", "jp", "constable"];
 
 const isObject = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
 const text = (value, max = 300) => (typeof value === "string" ? value.slice(0, max) : "");
@@ -21,44 +31,115 @@ const plain = (value) => String(value ?? "").normalize("NFKD").replace(/[̀-ͯ]/
 
 export const allRaces = (ballot) => [...ballot.races, ...ballot.maybe.flatMap((section) => section.races)];
 
-function pickName(race, key, picks, names) {
+function pickName(race, key, picks, people) {
   if (race.retention) return ANSWERS.find(([answer]) => answer === key)?.[1] ?? null;
   if (key === WRITE_IN) return picks.writeIn(race.key).trim() || "Write-in";
-  return names.get(key) ?? null;
+  return people.get(key)?.name ?? null;
 }
 
-// The picks file of ``ballot``. ``notes``: with the voter's notes; ``address``: with the lookup's
-// address or voter card, so the file or link opens the same ballot elsewhere. ``title``: the
-// election line, for the person who opens it.
-export function buildSlate(ballot, picks, { request = {}, title = "", notes = true, address = false } = {}) {
+const partyOf = (candidate) => (candidate?.party ? { party: candidate.party } : {});
+
+// A file of the picks on ``ballot``. ``notes``: with the voter's notes; ``address``: with the lookup's
+// address or voter card, so the file or link opens the same ballot elsewhere, and ``districts``
+// (districtsRecord's), to show where it is. ``title``: the election line, for the person who opens it.
+export function buildSlate(ballot, picks, { request = {}, title = "", notes = true, address = false, districts = null } = {}) {
   const races = [];
   const kept = [];
   for (const race of allRaces(ballot)) {
-    const names = new Map(race.candidates.map((c) => [c.key, c.name]));
+    const people = new Map(race.candidates.map((c) => [c.key, c]));
     const chosen = picks.picked(race.key)
-      .map((key) => ({ key, name: pickName(race, key, picks, names) }))
+      .map((key) => ({ key, name: pickName(race, key, picks, people), ...partyOf(people.get(key)) }))
       .filter((pick) => pick.name !== null);
     const writeIn = picks.writeIn(race.key).trim();
     if (chosen.length || writeIn) races.push({ key: race.key, name: race.name, picks: chosen, ...(writeIn ? { write_in: writeIn } : {}) });
     if (!notes) continue;
     for (const candidate of race.candidates) {
       const note = picks.note(candidate.key);
-      if (note.trim()) kept.push({ key: candidate.key, name: candidate.name, race: race.key, text: note });
+      if (note.trim()) kept.push({ key: candidate.key, name: candidate.name, race: race.key, ...partyOf(candidate), text: note });
     }
   }
   const { election_date: _date, party, all_races: _all, ...place } = request || {};
   return {
     kind: KIND,
     version: VERSION,
-    election: { date: ballot.election_date, title, ...(party ? { party } : {}) },
-    ...(address ? { ballot: place } : {}),
+    election: { date: ballot.election_date, title, ...(party ? { party } : {}), cycle: cycleOf(ballot) },
+    ...(address ? { ballot: place, ...(districts ? { districts } : {}) } : {}),
     races,
     notes: kept,
   };
 }
 
-// How many races have a pick, and how many notes there are.
-export const slateCounts = (slate) => ({ races: slate.races.filter((race) => race.picks.length).length, notes: slate.notes.length });
+const parsed = (raw) => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
+// A whole session: ``store``, every key Pallot keeps in this browser as stored, and ``race``, the race
+// on screen, to go back to. Its address, election and districts are read from the store, to show.
+export function buildSession(store, { race = "" } = {}) {
+  const lookup = parsed(store[LAST_LOOKUP]);
+  const place = readPlace(lookup);
+  const districts = place && readDistricts(parsed(store[LAST_DISTRICTS]));
+  return {
+    kind: KIND,
+    version: VERSION,
+    election: { date: DATED.test(lookup?.election_date) ? lookup.election_date : null, title: "" },
+    ...(place ? { ballot: place, ...(districts ? { districts } : {}) } : {}),
+    races: [],
+    notes: [],
+    session: { store, ...(race ? { race } : {}) },
+  };
+}
+
+// How many races have a pick, and how many notes there are; a session's across every election it keeps.
+export function slateCounts(slate) {
+  if (!slate.session) return { races: slate.races.filter((race) => race.picks.length).length, notes: slate.notes.length };
+  const buckets = Object.values(parsed(slate.session.store[PICKS]) || {}).filter(isObject);
+  const count = (part) => buckets.reduce((n, bucket) => n + Object.keys(isObject(bucket[part]) ? bucket[part] : {}).length, 0);
+  return { races: count("races"), notes: count("notes") };
+}
+
+// The districts ``ballot`` was found in, as a file keeps them, to show where its ballot is and to
+// tell whether it's the same as another's: each number or name, and ``line``, as the voter reads them.
+export function districtsRecord(ballot, line = "") {
+  const d = ballot.districts || {};
+  const where = ballot.location || {};
+  return readDistricts({
+    state: where.state, county: where.county_name || where.county, cd: d.cd, sd: d.sd, hd: d.hd, sboe: d.sboe,
+    precinct: d.election_precinct?.name, commissioner: d.commissioner, jp: d.jp, constable: d.constable, line,
+  });
+}
+
+function readDistricts(value) {
+  if (!isObject(value)) return null;
+  const record = {};
+  for (const kind of DISTRICT_KINDS) {
+    const found = value[kind];
+    if (Number.isInteger(found) && found >= 0 && found < 10000) record[kind] = found;
+    else if (text(found, 40).trim()) record[kind] = text(found, 40).trim();
+  }
+  if (text(value.line).trim()) record.line = text(value.line).trim();
+  return DISTRICT_KINDS.slice(2).some((kind) => kind in record) ? record : null;
+}
+
+// Whether two records (districtsRecord's) are the same districts, so the same ballot.
+export function sameDistricts(a, b) {
+  if (!a || !b) return false;
+  return DISTRICT_KINDS.every((kind) => String(a[kind] ?? "") === String(b[kind] ?? ""));
+}
+
+// Whether two lookups (a file's ``ballot``, a request) are for the same address, or the same voter
+// card's state, county and precinct.
+export function samePlace(a, b) {
+  if (!a || !b) return false;
+  if (a.address || b.address) return Boolean(a.address && b.address) && plain(a.address) === plain(b.address);
+  const county = (value) => plain(value).replace(/ (county|parish|borough)$/, "");
+  return (a.state || "TX") === (b.state || "TX") && county(a.county) === county(b.county)
+    && plain(a.precinct).replace(/^0+(?=.)/, "") === plain(b.precinct).replace(/^0+(?=.)/, "");
+}
 
 const smallNumbers = (value) => (isObject(value)
   ? Object.fromEntries(Object.entries(value).filter(([, n]) => Number.isInteger(n) && n > 0 && n < 1000).slice(0, 10))
@@ -73,41 +154,73 @@ function readPlace(value) {
   return place.address || place.county ? place : null;
 }
 
-// A picks file read from JSON (a file, or a link's unpacked text): checked, with anything it
+// A Pallot file's contents read from JSON (a file's or a link's unpacked text): checked, with anything it
 // shouldn't hold dropped. Throws an Error that says what's wrong, for the voter.
 export function readSlate(json) {
   let data;
   try {
     data = typeof json === "string" ? JSON.parse(json) : json;
   } catch {
-    throw new Error("This isn't a Pallot picks file.");
+    throw new Error("This isn't a Pallot file.");
   }
-  if (!isObject(data) || data.kind !== KIND) throw new Error("This isn't a Pallot picks file.");
-  if (!(Number(data.version) <= VERSION)) throw new Error("This picks file was made by a newer Pallot.");
+  if (!isObject(data) || data.kind !== KIND) throw new Error("This isn't a Pallot file.");
+  if (!(Number(data.version) <= VERSION)) throw new Error("This file was made by a newer Pallot.");
   const election = isObject(data.election) ? data.election : {};
+  const party = (value) => (text(value, 20) ? { party: text(value, 20) } : {});
   const races = (Array.isArray(data.races) ? data.races : []).filter(isObject).slice(0, MAX_ENTRIES).map((race) => ({
     key: text(race.key),
     name: text(race.name),
     picks: (Array.isArray(race.picks) ? race.picks : []).filter(isObject).slice(0, 50)
-      .map((pick) => ({ key: text(pick.key), name: text(pick.name) })).filter((pick) => pick.key || pick.name),
+      .map((pick) => ({ key: text(pick.key), name: text(pick.name), ...party(pick.party) })).filter((pick) => pick.key || pick.name),
     ...(text(race.write_in).trim() ? { write_in: text(race.write_in) } : {}),
   })).filter((race) => (race.key || race.name) && (race.picks.length || race.write_in));
   const notes = (Array.isArray(data.notes) ? data.notes : []).filter(isObject).slice(0, MAX_ENTRIES).map((note) => ({
-    key: text(note.key), name: text(note.name), race: text(note.race), text: text(note.text, MAX_TEXT),
+    key: text(note.key), name: text(note.name), race: text(note.race), ...party(note.party), text: text(note.text, MAX_TEXT),
   })).filter((note) => (note.key || note.name) && note.text.trim());
   const place = readPlace(data.ballot);
+  const districts = place && readDistricts(data.districts);
+  const cycle = readCycle(election.cycle);
+  const session = readSession(data.session);
   return {
     kind: KIND,
     version: VERSION,
     election: {
       date: DATED.test(election.date) ? election.date : null,
       title: text(election.title),
-      ...(text(election.party, 20) ? { party: text(election.party, 20) } : {}),
+      ...party(election.party),
+      ...(cycle ? { cycle } : {}),
     },
-    ...(place ? { ballot: place } : {}),
+    ...(place ? { ballot: place, ...(districts ? { districts } : {}) } : {}),
     races,
     notes,
+    ...(session ? { session } : {}),
   };
+}
+
+// An election's cycle (picks.js's cycleOf): its date, state and the elections on the ballot.
+function readCycle(value) {
+  if (!isObject(value)) return null;
+  const elections = (Array.isArray(value.elections) ? value.elections : []).filter(isObject).slice(0, 5)
+    .map((e) => Object.fromEntries(Object.entries({ name: text(e.name), type: text(e.type, 40), party: text(e.party, 20) }).filter(([, v]) => v)))
+    .filter((e) => e.name);
+  const cycle = {
+    ...(DATED.test(value.date) ? { date: value.date } : {}),
+    ...(/^[A-Z]{2}$/.test(value.state) ? { state: value.state } : {}),
+    ...(elections.length ? { elections } : {}),
+  };
+  return Object.keys(cycle).length ? cycle : null;
+}
+
+// A session's store: Pallot's own keys only, each holding JSON, and the race to go back to.
+function readSession(value) {
+  if (!isObject(value) || !isObject(value.store)) return null;
+  const store = {};
+  for (const [key, raw] of Object.entries(value.store).slice(0, MAX_KEYS)) {
+    if (!key.startsWith("pallot.") || key === SETTINGS_CHANGED || typeof raw !== "string" || raw.length > MAX_BYTES) continue;
+    if (parsed(raw) !== null) store[key] = raw;
+  }
+  if (!Object.keys(store).length) return null;
+  return { store, ...(text(value.race) ? { race: text(value.race) } : {}) };
 }
 
 // ---- links ------------------------------------------------------------------------------
@@ -173,11 +286,11 @@ async function unpack(mark, bytes) {
   return readSlate(text);
 }
 
-// Not a secret: Pallot's code is public. It keeps a picks file from reading as text to whatever
+// Not a secret: Pallot's code is public. It keeps a Pallot file from reading as text to whatever
 // indexes or scans it (a mail or cloud drive) and protects nothing from anyone who opens it in
 // Pallot, so the voter is never told it protects anything. Only the voter's own phrase does. Never
 // change it, or files locked with it no longer open.
-const BUILT_IN = "pallot-picks-file-v1";
+const BUILT_IN = "pallot-file-v1";
 const ROUNDS = 600_000; // PBKDF2-SHA-256 rounds for the voter's phrase, as OWASP advises
 const SALT = 16;
 const IV = 12;
@@ -201,9 +314,8 @@ async function lock(mark, bytes, phrase) {
   const salt = phrase ? crypto.getRandomValues(new Uint8Array(SALT)) : new Uint8Array(0);
   const iv = crypto.getRandomValues(new Uint8Array(IV));
   const key = phrase ? await phraseKey(phrase, salt) : await builtInKey();
-  const plainBytes = new Uint8Array([mark.charCodeAt(0), ...bytes]);
-  const sealed = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plainBytes));
-  return new Uint8Array([...salt, ...iv, ...sealed]);
+  const sealed = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, joined([mark.charCodeAt(0)], bytes)));
+  return joined(salt, iv, sealed);
 }
 
 // What lock() sealed, as [mark, bytes]; throws a WrongPhrase where the phrase doesn't fit.
@@ -233,44 +345,56 @@ export function phraseRules(phrase) {
 
 export const phraseReady = (phrase) => phraseRules(phrase).every((rule) => rule.met || !rule.required);
 
-// ``slate`` as text for a link or a file, a mark then base64url: "z" or "j" as is, "b" locked with
-// the built-in phrase (``hide``, for files), or "p" locked with the voter's ``phrase``. Where the
-// browser can't lock (plain HTTP, not localhost), it's left as is.
+const joined = (...parts) => {
+  const out = new Uint8Array(parts.reduce((size, part) => size + part.length, 0));
+  let at = 0;
+  for (const part of parts) {
+    out.set(part, at);
+    at += part.length;
+  }
+  return out;
+};
+
+// ``slate`` as a file's or a link's bytes: "PALLOT", the version and how it's locked (OPEN, LOCKED
+// with the built-in key for a file, ``hide``, or PHRASED with the voter's ``phrase``), then the mark
+// and bytes, sealed if locked. Where the browser can't lock (plain HTTP, not localhost), it's left open.
 async function encode(slate, { phrase = null, hide = false } = {}) {
   const [mark, bytes] = await pack(slate);
-  if (phrase) return `p${toBase64Url(await lock(mark, bytes, phrase))}`;
-  if (hide && canLock()) return `b${toBase64Url(await lock(mark, bytes, null))}`;
-  return `${mark}${toBase64Url(bytes)}`;
+  let how = OPEN;
+  let body = joined([mark.charCodeAt(0)], bytes);
+  if (phrase) {
+    how = PHRASED;
+    body = await lock(mark, bytes, phrase);
+  } else if (hide && canLock()) {
+    how = LOCKED;
+    body = await lock(mark, bytes, null);
+  }
+  return joined(MAGIC, [VERSION, how], body);
 }
 
-// The slate ``value`` (encode's) holds, or null if the voter cancelled the phrase. ``askPhrase(open)``
+// The slate ``bytes`` (encode's) hold, or null if the voter cancelled the phrase. ``askPhrase(open)``
 // asks the voter for a phrase: ``open(phrase)`` resolves to the slate, or to null when the phrase
 // doesn't fit; askPhrase resolves to the slate, or to null when the voter gives up. Throws an
-// Error with ``unreadable`` for the voter.
-async function decode(value, askPhrase, unreadable) {
-  if (typeof value !== "string" || value.length > MAX_BYTES * 2) throw new Error(unreadable);
-  let bytes;
+// Error for the voter: ``notOurs`` when it isn't a Pallot file, ``damaged`` when it can't be read.
+async function decode(bytes, askPhrase, { notOurs, damaged }) {
+  if (bytes.length < HEAD || bytes.length > MAX_BYTES || MAGIC.some((byte, i) => bytes[i] !== byte)) throw new Error(notOurs);
+  if (bytes[MAGIC.length] > VERSION) throw new Error("This file was made by a newer Pallot.");
+  const how = bytes[MAGIC.length + 1];
+  const body = bytes.slice(HEAD);
+  if (how !== OPEN && !canLock()) throw new Error("This browser can only open a locked Pallot file over HTTPS, or on the computer Pallot runs on.");
   try {
-    bytes = fromBase64Url(value.slice(1));
-  } catch {
-    throw new Error(unreadable);
-  }
-  const kind = value[0];
-  if ((kind === "b" || kind === "p") && !canLock()) {
-    throw new Error("This browser can only open these picks over HTTPS, or on the computer Pallot runs on.");
-  }
-  try {
-    if (kind === "b") return await unpack(...await unlock(bytes, null));
-    if (kind !== "p") return await unpack(kind, bytes);
+    if (how === OPEN) return await unpack(String.fromCharCode(body[0] ?? 0), body.slice(1));
+    if (how === LOCKED) return await unpack(...await unlock(body, null));
   } catch (error) {
-    throw error instanceof WrongPhrase || error instanceof Unreadable ? new Error(unreadable) : error;
+    throw error instanceof WrongPhrase || error instanceof Unreadable ? new Error(damaged) : error;
   }
+  if (how !== PHRASED) throw new Error(damaged);
   return askPhrase(async (phrase) => {
     try {
-      return await unpack(...await unlock(bytes, phrase));
+      return await unpack(...await unlock(body, phrase));
     } catch (error) {
       if (error instanceof WrongPhrase) return null;
-      throw error instanceof Unreadable ? new Error(unreadable) : error;
+      throw error instanceof Unreadable ? new Error(damaged) : error;
     }
   });
 }
@@ -278,30 +402,28 @@ async function decode(value, askPhrase, unreadable) {
 // The link to ``page`` (the ballot page's address) that carries ``slate``, locked with ``phrase`` if given.
 export async function slateLink(slate, page, phrase = null) {
   const url = new URL(page);
-  url.hash = `${LINK_KEY}=${await encode(slate, { phrase })}`;
+  url.hash = `${LINK_KEY}=${toBase64Url(await encode(slate, { phrase }))}`;
   return url.href;
 }
 
-export const slateFromLink = (value, askPhrase) => decode(value, askPhrase, "This link's picks couldn't be read. Ask for the link again.");
-
-// A picks file's text: always locked, with the voter's ``phrase`` or else the built-in one.
-export async function picksFile(slate, phrase = null) {
-  return JSON.stringify({ kind: KIND, version: VERSION, data: await encode(slate, { phrase, hide: true }) }, null, 2);
-}
-
-// The slate a picks file holds, or null if the voter cancelled the phrase. A file written out by
-// hand as a slate is read as one.
-export async function readPicksFile(text, askPhrase) {
-  let data;
+export async function slateFromLink(value, askPhrase) {
+  const unreadable = "This link's picks couldn't be read. Ask for the link again.";
+  let bytes;
   try {
-    data = JSON.parse(text);
+    if (typeof value !== "string" || value.length > MAX_BYTES * 2) throw new Error(unreadable);
+    bytes = fromBase64Url(value);
   } catch {
-    throw new Error("This isn't a Pallot picks file.");
+    throw new Error(unreadable);
   }
-  if (!isObject(data) || data.kind !== KIND) throw new Error("This isn't a Pallot picks file.");
-  if (!(Number(data.version) <= VERSION)) throw new Error("This picks file was made by a newer Pallot.");
-  return typeof data.data === "string" ? decode(data.data, askPhrase, "This picks file couldn't be read.") : readSlate(data);
+  return decode(bytes, askPhrase, { notOurs: unreadable, damaged: unreadable });
 }
+
+// A Pallot file's bytes: always locked, with the voter's ``phrase`` or else the built-in key.
+export const pallotFile = (slate, phrase = null) => encode(slate, { phrase, hide: true });
+
+// The slate a Pallot file's ``bytes`` hold, or null if the voter cancelled the phrase.
+export const readPallotFile = (bytes, askPhrase) => decode(bytes, askPhrase,
+  { notOurs: "This isn't a Pallot file.", damaged: "This Pallot file couldn't be read." });
 
 // ---- opening one on a ballot ------------------------------------------------------------
 
