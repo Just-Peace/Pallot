@@ -31,21 +31,22 @@ def _prompt(race, candidates, topics, ai=True):
     return json.loads(done.stdout)
 
 
-def test_one_candidate_is_named_with_their_party_and_seat():
-    text = _prompt(RACE, RACE["candidates"][:1], [TAXES, GUNS])
-    assert text.startswith("Where does Greg Abbott, the Republican candidate (incumbent), running for Governor in Texas "
-                           "in the 2026 election, stand on Taxes and Gun laws?")
+def test_one_candidate_is_named_with_their_party_and_seat_and_the_issues_numbered():
+    lines = _prompt(RACE, RACE["candidates"][:1], [TAXES, GUNS]).split("\n")
+    assert lines[:4] == ["Where does Greg Abbott, the Republican candidate (incumbent), running for Governor in Texas "
+                         "in the 2026 election, stand on these issues?", "", "1. Taxes", "2. Gun laws"]
+    text = "\n".join(lines)
     assert "Cite sources" in text and "more than one view" in text and "neutral" in text
     assert "table" not in text
 
 
 def test_several_candidates_get_a_table():
-    text = _prompt(RACE, RACE["candidates"], [TAXES])
-    lines = text.split("\n")
-    assert lines[0] == "Compare where these candidates for Governor in Texas in the 2026 election stand on Taxes:"
-    assert lines[1:4] == ["- Greg Abbott, the Republican candidate (incumbent)", "- Jane Doe, the Democratic candidate",
+    lines = _prompt(RACE, RACE["candidates"], [TAXES, GUNS]).split("\n")
+    assert lines[0] == "Compare where these candidates for Governor in Texas in the 2026 election stand on these issues."
+    assert lines[2:6] == ["Candidates:", "- Greg Abbott, the Republican candidate (incumbent)", "- Jane Doe, the Democratic candidate",
                           "- Sam Roe, the Libertarian candidate"]
-    assert "one row per issue and one column per candidate" in text
+    assert lines[7:10] == ["Issues:", "1. Taxes", "2. Gun laws"]
+    assert "one row per issue and one column per candidate" in lines[-1]
 
 
 def test_a_primary_says_a_party_candidate_and_no_issue_means_the_main_ones():

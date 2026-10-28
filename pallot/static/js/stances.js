@@ -1,56 +1,51 @@
-// The Issues tab in Details: hot-button issues the voter chooses, a folding section per group, and
-// under them the question (issue-prompt.js) for the engine chosen in Settings, which the voter can
-// edit, with an AI assistant comparing the race's other candidates too. The terms are neutral: where
-// an issue has two sides, they name both.
+// The Issues tab in Details: one card, "Ask Duck.ai" (the engine chosen in Settings), with the
+// hot-button issues to choose, grouped, the race's other candidates to compare with an AI assistant,
+// and the question (issue-prompt.js), which the voter can edit. The terms are neutral: where an issue
+// has two sides, they name both.
 
 import { h, safeUrl } from "./dom.js";
 import { icon } from "./icons.js";
 import { issuePrompt } from "./issue-prompt.js";
 import { partyName } from "./labels.js";
 import { currentEngine, searchHref, searchWord } from "./search.js";
-import { foldSection } from "./source-cards.js";
 import { showToast } from "./toast.js";
 
 const STANCES = [
-  { group: "Rights & society", topics: [
-    { label: "Abortion", terms: "abortion" },
-    { label: "Gun laws", terms: "gun rights gun control" },
-    { label: "Human rights", terms: "human rights" },
-    { label: "Women's rights", terms: "women's rights" },
-    { label: "Religious freedom", terms: "religious freedom" },
-    { label: "Free speech", terms: "free speech First Amendment" },
-    { label: "Immigration", terms: "immigration border" },
-  ] },
   { group: "Economy", topics: [
-    { label: "The economy", terms: "economic policy" },
-    { label: "Taxes", terms: "taxes" },
-    { label: "Trade & tariffs", terms: "trade tariffs" },
-    { label: "Jobs & labor", terms: "workers unions minimum wage" },
-    { label: "Housing", terms: "housing affordability" },
-    { label: "Cost of living", terms: "cost of living inflation prices" },
     { label: "Energy", terms: "energy policy oil gas renewables" },
     { label: "Environment & climate", terms: "environment climate change" },
-  ] },
-  { group: "Government", topics: [
-    { label: "Government spending", terms: "government spending" },
-    { label: "Deficit & debt", terms: "budget deficit national debt" },
-    { label: "Size of government", terms: "role and size of government" },
-    { label: "Regulation", terms: "government regulation" },
-    { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
+    { label: "Housing", terms: "housing affordability" },
+    { label: "Inflation & cost of living", terms: "inflation cost of living prices" },
+    { label: "Jobs & labor", terms: "workers unions minimum wage" },
+    { label: "Taxes", terms: "taxes" },
     { label: "Technology & AI", terms: "technology policy artificial intelligence privacy" },
+    { label: "Trade & tariffs", terms: "trade tariffs" },
   ] },
   { group: "Foreign policy & defense", topics: [
+    { label: "Defense & military spending", terms: "national defense military budget" },
     { label: "Foreign policy", terms: "foreign policy" },
-    { label: "War & military action", terms: "war military intervention" },
-    { label: "National defense", terms: "national defense" },
-    { label: "Military spending", terms: "military defense budget" },
     { label: "Israel & Palestine", terms: "Israel Palestine Gaza" },
+    { label: "War & military action", terms: "war military intervention" },
+  ] },
+  { group: "Government", topics: [
+    { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
+    { label: "Regulation", terms: "government regulation" },
+    { label: "Spending & debt", terms: "government spending budget deficit national debt" },
   ] },
   { group: "Public services", topics: [
     { label: "Education", terms: "education schools" },
     { label: "Health care", terms: "health care reform" },
-    { label: "Social Security", terms: "Social Security" },
     { label: "Infrastructure", terms: "infrastructure roads transit" },
+    { label: "Social Security", terms: "Social Security" },
+  ] },
+  { group: "Rights & society", topics: [
+    { label: "Abortion", terms: "abortion" },
+    { label: "Free speech", terms: "free speech First Amendment" },
+    { label: "Gun laws", terms: "gun rights gun control" },
+    { label: "Human rights", terms: "human rights" },
+    { label: "Immigration", terms: "immigration border" },
+    { label: "Religious freedom", terms: "religious freedom" },
+    { label: "Women's rights", terms: "women's rights" },
   ] },
 ];
 
@@ -101,16 +96,27 @@ export function stancesPanel(race, candidate, where, empty) {
     }
   } } }, "Copy");
 
+  // The Issues heading says how many are chosen; none asks about the main issues.
+  const countText = () => (held.chosen.size ? `· ${held.chosen.size} chosen` : "· none chosen, so the main ones");
+  const count = h("span", { class: "issue-count" }, countText());
   const chip = (topic) => h("li", {}, h("button", {
-    type: "button", class: "rule-chip", "aria-pressed": String(held.chosen.has(topic.label)),
+    type: "button", class: "rule-chip issue-chip", "aria-pressed": String(held.chosen.has(topic.label)),
     on: { click: (event) => {
       const on = !held.chosen.has(topic.label);
       if (on) held.chosen.add(topic.label);
       else held.chosen.delete(topic.label);
       event.currentTarget.setAttribute("aria-pressed", String(on));
+      count.textContent = countText();
       rebuild();
     } },
   }, topic.label));
+  const groupId = (name) => `issue-group-${name.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+  const issues = h("div", { class: "issue-step", role: "group", "aria-labelledby": "issue-issues-title" },
+    h("h4", { id: "issue-issues-title" }, "Issues ", count),
+    STANCES.map(({ group, topics }) => [
+      h("p", { class: "issue-group", id: groupId(group) }, group),
+      h("ul", { class: "rule-chips issue-chips", "aria-labelledby": groupId(group) }, topics.map(chip)),
+    ]));
   const compare = others.length ? h("fieldset", { class: "issue-compare" }, h("legend", {}, "Compare with"),
     others.map((other) => h("label", { class: "check" },
       h("input", { type: "checkbox", checked: !held.left.has(other.key), on: { change: (event) => {
@@ -123,18 +129,19 @@ export function stancesPanel(race, candidate, where, empty) {
 
   return h("div", { class: "card-panel stances" },
     empty ? h("p", { class: "muted" }, "No source has details on this candidate yet.") : null,
-    h("p", { class: "notice notice-warn" },
-      h("strong", {}, `This goes to ${label}, an outside ${ai ? "AI assistant" : "search engine"}.`), " ",
-      ai
-        ? `Choose issues, then ask it where ${candidate.name} stands, side by side with the others you check. Its answers aren't Pallot's, and we haven't checked them.`
-        : `Choose issues, then search it for ${candidate.name}'s stance. Its results aren't Pallot's, and we haven't checked them.`),
-    STANCES.map(({ group, topics }) => foldSection(group, null,
-      h("ul", { class: "rule-chips issue-chips", "aria-label": group }, topics.map(chip)))),
     h("section", { class: "issue-box", "aria-labelledby": "issue-box-title" },
-      h("h3", { id: "issue-box-title" }, "Your question"),
+      h("h3", { id: "issue-box-title" }, `${searchWord()} ${label}`),
+      h("p", { class: "issue-intro" }, ai
+        ? `Where ${candidate.name} stands, side by side with the others you check. Tap the issues to add.`
+        : `For ${candidate.name}'s stance. Tap the issues to add.`),
+      issues,
       compare,
-      h("label", { for: "issue-question", class: "fine" }, ai ? `What ${label} is asked. You can edit it.` : `What ${label} searches for. You can edit it.`),
+      h("label", { for: "issue-question", class: "issue-step-title" }, ai ? "The question" : "The search",
+        h("span", { class: "issue-count" }, " · you can edit it")),
       question,
       edited,
+      h("p", { class: "notice notice-warn issue-warn" },
+        h("strong", {}, `This goes to ${label}, an outside ${ai ? "AI assistant" : "search engine"}.`), " ",
+        ai ? "Its answers aren't Pallot's, and we haven't checked them." : "Its results aren't Pallot's, and we haven't checked them."),
       h("div", { class: "button-row" }, ask, copy)));
 }
