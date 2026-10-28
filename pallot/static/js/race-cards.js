@@ -257,17 +257,22 @@ export function avatar(candidate, extraClass = null) {
     : h("span", { class: ["avatar", extraClass], "aria-hidden": "true" }, initials(candidate.name));
 }
 
-// What to search the web for: the candidate plus the office and place, so common names find the right person.
-export function candidateQuery(race, candidate) {
+// The race's office, place and year, so common names find the right person: { office, place, year }.
+export function raceWhere(race) {
   const { ballot } = page;
   const { county, state_name: stateName } = ballot.location;
-  const terms = [candidate.name, race.name];
+  const place = [];
   if ((race.group === "county" || race.group === "precinct") && county && !race.name.includes(county)) {
-    terms.push(`${county} County`);
+    place.push(`${county} County`);
   }
-  if (stateName && !race.name.includes(stateName)) terms.push(stateName);
-  if (ballot.election_date) terms.push(ballot.election_date.slice(0, 4));
-  return terms.join(" ");
+  if (stateName && !race.name.includes(stateName)) place.push(stateName);
+  return { office: race.name, place, year: ballot.election_date?.slice(0, 4) || null };
+}
+
+// What to search the web for: the candidate plus the office and place.
+function candidateQuery(race, candidate) {
+  const { office, place, year } = raceWhere(race);
+  return [candidate.name, office, ...place, year].filter(Boolean).join(" ");
 }
 
 export function searchLink(race, candidate, className, label) {
@@ -369,7 +374,7 @@ function candidateRow(race, candidate) {
     const waiting = page.loadingCards;
     return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
       title: waiting ? STILL_LOADING : `${candidate.name}'s profile: ${sources ? `${plural(sources, "source")} and issues` : "issues"}`,
-      on: { click: () => page.showDetails(race, index()) } },
+      on: { click: () => page.showDetails(race, index(), null, viewPref("stanceLinks") ? "issues" : "profile") } },
       viewPref("stanceLinks") ? "Profile & issues" : "Profile");
   };
   // What the cards make, in the order fill() builds it again. The Endorsements line comes before
