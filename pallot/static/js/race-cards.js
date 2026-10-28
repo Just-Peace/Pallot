@@ -11,7 +11,8 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { ANSWERS, WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
-import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
+import { fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
+import { openIssueCompare } from "./stances.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -63,7 +64,7 @@ export function refillCards() {
 }
 
 // One part of every race head and candidate row, after the focus switch it follows changes:
-// lines (fundingFirst), profile (stanceLinks), headCompare (compareInHead), pills (pollChips).
+// lines (fundingFirst), profile (stanceLinks), headCompare (compareIssues), pills (pollChips).
 export function refillPart(name) {
   for (const named of parts) named[name]?.refill();
 }
@@ -164,10 +165,12 @@ function raceCard(race) {
     h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
   const compare = () => openCompare($("#compare"), race);
   const money = part(() => raceMoney(race, compare));
-  // With the compareInHead switch, Compare funding in the race's head too.
-  const headCompare = part(() => viewPref("compareInHead") && comparable(race).length
-    ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare funding",
-      "aria-label": `Compare funding in ${race.name}`, on: { click: compare } }, icon("bars"), h("span", { class: "btn-word" }, "Compare"))
+  // With the compareIssues switch (Where they stand), Compare issues in the race's head.
+  const headCompare = part(() => viewPref("compareIssues") && race.candidates.length > 1
+    ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare the candidates on the issues",
+      "aria-label": `Compare the candidates in ${race.name} on the issues`,
+      on: { click: () => openIssueCompare($("#issues-compare"), race, raceWhere(race)) } },
+    icon("list"), h("span", { class: "btn-word" }, "Compare issues"))
     : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));

@@ -327,8 +327,8 @@ function moneyStack(parts, people) {
 
 // A Breakdown's bars and note. With a total they're shares of it (and show a %); without one
 // they're scaled to the largest part. In "points" each bar is 0-100, with its ``mark`` (the
-// median) a line across them. ``tail`` goes at the right of the note.
-function breakdownRows(item, people = null, tail = null) {
+// median) a line across them.
+function breakdownRows(item, people = null) {
   const largest = Math.max(0, ...item.parts.map((p) => p.amount || 0));
   const points = item.unit === "points";
   const scale = points ? 100 : item.total || largest;
@@ -338,8 +338,7 @@ function breakdownRows(item, people = null, tail = null) {
       : h("ul", { class: ["breakdown-rows", points && "poll-rows", points && item.mark != null && "marked"],
           style: points && item.mark != null ? `--mark: ${width(item.mark / 100)}` : null },
         item.parts.map((part) => shareRow(part, scale, Boolean(item.total), people, points))),
-    tail ? h("div", { class: "box-foot" }, item.note ? h("p", { class: "fine" }, item.note) : null, tail)
-      : item.note ? h("p", { class: "fine" }, item.note) : null,
+    item.note ? h("p", { class: "fine" }, item.note) : null,
   ];
 }
 
@@ -394,25 +393,15 @@ function foldBox(race, card, setting, action, body) {
   return box;
 }
 
-// A poll box's corner: only the "?" to the FAQ's answer on how the bar is worked out. The count is in
-// the median line, and the source's link at its end (pollSource), so the head stays one short line.
-function pollCorner() {
-  return h("span", { class: "box-links" }, helpLink(MONEY_FAQ.polls, "how the poll bar is worked out"));
-}
-
-// The poll source's link, at the right of the median line under the bars.
-function pollSource(card) {
-  return card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null;
-}
-
-// A money box's corner, like a poll box's: Compare funding (``compare``), the source, and a "?" to
-// the FAQ's answer on how its figures are put together.
-function moneyCorner(card, compare) {
+// A money or poll box's corner: Compare funding (``compare``), the source, and a "?" to the FAQ's
+// answer on how its figures (a poll box's bar) are put together.
+function boxCorner(card, compare) {
   const faq = MONEY_FAQ[card.source];
+  const topic = card.kind === "polls" ? "how the poll bar is worked out" : `how ${card.label}'s figures are put together`;
   return h("span", { class: "box-links" },
     compare,
     card.url ? extLink(card.url, `${card.label} ↗`, { class: "icon-btn", title: `Open ${card.label}` }) : null,
-    faq ? helpLink(faq, `how ${card.label}'s figures are put together`) : null);
+    faq ? helpLink(faq, topic) : null);
 }
 
 // After a view switch changes: openMoney or openPolls opens or folds every box of its kind, whether
@@ -464,8 +453,8 @@ export function raceMoney(race, onCompare = null) {
     const shown = head ? head.parts.filter((p) => p.amount > 0) : [];
     if (!shown.length && !rest.length) return null;
     const polls = card.kind === "polls";
-    return foldBox(race, card, setting, polls ? pollCorner() : moneyCorner(card, action), [
-      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people, pollSource(card)) : moneyStack(shown, people)) : null,
+    return foldBox(race, card, setting, boxCorner(card, action), [
+      shown.length ? h("section", { class: "breakdown" }, polls ? breakdownRows({ ...head, parts: shown }, people) : moneyStack(shown, people)) : null,
       rest.map((b) => breakdownBlock(b, people)),
     ]);
   });

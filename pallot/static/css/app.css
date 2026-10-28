@@ -771,7 +771,7 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
 .poll-mark .icon { width: 13px; height: 13px; }
 .pill.poll-pill { background: var(--accent-soft); color: var(--accent); }
-.head-compare { flex: none; margin-top: -2px; gap: 4px; }
+.head-compare { flex: none; margin-top: -2px; gap: 4px; white-space: nowrap; }
 
 /* "Only races I haven't picked" and Help me pick's "Only races with a match": a section goes too
    once all its races are hidden (a maybe section stays, for its explanation and its link to the
@@ -1255,10 +1255,6 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .box-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
-/* a poll box's median line, its source's link at the right */
-.box-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
-.box-foot .fine { margin: 0; min-width: 0; }
-.box-foot .icon-btn { flex: none; }
 
 /* Details' Polls tab (pollsPanel): the median large beside one bar, then a bar per poll on 0-100
    in the candidate's party colour, the median a line across them. A margin's rival shows as text
@@ -1614,7 +1610,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
-  .head-compare .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
   .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
@@ -1789,8 +1784,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
   /* the small buttons in a box's corner and a candidate's row (Compare, a source's link, Profile, "…")
      keep their drawn size, with the 44px hit area around them, so they don't swell into big pills */
-  :is(.box-links, .box-foot, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more, .icon-btn.rank-up { position: relative; min-height: 0; }
-  :is(.box-links, .box-foot, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after, .icon-btn.rank-up::after { content: "";
+  :is(.box-links, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more, .icon-btn.rank-up { position: relative; min-height: 0; }
+  :is(.box-links, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after, .icon-btn.rank-up::after { content: "";
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* More's chips, segments and buttons too: drawn at their usual size, the 44px hit area around them */
   .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn), .details-head :is(.btn, .icon-btn) { position: relative; min-height: 0; }
