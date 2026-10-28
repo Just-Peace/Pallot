@@ -12,42 +12,41 @@ import { foldSection } from "./source-cards.js";
 import { showToast } from "./toast.js";
 
 const STANCES = [
-  { group: "Rights & society", topics: [
-    { label: "Abortion", terms: "abortion" },
-    { label: "Gun laws", terms: "gun rights gun control" },
-    { label: "Human rights", terms: "human rights" },
-    { label: "Women's rights", terms: "women's rights" },
-    { label: "Religious freedom", terms: "religious freedom" },
-    { label: "Free speech", terms: "free speech First Amendment" },
-    { label: "Immigration", terms: "immigration border" },
-  ] },
   { group: "Economy", topics: [
-    { label: "The economy", terms: "economic policy" },
-    { label: "Taxes", terms: "taxes" },
-    { label: "Trade & tariffs", terms: "trade tariffs" },
-    { label: "Jobs & labor", terms: "workers unions minimum wage" },
-    { label: "Housing", terms: "housing affordability" },
-    { label: "Cost of living", terms: "cost of living inflation prices" },
     { label: "Energy", terms: "energy policy oil gas renewables" },
     { label: "Environment & climate", terms: "environment climate change" },
+    { label: "Housing", terms: "housing affordability" },
+    { label: "Inflation & cost of living", terms: "inflation cost of living prices" },
+    { label: "Jobs & labor", terms: "workers unions minimum wage" },
+    { label: "Taxes", terms: "taxes" },
     { label: "Technology & AI", terms: "technology policy artificial intelligence privacy" },
-  ] },
-  { group: "Government", topics: [
-    { label: "Spending & debt", terms: "government spending budget deficit national debt" },
-    { label: "Regulation", terms: "government regulation" },
-    { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
+    { label: "Trade & tariffs", terms: "trade tariffs" },
   ] },
   { group: "Foreign policy & defense", topics: [
-    { label: "Foreign policy", terms: "foreign policy" },
-    { label: "War & military action", terms: "war military intervention" },
     { label: "Defense & military spending", terms: "national defense military budget" },
+    { label: "Foreign policy", terms: "foreign policy" },
     { label: "Israel & Palestine", terms: "Israel Palestine Gaza" },
+    { label: "War & military action", terms: "war military intervention" },
+  ] },
+  { group: "Government", topics: [
+    { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
+    { label: "Regulation", terms: "government regulation" },
+    { label: "Spending & debt", terms: "government spending budget deficit national debt" },
   ] },
   { group: "Public services", topics: [
     { label: "Education", terms: "education schools" },
     { label: "Health care", terms: "health care reform" },
-    { label: "Social Security", terms: "Social Security" },
     { label: "Infrastructure", terms: "infrastructure roads transit" },
+    { label: "Social Security", terms: "Social Security" },
+  ] },
+  { group: "Rights & society", topics: [
+    { label: "Abortion", terms: "abortion" },
+    { label: "Free speech", terms: "free speech First Amendment" },
+    { label: "Gun laws", terms: "gun rights gun control" },
+    { label: "Human rights", terms: "human rights" },
+    { label: "Immigration", terms: "immigration border" },
+    { label: "Religious freedom", terms: "religious freedom" },
+    { label: "Women's rights", terms: "women's rights" },
   ] },
 ];
 
