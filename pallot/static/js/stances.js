@@ -29,11 +29,13 @@ const STANCES = [
   ] },
   { group: "Government", topics: [
     { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
+    { label: "Corruption & ethics", terms: "government corruption ethics transparency" },
     { label: "Regulation", terms: "government regulation" },
     { label: "Spending & debt", terms: "government spending budget deficit national debt" },
   ] },
   { group: "Public services", topics: [
     { label: "Crime & public safety", terms: "crime public safety policing criminal justice reform" },
+    { label: "Disaster response", terms: "disaster preparedness response relief FEMA" },
     { label: "Education", terms: "education schools" },
     { label: "Health care", terms: "health care reform" },
     { label: "Infrastructure", terms: "infrastructure roads transit" },
