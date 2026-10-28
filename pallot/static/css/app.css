@@ -758,14 +758,18 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .focus-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .focus-option-label { font-size: 0.92rem; font-weight: 600; }
 .focus-option-hint { font-size: 0.82rem; line-height: 1.35; color: var(--muted); }
-/* "What matters to you?" under "Finding your ballot", while the first lookup runs */
+/* "What matters to you?" under "Finding your ballot", as an address is looked up, then the issues */
 .focus-ask { margin: 16px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); }
 .focus-ask h2 { margin: 0; font-size: 1.05rem; }
-.loading .focus-ask > .muted { margin: 2px 0 10px; }
+.loading .ask-step > .muted { margin: 2px 0 10px; }
 .focus-ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 14px 0 0; }
-#focus-setting { margin-bottom: 14px; }
-#focus-setting h3 { margin: 0 0 4px; font-size: 0.95rem; }
-#focus-setting .focus-chips { margin: 8px 0 4px; }
+#focus-setting, #issues-setting { margin-bottom: 14px; }
+:is(#focus-setting, #issues-setting) h3 { margin: 0 0 4px; font-size: 0.95rem; }
+#focus-setting .focus-chips, #issues-setting .saved-issues { margin: 8px 0 4px; }
+/* the issues that matter to the voter (issues.js), there and in Settings: how many, the chips, where they're kept */
+.issue-hint { margin: 0 0 8px; font-size: 0.9rem; font-weight: 650; }
+.issue-hint + .issue-group { margin-top: 0; }
+.saved-issues .fine { margin: 10px 0 0; }
 /* what a focus adds to the ballot: a poll mark on a section, a candidate's poll share, Compare in
    a race's head */
 .poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
@@ -1595,6 +1599,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .key-actions { flex-wrap: nowrap; gap: 6px; }
   .key-actions .btn { min-width: 0; gap: 4px; padding-inline: 6px; }
   .entry .button-row .btn, .focus-ask-foot .btn { flex: 1 1 auto; }
+  /* the issues' Show my ballot stays in reach of a thumb while the chips scroll by, edge to edge of the card */
+  #issues-step .focus-ask-foot { position: sticky; bottom: 0; margin: 14px -18px -16px; padding: 10px 18px max(12px, env(safe-area-inset-bottom));
+    background: var(--panel); border-top: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius); }
   .confirm-dialog .button-row { flex-direction: column; }
   /* When to vote and Your districts folded into a line each (ballot-top.js); a line opens its card
      right under it, in the same box, without a frame or a heading of its own (the line says it) */

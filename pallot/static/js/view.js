@@ -42,7 +42,7 @@ export const VIEW_MODES = {
 // the Funding line before Endorsements, pollChips a "47% in polls" pill on each polled candidate and a mark on
 // the sections with polls, stanceLinks names the candidate's button "Profile & issues", and compareIssues
 // puts Compare issues in the race's head. ``hint`` is
-// its line in the first lookup's question and in Settings, ``short`` its name in the View menu's summary. The
+// its line in a lookup's "What matters to you?" and in Settings, ``short`` its name in the View menu's summary. The
 // wording never names an issue or a source.
 export const FOCUSES = {
   money: { label: "Funding", short: "Funding", hint: "Opens the money boxes and Funding chips, and puts Funding first.",
@@ -93,9 +93,6 @@ export function setFocus(id, on) {
   setUiPrefs({ focuses: on ? [...others, id] : others });
   changed();
 }
-
-export const focusAsked = () => uiPref("focusAsked") === true;
-export const dismissFocusAsk = () => setUiPrefs({ focusAsked: true });
 
 // A browser that chose "Keep it simple", a focus no longer offered, gets what it meant: the Minimal
 // mode, with that focus dropped (a race folding on pick is the default). Run by each page before it
@@ -190,11 +187,9 @@ export function showViewControls(root = document) {
   return mode;
 }
 
-// Any change here answers "What matters to you?" (focusAsked).
 export function bindViewControls(root) {
   root.addEventListener("change", (event) => {
     const input = event.target;
-    if (input.name === "view-mode" || input.name === "focus" || input.dataset.view) dismissFocusAsk();
     if (input.name === "view-mode") setViewMode(input.value);
     else if (input.name === "focus") setFocus(input.value, input.checked);
     else if (input.dataset.view) setViewPref(input.dataset.view, input.checked);

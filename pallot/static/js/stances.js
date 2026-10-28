@@ -1,65 +1,21 @@
 // The Issues tab in Details, and the race's Compare issues: one card, "Ask Duck.ai" (the engine chosen in Settings), with the
-// hot-button issues to choose, grouped, the race's other candidates to compare with an AI assistant,
-// and the question (issue-prompt.js), which the voter can edit. The terms are neutral: where an issue
-// has two sides, they name both.
+// issues to choose (issues.js), the voter's saved ones chosen at first, the race's other candidates to compare
+// with an AI assistant, and the question (issue-prompt.js), which the voter can edit.
 
 import { closeOnBackdrop, dialogHead, h, safeUrl } from "./dom.js";
 import { icon } from "./icons.js";
 import { issuePrompt } from "./issue-prompt.js";
+import { TOPICS, issueGroups, savedIssues } from "./issues.js";
 import { partyName } from "./labels.js";
 import { currentEngine, searchHref, searchWord } from "./search.js";
 import { showToast } from "./toast.js";
 
-const STANCES = [
-  { group: "Economy", topics: [
-    { label: "Energy", terms: "energy policy oil gas renewables" },
-    { label: "Environment & climate", terms: "environment climate change" },
-    { label: "Housing", terms: "housing affordability" },
-    { label: "Inflation & cost of living", terms: "inflation cost of living prices" },
-    { label: "Jobs & labor", terms: "workers unions minimum wage" },
-    { label: "Taxes", terms: "taxes" },
-    { label: "Technology & AI", terms: "technology policy artificial intelligence privacy" },
-    { label: "Trade & tariffs", terms: "trade tariffs" },
-  ] },
-  { group: "Foreign policy & defense", topics: [
-    { label: "Defense & military spending", terms: "national defense military budget" },
-    { label: "Foreign policy", terms: "foreign policy" },
-    { label: "Israel & Palestine", terms: "Israel Palestine Gaza" },
-    { label: "War & military action", terms: "war military intervention" },
-  ] },
-  { group: "Government", topics: [
-    { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
-    { label: "Corruption & ethics", terms: "government corruption ethics transparency" },
-    { label: "Regulation", terms: "government regulation" },
-    { label: "Spending & debt", terms: "government spending budget deficit national debt" },
-  ] },
-  { group: "Public services", topics: [
-    { label: "Crime & public safety", terms: "crime public safety policing criminal justice reform" },
-    { label: "Disaster response", terms: "disaster preparedness response relief FEMA" },
-    { label: "Education", terms: "education schools" },
-    { label: "Health care", terms: "health care reform" },
-    { label: "Infrastructure", terms: "infrastructure roads transit" },
-    { label: "Social Security", terms: "Social Security" },
-  ] },
-  { group: "Rights & society", topics: [
-    { label: "Abortion", terms: "abortion" },
-    { label: "Free speech", terms: "free speech First Amendment" },
-    { label: "Gun laws", terms: "gun rights gun control" },
-    { label: "Human rights", terms: "human rights" },
-    { label: "Immigration", terms: "immigration border" },
-    { label: "Minority rights", terms: "minority rights civil rights discrimination affirmative action DEI" },
-    { label: "Religious freedom", terms: "religious freedom" },
-    { label: "Women's rights", terms: "women's rights" },
-  ] },
-];
-
-const TOPICS = STANCES.flatMap(({ topics }) => topics);
-
 // What the voter chose in this race, kept while ‹ and › step through its candidates: the issues, by
-// label, and the candidates they unchecked from the comparison, by key.
+// label, starting from their saved ones, and the candidates they unchecked from the comparison, by key.
+// Choosing here never changes the saved issues.
 let held = { race: null, chosen: new Set(), left: new Set() };
 
-// Details or Compare issues closed: the next one opened starts with nothing chosen.
+// Details or Compare issues closed: the next one opened starts again from the saved issues.
 export function resetIssues() {
   held = { race: null, chosen: new Set(), left: new Set() };
 }
@@ -94,7 +50,7 @@ export function openIssueCompare(dialog, race, where) {
 // the voter can edit, and Ask. ``candidate`` is the one Details shows, or null for the whole race;
 // ``prefix`` keeps the ids apart, since Details and Compare issues can both hold a card.
 function askCard(race, candidate, where, prefix) {
-  if (held.race !== race.key) held = { race: race.key, chosen: new Set(), left: new Set() };
+  if (held.race !== race.key) held = { race: race.key, chosen: new Set(savedIssues()), left: new Set() };
   const { ai, label } = currentEngine();
   const id = (name) => `${prefix}-issue-${name}`;
   const others = ai ? race.candidates.filter((other) => other !== candidate) : [];
@@ -133,24 +89,14 @@ function askCard(race, candidate, where, prefix) {
   // The Issues heading says how many are chosen; none asks about the main issues.
   const countText = () => (held.chosen.size ? `· ${held.chosen.size} chosen` : "· none chosen, so the main ones");
   const count = h("span", { class: "issue-count" }, countText());
-  const chip = (topic) => h("li", {}, h("button", {
-    type: "button", class: "rule-chip issue-chip", "aria-pressed": String(held.chosen.has(topic.label)),
-    on: { click: (event) => {
-      const on = !held.chosen.has(topic.label);
-      if (on) held.chosen.add(topic.label);
-      else held.chosen.delete(topic.label);
-      event.currentTarget.setAttribute("aria-pressed", String(on));
-      count.textContent = countText();
-      rebuild();
-    } },
-  }, topic.label));
-  const groupId = (name) => id(`group-${name.toLowerCase().replace(/[^a-z]+/g, "-")}`);
   const issues = h("div", { class: "issue-step", role: "group", "aria-labelledby": id("issues-title") },
     h("h4", { id: id("issues-title") }, "Issues ", count),
-    STANCES.map(({ group, topics }) => [
-      h("p", { class: "issue-group", id: groupId(group) }, group),
-      h("ul", { class: "rule-chips issue-chips", "aria-labelledby": groupId(group) }, topics.map(chip)),
-    ]));
+    issueGroups((label) => held.chosen.has(label), (label, on) => {
+      if (on) held.chosen.add(label);
+      else held.chosen.delete(label);
+      count.textContent = countText();
+      rebuild();
+    }, id));
   const compare = others.length ? h("fieldset", { class: "issue-compare" }, h("legend", {}, candidate ? "Compare with" : "Candidates"),
     others.map((other) => h("label", { class: "check" },
       h("input", { type: "checkbox", checked: !held.left.has(other.key), on: { change: (event) => {
