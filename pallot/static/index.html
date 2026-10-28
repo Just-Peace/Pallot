@@ -274,49 +274,50 @@
 
   <dialog id="share-dialog" class="small-dialog" aria-labelledby="share-title" aria-describedby="share-summary">
     <form method="dialog">
-      <h2 id="share-title">Share your picks</h2>
+      <h2 id="share-title">Share or save your picks</h2>
       <p id="share-summary"></p>
-      <div id="share-choices">
+      <div class="entry-tabs share-tabs" role="tablist" aria-label="Share or save">
+        <button class="entry-tab" type="button" role="tab" id="share-tab-send" aria-controls="share-send">Send to someone</button>
+        <button class="entry-tab" type="button" role="tab" id="share-tab-keep" aria-controls="share-keep">Keep a copy</button>
+      </div>
+      <section class="share-panel" id="share-send" role="tabpanel" aria-labelledby="share-tab-send">
+        <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes"> Include my notes</label>
+        <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
+        <div class="share-lock-slot"></div>
+        <div class="share-actions">
+          <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
+          <button class="btn with-icon" type="button" id="share-file"><span data-icon="download"></span>Save as file</button>
+        </div>
+        <p class="fine share-warn" id="share-warn"></p>
+        <label for="share-url" class="sr-only">Link to your picks</label>
+        <input type="text" id="share-url" class="share-picks-url" readonly hidden>
+      </section>
+      <section class="share-panel" id="share-keep" role="tabpanel" aria-labelledby="share-tab-keep" hidden>
+        <p>Everything Pallot keeps for you: your picks for every election, notes, address, districts and settings. Open it on another device, or here later, to pick up where you left off.</p>
+        <div class="share-lock-slot"></div>
+        <div class="share-actions">
+          <button class="btn primary with-icon" type="button" id="share-save"><span data-icon="download"></span>Save my session</button>
+        </div>
+      </section>
+      <p class="status" id="share-status" role="status" aria-live="polite"></p>
+      <p class="fine share-note">Pallot's server never sees what you share or save. <a href="faq.html#share-picks">More on sharing</a></p>
+      <div class="share-foot">
+        <button class="link-btn" type="button" id="share-open">Got a Pallot file? Open it</button>
+        <button class="btn ghost" type="button" id="share-done">Done</button>
+      </div>
+      <div hidden>
         <div class="share-picks-lock" id="share-lock-choice">
-          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box"> Lock with a phrase, for the link and the file</label>
-          <div class="phrase-box" id="share-phrase-box" hidden>
+          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box" checked> Lock with a phrase</label>
+          <div class="phrase-box" id="share-phrase-box">
             <label for="share-phrase">Phrase</label>
             <div class="phrase-field">
               <input type="password" id="share-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-rules share-phrase-note">
               <button class="btn ghost small" type="button" data-phrase-show aria-controls="share-phrase" aria-pressed="false">Show</button>
             </div>
             <ul class="phrase-rules" id="share-phrase-rules"></ul>
-            <p class="fine" id="share-phrase-note">Your phrase stays on this device. Pallot's server never sees it. Give it to them another way than the link, such as in person.</p>
+            <p class="fine" id="share-phrase-note">Your phrase stays on this device; Pallot's server never sees it, and it can't be recovered. If you send this, give the phrase another way, such as in person.</p>
           </div>
         </div>
-        <section class="share-picks-part" id="share-link-part" aria-labelledby="share-link-title">
-          <h3 id="share-link-title">Send a link</h3>
-          <p class="notice notice-warn share-picks-warn" id="share-warn">A link shows who you picked to anyone who has it, and to anyone they pass it on to. Send it only to people you trust.</p>
-          <label class="check"><input type="checkbox" id="share-link-notes"> Include my notes in the link</label>
-          <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
-          <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
-          <label for="share-url" class="sr-only">Link to your picks</label>
-          <input type="text" id="share-url" class="share-picks-url" readonly hidden>
-        </section>
-        <section class="share-picks-part" aria-labelledby="share-file-title">
-          <h3 id="share-file-title">Save a file</h3>
-          <fieldset class="share-file-what">
-            <legend class="sr-only">What to save</legend>
-            <label class="check"><input type="radio" name="share-file-what" value="session" checked> Everything: your picks for every election, notes, address and settings, to keep or move to another device</label>
-            <label class="check" id="share-file-picks"><input type="radio" name="share-file-what" value="picks"> These picks only, to send to someone</label>
-          </fieldset>
-          <label class="check"><input type="checkbox" id="share-file-notes" checked> Include my notes in the file</label>
-          <button class="btn with-icon" type="button" id="share-save"><span data-icon="download"></span>Save file</button>
-        </section>
-        <p class="status" id="share-status" role="status" aria-live="polite"></p>
-        <p class="fine">Pallot's server never sees what you share. <a href="faq.html#share-picks">More on sharing</a></p>
-      </div>
-      <div class="share-picks-open">
-        <p>A Pallot file from someone else, or from another device?</p>
-        <button class="btn small" type="button" id="share-open">Open a Pallot file</button>
-      </div>
-      <div class="button-row end">
-        <button class="btn ghost" type="button" id="share-done">Done</button>
       </div>
     </form>
   </dialog>

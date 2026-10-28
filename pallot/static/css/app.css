@@ -1352,17 +1352,21 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-unpicked { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
 .print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
-.share-picks-part { margin: 16px 0 0; }
 /* Pallot file: what a file brings back, and Load */
 .entry-file p { margin: 0 0 8px; }
 .file-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 4px 0 2px; }
 .file-pick .muted { min-width: 0; overflow-wrap: anywhere; }
-.share-file-what { margin: 0; padding: 0; border: 0; min-width: 0; }.share-picks-part + .share-picks-part { padding-top: 14px; border-top: 1px solid var(--line); }
-.share-picks-part h3 { margin: 0 0 6px; font-size: 1rem; }
-.share-picks-part .fine { margin: 0 0 4px; }
-.share-picks-part > .btn { width: 100%; justify-content: center; min-height: 44px; }
-.share-picks-warn { margin: 0 0 4px; }
-.share-picks-lock { margin: 12px 0 0; }
+/* Share or save (share-dialog.js): Send to someone or Keep a copy, each with the phrase lock and its buttons */
+.share-tabs { margin: 12px 0 4px; }
+.share-panel { margin: 8px 0 0; }
+.share-panel > p { margin: 0 0 8px; }
+.share-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+.share-actions .btn { flex: 1 1 10em; justify-content: center; min-height: 44px; }
+.share-warn { margin: 8px 0 0; }
+.share-note { margin: 12px 0 0; }
+.share-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 14px 0 0;
+  padding-top: 12px; border-top: 1px solid var(--line); }
+.share-picks-lock { margin: 4px 0 0; }
 .phrase-box { margin: 4px 0 0; }
 .phrase-field { display: flex; gap: 8px; align-items: stretch; margin-top: 4px; }
 .phrase-field input { flex: 1 1 auto; min-width: 0; font-size: 16px; }
@@ -1374,9 +1378,6 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .small-dialog .dialog-pad { padding: 20px; }
 .small-dialog .dialog-pad h2 { margin: 0 0 8px; font-size: 1.15rem; }
 .share-picks-url { width: 100%; margin-top: 8px; font-size: 16px; }
-.share-picks-open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 18px 0 14px; padding-top: 14px;
-  border-top: 1px solid var(--line); }
-.share-picks-open p { flex: 1 1 14em; margin: 0; }
 
 /* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */
 .sheet { width: min(560px, 100%); max-width: none; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto auto 0;

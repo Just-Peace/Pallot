@@ -1,6 +1,6 @@
-// Share picks (share.js): a dialog from the toolbar, or More on a phone, that copies or shares a link
-// carrying the ballot's picks, saves a Pallot file (the whole session, or these picks to send), and
-// opens one, either locked with a phrase if the voter chooses. Picks from a link or a file are offered
+// Share picks (share.js): a dialog from the toolbar, or More on a phone, with two tabs: Send to
+// someone, a link or a Pallot file carrying the ballot's picks, and Keep a copy, the whole session as
+// a Pallot file; each locked with a phrase unless the voter unticks it. Its foot opens a file. Picks from a link or a file are offered
 // once a ballot is shown: the voter sees what they bring and what's left out before they're used, and
 // Undo puts the voter's own back. Picks for another address ask first which ballot to show, unless
 // the address or its districts are the same as the voter's. A session is put back (pallot-file.js).
@@ -29,12 +29,14 @@ const lockChoice = $("#share-lock");
 const phraseBox = $("#share-phrase-box");
 const phraseInput = $("#share-phrase");
 const rulesList = $("#share-phrase-rules");
-const linkNotes = $("#share-link-notes");
-const fileNotes = $("#share-file-notes");
+const lockBlock = $("#share-lock-choice");
+const notesChoice = $("#share-notes");
 const addressChoice = $("#share-address");
 const warning = $("#share-warn");
 const linkButton = $("#share-link");
+const fileButton = $("#share-file");
 const saveButton = $("#share-save");
+const TABS = { send: { tab: $("#share-tab-send"), panel: $("#share-send") }, keep: { tab: $("#share-tab-keep"), panel: $("#share-keep") } };
 const urlBox = $("#share-url");
 const status = $("#share-status");
 const SHOWN_MISSING = 3;
@@ -44,27 +46,36 @@ let held = null; // picks from a link or file waiting for a ballot: { slate, fro
 
 const nativeShare = () => typeof navigator.share === "function" && matchMedia("(pointer: coarse)").matches;
 
-// The link leaves the notes out unless the voter ticks them in; a file of these picks, keeps them
-// unless they tick them out. Only the link offers the address, with the districts it's in.
+// What's sent: this election's picks, with the notes and the address (and the districts it's in)
+// only if the voter ticks them in.
 const slate = (notes, address = false) => buildSlate(page.ballot, page.picks, {
   request: page.request, title: electionLine(page.ballot), notes, address, districts: readJson(LAST_DISTRICTS, null),
 });
+const sentSlate = () => slate(notesChoice.checked && !notesChoice.closest("label").hidden, addressChoice.checked);
 
-const locked = () => lockChoice.checked && !$("#share-lock-choice").hidden;
-const savingSession = () => $('input[name="share-file-what"]:checked').value === "session";
+const locked = () => lockChoice.checked && canLock();
 
-// The link's warning names everything the link would show, and to whom.
-function syncWarning() {
+// Send to someone or Keep a copy: one panel shows, and the phrase lock, ticked at first, moves into it.
+function selectShare(name, { focus = false } = {}) {
+  for (const [key, { tab, panel }] of Object.entries(TABS)) {
+    const on = key === name;
+    tab.setAttribute("aria-selected", String(on));
+    tab.tabIndex = on ? 0 : -1;
+    panel.hidden = !on;
+  }
+  TABS[name].panel.querySelector(".share-lock-slot").append(lockBlock);
   urlBox.hidden = true;
-  const also = [linkNotes.checked && !linkNotes.closest("label").hidden && "your notes", addressChoice.checked && "your address"].filter(Boolean);
-  const who = locked() ? "anyone who has it and the phrase" : "anyone who has it";
-  warning.textContent = `${locked() ? "A locked link" : "A link"} shows who you picked${also.length ? `, ${also.join(" and ")}` : ""} to ${who}, `
-    + "and to anyone they pass it on to. Send it only to people you trust.";
+  setStatus(status, "");
+  if (focus) TABS[name].tab.focus();
 }
 
-// The file's notes choice is for a file of these picks only: a session keeps everything.
-function syncFileWhat() {
-  fileNotes.closest("label").hidden = savingSession() || !slateCounts(slate(true)).notes;
+// The warning under Send to someone names everything it would show, and to whom.
+function syncWarning() {
+  urlBox.hidden = true;
+  const also = [notesChoice.checked && !notesChoice.closest("label").hidden && "your notes", addressChoice.checked && "your address"].filter(Boolean);
+  const who = locked() ? "Anyone with it and the phrase" : "Anyone with it";
+  warning.textContent = `${who} sees who you picked${also.length ? `, ${also.join(" and ")}` : ""}, and so does anyone they pass it on to. `
+    + "Send it only to people you trust.";
 }
 
 // The phrase's rules, each ticked once it's met.
@@ -75,19 +86,18 @@ function showRules() {
     h("span", { class: "sr-only" }, rule.met ? " (done)" : " (not yet)"))));
 }
 
-function syncLock() {
+function syncLock({ focus = false } = {}) {
   phraseBox.hidden = !lockChoice.checked;
   showRules();
   syncWarning();
-  if (lockChoice.checked) phraseInput.focus();
+  if (focus && lockChoice.checked) phraseInput.focus();
 }
 
-// Forgets the phrase and unticks the lock, as the dialog closes.
+// Forgets the phrase and ticks the lock again, as the dialog closes.
 function forgetPhrase() {
   phraseInput.value = "";
   hidePhrase(phraseInput);
-  lockChoice.checked = false;
-  phraseBox.hidden = true;
+  lockChoice.checked = true;
 }
 
 // The phrase to lock with: null when unlocked, false (said in the status line) when it doesn't
@@ -104,17 +114,20 @@ function chosenPhrase() {
 
 // Runs ``work`` with the buttons off, saying "Locking…" while a phrase is stretched into a key.
 async function busy(phrase, work) {
-  linkButton.disabled = saveButton.disabled = true;
+  const buttons = [linkButton, fileButton, saveButton];
+  for (const button of buttons) button.disabled = true;
   if (phrase) setStatus(status, "Locking…", "busy");
   try {
     await work();
   } catch (error) {
     setStatus(status, error.message || "Something went wrong. Try again.", "error");
   } finally {
-    linkButton.disabled = saveButton.disabled = false;
+    for (const button of buttons) button.disabled = false;
   }
 }
 
+// Opens on Send to someone once there's a pick or note to send, else on Keep a copy, with Send to
+// someone hidden.
 function openShare() {
   if (!page.ballot) return;
   const counts = slateCounts(slate(true));
@@ -122,24 +135,22 @@ function openShare() {
   summary.textContent = any
     ? `Your picks in ${plural(counts.races, "race")}${counts.notes ? ` and ${plural(counts.notes, "note")}` : ""}, for ${electionLine(page.ballot)}.`
     : "You haven't picked anyone yet. Once you do, you can send your picks from here.";
-  $("#share-link-part").hidden = !any;
-  $("#share-file-picks").hidden = !any;
-  if (!any) $('input[name="share-file-what"][value="session"]').checked = true;
-  $("#share-lock-choice").hidden = !canLock();
-  linkNotes.closest("label").hidden = !counts.notes;
-  syncFileWhat();
+  TABS.send.tab.hidden = !any;
+  TABS.send.tab.parentElement.hidden = !any; // one tab alone isn't a choice
+  lockBlock.hidden = !canLock();
+  notesChoice.closest("label").hidden = !counts.notes;
   $("#share-link-label").textContent = nativeShare() ? "Share link" : "Copy link";
+  selectShare(any ? "send" : "keep");
   syncLock();
-  setStatus(status, "");
   dialog.showModal();
-  (any ? linkButton : saveButton).focus();
+  TABS[any ? "send" : "keep"].tab.focus();
 }
 
 async function shareLink() {
   const phrase = chosenPhrase();
   if (phrase === false) return;
   await busy(phrase, async () => {
-    const url = await slateLink(slate(linkNotes.checked, addressChoice.checked), location.origin + location.pathname, phrase);
+    const url = await slateLink(sentSlate(), location.origin + location.pathname, phrase);
     const sendPhrase = phrase ? " Send the phrase another way, such as in person." : "";
     if (nativeShare()) {
       try {
@@ -177,18 +188,20 @@ function raceOnScreen() {
   return card?.dataset.race || "";
 }
 
-async function saveFile() {
+// Saves a file: these picks to send (Send to someone), or the whole session (Keep a copy).
+async function saveFile(session) {
   const phrase = chosenPhrase();
   if (phrase === false) return;
   await busy(phrase, async () => {
     let name;
-    if (savingSession()) {
+    if (session) {
       name = await saveSession({ phrase, race: raceOnScreen() });
     } else {
       name = `pallot-picks-${page.ballot.election_date || "undated"}${EXTENSION}`;
-      saveBytes(await pallotFile(slate(fileNotes.checked), phrase), name);
+      saveBytes(await pallotFile(sentSlate(), phrase), name);
     }
-    setStatus(status, `Saved ${name} to your downloads.${phrase ? " Keep the phrase somewhere safe: it can't be recovered." : ""}`, "ok");
+    const tip = !phrase ? "" : session ? " Keep the phrase somewhere safe: it can't be recovered." : " Send the phrase another way, such as in person.";
+    setStatus(status, `Saved ${name} to your downloads.${tip}`, "ok");
   });
 }
 
@@ -340,17 +353,26 @@ export function initShare(shared) {
   bindPhraseShow($('[data-phrase-show][aria-controls="share-phrase"]'));
   $("#share-btn").addEventListener("click", openShare);
   $("#share-done").addEventListener("click", () => dialog.close());
-  lockChoice.addEventListener("change", syncLock);
+  lockChoice.addEventListener("change", () => syncLock({ focus: true }));
   phraseInput.addEventListener("input", () => {
     showRules();
     urlBox.hidden = true;
   });
   linkButton.addEventListener("click", shareLink);
-  saveButton.addEventListener("click", saveFile);
-  for (const input of document.querySelectorAll('input[name="share-file-what"]')) input.addEventListener("change", syncFileWhat);
+  fileButton.addEventListener("click", () => saveFile(false));
+  saveButton.addEventListener("click", () => saveFile(true));
   $("#share-open").addEventListener("click", openFile);
   addressChoice.addEventListener("change", syncWarning);
-  linkNotes.addEventListener("change", syncWarning);
+  notesChoice.addEventListener("change", syncWarning);
+  for (const [name, { tab }] of Object.entries(TABS)) {
+    tab.addEventListener("click", () => selectShare(name));
+    tab.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+      event.preventDefault();
+      const other = name === "send" ? "keep" : "send";
+      if (!TABS[other].tab.hidden) selectShare(other, { focus: true });
+    });
+  }
   window.addEventListener("hashchange", async () => {
     if (await takeLinkedPicks()) offerHeldPicks();
   });
