@@ -45,6 +45,7 @@ const STANCES = [
     { label: "Gun laws", terms: "gun rights gun control" },
     { label: "Human rights", terms: "human rights" },
     { label: "Immigration", terms: "immigration border" },
+    { label: "Minority rights", terms: "minority rights civil rights discrimination affirmative action DEI" },
     { label: "Religious freedom", terms: "religious freedom" },
     { label: "Women's rights", terms: "women's rights" },
   ] },
