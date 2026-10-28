@@ -23,7 +23,7 @@ import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openDistricts, renderDistricts } from "./districts-card.js";
 import { syncEndorserBar } from "./endorser-bar.js";
 import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, phoneWords, setStatus as showStatus, stepText } from "./dom.js";
-import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, readVoterCard } from "./entry-card.js";
+import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, pickedSlate, placeEntry, readVoterCard, selectEntry } from "./entry-card.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
@@ -232,7 +232,6 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     page.request = request;
     page.loadingCards = Boolean(rest);
     writeJson(LAST_LOOKUP, request);
-    $("#open-file-btn").hidden = true;
     clearPicks?.reload();
     const cleared = clearPicks?.clear();
     page.picks = new Picks(found.election_date);
@@ -514,6 +513,10 @@ initShare(page);
 // nothing else the voter chose is cleared.
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (entryMode() === "file") {
+    openChosenFile();
+    return;
+  }
   const request = readForm();
   const old = page.ballot && page.picks;
   if (!old || ballotOf(request) === ballotOf(page.request)) {
@@ -535,6 +538,21 @@ form.addEventListener("submit", async (event) => {
   });
   if (sure) lookup(request, { clearPicks: old, ask: true });
 });
+
+// Show my ballot on the Pallot file tab: a session is put back; picks someone sent wait for a ballot,
+// the one they're for, or the voter's own once they look it up with the Address tab.
+function openChosenFile() {
+  const opened = pickedSlate();
+  if (!opened) {
+    setStatus("Choose your Pallot file first.", "error");
+    focusEntry();
+    return;
+  }
+  openFromStart(opened, (request) => lookup(request), (text, tone) => {
+    setStatus(text, tone);
+    selectEntry("address", { focus: true });
+  });
+}
 
 function offerUndoClear(picks, cleared) {
   showToast("Cleared your picks for the old address.", {
@@ -608,7 +626,6 @@ async function start() {
   // keyboard would cover the card.
   if (changing || !label) showEntry(true, { focus: changing || typingDevice.matches });
   if (linked && !label) setStatus("Look up your address to see the picks you were sent on your ballot.");
-  $("#open-file-btn").hidden = Boolean(label);
   loadElections(initial?.election_date);
   loadEntryConfig({
     startOn: () => (label ? (initial.address ? "address" : "voter_card") : null),
@@ -623,11 +640,5 @@ async function start() {
     offerUndoRestore(restored.before);
   }
 }
-
-// "Load a Pallot file", beside Show my ballot on a first visit: a session, or picks to see on a ballot.
-$("#open-file-btn").addEventListener("click", () => openFromStart((request) => lookup(request), (text, tone) => {
-  setStatus(text, tone);
-  focusEntry();
-}));
 
 start();

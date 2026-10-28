@@ -125,7 +125,7 @@ async function tryPhrase() {
 
 // The file the voter chooses, or null. Any file can be chosen, since a phone greys out the types it
 // doesn't know; share.js tells a Pallot file by its first bytes.
-function chooseFile() {
+export function chooseFile() {
   if (!picker) {
     picker = h("input", { type: "file", hidden: true });
     document.body.append(picker);
@@ -146,7 +146,11 @@ function chooseFile() {
 // its phrase. Throws an Error that says what's wrong, for the voter.
 export async function openPallotFile() {
   const file = await chooseFile();
-  if (!file) return null;
+  return file ? readFile(file) : null;
+}
+
+// What ``file`` holds, as openPallotFile().
+export async function readFile(file) {
   if (file.size > MAX_FILE) throw new Error("This isn't a Pallot file.");
   return readPallotFile(new Uint8Array(await file.arrayBuffer()), askPhrase);
 }

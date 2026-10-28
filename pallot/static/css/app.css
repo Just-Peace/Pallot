@@ -490,7 +490,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .welcome-head .lede { margin: 0; }
 .entry { max-width: 560px; margin-top: 8px; padding: 24px 28px; }
 .entry h2 { margin: 0 0 16px; font-size: 1.5rem; }
-.entry-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border: 1px solid var(--line-strong);
+.entry-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; padding: 3px; border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm); background: var(--panel-2); }
 .entry-tab { padding: 8px 12px; border: 0; border-radius: calc(var(--radius-sm) - 2px); background: none; color: var(--muted);
   font-weight: 600; cursor: pointer; }
@@ -1353,6 +1353,10 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 .share-picks-part { margin: 16px 0 0; }
+/* Pallot file: what a file brings back, and Load */
+.entry-file p { margin: 0 0 8px; }
+.file-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 4px 0 2px; }
+.file-pick .muted { min-width: 0; overflow-wrap: anywhere; }
 .share-file-what { margin: 0; padding: 0; border: 0; min-width: 0; }.share-picks-part + .share-picks-part { padding-top: 14px; border-top: 1px solid var(--line); }
 .share-picks-part h3 { margin: 0 0 6px; font-size: 1rem; }
 .share-picks-part .fine { margin: 0 0 4px; }

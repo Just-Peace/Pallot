@@ -307,17 +307,9 @@ export function offerHeldPicks() {
   offerSlate(waiting, from, retried, placed);
 }
 
-// "Load a Pallot file" on the first visit, before any ballot: a session is put back; picks wait for a ballot,
-// the one they're for if the voter wants it, else their own once they look it up.
-export async function openFromStart(lookup, ask) {
-  let opened;
-  try {
-    opened = await openPallotFile();
-  } catch (error) {
-    ask(error.message, "error");
-    return;
-  }
-  if (!opened) return;
+// What the Pallot file tab read (``opened``), on Show my ballot: a session is put back; picks wait for a
+// ballot, the one they're for if the voter wants it, else their own once they look it up.
+export async function openFromStart(opened, lookup, ask) {
   if (opened.session) {
     offerSession(opened);
     return;

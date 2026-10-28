@@ -31,9 +31,10 @@
       <section id="entry" class="panel entry" aria-labelledby="entry-title" hidden>
         <h2 id="entry-title">See your ballot, race by race</h2>
         <form id="lookup-form" class="lookup-form">
-          <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by" hidden>
-            <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">My address</button>
-            <button class="entry-tab" type="button" role="tab" id="entry-tab-card" aria-controls="entry-voter-card">My voter card</button>
+          <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by">
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">Address</button>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-card" aria-controls="entry-voter-card" hidden>Voter card</button>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-file" aria-controls="entry-file">Pallot file</button>
           </div>
           <div id="entry-address" aria-labelledby="entry-tab-address">
             <fieldset class="entry-fields">
@@ -83,6 +84,18 @@
               </div>
             </fieldset>
           </div>
+          <div id="entry-file" aria-labelledby="entry-tab-file" hidden>
+            <fieldset class="entry-fields entry-file" disabled>
+              <p>Saved your session with Pallot before? Choose the file you saved (it ends in .pallot), then Show my ballot, to get back your address, picks, notes and settings, right where you left off. It also opens picks someone sent you.</p>
+              <p class="fine">First time here? You don't need a file: look up your ballot with your address.</p>
+              <div class="file-pick">
+                <button class="btn" type="button" id="choose-file-btn">Choose file</button>
+                <span class="muted" id="chosen-file">No file chosen</span>
+              </div>
+              <div class="file-holds" id="file-holds" hidden></div>
+              <p class="status" id="file-status" role="status" aria-live="polite"></p>
+            </fieldset>
+          </div>
           <div class="field-row">
             <div class="field">
               <label for="election">Election</label>
@@ -99,7 +112,6 @@
           </div>
           <div class="button-row">
             <button class="btn primary" type="submit" id="lookup-btn">Show my ballot</button>
-            <button class="btn" type="button" id="open-file-btn" hidden>Load a Pallot file</button>
             <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
           </div>
           <p id="status" class="status" role="status" aria-live="polite"></p>
