@@ -30,13 +30,12 @@ const STANCES = [
     { label: "Cost of living", terms: "cost of living inflation prices" },
     { label: "Energy", terms: "energy policy oil gas renewables" },
     { label: "Environment & climate", terms: "environment climate change" },
+    { label: "Technology & AI", terms: "technology policy artificial intelligence privacy" },
   ] },
   { group: "Government", topics: [
     { label: "Spending & debt", terms: "government spending budget deficit national debt" },
-    { label: "Size of government", terms: "role and size of government" },
     { label: "Regulation", terms: "government regulation" },
     { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
-    { label: "Technology & AI", terms: "technology policy artificial intelligence privacy" },
   ] },
   { group: "Foreign policy & defense", topics: [
     { label: "Foreign policy", terms: "foreign policy" },
