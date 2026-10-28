@@ -32,8 +32,7 @@ const STANCES = [
     { label: "Environment & climate", terms: "environment climate change" },
   ] },
   { group: "Government", topics: [
-    { label: "Government spending", terms: "government spending" },
-    { label: "Deficit & debt", terms: "budget deficit national debt" },
+    { label: "Spending & debt", terms: "government spending budget deficit national debt" },
     { label: "Size of government", terms: "role and size of government" },
     { label: "Regulation", terms: "government regulation" },
     { label: "Campaign finance", terms: "campaign finance Citizens United super PAC money" },
@@ -42,8 +41,7 @@ const STANCES = [
   { group: "Foreign policy & defense", topics: [
     { label: "Foreign policy", terms: "foreign policy" },
     { label: "War & military action", terms: "war military intervention" },
-    { label: "National defense", terms: "national defense" },
-    { label: "Military spending", terms: "military defense budget" },
+    { label: "Defense & military spending", terms: "national defense military budget" },
     { label: "Israel & Palestine", terms: "Israel Palestine Gaza" },
   ] },
   { group: "Public services", topics: [
