@@ -131,19 +131,31 @@
 
       <section class="panel" aria-labelledby="data-title">
         <h2 id="data-title">Your data</h2>
-        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, save your session. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
+        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, save everything. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
         <ul class="data-actions">
           <li class="data-action">
             <div class="data-action-text">
-              <h3>Save my session</h3>
-              <p>Saves a Pallot file with everything kept here: your picks for every election, notes, address, districts and settings. Open it on another device, or here later, to pick up where you left off. To lock it with a phrase of your own, use Share picks → Keep a copy on your ballot.</p>
+              <h3>Save everything</h3>
+              <p>Saves a Pallot file with everything kept here: your picks for every election, notes, address, districts and settings. Open it on another device, or here later, to pick up where you left off.</p>
+              <div class="share-picks-lock">
+                <label class="check"><input type="checkbox" id="save-lock" aria-controls="save-phrase-box" checked> Lock with a phrase</label>
+                <div class="phrase-box" id="save-phrase-box">
+                  <label for="save-phrase">Phrase</label>
+                  <div class="phrase-field">
+                    <input type="password" id="save-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="save-phrase-rules save-phrase-note">
+                    <button class="btn ghost small" type="button" data-phrase-show aria-controls="save-phrase" aria-pressed="false">Show</button>
+                  </div>
+                  <ul class="phrase-rules" id="save-phrase-rules"></ul>
+                  <p class="fine" id="save-phrase-note">Your phrase stays on this device; Pallot's server never sees it, and it can't be recovered, so keep it somewhere safe.</p>
+                </div>
+              </div>
             </div>
-            <button class="btn small" id="save-session" type="button">Save my session</button>
+            <button class="btn small" id="save-session" type="button">Save everything</button>
           </li>
           <li class="data-action">
             <div class="data-action-text">
               <h3>Open a Pallot file</h3>
-              <p>Puts a saved session back, replacing what's here or merged with it, with Undo. Picks someone sent you open on your ballot.</p>
+              <p>Puts everything you saved back, replacing what's here or merged with it, with Undo, and opens your ballot where you left off.</p>
             </div>
             <button class="btn small" id="open-session" type="button">Open a file</button>
           </li>

@@ -15,7 +15,7 @@ import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { savedIssuesPicker } from "./issues.js";
-import { offerSession, openPallotFile, saveSession } from "./pallot-file.js";
+import { offerSession, openPallotFile, phraseLock, saveSession } from "./pallot-file.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { DEFAULT_ENGINE, ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
@@ -307,11 +307,24 @@ function showBrowserData() {
 // on it); picks someone sent wait for the ballot, which offers them.
 const dataStatus = $("#data-status");
 
-$("#save-session").addEventListener("click", async () => {
+const saveLock = phraseLock({
+  check: $("#save-lock"), box: $("#save-phrase-box"), input: $("#save-phrase"), rules: $("#save-phrase-rules"), status: dataStatus,
+});
+saveLock.sync();
+
+$("#save-session").addEventListener("click", async (event) => {
+  const phrase = saveLock.chosen();
+  if (phrase === false) return;
+  const button = event.currentTarget;
+  button.disabled = true;
+  if (phrase) setStatus(dataStatus, "Locking…", "busy");
   try {
-    setStatus(dataStatus, `Saved ${await saveSession()} to your downloads.`, "ok");
+    const name = await saveSession({ phrase });
+    setStatus(dataStatus, `Saved ${name} to your downloads.${phrase ? " Keep the phrase somewhere safe: it can't be recovered." : ""}`, "ok");
   } catch (error) {
     setStatus(dataStatus, error.message || "Something went wrong. Try again.", "error");
+  } finally {
+    button.disabled = false;
   }
 });
 
@@ -325,7 +338,7 @@ $("#open-session").addEventListener("click", async () => {
   }
   if (!opened) return;
   if (opened.session) offerSession(opened);
-  else setStatus(dataStatus, "This file has picks, not a session. Open it from Share picks on your ballot to see them there.", "info");
+  else setStatus(dataStatus, "This file has someone's picks, not a saved copy of everything. Open it with the Pallot file tab where you enter your address.", "info");
 });
 
 $("#clear-my-picks").addEventListener("click", async () => {

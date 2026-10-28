@@ -35,7 +35,7 @@ import { buildPrintSheet } from "./print.js";
 import { cardFor, initRaceCards, redrawCards, refillBans, refillCards, renderCards } from "./race-cards.js";
 import { districtsRecord } from "./share.js";
 import { initShare, offerHeldPicks, openFromStart, requestFor, takeLinkedPicks } from "./share-dialog.js";
-import { ADDRESS_CARD, LAST_DISTRICTS, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
+import { ADDRESS_CARD, LAST_DISTRICTS, LAST_LOOKUP, readJson, setUiPref, settingsStamp, uiPref, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
 import { onEnterAddress, openPanel } from "./topbar.js";
@@ -466,8 +466,22 @@ $("#print-next").addEventListener("click", () => {
   nextRace();
 });
 printDialog.addEventListener("close", () => {
-  if (printDialog.returnValue === "print" && page.ballot) setTimeout(() => window.print(), 50);
+  if (printDialog.returnValue !== "print" || !page.ballot) return;
+  setTimeout(() => {
+    window.print();
+    nudgeSave();
+  }, 50);
 });
+
+// Once, after the first Print my picks, the moment a voter is done: where to keep a copy of
+// everything, since this browser forgets an election's picks 90 days after it.
+function nudgeSave() {
+  if (uiPref("saveNudged")) return;
+  setUiPref("saveNudged", true);
+  showToast("Want a copy you can open later? Save everything in Settings.", {
+    label: "Settings", run: () => location.assign("settings.html#data-title"),
+  });
+}
 // Every print, Print my picks or the browser's own (Ctrl+P), gets a sheet of the current
 // picks, laid out by the print dialog's current choices.
 window.addEventListener("beforeprint", () => {

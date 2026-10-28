@@ -10,7 +10,9 @@ import { lookupLabel } from "./address.js";
 import { choiceDialog, closeOnBackdrop, confirmDialog, h, setStatus } from "./dom.js";
 import { plural } from "./format.js";
 import { keepsAnything, restoreSession, sessionStore, undoRestore } from "./session.js";
-import { EXTENSION, buildSession, pallotFile, readPallotFile, slateCounts } from "./share.js";
+import { icon } from "./icons.js";
+import { EXTENSION, buildSession, canLock, pallotFile, phraseReady, phraseRules, readPallotFile, slateCounts } from "./share.js";
+import { LAST_RACE, readJson } from "./storage.js";
 import { showToast } from "./toast.js";
 
 const MAX_FILE = 1_000_000;
@@ -22,7 +24,7 @@ let picker = null;
 
 // ---- the phrase of a locked file or link ----------------------------------------------------
 
-export function hidePhrase(input) {
+function hidePhrase(input) {
   input.type = "password";
   const button = document.querySelector(`[data-phrase-show][aria-controls="${input.id}"]`);
   button.textContent = "Show";
@@ -30,7 +32,7 @@ export function hidePhrase(input) {
 }
 
 // A phrase box's Show button shows or masks the phrase.
-export function bindPhraseShow(button) {
+function bindPhraseShow(button) {
   button.addEventListener("click", () => {
     const input = document.getElementById(button.getAttribute("aria-controls"));
     const show = input.type === "password";
@@ -39,6 +41,48 @@ export function bindPhraseShow(button) {
     button.setAttribute("aria-pressed", String(show));
     input.focus();
   });
+}
+
+// A "Lock with a phrase" box (``check``, ticked at first), its phrase box, ``input`` and ``rules``, each
+// rule ticked once it's met. ``chosen()`` is the phrase to lock with: null when unticked (or where the
+// browser can't lock), false, said in ``status``, while it doesn't meet the rules. ``onChange`` runs
+// after any change; ``forget()`` empties it and ticks it again, as its dialog closes.
+export function phraseLock({ check, box, input, rules, status, onChange = () => {} }) {
+  const showRules = () => rules.replaceChildren(...phraseRules(input.value).map((rule) => h("li", { class: rule.met ? "met" : null },
+    rule.met ? icon("check") : h("span", { "aria-hidden": "true" }, "•"),
+    rule.text,
+    h("span", { class: "sr-only" }, rule.met ? " (done)" : " (not yet)"))));
+  const locked = () => check.checked && canLock();
+  const sync = ({ focus = false } = {}) => {
+    box.hidden = !check.checked;
+    showRules();
+    onChange();
+    if (focus && check.checked) input.focus();
+  };
+  check.addEventListener("change", () => sync({ focus: true }));
+  input.addEventListener("input", () => {
+    showRules();
+    onChange();
+  });
+  bindPhraseShow(document.querySelector(`[data-phrase-show][aria-controls="${input.id}"]`));
+  return {
+    sync,
+    locked,
+    chosen() {
+      if (!locked()) return null;
+      if (phraseReady(input.value)) return input.value;
+      const missing = phraseRules(input.value).filter((rule) => rule.required && !rule.met).map((rule) => rule.text.toLowerCase());
+      setStatus(status, `Your phrase needs ${missing.join(", ")}.`, "error");
+      input.focus();
+      return false;
+    },
+    forget() {
+      input.value = "";
+      hidePhrase(input);
+      check.checked = true;
+      sync();
+    },
+  };
 }
 
 function phraseParts() {
@@ -156,7 +200,7 @@ export async function readFile(file) {
 }
 
 // Saves ``bytes`` to the voter's downloads as ``name``.
-export function saveBytes(bytes, name) {
+function saveBytes(bytes, name) {
   const href = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
   const link = h("a", { href, download: name, hidden: true });
   document.body.append(link);
@@ -170,11 +214,12 @@ const today = () => {
   return [now.getFullYear(), now.getMonth() + 1, now.getDate()].map((n) => String(n).padStart(2, "0")).join("-");
 };
 
-// Saves everything this browser keeps as a file, locked with ``phrase`` or the built-in key, with
-// ``race``, the race on screen, to go back to. Returns the file's name.
-export async function saveSession({ phrase: chosen = null, race = "" } = {}) {
-  const name = `pallot-session-${today()}${EXTENSION}`;
-  saveBytes(await pallotFile(buildSession(sessionStore(), { race }), chosen), name);
+// Saves everything this browser keeps as a file, locked with ``phrase`` or the built-in key, with the
+// race last on screen on the ballot, to go back to. Returns the file's name.
+export async function saveSession({ phrase: chosen = null } = {}) {
+  const name = `pallot-${today()}${EXTENSION}`;
+  const race = readJson(LAST_RACE, "");
+  saveBytes(await pallotFile(buildSession(sessionStore(), { race: typeof race === "string" ? race : "" }), chosen), name);
   return name;
 }
 

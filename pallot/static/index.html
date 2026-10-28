@@ -274,38 +274,11 @@
 
   <dialog id="share-dialog" class="small-dialog" aria-labelledby="share-title" aria-describedby="share-summary">
     <form method="dialog">
-      <h2 id="share-title">Share or save your picks</h2>
+      <h2 id="share-title">Share your picks</h2>
       <p id="share-summary"></p>
-      <div class="entry-tabs share-tabs" role="tablist" aria-label="Share or save">
-        <button class="entry-tab" type="button" role="tab" id="share-tab-send" aria-controls="share-send">Send to someone</button>
-        <button class="entry-tab" type="button" role="tab" id="share-tab-keep" aria-controls="share-keep">Keep a copy</button>
-      </div>
-      <section class="share-panel" id="share-send" role="tabpanel" aria-labelledby="share-tab-send">
+      <div id="share-choices">
         <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes"> Include my notes</label>
         <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
-        <div class="share-lock-slot"></div>
-        <div class="share-actions">
-          <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
-          <button class="btn with-icon" type="button" id="share-file"><span data-icon="download"></span>Save as file</button>
-        </div>
-        <p class="fine share-warn" id="share-warn"></p>
-        <label for="share-url" class="sr-only">Link to your picks</label>
-        <input type="text" id="share-url" class="share-picks-url" readonly hidden>
-      </section>
-      <section class="share-panel" id="share-keep" role="tabpanel" aria-labelledby="share-tab-keep" hidden>
-        <p>Everything Pallot keeps for you: your picks for every election, notes, address, districts and settings. Open it on another device, or here later, to pick up where you left off.</p>
-        <div class="share-lock-slot"></div>
-        <div class="share-actions">
-          <button class="btn primary with-icon" type="button" id="share-save"><span data-icon="download"></span>Save my session</button>
-        </div>
-      </section>
-      <p class="status" id="share-status" role="status" aria-live="polite"></p>
-      <p class="fine share-note">Pallot's server never sees what you share or save. <a href="faq.html#share-picks">More on sharing</a></p>
-      <div class="share-foot">
-        <button class="link-btn" type="button" id="share-open">Got a Pallot file? Open it</button>
-        <button class="btn ghost" type="button" id="share-done">Done</button>
-      </div>
-      <div hidden>
         <div class="share-picks-lock" id="share-lock-choice">
           <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box" checked> Lock with a phrase</label>
           <div class="phrase-box" id="share-phrase-box">
@@ -315,9 +288,21 @@
               <button class="btn ghost small" type="button" data-phrase-show aria-controls="share-phrase" aria-pressed="false">Show</button>
             </div>
             <ul class="phrase-rules" id="share-phrase-rules"></ul>
-            <p class="fine" id="share-phrase-note">Your phrase stays on this device; Pallot's server never sees it, and it can't be recovered. If you send this, give the phrase another way, such as in person.</p>
+            <p class="fine" id="share-phrase-note">Your phrase stays on this device; Pallot's server never sees it. Give it to them another way than the link, such as in person.</p>
           </div>
         </div>
+        <div class="share-actions">
+          <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
+        </div>
+        <p class="fine share-warn" id="share-warn"></p>
+        <label for="share-url" class="sr-only">Link to your picks</label>
+        <input type="text" id="share-url" class="share-picks-url" readonly hidden>
+        <p class="status" id="share-status" role="status" aria-live="polite"></p>
+      </div>
+      <p class="share-note">Want a copy of everything, to keep or move to another device? <a href="settings.html#data-title">Save it in Settings</a>.</p>
+      <div class="share-foot">
+        <a class="fine" href="faq.html#share-picks">More on sharing</a>
+        <button class="btn ghost" type="button" id="share-done">Done</button>
       </div>
     </form>
   </dialog>

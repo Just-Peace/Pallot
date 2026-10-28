@@ -1356,16 +1356,12 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .entry-file p { margin: 0 0 8px; }
 .file-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 4px 0 2px; }
 .file-pick .muted { min-width: 0; overflow-wrap: anywhere; }
-/* Share or save (share-dialog.js): Send to someone or Keep a copy, each with the phrase lock and its buttons */
-.share-tabs { margin: 12px 0 4px; }
-.share-panel { margin: 8px 0 0; }
-.share-panel > p { margin: 0 0 8px; }
+/* Share your picks (share-dialog.js): what goes in the link, the phrase lock, Copy link, and Settings for a copy of everything */
 .share-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
 .share-actions .btn { flex: 1 1 10em; justify-content: center; min-height: 44px; }
 .share-warn { margin: 8px 0 0; }
-.share-note { margin: 12px 0 0; }
-.share-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 14px 0 0;
-  padding-top: 12px; border-top: 1px solid var(--line); }
+.share-note { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.9rem; }
+.share-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 12px 0 0; }
 .share-picks-lock { margin: 4px 0 0; }
 .phrase-box { margin: 4px 0 0; }
 .phrase-field { display: flex; gap: 8px; align-items: stretch; margin-top: 4px; }
