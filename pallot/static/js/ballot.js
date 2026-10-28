@@ -232,7 +232,7 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     page.request = request;
     page.loadingCards = Boolean(rest);
     writeJson(LAST_LOOKUP, request);
-    $("#open-file").hidden = true;
+    $("#open-file-btn").hidden = true;
     clearPicks?.reload();
     const cleared = clearPicks?.clear();
     page.picks = new Picks(found.election_date);
@@ -608,7 +608,7 @@ async function start() {
   // keyboard would cover the card.
   if (changing || !label) showEntry(true, { focus: changing || typingDevice.matches });
   if (linked && !label) setStatus("Look up your address to see the picks you were sent on your ballot.");
-  $("#open-file").hidden = Boolean(label);
+  $("#open-file-btn").hidden = Boolean(label);
   loadElections(initial?.election_date);
   loadEntryConfig({
     startOn: () => (label ? (initial.address ? "address" : "voter_card") : null),
@@ -624,7 +624,7 @@ async function start() {
   }
 }
 
-// "Have a Pallot file? Open it", on a first visit: a session, or picks to see on a ballot.
+// "Load a Pallot file", beside Show my ballot on a first visit: a session, or picks to see on a ballot.
 $("#open-file-btn").addEventListener("click", () => openFromStart((request) => lookup(request), (text, tone) => {
   setStatus(text, tone);
   focusEntry();

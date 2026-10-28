@@ -1353,10 +1353,7 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
 .share-picks-part { margin: 16px 0 0; }
-.share-file-what { margin: 0; padding: 0; border: 0; min-width: 0; }
-/* "Have a Pallot file? Open it", under Show my ballot on a first visit */
-.open-file { margin: 10px 0 0; font-size: 0.9rem; color: var(--muted); }
-.share-picks-part + .share-picks-part { padding-top: 14px; border-top: 1px solid var(--line); }
+.share-file-what { margin: 0; padding: 0; border: 0; min-width: 0; }.share-picks-part + .share-picks-part { padding-top: 14px; border-top: 1px solid var(--line); }
 .share-picks-part h3 { margin: 0 0 6px; font-size: 1rem; }
 .share-picks-part .fine { margin: 0 0 4px; }
 .share-picks-part > .btn { width: 100%; justify-content: center; min-height: 44px; }

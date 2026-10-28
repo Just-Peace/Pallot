@@ -307,7 +307,7 @@ export function offerHeldPicks() {
   offerSlate(waiting, from, retried, placed);
 }
 
-// "Open it" on the first visit, before any ballot: a session is put back; picks wait for a ballot,
+// "Load a Pallot file" on the first visit, before any ballot: a session is put back; picks wait for a ballot,
 // the one they're for if the voter wants it, else their own once they look it up.
 export async function openFromStart(lookup, ask) {
   let opened;
