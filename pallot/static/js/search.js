@@ -1,4 +1,4 @@
-// The web search behind each candidate's "Search" (or "Ask") and Issues links. The engine is a per-browser
+// The web search behind each candidate's "Search" (or "Ask") and the Issues tab's question. The engine is a per-browser
 // choice on the Settings page; Duck.ai unless changed. An AI assistant gets the same query as a prompt.
 
 import { setUiPref, uiPref } from "./storage.js";
@@ -44,9 +44,4 @@ export function searchWord() {
 export function searchTitle(name) {
   const engine = currentEngine();
   return engine.ai ? `Ask ${engine.label} about ${name}` : `Search ${engine.label} for ${name}`;
-}
-
-export function stanceTitle(name, topic) {
-  const engine = currentEngine();
-  return engine.ai ? `Ask ${engine.label} where ${name} stands on ${topic}` : `Search ${engine.label} for ${name} on ${topic}`;
 }

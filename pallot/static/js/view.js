@@ -50,7 +50,7 @@ export const FOCUSES = {
     hint: "Shows who endorses each candidate, open.", on: ["showEndorsements", "openEndorsements"] },
   polls: { label: "Polls", short: "Polls", hint: "Opens the poll boxes and shows each candidate's share.",
     on: ["showPolls", "openPolls", "pollChips"] },
-  stances: { label: "Where they stand", short: "Stances", hint: "Each candidate's button reads Profile & issues.",
+  stances: { label: "Where they stand", short: "Stances", hint: "Each candidate's button reads Profile & issues and opens at their issues.",
     on: ["stanceLinks"] },
 };
 const FOLLOWS = { openMoney: "openBoxes", openPolls: "openBoxes", openEndorsements: "openBoxes" };

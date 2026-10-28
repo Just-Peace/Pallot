@@ -9,10 +9,10 @@ import { $, closeOnBackdrop, dialogHead, h, slug } from "./dom.js";
 import { ordinal } from "./format.js";
 import { icon } from "./icons.js";
 import { candidatePills } from "./labels.js";
-import { avatar, avoidWords, candidateQuery, choose, searchLink, toggleBan } from "./race-cards.js";
+import { avatar, avoidWords, choose, raceWhere, searchLink, toggleBan } from "./race-cards.js";
 import { searchWord } from "./search.js";
 import { cardPanel, endorsementsPanel, isLikely, moneyPanel, pollsPanel, profilePanel, renderTabs } from "./source-cards.js";
-import { stancesPanel } from "./stances.js";
+import { resetIssues, stancesPanel } from "./stances.js";
 import { onSwipe } from "./swipe.js";
 
 let page = null; // { picks }
@@ -24,6 +24,7 @@ let current = null; // { race, index }: the candidate shown, for a swipe
 export function initDetails(context) {
   page = context;
   closeOnBackdrop(details);
+  details.addEventListener("close", resetIssues);
   details.addEventListener("scroll", syncCompact, { passive: true });
   onSwipe(details, (way) => {
     const { race, index } = current || {};
@@ -100,7 +101,7 @@ export function showDetails(race, index, focus = null, at = "profile") {
   const initial = Math.max(0, tabs.findIndex((tab) => tab.key === at));
   shown = tabs[initial].key;
   const panelFor = (tab) => {
-    if (tab === issues) return stancesPanel(candidate, candidateQuery(race, candidate), !candidate.cards.length);
+    if (tab === issues) return stancesPanel(race, candidate, raceWhere(race), !candidate.cards.length);
     if (tab === profile) return profilePanel(profiled, candidate.name);
     if (tab === endorsements) return endorsementsPanel(grouped);
     if (tab.card.kind === "polls") return pollsPanel(tab.card, candidate.party);
