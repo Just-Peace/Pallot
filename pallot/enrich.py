@@ -20,7 +20,7 @@ from .models import Race, SourceCard
 from .offices import OfficeScope
 from .settings import Sources
 from .sources import (
-    CardSet, SeatInfo, fec, officeholders, polls, sos, tec, trackaipac, voteforpeace, wikidata,
+    CardSet, SeatInfo, congress_gov, fec, officeholders, polls, sos, tec, trackaipac, voteforpeace, wikidata,
 )
 from .sources.endorsement_feeds import EndorsementFeed
 from .sources.sos import Election, Lookups
@@ -35,6 +35,7 @@ UNAVAILABLE = {  # what the voter reads when a source's UpstreamError leaves its
     polls.SOURCE: "FiftyPlusOne isn't answering right now, so polls aren't shown.",
     officeholders.SOURCE: "The lists of seat holders aren't answering right now, so who holds each seat isn't shown.",
     wikidata.SOURCE: "Wikidata isn't answering right now, so its profiles aren't shown.",
+    congress_gov.SOURCE: "The list of members of Congress isn't answering right now, so their bills aren't shown.",
 }
 
 
@@ -85,6 +86,9 @@ JOBS: dict[str, Job] = {  # each source's cards, None when it has nothing to ask
         voteforpeace.cards, svc.voteforpeace, races, ctx.scopes, ctx.county, ctx.city, ctx.state),
     officeholders.SOURCE: lambda svc, races, ctx, _: officeholders.cards(
         svc.officeholders, races, ctx.scopes, ctx.county, ctx.day, ctx.state),
+    # Finds the members by the seat holders' list, so it's off with it.
+    congress_gov.SOURCE: lambda svc, races, ctx, sources: congress_gov.cards(
+        svc.congress_gov, svc.officeholders, races, ctx.day) if sources.enabled(officeholders.SOURCE) else None,
 }
 
 

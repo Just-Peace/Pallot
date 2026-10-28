@@ -259,6 +259,29 @@ def test_only_michigans_statewide_election_days_have_dates():
     assert state_key_dates.computed("TX", D(2026, 11, 3)) is None and state_key_dates.computed(None, D(2026, 11, 3)) is None
 
 
+def test_same_day_registration_states_say_how_to_register_after_the_deadline():
+    same_day = {state for state, guide in state_key_dates.GUIDES.items() if guide.late_registration}
+    assert same_day == {"MI", "CA", "NV", "IA", "WI", "CO", "WY", "IL", "NC", "VA"}
+    late = state_key_dates.GUIDES["MI"].voter_info().late_registration
+    assert late.url == state_key_dates.MICHIGAN.registration_url and "through Election Day" in late.label
+    assert state_key_dates.GUIDES["TX"].voter_info().late_registration is None
+
+
+@pytest.mark.parametrize("state, register, mail, early_start, early_end", [
+    ("FL", D(2026, 10, 5), D(2026, 10, 22), D(2026, 10, 24), D(2026, 10, 31)),
+    ("NC", D(2026, 10, 9), D(2026, 10, 20), D(2026, 10, 15), D(2026, 10, 31)),
+    ("PA", D(2026, 10, 19), D(2026, 10, 27), None, None),
+    ("VA", D(2026, 10, 23), D(2026, 10, 23), D(2026, 9, 18), D(2026, 10, 31)),
+])
+def test_florida_north_carolina_pennsylvania_and_virginia_dates_follow_their_election_law(
+    state, register, mail, early_start, early_end,
+):
+    found = state_key_dates.computed(state, D(2026, 11, 3))
+    assert (found.register_by, found.mail_apply_by, found.early_start, found.early_end) == (
+        register, mail, early_start, early_end)
+    assert (state_key_dates.computed(state, D(2027, 11, 2)) is not None) == (state == "VA")
+
+
 def test_pallot_cache_refreshes_and_rebuilds_key_dates(client, make_app, upstream):
     get_ballot(client)
     assert make_app.cache_command("hard-refresh", "key_dates") == (0, "Key election dates (Texas SOS): Refreshed 1 saved response.")

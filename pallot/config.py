@@ -75,6 +75,8 @@ class Ttls:
     wikidata: int = 7 * DAY  # Wikidata's list of a state's officeholders, and the matched people's profiles
     wikidata_backoff: int = HOUR  # after Wikidata's query service refuses us, stop asking for this long
     wikidata_bundle: int = 14 * DAY  # the list bundled with Pallot (bundles/), refreshed weekly: a week of grace
+    congress_gov: int = DAY  # a member of Congress's bills, asked when a lookup needs them; deleted once expired
+    congress_gov_backoff: int = HOUR  # how long a key Congress.gov rate limits or refuses rests
     state_list: int = DAY  # a state's official list of candidates (states/): withdrawals and replacements come late
     state_list_backoff: int = HOUR  # after a state's election site refuses us, stop asking it for this long
     state_list_bundle: int = 2 * DAY  # each state's list bundled with Pallot (bundles/), refreshed daily: a day of grace

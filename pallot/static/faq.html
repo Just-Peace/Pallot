@@ -41,7 +41,7 @@
             <p>Any address in the 50 states and DC, though how much of the ballot Pallot has depends on the state:</p>
             <ul>
               <li><strong>Texas: the full ballot.</strong> Every federal, state, district, county and precinct race, in ballot order, from the Texas Secretary of State (Texas SOS), with your precincts, the key dates and a map of your districts. Its list of elections comes from Texas SOS too: Pallot shows the next one unless you choose another.</li>
-              <li><strong>Alaska, Arizona, California, Colorado, Florida, Georgia, Illinois, Iowa, Michigan, Nevada, New Jersey, New York, North Carolina, Pennsylvania, Virginia, Wisconsin and Wyoming: the state's official list.</strong> The races on the candidate list the state's election office publishes for the November general election: Congress, statewide offices, the Legislature and the courts the list places, and in Georgia, Nevada, North Carolina and Wisconsin county and city races too. New Jersey's and Virginia's lists have only Congress. All of them but Florida, North Carolina, Pennsylvania and Virginia also have their key dates.</li>
+              <li><strong>Alaska, Arizona, California, Colorado, Florida, Georgia, Illinois, Iowa, Michigan, Nevada, New Jersey, New York, North Carolina, Pennsylvania, Virginia, Wisconsin and Wyoming: the state's official list.</strong> The races on the candidate list the state's election office publishes for the November general election: Congress, statewide offices, the Legislature and the courts the list places, and in Georgia, Nevada, North Carolina and Wisconsin county and city races too. New Jersey's and Virginia's lists have only Congress. All of them also have their key dates.</li>
               <li><strong>Ohio: its statewide races.</strong> Governor, the other statewide offices, the Supreme Court and the U.S. Senate, from the Secretary of State's sample ballot, your U.S. House race from the FEC (Unverified, as in the states below), and the key dates. Your county board of elections' sample ballot has the rest.</li>
               <li><strong>Every other state, and DC: Congress only.</strong> Your U.S. Senate race, when your state has one this year, and your U.S. House race, for the November general election. The candidates aren't confirmed: see <a href="#unverified">why a candidate is marked Unverified</a>.</li>
             </ul>
@@ -53,7 +53,7 @@
         <details class="faq" id="unverified">
           <summary>Why is a candidate marked "Unverified"?</summary>
           <div class="faq-body">
-            <p>In a state where Pallot has only the races for Congress, its candidates are the people who filed with the FEC (Federal Election Commission) to run for your seat this cycle and raised $5,000 or more, the FEC's own line for being a candidate. They're listed by how much they raised.</p>
+            <p>In a state where Pallot has only the races for Congress, its candidates are the people who filed with the FEC (Federal Election Commission) to run for your seat this cycle and raised $5,000 or more, the FEC's own line for being a candidate, along with the seat's holder if they filed, whatever they raised. They're listed by how much they raised.</p>
             <p>The FEC doesn't say who made the November ballot: that's up to each state. So someone who lost their primary or dropped out may still be listed, and a candidate who raised less, often from a small party, may be missing. Pallot can't confirm them, so each is marked Unverified. Your state's official candidate list, or your sample ballot, says who's really on it.</p>
           </div>
         </details>
@@ -100,11 +100,19 @@
           </div>
         </details>
 
-        <details class="faq">
+        <details class="faq" id="official">
           <summary>Is this my official ballot?</summary>
           <div class="faq-body">
             <p>No. Pallot is an unofficial helper (see <a href="about.html#isnt">what it isn't</a>), and it can be wrong or miss something, for example when a source hasn't caught up with a late change, or when Pallot matches the wrong record. Check the official sample ballot from your county or state elections office before you vote.</p>
             <p>Pallot is provided as is, without warranty of any kind. Its makers and contributors aren't liable for any decision made with it, or for anything a source got wrong.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="wrong-candidate">
+          <summary>What if Pallot shows a wrong candidate on my ballot?</summary>
+          <div class="faq-body">
+            <p>Please tell us. Pallot can make mistakes: a source can be late or wrong, or Pallot can match the wrong record. Open an issue in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a> saying which state and race it's in, which candidate is wrong, and what your official sample ballot shows instead. You don't need to give your address. We fix mistakes quickly.</p>
+            <p>Until then, go by your official sample ballot (see <a href="#official">Is this my official ballot?</a>).</p>
           </div>
         </details>
 
@@ -166,15 +174,15 @@
         <details class="faq" id="view-modes">
           <summary>Focus and views: what do they change?</summary>
           <div class="faq-body">
-            <p>Both are under <strong>View</strong> at the top of the ballot (in More, on a phone) and under Ballot view in <a href="settings.html#view-title">Settings</a>. While your first ballot is being found, Pallot asks once what matters to you; after that, change it under View. View also links to Settings and has a button for the appearance, which steps System, Light and Dark.</p>
+            <p>Both are under <strong>View</strong> at the top of the ballot (in More, on a phone) and under Ballot view in <a href="settings.html#view-title">Settings</a>. Each time you look up an address, Pallot asks what matters to you, with your last answers already chosen; Skip shows your ballot as it is. With Where they stand chosen, Next asks which issues matter most to you. Between lookups, change them under View, and the issues in Settings. View also links to Settings and has a button for the appearance, which steps System, Light and Dark.</p>
             <p><strong>Focus</strong> is what matters to you. Choose any number; each one only adds to the view you chose, never hides anything, and together they open everything each one does:</p>
             <ul>
-              <li><strong>Funding</strong>: the money boxes and each candidate's Funding line open, the Funding line comes first, and Compare funding sits in each race's heading.</li>
+              <li><strong>Funding</strong>: the money boxes and each candidate's Funding line open, and the Funding line comes first.</li>
               <li><strong>Endorsements</strong>: every candidate's Endorsements line shows, open. To see who the endorsers you trust endorse in every race, use <a href="#endorsements">Help me pick</a>.</li>
               <li><strong>Polls</strong>: the poll boxes open, each polled candidate shows their share ("47% in polls"), and the sections with polls get a small bar mark.</li>
-              <li><strong>Where they stand</strong>: the candidate's button reads "Profile &amp; issues".</li>
+              <li><strong>Where they stand</strong>: the candidate's button reads "Profile &amp; issues" and opens their Issues tab, and each race with more than one candidate gets Compare issues in its heading, to ask an AI assistant about them all at once.</li>
             </ul>
-            <p>Whatever you choose, a candidate's Profile button opens their Profile tab; a Funding chip opens their money tab.</p>
+            <p>Otherwise a candidate's Profile button opens their Profile tab; a Funding chip opens their money tab.</p>
             <p>With no focus chosen, the ballot is just the view below. A focus turns its switches on, but none is locked: turning one of them off in Settings (the Funding switch, with the Funding focus) drops that focus. Your focus is kept in this browser, never sent anywhere, and an open ballot in another tab follows it at once.</p>
             <p>The <strong>views</strong>, Minimal | Simple | Detailed under "How much detail", are how much of your ballot shows at first; a focus adds to the one you chose. Point at one (or move to it with a screen reader) for a word on what it shows. Nothing is left out of any: anything folded opens with a click.</p>
             <ul>
@@ -198,7 +206,7 @@
         <details class="faq" id="district-map">
           <summary>What does the map of my districts show?</summary>
           <div class="faq-body">
-            <p>Outside Texas, the map is a street map centered on a pin at your address, without district outlines; turn "Street map" off in <a href="settings.html">Settings</a> and there's no map. In Texas, the map under "Your districts" is a street map with the outline of your U.S. House, State Senate, State House and State Board of Education districts and of your election precinct, and a pin at your address, which the map opens centered on, close enough to see your precinct's streets. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own color and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
+            <p>The map under "Your districts" is a street map with the outline of each district Pallot shows you, your U.S. House district and, where Pallot shows them, your State Senate and State House districts (in Texas, your State Board of Education district and your election precinct too), and a pin at your address, which the map opens centered on, close enough to see your precinct's streets. Pick a district in the row of buttons above the map, or its line on the map, to highlight it and zoom to it; pick it again, or the pin button on the map, to come back to your address. Each district has its own color and its own kind of line: solid, dashed, dotted, or dashes and dots.</p>
             <p>Drag the map to move it, and zoom with + and −, or with the scroll wheel once you've clicked the map, so scrolling the page never zooms it by accident. On a phone, use two fingers to move or zoom it; one finger scrolls the page.</p>
             <p>The U.S. House and legislative outlines come from the US Census's TIGERweb, the same maps the Census uses to find your districts. The State Board of Education outline comes from the Texas Legislative Council's map, which Pallot already keeps. Your election precinct's outline comes from the Council's precinct map, also already kept. The outlines are simplified to about 160 feet, your precinct's to about 16, so if you live near a boundary, go by the numbers, which come from the full maps.</p>
             <p>The street map comes from OpenStreetMap. Neither it nor TIGERweb is sent your address; <a href="privacy.html#lookups">Privacy</a> says what each is sent. Turn "Street map" off in <a href="settings.html">Settings</a> to see the outlines alone, or "District map" off to leave out the Census's outlines.</p>
@@ -283,7 +291,7 @@
         <details class="faq">
           <summary>Where does the information about candidates come from?</summary>
           <div class="faq-body">
-            <p>From the Texas Secretary of State's candidate filings, <a href="#wikidata">Wikidata</a>, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS and Wikidata share the Profile tab, where Details opens, and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. In Details, ‹ and › step through the race's other candidates; on a phone they're in the bar at the bottom, beside Pick, and a swipe left or right does the same. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Google AI Mode unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
+            <p>From the Texas Secretary of State's candidate filings, <a href="#wikidata">Wikidata</a>, TrackAIPAC, Vote for Peace, organizations' <a href="#endorsements">endorsement lists</a>, and the campaign finance reports candidates file with the FEC or the Texas Ethics Commission (<a href="#money">Campaign money</a> below explains those). A candidate's badges and Details show what each source says, each source in a tab or a section of its own (Texas SOS, Wikidata and, for a member of Congress, <a href="#seat-holders">their pages elsewhere</a> share the Profile tab, where Details opens; a member of Congress running again has an <a href="#in-congress">In Congress</a> tab; and TrackAIPAC, Vote for Peace and the endorsement lists share the Endorsements tab), so you can see which source said what. In Details, ‹ and › step through the race's other candidates; on a phone they're in the bar at the bottom, beside Pick, and a swipe left or right does the same. The "Search" link ("Ask" for an AI assistant) searches for the candidate's name, office and place, with Duck.ai, DuckDuckGo's AI chat, unless you pick another AI assistant or a search engine in <a href="settings.html">Settings</a>.</p>
             <p>Sources write names differently, so Pallot matches them, and a <strong>?</strong> marks a match to check (see <a href="#matches">"Exact match" and "Likely match"</a>). "Incumbent" comes from the state's filing, or from the list of who holds the seat now when the holder is on the ballot by name.</p>
           </div>
         </details>
@@ -297,9 +305,12 @@
         </details>
 
         <details class="faq" id="stances">
-          <summary>Where do the Issues links come from?</summary>
+          <summary>Where does the Issues tab's question come from?</summary>
           <div class="faq-body">
-            <p>The Issues tab in Details lists 30 issues, from abortion to infrastructure. Each one is a link to a web search for the candidate's name, office, place and year, plus neutral words for the issue: where an issue has two sides, the search names both, such as "gun rights gun control". It uses Google AI Mode, or the search engine or AI assistant you pick in <a href="settings.html">Settings</a>; an AI assistant is asked to cite its sources and give more than one view.</p>
+            <p>The Issues tab in Details lists 30 issues, from energy to women's rights, in five groups, each in A to Z order. Choose any number, and the question under them lists them, numbered, with the candidate's name, office, place and year. You can edit it before you send it, or copy it. It goes to Duck.ai, or the search engine or AI assistant you pick in <a href="settings.html">Settings</a>.</p>
+            <p>The issues that matter most to you start chosen there and in Compare issues. Choose them under Ballot view in <a href="settings.html#view-title">Settings</a>, or when you look up an address with Where they stand chosen; three to five make for a clear answer. Choosing others in the Issues tab changes only that question. Your issues are kept in this browser and go out only in a question you send.</p>
+            <p>An AI assistant is told each candidate's party and whether they hold the seat, and is asked to cite its sources, say when a position is unclear, show more than one view and keep it neutral. Where a candidate has no stance of their own on an issue, it's asked for their party's, marked as the party's. For each issue it's also asked to name well-known groups on either side that have endorsed or rated the candidate, each with a source, and to leave them out rather than guess. These come from the AI assistant, not from Pallot's own endorsement lists. It can compare the race's other candidates too: they're all checked at first, and with two or more it's asked for a table, a row per issue and a column per candidate. With no issue chosen, it's asked about the main issues in the race.</p>
+            <p>A search engine gets keywords instead, for the one candidate. Where an issue has two sides, they name both, such as "gun rights gun control".</p>
             <p>Pallot doesn't rate, summarize or check what the search finds, and the results depend on the engine. A candidate's own website, debates and voting record are the best places to confirm a stance.</p>
           </div>
         </details>
@@ -317,6 +328,15 @@
             <p>"Open seat", next to a race's name, means whoever holds the seat now isn't running for it, or the seat is empty. "Party holds seat", next to a candidate's party, means their party holds the seat now, though they aren't the one holding it; click or tap it to see who does. It's the party of whoever holds the seat today, not of the last election's winner, so a seat that changed hands since still counts.</p>
             <p>They cover the U.S. Senate, the U.S. House, the State Senate and the State House, from two public lists: the congress-legislators project's list of the members of Congress, and Open States' list of Texas legislators. Statewide offices, the State Board of Education, courts and local races show neither. Texas has two U.S. Senators: the seat up is the one whose term ends after this election. Texas redrew its U.S. House map in 2025, so each U.S. House member was elected under the district's old lines, and the pill's note says so.</p>
             <p>When the seat's holder is on the ballot by name, they're marked "Incumbent" too, even where the state's filing doesn't say. A first initial alone isn't enough (Troy and Trever Nehls), so then neither label shows. Turn Seat holders off in <a href="settings.html">Settings</a> to hide them.</p>
+            <p>An incumbent member of Congress also gets a "Member of Congress" section in their Profile tab, linking to their pages on Congress.gov, GovTrack, OpenSecrets and Vote Smart. The congress-legislators list names each member's page on those sites, so the links aren't guessed from a name, and Pallot asks those sites nothing until you open one.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="in-congress">
+          <summary>What's in the In Congress tab?</summary>
+          <div class="faq-body">
+            <p>A member of Congress running for the seat they hold has an In Congress tab in Details, with the newest bills and resolutions they sponsored and cosponsored, how many in all, when each was introduced, and where it stands now. It comes from <a href="https://www.congress.gov/" target="_blank" rel="noopener noreferrer">Congress.gov</a>, the Library of Congress's site. The totals cover their whole time in Congress and count amendments too, which aren't listed.</p>
+            <p>Pallot asks Congress.gov when your ballot needs it and keeps the answer for a day. It shows bills, not votes: Congress.gov lists House votes one roll call at a time and has no Senate votes. Only the seat's holder gets the tab, found by the <a href="#seat-holders">seat holders</a> list, so it's off while Seat holders is off. Turn Bills in Congress off in <a href="settings.html">Settings</a> to hide it.</p>
           </div>
         </details>
 
@@ -355,10 +375,17 @@
           </div>
         </details>
 
+        <details class="faq" id="add-endorsements">
+          <summary>Can you add an organization's endorsements?</summary>
+          <div class="faq-body">
+            <p>Suggest it in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>: name the organization and link to where it publishes its endorsements. We'll review it, and add the list if its endorsements line up with Pallot's core values, justice and peace. An added list gets its own switch in Settings, like the others.</p>
+          </div>
+        </details>
+
         <details class="faq" id="fresh">
           <summary>How up to date is the information?</summary>
           <div class="faq-body">
-            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates and polls, after 7 days for the FEC and Wikidata, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
+            <p>Pallot keeps a copy of what each source sends back and asks again once it's old: after 24 hours for elections, key dates, candidates, polls and a member of Congress's bills, after 7 days for the FEC and Wikidata, and after 30 days for address lookups and address suggestions. If a source doesn't answer, or answers with an error, you'll see its last copy with a "data as of" note. <a href="privacy.html#server">Privacy</a> says how long each copy is kept.</p>
             <p>TrackAIPAC's, Vote for Peace's and the Texas Ethics Commission's data come with Pallot and are only fetched again when we refresh them; Settings shows how old each one is. The endorsement lists that come with Pallot are never fetched again; the ones fetched from an organization's website are at most a week old. Campaigns file on a schedule, so the money figures move in steps: quarterly and just before the election for Congress, every six months and 30 and 8 days before an election for state offices.</p>
             <p>Settings shows how old each source's copy is. Only we can fetch a copy again early, on the server.</p>
           </div>
@@ -561,7 +588,7 @@
         <details class="faq" id="tracking">
           <summary>Do you track me or keep my picks?</summary>
           <div class="faq-body">
-            <p>No. There are no accounts, cookies, ads or analytics, and we don't sell anything. Your picks and notes stay in this browser and never reach our server, so we never see how you plan to vote. They don't follow you to another browser or device. <a href="privacy.html">Privacy</a> lists exactly what Pallot sends and keeps.</p>
+            <p>No. There are no accounts, cookies, ads or analytics, and we don't sell anything. Your picks and notes stay in this browser and never reach our server, so we never see how you plan to vote. They don't follow you to another browser or device unless you <a href="#share-picks">share them</a>. <a href="privacy.html">Privacy</a> lists exactly what Pallot sends and keeps.</p>
           </div>
         </details>
 
@@ -602,11 +629,21 @@
           </div>
         </details>
 
+        <details class="faq" id="share-picks">
+          <summary>How do I move my picks to another device, or share them?</summary>
+          <div class="faq-body">
+            <p>Use "Share picks" at the top of your ballot (in More, on a phone). "Copy link" (or "Share link" on a phone) makes a link that carries your picks and write-ins, and your notes only if you tick them in. With "Include my address", the link opens the same ballot; otherwise it opens on the ballot of whoever opens it. "Save file" saves a picks file, with your notes unless you tick them out, to keep a copy or open on another device.</p>
+            <p>Open the link, or a picks file with "Open a picks file" in Share picks, and Pallot shows what they hold and which races aren't on your ballot before anything changes. "Use these picks" puts them in, replacing your picks only in the races they have, and adds their notes under yours; Undo takes them back for a few seconds. Picks for another election offer that election's ballot first. A friend's picks fit wherever you share races with them, such as statewide races.</p>
+            <p>"Lock with a phrase" locks the link and the file, so only someone with the phrase can open them: Pallot asks for it first. The phrase needs at least 10 characters, with a capital letter, a small letter and a number; a special character, such as ! or #, makes it stronger. Give the phrase another way than the link, such as in person. It stays on your device: Pallot never keeps it or sends it to our server, so a forgotten phrase can't be recovered.</p>
+            <p>The picks travel in the link itself, after its "#", which browsers never send to a server, so our server never sees them. But a link shows how you plan to vote to anyone who has it, and to anyone they pass it on to, with your notes and address if you included them, so send it only to people you trust. A picks file can be read by anyone who gets a copy.</p>
+          </div>
+        </details>
+
         <details class="faq">
           <summary>Where did my picks go?</summary>
           <div class="faq-body">
             <p>Picks are kept for each election separately, so choosing another election shows that election's picks. Pallot forgets an election's picks, notes, write-ins and folded races 90 days after Election Day, the next time you open a ballot; picks for a ballot without a date go 90 days after you last changed them. Looking up a different address starts a new ballot: Pallot asks first, then clears that election's picks, notes and write-ins, and offers Undo for a few seconds. They're also gone if your browser's data for this site was cleared: private windows forget everything when they close, and some browsers delete a site's data after a while without a visit.</p>
-            <p>Print or save a PDF of your picks if you want a copy that lasts.</p>
+            <p>Print or save a PDF of your picks, or <a href="#share-picks">save them as a picks file</a>, if you want a copy that lasts.</p>
           </div>
         </details>
 
@@ -622,6 +659,28 @@
       <section class="faq-group" aria-labelledby="running">
         <h2 class="group-title" id="running">About Pallot</h2>
 
+        <details class="faq" id="why-pallot">
+          <summary>Why does Pallot exist?</summary>
+          <div class="faq-body">
+            <p>To help people find their way through voting: to see the races on their ballot, learn about each candidate, and find the candidates who stand for justice and peace. The choice is always yours (see <a href="#neutral">Does Pallot endorse anyone?</a>).</p>
+          </div>
+        </details>
+
+        <details class="faq" id="supporters">
+          <summary>Who pays for Pallot, and do you take donations?</summary>
+          <div class="faq-body">
+            <p>Pallot is self-supported: we build and run it ourselves. We don't take donations. If you'd like to give, please donate to a charity of your choice instead.</p>
+          </div>
+        </details>
+
+        <details class="faq" id="helping">
+          <summary>How can I help?</summary>
+          <div class="faq-body">
+            <p>Spread the word: send Pallot to your friends and family, and encourage people to vote for the change they'd like to see.</p>
+            <p>Pallot is open source, so you can also make it your own: run your own copy, change it, or help build it (see <a href="#sharing">Can I run my own Pallot?</a>). Problems and ideas go in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>.</p>
+          </div>
+        </details>
+
         <details class="faq" id="sharing">
           <summary>Can I run my own Pallot?</summary>
           <div class="faq-body">
@@ -629,10 +688,11 @@
           </div>
         </details>
 
-        <details class="faq">
-          <summary>Will it cover more of my state?</summary>
+        <details class="faq" id="more-coverage">
+          <summary>Can you add more of my state, or its local elections?</summary>
           <div class="faq-body">
-            <p>It already covers every state, with as much as Pallot has a source for (see <a href="#coverage">which addresses Pallot covers</a>). Each state that gets more needs its election office's own list of candidates, read its own way, so states are added one at a time. Tell us which you'd like next in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>.</p>
+            <p>Yes, and we'd like to. Pallot already covers every state, with as much as it has a source for (see <a href="#coverage">which addresses Pallot covers</a>, and <a href="#local-races">why you don't see local races</a>). Each state that gets more needs its election office's own list of candidates, read its own way, so states and their local elections are added one at a time.</p>
+            <p>Ask for yours in the <a href="https://github.com/Just-Peace/Pallot/issues" target="_blank" rel="noopener noreferrer">GitHub issues</a>, naming your state and the races you're missing. We try to get to every request.</p>
           </div>
         </details>
       </section>

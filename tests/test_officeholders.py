@@ -46,6 +46,25 @@ def test_a_holder_on_the_ballot_is_the_incumbent(client, upstream):
     paxton = people(senate)["Ken Paxton"]
     assert paxton["incumbent"] and not paxton["party_holds_seat"]  # by his nickname and last name
     assert not senate["open_seat"]
+    [member] = [c for c in paxton["cards"] if c["source"] == "officeholders"]
+    assert (member["kind"], member["label"], member["match"]["method"]) == ("profile", "Member of Congress", "name")
+    assert [(link["label"], link["url"]) for link in member["links"]] == [
+        ("Congress.gov", "https://www.congress.gov/member/warren-kenneth-paxton/C001056"),
+        ("GovTrack", "https://www.govtrack.us/congress/members/300027"),
+        ("OpenSecrets", "https://www.opensecrets.org/members-of-congress/summary?cid=N00024852"),
+        ("Vote Smart", "https://justfacts.votesmart.org/candidate/15375"),
+    ]
+    others = [c for r in get_ballot(client)["races"] for c in r["candidates"] if c["name"] != "Ken Paxton"]
+    assert not [card for c in others for card in c["cards"] if card["source"] == "officeholders"]
+
+
+def test_a_member_page_needs_their_id_on_that_site():
+    member = Holder(seat="TX-07", name="Jane Q. Public", names=["Jane Q. Public"], party="D", party_name="Democrat",
+                    fec_ids=("H0TX07000",), ids={"votesmart": "1"})
+    card = officeholders.member_card(member, "fec:H0TX07000")
+    assert [link.label for link in card.links] == ["Vote Smart"] and card.match.method == "FEC candidate ID"
+    legislator = Holder(seat="STATEREP:49", name="Gina Hinojosa", names=["Gina Hinojosa"], party="D", party_name="Democrat")
+    assert officeholders.member_card(legislator, "sos:1") is None
 
 
 def test_a_source_kept_off_shows_nothing(client, upstream):

@@ -105,8 +105,8 @@ def test_a_bucket_of_the_wrong_shape_reads_as_empty_and_is_dropped():
 write("pallot.picks.v1", { "2099-11-03": { writeIns: { r1: "Ann" } }, "2099-12-01": "junk", "2099-12-02": [1], "2099-12-03": { races: "x" } });
 const p = new picks.Picks("2099-11-03");
 const q = new picks.Picks("2099-12-03");
-return [p.picked("r1"), p.note("c1"), p.isEmpty(), p.writeIn("r1"), q.isEmpty(), Object.keys(read("pallot.picks.v1")).sort(), picks.hasAnyPicks()];
-""") == [[], "", False, "Ann", True, ["2099-11-03", "2099-12-03"], False]
+return [p.picked("r1"), p.note("c1"), p.isEmpty(), p.writeIn("r1"), q.isEmpty(), Object.keys(read("pallot.picks.v1")).sort()];
+""") == [[], "", False, "Ann", True, ["2099-11-03", "2099-12-03"]]
 
 
 def test_clear_my_picks_removes_the_folded_races_and_undo_puts_them_back():

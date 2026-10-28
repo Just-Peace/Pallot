@@ -73,6 +73,7 @@ export function stateInfo(ballot) {
     mailEligibility: info.mail_eligibility,
     mailDeadline: info.mail_deadline,
     pollHours: info.poll_hours,
+    lateRegistration: info.late_registration,
   };
 }
 
@@ -90,9 +91,9 @@ export const DISTRICTS = {
 export const PRECINCT_KINDS = Object.keys(DISTRICTS).filter((kind) => DISTRICTS[kind].unit === "precinct");
 
 // How much of the voter's state's ballot Pallot has, as the server says (coverage.py): which
-// districts it shows, whether there are precincts and a map, and whether the races come from the
+// districts it shows, whether there are precincts, and whether the races come from the
 // state's own list ("state") or the FEC's filers ("fec"). A ballot from before it said is Texas's.
-const FULL_COVERAGE = { ballot: "state", districts: ["cd", "sd", "hd", "sboe"], precincts: true, outlines: true };
+const FULL_COVERAGE = { ballot: "state", districts: ["cd", "sd", "hd", "sboe"], precincts: true };
 export function coverageOf(ballot) {
   return ballot?.coverage || FULL_COVERAGE;
 }

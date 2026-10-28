@@ -46,6 +46,14 @@ def test_seats_in_text():
     assert seats_in("TX-35 (TX-37 2026)") == {"TX-35", "TX-37"}
     assert seats_in("TX-5 [R]") == {"TX-05"}
     assert seats_in("Texas [R]") == set()
+    assert seats_in("VT-AL") == {"VT-00"}
+
+
+def test_at_large_seat_matches_exactly():
+    idx = NameIndex()
+    idx.add("Becca Balint", person("Becca Balint", "VT-AL", "D", listing("VT-AL", "VT-AL [D]")))
+    _, match = match_trackaipac(idx, "BECCA BALINT", "D", "VT-00")
+    assert (match.confidence, match.method) == ("exact", "full name, in the same seat")
 
 
 def test_exact_match_on_name_and_seat(index):

@@ -11,7 +11,8 @@ import { icon } from "./icons.js";
 import { STATES, candidatePills } from "./labels.js";
 import { ANSWERS, WRITE_IN } from "./picks.js";
 import { searchHref, searchTitle, searchWord } from "./search.js";
-import { comparable, fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
+import { fundingLine, pollPill, quietWriteIn, raceMoney, sourceLines } from "./source-cards.js";
+import { openIssueCompare } from "./stances.js";
 import { hideToast, showToast } from "./toast.js";
 import { viewPref } from "./view.js";
 
@@ -63,7 +64,7 @@ export function refillCards() {
 }
 
 // One part of every race head and candidate row, after the focus switch it follows changes:
-// lines (fundingFirst), profile (stanceLinks), headCompare (compareInHead), pills (pollChips).
+// lines (fundingFirst), profile (stanceLinks), headCompare (compareIssues), pills (pollChips).
 export function refillPart(name) {
   for (const named of parts) named[name]?.refill();
 }
@@ -164,10 +165,12 @@ function raceCard(race) {
     h("ul", { class: "cands" }, candRows.map((r) => r.row), quiet.line, rows.at(-1).row));
   const compare = () => openCompare($("#compare"), race);
   const money = part(() => raceMoney(race, compare));
-  // With the compareInHead switch, Compare funding in the race's head too.
-  const headCompare = part(() => viewPref("compareInHead") && comparable(race).length
-    ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare funding",
-      "aria-label": `Compare funding in ${race.name}`, on: { click: compare } }, icon("bars"), h("span", { class: "btn-word" }, "Compare"))
+  // With the compareIssues switch (Where they stand), Compare issues in the race's head.
+  const headCompare = part(() => viewPref("compareIssues") && race.candidates.length > 1
+    ? h("button", { type: "button", class: "icon-btn compare-btn head-compare with-icon", title: "Compare the candidates on the issues",
+      "aria-label": `Compare the candidates in ${race.name} on the issues`,
+      on: { click: () => openIssueCompare($("#issues-compare"), race, raceWhere(race)) } },
+    icon("list"), h("span", { class: "btn-word" }, "Compare issues"))
     : null);
   const notes = (race.notes || []).map((note) => h("p", { class: "fine race-note" },
     `${note.source}: ${note.text}`, note.url ? [" ", extLink(note.url, `More on ${note.source}`)] : null));
@@ -257,17 +260,22 @@ export function avatar(candidate, extraClass = null) {
     : h("span", { class: ["avatar", extraClass], "aria-hidden": "true" }, initials(candidate.name));
 }
 
-// What to search the web for: the candidate plus the office and place, so common names find the right person.
-export function candidateQuery(race, candidate) {
+// The race's office, place and year, so common names find the right person: { office, place, year }.
+export function raceWhere(race) {
   const { ballot } = page;
   const { county, state_name: stateName } = ballot.location;
-  const terms = [candidate.name, race.name];
+  const place = [];
   if ((race.group === "county" || race.group === "precinct") && county && !race.name.includes(county)) {
-    terms.push(`${county} County`);
+    place.push(`${county} County`);
   }
-  if (stateName && !race.name.includes(stateName)) terms.push(stateName);
-  if (ballot.election_date) terms.push(ballot.election_date.slice(0, 4));
-  return terms.join(" ");
+  if (stateName && !race.name.includes(stateName)) place.push(stateName);
+  return { office: race.name, place, year: ballot.election_date?.slice(0, 4) || null };
+}
+
+// What to search the web for: the candidate plus the office and place.
+function candidateQuery(race, candidate) {
+  const { office, place, year } = raceWhere(race);
+  return [candidate.name, office, ...place, year].filter(Boolean).join(" ");
 }
 
 export function searchLink(race, candidate, className, label) {
@@ -369,7 +377,7 @@ function candidateRow(race, candidate) {
     const waiting = page.loadingCards;
     return h("button", { type: "button", class: "icon-btn profile-btn", disabled: waiting,
       title: waiting ? STILL_LOADING : `${candidate.name}'s profile: ${sources ? `${plural(sources, "source")} and issues` : "issues"}`,
-      on: { click: () => page.showDetails(race, index()) } },
+      on: { click: () => page.showDetails(race, index(), null, viewPref("stanceLinks") ? "issues" : "profile") } },
       viewPref("stanceLinks") ? "Profile & issues" : "Profile");
   };
   // What the cards make, in the order fill() builds it again. The Endorsements line comes before

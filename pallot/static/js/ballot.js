@@ -32,6 +32,7 @@ import { hideBanner, initRules, openRules, syncRuleBanner } from "./pick-rule-di
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
 import { initRaceCards, redrawCards, refillBans, refillCards, renderCards } from "./race-cards.js";
+import { initShare, offerHeldPicks, takeLinkedPicks } from "./share-dialog.js";
 import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
@@ -183,9 +184,11 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // keepForm: leave the entry card open, meanwhile and afterwards ("Change" on another page opened it).
 // keepBallot: leave the ballot showing meanwhile (new precincts), rather than "Finding your ballot".
 // clearPicks: the old address's Picks, cleared once the new ballot arrives, with Undo.
+// ask: an address the voter entered, so "What matters to you?" is asked meanwhile, and the ballot
+// waits for the answer.
 // A new lookup cancels one still running, its cards included, so an older answer can't replace a
 // newer ballot. Resolves once the ballot is drawn; its cards may still be coming.
-async function lookup(request, { keepForm = false, keepBallot = false, clearPicks = null } = {}) {
+async function lookup(request, { keepForm = false, keepBallot = false, clearPicks = null, ask = false } = {}) {
   pendingLookup?.abort();
   const controller = new AbortController();
   pendingLookup = controller;
@@ -193,7 +196,7 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
   if (keepBallot) showToast("Updating your ballot…");
   submitButton.disabled = true;
   // Only a lookup that isn't cached takes long enough to see this, unless it asks what matters.
-  const asked = askFocus(controller.signal, !keepBallot && !keepForm);
+  const asked = askFocus(controller.signal, ask);
   if (asked) showLoading(true);
   const loadingShown = keepBallot || asked ? null : setTimeout(() => showLoading(true, { keepEntry: keepForm }), 300);
   try {
@@ -239,6 +242,7 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     else if (keepBallot) hideToast();
     showEntry(keepForm, { focus: false });
     if (rest) addCards(rest, controller);
+    offerHeldPicks();
   } catch (error) {
     if (controller.signal.aborted) return;
     showLoading(false);
@@ -496,6 +500,7 @@ initRules(page);
 initDistrictsCard(page);
 initBallotTop();
 initNav(page);
+initShare(page);
 
 // A new address or precinct starts a new ballot, and so does switching between the address and the
 // voter card: when this election has picks, notes or write-ins, the voter is asked first, and
@@ -506,12 +511,12 @@ form.addEventListener("submit", async (event) => {
   const request = readForm();
   const old = page.ballot && page.picks;
   if (!old || ballotOf(request) === ballotOf(page.request)) {
-    lookup(request);
+    lookup(request, { ask: true });
     return;
   }
   old.reload();
   if (old.isEmpty()) {
-    lookup(request);
+    lookup(request, { ask: true });
     return;
   }
   const card = !request.address;
@@ -522,7 +527,7 @@ form.addEventListener("submit", async (event) => {
     body: `A new ${card ? "precinct" : "address"} starts a new ballot. Your picks, notes and write-ins for this election will be cleared. Your settings stay.`,
     confirm: "Continue",
   });
-  if (sure) lookup(request, { clearPicks: old });
+  if (sure) lookup(request, { clearPicks: old, ask: true });
 });
 
 function offerUndoClear(picks, cleared) {
@@ -562,13 +567,26 @@ onPicksChanged(() => {
   renderRaces();
 });
 
-function start() {
+// The ballot a link's picks open on: the voter's own, else the one the picks name, for the
+// election and party they're for.
+function linkedRequest(linked, own) {
+  const base = own || linked.ballot;
+  if (!base) return null;
+  const request = { ...base };
+  if (linked.election.date) request.election_date = linked.election.date;
+  if (linked.election.party) request.party = linked.election.party;
+  return request;
+}
+
+async function start() {
   const fromHash = new URLSearchParams(location.hash.slice(1));
   const changing = fromHash.has("change"); // "Change" on another page's address card
   if (changing) history.replaceState(null, "", location.pathname + location.search);
-  const initial = fromHash.get("address")
+  const linked = await takeLinkedPicks();
+  let initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
     : readJson(LAST_LOOKUP, null);
+  if (linked) initial = linkedRequest(linked, initial);
   const label = lookupLabel(initial);
   if (label) {
     // Show the remembered address or voter card right away; the lookup fills in the rest.
@@ -579,6 +597,7 @@ function start() {
   // A first visit starts with the cursor in the address box, except on a touch screen, where the
   // keyboard would cover the card.
   if (changing || !label) showEntry(true, { focus: changing || typingDevice.matches });
+  if (linked && !label) setStatus("Look up your address to see the picks you were sent on your ballot.");
   loadElections(initial?.election_date);
   loadEntryConfig({
     startOn: () => (label ? (initial.address ? "address" : "voter_card") : null),

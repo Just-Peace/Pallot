@@ -26,10 +26,14 @@
 
       <section class="panel" aria-labelledby="view-title">
         <h2 id="view-title">Ballot view</h2>
-        <p class="panel-intro">What matters to you, and how much of the ballot shows at first. The ballot's View menu has the same choices.</p>
+        <p class="panel-intro">What matters to you, the issues you care about most, and how much of the ballot shows at first. The ballot's View menu has the same view choices.</p>
         <div class="setting-row" id="focus-setting">
           <h3 class="setting-label">What matters to you</h3>
           <p class="fine">Each one turns on its switches below; turning one off drops it. <a href="faq.html#view-modes">More on focus</a></p>
+        </div>
+        <div class="setting-row" id="issues-setting">
+          <h3 class="setting-label" id="issues-setting-title">Issues that matter to you</h3>
+          <p class="fine">They start chosen when you compare the candidates on the issues, in Compare issues and each candidate's Issues tab. <a href="faq.html#stances">More on issues</a></p>
         </div>
         <div class="setting-row" id="ballot-view">
           <fieldset class="seg">
@@ -43,7 +47,7 @@
         <div class="source-list view-switches" id="view-switches">
           <div class="source-row">
             <label class="switch" for="view-show-map"><input type="checkbox" role="switch" id="view-show-map" data-view="showMap"><span class="source-name">Map of your districts</span></label>
-            <p class="source-desc">A street map of your address, with your districts' outlines where Pallot has them (in Texas).</p>
+            <p class="source-desc">A street map of your address, with your districts' outlines.</p>
           </div>
           <div class="source-row">
             <label class="switch" for="view-show-funding"><input type="checkbox" role="switch" id="view-show-funding" data-view="showFunding"><span class="source-name">Funding</span></label>
@@ -84,7 +88,7 @@
 
       <section class="panel" aria-labelledby="search-title">
         <h2 id="search-title">Web search</h2>
-        <p class="panel-intro">Where each candidate's "Search" (or "Ask") and Issues links go. An AI assistant gets the same search as a question, and may keep it in your chat history.</p>
+        <p class="panel-intro">Where each candidate's "Search" (or "Ask") and the Issues tab's question go. An AI assistant gets the search as a question, and may keep it in your chat history.</p>
         <div class="setting-row">
           <label for="search-engine">Search with</label>
           <select id="search-engine"></select>
@@ -127,7 +131,7 @@
 
       <section class="panel" aria-labelledby="data-title">
         <h2 id="data-title">Clear data</h2>
-        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
+        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, use Share picks on your ballot. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
         <ul class="data-actions">
           <li class="data-action">
             <div class="data-action-text">

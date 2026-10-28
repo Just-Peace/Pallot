@@ -22,7 +22,7 @@ from .ballot import Services
 from .config import BadConfig, load_config
 from .http_cache import RequestSpec, SavedRequest
 from .services import open_services, prune
-from .sources import RefreshFailed, fec, google, suggestions
+from .sources import RefreshFailed, congress_gov, fec, google, suggestions
 from .text import display_size, display_time
 
 COMMANDS = {
@@ -121,6 +121,8 @@ class Maintenance:
         if info.id == fec.SOURCE:
             return [f"Keys: {', '.join(self.svc.fec.key_names)}.",
                     *([f"{trouble[0].upper()}{trouble[1:]}."] if (trouble := self.svc.fec.key_trouble()) else [])]
+        if info.id == congress_gov.SOURCE:
+            return [f"Keys: the FEC's, {', '.join(self.svc.fec.key_names)}."]
         if info.id in (google.SOURCE, suggestions.SOURCE) and not self.svc.google.keyed:
             return ["No key in PALLOT_GOOGLE_API_KEY, so it's never asked."]
         return []

@@ -8,7 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 Tone = Literal["neutral", "info", "good", "warn"]
-CardKind = Literal["money", "polls", "filing", "profile", "endorsement"]
+CardKind = Literal["money", "polls", "filing", "profile", "endorsement", "record"]
 
 # Display order of race groups on the ballot (labels live in the frontend).
 GROUPS = ("federal", "state", "legislature", "judicial", "county", "precinct", "local")
@@ -52,6 +52,24 @@ class Share(BaseModel):
     candidate_key: str | None = None  # in a race comparison, whose row this is (for the party colour)
     url: str | None = None  # where the part comes from (a poll's page)
     versus: str | None = None  # whom the tag measures against (a poll's closest rival)
+
+
+class Item(BaseModel):
+    """One entry of an ItemList: a bill, what it is, and where it stands."""
+
+    title: str
+    url: str | None = None
+    meta: str | None = None  # "S. 5677 · Sep 30, 2026"
+    note: str | None = None  # its latest action
+
+
+class ItemList(BaseModel):
+    """Part of a candidate's record as a list, the newest first (a member's bills, from
+    Congress.gov), with how many there are in all."""
+
+    title: str
+    items: list[Item] = Field(default_factory=list)
+    total: int | None = None
 
 
 class Breakdown(BaseModel):
@@ -132,6 +150,7 @@ class SourceCard(BaseModel):
     facts: list[Fact] = Field(default_factory=list)
     quotes: list[str] = Field(default_factory=list)
     breakdowns: list[Breakdown] = Field(default_factory=list)
+    lists: list[ItemList] = Field(default_factory=list)
     links: list[Link] = Field(default_factory=list)
     comparison: Comparison | None = None  # race cards only: the candidates side by side
     # What Pick by rule tests, by id, shared by sources that mean the same thing ("raised" from
@@ -293,6 +312,7 @@ class VoterInfo(BaseModel):
     mail_deadline: str | None = None  # the words before the mail-ballot deadline, where they aren't the usual
     local_office: str | None = None  # who sets where and when you vote, where it isn't the county elections office
     poll_hours: str  # "7 a.m. – 8 p.m."
+    late_registration: VoterLink | None = None  # how to register once the deadline is over, in a same-day registration state
 
 
 class Outline(BaseModel):
@@ -330,7 +350,6 @@ class Coverage(BaseModel):
     ballot: Literal["state", "list", "fec"] = "state"  # Texas SOS's ballot, another state's official list, or the FEC's filers (unverified)
     districts: list[str] = ["cd", "sd", "hd", "sboe"]  # the district kinds found and shown
     precincts: bool = True  # election, commissioner and JP precincts
-    outlines: bool = True  # the districts' map
     labels: dict[str, str] = {}  # a district kind's name in this state where it isn't the usual one: {"hd": "State Assembly"}
 
 

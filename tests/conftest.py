@@ -315,10 +315,13 @@ class Upstream:
         self.key_dates_status: int | None = None  # e.g. 403 when the SOS website refuses us
         self.officeholders_status: int | None = None  # e.g. 403 when the seat holders' lists are refused us
         self.congress_members: list[dict[str, Any]] | None = None  # Congress's members (default: the recorded ones)
+        self.congress_gov_status: int | None = None  # e.g. 429 when Congress.gov rate limits us
+        self.congress_gov_keys: list[str | None] = []  # the X-Api-Key each request to Congress.gov carried
         self.wikidata_status: int | None = None  # e.g. 429 when Wikidata's query service throttles us
         self.wikidata_elsewhere: dict[str, Any] = {"results": {"bindings": []}}  # another state's officeholders
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
+        self.tigerweb_wheres: list[str] = []  # the districts TIGERweb was asked for
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
         self.tile_agents: set[str | None] = set()  # the User-Agents the tile server was sent
         self.precincts_status: int | None = None  # e.g. 429 when the TLC's portal throttles us
@@ -502,6 +505,16 @@ class Upstream:
             if self.congress_members is not None:
                 return httpx.Response(200, json=self.congress_members)
             return _file("officeholders_congress.json")
+        if url.host == "api.congress.gov":
+            self.congress_gov_keys.append(request.headers.get("x-api-key"))
+            if self.congress_gov_status:
+                return httpx.Response(self.congress_gov_status)
+            found = re.fullmatch(r"/v3/member/(\w+)/(sponsored|cosponsored)-legislation", url.path)
+            if not found:
+                return httpx.Response(404)
+            member, which = found.groups()
+            return _file(f"congress_gov_{member}_{which}.json",
+                         default={"pagination": {"count": 0}, f"{which}Legislation": []})
         if url.host == "query.wikidata.org":
             if self.wikidata_status:
                 return httpx.Response(self.wikidata_status)
@@ -532,8 +545,11 @@ class Upstream:
                 return httpx.Response(200, json=self.tigerweb_answer)
             if url.path.endswith("/MapServer"):
                 return _file("tigerweb_layers.json")
-            geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"]).group(1)
-            return _file(f"tigerweb_{geoid}.json", default={"features": []})
+            self.tigerweb_wheres.append(params["where"])
+            geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"])
+            if not geoid:
+                return httpx.Response(200, json={"features": []})
+            return _file(f"tigerweb_{geoid.group(1)}.json", default={"features": []})
         if url.host == "tile.openstreetmap.org":
             self.tile_agents.add(request.headers.get("user-agent"))
             if self.tiles_status:

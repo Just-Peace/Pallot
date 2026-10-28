@@ -19,13 +19,13 @@
       <header class="page-head">
         <h1>Privacy</h1>
         <p class="lede">No accounts, cookies, ads or analytics, no tracking, and nothing sold. Here's exactly what Pallot sends and keeps.</p>
-        <p class="updated">Last updated October 15, 2026</p>
+        <p class="updated">Last updated October 27, 2026</p>
       </header>
 
       <section class="panel prose" aria-labelledby="summary">
         <h2 id="summary">In short</h2>
         <ul>
-          <li>Your picks, notes and Help me pick choices never leave your browser. We never see how you plan to vote.</li>
+          <li>Your picks, notes and Help me pick choices never leave your browser, unless you share them. We never see how you plan to vote.</li>
           <li>We don't track you, build a profile of you, or sell anything.</li>
           <li>To find your ballot, your address goes to the US Census (and to a backup only if it can't match it), and what you type goes to Google for suggestions.</li>
           <li>With your voter card instead, no address is sent anywhere: only a few points inside your precinct go to the US Census.</li>
@@ -39,10 +39,11 @@
           <li>Your picks, notes, write-ins, collapsed races, and your Help me pick choices: who you trust and avoid, and your conditions. Never sent to our server.</li>
           <li>Your last lookup: the address (or your voter card's county and precinct), election, ballot and any numbers you entered.</li>
           <li>Which sources you turned on or off. Sent with each request so the server builds your ballot with them, but never saved there.</li>
-          <li>Your appearance, search and view choices, and which tips you've put away.</li>
+          <li>Your appearance, search and view choices, the issues that matter to you, and which tips you've put away.</li>
           <li>The people you avoid. Never sent to our server.</li>
         </ul>
         <p>All of it stays until you clear it in <a href="settings.html#data-title">Settings → Clear data</a>, except an election's picks, notes, write-ins and collapsed races, which Pallot forgets 90 days after the election. Private windows forget it when they close.</p>
+        <p>"Share picks" puts your picks and write-ins into a link or a file: a link has your notes and address only if you tick them in, a file has your notes unless you tick them out. The link carries them after its "#", which browsers never send to a server, so they don't reach ours. But anyone who has the link or file, and anyone they pass it on to, can see how you plan to vote, so share it only with people you trust. With "Lock with a phrase", they also need the phrase. The phrase stays on your device: it's never kept, and never sent to our server.</p>
       </section>
 
       <section class="panel prose" aria-labelledby="lookups">
@@ -56,11 +57,12 @@
               <tr><th scope="row">OpenStreetMap Nominatim</th><td data-label="Sent">Your address, only if the Census can't match it</td><td data-label="Asked again after">30 days</td></tr>
               <tr><th scope="row">Google Geocoding</th><td data-label="Sent">Your address, only if neither can match it, with the server's key</td><td data-label="Asked again after">30 days</td></tr>
               <tr><th scope="row">Google Maps' address search</th><td data-label="Sent">What you type in the address box, once it has a house number and a street, with the server's key</td><td data-label="Asked again after">30 days</td></tr>
-              <tr><th scope="row">US Census TIGERweb</th><td data-label="Sent">Your district numbers, when their outlines aren't among those that come with Pallot</td><td data-label="Asked again after">30 days</td></tr>
+              <tr><th scope="row">US Census TIGERweb</th><td data-label="Sent">Your state and district numbers (or names), when their outlines aren't among those that come with Pallot</td><td data-label="Asked again after">30 days</td></tr>
               <tr><th scope="row">OpenStreetMap tiles</th><td data-label="Sent">Which squares of the map you look at</td><td data-label="Asked again after">7 days</td></tr>
               <tr><th scope="row">Texas Secretary of State</th><td data-label="Sent">In Texas, your county and election</td><td data-label="Asked again after">1 day</td></tr>
-              <tr><th scope="row">FEC</th><td data-label="Sent">Your congressional races and candidates, with the server's key, when they aren't among the FEC answers that come with Pallot</td><td data-label="Asked again after">7 days</td></tr>
+              <tr><th scope="row">FEC</th><td data-label="Sent">Your state and U.S. House district, in any state, for who filed for your seats in Congress; then those candidates, for where their money came from. With the server's key, and only when they aren't among the FEC answers that come with Pallot</td><td data-label="Asked again after">7 days</td></tr>
               <tr><th scope="row">Wikidata</th><td data-label="Sent">Your state, as its Wikidata id, for the list of its officeholders (Texas's comes with Pallot); then the Wikidata ids of your ballot's candidates who hold or held an office there, for their profiles</td><td data-label="Asked again after">7 days</td></tr>
+              <tr><th scope="row">Congress.gov</th><td data-label="Sent">The member id of a member of Congress on your ballot running for their own seat, with the server's key, for their bills</td><td data-label="Asked again after">1 day</td></tr>
               <tr><th scope="row">County map servers</th><td data-label="Sent">Nothing about you; only that someone looked up an address in that county, when its records that come with Pallot are over two weeks old</td><td data-label="Asked again after">7 days</td></tr>
             </tbody>
           </table>
@@ -74,7 +76,7 @@
         <h2 id="direct">Straight from your browser</h2>
         <ul>
           <li><strong>Candidate photos</strong> load from Wikimedia Commons, which sees your internet address.</li>
-          <li><strong>Links you open</strong> go straight to that site. A web search sends the candidate's name, office, place and year, and an Issues link the issue too; an AI assistant may keep it in your chat history.</li>
+          <li><strong>Links you open</strong> go straight to that site. A web search sends the candidate's name, office, place and year, and the Issues tab's question whatever is in its box: the issues you chose and the candidates it compares, with their parties, or your own words; an AI assistant may keep it in your chat history. The issues you save as the ones that matter to you stay in this browser until you send a question with them.</li>
         </ul>
         <p>Everything else, including the map, comes through our server.</p>
       </section>

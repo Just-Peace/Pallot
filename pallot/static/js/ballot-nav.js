@@ -1,5 +1,5 @@
 // Getting around the ballot: the progress strip and Next, the left pane's list of sections (and
-// which one is on screen), the View menu, "What matters to you?" while the first lookup runs, j and k, where the
+// which one is on screen), the View menu, "What matters to you?" and the issues as an address is looked up, j and k, where the
 // strip's parts go on a phone, with the race on screen, More and the chips that make way while
 // scrolling down, and the first-run tips.
 
@@ -13,13 +13,14 @@ import { initEndorserBar, moreHelp } from "./endorser-bar.js";
 import { helpLink, showTip } from "./help.js";
 import { icon } from "./icons.js";
 import { STATES } from "./labels.js";
+import { savedIssuesPicker } from "./issues.js";
 import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
-import { hasAnyPicks, onPicksSaved } from "./picks.js";
+import { onPicksSaved } from "./picks.js";
 import { STILL_LOADING, cardFor, redrawRace, refillPart, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
 import { setUiPrefs, uiPref } from "./storage.js";
 import {
-  FOCUSES, VIEW_MODES, bindViewControls, dismissFocusAsk, focusAsked, focusChips, focuses, migrateView, modeChoice, onViewChange,
+  FOCUSES, VIEW_MODES, bindViewControls, focusChips, focuses, migrateView, modeChoice, onViewChange,
   setViewPref, showViewControls, syncSourceNotes, viewPref,
 } from "./view.js";
 
@@ -31,7 +32,11 @@ const viewControls = $("#view-controls");
 const viewMenu = $("#view-menu");
 const viewSummary = $("#view-summary");
 const focusAsk = $("#focus-ask");
+const focusStep = $("#focus-step");
+const issuesStep = $("#issues-step");
 const focusShow = $("#focus-ask-show");
+const issuesShow = $("#issues-ask-show");
+const issuesPicker = savedIssuesPicker("ask", "issues-ask-title");
 const nextButton = $("#next-race");
 const jump = $("#jump");
 const jumpList = $("#jump-list");
@@ -70,7 +75,7 @@ const APPLY = {
     markCurrentSection(); // the marked section may have gone
   },
   fundingFirst: refill("lines"),
-  compareInHead: refill("headCompare"),
+  compareIssues: refill("headCompare"),
   pollChips: [refill("pills"), syncPollMarks],
   stanceLinks: refill("profile"),
 };
@@ -156,13 +161,6 @@ export function updateProgress() {
 function syncClearPicks() {
   const empty = !page?.picks || page.picks.isEmpty();
   for (const button of clearButtons) button.hidden = empty;
-  syncPicksSection();
-}
-
-// More's "Your picks" shows only while it holds Clear picks or the line saying why Print waits.
-let picksSection = null;
-function syncPicksSection() {
-  if (picksSection) picksSection.hidden = clearButtons[1].hidden && waitNotes[1].hidden;
 }
 
 // While the cards are coming, the strip's bar says so, its words changing as the wait goes on, and
@@ -187,7 +185,6 @@ export function setCardsLoading(waiting, { failed = false } = {}) {
     button.title = waiting ? STILL_LOADING : title;
   }
   for (const note of waitNotes) note.hidden = !waiting;
-  syncPicksSection();
   maybeTip();
 }
 
@@ -263,6 +260,7 @@ function applyView() {
   const mode = showViewControls(viewControls);
   document.documentElement.dataset.viewMode = mode;
   for (const root of [moreView, moreFocus, moreHidePicked, focusAsk]) showViewControls(root);
+  syncFocusStep();
   viewSummary.textContent = viewLabel(mode);
   const runs = new Set();
   for (const [name, apply] of Object.entries(APPLY)) {
@@ -274,29 +272,36 @@ function applyView() {
   maybeTip();
 }
 
-// "What matters to you?", asked once per browser on the "Finding your ballot" screen, the first
-// lookup's dead time. A voter who already has picks, or changed anything under View, counts as
-// answered. Returns null when it isn't asked (``wanted`` false: a lookup that keeps the ballot or the
-// entry card), else ``ready()``, for when the ballot is in: Show my ballot turns on (nothing else on
-// the screen changes under the voter), and it resolves once they press it, at once if they skipped
-// meanwhile, or when ``signal`` cancels the lookup. A lookup that failed leaves its question to the next.
+// "What matters to you?" on the "Finding your ballot" screen, for each address the voter looks up
+// (``wanted``), even one whose ballot is in at once, with their last answers chosen. With Where they
+// stand chosen, Next leads to a second step, the issues that matter most to them. Returns null when
+// it isn't asked, else ``ready()``, for when the ballot is in: Show my ballot turns on (nothing else
+// on the screen changes under the voter), and it resolves once they press it, at once if they
+// skipped meanwhile, or when ``signal`` cancels the lookup. A lookup that failed leaves its question
+// to the next.
 let asking = null; // { ready, skipped, resolve }
 
 export function askFocus(signal, wanted) {
   if (asking) endAsk(asking);
-  if (!wanted || focusAsked() || hasAnyPicks()) return null;
+  if (!wanted) return null;
   let resolve;
   const answered = new Promise((done) => { resolve = done; });
   const ask = { ready: false, skipped: false, resolve };
   asking = ask;
   showViewControls(focusAsk);
-  focusShow.disabled = true;
+  issuesPicker.sync();
+  showIssuesStep(false);
+  issuesShow.disabled = true;
+  syncFocusStep();
   focusAsk.hidden = false;
   signal.addEventListener("abort", () => endAsk(ask), { once: true });
   return () => {
     ask.ready = true;
     if (ask.skipped) endAsk(ask);
-    else if (asking === ask) focusShow.disabled = false;
+    else if (asking === ask) {
+      syncFocusStep();
+      issuesShow.disabled = false;
+    }
     return answered;
   };
 }
@@ -309,21 +314,50 @@ function endAsk(ask) {
   ask.resolve();
 }
 
-// Skip hides the question and leaves "Finding your ballot" to show the ballot as it comes.
+// The first step's button: Next, on to the issues, while Where they stand is chosen, else Show
+// my ballot, which waits for the ballot.
+function syncFocusStep() {
+  const next = focuses().includes("stances");
+  focusShow.textContent = next ? "Next" : "Show my ballot";
+  focusShow.disabled = !next && !asking?.ready;
+}
+
+function showIssuesStep(show) {
+  focusStep.hidden = show;
+  issuesStep.hidden = !show;
+}
+
+// Skip, from either step, hides the question and leaves "Finding your ballot" to show the ballot
+// as it comes. Back from the issues returns to Next.
 function initFocusAsk() {
-  focusAsk.querySelector(".muted").after(focusChips({ hints: true }));
+  $("#focus-step > .muted").after(focusChips({ hints: true }));
+  $("#issues-step > .muted").after(issuesPicker.element);
   bindViewControls(focusAsk);
   focusShow.addEventListener("click", () => {
-    dismissFocusAsk();
+    if (!focuses().includes("stances")) {
+      if (asking) endAsk(asking);
+      return;
+    }
+    showIssuesStep(true);
+    scrollTo({ top: 0 });
+    $("#issues-ask-title").focus({ preventScroll: true });
+  });
+  issuesShow.addEventListener("click", () => {
     if (asking) endAsk(asking);
   });
-  $("#focus-ask-skip").addEventListener("click", () => {
-    setUiPrefs({ focusAsked: true, focusSkipped: true });
-    if (!asking) return;
-    asking.skipped = true;
-    if (asking.ready) endAsk(asking);
-    else focusAsk.hidden = true;
+  $("#issues-ask-back").addEventListener("click", () => {
+    showIssuesStep(false);
+    focusShow.focus();
   });
+  for (const skip of [$("#focus-ask-skip"), $("#issues-ask-skip")]) {
+    skip.addEventListener("click", () => {
+      setUiPrefs({ focusSkipped: true });
+      if (!asking) return;
+      asking.skipped = true;
+      if (asking.ready) endAsk(asking);
+      else focusAsk.hidden = true;
+    });
+  }
 }
 
 // "Only races I haven't picked": hides the races picked so far. One picked meanwhile stays
@@ -403,16 +437,16 @@ function placeForWidth() {
   syncChipFades();
 }
 
-// More's sections, in the order a voter reaches for them: Clear picks (with the line saying why the
-// strip's Print picks waits), Help me pick's controls, and the View menu's: detail and focuses (each with
+// More's sections, in the order a voter reaches for them: Share picks and Clear picks (with the line
+// saying why the strip's Print picks waits), Help me pick's controls, and the View menu's: detail and focuses (each with
 // its "?"), then Expand and Collapse all and Only races I haven't picked.
 // On a phone the toolbar is hidden and Print picks sits on the strip, so More is where the rest live.
 function fillMoreSheet() {
   for (const root of [moreView, moreFocus, moreHidePicked]) bindViewControls(root);
   bindThemeToggle(moreTheme);
   stripPrint.addEventListener("click", () => $("#print-btn").click());
-  picksSection = addMoreSection({ id: "picks", label: "Your picks" }, clearButtons[1], waitNotes[1]);
-  syncPicksSection();
+  addMoreSection({ id: "picks", label: "Your picks" },
+    moreAction("Share picks", "share", () => $("#share-btn").click()), clearButtons[1], waitNotes[1]);
   addMoreSection({ id: "help", label: ["Help me pick ", helpLink("endorsements", "Help me pick")] }, moreHelp);
   addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
   // Settings and the appearance beside Done, in the sheet's head

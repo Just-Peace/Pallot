@@ -14,8 +14,9 @@ import { banList, isPattern, setBanList } from "./ban-list.js";
 import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
+import { savedIssuesPicker } from "./issues.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
-import { ENGINES, currentEngine, setEngine } from "./search.js";
+import { DEFAULT_ENGINE, ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
 import { showToast } from "./toast.js";
 import { bindViewControls, focusChips, migrateView, onViewChange, showViewControls } from "./view.js";
@@ -172,8 +173,7 @@ async function load() {
 
 function initSearchEngine() {
   const selected = currentEngine().id;
-  const options = (ai) => ENGINES.filter((e) => !e.ai === !ai)
-    .map((e) => h("option", { value: e.id, selected: e.id === selected }, e.label));
+  const options = (ai) => ENGINES.filter((e) => !e.ai === !ai)    .map((e) => h("option", { value: e.id, selected: e.id === selected }, e.id === DEFAULT_ENGINE ? `${e.label} (default)` : e.label));
   searchSelect.replaceChildren(
     h("optgroup", { label: "Search engines" }, ...options(false)),
     h("optgroup", { label: "AI assistants" }, ...options(true)),
@@ -196,13 +196,18 @@ function showTheme() {
 themeChoice.addEventListener("change", (event) => setTheme(event.target.value));
 onThemeChange(showTheme);
 
-// Ballot view: the focuses, each with its hint, Minimal, Simple, Detailed (none when the switches are
-// mixed) and the switches, none locked: turning off one a focus turns on drops it (setViewPref). An
-// open ballot applies a change at once (onViewChange there), so it's not marked as a settings change.
+// Ballot view: the focuses, each with its hint, the issues that matter to the voter (issues.js),
+// Minimal, Simple, Detailed (none when the switches are mixed) and the switches, none locked: turning
+// off one a focus turns on drops it (setViewPref). An open ballot applies a change at once
+// (onViewChange there), and reads the issues as Compare issues opens, so neither is marked as a
+// settings change.
 const viewSection = $("#view-title").closest("section");
+const issuesPicker = savedIssuesPicker("settings", "issues-setting-title");
 $("#focus-setting .fine").after(focusChips({ hints: true }));
+$("#issues-setting .fine").after(issuesPicker.element);
 
 function showView() {
+  issuesPicker.sync();
   const mode = showViewControls(viewSection);
   $("#view-mode-note").textContent = {
     minimal: "Just the races and their candidates.",
@@ -310,7 +315,7 @@ $("#clear-my-picks").addEventListener("click", async () => {
 $("#clear-browser-data").addEventListener("click", async () => {
   const sure = await confirmDialog({
     title: "Clear everything Pallot keeps in this browser?",
-    body: "Your picks, notes, address, appearance, search engine, sources, view and the people you avoid will be removed.",
+    body: "Your picks, notes, address, appearance, search engine, sources, view, issues and the people you avoid will be removed.",
     confirm: "Clear everything",
     danger: true,
   });

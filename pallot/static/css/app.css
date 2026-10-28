@@ -226,7 +226,7 @@ button, input, select, textarea { font: inherit; }
 .field.small { min-width: 150px; flex: 1 1 150px; }
 label { font-weight: 600; font-size: 0.9rem; }
 
-input[type="text"], input[type="search"], input[type="number"], select, textarea {
+input[type="text"], input[type="search"], input[type="number"], input[type="password"], select, textarea {
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line-strong);
@@ -557,6 +557,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .key-date.passed dt, .key-date.passed dd { color: var(--muted); }
 .key-date .when { margin-left: 10px; font-size: 0.85rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
 .key-date.passed .when { color: inherit; font-weight: 400; }
+.key-date .late { display: block; font-size: 0.85rem; color: var(--text); }
 .cal-link { display: inline-flex; vertical-align: -2px; margin: -3.5px -3.5px -3.5px 1.5px; padding: 4.5px; color: var(--muted); }
 .cal-link:hover { color: var(--accent); }
 .cal-link .icon, .key-actions .icon { width: 15px; height: 15px; }
@@ -757,20 +758,24 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .focus-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .focus-option-label { font-size: 0.92rem; font-weight: 600; }
 .focus-option-hint { font-size: 0.82rem; line-height: 1.35; color: var(--muted); }
-/* "What matters to you?" under "Finding your ballot", while the first lookup runs */
+/* "What matters to you?" under "Finding your ballot", as an address is looked up, then the issues */
 .focus-ask { margin: 16px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); }
 .focus-ask h2 { margin: 0; font-size: 1.05rem; }
-.loading .focus-ask > .muted { margin: 2px 0 10px; }
+.loading .ask-step > .muted { margin: 2px 0 10px; }
 .focus-ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 14px 0 0; }
-#focus-setting { margin-bottom: 14px; }
-#focus-setting h3 { margin: 0 0 4px; font-size: 0.95rem; }
-#focus-setting .focus-chips { margin: 8px 0 4px; }
+#focus-setting, #issues-setting { margin-bottom: 14px; }
+:is(#focus-setting, #issues-setting) h3 { margin: 0 0 4px; font-size: 0.95rem; }
+#focus-setting .focus-chips, #issues-setting .saved-issues { margin: 8px 0 4px; }
+/* the issues that matter to the voter (issues.js), there and in Settings: how many, the chips, where they're kept */
+.issue-hint { margin: 0 0 8px; font-size: 0.9rem; font-weight: 650; }
+.issue-hint + .issue-group { margin-top: 0; }
+.saved-issues .fine { margin: 10px 0 0; }
 /* what a focus adds to the ballot: a poll mark on a section, a candidate's poll share, Compare in
    a race's head */
 .poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
 .poll-mark .icon { width: 13px; height: 13px; }
 .pill.poll-pill { background: var(--accent-soft); color: var(--accent); }
-.head-compare { flex: none; margin-top: -2px; gap: 4px; }
+.head-compare { flex: none; margin-top: -2px; gap: 4px; white-space: nowrap; }
 
 /* "Only races I haven't picked" and Help me pick's "Only races with a match": a section goes too
    once all its races are hidden (a maybe section stays, for its explanation and its link to the
@@ -1105,7 +1110,27 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 /* ‹ and › step through the race's candidates */
 .details-nav { display: flex; align-items: center; gap: 6px; flex: none; }
 .icon-btn.step { font-size: 1.4rem; font-weight: 400; line-height: 1; padding: 2px 12px 6px; color: var(--text); }
-.stances .badges { margin: 0; }
+/* the Issues tab (stances.js): one card, "Ask Duck.ai", with its steps one under another, each under
+   a heading of one style: the issues, by group; Compare with; the question, editable; then Ask */
+.issue-box { margin: 4px 0; padding: 14px; border: 1px solid var(--accent); border-radius: var(--radius-sm); background: var(--panel-2); }
+.issue-box h3 { margin: 0 0 2px; font-size: 1.05rem; }
+.issue-intro { margin: 0 0 4px; font-size: 0.9rem; color: var(--muted); }
+.issue-step h4, .issue-compare legend, .issue-step-title { display: block; margin: 14px 0 6px; padding: 0; font-size: 0.9rem; font-weight: 650; color: var(--text); }
+.issue-group { margin: 10px 0 6px; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.issue-step h4 + .issue-group { margin-top: 0; }
+.issue-chips { list-style: none; margin: 0; padding: 0; }
+.issue-compare { margin: 0; padding: 0; border: 0; }
+.issue-compare .check { margin: 4px 0; }
+.issue-question { width: 100%; box-sizing: border-box; }
+.issue-edited { margin: 4px 0 0; }
+/* an issue reads as something to add: "+" and the text colour until chosen, then the rule chips' ✓ and fill */
+.issue-chips .issue-chip { color: var(--text); border-color: var(--accent); }
+.issue-chips .issue-chip::before { content: "+"; font-weight: 700; color: var(--accent); }
+.issue-chips .issue-chip:hover { background: var(--accent-soft); }
+.issue-count { color: var(--muted); font-weight: 400; }
+.issue-warn { margin: 10px 0 0; }
+.issue-box .button-row { margin: 10px 0 0; }
+a.issue-ask:not([href]) { opacity: 0.5; pointer-events: none; }
 /* a box on a Details tab (foldSection): a source on Profile or Endorsements, an issue group, a money breakdown;
    its title line is its name and what's beside it (a "?", an endorsement's chips, at the right its match and date) */
 .source-section { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); margin: 0 0 8px; }
@@ -1119,7 +1144,6 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .source-section .section-meta { margin-left: auto; font-size: 0.8rem; font-weight: 400; color: var(--muted); white-space: nowrap; }
 .match-line { margin: 4px 0 8px; font-size: 0.85rem; color: var(--warn); }
 .source-section > .section-body { padding: 0 12px 10px; }
-.stances .badge-link { font-size: 0.85rem; padding: 4px 10px; }
 .details-tabs { padding: 0 20px; }
 .details-foot { padding: 12px 20px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 /* the head (with its ✕), the tabs under it (--head-h, dialogHead) and the foot stay in view while the dialog scrolls */
@@ -1172,6 +1196,9 @@ html:has(dialog:modal) { overflow: hidden; scrollbar-gutter: stable; }
 .facts dd { margin: 0; overflow-wrap: anywhere; }
 
 .quotes { margin: 12px 0; }
+.item-list { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 12px; }
+.item-list li { overflow-wrap: anywhere; }
+.item-list .fine { margin: 2px 0 0; }
 .quotes-title { font-size: 0.82rem; margin-bottom: 6px; }
 blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--line-strong); background: var(--panel-2);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.92rem; overflow-wrap: anywhere; }
@@ -1232,10 +1259,6 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .stack-legend .stack-total { margin-left: auto; }
 .stack-legend .rest .cmp-swatch { background: var(--neutral-soft); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .box-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
-/* a poll box's median line, its source's link at the right */
-.box-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
-.box-foot .fine { margin: 0; min-width: 0; }
-.box-foot .icon-btn { flex: none; }
 
 /* Details' Polls tab (pollsPanel): the median large beside one bar, then a bar per poll on 0-100
    in the candidate's party colour, the median a line across them. A margin's rival shows as text
@@ -1329,6 +1352,27 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-unpicked { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
 .print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
+.share-picks-part { margin: 16px 0 0; }
+.share-picks-part + .share-picks-part { padding-top: 14px; border-top: 1px solid var(--line); }
+.share-picks-part h3 { margin: 0 0 6px; font-size: 1rem; }
+.share-picks-part .fine { margin: 0 0 4px; }
+.share-picks-part > .btn { width: 100%; justify-content: center; min-height: 44px; }
+.share-picks-warn { margin: 0 0 4px; }
+.share-picks-lock { margin: 12px 0 0; }
+.phrase-box { margin: 4px 0 0; }
+.phrase-field { display: flex; gap: 8px; align-items: stretch; margin-top: 4px; }
+.phrase-field input { flex: 1 1 auto; min-width: 0; font-size: 16px; }
+.phrase-field .btn { flex: none; min-width: 64px; justify-content: center; }
+.phrase-rules { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; font-size: 0.85rem; color: var(--muted); }
+.phrase-rules li { display: flex; gap: 6px; align-items: center; }
+.phrase-rules li .icon { width: 14px; height: 14px; flex: none; }
+.phrase-rules li.met { color: var(--good); }
+.small-dialog .dialog-pad { padding: 20px; }
+.small-dialog .dialog-pad h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.share-picks-url { width: 100%; margin-top: 8px; font-size: 16px; }
+.share-picks-open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 18px 0 14px; padding-top: 14px;
+  border-top: 1px solid var(--line); }
+.share-picks-open p { flex: 1 1 14em; margin: 0; }
 
 /* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */
 .sheet { width: min(560px, 100%); max-width: none; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto auto 0;
@@ -1534,7 +1578,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   :root { --fs-title: 20px; --fs-sub: 14px; --fs-race: 15px; --fs-body: 15px; --fs-control: 14px; --fs-fine: 12px; --fs-input: 16px; }
   body { font-size: var(--fs-body); }
   h1 { font-size: var(--fs-title); }
-  input[type="text"], input[type="number"], select, textarea { font-size: var(--fs-input); }
+  input[type="text"], input[type="number"], input[type="password"], select, textarea { font-size: var(--fs-input); }
   .lede { font-size: var(--fs-sub); }
   .ballot-head p { font-size: var(--fs-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* the title and the election on one line: "Your ballot · Nov 3 · General Election" */
@@ -1555,6 +1599,9 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .key-actions { flex-wrap: nowrap; gap: 6px; }
   .key-actions .btn { min-width: 0; gap: 4px; padding-inline: 6px; }
   .entry .button-row .btn, .focus-ask-foot .btn { flex: 1 1 auto; }
+  /* the issues' Show my ballot stays in reach of a thumb while the chips scroll by, edge to edge of the card */
+  #issues-step .focus-ask-foot { position: sticky; bottom: 0; margin: 14px -18px -16px; padding: 10px 18px max(12px, env(safe-area-inset-bottom));
+    background: var(--panel); border-top: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius); }
   .confirm-dialog .button-row { flex-direction: column; }
   /* When to vote and Your districts folded into a line each (ballot-top.js); a line opens its card
      right under it, in the same box, without a frame or a heading of its own (the line says it) */
@@ -1570,7 +1617,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
-  .head-compare .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
   .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
@@ -1725,7 +1771,7 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
 @media (pointer: coarse) {
   .btn, .icon-btn, .link-btn, .topbar-btn, .map-pick, .rule-chip, .focus-chip, .focus-option, .switch, .check, .site-nav a, .jump-list a,
   .race-toggle, .box-toggle, .map-toggle, .entry-tab, .chip-menu > a, .chip-menu > .link-btn,
-  input[type="text"], input[type="search"], input[type="number"], select { min-height: 44px; }
+  input[type="text"], input[type="search"], input[type="number"], input[type="password"], select { min-height: 44px; }
   a.btn, a.icon-btn, a.link-btn { display: inline-flex; align-items: center; }
   /* a segmented switch (Minimal / Simple / Detailed, Dollars / Share) drawn slim, its options 44px to a tap */
   .seg-option { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; }
@@ -1745,8 +1791,8 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .cand-actions, .cand-grid > .cand-actions { gap: 8px; }
   /* the small buttons in a box's corner and a candidate's row (Compare, a source's link, Profile, "…")
      keep their drawn size, with the 44px hit area around them, so they don't swell into big pills */
-  :is(.box-links, .box-foot, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more, .icon-btn.rank-up { position: relative; min-height: 0; }
-  :is(.box-links, .box-foot, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after, .icon-btn.rank-up::after { content: "";
+  :is(.box-links, .race-head) .icon-btn, .cand-profile .profile-btn, .icon-btn.row-more, .icon-btn.rank-up { position: relative; min-height: 0; }
+  :is(.box-links, .race-head) .icon-btn::after, .cand-profile .profile-btn::after, .icon-btn.row-more::after, .icon-btn.rank-up::after { content: "";
     position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
   /* More's chips, segments and buttons too: drawn at their usual size, the 44px hit area around them */
   .sheet :is(.rule-chip, .focus-chip, .seg-option, .btn), .details-head :is(.btn, .icon-btn) { position: relative; min-height: 0; }
