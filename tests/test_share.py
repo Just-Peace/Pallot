@@ -194,13 +194,13 @@ def test_a_phrase_needs_ten_characters_a_capital_a_small_letter_and_a_number():
     assert _run("""
 const met = (phrase) => Object.fromEntries(m.phraseRules(phrase).map((rule) => [rule.id, rule.met]));
 return {
-  rules: m.phraseRules("").map((rule) => [rule.id, rule.required]),
+  missing: m.phraseRules("Abc").filter((rule) => !rule.met).map((rule) => rule.short),
   some: met("Élan vital 9!"),
   ready: ["Abcdefghi1", "Abcdefgh1", "abcdefghi1", "ABCDEFGHI1", "Abcdefghij"].map(m.phraseReady),
 };
 """) == {
-        "rules": [["length", True], ["upper", True], ["lower", True], ["number", True], ["special", False]],
-        "some": {"length": True, "upper": True, "lower": True, "number": True, "special": True},
+        "missing": ["7 more characters", "0–9"],
+        "some": {"length": True, "upper": True, "lower": True, "number": True},
         "ready": [True, False, False, False, False],
     }
 

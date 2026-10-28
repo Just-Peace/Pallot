@@ -41,36 +41,42 @@ function bindPhraseShow(button) {
   });
 }
 
-// A "Lock with a phrase" box (``check``, ticked at first), its phrase box, ``input`` and ``rules``, one
-// line whose parts tick once they're met. ``chosen()`` is the phrase to lock with: null when unticked
-// (or where the browser can't lock), false, said in ``status``, while it doesn't meet the rules.
+// A "Lock with a phrase" box (``check``, ticked at first) over its phrase box, ``input``, which is off
+// while it's unticked, and ``hint``, a line that names what the phrase still needs while it's typed,
+// else says what the hint first said. ``chosen()`` is the phrase to lock with: null when unticked (or
+// where the browser can't lock), false, said in ``status``, while it's missing something.
 // ``onChange`` runs after any change; ``forget()`` empties it and ticks it again, as its dialog closes.
-export function phraseLock({ check, box, input, rules, status, onChange = () => {} }) {
-  const showRules = () => rules.replaceChildren(...phraseRules(input.value).map((rule) => h("li", { class: rule.met ? "met" : null },
-    rule.met ? icon("check") : null,
-    rule.short,
-    h("span", { class: "sr-only" }, rule.met ? " (done)" : " (not yet)"))));
+export function phraseLock({ check, box, input, hint, status, onChange = () => {} }) {
+  const eye = document.querySelector(`[data-phrase-show][aria-controls="${input.id}"]`);
+  const note = hint.textContent;
+  const showHint = () => {
+    const missing = phraseRules(input.value).filter((rule) => !rule.met);
+    const typing = input.value && missing.length;
+    hint.classList.toggle("needs", Boolean(typing));
+    hint.replaceChildren(typing ? `Needs ${missing.map((rule) => rule.short).join(" · ")}` : note);
+  };
   const locked = () => check.checked && canLock();
   const sync = ({ focus = false } = {}) => {
-    box.hidden = !check.checked;
-    showRules();
+    input.disabled = eye.disabled = !check.checked;
+    box.classList.toggle("off", !check.checked);
+    showHint();
     onChange();
     if (focus && check.checked) input.focus();
   };
   check.addEventListener("change", () => sync({ focus: true }));
   input.addEventListener("input", () => {
-    showRules();
+    showHint();
     onChange();
   });
-  bindPhraseShow(document.querySelector(`[data-phrase-show][aria-controls="${input.id}"]`));
+  bindPhraseShow(eye);
   return {
     sync,
     locked,
     chosen() {
       if (!locked()) return null;
       if (phraseReady(input.value)) return input.value;
-      const missing = phraseRules(input.value).filter((rule) => rule.required && !rule.met).map((rule) => rule.text.toLowerCase());
-      setStatus(status, `Your phrase needs ${missing.join(", ")}.`, "error");
+      const missing = phraseRules(input.value).filter((rule) => !rule.met).map((rule) => rule.text);
+      setStatus(status, input.value ? `Your phrase needs ${missing.join(", ")}.` : "Type a phrase, or untick Lock with a phrase.", "error");
       input.focus();
       return false;
     },

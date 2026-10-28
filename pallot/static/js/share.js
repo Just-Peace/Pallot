@@ -350,19 +350,20 @@ async function unlock(locked, phrase) {
   return [String.fromCharCode(opened[0]), opened.slice(1)];
 }
 
-// The voter's phrase: what it must have (``required``) and what's recommended, each ``met`` or not;
-// ``short`` for the one line under the phrase box.
+// What the voter's phrase must have, each ``met`` or not: ``text`` in words, ``short`` for the line
+// under the phrase box that names only what's missing.
 export function phraseRules(phrase) {
+  const left = 10 - [...phrase].length;
+  const more = `${left} more character${left === 1 ? "" : "s"}`;
   return [
-    { id: "length", text: "10 or more characters", short: "10+ characters", met: [...phrase].length >= 10, required: true },
-    { id: "upper", text: "A capital letter", short: "A capital", met: /\p{Lu}/u.test(phrase), required: true },
-    { id: "lower", text: "A small letter", short: "A small letter", met: /\p{Ll}/u.test(phrase), required: true },
-    { id: "number", text: "A number", short: "A number", met: /\p{Nd}/u.test(phrase), required: true },
-    { id: "special", text: "A special character, such as ! or #", short: "A symbol (optional)", met: /[^\p{L}\p{N}\s]/u.test(phrase), required: false },
+    { id: "length", text: more, short: more, met: left <= 0 },
+    { id: "upper", text: "a capital letter", short: "A–Z", met: /\p{Lu}/u.test(phrase) },
+    { id: "lower", text: "a small letter", short: "a–z", met: /\p{Ll}/u.test(phrase) },
+    { id: "number", text: "a number", short: "0–9", met: /\p{Nd}/u.test(phrase) },
   ];
 }
 
-export const phraseReady = (phrase) => phraseRules(phrase).every((rule) => rule.met || !rule.required);
+export const phraseReady = (phrase) => phraseRules(phrase).every((rule) => rule.met);
 
 const joined = (...parts) => {
   const out = new Uint8Array(parts.reduce((size, part) => size + part.length, 0));

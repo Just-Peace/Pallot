@@ -311,7 +311,7 @@ const saveStatus = $("#save-status");
 const saveButton = $("#save-file");
 
 const saveLock = phraseLock({
-  check: $("#save-lock"), box: $("#save-phrase-box"), input: $("#save-phrase"), rules: $("#save-phrase-rules"), status: saveStatus,
+  check: $("#save-lock"), box: $("#save-phrase-box"), input: $("#save-phrase"), hint: $("#save-phrase-hint"), status: saveStatus,
 });
 
 closeOnBackdrop(saveDialog);

@@ -172,15 +172,13 @@
       <h2 id="save-title">Save everything</h2>
       <p id="save-intro">A Pallot file with your picks for every election, notes, address, districts and settings, saved to your downloads.</p>
       <div class="share-picks-lock">
-        <label class="check"><input type="checkbox" id="save-lock" aria-controls="save-phrase-box" checked> Lock with a phrase</label>
+        <label class="check"><input type="checkbox" id="save-lock" aria-controls="save-phrase" checked> Lock with a phrase</label>
         <div class="phrase-box" id="save-phrase-box">
-          <label for="save-phrase">Phrase</label>
           <div class="phrase-field">
-            <input type="password" id="save-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="save-phrase-rules save-phrase-note">
+            <input type="password" id="save-phrase" aria-label="Phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="save-phrase-hint">
             <button class="phrase-eye" type="button" data-phrase-show aria-controls="save-phrase" aria-label="Show phrase"></button>
           </div>
-          <ul class="phrase-rules" id="save-phrase-rules"></ul>
-          <p class="fine" id="save-phrase-note">It can't be recovered, so keep it somewhere safe. It never reaches our server.</p>
+          <p class="fine phrase-hint" id="save-phrase-hint">It can't be recovered, so keep it somewhere safe.</p>
         </div>
       </div>
       <p class="status" id="save-status" role="status" aria-live="polite"></p>

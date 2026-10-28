@@ -274,7 +274,10 @@
 
   <dialog id="share-dialog" class="small-dialog" aria-labelledby="share-title" aria-describedby="share-summary">
     <form method="dialog">
-      <h2 id="share-title">Share your picks</h2>
+      <div class="dialog-title">
+        <h2 id="share-title">Share your picks</h2>
+        <button class="icon-only close-x" type="button" id="share-close" aria-label="Close" title="Close"><span data-icon="x"></span></button>
+      </div>
       <p id="share-summary"></p>
       <div id="share-choices">
         <fieldset class="share-parts">
@@ -284,30 +287,24 @@
           <label class="check" id="share-avoid-choice"><input type="checkbox" id="share-avoid"> <span>My Avoid list <span class="share-count" id="share-avoid-count"></span></span></label>
         </fieldset>
         <div class="share-picks-lock" id="share-lock-choice">
-          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box" checked> Lock with a phrase</label>
+          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase" checked> Lock with a phrase</label>
           <div class="phrase-box" id="share-phrase-box">
-            <label for="share-phrase">Phrase</label>
             <div class="phrase-field">
-              <input type="password" id="share-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-rules share-phrase-note">
+              <input type="password" id="share-phrase" aria-label="Phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-hint">
               <button class="phrase-eye" type="button" data-phrase-show aria-controls="share-phrase" aria-label="Show phrase"></button>
             </div>
-            <ul class="phrase-rules" id="share-phrase-rules"></ul>
-            <p class="fine" id="share-phrase-note">Send the phrase another way than the link, such as in person. It never reaches our server.</p>
+            <p class="fine phrase-hint" id="share-phrase-hint">Send it apart from the link, such as in person.</p>
           </div>
         </div>
         <div class="share-actions">
           <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
         </div>
-        <p class="fine share-warn" id="share-warn"></p>
         <label for="share-url" class="sr-only">Link to your picks</label>
         <input type="text" id="share-url" class="share-picks-url" readonly hidden>
         <p class="status" id="share-status" role="status" aria-live="polite"></p>
+        <p class="fine share-warn" id="share-warn"></p>
       </div>
-      <p class="share-note">Want a copy of everything, to keep or move to another device? <a href="settings.html#data-title">Save it in Settings</a>.</p>
-      <div class="share-foot">
-        <a class="fine" href="faq.html#share-picks">More on sharing</a>
-        <button class="btn ghost" type="button" id="share-done">Done</button>
-      </div>
+      <p class="fine share-foot"><a href="faq.html#share-picks">More on sharing</a> · <a href="settings.html#data-title">Save everything</a></p>
     </form>
   </dialog>
 

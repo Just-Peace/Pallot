@@ -1356,28 +1356,27 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .entry-file p { margin: 0 0 8px; }
 .file-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 4px 0 2px; }
 .file-pick .muted { min-width: 0; overflow-wrap: anywhere; }
-/* Share your picks (share-dialog.js): what goes in the link, the phrase lock, Copy link, and Settings for a copy of everything */
+/* Share your picks (share-dialog.js): a title with the blue ✕, what goes in the link, the phrase lock, Copy link */
+.dialog-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 8px; }
+.dialog-title h2 { margin: 0; }
 .share-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
 .share-actions .btn { flex: 1 1 10em; justify-content: center; min-height: 44px; }
 .share-warn { margin: 8px 0 0; }
-.share-note { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.9rem; }
-.share-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 12px 0 0; }
+.share-foot { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
 .share-picks-lock { margin: 4px 0 0; }
-.phrase-box { margin: 4px 0 0; }
-/* a password box with its eye inside the right edge */
-.phrase-field { position: relative; max-width: 22rem; margin-top: 4px; }
-.phrase-field input { width: 100%; box-sizing: border-box; min-height: 44px; padding-right: 48px; font-size: 16px; }
-.phrase-eye { position: absolute; top: 0; right: 0; bottom: 0; width: 44px; display: grid; place-items: center; padding: 0; border: 0;
+.phrase-box { margin: 0 0 0 26px; }
+.phrase-box.off { opacity: 0.5; }
+/* a password box, as tall as the others, with its eye inside the right edge */
+.phrase-field { position: relative; max-width: 16rem; }
+.phrase-field input { padding-right: 40px; font-size: 16px; }
+.phrase-eye { position: absolute; top: 0; right: 0; bottom: 0; width: 40px; display: grid; place-items: center; padding: 0; border: 0;
   background: none; color: var(--muted); cursor: pointer; border-radius: var(--radius-sm); }
-.phrase-eye:hover, .phrase-eye[aria-pressed="true"] { color: var(--text); }
-.phrase-eye .icon { width: 20px; height: 20px; }
-/* the rules on one line, each turning green with a tick once met */
-.phrase-rules { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 0; font-size: 0.8rem; color: var(--muted); }
-.phrase-rules li { display: inline-flex; gap: 3px; align-items: center; }
-.phrase-rules li + li::before { content: "·"; margin: 0 6px; color: var(--muted); }
-.phrase-rules li .icon { width: 12px; height: 12px; flex: none; }
-.phrase-rules li.met { color: var(--good); }
-.phrase-box .fine { margin: 4px 0 0; }
+.phrase-eye:hover:not(:disabled), .phrase-eye[aria-pressed="true"] { color: var(--text); }
+.phrase-eye:disabled { cursor: default; }
+.phrase-eye .icon { width: 18px; height: 18px; }
+/* what the phrase still needs, while it's typed */
+.phrase-box .phrase-hint { margin: 4px 0 0; }
+.phrase-hint.needs { color: var(--warn); }
 .share-parts { border: 0; margin: 4px 0 0; padding: 0; }
 .share-parts legend { padding: 0; font-weight: 600; font-size: 0.9rem; }
 .share-parts .check { margin: 6px 0; }

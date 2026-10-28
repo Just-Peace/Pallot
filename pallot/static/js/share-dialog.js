@@ -9,7 +9,7 @@
 // spellcheck (which may send text away), autocorrect and password managers, never stored, and
 // emptied when its dialog closes. It never leaves the browser.
 
-import { electionLine } from "./ballot-shared.js";
+import { electionLine, shortElectionLine } from "./ballot-shared.js";
 import { banList, setBanList } from "./ban-list.js";
 import { $, closeOnBackdrop, confirmDialog, h, setStatus } from "./dom.js";
 import { plural } from "./format.js";
@@ -55,13 +55,12 @@ function syncWarning() {
     warning.textContent = "Tick what the link should carry.";
     return;
   }
-  const who = lock.locked() ? "Anyone with it and the phrase" : "Anyone with it";
-  warning.textContent = `${who} sees ${shown.join(", ").replace(/, ([^,]*)$/, " and $1")}, and so does anyone they pass it on to. `
-    + "Send it only to people you trust.";
+  const who = lock.locked() ? "Anyone with the link and phrase" : "Anyone with the link";
+  warning.textContent = `${who} sees ${shown.join(", ").replace(/, ([^,]*)$/, " and $1")}. Send it only to people you trust.`;
 }
 
 const lock = phraseLock({
-  check: $("#share-lock"), box: $("#share-phrase-box"), input: $("#share-phrase"), rules: $("#share-phrase-rules"), status,
+  check: $("#share-lock"), box: $("#share-phrase-box"), input: $("#share-phrase"), hint: $("#share-phrase-hint"), status,
   onChange: syncWarning,
 });
 
@@ -84,7 +83,7 @@ function openShare() {
   const has = { picks: counts.races, notes: counts.notes, avoid: counts.avoid };
   const any = Object.values(has).some(Boolean);
   summary.textContent = any
-    ? `A link for ${electionLine(page.ballot)}. It carries your districts, never your address.`
+    ? `For ${shortElectionLine(page.ballot)}, with your districts but never your address.`
     : "You haven't picked anyone yet. Once you do, you can share your picks here.";
   $("#share-choices").hidden = !any;
   for (const [part, { box, count }] of Object.entries(parts)) {
@@ -99,7 +98,7 @@ function openShare() {
   setStatus(status, "");
   lock.sync();
   dialog.showModal();
-  (any ? (lock.locked() ? $("#share-phrase") : linkButton) : $("#share-done")).focus();
+  (any ? (lock.locked() ? $("#share-phrase") : linkButton) : $("#share-close")).focus();
 }
 
 async function shareLink() {
@@ -268,7 +267,7 @@ export function initShare(shared) {
   dialog.querySelector("form").addEventListener("submit", (event) => event.preventDefault());
   dialog.addEventListener("close", () => lock.forget());
   $("#share-btn").addEventListener("click", openShare);
-  $("#share-done").addEventListener("click", () => dialog.close());
+  $("#share-close").addEventListener("click", () => dialog.close());
   linkButton.addEventListener("click", shareLink);
   for (const { box } of Object.values(parts)) box.addEventListener("change", syncWarning);
   window.addEventListener("hashchange", async () => {
