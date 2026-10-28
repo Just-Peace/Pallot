@@ -37,6 +37,7 @@ def test_one_candidate_is_named_with_their_party_and_seat_and_the_issues_numbere
                          "in the 2026 election, stand on these issues?", "", "1. Taxes", "2. Gun laws"]
     text = "\n".join(lines)
     assert "Cite sources" in text and "more than one view" in text and "neutral" in text
+    assert "give their party's and say it's the party's" in text
     assert "table" not in text
 
 

@@ -39,22 +39,23 @@ export const VIEW_MODES = {
 // turns on its switches, so what shows is the mode's with the union of what the chosen ones open.
 // Besides the stored switches: openMoney (the money boxes and Funding lines), openPolls and
 // openEndorsements open one kind of box or line (else they follow openBoxes), fundingFirst puts
-// the Funding line before Endorsements, compareInHead puts Compare funding in the race's head, pollChips a "47% in polls" pill on each polled candidate and a mark on
-// the sections with polls, and stanceLinks names the candidate's button "Profile & issues". ``hint`` is
+// the Funding line before Endorsements, pollChips a "47% in polls" pill on each polled candidate and a mark on
+// the sections with polls, stanceLinks names the candidate's button "Profile & issues", and compareIssues
+// puts Compare issues in the race's head. ``hint`` is
 // its line in the first lookup's question and in Settings, ``short`` its name in the View menu's summary. The
 // wording never names an issue or a source.
 export const FOCUSES = {
   money: { label: "Funding", short: "Funding", hint: "Opens the money boxes and Funding chips, and puts Funding first.",
-    on: ["showFunding", "openMoney", "fundingFirst", "compareInHead"] },
+    on: ["showFunding", "openMoney", "fundingFirst"] },
   endorsements: { label: "Endorsements", short: "Endorsements",
     hint: "Shows who endorses each candidate, open.", on: ["showEndorsements", "openEndorsements"] },
   polls: { label: "Polls", short: "Polls", hint: "Opens the poll boxes and shows each candidate's share.",
     on: ["showPolls", "openPolls", "pollChips"] },
-  stances: { label: "Where they stand", short: "Stances", hint: "Each candidate's button reads Profile & issues and opens at their issues.",
-    on: ["stanceLinks"] },
+  stances: { label: "Where they stand", short: "Stances", hint: "Opens each candidate at their issues, and puts Compare issues in each race.",
+    on: ["stanceLinks", "compareIssues"] },
 };
 const FOLLOWS = { openMoney: "openBoxes", openPolls: "openBoxes", openEndorsements: "openBoxes" };
-const FOCUS_ONLY = new Set(["fundingFirst", "compareInHead", "pollChips", "stanceLinks"]);
+const FOCUS_ONLY = new Set(["fundingFirst", "compareIssues", "pollChips", "stanceLinks"]);
 
 // The chosen focuses, in FOCUSES' order.
 export function focuses() {

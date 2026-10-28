@@ -70,7 +70,7 @@ const APPLY = {
     markCurrentSection(); // the marked section may have gone
   },
   fundingFirst: refill("lines"),
-  compareInHead: refill("headCompare"),
+  compareIssues: refill("headCompare"),
   pollChips: [refill("pills"), syncPollMarks],
   stanceLinks: refill("profile"),
 };

@@ -3,7 +3,8 @@
 
 import { partyName } from "./labels.js";
 
-const ASK = "Cite sources for every position, say when one is unclear, and show more than one view. Keep it neutral.";
+const ASK = "Cite sources for every position, say when one is unclear, and show more than one view. "
+  + "Where a candidate has no stance of their own on an issue, give their party's and say it's the party's. Keep it neutral.";
 
 // ``where`` is { office, place: [county, state], year }: "for Governor in Texas in the 2026 election".
 function seatWords({ office, place, year }) {

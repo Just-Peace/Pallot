@@ -771,7 +771,7 @@ input.pair-box::-webkit-inner-spin-button, input.pair-box::-webkit-outer-spin-bu
 .poll-mark { display: inline-flex; vertical-align: -2px; margin-left: 5px; color: var(--accent); }
 .poll-mark .icon { width: 13px; height: 13px; }
 .pill.poll-pill { background: var(--accent-soft); color: var(--accent); }
-.head-compare { flex: none; margin-top: -2px; gap: 4px; }
+.head-compare { flex: none; margin-top: -2px; gap: 4px; white-space: nowrap; }
 
 /* "Only races I haven't picked" and Help me pick's "Only races with a match": a section goes too
    once all its races are hidden (a maybe section stays, for its explanation and its link to the
@@ -1614,7 +1614,6 @@ input.rule-amount[aria-invalid="true"] { border-color: var(--danger); box-shadow
   .confirm-dialog .btn { width: 100%; min-height: 44px; white-space: normal; }
   .progress-strip .btn.small { padding: 5px 9px; font-size: 0.8rem; }
   .focus-chips.focus-options { grid-template-columns: minmax(0, 1fr); }
-  .head-compare .btn-word { display: none; }
   .head-compare { padding: 4px 9px; }
   .progress { font-size: 0.85rem; }
   .progress-strip .jump-list a { padding: 4px 10px; font-size: 0.85rem; }
