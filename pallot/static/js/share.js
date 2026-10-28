@@ -1,10 +1,11 @@
 // A Pallot file (.pallot): a whole session, everything Pallot keeps in this browser, to keep or move
-// to another device; or the picks, write-ins and notes on the ballot shown, with the names and parties
-// they belong to and the election's cycle, to send to someone. As a link it travels after "#picks=" in
-// the address, which the browser never sends to the server, so Pallot keeps none of it. A file and a
-// link are the same bytes: a header, then the compressed contents, a file always locked, a link only
-// with the voter's own phrase. Opened on a ballot, its races and candidates are found by their keys,
-// then by their names alone where one name fits (a friend's ballot, or another lookup), and the rest left out.
+// to another device. Or a link, to send to someone: the picks and write-ins on the ballot shown (with
+// the names and parties they belong to, the election's cycle and the districts, never the address),
+// the notes and the Avoid list if the voter ticks them in. A link travels after "#picks=" in the
+// address, which the browser never sends to the server, so Pallot keeps none of it. A file and a link
+// are the same bytes: a header, then the compressed contents, a file always locked, a link only with
+// the voter's own phrase. Opened on a ballot, its races and candidates are found by their keys, then by
+// their names alone where one name fits (a friend's ballot, or another lookup), and the rest left out.
 
 import { ANSWERS, WRITE_IN, cycleOf } from "./picks.js";
 import { LAST_DISTRICTS, LAST_LOOKUP, PICKS, SETTINGS_CHANGED } from "./storage.js";
@@ -39,10 +40,11 @@ function pickName(race, key, picks, people) {
 
 const partyOf = (candidate) => (candidate?.party ? { party: candidate.party } : {});
 
-// A file of the picks on ``ballot``. ``notes``: with the voter's notes; ``address``: with the lookup's
-// address or voter card, so the file or link opens the same ballot elsewhere, and ``districts``
-// (districtsRecord's), to show where it is. ``title``: the election line, for the person who opens it.
-export function buildSlate(ballot, picks, { request = {}, title = "", notes = true, address = false, districts = null } = {}) {
+// What a link sends from ``ballot``: its picks and write-ins (unless ``withPicks`` is false), the
+// voter's ``notes`` if true, ``avoid`` (the Avoid list's entries) if given, and ``districts``
+// (districtsRecord's), to tell the person who opens it which ballot the picks are for. ``title``: the
+// election line, for them. The address is never in it.
+export function buildSlate(ballot, picks, { request = {}, title = "", withPicks = true, notes = false, avoid = null, districts = null } = {}) {
   const races = [];
   const kept = [];
   for (const race of allRaces(ballot)) {
@@ -51,21 +53,22 @@ export function buildSlate(ballot, picks, { request = {}, title = "", notes = tr
       .map((key) => ({ key, name: pickName(race, key, picks, people), ...partyOf(people.get(key)) }))
       .filter((pick) => pick.name !== null);
     const writeIn = picks.writeIn(race.key).trim();
-    if (chosen.length || writeIn) races.push({ key: race.key, name: race.name, picks: chosen, ...(writeIn ? { write_in: writeIn } : {}) });
+    if (withPicks && (chosen.length || writeIn)) races.push({ key: race.key, name: race.name, picks: chosen, ...(writeIn ? { write_in: writeIn } : {}) });
     if (!notes) continue;
     for (const candidate of race.candidates) {
       const note = picks.note(candidate.key);
       if (note.trim()) kept.push({ key: candidate.key, name: candidate.name, race: race.key, ...partyOf(candidate), text: note });
     }
   }
-  const { election_date: _date, party, all_races: _all, ...place } = request || {};
+  const party = request?.party;
   return {
     kind: KIND,
     version: VERSION,
     election: { date: ballot.election_date, title, ...(party ? { party } : {}), cycle: cycleOf(ballot) },
-    ...(address ? { ballot: place, ...(districts ? { districts } : {}) } : {}),
+    ...(districts ? { districts } : {}),
     races,
     notes: kept,
+    ...(avoid?.length ? { avoid: avoid.map(({ text: entry, plain: literal }) => ({ text: entry, plain: Boolean(literal) })) } : {}),
   };
 }
 
@@ -94,12 +97,15 @@ export function buildSession(store, { race = "" } = {}) {
   };
 }
 
-// How many races have a pick, and how many notes there are; a session's across every election it keeps.
+// How many races have a pick, how many notes there are, and how many Avoid list entries; a session's
+// picks and notes across every election it keeps.
 export function slateCounts(slate) {
-  if (!slate.session) return { races: slate.races.filter((race) => race.picks.length).length, notes: slate.notes.length };
+  if (!slate.session) {
+    return { races: slate.races.filter((race) => race.picks.length).length, notes: slate.notes.length, avoid: slate.avoid?.length || 0 };
+  }
   const buckets = Object.values(parsed(slate.session.store[PICKS]) || {}).filter(isObject);
   const count = (part) => buckets.reduce((n, bucket) => n + Object.keys(isObject(bucket[part]) ? bucket[part] : {}).length, 0);
-  return { races: count("races"), notes: count("notes") };
+  return { races: count("races"), notes: count("notes"), avoid: 0 };
 }
 
 // The districts ``ballot`` was found in, as a file keeps them, to show where its ballot is and to
@@ -178,9 +184,10 @@ export function readSlate(json) {
     key: text(note.key), name: text(note.name), race: text(note.race), ...party(note.party), text: text(note.text, MAX_TEXT),
   })).filter((note) => (note.key || note.name) && note.text.trim());
   const place = readPlace(data.ballot);
-  const districts = place && readDistricts(data.districts);
+  const districts = readDistricts(data.districts);
   const cycle = readCycle(election.cycle);
   const session = readSession(data.session);
+  const avoid = readAvoid(data.avoid);
   return {
     kind: KIND,
     version: VERSION,
@@ -190,11 +197,22 @@ export function readSlate(json) {
       ...party(election.party),
       ...(cycle ? { cycle } : {}),
     },
-    ...(place ? { ballot: place, ...(districts ? { districts } : {}) } : {}),
+    ...(place ? { ballot: place } : {}),
+    ...(districts ? { districts } : {}),
     races,
     notes,
+    ...(avoid.length ? { avoid } : {}),
     ...(session ? { session } : {}),
   };
+}
+
+// Someone else's Avoid list entries (ban-list.js's { text, plain }). A pattern that repeats a group,
+// which can take a browser minutes to try on a name, is kept as plain text.
+function readAvoid(value) {
+  const seen = new Set();
+  return (Array.isArray(value) ? value : []).filter(isObject).slice(0, MAX_ENTRIES)
+    .map((entry) => ({ text: text(entry.text, 200).trim(), plain: entry.plain === true || /\)\s*[*+{]|\\\d/.test(text(entry.text, 200)) }))
+    .filter((entry) => entry.text && !seen.has(entry.text.toLowerCase()) && seen.add(entry.text.toLowerCase()));
 }
 
 // An election's cycle (picks.js's cycleOf): its date, state and the elections on the ballot.
@@ -332,14 +350,15 @@ async function unlock(locked, phrase) {
   return [String.fromCharCode(opened[0]), opened.slice(1)];
 }
 
-// The voter's phrase: what it must have (``required``) and what's recommended, each ``met`` or not.
+// The voter's phrase: what it must have (``required``) and what's recommended, each ``met`` or not;
+// ``short`` for the one line under the phrase box.
 export function phraseRules(phrase) {
   return [
-    { id: "length", text: "10 or more characters", met: [...phrase].length >= 10, required: true },
-    { id: "upper", text: "A capital letter", met: /\p{Lu}/u.test(phrase), required: true },
-    { id: "lower", text: "A small letter", met: /\p{Ll}/u.test(phrase), required: true },
-    { id: "number", text: "A number", met: /\p{Nd}/u.test(phrase), required: true },
-    { id: "special", text: "A special character, such as ! or # (recommended)", met: /[^\p{L}\p{N}\s]/u.test(phrase), required: false },
+    { id: "length", text: "10 or more characters", short: "10+ characters", met: [...phrase].length >= 10, required: true },
+    { id: "upper", text: "A capital letter", short: "A capital", met: /\p{Lu}/u.test(phrase), required: true },
+    { id: "lower", text: "A small letter", short: "A small letter", met: /\p{Ll}/u.test(phrase), required: true },
+    { id: "number", text: "A number", short: "A number", met: /\p{Nd}/u.test(phrase), required: true },
+    { id: "special", text: "A special character, such as ! or #", short: "A symbol (optional)", met: /[^\p{L}\p{N}\s]/u.test(phrase), required: false },
   ];
 }
 

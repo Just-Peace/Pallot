@@ -553,8 +553,8 @@ form.addEventListener("submit", async (event) => {
   if (sure) lookup(request, { clearPicks: old, ask: true });
 });
 
-// Show my ballot on the Pallot file tab: a session is put back; picks someone sent wait for a ballot,
-// the one they're for, or the voter's own once they look it up with the Address tab.
+// Show my ballot on the Pallot file tab: a session is put back; anything else waits for the voter's
+// own ballot, once they look it up with the Address tab.
 function openChosenFile() {
   const opened = pickedSlate();
   if (!opened) {
@@ -562,7 +562,7 @@ function openChosenFile() {
     focusEntry();
     return;
   }
-  openFromStart(opened, (request) => lookup(request), (text, tone) => {
+  openFromStart(opened, (text, tone) => {
     setStatus(text, tone);
     selectEntry("address", { focus: true });
   });
@@ -605,13 +605,6 @@ onPicksChanged(() => {
   renderRaces();
 });
 
-// The ballot a link's picks open on: the voter's own, else the one the picks name, for the
-// election and party they're for.
-function linkedRequest(linked, own) {
-  const base = own || linked.ballot;
-  return base ? requestFor(linked, base) : null;
-}
-
 // After a session is put back (pallot-file.js): the ballot goes back to the race it was saved on,
 // and Undo puts this browser back as it was.
 function resumeRestored(restored) {
@@ -628,7 +621,8 @@ async function start() {
   let initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
     : readJson(LAST_LOOKUP, null);
-  if (linked) initial = linkedRequest(linked, initial);
+  // A link's picks open on the voter's own ballot, for the election and party they're for.
+  if (linked && initial && (linked.races.length || linked.notes.length)) initial = requestFor(linked, initial);
   const label = lookupLabel(initial);
   if (label) {
     // Show the remembered address or voter card right away; the lookup fills in the rest.
@@ -639,7 +633,7 @@ async function start() {
   // A first visit starts with the cursor in the address box, except on a touch screen, where the
   // keyboard would cover the card.
   if (changing || !label) showEntry(true, { focus: changing || typingDevice.matches });
-  if (linked && !label) setStatus("Look up your address to see the picks you were sent on your ballot.");
+  if (linked && !label) setStatus("Look up your address to see what you were sent on your ballot.");
   loadElections(initial?.election_date);
   loadEntryConfig({
     startOn: () => (label ? (initial.address ? "address" : "voter_card") : null),

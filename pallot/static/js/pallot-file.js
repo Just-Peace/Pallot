@@ -24,33 +24,31 @@ let picker = null;
 
 // ---- the phrase of a locked file or link ----------------------------------------------------
 
-function hidePhrase(input) {
-  input.type = "password";
-  const button = document.querySelector(`[data-phrase-show][aria-controls="${input.id}"]`);
-  button.textContent = "Show";
-  button.setAttribute("aria-pressed", "false");
+// A phrase box's eye, inside its right edge, shows or masks the phrase.
+function showPhrase(button, show) {
+  document.getElementById(button.getAttribute("aria-controls")).type = show ? "text" : "password";
+  button.replaceChildren(icon(show ? "eye-off" : "eye"));
+  button.setAttribute("aria-pressed", String(show));
 }
 
-// A phrase box's Show button shows or masks the phrase.
+const hidePhrase = (input) => showPhrase(document.querySelector(`[data-phrase-show][aria-controls="${input.id}"]`), false);
+
 function bindPhraseShow(button) {
+  showPhrase(button, false);
   button.addEventListener("click", () => {
-    const input = document.getElementById(button.getAttribute("aria-controls"));
-    const show = input.type === "password";
-    input.type = show ? "text" : "password";
-    button.textContent = show ? "Hide" : "Show";
-    button.setAttribute("aria-pressed", String(show));
-    input.focus();
+    showPhrase(button, button.getAttribute("aria-pressed") !== "true");
+    document.getElementById(button.getAttribute("aria-controls")).focus();
   });
 }
 
-// A "Lock with a phrase" box (``check``, ticked at first), its phrase box, ``input`` and ``rules``, each
-// rule ticked once it's met. ``chosen()`` is the phrase to lock with: null when unticked (or where the
-// browser can't lock), false, said in ``status``, while it doesn't meet the rules. ``onChange`` runs
-// after any change; ``forget()`` empties it and ticks it again, as its dialog closes.
+// A "Lock with a phrase" box (``check``, ticked at first), its phrase box, ``input`` and ``rules``, one
+// line whose parts tick once they're met. ``chosen()`` is the phrase to lock with: null when unticked
+// (or where the browser can't lock), false, said in ``status``, while it doesn't meet the rules.
+// ``onChange`` runs after any change; ``forget()`` empties it and ticks it again, as its dialog closes.
 export function phraseLock({ check, box, input, rules, status, onChange = () => {} }) {
   const showRules = () => rules.replaceChildren(...phraseRules(input.value).map((rule) => h("li", { class: rule.met ? "met" : null },
-    rule.met ? icon("check") : h("span", { "aria-hidden": "true" }, "•"),
-    rule.text,
+    rule.met ? icon("check") : null,
+    rule.short,
     h("span", { class: "sr-only" }, rule.met ? " (done)" : " (not yet)"))));
   const locked = () => check.checked && canLock();
   const sync = ({ focus = false } = {}) => {
@@ -89,7 +87,7 @@ function phraseParts() {
   if (phrase) return phrase;
   const input = h("input", { type: "password", id: "phrase-input", autocomplete: "off", autocapitalize: "off", autocorrect: "off",
     spellcheck: "false", "data-1p-ignore": true, "data-lpignore": "true" });
-  const show = h("button", { class: "btn ghost small", type: "button", "data-phrase-show": true, "aria-controls": "phrase-input", "aria-pressed": "false" }, "Show");
+  const show = h("button", { class: "phrase-eye", type: "button", "data-phrase-show": true, "aria-controls": "phrase-input", "aria-label": "Show phrase" });
   const status = h("p", { class: "status", role: "status", "aria-live": "polite" });
   const open = h("button", { class: "btn primary", type: "button" }, "Open");
   const cancel = h("button", { class: "btn ghost", type: "button" }, "Cancel");

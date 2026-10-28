@@ -58,7 +58,7 @@ def _run(script: str):
     return json.loads(done.stdout)
 
 
-def test_a_picks_file_names_each_pick_with_its_party_and_keeps_the_cycle_notes_and_address_only_when_asked():
+def test_a_link_names_each_pick_with_its_party_and_the_districts_never_the_address_and_notes_and_avoid_only_when_asked():
     assert _run("""
 const picks = new Picks("2026-11-03");
 picks.set("sos:1:sen", ["sos:1:a"]);
@@ -68,10 +68,13 @@ picks.setWriteIn("sos:1:jp", "Mo Bay");
 picks.setNote("sos:1:b", "Spoke at the forum");
 const request = { address: "1 Main St", election_date: "2026-11-03", party: "D" };
 const districts = m.districtsRecord(ballot, "U.S. House 10 · Pct 300");
-const full = m.buildSlate(ballot, picks, { request, title: "Nov 3", address: true, districts });
-const bare = m.buildSlate(ballot, picks, { request, notes: false, districts });
-return { races: full.races, notes: full.notes, ballot: full.ballot, districts: full.districts, election: bare.election,
-  bare: [bare.notes, "ballot" in bare, "districts" in bare], counts: m.slateCounts(full) };
+const avoid = [{ text: "Cy Moe", plain: true }, { text: "^Ed", plain: false }];
+const full = m.buildSlate(ballot, picks, { request, title: "Nov 3", notes: true, avoid, districts });
+const bare = m.buildSlate(ballot, picks, { request, districts });
+const avoidOnly = m.buildSlate(ballot, picks, { withPicks: false, avoid });
+return { races: full.races, notes: full.notes, districts: full.districts, avoid: full.avoid, election: bare.election,
+  bare: [bare.notes, "ballot" in bare, "avoid" in bare], avoidOnly: [avoidOnly.races, avoidOnly.avoid.length],
+  counts: m.slateCounts(full) };
 """) == {
         "races": [
             {"key": "sos:1:sen", "name": "U.S. Senator", "picks": [{"key": "sos:1:a", "name": "Ann Lee", "party": "D"}]},
@@ -79,13 +82,14 @@ return { races: full.races, notes: full.notes, ballot: full.ballot, districts: f
             {"key": "sos:1:jp", "name": "Justice of the Peace", "picks": [{"key": "write-in", "name": "Mo Bay"}], "write_in": "Mo Bay"},
         ],
         "notes": [{"key": "sos:1:b", "name": "Bob Ray", "race": "sos:1:sen", "party": "R", "text": "Spoke at the forum"}],
-        "ballot": {"address": "1 Main St"},
         "districts": {"state": "TX", "county": "Travis", "cd": 10, "sd": 14, "hd": 49, "precinct": "300", "line": "U.S. House 10 · Pct 300"},
+        "avoid": [{"text": "Cy Moe", "plain": True}, {"text": "^Ed", "plain": False}],
         "election": {"date": "2026-11-03", "title": "", "party": "D", "cycle": {
             "date": "2026-11-03", "state": "TX", "elections": [{"name": "2026 November General Election", "type": "general"}],
         }},
         "bare": [[], False, False],
-        "counts": {"races": 3, "notes": 1},
+        "avoidOnly": [[], 2],
+        "counts": {"races": 3, "notes": 1, "avoid": 2},
     }
 
 
@@ -102,7 +106,8 @@ const read = m.readSlate({
   districts: { cd: 10, hd: "<b>", evil: 1, line: "U.S. House 10" },
   races: [{ key: "r", name: "Race", picks: [{ key: "a", name: "A", party: "D" }, "junk"] }, { key: "empty", picks: [] }, 5],
   notes: [{ key: "a", name: "A", race: "r", text: "  " }, { key: "a", name: "A", race: "r", text: "Good" }],
-  session: { store: { "pallot.ui.v1": "{}", "pallot.settingsChanged.v1": "1", "other.key": "{}", "pallot.bad.v1": "{oops" }, race: "r" },
+  avoid: [{ text: " Bo Li ", plain: true }, { text: "bo li" }, { text: "^Ed" }, { text: "(a+)+$" }, { text: "(x)\\\\1" }, { text: "" }, "junk"],
+  session:{ store: { "pallot.ui.v1": "{}", "pallot.settingsChanged.v1": "1", "other.key": "{}", "pallot.bad.v1": "{oops" }, race: "r" },
 });
 return { errors, read };
 """) == {
@@ -114,6 +119,8 @@ return { errors, read };
             "districts": {"cd": 10, "hd": "<b>", "line": "U.S. House 10"},
             "races": [{"key": "r", "name": "Race", "picks": [{"key": "a", "name": "A", "party": "D"}]}],
             "notes": [{"key": "a", "name": "A", "race": "r", "text": "Good"}],
+            "avoid": [{"text": "Bo Li", "plain": True}, {"text": "^Ed", "plain": False}, {"text": "(a+)+$", "plain": True},
+                      {"text": "(x)\\1", "plain": True}],
             "session": {"store": {"pallot.ui.v1": "{}"}, "race": "r"},
         },
     }

@@ -1364,13 +1364,24 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .share-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 12px 0 0; }
 .share-picks-lock { margin: 4px 0 0; }
 .phrase-box { margin: 4px 0 0; }
-.phrase-field { display: flex; gap: 8px; align-items: stretch; margin-top: 4px; }
-.phrase-field input { flex: 1 1 auto; min-width: 0; font-size: 16px; }
-.phrase-field .btn { flex: none; min-width: 64px; justify-content: center; }
-.phrase-rules { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; font-size: 0.85rem; color: var(--muted); }
-.phrase-rules li { display: flex; gap: 6px; align-items: center; }
-.phrase-rules li .icon { width: 14px; height: 14px; flex: none; }
+/* a password box with its eye inside the right edge */
+.phrase-field { position: relative; max-width: 22rem; margin-top: 4px; }
+.phrase-field input { width: 100%; box-sizing: border-box; min-height: 44px; padding-right: 48px; font-size: 16px; }
+.phrase-eye { position: absolute; top: 0; right: 0; bottom: 0; width: 44px; display: grid; place-items: center; padding: 0; border: 0;
+  background: none; color: var(--muted); cursor: pointer; border-radius: var(--radius-sm); }
+.phrase-eye:hover, .phrase-eye[aria-pressed="true"] { color: var(--text); }
+.phrase-eye .icon { width: 20px; height: 20px; }
+/* the rules on one line, each turning green with a tick once met */
+.phrase-rules { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 0; font-size: 0.8rem; color: var(--muted); }
+.phrase-rules li { display: inline-flex; gap: 3px; align-items: center; }
+.phrase-rules li + li::before { content: "·"; margin: 0 6px; color: var(--muted); }
+.phrase-rules li .icon { width: 12px; height: 12px; flex: none; }
 .phrase-rules li.met { color: var(--good); }
+.phrase-box .fine { margin: 4px 0 0; }
+.share-parts { border: 0; margin: 4px 0 0; padding: 0; }
+.share-parts legend { padding: 0; font-weight: 600; font-size: 0.9rem; }
+.share-parts .check { margin: 6px 0; }
+.share-count { color: var(--muted); font-weight: 400; }
 .small-dialog .dialog-pad { padding: 20px; }
 .small-dialog .dialog-pad h2 { margin: 0 0 8px; font-size: 1.15rem; }
 .share-picks-url { width: 100%; margin-top: 8px; font-size: 16px; }

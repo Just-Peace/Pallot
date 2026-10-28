@@ -11,7 +11,7 @@ import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { applyTheme, currentTheme, onThemeChange, setTheme } from "./appearance.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
-import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
+import { $, closeOnBackdrop, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { savedIssuesPicker } from "./issues.js";
@@ -303,29 +303,49 @@ function showBrowserData() {
   showBanList();
 }
 
-// Your session as a Pallot file, and a file opened here: a session is put back (and the ballot opens
-// on it); picks someone sent wait for the ballot, which offers them.
+// Your session as a Pallot file, saved from its own dialog, where the phrase is asked, and a file
+// opened here: a session is put back (and the ballot opens on it).
 const dataStatus = $("#data-status");
+const saveDialog = $("#save-dialog");
+const saveStatus = $("#save-status");
+const saveButton = $("#save-file");
 
 const saveLock = phraseLock({
-  check: $("#save-lock"), box: $("#save-phrase-box"), input: $("#save-phrase"), rules: $("#save-phrase-rules"), status: dataStatus,
+  check: $("#save-lock"), box: $("#save-phrase-box"), input: $("#save-phrase"), rules: $("#save-phrase-rules"), status: saveStatus,
 });
-saveLock.sync();
 
-$("#save-session").addEventListener("click", async (event) => {
+closeOnBackdrop(saveDialog);
+saveDialog.addEventListener("close", () => saveLock.forget());
+saveDialog.querySelector("form").addEventListener("submit", (event) => event.preventDefault());
+$("#save-cancel").addEventListener("click", () => saveDialog.close());
+
+$("#save-session").addEventListener("click", () => {
+  setStatus(saveStatus, "");
+  saveLock.sync();
+  saveDialog.showModal();
+  (saveLock.locked() ? $("#save-phrase") : saveButton).focus();
+});
+
+saveButton.addEventListener("click", async () => {
   const phrase = saveLock.chosen();
   if (phrase === false) return;
-  const button = event.currentTarget;
-  button.disabled = true;
-  if (phrase) setStatus(dataStatus, "Locking…", "busy");
+  saveButton.disabled = true;
+  if (phrase) setStatus(saveStatus, "Locking…", "busy");
   try {
     const name = await saveSession({ phrase });
+    saveDialog.close();
     setStatus(dataStatus, `Saved ${name} to your downloads.${phrase ? " Keep the phrase somewhere safe: it can't be recovered." : ""}`, "ok");
   } catch (error) {
-    setStatus(dataStatus, error.message || "Something went wrong. Try again.", "error");
+    setStatus(saveStatus, error.message || "Something went wrong. Try again.", "error");
   } finally {
-    button.disabled = false;
+    saveButton.disabled = false;
   }
+});
+
+$("#save-phrase").addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+  event.preventDefault();
+  saveButton.click();
 });
 
 $("#open-session").addEventListener("click", async () => {
@@ -338,7 +358,7 @@ $("#open-session").addEventListener("click", async () => {
   }
   if (!opened) return;
   if (opened.session) offerSession(opened);
-  else setStatus(dataStatus, "This file has someone's picks, not a saved copy of everything. Open it with the Pallot file tab where you enter your address.", "info");
+  else setStatus(dataStatus, "This file isn't a saved copy of everything.", "error");
 });
 
 $("#clear-my-picks").addEventListener("click", async () => {

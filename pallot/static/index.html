@@ -277,18 +277,22 @@
       <h2 id="share-title">Share your picks</h2>
       <p id="share-summary"></p>
       <div id="share-choices">
-        <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes"> Include my notes</label>
-        <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
+        <fieldset class="share-parts">
+          <legend>The link carries</legend>
+          <label class="check" id="share-picks-choice"><input type="checkbox" id="share-picks" checked> <span>My picks <span class="share-count" id="share-picks-count"></span></span></label>
+          <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes"> <span>My notes <span class="share-count" id="share-notes-count"></span></span></label>
+          <label class="check" id="share-avoid-choice"><input type="checkbox" id="share-avoid"> <span>My Avoid list <span class="share-count" id="share-avoid-count"></span></span></label>
+        </fieldset>
         <div class="share-picks-lock" id="share-lock-choice">
           <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box" checked> Lock with a phrase</label>
           <div class="phrase-box" id="share-phrase-box">
             <label for="share-phrase">Phrase</label>
             <div class="phrase-field">
               <input type="password" id="share-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-rules share-phrase-note">
-              <button class="btn ghost small" type="button" data-phrase-show aria-controls="share-phrase" aria-pressed="false">Show</button>
+              <button class="phrase-eye" type="button" data-phrase-show aria-controls="share-phrase" aria-label="Show phrase"></button>
             </div>
             <ul class="phrase-rules" id="share-phrase-rules"></ul>
-            <p class="fine" id="share-phrase-note">Your phrase stays on this device; Pallot's server never sees it. Give it to them another way than the link, such as in person.</p>
+            <p class="fine" id="share-phrase-note">Send the phrase another way than the link, such as in person. It never reaches our server.</p>
           </div>
         </div>
         <div class="share-actions">
