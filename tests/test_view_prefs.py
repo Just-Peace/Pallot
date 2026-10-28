@@ -1,5 +1,5 @@
-"""The view settings and picks kept in the voter's browser (view.js, picks.js): the view's mode, and
-whether "What matters to you?" still has to be asked. Run in Node, which loads the modules as the browser does, with a
+"""The view settings kept in the voter's browser (view.js, issues.js): the view's mode, and the issues
+that matter most to the voter. Run in Node, which loads the modules as the browser does, with a
 stand-in for localStorage."""
 
 from __future__ import annotations
@@ -14,8 +14,8 @@ from pallot.api import STATIC_DIR
 
 pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="needs Node")
 
-PICKS = (STATIC_DIR / "js" / "picks.js").as_uri()
 VIEW = (STATIC_DIR / "js" / "view.js").as_uri()
+ISSUES = (STATIC_DIR / "js" / "issues.js").as_uri()
 STORAGE = """
 const store = new Map();
 globalThis.localStorage = {
@@ -28,21 +28,10 @@ globalThis.document = { dispatchEvent() {} };
 
 
 def _run(script: str):
-    source = (f'{STORAGE}\nconst picks = await import("{PICKS}");\nconst view = await import("{VIEW}");\n'
+    source = (f'{STORAGE}\nconst view = await import("{VIEW}");\nconst issues = await import("{ISSUES}");\n'
               f"console.log(JSON.stringify(await (async () => {{ {script} }})()));")
     done = subprocess.run(["node", "--input-type=module", "-e", source], capture_output=True, text=True, check=True)
     return json.loads(done.stdout)
-
-
-def test_a_voter_with_a_pick_in_any_election_has_answered():
-    assert _run("""
-const before = picks.hasAnyPicks();
-const p = new picks.Picks("2026-11-03");
-p.setNote("c1", "maybe");
-const noteOnly = picks.hasAnyPicks();
-p.set("r1", ["c1"]);
-return [before, noteOnly, picks.hasAnyPicks()];
-""") == [False, False, True]
 
 
 def test_opening_the_map_keeps_the_mode_and_another_switch_makes_it_custom():
@@ -59,9 +48,16 @@ return modes;
 """) ==["simple", "simple", "detailed", False, "custom"]
 
 
-def test_the_question_counts_as_asked_once_dismissed():
+def test_saved_issues_keep_the_list_order_and_drop_one_no_longer_offered():
     assert _run("""
-const before = view.focusAsked();
-view.dismissFocusAsk();
-return [before, view.focusAsked()];
-""") == [False, True]
+const before = issues.savedIssues();
+issues.setSavedIssue("Taxes", true);
+issues.setSavedIssue("Abortion", true);
+issues.setSavedIssue("Energy", true);
+issues.setSavedIssue("Taxes", true);
+const chosen = issues.savedIssues();
+issues.setSavedIssue("Energy", false);
+const stored = JSON.parse(store.get("pallot.ui.v1"));
+localStorage.setItem("pallot.ui.v1", JSON.stringify({ ...stored, issues: [...stored.issues, "Not an issue"] }));
+return [before, chosen, issues.savedIssues()];
+""") == [[], ["Energy", "Taxes", "Abortion"], ["Taxes", "Abortion"]]

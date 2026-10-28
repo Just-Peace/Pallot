@@ -121,11 +121,22 @@
           <p class="muted" id="loading-step"></p>
         </div>
         <section class="focus-ask" id="focus-ask" aria-labelledby="focus-ask-title" hidden>
-          <h2 id="focus-ask-title">While we look: what matters to you?</h2>
-          <p class="muted">Choose any, or none. Change it any time under View.</p>
-          <div class="focus-ask-foot">
-            <button class="btn primary" type="button" id="focus-ask-show" disabled>Show my ballot</button>
-            <button class="link-btn" type="button" id="focus-ask-skip">Skip, show it as it comes</button>
+          <div class="ask-step" id="focus-step">
+            <h2 id="focus-ask-title">What matters to you?</h2>
+            <p class="muted">Choose any, or none. Change it any time under View.</p>
+            <div class="focus-ask-foot">
+              <button class="btn primary" type="button" id="focus-ask-show" disabled>Show my ballot</button>
+              <button class="link-btn" type="button" id="focus-ask-skip">Skip</button>
+            </div>
+          </div>
+          <div class="ask-step" id="issues-step" hidden>
+            <h2 id="issues-ask-title" tabindex="-1">Which issues matter most to you?</h2>
+            <p class="muted">They start chosen when you compare the candidates on the issues. Change them any time in Settings.</p>
+            <div class="focus-ask-foot">
+              <button class="btn primary" type="button" id="issues-ask-show" disabled>Show my ballot</button>
+              <button class="btn ghost" type="button" id="issues-ask-back">Back</button>
+              <button class="link-btn" type="button" id="issues-ask-skip">Skip</button>
+            </div>
           </div>
         </section>
       </section>
