@@ -97,16 +97,25 @@ export function stancesPanel(race, candidate, where, empty) {
     }
   } } }, "Copy");
 
-  const chip = (topic) => h("li", {}, h("button", {
-    type: "button", class: "rule-chip", "aria-pressed": String(held.chosen.has(topic.label)),
+  // Each group's title says how many of its issues are chosen.
+  const counted = (topics) => topics.filter((topic) => held.chosen.has(topic.label)).length;
+  const countText = (n) => (n ? `${n} chosen` : "");
+  const chip = (topic, count, topics) => h("li", {}, h("button", {
+    type: "button", class: "rule-chip issue-chip", "aria-pressed": String(held.chosen.has(topic.label)),
     on: { click: (event) => {
       const on = !held.chosen.has(topic.label);
       if (on) held.chosen.add(topic.label);
       else held.chosen.delete(topic.label);
       event.currentTarget.setAttribute("aria-pressed", String(on));
+      count.textContent = countText(counted(topics));
       rebuild();
     } },
   }, topic.label));
+  const group = ({ group: name, topics }) => {
+    const count = h("span", { class: "section-meta issue-count" }, countText(counted(topics)));
+    return foldSection(name, count, h("ul", { class: "rule-chips issue-chips", "aria-label": name },
+      topics.map((topic) => chip(topic, count, topics))));
+  };
   const compare = others.length ? h("fieldset", { class: "issue-compare" }, h("legend", {}, "Compare with"),
     others.map((other) => h("label", { class: "check" },
       h("input", { type: "checkbox", checked: !held.left.has(other.key), on: { change: (event) => {
@@ -119,11 +128,10 @@ export function stancesPanel(race, candidate, where, empty) {
 
   return h("div", { class: "card-panel stances" },
     empty ? h("p", { class: "muted" }, "No source has details on this candidate yet.") : null,
-    h("p", { class: "fine issue-intro" }, ai
-      ? `Choose issues, then ask where ${candidate.name} stands, side by side with the others you check.`
-      : `Choose issues, then search for ${candidate.name}'s stance.`),
-    STANCES.map(({ group, topics }) => foldSection(group, null,
-      h("ul", { class: "rule-chips issue-chips", "aria-label": group }, topics.map(chip)))),
+    h("p", { class: "issue-intro" }, ai
+      ? `Tap the issues to add to your question, then ask where ${candidate.name} stands, side by side with the others you check.`
+      : `Tap the issues to add to your search for ${candidate.name}'s stance.`),
+    STANCES.map(group),
     h("section", { class: "issue-box", "aria-labelledby": "issue-box-title" },
       h("h3", { id: "issue-box-title" }, `${searchWord()} ${label}`),
       compare,
