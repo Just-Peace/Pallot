@@ -33,6 +33,7 @@ const STANCES = [
     { label: "Spending & debt", terms: "government spending budget deficit national debt" },
   ] },
   { group: "Public services", topics: [
+    { label: "Crime & public safety", terms: "crime public safety policing criminal justice reform" },
     { label: "Education", terms: "education schools" },
     { label: "Health care", terms: "health care reform" },
     { label: "Infrastructure", terms: "infrastructure roads transit" },
