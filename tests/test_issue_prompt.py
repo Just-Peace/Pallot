@@ -38,6 +38,7 @@ def test_one_candidate_is_named_with_their_party_and_seat_and_the_issues_numbere
     text = "\n".join(lines)
     assert "Cite sources" in text and "more than one view" in text and "neutral" in text
     assert "give their party's and say it's the party's" in text
+    assert "For each issue, name any well-known groups on either side of the issue" in text
     assert "table" not in text
 
 
@@ -47,7 +48,10 @@ def test_several_candidates_get_a_table():
     assert lines[2:6] == ["Candidates:", "- Greg Abbott, the Republican candidate (incumbent)", "- Jane Doe, the Democratic candidate",
                           "- Sam Roe, the Libertarian candidate"]
     assert lines[7:10] == ["Issues:", "1. Taxes", "2. Gun laws"]
-    assert "one row per issue and one column per candidate" in lines[-1]
+    assert "one row per issue and one column per candidate" in lines[-2]
+    assert "In each cell, after the stance, name any well-known groups on either side of the issue" in lines[-2]
+    assert "Leave it out rather than guess." in lines[-2]
+    assert lines[-1].startswith("Cite sources")
 
 
 def test_a_primary_says_a_party_candidate_and_no_issue_means_the_main_ones():
