@@ -881,6 +881,13 @@
     "party": "R",
     "state": "FL"
   },
+  "fl-bale-dalton": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Bale Dalton",
+    "party": "D",
+    "state": "FL"
+  },
   "fl-brian-mast": {
     "chamber": "house",
     "district": "21",
@@ -899,6 +906,13 @@
     "chamber": "house",
     "district": "28",
     "name": "Carlos A. Gimenez",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-casey-askar": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Casey Askar",
     "party": "R",
     "state": "FL"
   },
@@ -1067,6 +1081,13 @@
     "chamber": "house",
     "district": "26",
     "name": "Nicole Locklin",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-pia-dandiya": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Pia Dandiya",
     "party": "D",
     "state": "FL"
   },
@@ -2540,6 +2561,13 @@
     "party": "R",
     "state": "NE"
   },
+  "ne-brinker-harding": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Brinker Harding",
+    "party": "R",
+    "state": "NE"
+  },
   "ne-deb-fischer": {
     "chamber": "senate",
     "district": null,
@@ -2763,6 +2791,13 @@
     "name": "Teresa Leger Fernandez",
     "party": "D",
     "state": "NM"
+  },
+  "nv-carrie-buck": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Carrie Buck",
+    "party": "R",
+    "state": "NV"
   },
   "nv-catherine-cortez-masto": {
     "chamber": "senate",
@@ -3741,6 +3776,13 @@
     "chamber": "house",
     "district": "36",
     "name": "Brian Babin",
+    "party": "R",
+    "state": "TX"
+  },
+  "tx-carlos-de-la-cruz": {
+    "chamber": "house",
+    "district": "35",
+    "name": "Carlos De La Cruz",
     "party": "R",
     "state": "TX"
   },

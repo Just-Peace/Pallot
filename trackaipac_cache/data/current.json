@@ -3957,22 +3957,25 @@
           "chamber": "house",
           "district": "01",
           "donate_url": null,
-          "donations": null,
+          "donations": 8220,
           "election_date": null,
-          "ie": null,
+          "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 0,
+          "israel_lobby_total": 8220,
           "lines": [
             "Candidate for U.S. House",
             "CA-01 [D]",
-            "Israel Lobby Total: $0",
-            "Endorsed by CAJD & JSTREET"
+            "Israel Lobby Total: $8,220",
+            "Donations: $8,220",
+            "IE: $0",
+            "CAJD, JSTREET"
           ],
           "name": "Mike McGuire",
-          "notes": [
-            "Endorsed by CAJD & JSTREET"
+          "notes": [],
+          "pacs": [
+            "CAJD",
+            "JSTREET"
           ],
-          "pacs": [],
           "party": "D",
           "seat": "CA-01",
           "seat_text": "CA-01 [D]",
@@ -4689,23 +4692,23 @@
           "chamber": "house",
           "district": "11",
           "donate_url": null,
-          "donations": 1605,
+          "donations": 44496,
           "election_date": null,
           "ie": 60000,
           "incumbent": false,
-          "israel_lobby_total": 61605,
+          "israel_lobby_total": 104496,
           "lines": [
             "Candidate for U.S. House",
             "CA-11 [D]",
-            "Israel Lobby Total: $61,605",
-            "Donations: $1,605",
+            "Israel Lobby Total: $104,496",
+            "Donations: $44,496",
             "IE: $60,000",
             "JSTREET",
-            "[This candidate is pro-Israel.](https://x.com/TrackAIPAC/status/1981121730677821816?s=20)"
+            "[This candidate is pro-Israel.](https://wienerfacts.com/)"
           ],
           "name": "Scott Wiener",
           "notes": [
-            "[This candidate is pro-Israel.](https://x.com/TrackAIPAC/status/1981121730677821816?s=20)"
+            "[This candidate is pro-Israel.](https://wienerfacts.com/)"
           ],
           "pacs": [
             "JSTREET"
@@ -6350,6 +6353,53 @@
       "state": "FL"
     },
     {
+      "candidate_id": "fl-bale-dalton",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "07",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-bale-dalton",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "07",
+          "donate_url": null,
+          "donations": 2500,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 2500,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-07 [D]",
+            "Israel Lobby Total: $2,500",
+            "Donations: $2,500",
+            "IE: $0",
+            "DMFI"
+          ],
+          "name": "Bale Dalton",
+          "notes": [],
+          "pacs": [
+            "DMFI"
+          ],
+          "party": "D",
+          "seat": "FL-07",
+          "seat_text": "FL-07 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Bale Dalton",
+      "party": "D",
+      "seat": "FL-07",
+      "state": "FL"
+    },
+    {
       "candidate_id": "fl-brian-mast",
       "categories": [
         "congress"
@@ -6505,6 +6555,53 @@
       "name": "Carlos A. Gimenez",
       "party": "R",
       "seat": "FL-28",
+      "state": "FL"
+    },
+    {
+      "candidate_id": "fl-casey-askar",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "22",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-casey-askar",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "22",
+          "donate_url": null,
+          "donations": 5200,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5200,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-22 [R]",
+            "Israel Lobby Total: $5,200",
+            "Donations: $5,200",
+            "IE: $0",
+            "RJC"
+          ],
+          "name": "Casey Askar",
+          "notes": [],
+          "pacs": [
+            "RJC"
+          ],
+          "party": "R",
+          "seat": "FL-22",
+          "seat_text": "FL-22 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Casey Askar",
+      "party": "R",
+      "seat": "FL-22",
       "state": "FL"
     },
     {
@@ -6994,10 +7091,11 @@
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": null,
+          "israel_lobby_total": 5000,
           "lines": [
             "Candidate for U.S. House",
             "FL-19 [R]",
+            "Israel Lobby Total: $5,000",
             "Donations: $5,000",
             "IE: $0",
             "AIPAC"
@@ -7735,6 +7833,53 @@
       "name": "Nicole Locklin",
       "party": "D",
       "seat": "FL-26",
+      "state": "FL"
+    },
+    {
+      "candidate_id": "fl-pia-dandiya",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "22",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-pia-dandiya",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "22",
+          "donate_url": null,
+          "donations": 2500,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 2500,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-22 [D]",
+            "Israel Lobby Total: $2,500",
+            "Donations: $2,500",
+            "IE: $0",
+            "DMFI"
+          ],
+          "name": "Pia Dandiya",
+          "notes": [],
+          "pacs": [
+            "DMFI"
+          ],
+          "party": "D",
+          "seat": "FL-22",
+          "seat_text": "FL-22 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Pia Dandiya",
+      "party": "D",
+      "seat": "FL-22",
       "state": "FL"
     },
     {
@@ -18707,6 +18852,53 @@
       "state": "NE"
     },
     {
+      "candidate_id": "ne-brinker-harding",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "02",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "ne-brinker-harding",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "02",
+          "donate_url": null,
+          "donations": 5010,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 5010,
+          "lines": [
+            "Candidate for U.S. House",
+            "NE-02 [R]",
+            "Israel Lobby Total: $5,010",
+            "Donations: $5,010",
+            "IE: $0",
+            "RJC"
+          ],
+          "name": "Brinker Harding",
+          "notes": [],
+          "pacs": [
+            "RJC"
+          ],
+          "party": "R",
+          "seat": "NE-02",
+          "seat_text": "NE-02 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "NE",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Brinker Harding",
+      "party": "R",
+      "seat": "NE-02",
+      "state": "NE"
+    },
+    {
       "candidate_id": "ne-deb-fischer",
       "categories": [
         "congress"
@@ -20416,6 +20608,53 @@
       "party": "D",
       "seat": "NM-03",
       "state": "NM"
+    },
+    {
+      "candidate_id": "nv-carrie-buck",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "01",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "nv-carrie-buck",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "01",
+          "donate_url": null,
+          "donations": 2000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 2000,
+          "lines": [
+            "Candidate for U.S. House",
+            "NV-01 [R]",
+            "Israel Lobby Total: $2,000",
+            "Donations: $2,000",
+            "IE: $0",
+            "RJC"
+          ],
+          "name": "Carrie Buck",
+          "notes": [],
+          "pacs": [
+            "RJC"
+          ],
+          "party": "R",
+          "seat": "NV-01",
+          "seat_text": "NV-01 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "NV",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Carrie Buck",
+      "party": "R",
+      "seat": "NV-01",
+      "state": "NV"
     },
     {
       "candidate_id": "nv-catherine-cortez-masto",
@@ -27633,6 +27872,53 @@
       "state": "TX"
     },
     {
+      "candidate_id": "tx-carlos-de-la-cruz",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "35",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tx-carlos-de-la-cruz",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "35",
+          "donate_url": null,
+          "donations": 6408,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 6408,
+          "lines": [
+            "Candidate for U.S. House",
+            "TX-35 [R]",
+            "Israel Lobby Total: $6,408",
+            "Donations: $6,408",
+            "IE: $0",
+            "RJC"
+          ],
+          "name": "Carlos De La Cruz",
+          "notes": [],
+          "pacs": [
+            "RJC"
+          ],
+          "party": "R",
+          "seat": "TX-35",
+          "seat_text": "TX-35 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "TX",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Carlos De La Cruz",
+      "party": "R",
+      "seat": "TX-35",
+      "state": "TX"
+    },
+    {
       "candidate_id": "tx-chip-roy",
       "categories": [
         "congress"
@@ -28668,16 +28954,16 @@
           "chamber": "house",
           "district": "35",
           "donate_url": null,
-          "donations": 3950,
+          "donations": 10800,
           "election_date": null,
           "ie": 178402,
           "incumbent": false,
-          "israel_lobby_total": 182352,
+          "israel_lobby_total": 189202,
           "lines": [
             "Candidate for U.S. House",
             "TX-35 [D]",
-            "Israel Lobby Total: $182,352",
-            "Donations: $3,950",
+            "Israel Lobby Total: $189,202",
+            "Donations: $10,800",
             "IE: $178,402",
             "DMFI, JAC"
           ],
@@ -33457,5 +33743,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-27"
+  "snapshot": "2026-10-28"
 }

@@ -4298,7 +4298,7 @@
           "type": "endorsed"
         }
       ],
-      "featured_text": null,
+      "featured_text": "Close Race!",
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Sara Deen",
@@ -6373,7 +6373,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Young Kim",
-      "notes": "This candidate takes money from AIPAC and affiliated lobbies and has not signed block the bombs act.",
+      "notes": "Despite the fact this candidate takes money from AIPAC and has not signed block the bombs act, Kim may be a more strategic vote to Ken Calvert, who is one of the most senior AIPAC-backed candidates in Candidates and sits on the foreign affairs committee.",
       "office_title": "U.S. Representative",
       "party": "Republican",
       "rating": "reject",
@@ -6850,7 +6850,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Sam Liccardo",
-      "notes": "This candidate takes money from AIPAC and affiliated lobbies and has not signed block the bombs act.",
+      "notes": "As of October 2026, Sam Liccardo has received no money from AIPAC PAC or its super PAC, United Democracy Project, in FEC filing and is a cosponsor of Block the Bombs.",
       "office_title": "U.S. Representative",
       "party": "Democrat",
       "rating": "vote",
@@ -7074,7 +7074,7 @@
           "type": "endorsed"
         }
       ],
-      "featured_text": null,
+      "featured_text": "Close Race!",
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Jessie Lopez",
@@ -44149,5 +44149,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-27"
+  "snapshot": "2026-10-28"
 }
