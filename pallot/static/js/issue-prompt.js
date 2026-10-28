@@ -5,11 +5,6 @@ import { partyName } from "./labels.js";
 
 const ASK = "Cite sources for every position, say when one is unclear, and show more than one view. Keep it neutral.";
 
-// "A, B and C".
-function listed(words) {
-  return words.length < 2 ? words.join("") : `${words.slice(0, -1).join(", ")} and ${words.at(-1)}`;
-}
-
 // ``where`` is { office, place: [county, state], year }: "for Governor in Texas in the 2026 election".
 function seatWords({ office, place, year }) {
   return [`for ${office}`, place.length && `in ${place.join(", ")}`, year && `in the ${year} election`].filter(Boolean).join(" ");
@@ -26,20 +21,27 @@ function who(candidate, race) {
 }
 
 // ``candidates`` are the shown one first, then those it's compared with; ``topics`` the chosen
-// issues ({ label, terms }), none meaning the main issues. A search engine gets the first candidate only.
+// issues ({ label, terms }), numbered, none meaning the main issues. A search engine gets the first
+// candidate only.
 export function issuePrompt(race, where, candidates, topics, ai) {
   if (!ai) {
     const terms = topics.length ? ["position on", ...topics.map((topic) => topic.terms)] : ["positions"];
     return [candidates[0].name, where.office, ...where.place, where.year, ...terms].filter(Boolean).join(" ");
   }
   const seat = seatWords(where);
-  const on = topics.length ? `on ${listed(topics.map((topic) => topic.label))}` : "on the main issues in this race";
-  if (candidates.length === 1) return `Where does ${who(candidates[0], race)}, running ${seat}, stand ${on}? ${ASK}`;
+  const on = topics.length ? "on these issues" : "on the main issues in this race";
+  const issues = topics.length ? ["", ...topics.map((topic, i) => `${i + 1}. ${topic.label}`)] : [];
   const rows = topics.length ? "one row per issue" : "one row per main issue";
-  return [
-    `Compare where these candidates ${seat} stand ${on}:`,
-    ...candidates.map((candidate) => `- ${who(candidate, race)}`),
-    "",
-    `Show a table with ${rows} and one column per candidate, then a short summary of each. ${ASK}`,
-  ].join("\n");
+  const lines = candidates.length === 1
+    ? [`Where does ${who(candidates[0], race)}, running ${seat}, stand ${on}?`, ...issues, "", ASK]
+    : [
+      `Compare where these candidates ${seat} stand ${on}.`,
+      "",
+      "Candidates:",
+      ...candidates.map((candidate) => `- ${who(candidate, race)}`),
+      ...(topics.length ? ["", "Issues:", ...issues.slice(1)] : []),
+      "",
+      `Show a table with ${rows} and one column per candidate, then a short summary of each. ${ASK}`,
+    ];
+  return lines.join("\n");
 }

@@ -123,18 +123,19 @@ export function stancesPanel(race, candidate, where, empty) {
 
   return h("div", { class: "card-panel stances" },
     empty ? h("p", { class: "muted" }, "No source has details on this candidate yet.") : null,
-    h("p", { class: "notice notice-warn" },
-      h("strong", {}, `This goes to ${label}, an outside ${ai ? "AI assistant" : "search engine"}.`), " ",
-      ai
-        ? `Choose issues, then ask it where ${candidate.name} stands, side by side with the others you check. Its answers aren't Pallot's, and we haven't checked them.`
-        : `Choose issues, then search it for ${candidate.name}'s stance. Its results aren't Pallot's, and we haven't checked them.`),
+    h("p", { class: "fine issue-intro" }, ai
+      ? `Choose issues, then ask where ${candidate.name} stands, side by side with the others you check.`
+      : `Choose issues, then search for ${candidate.name}'s stance.`),
     STANCES.map(({ group, topics }) => foldSection(group, null,
       h("ul", { class: "rule-chips issue-chips", "aria-label": group }, topics.map(chip)))),
     h("section", { class: "issue-box", "aria-labelledby": "issue-box-title" },
-      h("h3", { id: "issue-box-title" }, "Your question"),
+      h("h3", { id: "issue-box-title" }, `${searchWord()} ${label}`),
       compare,
       h("label", { for: "issue-question", class: "fine" }, ai ? `What ${label} is asked. You can edit it.` : `What ${label} searches for. You can edit it.`),
       question,
       edited,
+      h("p", { class: "notice notice-warn issue-warn" },
+        h("strong", {}, `This goes to ${label}, an outside ${ai ? "AI assistant" : "search engine"}.`), " ",
+        ai ? "Its answers aren't Pallot's, and we haven't checked them." : "Its results aren't Pallot's, and we haven't checked them."),
       h("div", { class: "button-row" }, ask, copy)));
 }
