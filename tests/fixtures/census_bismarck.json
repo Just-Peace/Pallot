@@ -1,0 +1,424 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "600 E BOULEVARD AVE, BISMARCK, ND 58505"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "198880703"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "3800300",
+       "CENTLAT": "+46.8373176",
+       "AREAWATER": 142622515,
+       "BASENAME": "Bismarck & Mandan Cities",
+       "STATE": "38",
+       "OID": "217704484230143",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8373553",
+       "NAME": "Bismarck & Mandan Cities PUMA",
+       "OBJECTID": 961,
+       "CENTLON": "-100.9062579",
+       "AREALAND": 9216685598,
+       "INTPTLON": "-100.9054499",
+       "MTFCC": "G6120",
+       "PUMA": "00300"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "58505",
+       "CENTLAT": "+46.8202854",
+       "AREAWATER": 0,
+       "BASENAME": "58505",
+       "OID": "221704258301015",
+       "ZCTA5": "58505",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8202854",
+       "NAME": "ZCTA5 58505",
+       "OBJECTID": 20195,
+       "CENTLON": "-100.7810594",
+       "AREALAND": 554451,
+       "INTPTLON": "-100.7810594",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "07921",
+       "CENTLAT": "+46.8180654",
+       "AREAWATER": 1047285,
+       "BASENAME": "Bismarck, ND",
+       "OID": "27021132793617",
+       "UA": "07921",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8198476",
+       "NAME": "Bismarck, ND Urban Area",
+       "OBJECTID": 1146,
+       "CENTLON": "-100.8024323",
+       "AREALAND": 108418039,
+       "INTPTLON": "-100.8010048",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 203152555.1156432,
+       "NECTAPCI": "N",
+       "GEOID": "3807200",
+       "CENTLAT": "+46.8152698",
+       "AREAWATER": 1288029,
+       "BASENAME": "Bismarck",
+       "STATE": "38",
+       "OID": "27890134177236",
+       "LSADC": "25",
+       "PLACE": "07200",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+46.8158567",
+       "NAME": "Bismarck city",
+       "OBJECTID": 31525,
+       "PLACECC": "C5",
+       "CENTLON": "-100.7693156",
+       "STGEOMETRY_Length": 183953.42190078262,
+       "CBSAPCI": "Y",
+       "AREALAND": 93895478,
+       "INTPTLON": "-100.7685685",
+       "PLACENS": "01035934",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "38015",
+       "CENTLAT": "+46.9769925",
+       "AREAWATER": 92691311,
+       "STATE": "38",
+       "BASENAME": "Burleigh",
+       "OID": "27590134168705",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+46.9788291",
+       "NAME": "Burleigh County",
+       "OBJECTID": 1958,
+       "CENTLON": "-100.4686713",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01035614",
+       "AREALAND": 4228659202,
+       "INTPTLON": "-100.4695326",
+       "MTFCC": "G4020",
+       "COUNTY": "015"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "3800014",
+       "CENTLAT": "+46.8687456",
+       "AREAWATER": 13123830,
+       "STATE": "38",
+       "BASENAME": "Bismarck Public School District 1",
+       "OID": "28490134182064",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+46.8652283",
+       "SDUNI": "00014",
+       "NAME": "Bismarck Public School District 1",
+       "OBJECTID": 10720,
+       "CENTLON": "-100.7618480",
+       "HIGRADE": "12",
+       "AREALAND": 557582684,
+       "INTPTLON": "-100.7594168",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "380150104003001",
+       "CENTLAT": "+46.8183502",
+       "BLOCK": "3001",
+       "AREAWATER": 0,
+       "STATE": "38",
+       "BASENAME": "3001",
+       "OID": "210701003139368",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8183502",
+       "NAME": "Block 3001",
+       "OBJECTID": 2320363,
+       "TRACT": "010400",
+       "CENTLON": "-100.7801728",
+       "BLKGRP": "3",
+       "AREALAND": 179100,
+       "INTPTLON": "-100.7801728",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "015"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779797",
+       "GEOID": "38",
+       "CENTLAT": "+47.4504657",
+       "AREAWATER": 4414696749,
+       "STATE": "38",
+       "BASENAME": "North Dakota",
+       "STUSAB": "ND",
+       "OID": "2749051615269",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+47.4421609",
+       "DIVISION": "4",
+       "NAME": "North Dakota",
+       "REGION": "2",
+       "OBJECTID": 51,
+       "CENTLON": "-100.4660576",
+       "AREALAND": 178694393437,
+       "INTPTLON": "-100.4608178",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "380150104003",
+       "CENTLAT": "+46.8201808",
+       "AREAWATER": 0,
+       "STATE": "38",
+       "BASENAME": "3",
+       "OID": "20890134156773",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8201808",
+       "NAME": "Block Group 3",
+       "OBJECTID": 57329,
+       "TRACT": "010400",
+       "CENTLON": "-100.7850739",
+       "BLKGRP": "3",
+       "AREALAND": 1075852,
+       "INTPTLON": "-100.7850739",
+       "MTFCC": "G5030",
+       "COUNTY": "015"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "07200",
+       "GEOID": "3801507200",
+       "CENTLAT": "+46.8152698",
+       "AREAWATER": 1288029,
+       "STATE": "38",
+       "BASENAME": "Bismarck",
+       "OID": "27690134171619",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+46.8158567",
+       "NAME": "Bismarck city",
+       "OBJECTID": 24042,
+       "CENTLON": "-100.7693156",
+       "COUSUBCC": "C5",
+       "AREALAND": 93895478,
+       "INTPTLON": "-100.7685685",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01035934",
+       "COUNTY": "015"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "38035",
+       "CENTLAT": "+46.8215727",
+       "AREAWATER": 296386,
+       "STATE": "38",
+       "BASENAME": "35",
+       "OID": "2129042973166048",
+       "SLDU": "035",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+46.8212670",
+       "NAME": "State Senate District 35",
+       "OBJECTID": 477,
+       "CENTLON": "-100.7851904",
+       "LSY": "2026",
+       "AREALAND": 12715589,
+       "INTPTLON": "-100.7842032",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+42.7660395",
+       "AREAWATER": 33031368091,
+       "BASENAME": "West North Central",
+       "OID": "2739020719810",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7654797",
+       "DIVISION": "4",
+       "REGION": "2",
+       "NAME": "West North Central Division",
+       "OBJECTID": 9,
+       "CENTLON": "-097.0814964",
+       "AREALAND": 1314703193437,
+       "INTPTLON": "-097.0630087",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 400349587629.2689,
+       "CD120": "00",
+       "GEOID": "3800",
+       "CENTLAT": "+47.4504657",
+       "CDSESSN": "120",
+       "AREAWATER": 4414696749,
+       "STATE": "38",
+       "BASENAME": "Congressional District (at Large)",
+       "OID": "2119042973167473",
+       "LSADC": "C1",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+47.4421609",
+       "NAME": "Congressional District (at Large)",
+       "OBJECTID": 206,
+       "CENTLON": "-100.4660576",
+       "STGEOMETRY_Length": 3125328.608909447,
+       "AREALAND": 178694393437,
+       "INTPTLON": "-100.4608178",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "38035",
+       "CENTLAT": "+46.8215727",
+       "SLDL": "035",
+       "AREAWATER": 296386,
+       "STATE": "38",
+       "BASENAME": "35",
+       "OID": "2139042973166125",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+46.8212670",
+       "NAME": "State House District 35",
+       "OBJECTID": 4671,
+       "CENTLON": "-100.7851904",
+       "LSY": "2026",
+       "AREALAND": 12715589,
+       "INTPTLON": "-100.7842032",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "13900",
+       "CENTLAT": "+46.8842277",
+       "AREAWATER": 165098275,
+       "BASENAME": "Bismarck, ND",
+       "OID": "2629034687907125",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8870310",
+       "NAME": "Bismarck, ND Metro Area",
+       "CSA": "",
+       "OBJECTID": 216,
+       "CENTLON": "-100.9789834",
+       "CBSA": "13900",
+       "AREALAND": 11087703035,
+       "INTPTLON": "-100.9795920",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "38015010400",
+       "CENTLAT": "+46.8242771",
+       "AREAWATER": 0,
+       "STATE": "38",
+       "BASENAME": "104",
+       "OID": "20790134180087",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.8242771",
+       "NAME": "Census Tract 104",
+       "OBJECTID": 24099,
+       "TRACT": "010400",
+       "CENTLON": "-100.7841820",
+       "AREALAND": 2451681,
+       "INTPTLON": "-100.7841820",
+       "MTFCC": "G5020",
+       "COUNTY": "015"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -100.781294062003,
+     "y": 46.816799487321
+    },
+    "addressComponents": {
+     "zip": "58505",
+     "streetName": "BOULEVARD",
+     "preType": "",
+     "city": "BISMARCK",
+     "preDirection": "E",
+     "suffixDirection": "",
+     "fromAddress": "698",
+     "state": "ND",
+     "suffixType": "AVE",
+     "toAddress": "600",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "600 E BOULEVARD AVE, BISMARCK, ND, 58505"
+   }
+  ]
+ }
+}

@@ -20901,5 +20901,229 @@
     "phone": "202-225-2726"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "H001061",
+   "thomas": "02079",
+   "lis": "S344",
+   "govtrack": 412494,
+   "opensecrets": "N00031688",
+   "votesmart": 41788,
+   "fec": [
+    "S0ND00093"
+   ],
+   "cspan": 85233,
+   "wikipedia": "John Hoeven",
+   "ballotpedia": "John Hoeven",
+   "maplight": 1499,
+   "icpsr": 41107,
+   "wikidata": "Q374762",
+   "google_entity_id": "kg:/m/01qb45",
+   "pictorial": 13422
+  },
+  "name": {
+   "first": "John",
+   "last": "Hoeven",
+   "official_full": "John Hoeven"
+  },
+  "bio": {
+   "birthday": "1957-03-13",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2011-01-05",
+    "end": "2017-01-03",
+    "state": "ND",
+    "class": 3,
+    "party": "Republican",
+    "url": "https://www.hoeven.senate.gov",
+    "address": "338 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-2551",
+    "contact_form": "http://www.hoeven.senate.gov/public/index.cfm/email-the-senator",
+    "office": "338 Russell Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.hoeven.senate.gov/public/index.cfm/rss/feed",
+    "fax": "202-224-7999"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "ND",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.hoeven.senate.gov",
+    "rss_url": "http://www.hoeven.senate.gov/public/index.cfm/rss/feed",
+    "address": "338 Russell Senate Office Building Washington DC 20510",
+    "office": "338 Russell Senate Office Building",
+    "phone": "202-224-2551",
+    "contact_form": "https://www.hoeven.senate.gov/public/index.cfm/email-the-senator",
+    "fax": "202-224-7999"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "ND",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.hoeven.senate.gov",
+    "rss_url": "http://www.hoeven.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.hoeven.senate.gov/contact/contact-the-senator",
+    "address": "338 Russell Senate Office Building Washington DC 20510",
+    "office": "338 Russell Senate Office Building",
+    "phone": "202-224-2551"
+   }
+  ]
+ },
+ {
+  "id": {
+   "govtrack": 412555,
+   "bioguide": "C001096",
+   "thomas": "02144",
+   "cspan": 7600,
+   "votesmart": 444,
+   "wikipedia": "Kevin Cramer",
+   "fec": [
+    "H0ND01026",
+    "H6ND00074",
+    "S8ND00120"
+   ],
+   "opensecrets": "N00004614",
+   "ballotpedia": "Kevin Cramer",
+   "maplight": 1779,
+   "icpsr": 21350,
+   "wikidata": "Q3957020",
+   "google_entity_id": "kg:/m/02rhrnw",
+   "lis": "S398",
+   "pictorial": 13408
+  },
+  "name": {
+   "first": "Kevin",
+   "last": "Cramer",
+   "official_full": "Kevin Cramer"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1961-01-21"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "ND",
+    "party": "Republican",
+    "district": 0,
+    "office": "1032 Longworth House Office Building",
+    "address": "1032 Longworth HOB; Washington DC 20515-3400",
+    "phone": "202-225-2611",
+    "url": "http://cramer.house.gov",
+    "rss_url": "http://cramer.house.gov/rss.xml",
+    "contact_form": "https://cramer.house.gov/contact/email-me",
+    "fax": "202-226-0893"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "ND",
+    "party": "Republican",
+    "district": 0,
+    "office": "1032 Longworth House Office Building",
+    "address": "1032 Longworth HOB; Washington DC 20515-3400",
+    "phone": "202-225-2611",
+    "url": "http://cramer.house.gov",
+    "rss_url": "http://cramer.house.gov/rss.xml",
+    "contact_form": "https://cramer.house.gov/contact/email-me",
+    "fax": "202-226-0893"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "ND",
+    "district": 0,
+    "party": "Republican",
+    "phone": "202-225-2611",
+    "url": "https://cramer.house.gov",
+    "rss_url": "http://cramer.house.gov/rss.xml",
+    "address": "1717 Longworth House Office Building; Washington DC 20515-3400",
+    "office": "1717 Longworth House Office Building",
+    "fax": "202-226-0893"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "ND",
+    "class": 1,
+    "party": "Republican",
+    "state_rank": "junior",
+    "url": "https://www.cramer.senate.gov",
+    "address": "313 Hart Senate Office Building Washington DC 20510",
+    "office": "313 Hart Senate Office Building",
+    "phone": "202-224-2043",
+    "contact_form": "https://www.cramer.senate.gov/contact/contact-kevin"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "ND",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.cramer.senate.gov",
+    "contact_form": "https://www.cramer.senate.gov/contact/contact-kevin",
+    "address": "313 Hart Senate Office Building Washington DC 20510",
+    "office": "313 Hart Senate Office Building",
+    "phone": "202-224-2043"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "F000482",
+   "fec": [
+    "H4ND00061"
+   ],
+   "govtrack": 457006,
+   "opensecrets": "N00054800",
+   "wikipedia": "Julie Fedorchak",
+   "wikidata": "Q37824664",
+   "votesmart": 144276,
+   "ballotpedia": "Julie Fedorchak",
+   "google_entity_id": "kg:/g/11f06k2mb2"
+  },
+  "name": {
+   "first": "Julie",
+   "middle": "Ann",
+   "last": "Fedorchak",
+   "official_full": "Julie Fedorchak"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1968-09-28"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "ND",
+    "district": 0,
+    "party": "Republican",
+    "address": "1607 Longworth House Office Building Washington DC 20515-3400",
+    "office": "1607 Longworth House Office Building",
+    "phone": "202-225-2611",
+    "url": "https://fedorchak.house.gov"
+   }
+  ]
  }
 ]

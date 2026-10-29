@@ -82,6 +82,7 @@ ADDRESSES = {
     "helena": "1301 E 6th Ave, Helena, MT 59601",  # Montana's grid (states/mt.py); MT-2, SD 41, HD 82
     "pierre": "500 E Capitol Ave, Pierre, SD 57501",  # South Dakota's grid (states/sd.py); SD-0, SD 24, HD 24
     "honolulu": "415 S Beretania St, Honolulu, HI 96813",  # Hawaii's grid (states/hi.py); HI-1, SD 13, HD 25
+    "bismarck": "600 E Boulevard Ave, Bismarck, ND 58505",  # North Dakota's grid (states/nd.py); ND-0, Burleigh
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -111,6 +112,7 @@ KS_ELECTION = "36"  # the November 3, 2026 general election's id in Kansas's dro
 MT_ELECTION = "450002987"  # the November 3, 2026 general election's id in Montana's dropdown
 SD_ELECTION = "774"  # the 2026 general election's id in South Dakota's link to its grid
 HI_ELECTION = "94"  # the 2026 Candidate Report's id in Hawaii's link to its grid
+ND_ELECTION = "348"  # the 2026 general election's id in North Dakota's link to its grid
 MD_NOT_FOUND ="<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
@@ -634,6 +636,19 @@ class Upstream:
                       and any(name.endswith("$ExportToCsvButton") for name in form))
             text = self.state_lists.get(f"{url.host}#{'csv' if export else 'page'}")
             body = text.encode() if text is not None else fixture_bytes("state_hi.csv" if export else "state_hi_grid.html")
+            return httpx.Response(200, content=body)
+        if url.host == "www.sos.nd.gov":  # its Candidate page, linking to the grid
+            if url.path != "/elections/candidate":
+                return httpx.Response(404)
+            text = self.state_lists.get(f"{url.host}#index")
+            return httpx.Response(200, content=text.encode() if text is not None else fixture_bytes("state_nd.html"))
+        if url.host == "vip.sos.nd.gov":  # the grid's page, and the table a postback of its own form's Search answers
+            if url.path != "/candidatelist.aspx" or params.get("eid") != ND_ELECTION:
+                return httpx.Response(302, headers={"location": "/PortalList.aspx"})
+            form = dict(parse_qsl(request.content.decode())) if request.method == "POST" else {}
+            search = form.get("__VIEWSTATE") == "VIEWSTATE-recorded" and any(name.endswith("$btnSearch") for name in form)
+            text = self.state_lists.get(f"{url.host}#{'list' if search else 'page'}")
+            body = text.encode() if text is not None else fixture_bytes("state_nd_list.html" if search else "state_nd_grid.html")
             return httpx.Response(200, content=body)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
