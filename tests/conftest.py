@@ -54,7 +54,7 @@ ADDRESSES = {
     "lansing": "100 N Capitol Ave, Lansing, MI 48933",  # Michigan's (states/mi.py)
     "harrisburg": "501 N 3rd St, Harrisburg, PA 17120",  # Pennsylvania's (states/pa.py)
     "tallahassee": "400 S Monroe St, Tallahassee, FL 32399",  # Florida's (states/fl.py)
-    "richmond": "1000 Bank St, Richmond, VA 23219",  # Virginia's federal list (states/va.py)
+    "richmond": "1000 Bank St, Richmond, VA 23219",  # Virginia's list of all offices (states/va.py)
     "losangeles": "200 N Spring St, Los Angeles, CA 90012",  # California's PDF list (states/ca.py)
     "phoenix": "1700 W Washington St, Phoenix, AZ 85007",  # Arizona's list, imported by hand (states/az.py)
     "lasvegas": "495 S Main St, Las Vegas, NV 89101",  # Nevada's PDF list, imported by hand (states/nv.py)
@@ -80,10 +80,11 @@ FEED_TOKEN = "recorded-token"  # the token in a feed's recorded page; its endpoi
 STATE_LISTS = {
     "s3.amazonaws.com": "state_nc.csv", "mi-boe.entellitrak.com": "state_mi.html",
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
-    "www.elections.virginia.gov": "state_va.html", "elections.cdn.sos.ca.gov": "state_ca.pdf",
+    "elections.cdn.sos.ca.gov": "state_ca.pdf",
     "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
+VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "state_va_all.html"}
 ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
 NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
@@ -499,6 +500,11 @@ class Upstream:
             body = text.encode() if text is not None else fixture_bytes(f"state_ak_{page}.html")
             if params.get("election") != "26genr" and text is None:
                 body = fixture_bytes("state_ak_none.html")
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.elections.virginia.gov":
+            name = next((name for part, name in VA_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
         if url.host == "www.maine.gov":  # it refuses a user agent that isn't a browser's
             if "Mozilla/" not in request.headers.get("user-agent", ""):
