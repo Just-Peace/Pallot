@@ -1,0 +1,365 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 22,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00464",
+   "candidate_name": "JACKSON, TROY DALE",
+   "candidate_pcc_id": "C00955609",
+   "candidate_pcc_name": "TROY JACKSON FOR MAINE",
+   "cash_on_hand_end_period": 1596870.56,
+   "committee_ids": [
+    "C00955609",
+    "C00962738"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 25276003.4,
+   "total_receipts": 26872873.96
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00159",
+   "candidate_name": "COLLINS, SUSAN M.",
+   "candidate_pcc_id": "C00314575",
+   "candidate_pcc_name": "COLLINS FOR SENATOR",
+   "cash_on_hand_end_period": 2689882.54,
+   "committee_ids": [
+    "C00314575"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 23830778.33,
+   "total_receipts": 25225468.39
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00332",
+   "candidate_name": "WOOD, JORDAN",
+   "candidate_pcc_id": "C00903179",
+   "candidate_pcc_name": "JORDAN FOR MAINE",
+   "cash_on_hand_end_period": 19224.63,
+   "committee_ids": [
+    "C00903179"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6372204.88,
+   "total_receipts": 6391429.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00407",
+   "candidate_name": "MILLS, JANET TRAFTON",
+   "candidate_pcc_id": "C00923144",
+   "candidate_pcc_name": "MILLS FOR MAINE",
+   "cash_on_hand_end_period": 74197.93,
+   "committee_ids": [
+    "C00923144"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6041024.37,
+   "total_receipts": 6115222.3
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00381",
+   "candidate_name": "KLEBAN, DAN",
+   "candidate_pcc_id": "C00918300",
+   "candidate_pcc_name": "DAN KLEBAN FOR US SENATE",
+   "cash_on_hand_end_period": 15159.56,
+   "committee_ids": [
+    "C00918300"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 520644.23,
+   "total_receipts": 535803.79
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00498",
+   "candidate_name": "PELLETIER, SAUNDRA",
+   "candidate_pcc_id": "C00957167",
+   "candidate_pcc_name": "SAUNDRA PELLETIER FOR MAINE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00957167"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 426560.0,
+   "total_receipts": 426560.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00456",
+   "candidate_name": "BELLOWS, SHENNA",
+   "candidate_pcc_id": "C00955815",
+   "candidate_pcc_name": "BELLOWS FOR MAINE",
+   "cash_on_hand_end_period": 135.5,
+   "committee_ids": [
+    "C00955815"
+   ],
+   "coverage_end_date": "2026-08-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 381235.14,
+   "total_receipts": 381370.64
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00449",
+   "candidate_name": "SHAH, NIRAV",
+   "candidate_pcc_id": "C00955773",
+   "candidate_pcc_name": "NIRAV SHAH FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00955773"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 280756.88,
+   "total_receipts": 280756.88
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00365",
+   "candidate_name": "RODRIGUEZ, DAIRA",
+   "candidate_pcc_id": "C00916189",
+   "candidate_pcc_name": "DAIRA FOR MAINE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00916189"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 242582.34,
+   "total_receipts": 242582.34
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4ME00113",
+   "candidate_name": "COSTELLO, DAVID",
+   "candidate_pcc_id": "C00907881",
+   "candidate_pcc_name": "COSTELLO FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00907881"
+   ],
+   "coverage_end_date": "2026-08-26",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 154377.1,
+   "total_receipts": 154377.1
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00431",
+   "candidate_name": "LOUD, PAIGE",
+   "candidate_pcc_id": "C00931352",
+   "candidate_pcc_name": "FRIENDS OF PAIGE LOUD",
+   "cash_on_hand_end_period": 2991.04,
+   "committee_ids": [
+    "C00931352"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 58928.17,
+   "total_receipts": 61919.21
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00282",
+   "candidate_name": "RENCH, PHILLIP",
+   "candidate_pcc_id": "C00897660",
+   "candidate_pcc_name": "PHILLIP RENCH FOR US SENATE CAMPAIGN",
+   "cash_on_hand_end_period": 8047.8,
+   "committee_ids": [
+    "C00897660"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 47452.0,
+   "total_receipts": 55499.8
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00316",
+   "candidate_name": "CALABRESE, CARMEM VINCENT MR.",
+   "candidate_pcc_id": "C00902759",
+   "candidate_pcc_name": "CARMEN4SENATE.COM",
+   "cash_on_hand_end_period": -3500.0,
+   "committee_ids": [
+    "C00902759"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 21259.71,
+   "total_receipts": 17759.71
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00324",
+   "candidate_name": "CALABRESE, CARMEN VINCENT MR.",
+   "candidate_pcc_id": "C00902759",
+   "candidate_pcc_name": "CARMEN4SENATE.COM",
+   "cash_on_hand_end_period": -3500.0,
+   "committee_ids": [
+    "C00902759"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 21259.71,
+   "total_receipts": 17759.71
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00340",
+   "candidate_name": "LAFLAMME, ANDREA",
+   "candidate_pcc_id": "C00907261",
+   "candidate_pcc_name": "LAFLAMME FOR ME",
+   "cash_on_hand_end_period": 4535.0,
+   "committee_ids": [
+    "C00907261"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 12387.43,
+   "total_receipts": 16922.43
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00357",
+   "candidate_name": "FAVREAU, TUCKER",
+   "candidate_pcc_id": "C00907873",
+   "candidate_pcc_name": "TUCKER FOR MAINE",
+   "cash_on_hand_end_period": 7.13,
+   "committee_ids": [
+    "C00907873"
+   ],
+   "coverage_end_date": "2026-07-12",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 13591.97,
+   "total_receipts": 13599.1
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00399",
+   "candidate_name": "EVANS, DAVID ALAN",
+   "candidate_pcc_id": "C00921767",
+   "candidate_pcc_name": "COMMITTEE TO ELECT DAVID EVANS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00921767"
+   ],
+   "coverage_end_date": "2025-12-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 6436.72,
+   "total_receipts": 6436.72
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00290",
+   "candidate_name": "SMERIGLIO, DANIEL C",
+   "candidate_pcc_id": "C00903872",
+   "candidate_pcc_name": "DANIEL SMERIGLIO FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00903872"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00308",
+   "candidate_name": "ALCALA, NATASHA",
+   "candidate_pcc_id": "C00898080",
+   "candidate_pcc_name": "NATASHA ALCALA 4 SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00898080"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00415",
+   "candidate_name": "RICH, TIMOTHY",
+   "candidate_pcc_id": "C00935718",
+   "candidate_pcc_name": "MAINE FOR TIM",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00935718"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "UNAFFILIATED",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00423",
+   "candidate_name": "ALCORN, ETHAN WELD MR",
+   "candidate_pcc_id": "C00942078",
+   "candidate_pcc_name": "ETHAN FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00942078"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "UNAFFILIATED",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ME00480",
+   "candidate_name": "WEBB, ASHLEY JAMES",
+   "candidate_pcc_id": "C00957126",
+   "candidate_pcc_name": "ASHLEY WEBB: TAKE NO PRISONERS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00957126"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

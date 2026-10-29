@@ -60,6 +60,7 @@ COVERED = {
     "WY": LIST,
     "IL": LIST,
     "AK": LIST,  # its State Senate districts are letters
+    "ME": LIST,  # without its county offices
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the

@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -51,8 +51,10 @@ SOS's candidates data file with every candidate's contact details made up, and i
 (state_il) takes a Chicago address, the State Board's list of elections cut down to its table, the
 election's download page cut down to its form, and the candidate data file it posts back for, with
 its contact columns emptied. Alaska's (state_ak) takes an Anchorage address and the Division of
-Elections' list, its three pages one at a time, without the candidates' contact details. The
-candidate-list grid six states share (grid) takes Washington's page, cut down to its election
+Elections' list, its three pages one at a time, without the candidates' contact details. Maine's
+(state_me) takes a Bangor address, the Secretary of State's Upcoming Elections page cut down to its
+links, and the candidate spreadsheet and declared write-ins PDF it links, as served (they have
+no contact details). The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
@@ -91,7 +93,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, mi, nc, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, me, mi, nc, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -148,6 +150,7 @@ WY_CONTACT = {"Mailing Address": "PO Box 1", "Mailing City State & Zip": "CHEYEN
               "Web Address": "EXAMPLE.COM"}  # made up
 IL_ADDRESS = ("chicago", "121 N LaSalle St, Chicago, IL 60602")  # City Hall: Cook County
 AK_ADDRESS = ("anchorage", "632 W 6th Ave, Anchorage, AK 99501")  # City Hall: Senate District I, up in 2026
+ME_ADDRESS = ("bangor", "73 Harlow St, Bangor, ME 04401")  # City Hall: ME-2, ranked-choice in 2026
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -800,6 +803,36 @@ def record_ak(client: httpx.Client, key: str) -> None:
     record_members(client, "AK")
 
 
+def record_me(client: httpx.Client, key: str) -> None:
+    """Maine: ME_ADDRESS's Census answer; the Secretary of State's Upcoming Elections page, cut down
+    to its title and its links to the candidate list and the declared write-ins; the two files it
+    links, as served (a town for each candidate, no contact details), asked with a browser's headers
+    as Pallot asks them; the address's FEC filers for U.S. Senate and House, its legislators, and
+    its members of Congress added to officeholders_congress.json."""
+    name, address = ME_ADDRESS
+    place = record_census(client, name, address)
+    response = client.get(me.PAGE, headers=me.HEADERS)
+    response.raise_for_status()
+    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
+    found = me.links(response.text)
+    urls = [found["links"][str(FEC_CYCLE)], *found["write_ins"]]
+    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*\.(?:xlsx|pdf)\".*?</a>", response.text, re.S)
+               if any(html.unescape(re.search(r'href="([^"]*)"', a).group(1)) in url for url in urls)]
+    (FIXTURES / "state_me.html").write_text(
+        f"<html><head>{title}</head><body>\n" + "\n".join(f"<p>{a}</p>" for a in anchors) + "\n</body></html>\n",
+        encoding="utf-8", newline="")
+    for url, fixture in zip(urls, ("state_me.xlsx", "state_me_write_ins.pdf")):
+        time.sleep(2)
+        response = client.get(url, headers=me.HEADERS)
+        response.raise_for_status()
+        (FIXTURES / fixture).write_bytes(response.content)
+        print(f"{fixture}: {len(me.MeList.parse(response.content))} candidates")
+    for district in (None, place.cd):
+        record_filers(client, key, "ME", district)
+    record_legislators(client, "me")
+    record_members(client, "ME", (None, place.cd))
+
+
 GA_PLACES = {
     ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
     ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
@@ -1133,7 +1166,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "grid", "polls", "key_dates", "officeholders",
                                            "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1182,6 +1215,8 @@ def main(argv: list[str] | None = None) -> int:
             record_il(client, config.fec_api_key)
         if only in (None, "state_ak"):
             record_ak(client, config.fec_api_key)
+        if only in (None, "state_me"):
+            record_me(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):

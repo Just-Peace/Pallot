@@ -67,6 +67,7 @@ ADDRESSES = {
     "denver": "1437 Bannock St, Denver, CO 80202",  # Colorado's spreadsheet (states/co.py); CO-1, SD 31, HD 5
     "chicago": "121 N LaSalle St, Chicago, IL 60602",  # Illinois's candidate data file (states/il.py); IL-7, Cook County
     "anchorage": "632 W 6th Ave, Anchorage, AK 99501",  # Alaska's list, three pages (states/ak.py); Senate I, House 17
+    "bangor": "73 Harlow St, Bangor, ME 04401",  # Maine's spreadsheet and write-ins (states/me.py); ME-2
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -82,6 +83,7 @@ STATE_LISTS = {
     "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
+ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 
 
@@ -495,6 +497,13 @@ class Upstream:
             body = text.encode() if text is not None else fixture_bytes(f"state_ak_{page}.html")
             if params.get("election") != "26genr" and text is None:
                 body = fixture_bytes("state_ak_none.html")
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.maine.gov":  # it refuses a user agent that isn't a browser's
+            if "Mozilla/" not in request.headers.get("user-agent", ""):
+                return httpx.Response(403)
+            name = next((name for part, name in ME_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
