@@ -17469,5 +17469,233 @@
     "phone": "202-225-6306"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "F000463",
+   "thomas": "02179",
+   "lis": "S357",
+   "govtrack": 412556,
+   "cspan": 1034067,
+   "wikipedia": "Deb Fischer",
+   "votesmart": 41963,
+   "opensecrets": "N00033443",
+   "fec": [
+    "S2NE00094"
+   ],
+   "ballotpedia": "Deb Fischer",
+   "maplight": 1780,
+   "icpsr": 41302,
+   "house_history": 15032390640,
+   "wikidata": "Q2580649",
+   "google_entity_id": "kg:/m/0c4cp0",
+   "pictorial": 13438
+  },
+  "name": {
+   "first": "Deb",
+   "last": "Fischer",
+   "official_full": "Deb Fischer"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1951-03-01"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "NE",
+    "party": "Republican",
+    "class": 1,
+    "url": "https://www.fischer.senate.gov",
+    "address": "454 Russell Senate Office Building Washington DC 20510",
+    "office": "454 Russell Senate Office Building",
+    "phone": "202-224-6551",
+    "state_rank": "senior",
+    "contact_form": "http://www.fischer.senate.gov/public/index.cfm/contact",
+    "rss_url": "http://www.fischer.senate.gov/public/index.cfm/rss/feed",
+    "fax": "202-228-1325"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "NE",
+    "class": 1,
+    "party": "Republican",
+    "state_rank": "senior",
+    "url": "https://www.fischer.senate.gov",
+    "rss_url": "http://www.fischer.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.fischer.senate.gov/public/index.cfm/contact",
+    "address": "448 Russell Senate Office Building Washington DC 20510",
+    "office": "448 Russell Senate Office Building",
+    "phone": "202-224-6551"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "NE",
+    "class": 1,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.fischer.senate.gov",
+    "rss_url": "http://www.fischer.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.fischer.senate.gov/public/index.cfm/contact",
+    "address": "448 Russell Senate Office Building Washington DC 20510",
+    "office": "448 Russell Senate Office Building",
+    "phone": "202-224-6551"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001298",
+   "govtrack": 412713,
+   "wikipedia": "Don Bacon",
+   "wikidata": "Q19757583",
+   "votesmart": 166299,
+   "fec": [
+    "H6NE02125"
+   ],
+   "opensecrets": "N00037049",
+   "maplight": 2225,
+   "google_entity_id": "kg:/m/01311t71",
+   "cspan": 103442,
+   "icpsr": 21701,
+   "ballotpedia": "Don Bacon",
+   "pictorial": 13146
+  },
+  "name": {
+   "first": "Don",
+   "last": "Bacon",
+   "official_full": "Don Bacon"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1963-08-16"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NE",
+    "district": 2,
+    "party": "Republican",
+    "phone": "202-225-4155",
+    "address": "1516 Longworth House Office Building; Washington DC 20515-2702",
+    "office": "1516 Longworth House Office Building",
+    "url": "https://bacon.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NE",
+    "district": 2,
+    "party": "Republican",
+    "phone": "202-225-4155",
+    "address": "1024 Longworth House Office Building Washington DC 20515-2702",
+    "office": "1024 Longworth House Office Building",
+    "url": "https://bacon.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "NE",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://bacon.house.gov",
+    "address": "1024 Longworth House Office Building Washington DC 20515-2702",
+    "office": "1024 Longworth House Office Building",
+    "phone": "202-225-4155"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NE",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://bacon.house.gov",
+    "address": "2104 Rayburn House Office Building Washington DC 20515-2702",
+    "office": "2104 Rayburn House Office Building",
+    "phone": "202-225-4155"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NE",
+    "district": 2,
+    "party": "Republican",
+    "url": "https://bacon.house.gov",
+    "address": "2104 Rayburn House Office Building Washington DC 20515-2702",
+    "office": "2104 Rayburn House Office Building",
+    "phone": "202-225-4155"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "R000618",
+   "lis": "S423",
+   "fec": [
+    "S6NE00129"
+   ],
+   "govtrack": 456952,
+   "opensecrets": "N00027695",
+   "wikidata": "Q6106781",
+   "wikipedia": "Pete Ricketts",
+   "votesmart": 57777,
+   "cspan": 61233,
+   "ballotpedia": "Pete Ricketts",
+   "pictorial": 13381
+  },
+  "name": {
+   "first": "Pete",
+   "last": "Ricketts",
+   "official_full": "Pete Ricketts"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1964-08-19"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2023-01-23",
+    "end": "2024-11-05",
+    "how": "appointment",
+    "end-type": "special-election",
+    "state": "NE",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.ricketts.senate.gov",
+    "address": "139 Russell Senate Office Building Washington DC 20510",
+    "office": "139 Russell Senate Office Building",
+    "phone": "202-224-4224",
+    "contact_form": "https://www.ricketts.senate.gov/contact/"
+   },
+   {
+    "type": "sen",
+    "start": "2024-11-05",
+    "end": "2027-01-03",
+    "how": "special-election",
+    "state": "NE",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.ricketts.senate.gov",
+    "address": "139 Russell Senate Office Building Washington DC 20510",
+    "office": "139 Russell Senate Office Building",
+    "phone": "202-224-4224",
+    "contact_form": "https://www.ricketts.senate.gov/contact/"
+   }
+  ]
  }
 ]

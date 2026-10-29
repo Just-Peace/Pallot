@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -54,7 +54,10 @@ its contact columns emptied. Alaska's (state_ak) takes an Anchorage address and 
 Elections' list, its three pages one at a time, without the candidates' contact details. Maine's
 (state_me) takes a Bangor address, the Secretary of State's Upcoming Elections page cut down to its
 links, and the candidate spreadsheet and declared write-ins PDF it links, as served (they have
-no contact details). The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
+no contact details). Nebraska's (state_ne) takes an Omaha address, the Secretary of State's
+elections page cut down to its links, its candidate list rewritten without contact details (its
+pages turned sideways, as served) and its judges for retention as served. A Census answer whose
+/geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
@@ -93,7 +96,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, me, mi, nc, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, me, mi, nc, ne, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -151,6 +154,7 @@ WY_CONTACT = {"Mailing Address": "PO Box 1", "Mailing City State & Zip": "CHEYEN
 IL_ADDRESS = ("chicago", "121 N LaSalle St, Chicago, IL 60602")  # City Hall: Cook County
 AK_ADDRESS = ("anchorage", "632 W 6th Ave, Anchorage, AK 99501")  # City Hall: Senate District I, up in 2026
 ME_ADDRESS = ("bangor", "73 Harlow St, Bangor, ME 04401")  # City Hall: ME-2, ranked-choice in 2026
+NE_ADDRESS = ("omaha", "4917 Underwood Ave, Omaha, NE 68132")  # Dundee, Douglas County: NE-2, Legislature District 8
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -169,11 +173,29 @@ LEGISLATOR_COLUMNS = ("id", "name", "current_party", "current_district", "curren
 
 
 def record_census(client: httpx.Client, name: str, address: str) -> census.Place:
-    """``address``'s Census answer, saved as census_<name>.json; the place it gives."""
-    response = client.get(f"{census.BASE}/onelineaddress", params={"address": census.normalize_address(address), **census.PARAMS})
-    response.raise_for_status()
-    save(f"census_{name}.json", response.json())
-    match = response.json()["result"]["addressMatches"][0]
+    """``address``'s Census answer, saved as census_<name>.json; the place it gives. When the
+    geocoder's /geographies answers a 5xx, its /locations match with the geographies from
+    TIGERweb's identify at its point, the same layers Pallot's own fallback reads."""
+    normalized = census.normalize_address(address)
+    response = client.get(f"{census.BASE}/onelineaddress", params={"address": normalized, **census.PARAMS})
+    if response.status_code >= 500:
+        response = client.get(f"{census.LOCATIONS}/onelineaddress", params={
+            "address": normalized, "benchmark": census.PARAMS["benchmark"], "format": "json"})
+        response.raise_for_status()
+        answer = response.json()
+        match = answer["result"]["addressMatches"][0]
+        index = client.get(tigerweb.index_spec().url, params=tigerweb.index_spec().params)
+        index.raise_for_status()
+        spec = tigerweb.identify_spec(tigerweb.place_layer_ids(index.json()), match["coordinates"]["y"],
+                                      match["coordinates"]["x"])
+        found = client.get(spec.url, params=spec.params)
+        found.raise_for_status()
+        match["geographies"] = tigerweb.geographies(found.json())
+    else:
+        response.raise_for_status()
+        answer = response.json()
+    save(f"census_{name}.json", answer)
+    match = answer["result"]["addressMatches"][0]
     return census.parse_geographies(match["geographies"], match["coordinates"]["y"], match["coordinates"]["x"], None)
 
 
@@ -584,16 +606,16 @@ def record_ia(client: httpx.Client, key: str, pdf: Path | None) -> None:
     record_members(client, "IA", (None, place.cd))
 
 
-def text_pdf(pages: list[list[str]]) -> bytes:
+def text_pdf(pages: list[list[str]], width: int = 612) -> bytes:
     """A PDF of ``pages`` of lines in Courier, each laid out as written, for a fixture that
-    stands in for a list whose real file carries what Pallot never keeps."""
+    stands in for a list whose real file carries what Pallot never keeps; ``width`` points wide."""
     objects = ["<< /Type /Catalog /Pages 2 0 R >>", "", "<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>"]
     kids = []
     for lines in pages:
         escaped = [re.sub(r"([\\()])", r"\\\1", line) for line in lines]
         stream = "\n".join(f"BT /F1 5 Tf 20 {770 - 9 * i} Td ({line}) Tj ET" for i, line in enumerate(escaped))
         objects.append(f"<< /Length {len(stream.encode('latin-1'))} >>\nstream\n{stream}\nendstream")
-        objects.append(f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> "
+        objects.append(f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {width} 792] /Resources << /Font << /F1 3 0 R >> >> "
                        f"/Contents {len(objects)} 0 R >>")
         kids.append(f"{len(objects)} 0 R")
     objects[1] = f"<< /Type /Pages /Kids [{' '.join(kids)}] /Count {len(kids)} >>"
@@ -831,6 +853,66 @@ def record_me(client: httpx.Client, key: str) -> None:
         record_filers(client, key, "ME", district)
     record_legislators(client, "me")
     record_members(client, "ME", (None, place.cd))
+
+
+def ne_without_contacts(raw: bytes) -> list[list[str]]:
+    """Nebraska's candidate list, the pages with offices of the state ("For …"), without the
+    candidates' contact details: a row cut after its Incumbent or Nonincumbent, and the lines
+    under it keeping only what's left of the incumbency column (a wrapped party or office)."""
+    pages: list[list[str]] = []
+    for line in pdf_lines(raw):
+        if "Final Statewide General Candidate List" in line:
+            pages.append([])
+        if not pages or not line.strip() or re.search(r"Page \d+ of \d+", line):
+            continue
+        status = re.search(r"\b(?:Incumbent|Nonincumbent)\b", line)
+        line = line[:status.end()] if status else "".join(
+            word.group() if word.start() < 285 else " " * len(word.group()) for word in re.finditer(r"\s+|\S+", line)
+        ).rstrip()
+        if line:
+            pages[-1].append(line)
+    return [page for page in pages if any(line.startswith("For ") for line in page)]
+
+
+def record_ne(client: httpx.Client, key: str) -> None:
+    """Nebraska: NE_ADDRESS's Census answer; the Secretary of State's elections page, cut down to
+    its title and its links to the candidate list and the judges for retention; the candidate list
+    rewritten without contact details (ne_without_contacts), its pages turned sideways as served;
+    the judges' list as served (it has no contact details); the address's FEC filers for U.S.
+    Senate and House, its legislators, and its members of Congress added to officeholders_congress.json."""
+    name, address = NE_ADDRESS
+    place = record_census(client, name, address)
+    response = client.get(ne.PAGE)
+    response.raise_for_status()
+    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
+    found = ne.links(response.text)
+    urls = [found["links"][str(FEC_CYCLE)], found["retention"][str(FEC_CYCLE)]]
+    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*\.pdf\".*?</a>", response.text, re.S)
+               if any(html.unescape(re.search(r'href="([^"]*)"', a).group(1)) in url for url in urls)]
+    (FIXTURES / "state_ne.html").write_text(
+        f"<html><head>{title}</head><body>\n" + "\n".join(f"<p>{a}</p>" for a in anchors) + "\n</body></html>\n",
+        encoding="utf-8", newline="")
+    time.sleep(2)
+    response = client.get(urls[0])
+    response.raise_for_status()
+    reader = PdfReader(io.BytesIO(text_pdf(ne_without_contacts(response.content), width=900)))
+    writer = PdfWriter()
+    for page in reader.pages:
+        page.rotate(90)
+        page.transfer_rotation_to_content()
+        writer.add_page(page.rotate(270))
+    with (FIXTURES / "state_ne.pdf").open("wb") as fh:
+        writer.write(fh)
+    print(f"state_ne.pdf: {len(ne.NeList.parse((FIXTURES / 'state_ne.pdf').read_bytes()))} candidates")
+    time.sleep(2)
+    response = client.get(urls[1])
+    response.raise_for_status()
+    (FIXTURES / "state_ne_retention.pdf").write_bytes(response.content)
+    print(f"state_ne_retention.pdf: {len(ne.NeList.parse(response.content))} judges")
+    for district in (None, place.cd):
+        record_filers(client, key, "NE", district)
+    record_legislators(client, "ne")
+    record_members(client, "NE", (None, place.cd))
 
 
 GA_PLACES = {
@@ -1166,7 +1248,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "grid", "polls", "key_dates", "officeholders",
                                            "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1217,6 +1299,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ak(client, config.fec_api_key)
         if only in (None, "state_me"):
             record_me(client, config.fec_api_key)
+        if only in (None, "state_ne"):
+            record_ne(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):
