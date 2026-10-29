@@ -18882,5 +18882,403 @@
     "url": "https://onder.house.gov"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "C000537",
+   "thomas": "00208",
+   "govtrack": 400075,
+   "opensecrets": "N00002408",
+   "votesmart": 27066,
+   "fec": [
+    "H2SC02042"
+   ],
+   "cspan": 21607,
+   "wikipedia": "Jim Clyburn",
+   "house_history": 11119,
+   "ballotpedia": "James E. Clyburn",
+   "maplight": 192,
+   "icpsr": 39301,
+   "wikidata": "Q1289889",
+   "google_entity_id": "kg:/m/03c469",
+   "pictorial": 13246
+  },
+  "name": {
+   "first": "James",
+   "middle": "E.",
+   "last": "Clyburn",
+   "nickname": "Jim",
+   "official_full": "James E. Clyburn"
+  },
+  "bio": {
+   "birthday": "1940-07-21",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "House Majority Whip",
+    "chamber": "house",
+    "start": "2019-01-03",
+    "end": "2021-01-03"
+   },
+   {
+    "title": "House Majority Whip",
+    "chamber": "house",
+    "start": "2021-01-03",
+    "end": "2023-01-03"
+   },
+   {
+    "title": "Assistant House Minority Leader",
+    "chamber": "house",
+    "start": "2021-01-03",
+    "end": "2024-03-20"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1993-01-05",
+    "end": "1995-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1995-01-04",
+    "end": "1997-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1997-01-07",
+    "end": "1999-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1999-01-06",
+    "end": "2001-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "http://www.house.gov/clyburn"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "http://www.house.gov/clyburn"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "http://clyburn.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "http://clyburn.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "http://clyburn.house.gov",
+    "address": "2135 Rayburn HOB; Washington DC 20515-4006",
+    "phone": "202-225-3315",
+    "fax": "202-225-2313",
+    "contact_form": "http://clyburn.house.gov/contact.cfm",
+    "office": "2135 Rayburn House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "SC",
+    "party": "Democrat",
+    "district": 6,
+    "url": "http://clyburn.house.gov",
+    "address": "242 Cannon HOB; Washington DC 20515-4006",
+    "phone": "202-225-3315",
+    "fax": "202-225-2313",
+    "contact_form": "https://clyburn.house.gov/contact-me/email-me",
+    "office": "242 Cannon House Office Building",
+    "rss_url": "http://clyburn.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "SC",
+    "party": "Democrat",
+    "district": 6,
+    "url": "http://clyburn.house.gov",
+    "address": "242 Cannon HOB; Washington DC 20515-4006",
+    "phone": "202-225-3315",
+    "fax": "202-225-2313",
+    "contact_form": "https://clyburn.house.gov/contact-me/email-me",
+    "office": "242 Cannon House Office Building",
+    "rss_url": "http://clyburn.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "phone": "202-225-3315",
+    "url": "https://clyburn.house.gov",
+    "rss_url": "http://clyburn.house.gov/rss.xml",
+    "address": "242 Cannon House Office Building; Washington DC 20515-4006",
+    "office": "242 Cannon House Office Building",
+    "fax": "202-225-2313"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "phone": "202-225-3315",
+    "address": "200 Cannon House Office Building Washington DC 20515-4006",
+    "office": "200 Cannon House Office Building",
+    "url": "https://clyburn.house.gov",
+    "rss_url": "http://clyburn.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "https://clyburn.house.gov",
+    "rss_url": "http://clyburn.house.gov/rss.xml",
+    "address": "274 Cannon House Office Building Washington DC 20515-4006",
+    "office": "274 Cannon House Office Building",
+    "phone": "202-225-3315"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "https://clyburn.house.gov",
+    "rss_url": "http://clyburn.house.gov/rss.xml",
+    "address": "274 Cannon House Office Building Washington DC 20515-4006",
+    "office": "274 Cannon House Office Building",
+    "phone": "202-225-3315"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "SC",
+    "district": 6,
+    "party": "Democrat",
+    "url": "https://clyburn.house.gov",
+    "rss_url": "http://clyburn.house.gov/rss.xml",
+    "address": "274 Cannon House Office Building Washington DC 20515-4006",
+    "office": "274 Cannon House Office Building",
+    "phone": "202-225-3315"
+   }
+  ],
+  "family": [
+   {
+    "name": "George Washington Murray",
+    "relation": "relative"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001184",
+   "thomas": "02056",
+   "lis": "S365",
+   "govtrack": 412471,
+   "opensecrets": "N00031782",
+   "votesmart": 11940,
+   "fec": [
+    "H0SC01279",
+    "S4SC00240"
+   ],
+   "cspan": 623506,
+   "wikipedia": "Tim Scott",
+   "ballotpedia": "Tim Scott",
+   "maplight": 1476,
+   "icpsr": 21173,
+   "house_history": 22623,
+   "wikidata": "Q561315",
+   "google_entity_id": "kg:/m/0c407g6",
+   "pictorial": 13390
+  },
+  "name": {
+   "first": "Tim",
+   "last": "Scott",
+   "official_full": "Tim Scott"
+  },
+  "bio": {
+   "birthday": "1965-09-19",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Republican Committee Chair",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-02",
+    "state": "SC",
+    "district": 1,
+    "party": "Republican",
+    "url": "http://timscott.house.gov/",
+    "address": "1117 Longworth HOB; Washington DC 20515-4001",
+    "phone": "202-225-3176",
+    "fax": "202-225-3407",
+    "office": "1117 Longworth House Office Building"
+   },
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "SC",
+    "party": "Republican",
+    "class": 3,
+    "url": "http://www.scott.senate.gov",
+    "address": "167 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-6121",
+    "fax": "202-225-3407",
+    "office": "167 Russell Senate Office Building",
+    "state_rank": "junior",
+    "contact_form": "http://www.scott.senate.gov/contact/email-me",
+    "rss_url": "http://www.scott.senate.gov/rss.xml",
+    "how": "appointment"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "SC",
+    "party": "Republican",
+    "class": 3,
+    "url": "https://www.scott.senate.gov",
+    "address": "520 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-6121",
+    "fax": "202-225-3407",
+    "office": "520 Hart Senate Office Building",
+    "state_rank": "junior",
+    "contact_form": "http://www.scott.senate.gov/contact/email-me",
+    "rss_url": "http://www.scott.senate.gov/rss.xml"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "SC",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.scott.senate.gov",
+    "rss_url": "http://www.scott.senate.gov/rss.xml",
+    "address": "104 Hart Senate Office Building Washington DC 20510",
+    "office": "104 Hart Senate Office Building",
+    "phone": "202-224-6121",
+    "contact_form": "https://www.scott.senate.gov/contact/email-me",
+    "fax": "202-225-3407"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "SC",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.scott.senate.gov",
+    "rss_url": "http://www.scott.senate.gov/rss.xml",
+    "contact_form": "https://www.scott.senate.gov/contact/email-me",
+    "address": "104 Hart Senate Office Building Washington DC 20510",
+    "office": "104 Hart Senate Office Building",
+    "phone": "202-224-6121"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000608",
+   "lis": "S441",
+   "govtrack": 457044,
+   "wikipedia": "Darline Graham Nordone",
+   "wikidata": "Q140537772"
+  },
+  "name": {
+   "first": "Darline",
+   "last": "Graham Nordone",
+   "official_full": "Darline Graham"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1964-06-12"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2026-07-14",
+    "end": "2027-01-03",
+    "how": "appointment",
+    "state": "SC",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "address": "211 Russell Senate Office Building Washington DC 20510",
+    "office": "211 Russell Senate Office Building",
+    "phone": "202-224-5972",
+    "url": "https://www.dgraham.senate.gov"
+   }
+  ]
  }
 ]

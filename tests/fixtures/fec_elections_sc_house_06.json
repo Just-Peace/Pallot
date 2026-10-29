@@ -1,0 +1,60 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 3,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2SC02042",
+   "candidate_name": "CLYBURN, JAMES E",
+   "candidate_pcc_id": "C00255562",
+   "candidate_pcc_name": "FRIENDS OF JIM CLYBURN",
+   "cash_on_hand_end_period": 1827711.11,
+   "committee_ids": [
+    "C00255562"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1698873.67,
+   "total_receipts": 1687457.55
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6SC06168",
+   "candidate_name": "WASHINGTON, MAURICE G MR I",
+   "candidate_pcc_id": "C00946897",
+   "candidate_pcc_name": "COMMITTEE TO ELECT MAURICE WASHINGTON",
+   "cash_on_hand_end_period": 7002.63,
+   "committee_ids": [
+    "C00946897"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 18607.37,
+   "total_receipts": 25610.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6SC06184",
+   "candidate_name": "PETERSON, JOHN",
+   "candidate_pcc_id": "C00932970",
+   "candidate_pcc_name": "JOHN PETERSON FOR U.S. CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00932970"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

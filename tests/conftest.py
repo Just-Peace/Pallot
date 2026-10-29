@@ -75,6 +75,7 @@ ADDRESSES = {
     "annapolis": "100 State Cir, Annapolis, MD 21401",  # Maryland's CSV (states/md.py); MD-3, SD 30, HD 30A, Anne Arundel
     # Missouri's PDF (states/mo.py); MO-3 on the 2022 map in force (TIGERweb), MO-5 on the geocoder's; SD 6, HD 60, Cole
     "jeffersoncity": "201 W Capitol Ave, Jefferson City, MO 65101",
+    "columbia": "1100 Gervais St, Columbia, SC 29201",  # South Carolina's search (states/sc.py); SC-6, SD 26, HD 72, Richland
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -97,6 +98,7 @@ NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.
 IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
 MD_FILES = {"/2026/general_candidates/index.html": "state_md.html", "_statewide_candidatelist.csv": "state_md.csv"}
 MO_FILES = {"/elections": "state_mo.html", ".pdf": "state_mo.pdf"}
+SC_ELECTION = "22596"  # the November 3, 2026 general election's id on South Carolina's list of elections
 MD_NOT_FOUND ="<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
@@ -556,6 +558,16 @@ class Upstream:
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "vrems.scvotes.sc.gov":  # its list of a year's elections, and the search a POST answers
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            if url.path == "/Candidate/GetElections":
+                body = fixture_bytes("state_sc.json") if params.get("year") == "2026" else b"[]"
+            elif url.path == "/Candidate/CandidateSearch/" and request.method == "POST":
+                form = dict(parse_qsl(request.content.decode()))
+                body = fixture_bytes("state_sc.html") if form.get("ElectionId") == SC_ELECTION else b""
+            else:
+                return httpx.Response(404)
+            return httpx.Response(200, content=text.encode() if text is not None else body)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
                 return _file("state_ga_elections.json")
