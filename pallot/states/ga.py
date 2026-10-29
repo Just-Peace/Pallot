@@ -20,6 +20,14 @@ A county's whole-county office reaches the county; one with a district, post or 
 and a county's district offices, only part of it. A city's office reaches the whole city, but a
 district or ward only part of it. A district attorney's judicial circuit isn't said by county,
 so those races are only counted.
+
+Georgia's key dates, for its general election (O.C.G.A. 21-2-9: the first Tuesday after the first
+Monday of November in an even year): registration closes the fifth Monday before (21-2-224); any
+voter can vote absentee, applying by the eleventh day before (21-2-381(a)(1)(A)), and the ballot
+must reach the county's registrars by 7 p.m. on Election Day (21-2-386); advance voting runs
+weekdays from the fourth Monday before through the Friday before, and on the second and third
+Saturdays before (21-2-385(d)(1)), but not on an observed state holiday, so it starts the next day
+when that Monday is Columbus Day; polls are open 7 a.m. to 7 p.m. (21-2-403).
 """
 
 from __future__ import annotations
@@ -31,9 +39,10 @@ from typing import Any
 
 from .. import counties
 from ..http_cache import RequestSpec
+from ..sources.key_dates import Deadlines
 from ..text import display_person
 from . import Filing, ManualList, Office, legislator, party, statewide, us_house, us_senate
-from .key_dates import first_tuesday_after_first_monday
+from .dates import Guide, columbus_day, first_tuesday_after_first_monday
 
 RESULTS_API = "https://results.sos.ga.gov/results/public/api"
 ELECTIONS = f"{RESULTS_API}/jurisdictions/Georgia"
@@ -376,3 +385,53 @@ class GaList(ManualList):
 
     def missing(self, when: str) -> str:
         return f"Pallot doesn't have the {self.label}'s candidates for {when} yet"
+
+
+GUIDE = Guide(
+    name="Georgia",
+    source="Georgia Secretary of State",
+    url="https://sos.ga.gov/elections",
+    computed=True,
+    registration_url="https://mvp.sos.ga.gov/s/",
+    mail_url="https://securemyabsenteeballot.sos.ga.gov/s/",
+    register="The last day to register to vote in {election} in Georgia.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee in {election}, your application must reach your county's board of registrars today. "
+         "Your ballot must reach them by 7 p.m. on Election Day; one that arrives later isn't counted. Any voter can "
+         "vote absentee; how to apply:",
+    early_where="Your county's board of registrars lists the places and hours. Early voting is on weekdays, and on "
+                "the second and third Saturdays before Election Day; some counties also open on Sundays.",
+    credit="Dates worked out from Georgia's election law; more from the Georgia Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://mvp.sos.ga.gov/s/",
+    check_hint="My Voter Page (Georgia Secretary of State): your registration, your polling place and your sample "
+               "ballot",
+    where_url="https://mvp.sos.ga.gov/s/",
+    where_hint="My Voter Page: your polling place and your county's early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county by 7 p.m. on Election Day.",
+    local_office="Your county's board of registrars",
+)
+
+
+def georgia(day: dt.date) -> Deadlines | None:
+    """The dates of Georgia's general election on ``day``, or None when there's none: register by
+    the fifth Monday before, apply to vote absentee by the eleventh day before, early voting the
+    fourth Monday before (the Tuesday when that's Columbus Day) through the Friday before."""
+    if day.year % 2 or day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    early = day - dt.timedelta(days=22)
+    if early == columbus_day(day.year):
+        early += dt.timedelta(days=1)
+    return Deadlines(
+        day, "General Election",
+        register_by=day - dt.timedelta(days=29),
+        mail_apply_by=day - dt.timedelta(days=11),
+        early_start=early,
+        early_end=day - dt.timedelta(days=4),
+        state="GA",
+    )
+
+
+RULE = georgia

@@ -10,6 +10,14 @@ and both last names on the next.
 
 The statewide offices come under the state, Congress, the State Senate and the Assembly by their
 districts, and a Supreme Court judicial district reaches the whole counties it lists.
+
+New York's key dates, for its general election (Election Law 8-100(1)(c): the Tuesday after the
+first Monday of November, every year), checked on nysenate.gov on 2026-10-24: a registration must
+reach the county board by the tenth day before (5-210(3)); early voting runs from the tenth day
+before through the second day before (8-600(1)); an absentee or early mail ballot application online
+or by mail must reach the board by the tenth day before, in person by the day before (8-400); a
+mailed ballot must be postmarked by Election Day and reach the board within seven days after
+(8-412); polls are open 6 a.m. to 9 p.m. (8-100(2)).
 """
 
 from __future__ import annotations
@@ -20,7 +28,7 @@ import re
 from typing import Any
 
 from . import Filing, ManualList, Office, legislator, ordinal, party, pdf_lines, require, statewide, us_house
-from .key_dates import first_tuesday_after_first_monday
+from .dates import Counts, Guide, first_tuesday_after_first_monday
 
 STATEWIDE = {"GOVERNOR AND LT. GOVERNOR": "Governor and Lieutenant Governor", "COMPTROLLER": "Comptroller",
              "ATTORNEY GENERAL": "Attorney General"}
@@ -181,3 +189,32 @@ class NyList(ManualList):
 
     def missing(self, when: str) -> str:
         return f"Pallot doesn't have the {self.label}' certification of the candidates for {when} yet"
+
+
+GUIDE = Guide(
+    name="New York",
+    source="New York State Board of Elections",
+    url="https://elections.ny.gov/",
+    computed=True,
+    registration_url="https://elections.ny.gov/register-vote",
+    mail_url="https://absenteeballot.elections.ny.gov/",
+    register="The last day for your registration to reach your county board of elections for {election} in New York.",
+    mail_summary="Early mail or absentee ballot application due",
+    mail="If you vote by mail in {election}, an application made online or by mail must reach your county board of "
+         "elections today; in person, you can apply until the day before Election Day. Your ballot must be "
+         "postmarked by Election Day and reach the board within 7 days after. Any voter can vote early by mail; "
+         "how to apply:",
+    early_where="Your county board of elections sets the places and hours.",
+    credit="Dates worked out from New York's Election Law; more from the New York State Board of Elections",
+    poll_hours="6 a.m. – 9 p.m.",
+    check_url="https://voterlookup.elections.ny.gov/",
+    check_hint="New York State Board of Elections' voter lookup: your registration and your polling place",
+    where_url="https://voterlookup.elections.ny.gov/",
+    where_hint="The voter lookup: your polling place; your county board of elections publishes its early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote early by mail, no reason needed. Your ballot must be postmarked by "
+                     "Election Day and reach your county board within 7 days after.",
+    mail_deadline="Online or mailed applications must reach your county board by ",
+    local_office="Your county board of elections",
+)
+RULE = Counts(10, 10, 10, 2, every_year=True).rule("NY")

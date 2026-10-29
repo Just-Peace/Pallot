@@ -13,6 +13,14 @@ contest whose district is the whole county (sheriff, clerk of circuit court, cor
 whole county, and a city's or village's whose district is the whole of it, the whole place;
 anything else within a county (a supervisory district, a joint municipal court, a town) only part
 of it, so those are unconfirmed. A city spanning counties ("- MULTIPLE COUNTIES") isn't placed.
+
+Wisconsin's key dates, for its general election (Wis. Stat. 5.02(5): the Tuesday after the first
+Monday of November in an even year): registration by mail or online closes the third Wednesday
+before (6.28(1)), then it's in person at the municipal clerk's office until 5 p.m. the Friday before
+(6.29(2)(a)), or at the polling place on Election Day (6.55(2)); any voter can vote absentee, asking
+by mail or online by 5 p.m. the fifth day before, or in person at the clerk's office from the
+fourteenth day before through the Sunday before (6.86(1)(b)), and the ballot must reach the polling
+place by 8 p.m. on Election Day (6.87(6)); polls are open 7 a.m. to 8 p.m. (6.78(1m)).
 """
 
 from __future__ import annotations
@@ -25,7 +33,7 @@ import re
 from typing import Any
 
 from . import Filing, ManualList, Office, legislator, party, us_house
-from .key_dates import first_tuesday_after_first_monday
+from .dates import Counts, Guide, first_tuesday_after_first_monday
 
 COLUMNS = ("Election", "IsReferendum", "Name On Ballot", "Political Party", "Jurisdiction", "Contest", "District",
            "Contest Ballot Position", "Candidate Ballot Position")
@@ -128,3 +136,36 @@ class WiList(ManualList):
         if not isinstance(raw, str):
             raise ValueError("not a CSV")
         return parse_rows(raw)
+
+
+GUIDE = Guide(
+    name="Wisconsin",
+    source="Wisconsin Elections Commission",
+    url="https://elections.wi.gov/",
+    computed=True,
+    registration_url="https://myvote.wi.gov/",
+    mail_url="https://myvote.wi.gov/",
+    register="The last day to register online or by mail for {election} in Wisconsin. After it, you can still "
+             "register in person at your municipal clerk's office until 5 p.m. on the Friday before, or at your "
+             "polling place on Election Day, with proof of residence.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, a request made online or by mail must reach your municipal clerk by "
+         "5 p.m. today. Your ballot must reach your polling place or clerk by 8 p.m. on Election Day; one that "
+         "arrives later isn't counted. Any voter can vote absentee; how to ask:",
+    early_where="Your municipal clerk sets the places and hours, and may start later than the first day allowed.",
+    credit="Dates worked out from Wisconsin's election law; more from the Wisconsin Elections Commission",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://myvote.wi.gov/",
+    check_hint="MyVote Wisconsin (Wisconsin Elections Commission): your registration, your polling place and your "
+               "ballot",
+    where_url="https://myvote.wi.gov/",
+    where_hint="MyVote Wisconsin: your polling place, and your municipal clerk's office for voting early",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "polling place or clerk by 8 p.m. on Election Day.",
+    mail_deadline="Mailed or online requests must reach your clerk by 5 p.m. on ",
+    local_office="Your municipal clerk",
+    late_registration="After that, register in person at your clerk's office until the Friday before, or at your "
+                      "polling place on Election Day",
+)
+RULE = Counts(20, 5, 14, 2).rule("WI")

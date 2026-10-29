@@ -10,6 +10,14 @@ the address never leaves the parser, so the cache and the bundle hold the parsed
 page's two links alone. A House district starts with its heading ("First Congressional District:
 BURLINGTON (part) - …  Counties"), sometimes wrapped onto a second line, and each list ends with
 its totals, whose count of candidates the list read must match.
+
+New Jersey's key dates, for its general election (N.J.S.A. 19:2-3: the Tuesday after the first
+Monday of November): registration closes the twenty-first day before (19:31-6.3); early voting in
+person runs from the tenth day before through the second day before (19:15A-1); any voter can vote
+by mail, applying by mail so the county clerk has it by the seventh day before, or in person at the
+clerk's office until 3 p.m. the day before (19:63-3), and a mailed ballot must be postmarked by
+Election Day and reach the county board of elections within 144 hours after the polls close
+(19:63-22); polls are open 6 a.m. to 8 p.m. (19:15-2).
 """
 
 from __future__ import annotations
@@ -22,6 +30,7 @@ from urllib.parse import urljoin
 from ..http_cache import RequestSpec
 from ..text import display_person
 from . import _ORDINALS, Filing, StateList, party, pdf_lines, require, us_house, us_senate
+from .dates import Counts, Guide
 
 BASE = "https://www.nj.gov/state/elections/"
 URL = BASE + "election-information-{year}.shtml"
@@ -120,3 +129,35 @@ class NjList(StateList):
         if not isinstance(raw, bytes):
             raise ValueError("not a PDF")
         return parse_lines(pdf_lines(raw))
+
+
+GUIDE = Guide(
+    name="New Jersey",
+    source="New Jersey Division of Elections",
+    url="https://www.nj.gov/state/elections/",
+    computed=True,
+    registration_url="https://voter.svrs.nj.gov/register",
+    mail_url="https://www.nj.gov/state/elections/vote-by-mail.shtml",
+    register="The last day to register to vote in {election} in New Jersey, online, by mail or in person. There's no "
+             "registration on Election Day.",
+    mail_summary="Mail-in ballot application due by mail",
+    mail="If you vote by mail in {election}, an application sent by mail must reach your county clerk today. In "
+         "person, you can apply at the clerk's office until 3 p.m. the day before Election Day. Your ballot must be "
+         "postmarked by Election Day and reach your county board of elections within six days, or be dropped in a "
+         "drop box by 8 p.m. on Election Day. Any voter can vote by mail; how to apply:",
+    early_where="Your county lists the places. Early voting is open 10 a.m. to 8 p.m. Monday to Saturday, and 10 a.m. "
+                "to 6 p.m. on Sunday.",
+    credit="Dates worked out from New Jersey's election law; more from the New Jersey Division of Elections",
+    poll_hours="6 a.m. – 8 p.m.",
+    check_url="https://voter.svrs.nj.gov/registration-check",
+    check_hint="New Jersey's voter registration check (Division of Elections)",
+    where_url="https://voter.svrs.nj.gov/polling-place-search",
+    where_hint="New Jersey's polling place search; your county lists its early voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+                     "Election Day and reach your county within six days, or be dropped in a drop box by 8 p.m. on "
+                     "Election Day.",
+    mail_deadline="An application sent by mail must reach your county clerk by ",
+    local_office="Your county clerk",
+)
+RULE = Counts(21, 7, 10, 2, every_year=True).rule("NJ")

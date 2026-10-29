@@ -6,6 +6,14 @@ primary and the general; a general's rows carry its November date. It has no wit
 candidates, write-ins or incumbents. A contest's reach comes from its name and the counties it
 has rows in: a judicial or district attorney's district is the counties it's listed in, a county
 office the one county, a town's the town.
+
+North Carolina's key dates, for its general election (G.S. 163-1: the Tuesday after the first Monday
+of November in an even year): registration closes the twenty-fifth day before (163-82.6(d)), then
+voters register and vote the same day at an early voting site (163-82.6B), but not on Election Day;
+early voting runs from the third Thursday before through 3 p.m. on the last Saturday before
+(163-227.2(b)); any voter can vote absentee, the request reaching the county board by 5 p.m. on the
+second Tuesday before (163-230.1(a)), and the ballot must reach the board by 7:30 p.m. on Election
+Day (163-231(b)); polls are open 6:30 a.m. to 7:30 p.m. (163-166.01).
 """
 
 from __future__ import annotations
@@ -20,6 +28,7 @@ from ..http_cache import RequestSpec
 from ..sources.fec import race_name
 from ..text import display_office
 from . import Filing, Office, StateList, party, party_rank
+from .dates import Counts, Guide
 
 URL = "https://s3.amazonaws.com/dl.ncsbe.gov/Elections/{year}/Candidate%20Filing/Candidate_Listing_{year}.csv"
 COLUMNS = ("election_dt", "county_name", "contest_name", "name_on_ballot", "party_candidate", "is_unexpired",
@@ -110,3 +119,36 @@ class NcList(StateList):
                 + party_rank(code, party_name),
             ))
         return filings
+
+
+GUIDE = Guide(
+    name="North Carolina",
+    source="North Carolina State Board of Elections",
+    url="https://www.ncsbe.gov/",
+    computed=True,
+    registration_url="https://www.ncsbe.gov/registering/how-register",
+    mail_url="https://votebymail.ncsbe.gov/",
+    register="The last day to register to vote in {election} in North Carolina, online, by mail (postmarked today) "
+             "or in person. After it, you can still register and vote the same day at an early voting site, until "
+             "early voting ends; not on Election Day.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, your request must reach your county board of elections by 5 p.m. "
+         "today. Your ballot must reach the board by 7:30 p.m. on Election Day; one that arrives later isn't "
+         "counted. Any voter can vote absentee; how to ask:",
+    early_where="Your county board of elections lists the places and hours. Early voting ends at 3 p.m. on the last "
+                "day.",
+    credit="Dates worked out from North Carolina's election law; more from the North Carolina State Board of Elections",
+    poll_hours="6:30 a.m. – 7:30 p.m.",
+    check_url="https://vt.ncsbe.gov/RegLkup/",
+    check_hint="North Carolina's voter search (State Board of Elections): your registration, your polling place and "
+               "your sample ballot",
+    where_url="https://vt.ncsbe.gov/RegLkup/",
+    where_hint="The voter search: your polling place; your county board of elections lists its early voting sites",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county board of elections by 7:30 p.m. on Election Day.",
+    mail_deadline="Your request must reach your county board by 5 p.m. on ",
+    local_office="Your county board of elections",
+    late_registration="After that, register and vote the same day at an early voting site, until early voting ends",
+)
+RULE = Counts(25, 14, 19, 3).rule("NC")

@@ -7,6 +7,16 @@ only the races every Ohio voter has (Governor and Lieutenant Governor as a ticke
 statewide offices, the Supreme Court and the U.S. Senate), says so in its ``scope``, and is refused
 when it says anything else. The U.S. House race comes from the FEC's filers instead (ballot.py),
 and the Legislature's and the county's races aren't shown.
+
+Ohio's key dates, for its general election (ORC 3501.01(A): the first Tuesday after the first Monday
+of November), checked on codes.ohio.gov on 2026-10-22: registration closes the thirtieth day before
+(3503.19), always a Sunday, so the next day that's neither a Sunday nor a legal holiday (1.14, whose
+holidays include Columbus Day); early voting in person runs from the day after through 5 p.m. on the
+Sunday before (3509.051); any voter can vote absentee, applying by the close of business on the
+seventh day before (3509.03(D)), and since SB 293 (effective March 20, 2026) the ballot must reach
+the county board by the close of the polls on Election Day (3509.05(D)), except a military or
+overseas voter's, counted through the fourth day after (3511.11); polls are open 6:30 a.m. to 7:30
+p.m. (3501.32). There's no registration on Election Day.
 """
 
 from __future__ import annotations
@@ -17,8 +27,10 @@ import json
 import re
 from typing import Any
 
+from ..sources.key_dates import Deadlines
 from ..text import display_person
 from . import Filing, ManualList, Office, party, us_senate
+from .dates import Guide, columbus_day, first_tuesday_after_first_monday
 
 PAGE = "https://www.ohiosos.gov/assets/dir2026-45-official-sample-ballot-november-3-2026.pdf"
 SCOPE = "statewide_offices_only"
@@ -116,3 +128,54 @@ class OhList(ManualList):
                     incumbent=bool(candidate.get("incumbent")), order=number * 100 + index,
                 ))
         return filings
+
+
+GUIDE = Guide(
+    name="Ohio",
+    source="Ohio Secretary of State",
+    url="https://www.ohiosos.gov/elections/",
+    computed=True,
+    registration_url="https://olvr.ohiosos.gov/",
+    mail_url="https://www.ohiosos.gov/elections/request-an-absentee-ballot",
+    register="The last day to register to vote in {election} in Ohio. There's no registration on Election Day.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee in {election}, your application must reach your county board of elections by the "
+         "close of business today. Your ballot must reach the board by 7:30 p.m. on Election Day; one that arrives "
+         "later isn't counted, even if it was mailed in time. Any voter can vote absentee; how to apply:",
+    early_where="Your county board of elections lists the place and hours. Early voting ends at 5 p.m. on the Sunday "
+                "before Election Day.",
+    credit="Dates worked out from Ohio's election law; more from the Ohio Secretary of State",
+    poll_hours="6:30 a.m. – 7:30 p.m.",
+    check_url="https://voterlookup.ohiosos.gov/voterlookup.aspx",
+    check_hint="Ohio Secretary of State's voter lookup: your registration and your polling place",
+    where_url="https://www.ohiosos.gov/elections/county-boards-of-elections-directory",
+    where_hint="Every county board of elections (Ohio Secretary of State); yours publishes where and when you can vote "
+               "early",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county board by 7:30 p.m. on Election Day: one mailed in time but arriving later isn't counted.",
+    mail_deadline="Your application must reach your county board by the close of business on ",
+    local_office="Your county board of elections",
+)
+
+
+def ohio(day: dt.date) -> Deadlines | None:
+    """The dates of Ohio's general election on ``day``, or None when there's none: register by
+    the thirtieth day before, moved past a Sunday or Columbus Day, early voting from the day after
+    through the Sunday before, apply to vote absentee by the seventh day before."""
+    if day != first_tuesday_after_first_monday(day.year, 11):
+        return None
+    register = day - dt.timedelta(days=30)
+    while register.weekday() == 6 or register == columbus_day(day.year):
+        register += dt.timedelta(days=1)
+    return Deadlines(
+        day, "General Election",
+        register_by=register,
+        mail_apply_by=day - dt.timedelta(days=7),
+        early_start=register + dt.timedelta(days=1),
+        early_end=day - dt.timedelta(days=2),
+        state="OH",
+    )
+
+
+RULE = ohio
