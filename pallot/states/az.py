@@ -14,8 +14,12 @@ Each Legislative District elects one senator and two representatives; the Census
 of Arizona's legislative layers with the district, so a representative's race is placed by
 its State House district, which is the same number.
 
-Arizona's key dates are entered by hand from its Secretary of State's list, whose site blocks
-scripts; early voting in person ends at 5 p.m. the Friday before Election Day (A.R.S. 16-542(E)).
+Arizona's key dates, for its general election (A.R.S. 16-211: the first Tuesday after the first
+Monday of November in an even year), checked on azleg.gov on 2026-10-28: registration closes at
+midnight on the twenty-ninth day before, and one received the next business day counts when that
+day is a Saturday, Sunday or legal holiday (16-120), whose holidays include Columbus Day (1-301);
+early ballots go out from the twenty-seventh day before (16-542(C)), and early voting in person
+ends at 7 p.m. on the Friday before (16-542(E)); polls are open 6 a.m. to 7 p.m. (16-565).
 """
 
 from __future__ import annotations
@@ -27,10 +31,9 @@ from collections import Counter
 from html.parser import HTMLParser
 from typing import Any
 
-from ..sources.key_dates import Deadlines
 from ..text import display_person
 from . import MONTH_DAY_YEAR, Filing, ManualList, Office, legislator, party, statewide, us_house, us_senate
-from .dates import Guide
+from .dates import Counts, Guide, Roll, columbus_day
 
 PAGE = "https://apps.arizona.vote/electioninfo/Election/69"
 _DATE = re.compile(rf"\b{MONTH_DAY_YEAR}\b")
@@ -193,7 +196,7 @@ GUIDE = Guide(
     name="Arizona",
     source="Arizona Secretary of State",
     url="https://azsos.gov/elections",
-    computed=False,
+    computed=True,
     registration_url="https://my.arizona.vote/",
     mail_url="https://my.arizona.vote/",
     register="The last day to register to vote in {election} in Arizona, by 11:59 p.m.",
@@ -201,7 +204,7 @@ GUIDE = Guide(
     mail="If you vote early by mail in {election}, ask your county recorder for your ballot in time for it to reach "
          "you and come back by Election Day. Any voter can vote early by mail; how to ask:",
     early_where="Your county recorder lists the places and hours.",
-    credit="Dates from the Arizona Secretary of State",
+    credit="Dates worked out from Arizona's election law; more from the Arizona Secretary of State",
     poll_hours="6 a.m. – 7 p.m.",
     check_url="https://my.arizona.vote/",
     check_hint="Arizona.Vote (Arizona Secretary of State): your registration, your polling place and your ballot's "
@@ -210,21 +213,8 @@ GUIDE = Guide(
     where_hint="Arizona.Vote: your polling place; Maricopa and Pima counties also have their own lookups",
     mail_label="How to ask",
     mail_eligibility="Any registered voter can vote early by mail, no reason needed. Early ballots go out from "
-                     "October 7; ask your county recorder for yours, or join the Active Early Voting List.",
+                     "27 days before Election Day; ask your county recorder for yours, or join the Active Early Voting List.",
     local_office="Your county recorder",
 )
 
-DATES = {
-    dt.date(2026, 11, 3): Deadlines(
-        dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 5),
-        early_start=dt.date(2026, 10, 7), early_end=dt.date(2026, 10, 30), state="AZ",
-    ),
-}
-
-
-def arizona(day: dt.date) -> Deadlines | None:
-    """The dates of Arizona's statewide election on ``day``, as its Secretary of State lists them."""
-    return DATES.get(day)
-
-
-RULE = arizona
+RULE = Counts(29, None, 27, 4, roll=Roll(holidays=lambda year: (columbus_day(year),))).rule("AZ")

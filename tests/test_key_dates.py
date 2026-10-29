@@ -284,6 +284,17 @@ def test_florida_north_carolina_pennsylvania_and_virginia_dates_follow_their_ele
     assert (state_key_dates.computed(state, D(2027, 11, 2)) is not None) == (state == "VA")
 
 
+@pytest.mark.parametrize("day, register, early_start, early_end", [
+    (D(2026, 11, 3), D(2026, 10, 5), D(2026, 10, 7), D(2026, 10, 30)),
+    (D(2028, 11, 7), D(2028, 10, 10), D(2028, 10, 11), D(2028, 11, 3)),  # past Columbus Day
+])
+def test_arizonas_dates_follow_its_election_law(day, register, early_start, early_end):
+    found = state_key_dates.computed("AZ", day)
+    assert (found.register_by, found.mail_apply_by, found.early_start, found.early_end) == (
+        register, None, early_start, early_end)
+    assert state_key_dates.computed("AZ", D(2027, 11, 2)) is None
+
+
 def test_a_state_without_registration_has_no_register_date_or_event(monkeypatch):
     monkeypatch.setitem(ics.GUIDES, "ZZ", state_key_dates.GUIDES["OH"])
     found = Counts(None, 7, 14, 1).on("ZZ", D(2026, 11, 3))

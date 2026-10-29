@@ -14,7 +14,6 @@ from bundles import store
 from bundles.__main__ import main as bundle_main
 from bundles.entry import BundleError
 from bundles.manual import import_list
-from pallot.states import key_dates as state_key_dates
 from pallot.states.az import AzList
 
 from .bundling import build
@@ -121,7 +120,7 @@ def test_an_arizona_ballot_comes_from_the_imported_list(tmp_path, upstream, make
         assert ballot["key_dates"] == {
             "election": "General Election", "election_day": "2026-11-03", "register_by": "2026-10-05",
             "mail_apply_by": None, "early_voting_start": "2026-10-07", "early_voting_end": "2026-10-30",
-            "source": "Arizona Secretary of State", "source_url": "https://azsos.gov/elections", "computed": False,
+            "source": "Arizona Secretary of State", "source_url": "https://azsos.gov/elections", "computed": True,
         }
         get_ballot(client, "phoenix")
         assert logged_calls() == 0
@@ -152,14 +151,6 @@ def test_pallot_cache_never_refreshes_the_imported_list_and_a_rebuild_keeps_it(t
     with TestClient(make_app(bundles=tmp_path / "no-bundles")) as client:
         assert get_ballot(client, "phoenix")["coverage"]["ballot"] == "list"
     assert upstream.count("arizona") == 0 and upstream.count("azsos") == 0
-
-
-def test_arizonas_key_dates_are_the_ones_its_secretary_of_state_lists():
-    found = state_key_dates.computed("AZ", dt.date(2026, 11, 3))
-    assert (found.register_by, found.early_start, found.early_end, found.state) == (
-        dt.date(2026, 10, 5), dt.date(2026, 10, 7), dt.date(2026, 10, 30), "AZ")
-    assert found.early_end.weekday() == 4  # the Friday before
-    assert state_key_dates.computed("AZ", dt.date(2028, 11, 7)) is None
 
 
 def test_arizonas_calendar_file_has_its_dates(client):
