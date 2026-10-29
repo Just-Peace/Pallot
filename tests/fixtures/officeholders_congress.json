@@ -18219,5 +18219,303 @@
     "phone": "202-225-3106"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "Y000064",
+   "thomas": "02019",
+   "govtrack": 412428,
+   "opensecrets": "N00030670",
+   "votesmart": 120345,
+   "fec": [
+    "H0IN09070",
+    "S6IN00191"
+   ],
+   "cspan": 1033743,
+   "wikipedia": "Todd Young",
+   "house_history": 21109,
+   "ballotpedia": "Todd Young",
+   "maplight": 1439,
+   "icpsr": 21133,
+   "wikidata": "Q25483",
+   "google_entity_id": "kg:/m/0ds030m",
+   "lis": "S391",
+   "pictorial": 13374
+  },
+  "name": {
+   "first": "Todd",
+   "middle": "C.",
+   "last": "Young",
+   "official_full": "Todd Young"
+  },
+  "bio": {
+   "birthday": "1972-08-24",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "IN",
+    "district": 9,
+    "party": "Republican",
+    "url": "http://toddyoung.house.gov/",
+    "address": "1721 Longworth HOB; Washington DC 20515-1409",
+    "phone": "202-225-5315",
+    "fax": "202-226-6866",
+    "office": "1721 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "IN",
+    "party": "Republican",
+    "district": 9,
+    "url": "http://toddyoung.house.gov",
+    "address": "1007 Longworth HOB; Washington DC 20515-1409",
+    "phone": "202-225-5315",
+    "fax": "202-226-6866",
+    "office": "1007 Longworth House Office Building",
+    "rss_url": "http://toddyoung.house.gov/common/rss//index.cfm?rss=49",
+    "contact_form": "https://toddyoungforms.house.gov/give-me-your-opinion"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "IN",
+    "party": "Republican",
+    "district": 9,
+    "url": "http://toddyoung.house.gov",
+    "address": "1007 Longworth HOB; Washington DC 20515-1409",
+    "phone": "202-225-5315",
+    "fax": "202-226-6866",
+    "office": "1007 Longworth House Office Building",
+    "rss_url": "http://toddyoung.house.gov/common/rss//index.cfm?rss=49",
+    "contact_form": "https://toddyoungforms.house.gov/give-me-your-opinion"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "IN",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "address": "185 Dirksen Senate Office Building Washington DC 20510",
+    "office": "185 Dirksen Senate Office Building",
+    "phone": "202-224-5623",
+    "url": "https://www.young.senate.gov",
+    "contact_form": "https://www.young.senate.gov/contact",
+    "fax": "202-226-6866"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "IN",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.young.senate.gov",
+    "contact_form": "https://www.young.senate.gov/contact",
+    "address": "185 Dirksen Senate Office Building Washington DC 20510",
+    "office": "185 Dirksen Senate Office Building",
+    "phone": "202-224-5623"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "B001299",
+   "lis": "S429",
+   "govtrack": 412702,
+   "wikipedia": "Jim Banks",
+   "wikidata": "Q16146788",
+   "votesmart": 116801,
+   "fec": [
+    "H6IN03229",
+    "S4IN00196"
+   ],
+   "opensecrets": "N00037185",
+   "maplight": 2214,
+   "google_entity_id": "kg:/m/0j621nj",
+   "ballotpedia": "Jim Banks",
+   "cspan": 89806,
+   "icpsr": 21702,
+   "pictorial": 13052
+  },
+  "name": {
+   "first": "Jim",
+   "last": "Banks",
+   "official_full": "Jim Banks"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1979-07-16"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "phone": "202-225-4436",
+    "address": "509 Cannon House Office Building; Washington DC 20515-1403",
+    "office": "509 Cannon House Office Building",
+    "url": "https://banks.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "phone": "202-225-4436",
+    "address": "1713 Longworth House Office Building Washington DC 20515-1403",
+    "office": "1713 Longworth House Office Building",
+    "url": "https://banks.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://banks.house.gov",
+    "address": "1713 Longworth House Office Building Washington DC 20515-1403",
+    "office": "1713 Longworth House Office Building",
+    "phone": "202-225-4436"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://banks.house.gov",
+    "address": "2418 Rayburn House Office Building Washington DC 20515-1403",
+    "office": "2418 Rayburn House Office Building",
+    "phone": "202-225-4436"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "IN",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.banks.senate.gov",
+    "address": "303 Hart Senate Office Building Washington DC 20510",
+    "office": "303 Hart Senate Office Building",
+    "phone": "202-224-4814"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001188",
+   "thomas": "01981",
+   "govtrack": 412392,
+   "opensecrets": "N00030891",
+   "votesmart": 34230,
+   "fec": [
+    "H0IN03198",
+    "S0IN00095"
+   ],
+   "cspan": 9267685,
+   "wikipedia": "Marlin Stutzman",
+   "ballotpedia": "Marlin Stutzman",
+   "maplight": 1373,
+   "icpsr": 21100,
+   "house_history": 22629,
+   "wikidata": "Q1902106",
+   "google_entity_id": "kg:/m/06zk1_1"
+  },
+  "name": {
+   "first": "Marlin",
+   "middle": "A.",
+   "last": "Stutzman",
+   "official_full": "Marlin A. Stutzman"
+  },
+  "bio": {
+   "birthday": "1976-08-31",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2010-11-16",
+    "end": "2011-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "url": "http://stutzman.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "url": "http://stutzman.house.gov",
+    "address": "1728 Longworth HOB; Washington DC 20515-1403",
+    "phone": "202-225-4436",
+    "fax": "202-225-3479",
+    "office": "1728 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "IN",
+    "party": "Republican",
+    "district": 3,
+    "url": "http://stutzman.house.gov",
+    "address": "1728 Longworth HOB; Washington DC 20515-1403",
+    "phone": "202-225-4436",
+    "fax": "202-226-9870",
+    "office": "1728 Longworth House Office Building",
+    "rss_url": "http://stutzman.house.gov/press_releases.rss",
+    "contact_form": "http://stutzman.house.gov/contacts/new"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "IN",
+    "party": "Republican",
+    "district": 3,
+    "url": "http://stutzman.house.gov",
+    "address": "2418 Rayburn HOB; Washington DC 20515-1403",
+    "phone": "202-225-4436",
+    "fax": "202-226-9870",
+    "office": "2418 Rayburn House Office Building",
+    "rss_url": "http://stutzman.house.gov/press_releases.rss",
+    "contact_form": "http://stutzman.house.gov/contacts/new"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "IN",
+    "district": 3,
+    "party": "Republican",
+    "url": "https://stutzman.house.gov",
+    "rss_url": "http://stutzman.house.gov/press_releases.rss",
+    "address": "404 Cannon House Office Building Washington DC 20515-1403",
+    "office": "404 Cannon House Office Building",
+    "phone": "202-225-4436"
+   }
+  ]
  }
 ]

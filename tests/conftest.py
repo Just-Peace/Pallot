@@ -71,6 +71,7 @@ ADDRESSES = {
     "omaha": "4917 Underwood Ave, Omaha, NE 68132",  # Nebraska's two PDFs (states/ne.py); NE-2, Legislature 8, Douglas County
     "albuquerque": "400 Marquette Ave NW, Albuquerque, NM 87102",  # New Mexico's grid (states/nm.py); NM-1, SD 13, HD 11
     "seattle": "600 4th Ave, Seattle, WA 98104",  # Washington's grid (states/wa.py); WA-7, Legislative District 34, King
+    "fortwayne": "200 E Berry St, Fort Wayne, IN 46802",  # Indiana's spreadsheet (states/in_.py); IN-3, SD 16, HD 82, Allen
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -90,6 +91,7 @@ NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", 
 VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "state_va_all.html"}
 ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
 NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
+IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
 
@@ -521,6 +523,11 @@ class Upstream:
             if "Mozilla/" not in request.headers.get("user-agent", ""):
                 return httpx.Response(403)
             name = next((name for part, name in ME_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.in.gov":
+            name = next((name for part, name in IN_FILES.items() if url.path.endswith(part)), None)
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)

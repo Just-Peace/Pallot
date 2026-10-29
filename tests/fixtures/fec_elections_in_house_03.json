@@ -1,0 +1,44 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 2,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H0IN03198",
+   "candidate_name": "STUTZMAN, MARLIN A",
+   "candidate_pcc_id": "C00838110",
+   "candidate_pcc_name": "STUTZMAN FOR CONGRESS",
+   "cash_on_hand_end_period": 101047.75,
+   "committee_ids": [
+    "C00838110"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 915364.11,
+   "total_receipts": 967094.9
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6IN03294",
+   "candidate_name": "THOMPSON, KELLY ELIZABETH",
+   "candidate_pcc_id": "C00907816",
+   "candidate_pcc_name": "KELLY THOMPSON FOR CONGRESS",
+   "cash_on_hand_end_period": 53981.44,
+   "committee_ids": [
+    "C00907816"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 293121.91,
+   "total_receipts": 347103.35
+  }
+ ]
+}
