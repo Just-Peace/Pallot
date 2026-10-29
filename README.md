@@ -236,40 +236,40 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 <!-- source-stats:start -->
 | Source | Candidates | Also | Data changed | Checked |
 |---|---|---|---|---|
-| FEC | **93** | 39 races | 2026-10-25 | 2026-10-25 |
-| FEC race lists, other states | — | 431 races · 50 states | 2026-10-25 | 2026-10-25 |
-| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-25 | 2026-10-25 |
-| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-18 | 2026-10-25 |
+| FEC | **93** | 39 races | 2026-10-28 | 2026-10-28 |
+| FEC race lists, other states | — | 431 races · 50 states | 2026-10-27 | 2026-10-28 |
+| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-28 | 2026-10-28 |
+| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-27 | 2026-10-28 |
 | Seat holders | — | 539 members of Congress · 2,292 state legislators | 2026-10-25 | 2026-10-25 |
-| Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-20 | 2026-10-20 |
+| Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-27 | 2026-10-27 |
 | TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-26 |
 | County precinct records | — | 7 counties | 2026-10-26 | 2026-10-26 |
-| FiftyPlusOne polls | — | 548 Senate polls · 338 House polls · 580 Governor polls | 2026-10-25 | 2026-10-25 |
-| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
-| CAIR Action | **1,355** · Texas: 391 | — | 2026-10-25 | 2026-10-25 |
-| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-25 |
-| NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-26 | 2026-10-26 |
-| Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-26 | 2026-10-26 |
-| Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-26 | 2026-10-26 |
-| Florida Division of Elections candidate list | **369** | 169 races | 2026-10-26 | 2026-10-26 |
-| Virginia Department of Elections candidate list | **38** | 12 races | 2026-10-26 | 2026-10-26 |
-| California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-26 |
+| FiftyPlusOne polls | — | 575 Senate polls (+8) · 362 House polls (+2) · 615 Governor polls (+12) | 2026-10-28 | 2026-10-28 |
+| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-28 |
+| CAIR Action | **1,366** (-1) · Texas: 390 | — | 2026-10-28 | 2026-10-28 |
+| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-28 |
+| NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-26 | 2026-10-28 |
+| Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-28 | 2026-10-28 |
+| Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-26 | 2026-10-28 |
+| Florida Division of Elections candidate list | **367** | 168 races | 2026-10-28 | 2026-10-28 |
+| Virginia Department of Elections candidate list | **38** | 12 races | 2026-10-26 | 2026-10-28 |
+| California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-28 |
 | Arizona Secretary of State candidate list | **232** | 91 races | 2026-10-26 | 2026-10-26 |
 | Nevada Secretary of State candidate list | **633** | 364 races | 2026-10-22 | 2026-10-22 |
 | Georgia Secretary of State candidate list | **292** | 184 races | 2026-10-26 | 2026-10-26 |
-| Georgia Secretary of State party nominees | **451** | 271 races | 2026-10-25 | 2026-10-25 |
+| Georgia Secretary of State party nominees | **451** | 271 races | 2026-10-28 | 2026-10-28 |
 | Wisconsin Elections Commission candidate list | **445** | 293 races | 2026-10-26 | 2026-10-26 |
 | Ohio Secretary of State candidate list | **20** | 8 races | 2026-10-26 | 2026-10-26 |
 | Iowa Secretary of State candidate list | **245** | 137 races | 2026-10-26 | 2026-10-26 |
-| New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-26 | 2026-10-26 |
+| New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-26 | 2026-10-28 |
 | New York State Board of Elections candidate list | **502** | 253 races | 2026-10-26 | 2026-10-26 |
-| Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-26 |
-| Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-26 |
-| Illinois State Board of Elections candidate list | **501** | 391 races | 2026-10-26 | 2026-10-26 |
-| Alaska Division of Elections candidate list | **155** | 74 races | 2026-10-26 | 2026-10-26 |
-| TrackAIPAC | **639** (+9) · Texas: 58 (+2) · House: 522 (+9) · Other: 1 · Senate: 116 | — | 2026-10-26 | 2026-10-26 |
-| Vote for Peace | **1,423** · Texas: 193 (-1) · State legislature: 499 (-1) · Federal: 276 (+2) · County: 268 · Local: 178 · Statewide: 91 (-1) · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-26 | 2026-10-26 |
-| Texas Ethics Commission | **2,154** | 803,415 contributions · 8,316 reports | 2026-10-25 | 2026-10-26 |
+| Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-28 |
+| Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-28 |
+| Illinois State Board of Elections candidate list | **501** | 391 races | 2026-10-26 | 2026-10-28 |
+| Alaska Division of Elections candidate list | **156** | 74 races | 2026-10-27 | 2026-10-28 |
+| TrackAIPAC | **651** (+6) · Texas: 61 (+1) · House: 534 (+6) · Other: 1 · Senate: 116 | — | 2026-10-28 | 2026-10-28 |
+| Vote for Peace | **1,429** · Texas: 193 · State legislature: 501 · Federal: 276 · County: 268 · Local: 178 · Statewide: 95 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-28 | 2026-10-28 |
+| Texas Ethics Commission | **2,154** | 1,082,577 contributions (+223) · 8,788 reports (+12) | 2026-10-28 | 2026-10-28 |
 <!-- source-stats:end -->
 
 ## Configuration

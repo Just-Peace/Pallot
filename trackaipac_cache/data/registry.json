@@ -881,6 +881,13 @@
     "party": "R",
     "state": "FL"
   },
+  "fl-bale-dalton": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Bale Dalton",
+    "party": "D",
+    "state": "FL"
+  },
   "fl-brian-mast": {
     "chamber": "house",
     "district": "21",
@@ -899,6 +906,13 @@
     "chamber": "house",
     "district": "28",
     "name": "Carlos A. Gimenez",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-casey-askar": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Casey Askar",
     "party": "R",
     "state": "FL"
   },
@@ -965,10 +979,24 @@
     "party": "D",
     "state": "FL"
   },
+  "fl-jim-schwartzel": {
+    "chamber": "house",
+    "district": "19",
+    "name": "Jim Schwartzel",
+    "party": "R",
+    "state": "FL"
+  },
   "fl-jimmy-patronis": {
     "chamber": "house",
     "district": "01",
     "name": "Jimmy Patronis",
+    "party": "R",
+    "state": "FL"
+  },
+  "fl-joe-strada": {
+    "chamber": "house",
+    "district": "11",
+    "name": "Joe Strada",
     "party": "R",
     "state": "FL"
   },
@@ -1053,6 +1081,13 @@
     "chamber": "house",
     "district": "26",
     "name": "Nicole Locklin",
+    "party": "D",
+    "state": "FL"
+  },
+  "fl-pia-dandiya": {
+    "chamber": "house",
+    "district": "22",
+    "name": "Pia Dandiya",
     "party": "D",
     "state": "FL"
   },
@@ -2526,6 +2561,13 @@
     "party": "R",
     "state": "NE"
   },
+  "ne-brinker-harding": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Brinker Harding",
+    "party": "R",
+    "state": "NE"
+  },
   "ne-deb-fischer": {
     "chamber": "senate",
     "district": null,
@@ -2749,6 +2791,13 @@
     "name": "Teresa Leger Fernandez",
     "party": "D",
     "state": "NM"
+  },
+  "nv-carrie-buck": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Carrie Buck",
+    "party": "R",
+    "state": "NV"
   },
   "nv-catherine-cortez-masto": {
     "chamber": "senate",
@@ -3590,6 +3639,13 @@
     "party": "R",
     "state": "TN"
   },
+  "tn-charlie-hatcher": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Charlie Hatcher",
+    "party": "R",
+    "state": "TN"
+  },
   "tn-chuck-fleischmann": {
     "chamber": null,
     "district": null,
@@ -3723,6 +3779,13 @@
     "party": "R",
     "state": "TX"
   },
+  "tx-carlos-de-la-cruz": {
+    "chamber": "house",
+    "district": "35",
+    "name": "Carlos De La Cruz",
+    "party": "R",
+    "state": "TX"
+  },
   "tx-chip-roy": {
     "chamber": "house",
     "district": "21",
@@ -3828,6 +3891,13 @@
     "party": "D",
     "state": "TX"
   },
+  "tx-jessica-steinmann": {
+    "chamber": "house",
+    "district": "08",
+    "name": "Jessica Steinmann",
+    "party": "R",
+    "state": "TX"
+  },
   "tx-joaquin-castro": {
     "chamber": "house",
     "district": "20",
@@ -3861,6 +3931,13 @@
     "district": "35",
     "name": "Johnny Garcia",
     "party": "D",
+    "state": "TX"
+  },
+  "tx-jon-bonck": {
+    "chamber": "house",
+    "district": "38",
+    "name": "Jon Bonck",
+    "party": "R",
     "state": "TX"
   },
   "tx-julie-johnson": {
@@ -4084,6 +4161,13 @@
     "chamber": "house",
     "district": null,
     "name": "Andrew Rice",
+    "party": null,
+    "state": null
+  },
+  "unk-marty-jackley": {
+    "chamber": "house",
+    "district": null,
+    "name": "Marty Jackley",
     "party": null,
     "state": null
   },

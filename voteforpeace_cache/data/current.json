@@ -4298,7 +4298,7 @@
           "type": "endorsed"
         }
       ],
-      "featured_text": null,
+      "featured_text": "Close Race!",
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Sara Deen",
@@ -6373,7 +6373,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Young Kim",
-      "notes": "This candidate takes money from AIPAC and affiliated lobbies and has not signed block the bombs act.",
+      "notes": "Despite the fact this candidate takes money from AIPAC and has not signed block the bombs act, Kim may be a more strategic vote to Ken Calvert, who is one of the most senior AIPAC-backed candidates in Candidates and sits on the foreign affairs committee.",
       "office_title": "U.S. Representative",
       "party": "Republican",
       "rating": "reject",
@@ -6850,7 +6850,7 @@
       "jurisdiction": null,
       "level": "federal",
       "name": "Sam Liccardo",
-      "notes": "This candidate takes money from AIPAC and affiliated lobbies and has not signed block the bombs act.",
+      "notes": "As of October 2026, Sam Liccardo has received no money from AIPAC PAC or its super PAC, United Democracy Project, in FEC filing and is a cosponsor of Block the Bombs.",
       "office_title": "U.S. Representative",
       "party": "Democrat",
       "rating": "vote",
@@ -7074,7 +7074,7 @@
           "type": "endorsed"
         }
       ],
-      "featured_text": null,
+      "featured_text": "Close Race!",
       "jurisdiction": null,
       "level": "state_legislature",
       "name": "Jessie Lopez",
@@ -22363,6 +22363,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "f0cfd05c-e5dc-47c2-8a86-e7e93a7f36cc",
+      "district": null,
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": "https://cairaction.org/",
+          "notes": "Endorsed",
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Shereef Akeel",
+      "notes": "Nominated at convention",
+      "office_title": "Wayne State Board of Governors",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "shereef-akeel",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/shereef-akeel"
+    },
+    {
+      "articles": [],
       "candidate_id": "75efbeb7-7412-4758-bdc3-6228ba3ffca5",
       "district": "2",
       "election_date": "Nov 3, 2026",
@@ -22567,6 +22602,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "509dbd23-5a0e-42aa-b3d7-411c0327f04f",
+      "district": null,
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": "https://cairaction.org/",
+          "notes": "Preferred",
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "preferred"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": "Michigan",
+      "level": "statewide",
+      "name": "Jocelyn Benson",
+      "notes": "Term-limited Secretary of State",
+      "office_title": "Governor",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "jocelyn-benson",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/jocelyn-benson"
+    },
+    {
+      "articles": [],
       "candidate_id": "44b7955c-aded-4e42-83ac-3ef5b17cb1a9",
       "district": "1",
       "election_date": "Nov 3, 2026",
@@ -22596,6 +22666,41 @@
     },
     {
       "articles": [],
+      "candidate_id": "ca310f6d-5147-40f0-abe9-0c4d41563a6a",
+      "district": null,
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": "https://cairaction.org/",
+          "notes": "Preferred",
+          "organization": "CAIR Action (Preferred, not Endorsed)",
+          "type": "preferred"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Winnie Brinks",
+      "notes": null,
+      "office_title": "Lieutenant Governor",
+      "party": null,
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "winnie-brinks",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/winnie-brinks"
+    },
+    {
+      "articles": [],
       "candidate_id": "4daf8301-abac-43e2-b8eb-37ba2b494b24",
       "district": "9",
       "election_date": "Nov 3, 2026",
@@ -22607,6 +22712,12 @@
           "link": "https://cairaction.org/",
           "notes": "Endorsed",
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
@@ -22636,6 +22747,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
@@ -22782,6 +22899,12 @@
           "notes": "Endorsed",
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -22880,6 +23003,12 @@
           "link": null,
           "notes": null,
           "organization": "Track AIPAC",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
@@ -23062,6 +23191,18 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
           "type": "endorsed"
         }
       ],
@@ -23340,6 +23481,47 @@
       "slug": "amir-makled",
       "state": "MI",
       "url": "https://voteforpeace.info/michigan/amir-makled"
+    },
+    {
+      "articles": [],
+      "candidate_id": "a6669e46-ec4f-4e6d-9c53-5a0c02afdc0a",
+      "district": "58",
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "Working Families Party",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Katrina Manetta",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": null,
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "katrina-manetta",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/katrina-manetta"
     },
     {
       "articles": [],
@@ -23723,6 +23905,12 @@
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
           "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
         }
       ],
       "featured_text": null,
@@ -23859,6 +24047,70 @@
       "slug": "dr-rashida-harrison",
       "state": "MI",
       "url": "https://voteforpeace.info/michigan/dr-rashida-harrison"
+    },
+    {
+      "articles": [],
+      "candidate_id": "46f4ec80-4b30-4e67-b3c3-f6961a48697c",
+      "district": "109",
+      "election_date": "Nov 3, 2026",
+      "election_label": "General: Nov 3, 2026",
+      "election_result": "pending",
+      "election_stage": "general",
+      "endorsements": [
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "state_legislature",
+      "name": "Anna Rink",
+      "notes": null,
+      "office_title": "State Representative",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "anna-rink",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/anna-rink"
+    },
+    {
+      "articles": [],
+      "candidate_id": "7379a379-7431-4bcb-a7f8-037fbc1e7c0e",
+      "district": null,
+      "election_date": "Aug 4, 2026",
+      "election_label": "Primary: Aug 4, 2026",
+      "election_result": "pending",
+      "election_stage": "primary",
+      "endorsements": [
+        {
+          "link": "https://cairaction.org/",
+          "notes": "Endorsed",
+          "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
+          "type": "endorsed"
+        }
+      ],
+      "featured_text": null,
+      "jurisdiction": null,
+      "level": "statewide",
+      "name": "Eli Savit",
+      "notes": "WFP and DAGA endorsed; Nominated at convention",
+      "office_title": "Attorney General",
+      "party": "Democrat",
+      "rating": "vote",
+      "section": "Michigan",
+      "slug": "eli-savit",
+      "state": "MI",
+      "url": "https://voteforpeace.info/michigan/eli-savit"
     },
     {
       "articles": [],
@@ -24049,6 +24301,12 @@
           "link": null,
           "notes": null,
           "organization": "CAIR Action (Endorsed)",
+          "type": "endorsed"
+        },
+        {
+          "link": null,
+          "notes": null,
+          "organization": "The People's Coalition",
           "type": "endorsed"
         }
       ],
@@ -43891,5 +44149,5 @@
       "url": "https://voteforpeace.info/wisconsin/amy-zimmerman"
     }
   ],
-  "snapshot": "2026-10-26"
+  "snapshot": "2026-10-28"
 }
