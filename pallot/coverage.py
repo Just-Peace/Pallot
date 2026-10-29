@@ -62,6 +62,7 @@ COVERED = {
     "AK": LIST,  # its State Senate districts are letters
     "ME": LIST,  # without its county offices
     "NE": LIST,  # its one house, the Legislature, is "sd" (CHAMBERS)
+    "NM": LIST,  # its State Senate up only in a vacancy's district in 2026
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the

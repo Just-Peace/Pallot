@@ -17697,5 +17697,305 @@
     "contact_form": "https://www.ricketts.senate.gov/contact/"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "H001046",
+   "thomas": "01937",
+   "lis": "S359",
+   "govtrack": 412281,
+   "opensecrets": "N00029835",
+   "votesmart": 74517,
+   "fec": [
+    "H8NM01224",
+    "S2NM00088"
+   ],
+   "cspan": 1030686,
+   "wikipedia": "Martin Heinrich",
+   "house_history": 15588,
+   "ballotpedia": "Martin Heinrich",
+   "maplight": 763,
+   "icpsr": 20930,
+   "wikidata": "Q565374",
+   "google_entity_id": "kg:/m/02qkv0r",
+   "pictorial": 13428
+  },
+  "name": {
+   "first": "Martin",
+   "last": "Heinrich",
+   "official_full": "Martin Heinrich"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1971-10-17"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "NM",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://heinrich.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "NM",
+    "district": 1,
+    "party": "Democrat",
+    "url": "http://heinrich.house.gov",
+    "address": "336 Cannon HOB; Washington DC 20515-3101",
+    "phone": "202-225-6316",
+    "fax": "202-225-4975",
+    "contact_form": "https://forms.house.gov/heinrich/contact-form.shtml",
+    "office": "336 Cannon House Office Building"
+   },
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "NM",
+    "party": "Democrat",
+    "class": 1,
+    "url": "https://www.heinrich.senate.gov",
+    "address": "303 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-5521",
+    "fax": "202-225-4975",
+    "contact_form": "http://www.heinrich.senate.gov/contact",
+    "office": "303 Hart Senate Office Building",
+    "state_rank": "junior"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "NM",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "senior",
+    "url": "https://www.heinrich.senate.gov",
+    "contact_form": "https://www.heinrich.senate.gov/contact",
+    "address": "709 Hart Senate Office Building Washington DC 20510",
+    "office": "709 Hart Senate Office Building",
+    "phone": "202-224-5521"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "NM",
+    "class": 1,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.heinrich.senate.gov",
+    "contact_form": "https://www.heinrich.senate.gov/contact",
+    "address": "709 Hart Senate Office Building Washington DC 20510",
+    "office": "709 Hart Senate Office Building",
+    "phone": "202-224-5521"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "L000570",
+   "thomas": "01939",
+   "lis": "S409",
+   "govtrack": 412293,
+   "opensecrets": "N00029562",
+   "votesmart": 102842,
+   "fec": [
+    "H8NM03196",
+    "S0NM00058"
+   ],
+   "cspan": 1031351,
+   "wikipedia": "Ben Ray Luján",
+   "house_history": 17317,
+   "maplight": 775,
+   "icpsr": 20932,
+   "wikidata": "Q324256",
+   "google_entity_id": "kg:/m/0412qzq",
+   "ballotpedia": "Ben Ray Luján"
+  },
+  "name": {
+   "first": "Ben",
+   "middle": "Ray",
+   "last": "Luján",
+   "official_full": "Ben Ray Luján"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1972-06-07"
+  },
+  "leadership_roles": [
+   {
+    "title": "Assistant Speaker of the House",
+    "chamber": "house",
+    "start": "2019-01-03",
+    "end": "2021-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "NM",
+    "district": 3,
+    "party": "Democrat",
+    "url": "http://lujan.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "NM",
+    "district": 3,
+    "party": "Democrat",
+    "url": "http://lujan.house.gov",
+    "address": "330 Cannon HOB; Washington DC 20515-3103",
+    "phone": "202-225-6190",
+    "fax": "202-226-1528",
+    "contact_form": "https://forms.house.gov/lujan/contact-form.shtml",
+    "office": "330 Cannon House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "NM",
+    "party": "Democrat",
+    "district": 3,
+    "url": "http://lujan.house.gov",
+    "address": "2446 Rayburn HOB; Washington DC 20515-3103",
+    "phone": "202-225-6190",
+    "fax": "202-226-1528",
+    "contact_form": "https://forms.house.gov/lujan/contact-form.shtml",
+    "office": "2446 Rayburn House Office Building",
+    "rss_url": "http://lujan.house.gov/index.php?option=com_bca-rss-syndicator&amp;feed_id=1"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "NM",
+    "party": "Democrat",
+    "district": 3,
+    "url": "http://lujan.house.gov",
+    "address": "2446 Rayburn HOB; Washington DC 20515-3103",
+    "phone": "202-225-6190",
+    "fax": "202-226-1528",
+    "contact_form": "https://forms.house.gov/lujan/contact-form.shtml",
+    "office": "2446 Rayburn House Office Building",
+    "rss_url": "http://lujan.house.gov/index.php?option=com_bca-rss-syndicator&amp;feed_id=1"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "NM",
+    "district": 3,
+    "party": "Democrat",
+    "phone": "202-225-6190",
+    "url": "https://lujan.house.gov",
+    "rss_url": "http://lujan.house.gov/index.php?option=com_bca-rss-syndicator&amp;feed_id=1",
+    "address": "2231 Rayburn House Office Building; Washington DC 20515-3103",
+    "office": "2231 Rayburn House Office Building",
+    "fax": "202-226-1528"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "NM",
+    "district": 3,
+    "party": "Democrat",
+    "phone": "202-225-6190",
+    "address": "2323 Rayburn House Office Building Washington DC 20515-3103",
+    "office": "2323 Rayburn House Office Building",
+    "url": "https://lujan.house.gov",
+    "rss_url": "http://lujan.house.gov/index.php?option=com_bca-rss-syndicator&amp;feed_id=1"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "NM",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.lujan.senate.gov",
+    "contact_form": "https://www.lujan.senate.gov/contact/",
+    "address": "498 Russell Senate Office Building Washington DC 20510",
+    "office": "498 Russell Senate Office Building",
+    "phone": "202-224-6621"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001218",
+   "fec": [
+    "H2NM01144"
+   ],
+   "opensecrets": "N00047871",
+   "govtrack": 456861,
+   "wikipedia": "Melanie Stansbury",
+   "wikidata": "Q96184996",
+   "ballotpedia": "Melanie Ann Stansbury",
+   "votesmart": 180789,
+   "google_entity_id": "kg:/g/11f_jwp_yr",
+   "pictorial": 13162
+  },
+  "name": {
+   "first": "Melanie",
+   "middle": "Ann",
+   "last": "Stansbury",
+   "official_full": "Melanie A. Stansbury"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1979-01-31"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2021-06-14",
+    "end": "2023-01-03",
+    "state": "NM",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://stansbury.house.gov",
+    "address": "1421 Longworth House Office Building Washington DC 20515-3101",
+    "office": "1421 Longworth House Office Building",
+    "phone": "202-225-6316"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "NM",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://stansbury.house.gov",
+    "address": "1421 Longworth House Office Building Washington DC 20515-3101",
+    "office": "1421 Longworth House Office Building",
+    "phone": "202-225-6316"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NM",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://stansbury.house.gov",
+    "address": "1421 Longworth House Office Building Washington DC 20515-3101",
+    "office": "1421 Longworth House Office Building",
+    "phone": "202-225-6316"
+   }
+  ]
  }
 ]

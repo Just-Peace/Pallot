@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "400 MARQUETTE AVE NW, ALBUQUERQUE, NM 87102"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "206706524"
+    },
+    "coordinates": {
+     "x": -106.651007743416,
+     "y": 35.088157793666
+    },
+    "addressComponents": {
+     "zip": "87102",
+     "streetName": "MARQUETTE",
+     "preType": "",
+     "city": "ALBUQUERQUE",
+     "preDirection": "",
+     "suffixDirection": "NW",
+     "fromAddress": "400",
+     "state": "NM",
+     "suffixType": "AVE",
+     "toAddress": "498",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "400 MARQUETTE AVE NW, ALBUQUERQUE, NM, 87102",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "350010021001021",
+       "STATE": "35",
+       "COUNTY": "001",
+       "TRACT": "002100",
+       "BLOCK": "1021",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "37852",
+       "MTFCC": "G5040",
+       "NAME": "Block 1021",
+       "BASENAME": "1021",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "1",
+       "CENTLON": "-106.6510570",
+       "CENTLAT": "+35.0874359",
+       "INTPTLON": "-106.6510570",
+       "INTPTLAT": "+35.0874359",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "3497190",
+       "OID": "210701003050128"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490492975065",
+       "GEOID": "3500060",
+       "STATE": "35",
+       "SDUNI": "00060",
+       "BASENAME": "Albuquerque Public Schools",
+       "NAME": "Albuquerque Public Schools",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "3149934245",
+       "AREAWATER": "15215928",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.0652915",
+       "CENTLON": "-106.7019946",
+       "INTPTLAT": "+35.0667858",
+       "INTPTLON": "-106.7022189",
+       "OBJECTID": "10406"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32065",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "485398601",
+       "AREAWATER": "4000764",
+       "PLACENS": "02409678",
+       "PLACECC": "C1",
+       "PLACE": "02000",
+       "FUNCSTAT": "A",
+       "GEOID": "3502000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Albuquerque",
+       "NAME": "Albuquerque city",
+       "OID": "27890492973773",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "35",
+       "CENTLON": "-106.6464417",
+       "CENTLAT": "+35.1053263",
+       "INTPTLON": "-106.6468093",
+       "INTPTLAT": "+35.1047797",
+       "DISP_CLR": "4"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "289",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "45506649178",
+       "AREAWATER": "51048615",
+       "CD120": "01",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "3501",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "1",
+       "NAME": "Congressional District 1",
+       "OID": "2119042393278359",
+       "STATE": "35",
+       "CENTLON": "-105.2353294",
+       "CENTLAT": "+34.2759282",
+       "INTPTLON": "-105.2383164",
+       "INTPTLAT": "+34.2867891"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042422283764",
+       "GEOID": "35013",
+       "STATE": "35",
+       "SLDU": "013",
+       "BASENAME": "013",
+       "NAME": "State Senate District 13",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "50440310",
+       "AREAWATER": "439332",
+       "LSY": "2026",
+       "OBJECTID": "1327",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.1226440",
+       "CENTLON": "-106.6315342",
+       "INTPTLAT": "+35.1225703",
+       "INTPTLON": "-106.6274164",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042428351007",
+       "GEOID": "35011",
+       "STATE": "35",
+       "SLDL": "011",
+       "BASENAME": "011",
+       "NAME": "State House District 11",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "30411686",
+       "AREAWATER": "665674",
+       "LSY": "2026",
+       "OBJECTID": "1625",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.1107095",
+       "CENTLON": "-106.6547325",
+       "INTPTLAT": "+35.1099487",
+       "INTPTLON": "-106.6551685",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490100936841",
+       "GEOID": "35",
+       "STATE": "35",
+       "STATENS": "00897535",
+       "BASENAME": "New Mexico",
+       "NAME": "New Mexico",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "314199600920",
+       "AREAWATER": "725454896",
+       "REGION": "4",
+       "DIVISION": "8",
+       "STUSAB": "NM",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+34.4075784",
+       "CENTLON": "-106.1126597",
+       "INTPTLAT": "+34.4346844",
+       "INTPTLON": "-106.1316180",
+       "OBJECTID": "32"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590492973734",
+       "GEOID": "35001",
+       "STATE": "35",
+       "COUNTY": "001",
+       "COUNTYNS": "01702363",
+       "BASENAME": "Bernalillo",
+       "NAME": "Bernalillo County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "3008678414",
+       "AREAWATER": "14815826",
+       "OBJECTID": "3230",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.0515267",
+       "CENTLON": "-106.6701091",
+       "INTPTLAT": "+35.0536280",
+       "INTPTLON": "-106.6690805"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

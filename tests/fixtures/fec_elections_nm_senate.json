@@ -1,0 +1,124 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 7,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0NM00058",
+   "candidate_name": "LUJAN, BEN RAY",
+   "candidate_pcc_id": "C00443689",
+   "candidate_pcc_name": "PEOPLE FOR BEN",
+   "cash_on_hand_end_period": 2843276.35,
+   "committee_ids": [
+    "C00443689"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 6347417.97,
+   "total_receipts": 9111370.87
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NM01186",
+   "candidate_name": "MARKER, LARRY E",
+   "candidate_pcc_id": "C00943738",
+   "candidate_pcc_name": "FRIENDS OF LARRY MARKER",
+   "cash_on_hand_end_period": 88.07,
+   "committee_ids": [
+    "C00943738"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 90122.32,
+   "total_receipts": 99229.65
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NM01137",
+   "candidate_name": "SMITH, TOBY MR.",
+   "candidate_pcc_id": "C00924522",
+   "candidate_pcc_name": "TOBY SMITH FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00924522"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "JEWISH/CHRISTIAN NATIONAL",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NM01152",
+   "candidate_name": "CHICK, CAMERON ALTON MR. SR.",
+   "candidate_pcc_id": "C00940643",
+   "candidate_pcc_name": "CAMERON CHICK FOR SENATE 2026",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00940643"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NM01160",
+   "candidate_name": "OCONNELL, MELISSA MIRA",
+   "candidate_pcc_id": "C00944967",
+   "candidate_pcc_name": "CONSERVATIVES FOR MIRA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00944967"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NM01178",
+   "candidate_name": "CHANNON, MATT",
+   "candidate_pcc_id": "C00947622",
+   "candidate_pcc_name": "MATT CHANNON FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00947622"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NM01194",
+   "candidate_name": "CARRARO, JOSEPH JOHN",
+   "candidate_pcc_id": "C00953216",
+   "candidate_pcc_name": "COMMITTEE TO ELECT JOE CARRARO TO SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00953216"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

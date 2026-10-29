@@ -8,13 +8,16 @@ the general election's id is found there, never written ahead. The list itself i
 the page for that election, sent with its own hidden fields (``__VIEWSTATE``, HttpCache.form_from_page):
 the grid's Export to CSV button answers the whole list as a CSV file. The HTML table shows only a
 page of 100 rows, so it's read only for a grid without the export (``table``), where a postback
-of its own form answers the table.
+of its own form answers the table. A grid without the dropdown (New Mexico's) is found through
+another page that links each year's general election to it (``index``), and one whose page holds
+every row (no ``form``) is asked for that election with a plain GET.
 
 The grids share their columns under a few names (a race is "Race" or "Contest", a party "Party"
 or "Party Preference"): each row is read into a GridRow, keeping only the active or qualified
-candidates without a withdrawal date. Neither the CSV nor the table says the election's date,
-so a filing's ``day`` is left empty and the date asked for filled in (on). The files carry
-candidates' addresses, emails and phone numbers: only the parsed filings are kept.
+candidates without a withdrawal date; a name ending "(write-in)" is a declared write-in's.
+Neither the CSV nor the table says the election's date, so a filing's ``day`` is left empty and
+the date asked for filled in (on). The files carry candidates' addresses, emails and phone
+numbers: only the parsed filings are kept.
 """
 
 from __future__ import annotations
@@ -22,10 +25,12 @@ from __future__ import annotations
 import csv
 import dataclasses
 import datetime as dt
+import html
 import io
 import re
 from dataclasses import dataclass
 from typing import Any, ClassVar, Mapping
+from urllib.parse import parse_qs, urlsplit
 
 from ..http_cache import RequestSpec
 from . import Filing, Office, Rows, StateList, decoded, filings_json, party, require
@@ -33,7 +38,7 @@ from . import Filing, Office, Rows, StateList, decoded, filings_json, party, req
 EXPORT = {"ctl00$ContentPlaceHolder1$grdCandidates$ctl00$ctl02$ctl00$ExportToCsvButton": " "}
 COLUMNS = {  # each shared column's names across the grids, as headings
     "race": ("RACE", "CONTEST", "OFFICE"),
-    "district_type": ("DISTRICT TYPE",),
+    "district_type": ("DISTRICT TYPE", "DISTRICTTYPE"),
     "district": ("DISTRICT", "JURISDICTION"),
     "name": ("NAME", "CANDIDATE NAME", "BALLOT NAME", "CANDIDATE"),
     "party": ("PARTY", "PARTY PREFERENCE", "PARTY AFFILIATION"),
@@ -49,6 +54,10 @@ _VALUE = re.compile(r"""value=["']([^"']*)["']""", re.I)
 _DAY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
 _GENERAL = re.compile(r"\bgeneral\b", re.I)
 _OTHER = re.compile(r"\b(?:primary|special|runoff|recall)\b", re.I)
+_LINK = re.compile(r"""<a\b[^>]*\bhref=["']([^"']*CandidateList\.aspx\?[^"']*)["'][^>]*>(.*?)</a>""", re.I | re.S)
+_YEAR = re.compile(r"\b(\d{4}) General Election\b", re.I)
+_GRID = re.compile(r"""<form\b[^>]*\baction=["'][^"']*CandidateList\.aspx""", re.I)
+_WRITE_IN = re.compile(r"\s*\(write[- ]?in\)$", re.I)
 
 
 def elections(text: str) -> dict[str, Any]:
@@ -68,6 +77,24 @@ def elections(text: str) -> dict[str, Any]:
                 found.setdefault(dt.date(year, month, date).isoformat(), value.group(1))
     if not dropdown:
         raise ValueError("not a candidate list page")
+    return {"elections": found}
+
+
+def linked(text: str, election: str) -> dict[str, Any]:
+    """The index as kept for a grid without the dropdown: each general election's id by its year,
+    from a page's links to the grid ("2026 General Election – Candidate Filing Day" to
+    "CandidateList.aspx?eid=2917&cty=99", the id under ``election``), a year's first link;
+    ValueError for a page without a link to the grid."""
+    found: dict[str, str] = {}
+    links = _LINK.findall(text)
+    if not links:
+        raise ValueError("no link to a candidate list")
+    for href, label in links:
+        words = " ".join(html.unescape(re.sub(r"<[^>]+>", " ", label)).split())
+        year = _YEAR.search(words)
+        key = parse_qs(urlsplit(html.unescape(href)).query).get(election)
+        if year and key and not _OTHER.search(words):
+            found.setdefault(year.group(1), key[0])
     return {"elections": found}
 
 
@@ -128,11 +155,14 @@ class GridList(StateList):
     """A state's CandidateList.aspx grid. A subclass gives its state, source, label, description,
     ``page`` (the grid, without its election), ``election`` (the query parameter naming one) and
     office() (each row's race); and where its grid differs, ``kept``, ``parties`` (affiliation),
-    ``minimum`` and ``form`` with ``table``."""
+    named(), ``minimum``, ``form`` with ``table``, and ``index`` with ``query``."""
 
     election: ClassVar[str] = "e"  # the query parameter that names the election: "e", "eid", "elid"
-    form: ClassVar[Mapping[str, str]] = EXPORT  # the postback's own fields: the CSV export's button by default
+    form: ClassVar[Mapping[str, str]] = EXPORT  # the postback's own fields: the CSV export's button by default; none
+    # for a grid whose page holds every row, asked with a GET
     table: ClassVar[bool] = False  # its list is the HTML table its postback answers (a grid without the export)
+    index: ClassVar[str | None] = None  # a page linking each year's general election to the grid, which has no dropdown
+    query: ClassVar[Mapping[str, str]] = {}  # the grid's other query parameters: {"cty": "99"}
     kept: ClassVar[tuple[str, ...]] = KEPT
     parties: ClassVar[dict[str, str]] = {}  # its parties' names by how the grid words them
     minimum: ClassVar[dict[str, int]] = {}  # require's
@@ -141,21 +171,27 @@ class GridList(StateList):
     index_key = "elections"
 
     def spec(self, day: dt.date) -> RequestSpec:
-        return RequestSpec("GET", self.page)
+        return RequestSpec("GET", self.index or self.page)
 
     def follow(self, index: dict[str, Any], day: dt.date) -> list[RequestSpec] | None:
-        key = index["elections"].get(day.isoformat())
+        found = index["elections"]
+        key = found.get(day.isoformat()) or (found.get(str(day.year)) if self.index else None)
         if key is None:
             return None
-        return [RequestSpec("POST", self.page, params={self.election: key}, form=dict(self.form))]
+        params = {**self.query, self.election: key}
+        if not self.form:
+            return [RequestSpec("GET", self.page, params=params)]
+        return [RequestSpec("POST", self.page, params=params, form=dict(self.form))]
 
     @classmethod
     def read_index(cls, raw: bytes) -> dict[str, Any] | None:
         """The page's elections; for a grid read from its table, its filings too. None for the
-        CSV export."""
+        CSV export, and for the grid itself where the elections are an ``index`` page's links."""
         text = decoded(raw)
         if not text.lstrip().startswith("<"):
             return None
+        if cls.index:
+            return None if _GRID.search(text) else linked(text, cls.election)
         index = elections(text)
         if cls.table:
             index["filings"] = filings_json(cls.parse(text))["filings"]
@@ -181,6 +217,11 @@ class GridList(StateList):
         return party(row.party, cls.parties)
 
     @classmethod
+    def named(cls, name: str) -> str:
+        """A candidate's name as the ballot shows it: as the grid writes it, by default."""
+        return name
+
+    @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
         """Every candidate on the ballot in the grid's answer, each race in the grid's order and its
         candidates in their ballot order; ValueError for an answer that isn't the grid or a list
@@ -196,6 +237,8 @@ class GridList(StateList):
             seen = races.setdefault((row.district_type, row.district, row.race), [len(races), 0])
             seen[1] += 1
             code, name = cls.affiliation(row)
-            filings.append(race.filing(day="", name=row.name, party=code, party_name=name,
+            written = _WRITE_IN.search(row.name)
+            filings.append(race.filing(day="", name=cls.named(row.name[:written.start()] if written else row.name),
+                                       party=code, party_name=name, write_in=bool(written),
                                        order=seen[0] * 1000 + (row.order or seen[1])))
         return require(filings, cls.minimum)
