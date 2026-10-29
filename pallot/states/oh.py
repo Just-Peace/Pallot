@@ -27,10 +27,9 @@ import json
 import re
 from typing import Any
 
-from ..sources.key_dates import Deadlines
 from ..text import display_person
 from . import Filing, ManualList, Office, party, us_senate
-from .dates import Guide, columbus_day, first_tuesday_after_first_monday
+from .dates import Counts, Guide, Roll, columbus_day
 
 PAGE = "https://www.ohiosos.gov/assets/dir2026-45-official-sample-ballot-november-3-2026.pdf"
 SCOPE = "statewide_offices_only"
@@ -157,25 +156,7 @@ GUIDE = Guide(
     mail_deadline="Your application must reach your county board by the close of business on ",
     local_office="Your county board of elections",
 )
-
-
-def ohio(day: dt.date) -> Deadlines | None:
-    """The dates of Ohio's general election on ``day``, or None when there's none: register by
-    the thirtieth day before, moved past a Sunday or Columbus Day, early voting from the day after
-    through the Sunday before, apply to vote absentee by the seventh day before."""
-    if day != first_tuesday_after_first_monday(day.year, 11):
-        return None
-    register = day - dt.timedelta(days=30)
-    while register.weekday() == 6 or register == columbus_day(day.year):
-        register += dt.timedelta(days=1)
-    return Deadlines(
-        day, "General Election",
-        register_by=register,
-        mail_apply_by=day - dt.timedelta(days=7),
-        early_start=register + dt.timedelta(days=1),
-        early_end=day - dt.timedelta(days=2),
-        state="OH",
-    )
-
-
-RULE = ohio
+RULE = Counts(
+    30, 7, None, 2, every_year=True, early_after_register=True,
+    roll=Roll(saturday=False, holidays=lambda year: (columbus_day(year),)),
+).rule("OH")
