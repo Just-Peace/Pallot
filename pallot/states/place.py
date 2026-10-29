@@ -1,7 +1,8 @@
 """A state's list made into the voter's races: which of its races are on the ballot at an address.
 
 A race reaching the whole state is always there; Congress and the Legislature by the Census's
-districts; a county's or a town's when the address is in it. A race on only part of a county or
+districts, as is a board elected by several of the Legislature's districts (Kansas's State Board of
+Education); a county's or a town's when the address is in it. A race on only part of a county or
 town (a commissioner's district, a ward), or a judicial district when another district of the
 same office also reaches the county, can't be told from the address, so it's "unconfirmed":
 the ballot leaves it out unless asked, as Texas's precinct races. A race the list doesn't say
@@ -48,7 +49,8 @@ def where(filing: Filing, districts: Districts, county: str | None, city: str | 
         mine = getattr(districts, reach)
         if mine is None:
             return "unconfirmed"
-        return "include" if district_key(filing.district) == district_key(mine) else "skip"
+        mine = district_key(mine)
+        return "include" if any(district_key(part) == mine for part in (filing.district or "").split(",")) else "skip"
     if reach == "unplaced" or not county or county not in filing.counties:
         return "skip"
     if reach == "counties":
@@ -108,7 +110,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
                 for f in sorted(found, key=lambda f: (f.order, f.name))
             ],
         )
-        if first.reach in ("sd", "hd") and first.district:
+        if first.reach in ("sd", "hd") and first.group == "legislature" and first.district:
             placed.scopes[key] = OfficeScope(first.reach, district_key(first.district), first.unexpired, first.office.upper())
         (placed.races if verdict == "include" else placed.unconfirmed).append(race)
     return placed
