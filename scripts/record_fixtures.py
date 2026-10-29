@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -52,6 +52,8 @@ SOS's candidates data file with every candidate's contact details made up, and i
 election's download page cut down to its form, and the candidate data file it posts back for, with
 its contact columns emptied. Alaska's (state_ak) takes an Anchorage address and the Division of
 Elections' list, its three pages one at a time, without the candidates' contact details. The
+candidate-list grid six states share (grid) takes Washington's page, cut down to its election
+dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
 Commission fixtures are subsets of the bundled snapshots (no request).
 The tests pin "today" to 2026-09-27; after the Nov 3, 2026 election, re-recording means
@@ -89,7 +91,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, ia, il, mi, nc, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, mi, nc, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -700,6 +702,56 @@ def record_il(client: httpx.Client, key: str) -> None:
     record_members(client, "IL", (None, place.cd))
 
 
+GRID_PAGE = "https://voter.votewa.gov/CandidateList.aspx"  # Washington's: the grid states/grid.py is built on
+GRID_CONTACT = ("MAILING ADDRESS", "EMAIL", "PHONE")
+
+
+def record_grid(client: httpx.Client) -> None:
+    """The candidate-list grid (states/grid.py), on Washington's: the page for the next general
+    election, then the CSV export it posts back for; written by grid_fixtures."""
+    page = client.get(GRID_PAGE)
+    page.raise_for_status()
+    election = grid.elections(page.text)["elections"][general_day(dt.date.today()).isoformat()]
+    url = f"{GRID_PAGE}?e={election}"
+    page = client.get(url)
+    page.raise_for_status()
+    response = client.post(url, data={**hidden_fields(page.text), **grid.EXPORT})
+    response.raise_for_status()
+    grid_fixtures(page.text, response.content)
+
+
+def grid_fixtures(page: str, export: bytes) -> None:
+    """grid_wa.html: the page cut down to its election dropdown, its hidden fields with made-up
+    values, its export button, and its table's headings and first rows; grid_wa.csv: the export.
+    Both without the candidates' addresses, emails and phones."""
+    select = next(m for m in re.finditer(r"(<select\b[^>]*>)(.*?)</select>", page, re.S) if "ddlElection" in m.group(1))
+    options = re.findall(r"<option\b[^>]*>[^<]*</option>", select.group(2))[:16]  # back to 2024's
+    dropdown = select.group(1) + "\n" + "\n".join(options) + "\n</select>"
+    inputs = "\n".join(f'<input type="hidden" name="{field}" id="{field}" value="{field.strip("_")}-recorded" />'
+                       for field in hidden_fields(page))
+    headings = re.findall(r'<th scope="col" class="rgHeader">([^<]*)</th>', page)
+    contact = {i for i, heading in enumerate(headings) if heading.upper() in GRID_CONTACT}
+    rows = []
+    for row in re.findall(r'<tr class="rg(?:Alt)?Row"[^>]*>(.*?)</tr>', page, re.S)[:6]:
+        cells = re.findall(r"<td>(.*?)</td>", row, re.S)
+        rows.append("<tr>" + "".join(f"<td>{'&nbsp;' if i in contact else ' '.join(cell.split())}</td>"
+                                     for i, cell in enumerate(cells)) + "</tr>")
+    table = ('<table class="rgMasterTable">\n<thead><tr>' + "".join(f'<th scope="col">{h}</th>' for h in headings)
+             + "</tr>\n<tr class=\"rgFilterRow\">" + "<td></td>" * len(headings) + "</tr></thead>\n<tbody>\n"
+             + "\n".join(rows) + "\n</tbody>\n</table>")
+    button = f'<input type="submit" name="{next(iter(grid.EXPORT))}" value=" " title="Export to CSV" />'
+    (FIXTURES / "grid_wa.html").write_text(
+        f'<html><body><form method="post" action="./CandidateList.aspx" id="form1">\n{inputs}\n{dropdown}\n{button}\n'
+        f"{table}\n</form></body></html>\n", encoding="utf-8", newline="")
+    lines = list(csv.reader(io.StringIO(export.decode("utf-8-sig"))))
+    contact = {i for i, heading in enumerate(lines[0]) if heading.upper() in GRID_CONTACT}
+    out = io.StringIO()
+    csv.writer(out, quoting=csv.QUOTE_ALL, lineterminator="\r\n").writerows(
+        [lines[0], *(["" if i in contact else cell for i, cell in enumerate(line)] for line in lines[1:] if line)])
+    (FIXTURES / "grid_wa.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"grid_wa.csv: {len(grid.rows(out.getvalue()))} candidates")
+
+
 def without_contacts(text: str) -> str:
     """A page of Alaska's list with only what Pallot reads: its title, the election, each race's
     heading and each row's first cell (name, registration, status), and the links to its pages;
@@ -1081,7 +1133,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "grid", "polls", "key_dates", "officeholders",
                                            "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1130,6 +1182,8 @@ def main(argv: list[str] | None = None) -> int:
             record_il(client, config.fec_api_key)
         if only in (None, "state_ak"):
             record_ak(client, config.fec_api_key)
+        if only in (None, "grid"):
+            record_grid(client)
         if only in (None, "polls"):
             record_polls(client)
         if only in (None, "key_dates"):
