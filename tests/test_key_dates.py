@@ -263,7 +263,7 @@ def test_only_michigans_statewide_election_days_have_dates():
 
 def test_same_day_registration_states_say_how_to_register_after_the_deadline():
     same_day = {state for state, guide in state_key_dates.GUIDES.items() if guide.late_registration}
-    assert same_day == {"MI", "CA", "NV", "IA", "WI", "CO", "WY", "IL", "NC", "VA", "ME"}
+    assert same_day == {"MI", "CA", "NV", "IA", "WI", "CO", "WY", "IL", "NC", "VA", "ME", "NM"}
     late = state_key_dates.GUIDES["MI"].voter_info().late_registration
     assert late.url == state_key_dates.MICHIGAN.registration_url and "through Election Day" in late.label
     assert state_key_dates.GUIDES["TX"].voter_info().late_registration is None

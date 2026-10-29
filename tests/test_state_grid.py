@@ -147,6 +147,39 @@ async def test_the_list_is_the_export_posted_back_for_the_elections_id_and_kept(
     assert form[EXPORT] == [" "]
 
 
+class LinkedGrid(WaGrid):
+    """A grid without the dropdown, found by another page's links, whose page holds every row."""
+
+    index = "https://example.gov/"
+    election = "eid"
+    query = {"cty": "99"}
+    form = {}
+    minimum = {}
+
+
+def test_a_grid_without_the_dropdown_is_found_by_its_years_link_and_asked_with_a_get():
+    page = ('<a href="https://x.gov/CandidateList.aspx?eid=12&amp;cty=99">2026 Primary Election</a>'
+            '<a href="https://x.gov/CandidateList.aspx?eid=17&#038;cty=99"><b>2026 General Election</b> – Filing Day</a>'
+            '<a href="https://x.gov/CandidateList.aspx?eid=18&#038;cty=99">2026 General Election, again</a>'
+            '<a href="https://x.gov/CandidateList.aspx?eid=9">Click here</a>')
+    assert grid.linked(page, "eid") == {"elections": {"2026": "17"}}
+    with pytest.raises(ValueError, match="no link to a candidate list"):
+        grid.linked("<html><body>Maintenance</body></html>", "eid")
+    adapter = LinkedGrid.__new__(LinkedGrid)
+    assert adapter.spec(dt.date(2026, 11, 3)).url == "https://example.gov/"
+    [spec] = adapter.follow({"elections": {"2026": "17"}}, dt.date(2026, 11, 3))
+    assert (spec.method, spec.url, spec.params, spec.form) == ("GET", PAGE, {"cty": "99", "eid": "17"}, None)
+    grid_page = HTML.replace('action="./CandidateList.aspx"', 'action="./CandidateList.aspx?eid=17&amp;cty=99"')
+    assert LinkedGrid.read_index(grid_page.encode()) is None and LinkedGrid.read_index(page.encode())
+
+
+def test_a_declared_write_in_is_marked_and_its_name_kept_without_the_mark():
+    text = ('"Contest","District","District Type","Name","Party","Status"\r\n'
+            '"State Senator","Legislative District 1","Legislative","Ann Able","Democratic","Qualified"\r\n'
+            '"State Senator","Legislative District 1","Legislative","Bo Baker (write-in)","","Qualified"\r\n')
+    assert [(f.name, f.write_in) for f in LinkedGrid.parse(text)] == [("Ann Able", False), ("Bo Baker", True)]
+
+
 def test_a_table_grids_list_is_its_postbacks_table_dated_as_asked(tmp_path):
     cache = HttpCache(tmp_path / "cache.sqlite3", httpx.AsyncClient())
     adapter = TableGrid(cache, Ttls())

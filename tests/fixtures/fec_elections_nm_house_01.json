@@ -1,0 +1,60 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 3,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2NM01144",
+   "candidate_name": "STANSBURY, MELANIE",
+   "candidate_pcc_id": "C00765099",
+   "candidate_pcc_name": "MELANIE FOR NEW MEXICO",
+   "cash_on_hand_end_period": 310745.93,
+   "committee_ids": [
+    "C00765099"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1556278.14,
+   "total_receipts": 1721315.41
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NM01129",
+   "candidate_name": "OKPAREKE, NDIDIAMAKA",
+   "candidate_pcc_id": "C00908509",
+   "candidate_pcc_name": "NDIDIAMAKA OKPAREKE FOR CONGRESS",
+   "cash_on_hand_end_period": 57544.79,
+   "committee_ids": [
+    "C00908509"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 116984.34,
+   "total_receipts": 174529.13
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4NM01140",
+   "candidate_name": "JONES, STEVE",
+   "candidate_pcc_id": "C00861153",
+   "candidate_pcc_name": "STEVE JONES NM1",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00861153"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 26253.77,
+   "total_receipts": 672.59
+  }
+ ]
+}

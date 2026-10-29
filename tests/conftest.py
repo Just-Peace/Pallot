@@ -69,6 +69,7 @@ ADDRESSES = {
     "anchorage": "632 W 6th Ave, Anchorage, AK 99501",  # Alaska's list, three pages (states/ak.py); Senate I, House 17
     "bangor": "73 Harlow St, Bangor, ME 04401",  # Maine's spreadsheet and write-ins (states/me.py); ME-2
     "omaha": "4917 Underwood Ave, Omaha, NE 68132",  # Nebraska's two PDFs (states/ne.py); NE-2, Legislature 8, Douglas County
+    "albuquerque": "400 Marquette Ave NW, Albuquerque, NM 87102",  # New Mexico's grid (states/nm.py); NM-1, SD 13, HD 11
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -82,6 +83,7 @@ STATE_LISTS = {
     "www.pavoterservices.pa.gov": "state_pa.html", "dos.elections.myflorida.com": "state_fl.tsv",
     "elections.cdn.sos.ca.gov": "state_ca.pdf",
     "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
+    "www.sos.nm.gov": "state_nm.html", "candidateportal.servis.sos.state.nm.us": "state_nm_list.html",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "state_va_all.html"}

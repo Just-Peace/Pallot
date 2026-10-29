@@ -195,6 +195,14 @@
    "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 13
   },
+  "state_nm": {
+   "answers": 2,
+   "answers_hash": "1d9d0e7914bbdfe1de65d5e5dd9c115eb798d0dbe030170847b3daacea1e3a36",
+   "candidates": 129,
+   "last_checked": "2026-10-29T11:35:58+00:00",
+   "last_refresh": "2026-10-29T11:35:58+00:00",
+   "races": 85
+  },
   "state_nv": {
    "answers": 1,
    "answers_hash": "3364a8c09993b7e79b33b5938b3e9bdfc768d8be355bbf519a2790ef15842364",

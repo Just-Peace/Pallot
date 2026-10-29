@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -57,7 +57,9 @@ Elections' list, its three pages one at a time, without the candidates' contact 
 links, and the candidate spreadsheet and declared write-ins PDF it links, as served (they have
 no contact details). Nebraska's (state_ne) takes an Omaha address, the Secretary of State's
 elections page cut down to its links, its candidate list rewritten without contact details (its
-pages turned sideways, as served) and its judges for retention as served. A Census answer whose
+pages turned sideways, as served) and its judges for retention as served. New Mexico's (state_nm)
+takes an Albuquerque address, the Secretary of State's home page cut down to its links to the
+candidate list, and the list's grid page for the election without contact details. A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -97,7 +99,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, me, mi, nc, ne, nj, ordinal, pa, pdf_lines, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, me, mi, nc, ne, nj, nm, ordinal, pa, pdf_lines, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -156,6 +158,7 @@ IL_ADDRESS = ("chicago", "121 N LaSalle St, Chicago, IL 60602")  # City Hall: Co
 AK_ADDRESS = ("anchorage", "632 W 6th Ave, Anchorage, AK 99501")  # City Hall: Senate District I, up in 2026
 ME_ADDRESS = ("bangor", "73 Harlow St, Bangor, ME 04401")  # City Hall: ME-2, ranked-choice in 2026
 NE_ADDRESS = ("omaha", "4917 Underwood Ave, Omaha, NE 68132")  # Dundee, Douglas County: NE-2, Legislature District 8
+NM_ADDRESS = ("albuquerque", "400 Marquette Ave NW, Albuquerque, NM 87102")  # the Government Center: NM-1
 # Virginia's newest odd-year list still served, for both chambers: 2025's (the House of Delegates
 # alone) answered 404 by 2026-10-29, and 2023's moved to the previous candidate lists.
 VA_ODD_YEAR = ("https://www.elections.virginia.gov/casting-a-ballot/previous-candidate-lists/"
@@ -954,6 +957,53 @@ def record_ne(client: httpx.Client, key: str) -> None:
     record_members(client, "NE", (None, place.cd))
 
 
+NM_CONTACT = ("PHYSICAL ADDRESS", "MAILING ADDRESS", "EMAIL/PHONE", "ADDRESS", "CITY", "STATE", "ZIP", "PHONE", "EMAIL",
+              "WEBSITE")
+
+
+def nm_without_contacts(page: str) -> str:
+    """New Mexico's grid page for an election with only what Pallot reads: its form (the grid's
+    address), its heading, and its table's every row, the candidates' addresses, phones, emails and
+    websites emptied."""
+    form = re.search(r"<form\b[^>]*>", page).group(0)
+    heading = re.search(r'<span id="MainContent_lblFormHeader">[^<]*</span>', page).group(0)
+    parser = Rows(cells=("th", "td"))
+    parser.feed(page[page.index("rgMasterTable"):])
+    header = next(row for row in parser.rows if "Contest" in row and "Name" in row)
+    contact = {i for i, heading in enumerate(header) if heading.upper() in NM_CONTACT}
+    rows = [row for row in parser.rows[parser.rows.index(header) + 1:] if len(row) == len(header) and any(row)]
+    cells = ["<tr>" + "".join(f"<th>{html.escape(h)}</th>" for h in header) + "</tr>"]
+    cells += ["<tr>" + "".join(f"<td>{'' if i in contact else html.escape(cell)}</td>" for i, cell in enumerate(row))
+              + "</tr>" for row in rows]
+    return (f"<html><body>{form}\n{heading}\n<table class=\"rgMasterTable\">\n" + "\n".join(cells)
+            + "\n</table>\n</form></body></html>\n")
+
+
+def record_nm(client: httpx.Client, key: str) -> None:
+    """New Mexico: NM_ADDRESS's Census answer; the Secretary of State's home page, cut down to its
+    links to the candidate list; the list's grid page for the year's general election, without the
+    candidates' contact details (nm_without_contacts); the address's FEC filers for U.S. Senate and
+    House, its legislators, and its members of Congress added to officeholders_congress.json."""
+    name, address = NM_ADDRESS
+    place = record_census(client, name, address)
+    response = client.get(nm.INDEX)
+    response.raise_for_status()
+    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*CandidateList\.aspx[^\"]*\".*?</a>",
+                                                      response.text, re.S)]
+    (FIXTURES / "state_nm.html").write_text(
+        "<html><body>\n" + "\n".join(f"<p>{a}</p>" for a in anchors) + "\n</body></html>\n", encoding="utf-8", newline="")
+    election = nm.NmList.read_index(response.content)["elections"][str(FEC_CYCLE)]
+    time.sleep(2)
+    response = client.get(nm.PAGE, params={**nm.NmList.query, nm.NmList.election: election})
+    response.raise_for_status()
+    (FIXTURES / "state_nm_list.html").write_text(nm_without_contacts(response.text), encoding="utf-8", newline="")
+    print(f"state_nm_list.html: {len(nm.NmList.parse((FIXTURES / 'state_nm_list.html').read_bytes()))} candidates")
+    for district in (None, place.cd):
+        record_filers(client, key, "NM", district)
+    record_legislators(client, "nm")
+    record_members(client, "NM", (None, place.cd))
+
+
 GA_PLACES = {
     ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
     ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
@@ -1287,7 +1337,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "grid", "polls", "key_dates", "officeholders",
                                            "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1342,6 +1392,8 @@ def main(argv: list[str] | None = None) -> int:
             record_me(client, config.fec_api_key)
         if only in (None, "state_ne"):
             record_ne(client, config.fec_api_key)
+        if only in (None, "state_nm"):
+            record_nm(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):
