@@ -20585,5 +20585,321 @@
     "phone": "202-225-2801"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "H001042",
+   "thomas": "01844",
+   "lis": "S361",
+   "govtrack": 412200,
+   "opensecrets": "N00028139",
+   "votesmart": 1677,
+   "fec": [
+    "H6HI02251",
+    "S2HI00106"
+   ],
+   "cspan": 91216,
+   "wikipedia": "Mazie Hirono",
+   "house_history": 15580,
+   "ballotpedia": "Mazie K. Hirono",
+   "maplight": 687,
+   "icpsr": 20713,
+   "wikidata": "Q16476",
+   "google_entity_id": "kg:/m/0357cd",
+   "pictorial": 13423
+  },
+  "name": {
+   "first": "Mazie",
+   "middle": "K.",
+   "last": "Hirono",
+   "official_full": "Mazie K. Hirono"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1947-11-03"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "HI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://hirono.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "HI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://hirono.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "HI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://hirono.house.gov",
+    "address": "1410 Longworth HOB; Washington DC 20515-1102",
+    "phone": "202-225-4906",
+    "fax": "202-225-4987",
+    "contact_form": "http://hirono.house.gov/IMA/issue_subscribe.htm",
+    "office": "1410 Longworth House Office Building"
+   },
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "HI",
+    "party": "Democrat",
+    "class": 1,
+    "url": "https://www.hirono.senate.gov",
+    "address": "730 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-6361",
+    "fax": "202-225-4987",
+    "contact_form": "https://www.hirono.senate.gov/contact",
+    "office": "730 Hart Senate Office Building",
+    "state_rank": "junior",
+    "rss_url": "http://www.hirono.senate.gov/rss/feeds/?type=all"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "HI",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.hirono.senate.gov",
+    "rss_url": "http://www.hirono.senate.gov/rss/feeds/?type=all",
+    "contact_form": "https://www.hirono.senate.gov/contact",
+    "address": "109 Hart Senate Office Building Washington DC 20510",
+    "office": "109 Hart Senate Office Building",
+    "phone": "202-224-6361"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "HI",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.hirono.senate.gov",
+    "rss_url": "http://www.hirono.senate.gov/rss/feeds/?type=all",
+    "contact_form": "https://www.hirono.senate.gov/contact",
+    "address": "109 Hart Senate Office Building Washington DC 20510",
+    "office": "109 Hart Senate Office Building",
+    "phone": "202-224-6361"
+   }
+  ]
+ },
+ {
+  "id": {
+   "lis": "S353",
+   "thomas": "02173",
+   "opensecrets": "N00028138",
+   "votesmart": 17852,
+   "bioguide": "S001194",
+   "govtrack": 412507,
+   "cspan": 87784,
+   "wikipedia": "Brian Schatz",
+   "fec": [
+    "S4HI00136",
+    "H6HI02244"
+   ],
+   "ballotpedia": "Brian E. Schatz",
+   "maplight": 1728,
+   "icpsr": 41112,
+   "wikidata": "Q1827902",
+   "google_entity_id": "kg:/m/0dd109",
+   "pictorial": 13380
+  },
+  "name": {
+   "first": "Brian",
+   "middle": "Emanuel",
+   "last": "Schatz",
+   "official_full": "Brian Schatz"
+  },
+  "bio": {
+   "birthday": "1972-10-20",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Democratic Conference Deputy Secretary",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Democratic Conference Deputy Secretary",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2012-12-27",
+    "end": "2015-01-03",
+    "state": "HI",
+    "class": 3,
+    "party": "Democrat",
+    "address": "722 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-3934",
+    "fax": "202-228-1153",
+    "office": "722 Hart Senate Office Building",
+    "url": "http://www.schatz.senate.gov",
+    "state_rank": "senior",
+    "contact_form": "http://www.schatz.senate.gov/contact",
+    "how": "appointment"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "HI",
+    "class": 3,
+    "party": "Democrat",
+    "address": "722 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-3934",
+    "fax": "202-228-1153",
+    "office": "722 Hart Senate Office Building",
+    "url": "http://www.schatz.senate.gov",
+    "state_rank": "senior",
+    "contact_form": "http://www.schatz.senate.gov/contact"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "HI",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.schatz.senate.gov",
+    "address": "722 Hart Senate Office Building Washington DC 20510",
+    "office": "722 Hart Senate Office Building",
+    "phone": "202-224-3934",
+    "contact_form": "https://www.schatz.senate.gov/contact",
+    "fax": "202-228-1153"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "HI",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.schatz.senate.gov",
+    "contact_form": "https://www.schatz.senate.gov/contact",
+    "address": "722 Hart Senate Office Building Washington DC 20510",
+    "office": "722 Hart Senate Office Building",
+    "phone": "202-224-3934"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C001055",
+   "fec": [
+    "H2HI02128"
+   ],
+   "thomas": "01693",
+   "govtrack": 400069,
+   "opensecrets": "N00025882",
+   "house_history": 11776,
+   "icpsr": 20322,
+   "wikipedia": "Ed Case",
+   "wikidata": "Q597613",
+   "google_entity_id": "kg:/m/0255s6",
+   "ballotpedia": "Ed Case",
+   "pictorial": 13025,
+   "votesmart": 3422
+  },
+  "name": {
+   "first": "Ed",
+   "last": "Case",
+   "official_full": "Ed Case"
+  },
+  "bio": {
+   "birthday": "1952-09-27",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "HI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://www.house.gov/case"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "HI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://www.house.gov/case"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "HI",
+    "district": 1,
+    "party": "Democrat",
+    "phone": "202-225-2726",
+    "address": "2443 Rayburn House Office Building Washington DC 20515-1101",
+    "office": "2443 Rayburn House Office Building",
+    "url": "https://case.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "HI",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://case.house.gov",
+    "address": "2210 Rayburn House Office Building Washington DC 20515-1101",
+    "office": "2210 Rayburn House Office Building",
+    "phone": "202-225-2726"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "HI",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://case.house.gov",
+    "address": "2210 Rayburn House Office Building Washington DC 20515-1101",
+    "office": "2210 Rayburn House Office Building",
+    "phone": "202-225-2726"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "HI",
+    "district": 1,
+    "party": "Democrat",
+    "url": "https://case.house.gov",
+    "address": "2210 Rayburn House Office Building Washington DC 20515-1101",
+    "office": "2210 Rayburn House Office Building",
+    "phone": "202-225-2726"
+   }
+  ]
  }
 ]

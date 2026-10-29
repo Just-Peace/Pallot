@@ -55,6 +55,7 @@ state_ok = true             # Oklahoma State Election Board
 state_ks = true             # Kansas Secretary of State
 state_mt = true             # Montana Secretary of State
 state_sd = true             # South Dakota Secretary of State
+state_hi = true             # Hawaii Office of Elections
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

@@ -73,6 +73,7 @@ COVERED = {
     "KS": LIST,  # its State Board of Education placed by the four Senate districts of each
     "MT": LIST,  # its Public Service Commission placed by the twenty House districts of each
     "SD": LIST,  # two Representatives a district, but one each in House subdistricts 26A, 26B, 28A and 28B
+    "HI": LIST,  # only its contested races: a candidate unopposed after the primary is elected then
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the
