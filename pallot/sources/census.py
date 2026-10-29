@@ -3,19 +3,31 @@
 Its "Current" vintage already carries the districts used on 2026 ballots (the 120th
 Congress map and the 2026 state legislative districts). Layer names change between
 vintages, so they are matched by name rather than by layer id.
+
+The districts lookup (/geographies) can be down while the rest of the Census answers. Then an
+address's point comes from its plain lookup (/locations), and the districts at a point from the
+same maps on TIGERweb (tigerweb.Tigerweb.place_at).
 """
 
 from __future__ import annotations
 
+import asyncio
+import logging
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..config import Ttls
-from ..http_cache import HttpCache, RequestSpec
+from ..http_cache import HttpCache, RequestSpec, UpstreamError
+
+if TYPE_CHECKING:
+    from .tigerweb import Tigerweb
+
+log = logging.getLogger("uvicorn.error")
 
 SOURCE = "census"
 BASE = "https://geocoding.geo.census.gov/geocoder/geographies"
+LOCATIONS = "https://geocoding.geo.census.gov/geocoder/locations"
 PARAMS = {"benchmark": "Public_AR_Current", "vintage": "Current_Current", "layers": "all", "format": "json"}
 TEXAS_FIPS = "48"
 STATE_FIPS = {
@@ -51,32 +63,75 @@ def normalize_address(address: str) -> str:
 
 
 class Census:
-    def __init__(self, cache: HttpCache, ttl: Ttls):
+    def __init__(self, cache: HttpCache, ttl: Ttls, tigerweb: Tigerweb):
         self.cache = cache
         self.ttl = ttl
+        self.tigerweb = tigerweb
         cache.pause_on(SOURCE, ttl.geocode_backoff)
 
     async def geocode(self, address: str) -> Place | None:
-        spec = RequestSpec("GET", f"{BASE}/onelineaddress", params={"address": normalize_address(address), **PARAMS})
-        got = await self.cache.get_json(
-            SOURCE, spec, ttl=self.ttl.geocode, empty_ttl=self.ttl.geocode_miss, empty_at=("result", "addressMatches")
-        )
-        matches = (got.value.get("result") or {}).get("addressMatches") or []
-        if not matches:
+        """The address's place. An address placed by the fallback once is placed by it again, with no call."""
+        normalized = normalize_address(address)
+        spec = RequestSpec("GET", f"{BASE}/onelineaddress", params={"address": normalized, **PARAMS})
+        plain = RequestSpec("GET", f"{LOCATIONS}/onelineaddress",
+                            params={"address": normalized, "benchmark": PARAMS["benchmark"], "format": "json"})
+        if not await self._kept(spec) and await self._kept(plain):
+            return await self._geocode_plain(plain)
+        try:
+            match = await self._match(spec)
+        except UpstreamError as exc:
+            log.warning("%s; asking its plain lookup and TIGERweb instead", exc)
+            try:
+                return await self._geocode_plain(plain)
+            except UpstreamError:
+                raise exc from None
+        if match is None:
             return None
-        match = matches[0]
         coords = match.get("coordinates") or {}
         return parse_geographies(match.get("geographies") or {}, coords["y"], coords["x"], match.get("matchedAddress"))
 
     async def at(self, lat: float, lon: float) -> Place | None:
+        """The place at the point. A point placed by TIGERweb once is placed by it again, with no call."""
         spec = RequestSpec("GET", f"{BASE}/coordinates", params={"x": f"{lon:.6f}", "y": f"{lat:.6f}", **PARAMS})
-        got = await self.cache.get_json(
-            SOURCE, spec, ttl=self.ttl.geocode, empty_ttl=self.ttl.geocode_miss, empty_at=("result", "geographies")
-        )
+        if not await self._kept(spec) and await self.tigerweb.kept_at(lat, lon):
+            return await self._at_tigerweb(lat, lon, None)
+        try:
+            got = await self.cache.get_json(
+                SOURCE, spec, ttl=self.ttl.geocode, empty_ttl=self.ttl.geocode_miss, empty_at=("result", "geographies")
+            )
+        except UpstreamError as exc:
+            log.warning("%s; asking TIGERweb instead", exc)
+            try:
+                return await self._at_tigerweb(lat, lon, None)
+            except UpstreamError:
+                raise exc from None
         geographies = (got.value.get("result") or {}).get("geographies") or {}
         if not any(geographies.values()):
             return None
         return parse_geographies(geographies, lat, lon, None)
+
+    async def _kept(self, spec: RequestSpec) -> bool:
+        return await asyncio.to_thread(self.cache.peek, spec) is not None
+
+    async def _geocode_plain(self, plain: RequestSpec) -> Place | None:
+        match = await self._match(plain)
+        if match is None:
+            return None
+        coords = match.get("coordinates") or {}
+        return await self._at_tigerweb(coords["y"], coords["x"], match.get("matchedAddress"))
+
+    async def _match(self, spec: RequestSpec) -> dict[str, Any] | None:
+        got = await self.cache.get_json(
+            SOURCE, spec, ttl=self.ttl.geocode, empty_ttl=self.ttl.geocode_miss, empty_at=("result", "addressMatches")
+        )
+        matches = (got.value.get("result") or {}).get("addressMatches") or []
+        return matches[0] if matches else None
+
+    async def _at_tigerweb(self, lat: float, lon: float, matched: str | None) -> Place | None:
+        geographies = await self.tigerweb.place_at(float(lat), float(lon))
+        if not any(geographies.values()):
+            return None
+        return parse_geographies(geographies, lat, lon, matched)
 
 
 def vintage(layer_name: str) -> int:

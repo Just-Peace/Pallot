@@ -78,7 +78,7 @@ SOURCES = (
         "Your county and districts from your address, from the US Census, OpenStreetMap and the Texas Legislative "
         "Council.",
         False,
-        ("census", "nominatim"),
+        ("census", tigerweb.POINTS, "nominatim"),
         group=ADDRESS,
         pause=Pause("the address lookup refused a request", "addresses already looked up still work"),
         kept="sboe",

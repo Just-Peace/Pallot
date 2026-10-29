@@ -979,7 +979,8 @@ def record_wikidata(client: httpx.Client) -> None:
 
 
 def record_tigerweb(client: httpx.Client) -> None:
-    """TIGERweb's layer list, then the Capitol's districts, sent as Pallot sends them."""
+    """TIGERweb's layer list, then the Capitol's districts, sent as Pallot sends them, and what's at
+    the Capitol's point, as the address lookup asks when the geocoder's districts are down."""
 
     def get(spec) -> dict:
         response = client.get(spec.url, params=spec.params)
@@ -991,6 +992,9 @@ def record_tigerweb(client: httpx.Client) -> None:
     for kind, number in OUTLINES.items():
         save(f"tigerweb_{tigerweb.geoid(kind, number)}.json",
              get(tigerweb.outline_spec(tigerweb.layer_id(index, kind), kind, number)))
+    coords = json.loads((FIXTURES / "census_capitol.json").read_text())["result"]["addressMatches"][0]["coordinates"]
+    save("tigerweb_identify_capitol.json",
+         get(tigerweb.identify_spec(tigerweb.place_layer_ids(index), coords["y"], coords["x"])))
 
 
 def record_election_precincts(client: httpx.Client) -> None:
