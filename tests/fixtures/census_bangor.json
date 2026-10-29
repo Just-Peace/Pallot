@@ -1,0 +1,239 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "73 HARLOW ST, BANGOR, ME 04401"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   },
+   "vintage": {
+    "vintageName": "Current_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "123628514"
+    },
+    "coordinates": {
+     "x": -68.77128833999,
+     "y": 44.803859175426
+    },
+    "addressComponents": {
+     "zip": "04401",
+     "streetName": "HARLOW",
+     "preType": "",
+     "city": "BANGOR",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "1",
+     "state": "ME",
+     "suffixType": "ST",
+     "toAddress": "99",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "73 HARLOW ST, BANGOR, ME, 04401",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "230190002002002",
+       "STATE": "23",
+       "COUNTY": "019",
+       "TRACT": "000200",
+       "BLOCK": "2002",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "30812",
+       "MTFCC": "G5040",
+       "NAME": "Block 2002",
+       "BASENAME": "2002",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "2",
+       "CENTLON": "-068.7716293",
+       "CENTLAT": "+44.8048327",
+       "INTPTLON": "-068.7716293",
+       "INTPTLAT": "+44.8048327",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "4884825",
+       "OID": "210701008140085"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490105063177",
+       "GEOID": "2302820",
+       "STATE": "23",
+       "SDUNI": "02820",
+       "BASENAME": "Bangor",
+       "NAME": "Bangor",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "88731356",
+       "AREAWATER": "868257",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.8322625",
+       "CENTLON": "-068.7906126",
+       "INTPTLAT": "+44.8296254",
+       "INTPTLON": "-068.7887668",
+       "OBJECTID": "6425"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "31518",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "88731356",
+       "AREAWATER": "868257",
+       "PLACENS": "00582340",
+       "PLACECC": "C5",
+       "PLACE": "02795",
+       "FUNCSTAT": "A",
+       "GEOID": "2302795",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Bangor",
+       "NAME": "Bangor city",
+       "OID": "27890105056797",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "23",
+       "CENTLON": "-068.7906126",
+       "CENTLAT": "+44.8322625",
+       "INTPTLON": "-068.7887668",
+       "INTPTLAT": "+44.8296254",
+       "DISP_CLR": "1"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "201",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "71349065790",
+       "AREAWATER": "7060247265",
+       "CD120": "02",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "2302",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "2",
+       "NAME": "Congressional District 2",
+       "OID": "2119042393278135",
+       "STATE": "23",
+       "CENTLON": "-069.0908078",
+       "CENTLAT": "+45.4992393",
+       "INTPTLON": "-069.0853097",
+       "INTPTLAT": "+45.5100010"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042393387807",
+       "GEOID": "23009",
+       "STATE": "23",
+       "SLDU": "009",
+       "BASENAME": "9",
+       "NAME": "State Senate District 9",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "181640233",
+       "AREAWATER": "3293861",
+       "LSY": "2026",
+       "OBJECTID": "1890",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.8229263",
+       "CENTLON": "-068.8514678",
+       "INTPTLAT": "+44.8305817",
+       "INTPTLON": "-068.8648541",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042393387891",
+       "GEOID": "23022",
+       "STATE": "23",
+       "SLDL": "022",
+       "BASENAME": "22",
+       "NAME": "State House District 22",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "18506629",
+       "AREAWATER": "0",
+       "LSY": "2026",
+       "OBJECTID": "4781",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.8375869",
+       "CENTLON": "-068.8215491",
+       "INTPTLAT": "+44.8375869",
+       "INTPTLON": "-068.8215491",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490100936543",
+       "GEOID": "23",
+       "STATE": "23",
+       "STATENS": "01779787",
+       "BASENAME": "Maine",
+       "NAME": "Maine",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "79888538922",
+       "AREAWATER": "11744922685",
+       "REGION": "1",
+       "DIVISION": "1",
+       "STUSAB": "ME",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+45.2610965",
+       "CENTLON": "-069.2136650",
+       "INTPTLAT": "+45.4109866",
+       "INTPTLON": "-068.6676348",
+       "OBJECTID": "24"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590105052618",
+       "GEOID": "23019",
+       "STATE": "23",
+       "COUNTY": "019",
+       "COUNTYNS": "00581295",
+       "BASENAME": "Penobscot",
+       "NAME": "Penobscot County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "8798303530",
+       "AREAWATER": "414379042",
+       "OBJECTID": "2302",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+45.3972249",
+       "CENTLON": "-068.6508946",
+       "INTPTLAT": "+45.4109866",
+       "INTPTLON": "-068.6676348"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

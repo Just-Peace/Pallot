@@ -17211,5 +17211,263 @@
     "url": "https://begich.house.gov"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "C001035",
+   "thomas": "01541",
+   "lis": "S252",
+   "govtrack": 300025,
+   "opensecrets": "N00000491",
+   "votesmart": 379,
+   "fec": [
+    "S6ME00159"
+   ],
+   "cspan": 45738,
+   "wikipedia": "Susan Collins",
+   "house_history": 11742,
+   "ballotpedia": "Susan Collins",
+   "maplight": 551,
+   "icpsr": 49703,
+   "wikidata": "Q22279",
+   "google_entity_id": "kg:/m/020y8m",
+   "pictorial": 13395
+  },
+  "name": {
+   "first": "Susan",
+   "middle": "M.",
+   "last": "Collins",
+   "official_full": "Susan M. Collins"
+  },
+  "bio": {
+   "birthday": "1952-12-07",
+   "gender": "F"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "1997-01-07",
+    "end": "2003-01-03",
+    "state": "ME",
+    "class": 2,
+    "party": "Republican"
+   },
+   {
+    "type": "sen",
+    "start": "2003-01-07",
+    "end": "2009-01-03",
+    "state": "ME",
+    "class": 2,
+    "party": "Republican",
+    "url": "http://collins.senate.gov"
+   },
+   {
+    "type": "sen",
+    "start": "2009-01-06",
+    "end": "2015-01-03",
+    "state": "ME",
+    "class": 2,
+    "party": "Republican",
+    "url": "http://www.collins.senate.gov",
+    "address": "413 Dirksen Senate Office Building Washington DC 20510",
+    "phone": "202-224-2523",
+    "fax": "202-224-2693",
+    "contact_form": "http://www.collins.senate.gov/public/index.cfm/email",
+    "office": "413 Dirksen Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.collins.senate.gov/public/?a=rss.feed"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "ME",
+    "class": 2,
+    "party": "Republican",
+    "url": "https://www.collins.senate.gov",
+    "address": "413 Dirksen Senate Office Building Washington DC 20510",
+    "phone": "202-224-2523",
+    "fax": "202-224-2693",
+    "contact_form": "http://www.collins.senate.gov/contact",
+    "office": "413 Dirksen Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.collins.senate.gov/public/?a=rss.feed"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "ME",
+    "class": 2,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.collins.senate.gov",
+    "rss_url": "http://www.collins.senate.gov/public/?a=rss.feed",
+    "contact_form": "https://www.collins.senate.gov/contact",
+    "address": "413 Dirksen Senate Office Building Washington DC 20510",
+    "office": "413 Dirksen Senate Office Building",
+    "phone": "202-224-2523"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "K000383",
+   "thomas": "02185",
+   "lis": "S363",
+   "govtrack": 412545,
+   "cspan": 37413,
+   "wikipedia": "Angus King",
+   "opensecrets": "N00034580",
+   "votesmart": 22381,
+   "fec": [
+    "S2ME00109"
+   ],
+   "ballotpedia": "Angus King",
+   "maplight": 1769,
+   "icpsr": 41300,
+   "wikidata": "Q544464",
+   "google_entity_id": "kg:/m/02hfx0",
+   "pictorial": 13432
+  },
+  "name": {
+   "first": "Angus",
+   "middle": "S.",
+   "last": "King",
+   "suffix": "Jr.",
+   "official_full": "Angus S. King, Jr."
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1944-03-31"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "ME",
+    "party": "Independent",
+    "caucus": "Democrat",
+    "class": 1,
+    "url": "https://www.king.senate.gov",
+    "address": "133 Hart Senate Office Building Washington DC 20510",
+    "office": "133 Hart Senate Office Building",
+    "phone": "202-224-5344",
+    "state_rank": "junior",
+    "contact_form": "https://www.king.senate.gov/contact",
+    "rss_url": "http://www.king.senate.gov/rss/feeds/?type=all",
+    "fax": "202-224-1946"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "ME",
+    "class": 1,
+    "party": "Independent",
+    "caucus": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.king.senate.gov",
+    "rss_url": "http://www.king.senate.gov/rss/feeds/?type=all",
+    "contact_form": "https://www.king.senate.gov/contact",
+    "address": "133 Hart Senate Office Building Washington DC 20510",
+    "office": "133 Hart Senate Office Building",
+    "phone": "202-224-5344"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "ME",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Independent",
+    "caucus": "Democrat",
+    "url": "https://www.king.senate.gov",
+    "rss_url": "http://www.king.senate.gov/rss/feeds/?type=all",
+    "contact_form": "https://www.king.senate.gov/contact",
+    "address": "133 Hart Senate Office Building Washington DC 20510",
+    "office": "133 Hart Senate Office Building",
+    "phone": "202-224-5344"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000592",
+   "fec": [
+    "H8ME02185"
+   ],
+   "govtrack": 412842,
+   "wikipedia": "Jared Golden",
+   "wikidata": "Q41694157",
+   "opensecrets": "N00041668",
+   "votesmart": 151420,
+   "icpsr": 21923,
+   "ballotpedia": "Jared Golden",
+   "google_entity_id": "kg:/g/11f1224576",
+   "pictorial": 13093
+  },
+  "name": {
+   "first": "Jared",
+   "middle": "Forrest",
+   "last": "Golden",
+   "official_full": "Jared F. Golden"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1982-07-25"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "ME",
+    "district": 2,
+    "party": "Democrat",
+    "address": "1223 Longworth House Office Building Washington DC 20515-1902",
+    "office": "1223 Longworth House Office Building",
+    "phone": "202-225-6306",
+    "url": "https://golden.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "ME",
+    "district": 2,
+    "party": "Democrat",
+    "url": "https://golden.house.gov",
+    "address": "1222 Longworth House Office Building Washington DC 20515-1902",
+    "office": "1222 Longworth House Office Building",
+    "phone": "202-225-6306"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "ME",
+    "district": 2,
+    "party": "Democrat",
+    "url": "https://golden.house.gov",
+    "address": "1710 Longworth House Office Building Washington DC 20515-1902",
+    "office": "1710 Longworth House Office Building",
+    "phone": "202-225-6306"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "ME",
+    "district": 2,
+    "party": "Democrat",
+    "url": "https://golden.house.gov",
+    "address": "1107 Longworth House Office Building Washington DC 20515-1902",
+    "office": "1107 Longworth House Office Building",
+    "phone": "202-225-6306"
+   }
+  ]
  }
 ]

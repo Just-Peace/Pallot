@@ -1,0 +1,94 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ME02148",
+   "candidate_name": "LEPAGE, PAUL",
+   "candidate_pcc_id": "C00904094",
+   "candidate_pcc_name": "PAUL LEPAGE FOR CONGRESS",
+   "cash_on_hand_end_period": 848223.64,
+   "committee_ids": [
+    "C00894451",
+    "C00895060",
+    "C00904094"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2450906.39,
+   "total_receipts": 3299130.03
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ME02171",
+   "candidate_name": "DUNLAP, MATT",
+   "candidate_pcc_id": "C00922377",
+   "candidate_pcc_name": "DUNLAP FOR CONGRESS",
+   "cash_on_hand_end_period": 443967.67,
+   "committee_ids": [
+    "C00922377"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 2520995.86,
+   "total_receipts": 2964963.53
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ME02213",
+   "candidate_name": "BALDACCI, JOSEPH",
+   "candidate_pcc_id": "C00934000",
+   "candidate_pcc_name": "JOE BALDACCI FOR CONGRESS",
+   "cash_on_hand_end_period": 5634.47,
+   "committee_ids": [
+    "C00934000"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 659339.62,
+   "total_receipts": 664974.09
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ME02189",
+   "candidate_name": "CLARK, JAMES L.",
+   "candidate_pcc_id": "C00927624",
+   "candidate_pcc_name": "FRIENDS OF JAMES L. CLARK",
+   "cash_on_hand_end_period": 505.0,
+   "committee_ids": [
+    "C00927624"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 45.0,
+   "total_receipts": 600.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ME02155",
+   "candidate_name": "SIGEL, LOUIS MR.",
+   "candidate_pcc_id": "C00915439",
+   "candidate_pcc_name": "LEGAL WITH SIGEL",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00915439"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

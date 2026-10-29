@@ -14,6 +14,7 @@ from .fl import FlList
 from .ga import GaList
 from .ia import IaList
 from .il import IlList
+from .me import MeList
 from .mi import MiList
 from .nc import NcList
 from .nj import NjList
@@ -28,7 +29,7 @@ from .wy import WyList
 ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
                              IaList, NjList, NyList, CoList, WyList, IlList,
-                             AkList)
+                             AkList, MeList)
 }
 
 
