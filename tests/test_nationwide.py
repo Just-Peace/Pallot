@@ -114,6 +114,7 @@ def test_coverage_and_where_sources_work():
     ("NE", "list", ("cd", "sd"), {"sd": "Legislature"}),  # one chamber
     ("NM", "list", ("cd", "sd", "hd"), {}),
     ("WA", "list", ("cd", "sd", "hd"), {}),
+    ("IN", "list", ("cd", "sd", "hd"), {}),
     ("DC", "fec", ("cd",), {}),
     ("CA", "list", ("cd", "sd", "hd"), {"hd": "State Assembly"}),
     ("NJ", "list", ("cd", "sd", "hd"), {"hd": "General Assembly"}),

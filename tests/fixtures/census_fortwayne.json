@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "200 E BERRY ST, FORT WAYNE, IN 46802"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "6379317"
+    },
+    "coordinates": {
+     "x": -85.137939575106,
+     "y": 41.079467666017
+    },
+    "addressComponents": {
+     "zip": "46802",
+     "streetName": "BERRY",
+     "preType": "",
+     "city": "FORT WAYNE",
+     "preDirection": "E",
+     "suffixDirection": "",
+     "fromAddress": "200",
+     "state": "IN",
+     "suffixType": "ST",
+     "toAddress": "298",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "200 E BERRY ST, FORT WAYNE, IN, 46802",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "180030013002007",
+       "STATE": "18",
+       "COUNTY": "003",
+       "TRACT": "001300",
+       "BLOCK": "2007",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "14507",
+       "MTFCC": "G5040",
+       "NAME": "Block 2007",
+       "BASENAME": "2007",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "2",
+       "CENTLON": "-085.1371625",
+       "CENTLAT": "+41.0791324",
+       "INTPTLON": "-085.1371625",
+       "INTPTLAT": "+41.0791324",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "1657962",
+       "OID": "210701004283561"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "2849062881987",
+       "GEOID": "1803630",
+       "STATE": "18",
+       "SDUNI": "03630",
+       "BASENAME": "Fort Wayne Community Schools",
+       "NAME": "Fort Wayne Community Schools",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "373663013",
+       "AREAWATER": "872509",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.0683214",
+       "CENTLON": "-085.1421031",
+       "INTPTLAT": "+41.0678911",
+       "INTPTLON": "-085.1418582",
+       "OBJECTID": "4083"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32256",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "289456552",
+       "AREAWATER": "863477",
+       "PLACENS": "02394798",
+       "PLACECC": "C1",
+       "PLACE": "25000",
+       "FUNCSTAT": "A",
+       "GEOID": "1825000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Fort Wayne",
+       "NAME": "Fort Wayne city",
+       "OID": "2789062868429",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "18",
+       "CENTLON": "-085.1426619",
+       "CENTLAT": "+41.0881396",
+       "INTPTLON": "-085.1427915",
+       "INTPTLAT": "+41.0881934",
+       "DISP_CLR": "4"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "263",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "11371203937",
+       "AREAWATER": "142807193",
+       "CD120": "03",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "1803",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "3",
+       "NAME": "Congressional District 3",
+       "OID": "2119042393277809",
+       "STATE": "18",
+       "CENTLON": "-085.2103542",
+       "CENTLAT": "+41.0443688",
+       "INTPTLON": "-085.2115338",
+       "INTPTLAT": "+41.0428036"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042393386277",
+       "GEOID": "18016",
+       "STATE": "18",
+       "SLDU": "016",
+       "BASENAME": "16",
+       "NAME": "State Senate District 16",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "1238657480",
+       "AREAWATER": "6783056",
+       "LSY": "2026",
+       "OBJECTID": "575",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.1364763",
+       "CENTLON": "-085.4288352",
+       "INTPTLAT": "+41.1371260",
+       "INTPTLON": "-085.4280352",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042393386367",
+       "GEOID": "18082",
+       "STATE": "18",
+       "SLDL": "082",
+       "BASENAME": "82",
+       "NAME": "State House District 82",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "64058356",
+       "AREAWATER": "140695",
+       "LSY": "2026",
+       "OBJECTID": "2685",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.0868860",
+       "CENTLON": "-085.1214073",
+       "INTPTLAT": "+41.0858445",
+       "INTPTLON": "-085.1219775",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "2749051705222",
+       "GEOID": "18",
+       "STATE": "18",
+       "STATENS": "00448508",
+       "BASENAME": "Indiana",
+       "NAME": "Indiana",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "92786794385",
+       "AREAWATER": "1543803678",
+       "REGION": "2",
+       "DIVISION": "3",
+       "STUSAB": "IN",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+39.9059401",
+       "CENTLON": "-086.2872768",
+       "INTPTLAT": "+39.9013136",
+       "INTPTLON": "-086.2919129",
+       "OBJECTID": "15"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "2759062868403",
+       "GEOID": "18003",
+       "STATE": "18",
+       "COUNTY": "003",
+       "COUNTYNS": "00450402",
+       "BASENAME": "Allen",
+       "NAME": "Allen County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "1702000555",
+       "AREAWATER": "7347951",
+       "OBJECTID": "2069",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.0908116",
+       "CENTLON": "-085.0665680",
+       "INTPTLAT": "+41.0911322",
+       "INTPTLON": "-085.0711206"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
