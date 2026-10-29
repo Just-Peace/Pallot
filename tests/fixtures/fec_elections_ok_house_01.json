@@ -1,0 +1,204 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 12,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01235",
+   "candidate_name": "TEDFORD, MARK",
+   "candidate_pcc_id": "C00943175",
+   "candidate_pcc_name": "TEDFORD FOR U.S. CONGRESS",
+   "cash_on_hand_end_period": 157345.07,
+   "committee_ids": [
+    "C00943175"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2332928.63,
+   "total_receipts": 2490273.7
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01276",
+   "candidate_name": "BUTTERFIELD, NATHANIEL ALLEN",
+   "candidate_pcc_id": "C00945162",
+   "candidate_pcc_name": "FRIENDS OF NATHAN BUTTERFIELD 2026",
+   "cash_on_hand_end_period": 9855.88,
+   "committee_ids": [
+    "C00945162"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1679515.73,
+   "total_receipts": 1689371.61
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01300",
+   "candidate_name": "ROONEY, DAN",
+   "candidate_pcc_id": "C00945931",
+   "candidate_pcc_name": "DAN ROONEY FOR AMERICA",
+   "cash_on_hand_end_period": 286.94,
+   "committee_ids": [
+    "C00945931"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 712531.64,
+   "total_receipts": 712818.58
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01284",
+   "candidate_name": "LAHMEYER, JACKSON",
+   "candidate_pcc_id": "C00945774",
+   "candidate_pcc_name": "LAHMEYER FOR CONGRESS INC",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00945774"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 415913.8,
+   "total_receipts": 415913.8
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01201",
+   "candidate_name": "CROISANT, JOHN THOMAS",
+   "candidate_pcc_id": "C00895714",
+   "candidate_pcc_name": "JOHN CROISANT FOR OK CD1",
+   "cash_on_hand_end_period": 38289.12,
+   "committee_ids": [
+    "C00895714"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 179179.74,
+   "total_receipts": 217468.86
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01250",
+   "candidate_name": "DAVID, KIM",
+   "candidate_pcc_id": "C00943365",
+   "candidate_pcc_name": "KIM DAVID FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00943365"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 199170.91,
+   "total_receipts": 199170.91
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01292",
+   "candidate_name": "COCHRAN, JED",
+   "candidate_pcc_id": "C00945873",
+   "candidate_pcc_name": "JED COCHRAN FOR CONGRESS",
+   "cash_on_hand_end_period": 5.45,
+   "committee_ids": [
+    "C00945873"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 176201.36,
+   "total_receipts": 176206.81
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01326",
+   "candidate_name": "WOODS, TODD",
+   "candidate_pcc_id": "C00949230",
+   "candidate_pcc_name": "TODD WOODS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00949230"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 153800.0,
+   "total_receipts": 153800.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01268",
+   "candidate_name": "STALLINGS, JACKSON",
+   "candidate_pcc_id": "C00943571",
+   "candidate_pcc_name": "JACKSON STALLINGS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00943571"
+   ],
+   "coverage_end_date": "2026-06-02",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 52910.38,
+   "total_receipts": 52910.38
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01243",
+   "candidate_name": "GILL, COURTNEY",
+   "candidate_pcc_id": "C00943274",
+   "candidate_pcc_name": "GILL FOR OKLAHOMA",
+   "cash_on_hand_end_period": 1437.87,
+   "committee_ids": [
+    "C00943274"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 14928.58,
+   "total_receipts": 15706.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6OK01227",
+   "candidate_name": "WATKINS, ERICA",
+   "candidate_pcc_id": "C00916171",
+   "candidate_pcc_name": "ERICA 4 OK 2026",
+   "cash_on_hand_end_period": 239.69,
+   "committee_ids": [
+    "C00916171"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 13708.15,
+   "total_receipts": 13947.84
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4OK01107",
+   "candidate_name": "BAKER, DENNIS",
+   "candidate_pcc_id": "C00838938",
+   "candidate_pcc_name": "DENNIS BAKER FOR CONGRESS",
+   "cash_on_hand_end_period": 128566.3,
+   "committee_ids": [
+    "C00838938"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 47240.0,
+   "total_receipts": 10640.0
+  }
+ ]
+}

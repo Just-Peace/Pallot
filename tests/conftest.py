@@ -77,6 +77,7 @@ ADDRESSES = {
     "jeffersoncity": "201 W Capitol Ave, Jefferson City, MO 65101",
     "columbia": "1100 Gervais St, Columbia, SC 29201",  # South Carolina's search (states/sc.py); SC-6, SD 26, HD 72, Richland
     "frankfort": "700 Capital Ave, Frankfort, KY 40601",  # Kentucky's filings (states/ky.py); KY-1, SD 20, HD 57, Franklin
+    "tulsa": "175 E 2nd St, Tulsa, OK 74103",  # Oklahoma's list (states/ok.py); OK-1, SD 11, HD 73, Tulsa
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -91,6 +92,7 @@ STATE_LISTS = {
     "elections.cdn.sos.ca.gov": "state_ca.pdf",
     "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
     "www.sos.nm.gov": "state_nm.html", "candidateportal.servis.sos.state.nm.us": "state_nm_list.html",
+    "hosting.okelections.gov": "state_ok.html",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "state_va_all.html"}

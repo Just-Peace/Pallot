@@ -19648,5 +19648,249 @@
     "phone": "202-225-3115"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "L000575",
+   "thomas": "02050",
+   "govtrack": 412464,
+   "opensecrets": "N00031129",
+   "votesmart": 124938,
+   "fec": [
+    "H0OK05114",
+    "S4OK00232"
+   ],
+   "cspan": 1033847,
+   "wikipedia": "James Lankford",
+   "house_history": 17326,
+   "ballotpedia": "James Lankford",
+   "maplight": 1470,
+   "icpsr": 21166,
+   "lis": "S378",
+   "wikidata": "Q45940",
+   "google_entity_id": "kg:/m/0dgrrx6",
+   "pictorial": 13356
+  },
+  "name": {
+   "first": "James",
+   "last": "Lankford",
+   "official_full": "James Lankford"
+  },
+  "bio": {
+   "birthday": "1968-03-04",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Republican Conference Vice Chair",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "OK",
+    "district": 5,
+    "party": "Republican",
+    "url": "http://lankford.house.gov/",
+    "address": "509 Cannon HOB; Washington DC 20515-3605",
+    "phone": "202-225-2132",
+    "fax": "202-226-1463",
+    "office": "509 Cannon House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "OK",
+    "party": "Republican",
+    "district": 5,
+    "url": "http://lankford.house.gov",
+    "address": "228 Cannon HOB; Washington DC 20515-3605",
+    "phone": "202-225-2132",
+    "fax": "202-226-1463",
+    "office": "228 Cannon House Office Building",
+    "rss_url": "http://lankford.house.gov/rss.xml",
+    "contact_form": "https://lankford.house.gov/contact-me/"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "OK",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.lankford.senate.gov",
+    "address": "316 Hart Senate Office Building Washington DC 20510",
+    "office": "316 Hart Senate Office Building",
+    "phone": "202-224-5754"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "OK",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.lankford.senate.gov",
+    "address": "316 Hart Senate Office Building Washington DC 20510",
+    "office": "316 Hart Senate Office Building",
+    "phone": "202-224-5754",
+    "contact_form": "https://www.lankford.senate.gov/contact/email"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "OK",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.lankford.senate.gov",
+    "contact_form": "https://www.lankford.senate.gov/contact/email",
+    "address": "731 Hart Senate Office Building Washington DC 20510",
+    "office": "731 Hart Senate Office Building",
+    "phone": "202-224-5754"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001082",
+   "fec": [
+    "H8OK01157",
+    "S6OK04247"
+   ],
+   "govtrack": 412748,
+   "wikipedia": "Kevin Hern",
+   "wikidata": "Q58333614",
+   "opensecrets": "N00040829",
+   "ballotpedia": "Kevin Hern",
+   "votesmart": 180004,
+   "icpsr": 21760,
+   "google_entity_id": "kg:/g/11gzqw48lf",
+   "pictorial": 13210
+  },
+  "name": {
+   "first": "Kevin",
+   "middle": "R.",
+   "last": "Hern",
+   "official_full": "Kevin Hern"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1961-12-04"
+  },
+  "leadership_roles": [
+   {
+    "title": "House Republican Policy Committee Chair",
+    "chamber": "house",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2018-11-13",
+    "end": "2019-01-03",
+    "state": "OK",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://hern.house.gov",
+    "address": "216 Cannon House Office Building; Washington DC 20515-3601",
+    "office": "216 Cannon House Office Building",
+    "phone": "202-225-2211"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "OK",
+    "district": 1,
+    "party": "Republican",
+    "phone": "202-225-2211",
+    "address": "1019 Longworth House Office Building Washington DC 20515-3601",
+    "office": "1019 Longworth House Office Building",
+    "url": "https://hern.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "OK",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://hern.house.gov",
+    "address": "1019 Longworth House Office Building Washington DC 20515-3601",
+    "office": "1019 Longworth House Office Building",
+    "phone": "202-225-2211"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "OK",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://hern.house.gov",
+    "address": "1019 Longworth House Office Building Washington DC 20515-3601",
+    "office": "1019 Longworth House Office Building",
+    "phone": "202-225-2211"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "OK",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://hern.house.gov",
+    "address": "171 Cannon House Office Building Washington DC 20515-3601",
+    "office": "171 Cannon House Office Building",
+    "phone": "202-225-2211"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "A000383",
+   "lis": "S440",
+   "govtrack": 457040,
+   "wikipedia": "Alan S. Armstrong",
+   "wikidata": "Q138781196",
+   "ballotpedia": "Alan Armstrong",
+   "votesmart": 237497
+  },
+  "name": {
+   "first": "Alan",
+   "last": "Armstrong",
+   "official_full": "Alan Armstrong"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1962-07-11"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2026-03-24",
+    "end": "2027-01-03",
+    "how": "appointment",
+    "state": "OK",
+    "class": 2,
+    "party": "Republican",
+    "state_rank": "junior",
+    "url": "https://www.armstrong.senate.gov",
+    "address": "330 Hart Senate Office Building Washington DC 20510",
+    "office": "330 Hart Senate Office Building",
+    "phone": "202-224-4721",
+    "fax": "202-228-0380"
+   }
+  ]
  }
 ]
