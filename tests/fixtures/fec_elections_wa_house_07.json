@@ -1,0 +1,60 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 3,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WA07458",
+   "candidate_name": "JAYAPAL, PRAMILA",
+   "candidate_pcc_id": "C00605592",
+   "candidate_pcc_name": "PRAMILA FOR CONGRESS",
+   "cash_on_hand_end_period": 1753240.92,
+   "committee_ids": [
+    "C00605592"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3180450.73,
+   "total_receipts": 2920966.88
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4WA08147",
+   "candidate_name": "SHETH, NIRAV",
+   "candidate_pcc_id": "C00845354",
+   "candidate_pcc_name": "SHETH FOR CONGRESS",
+   "cash_on_hand_end_period": 4876.8,
+   "committee_ids": [
+    "C00845354"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 70425.49,
+   "total_receipts": 71544.33
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6WA07490",
+   "candidate_name": "KIRKLAND, GWENEVERE JOSEPHINE",
+   "candidate_pcc_id": "C00954313",
+   "candidate_pcc_name": "GET GWEN IN CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00954313"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

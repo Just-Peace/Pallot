@@ -113,6 +113,7 @@ def test_coverage_and_where_sources_work():
     ("MD", "fec", ("cd", "sd", "hd"), {"hd": "House of Delegates"}),
     ("NE", "list", ("cd", "sd"), {"sd": "Legislature"}),  # one chamber
     ("NM", "list", ("cd", "sd", "hd"), {}),
+    ("WA", "list", ("cd", "sd", "hd"), {}),
     ("DC", "fec", ("cd",), {}),
     ("CA", "list", ("cd", "sd", "hd"), {"hd": "State Assembly"}),
     ("NJ", "list", ("cd", "sd", "hd"), {"hd": "General Assembly"}),

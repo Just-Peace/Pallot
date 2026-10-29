@@ -3510,117 +3510,6 @@
  },
  {
   "id": {
-   "bioguide": "C000127",
-   "thomas": "00172",
-   "lis": "S275",
-   "govtrack": 300018,
-   "opensecrets": "N00007836",
-   "votesmart": 27122,
-   "fec": [
-    "S8WA00194",
-    "H2WA01054"
-   ],
-   "cspan": 26137,
-   "wikipedia": "Maria Cantwell",
-   "house_history": 10608,
-   "ballotpedia": "Maria Cantwell",
-   "maplight": 544,
-   "icpsr": 39310,
-   "wikidata": "Q22250",
-   "google_entity_id": "kg:/m/01x68t",
-   "pictorial": 13398
-  },
-  "name": {
-   "first": "Maria",
-   "last": "Cantwell",
-   "official_full": "Maria Cantwell"
-  },
-  "bio": {
-   "birthday": "1958-10-13",
-   "gender": "F"
-  },
-  "terms": [
-   {
-    "type": "rep",
-    "start": "1993-01-05",
-    "end": "1995-01-03",
-    "state": "WA",
-    "district": 1,
-    "party": "Democrat"
-   },
-   {
-    "type": "sen",
-    "start": "2001-01-03",
-    "end": "2007-01-03",
-    "state": "WA",
-    "class": 1,
-    "party": "Democrat",
-    "url": "http://cantwell.senate.gov"
-   },
-   {
-    "type": "sen",
-    "start": "2007-01-04",
-    "end": "2013-01-03",
-    "state": "WA",
-    "class": 1,
-    "party": "Democrat",
-    "url": "http://cantwell.senate.gov",
-    "address": "311 HART SENATE OFFICE BUILDING WASHINGTON DC 20510",
-    "phone": "202-224-3441",
-    "fax": "202-228-0514",
-    "contact_form": "http://www.cantwell.senate.gov/contact/",
-    "office": "311 Hart Senate Office Building"
-   },
-   {
-    "type": "sen",
-    "start": "2013-01-03",
-    "end": "2019-01-03",
-    "state": "WA",
-    "party": "Democrat",
-    "class": 1,
-    "url": "https://www.cantwell.senate.gov",
-    "address": "511 Hart Senate Office Building Washington DC 20510",
-    "phone": "202-224-3441",
-    "fax": "202-228-0514",
-    "contact_form": "http://www.cantwell.senate.gov/public/index.cfm/email-maria",
-    "office": "511 Hart Senate Office Building",
-    "state_rank": "junior",
-    "rss_url": "http://www.cantwell.senate.gov/public/index.cfm/rss/feed"
-   },
-   {
-    "type": "sen",
-    "start": "2019-01-03",
-    "end": "2025-01-03",
-    "state": "WA",
-    "class": 1,
-    "party": "Democrat",
-    "state_rank": "junior",
-    "url": "https://www.cantwell.senate.gov",
-    "rss_url": "http://www.cantwell.senate.gov/public/index.cfm/rss/feed",
-    "contact_form": "https://www.cantwell.senate.gov/public/index.cfm/email-maria",
-    "address": "511 Hart Senate Office Building Washington DC 20510",
-    "office": "511 Hart Senate Office Building",
-    "phone": "202-224-3441"
-   },
-   {
-    "type": "sen",
-    "start": "2025-01-03",
-    "end": "2031-01-03",
-    "state": "WA",
-    "class": 1,
-    "state_rank": "junior",
-    "party": "Democrat",
-    "url": "https://www.cantwell.senate.gov",
-    "rss_url": "http://www.cantwell.senate.gov/public/index.cfm/rss/feed",
-    "contact_form": "https://www.cantwell.senate.gov/public/index.cfm/email-maria",
-    "address": "511 Hart Senate Office Building Washington DC 20510",
-    "office": "511 Hart Senate Office Building",
-    "phone": "202-224-3441"
-   }
-  ]
- },
- {
-  "id": {
    "bioguide": "K000367",
    "thomas": "01826",
    "lis": "S311",
@@ -17995,6 +17884,339 @@
     "address": "1421 Longworth House Office Building Washington DC 20515-3101",
     "office": "1421 Longworth House Office Building",
     "phone": "202-225-6316"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C000127",
+   "thomas": "00172",
+   "lis": "S275",
+   "govtrack": 300018,
+   "opensecrets": "N00007836",
+   "votesmart": 27122,
+   "fec": [
+    "S8WA00194",
+    "H2WA01054"
+   ],
+   "cspan": 26137,
+   "wikipedia": "Maria Cantwell",
+   "house_history": 10608,
+   "ballotpedia": "Maria Cantwell",
+   "maplight": 544,
+   "icpsr": 39310,
+   "wikidata": "Q22250",
+   "google_entity_id": "kg:/m/01x68t",
+   "pictorial": 13398
+  },
+  "name": {
+   "first": "Maria",
+   "last": "Cantwell",
+   "official_full": "Maria Cantwell"
+  },
+  "bio": {
+   "birthday": "1958-10-13",
+   "gender": "F"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1993-01-05",
+    "end": "1995-01-03",
+    "state": "WA",
+    "district": 1,
+    "party": "Democrat"
+   },
+   {
+    "type": "sen",
+    "start": "2001-01-03",
+    "end": "2007-01-03",
+    "state": "WA",
+    "class": 1,
+    "party": "Democrat",
+    "url": "http://cantwell.senate.gov"
+   },
+   {
+    "type": "sen",
+    "start": "2007-01-04",
+    "end": "2013-01-03",
+    "state": "WA",
+    "class": 1,
+    "party": "Democrat",
+    "url": "http://cantwell.senate.gov",
+    "address": "311 HART SENATE OFFICE BUILDING WASHINGTON DC 20510",
+    "phone": "202-224-3441",
+    "fax": "202-228-0514",
+    "contact_form": "http://www.cantwell.senate.gov/contact/",
+    "office": "311 Hart Senate Office Building"
+   },
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "WA",
+    "party": "Democrat",
+    "class": 1,
+    "url": "https://www.cantwell.senate.gov",
+    "address": "511 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-3441",
+    "fax": "202-228-0514",
+    "contact_form": "http://www.cantwell.senate.gov/public/index.cfm/email-maria",
+    "office": "511 Hart Senate Office Building",
+    "state_rank": "junior",
+    "rss_url": "http://www.cantwell.senate.gov/public/index.cfm/rss/feed"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "WA",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.cantwell.senate.gov",
+    "rss_url": "http://www.cantwell.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.cantwell.senate.gov/public/index.cfm/email-maria",
+    "address": "511 Hart Senate Office Building Washington DC 20510",
+    "office": "511 Hart Senate Office Building",
+    "phone": "202-224-3441"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "WA",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.cantwell.senate.gov",
+    "rss_url": "http://www.cantwell.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.cantwell.senate.gov/public/index.cfm/email-maria",
+    "address": "511 Hart Senate Office Building Washington DC 20510",
+    "office": "511 Hart Senate Office Building",
+    "phone": "202-224-3441"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M001111",
+   "thomas": "01409",
+   "lis": "S229",
+   "govtrack": 300076,
+   "opensecrets": "N00007876",
+   "votesmart": 53358,
+   "fec": [
+    "S2WA00189"
+   ],
+   "cspan": 25277,
+   "wikipedia": "Patty Murray",
+   "house_history": 18715,
+   "ballotpedia": "Patty Murray",
+   "maplight": 596,
+   "icpsr": 49308,
+   "wikidata": "Q258825",
+   "google_entity_id": "kg:/m/018qx5",
+   "pictorial": 13346
+  },
+  "name": {
+   "first": "Patty",
+   "last": "Murray",
+   "official_full": "Patty Murray"
+  },
+  "bio": {
+   "birthday": "1950-10-11",
+   "gender": "F"
+  },
+  "leadership_roles": [
+   {
+    "title": "Assistant Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2019-01-03",
+    "end": "2021-01-03"
+   },
+   {
+    "title": "Assistant Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2021-01-03",
+    "end": "2021-01-20"
+   },
+   {
+    "title": "Assistant Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2021-01-20",
+    "end": "2023-01-03"
+   },
+   {
+    "title": "President Pro Tempore of the Senate",
+    "chamber": "senate",
+    "start": "2021-01-03",
+    "end": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "sen",
+    "start": "1993-01-05",
+    "end": "1999-01-03",
+    "state": "WA",
+    "class": 3,
+    "party": "Democrat"
+   },
+   {
+    "type": "sen",
+    "start": "1999-01-06",
+    "end": "2005-01-03",
+    "state": "WA",
+    "class": 3,
+    "party": "Democrat",
+    "url": "http://murray.senate.gov/"
+   },
+   {
+    "type": "sen",
+    "start": "2005-01-04",
+    "end": "2011-01-03",
+    "state": "WA",
+    "class": 3,
+    "party": "Democrat",
+    "url": "http://murray.senate.gov/"
+   },
+   {
+    "type": "sen",
+    "start": "2011-01-05",
+    "end": "2017-01-03",
+    "state": "WA",
+    "class": 3,
+    "party": "Democrat",
+    "url": "http://www.murray.senate.gov",
+    "address": "154 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-2621",
+    "fax": "202-224-0238",
+    "contact_form": "http://www.murray.senate.gov/public/index.cfm/contactme",
+    "office": "154 Russell Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.murray.senate.gov/public/?a=rss.feed"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "WA",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.murray.senate.gov",
+    "rss_url": "http://www.murray.senate.gov/public/?a=rss.feed",
+    "address": "154 Russell Senate Office Building Washington DC 20510",
+    "office": "154 Russell Senate Office Building",
+    "phone": "202-224-2621",
+    "contact_form": "https://www.murray.senate.gov/write-to-patty/",
+    "fax": "202-224-0238"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "WA",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.murray.senate.gov",
+    "rss_url": "http://www.murray.senate.gov/public/?a=rss.feed",
+    "contact_form": "https://www.murray.senate.gov/write-to-patty/",
+    "address": "154 Russell Senate Office Building Washington DC 20510",
+    "office": "154 Russell Senate Office Building",
+    "phone": "202-224-2621"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "J000298",
+   "govtrack": 412730,
+   "wikipedia": "Pramila Jayapal",
+   "wikidata": "Q18978140",
+   "votesmart": 153141,
+   "fec": [
+    "H6WA07458"
+   ],
+   "opensecrets": "N00038858",
+   "maplight": 2242,
+   "google_entity_id": "kg:/m/0c3dxcq",
+   "cspan": 9267128,
+   "icpsr": 21726,
+   "ballotpedia": "Pramila Jayapal",
+   "pictorial": 13318
+  },
+  "name": {
+   "first": "Pramila",
+   "last": "Jayapal",
+   "official_full": "Pramila Jayapal"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1965-09-21"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "WA",
+    "district": 7,
+    "party": "Democrat",
+    "phone": "202-225-3106",
+    "address": "319 Cannon House Office Building; Washington DC 20515-4707",
+    "office": "319 Cannon House Office Building",
+    "url": "https://jayapal.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "WA",
+    "district": 7,
+    "party": "Democrat",
+    "phone": "202-225-3106",
+    "address": "1510 Longworth House Office Building Washington DC 20515-4707",
+    "office": "1510 Longworth House Office Building",
+    "url": "https://jayapal.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "WA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://jayapal.house.gov",
+    "address": "2346 Rayburn House Office Building Washington DC 20515-4707",
+    "office": "2346 Rayburn House Office Building",
+    "phone": "202-225-3106"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "WA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://jayapal.house.gov",
+    "address": "2346 Rayburn House Office Building Washington DC 20515-4707",
+    "office": "2346 Rayburn House Office Building",
+    "phone": "202-225-3106"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "WA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "https://jayapal.house.gov",
+    "address": "2346 Rayburn House Office Building Washington DC 20515-4707",
+    "office": "2346 Rayburn House Office Building",
+    "phone": "202-225-3106"
    }
   ]
  }

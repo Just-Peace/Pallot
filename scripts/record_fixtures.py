@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -60,7 +60,8 @@ no contact details). Nebraska's (state_ne) takes an Omaha address, the Secretary
 elections page cut down to its links, its candidate list rewritten without contact details (its
 pages turned sideways, as served) and its judges for retention as served. New Mexico's (state_nm)
 takes an Albuquerque address, the Secretary of State's home page cut down to its links to the
-candidate list, and the list's grid page for the election without contact details. A Census answer whose
+candidate list, and the list's grid page for the election without contact details. Washington's
+(state_wa) takes a Seattle address; its list is the grid's fixtures (grid). A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -162,6 +163,7 @@ IL_ADDRESS = ("chicago", "121 N LaSalle St, Chicago, IL 60602")  # City Hall: Co
 AK_ADDRESS = ("anchorage", "632 W 6th Ave, Anchorage, AK 99501")  # City Hall: Senate District I, up in 2026
 ME_ADDRESS = ("bangor", "73 Harlow St, Bangor, ME 04401")  # City Hall: ME-2, ranked-choice in 2026
 NE_ADDRESS = ("omaha", "4917 Underwood Ave, Omaha, NE 68132")  # Dundee, Douglas County: NE-2, Legislature District 8
+WA_ADDRESS = ("seattle", "600 4th Ave, Seattle, WA 98104")  # City Hall: King County
 NM_ADDRESS = ("albuquerque", "400 Marquette Ave NW, Albuquerque, NM 87102")  # the Government Center: NM-1
 # Virginia's newest odd-year list still served, for both chambers: 2025's (the House of Delegates
 # alone) answered 404 by 2026-10-29, and 2023's moved to the previous candidate lists.
@@ -1038,6 +1040,17 @@ def record_nm(client: httpx.Client, key: str) -> None:
     record_members(client, "NM", (None, place.cd))
 
 
+def record_wa(client: httpx.Client, key: str) -> None:
+    """Washington: WA_ADDRESS's Census answer, the address's FEC filers for U.S. House, its
+    legislators, and its members of Congress added to officeholders_congress.json. Its list is the
+    grid's fixtures (record_grid), which Upstream serves for its page and its export."""
+    name, address = WA_ADDRESS
+    place = record_census(client, name, address)
+    record_filers(client, key, "WA", place.cd)
+    record_legislators(client, "wa")
+    record_members(client, "WA", (None, place.cd))
+
+
 GA_PLACES = {
     ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
     ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
@@ -1371,7 +1384,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "grid", "polls", "key_dates", "officeholders",
                                            "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1428,6 +1441,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ne(client, config.fec_api_key)
         if only in (None, "state_nm"):
             record_nm(client, config.fec_api_key)
+        if only in (None, "state_wa"):
+            record_wa(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):
