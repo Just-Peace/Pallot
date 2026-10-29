@@ -32,6 +32,7 @@ from .oh import OhList
 from .ok import OkList
 from .pa import PaList
 from .sc import ScList
+from .sd import SdList
 from .va import VaList
 from .wa import WaList
 from .wi import WiList
@@ -41,7 +42,7 @@ ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
-                             OkList, KsList, MtList)
+                             OkList, KsList, MtList, SdList)
 }
 
 

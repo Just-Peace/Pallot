@@ -20304,5 +20304,286 @@
     "url": "https://downing.house.gov"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "T000250",
+   "thomas": "01534",
+   "lis": "S303",
+   "govtrack": 400546,
+   "opensecrets": "N00004572",
+   "votesmart": 398,
+   "fec": [
+    "S2SD00068",
+    "H6SD00085"
+   ],
+   "cspan": 45552,
+   "wikipedia": "John Thune",
+   "ballotpedia": "John Thune",
+   "maplight": 621,
+   "icpsr": 29754,
+   "house_history": 22937,
+   "wikidata": "Q462981",
+   "google_entity_id": "kg:/m/03ybyn",
+   "pictorial": 13370
+  },
+  "name": {
+   "first": "John",
+   "last": "Thune",
+   "official_full": "John Thune"
+  },
+  "bio": {
+   "birthday": "1961-01-07",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "Assistant Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2019-01-03",
+    "end": "2021-01-03"
+   },
+   {
+    "title": "Senate Majority Whip",
+    "chamber": "senate",
+    "start": "2021-01-03",
+    "end": "2021-01-20"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2021-01-20",
+    "end": "2023-01-03"
+   },
+   {
+    "title": "Senate Minority Whip",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1997-01-07",
+    "end": "1999-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican"
+   },
+   {
+    "type": "rep",
+    "start": "1999-01-06",
+    "end": "2001-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican"
+   },
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican"
+   },
+   {
+    "type": "sen",
+    "start": "2005-01-04",
+    "end": "2011-01-03",
+    "state": "SD",
+    "class": 3,
+    "party": "Republican",
+    "url": "http://thune.senate.gov/"
+   },
+   {
+    "type": "sen",
+    "start": "2011-01-05",
+    "end": "2017-01-03",
+    "state": "SD",
+    "class": 3,
+    "party": "Republican",
+    "url": "http://www.thune.senate.gov",
+    "address": "511 Dirksen Senate Office Building Washington DC 20510",
+    "phone": "202-224-2321",
+    "fax": "202-228-5429",
+    "contact_form": "http://www.thune.senate.gov/public/index.cfm/contact",
+    "office": "511 Dirksen Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.thune.senate.gov/public/index.cfm/rss/feed"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "SD",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.thune.senate.gov",
+    "rss_url": "http://www.thune.senate.gov/public/index.cfm/rss/feed",
+    "address": "511 Dirksen Senate Office Building Washington DC 20510",
+    "office": "511 Dirksen Senate Office Building",
+    "phone": "202-224-2321",
+    "contact_form": "https://www.thune.senate.gov/public/index.cfm/contact",
+    "fax": "202-228-5429"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "SD",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.thune.senate.gov",
+    "rss_url": "http://www.thune.senate.gov/public/index.cfm/rss/feed",
+    "contact_form": "https://www.thune.senate.gov/public/index.cfm/contact",
+    "address": "511 Dirksen Senate Office Building Washington DC 20510",
+    "office": "511 Dirksen Senate Office Building",
+    "phone": "202-224-2321"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "R000605",
+   "thomas": "02288",
+   "fec": [
+    "S4SD00049"
+   ],
+   "govtrack": 412669,
+   "opensecrets": "N00035187",
+   "lis": "S381",
+   "maplight": 2125,
+   "wikidata": "Q722503",
+   "wikipedia": "Mike Rounds",
+   "google_entity_id": "kg:/m/020z2p",
+   "votesmart": 7455,
+   "cspan": 78317,
+   "icpsr": 41505,
+   "ballotpedia": "Mike Rounds",
+   "pictorial": 13384
+  },
+  "name": {
+   "first": "Mike",
+   "last": "Rounds",
+   "official_full": "Mike Rounds"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1954-10-24"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "SD",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.rounds.senate.gov",
+    "address": "502 Hart Senate Office Building Washington DC 20510",
+    "office": "502 Hart Senate Office Building",
+    "phone": "202-224-5842",
+    "contact_form": "https://www.rounds.senate.gov/contact/email-mike"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "SD",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.rounds.senate.gov",
+    "contact_form": "https://www.rounds.senate.gov/contact/email-mike",
+    "address": "716 Hart Senate Office Building Washington DC 20510",
+    "office": "716 Hart Senate Office Building",
+    "phone": "202-224-5842"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "J000301",
+   "fec": [
+    "H8SD01055"
+   ],
+   "govtrack": 412816,
+   "wikipedia": "Dusty Johnson",
+   "wikidata": "Q30015838",
+   "opensecrets": "N00040559",
+   "votesmart": 48307,
+   "icpsr": 21935,
+   "ballotpedia": "Dusty Johnson",
+   "google_entity_id": "kg:/g/11dyzlcnbr",
+   "pictorial": 13248
+  },
+  "name": {
+   "first": "Dusty",
+   "last": "Johnson",
+   "official_full": "Dusty Johnson"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1976-09-30"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican",
+    "phone": "202-225-2801",
+    "address": "1508 Longworth House Office Building Washington DC 20515-4100",
+    "office": "1508 Longworth House Office Building",
+    "url": "https://dustyjohnson.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican",
+    "url": "https://dustyjohnson.house.gov",
+    "address": "1714 Longworth House Office Building Washington DC 20515-4100",
+    "office": "1714 Longworth House Office Building",
+    "phone": "202-225-2801"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican",
+    "url": "https://dustyjohnson.house.gov",
+    "address": "1714 Longworth House Office Building Washington DC 20515-4100",
+    "office": "1714 Longworth House Office Building",
+    "phone": "202-225-2801"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "SD",
+    "district": 0,
+    "party": "Republican",
+    "url": "https://dustyjohnson.house.gov",
+    "address": "1714 Longworth House Office Building Washington DC 20515-4100",
+    "office": "1714 Longworth House Office Building",
+    "phone": "202-225-2801"
+   }
+  ]
  }
 ]

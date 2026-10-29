@@ -80,6 +80,7 @@ ADDRESSES = {
     "tulsa": "175 E 2nd St, Tulsa, OK 74103",  # Oklahoma's list (states/ok.py); OK-1, SD 11, HD 73, Tulsa
     "topeka": "300 SW 10th Ave, Topeka, KS 66612",  # Kansas's list (states/ks.py); Shawnee
     "helena": "1301 E 6th Ave, Helena, MT 59601",  # Montana's grid (states/mt.py); MT-2, SD 41, HD 82
+    "pierre": "500 E Capitol Ave, Pierre, SD 57501",  # South Dakota's grid (states/sd.py); SD-0, SD 24, HD 24
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -107,6 +108,7 @@ SC_ELECTION = "22596"  # the November 3, 2026 general election's id on South Car
 KY_ELECTION = "87"  # the November 3, 2026 general election's id in Kentucky's dropdown
 KS_ELECTION = "36"  # the November 3, 2026 general election's id in Kansas's dropdown
 MT_ELECTION = "450002987"  # the November 3, 2026 general election's id in Montana's dropdown
+SD_ELECTION = "774"  # the 2026 general election's id in South Dakota's link to its grid
 MD_NOT_FOUND ="<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
@@ -602,6 +604,20 @@ class Upstream:
                       and form.get("__EVENTTARGET", "").endswith("$ExportToCsvButton"))
             text = self.state_lists.get(f"{url.host}#{'csv' if export else 'page'}")
             body = text.encode() if text is not None else fixture_bytes("state_mt.csv" if export else "state_mt.html")
+            return httpx.Response(200, content=body)
+        if url.host == "sdsos.gov":  # its Upcoming Elections page, linking to the grid
+            if url.path != "/elections-voting/upcoming-elections/default.aspx":
+                return httpx.Response(404)
+            text = self.state_lists.get(f"{url.host}#index")
+            return httpx.Response(200, content=text.encode() if text is not None else fixture_bytes("state_sd.html"))
+        if url.host == "vip.sdsos.gov":  # the grid's page, and the CSV a postback of its own form exports
+            if url.path.lower() != "/candidatelist.aspx" or params.get("eid") != SD_ELECTION:
+                return httpx.Response(302, headers={"location": "/Default.aspx"})
+            form = dict(parse_qsl(request.content.decode())) if request.method == "POST" else {}
+            export = (form.get("__VIEWSTATE") == "VIEWSTATE-recorded"
+                      and form.get("__EVENTTARGET", "").endswith("$ExportToCsvButton"))
+            text = self.state_lists.get(f"{url.host}#{'csv' if export else 'page'}")
+            body = text.encode() if text is not None else fixture_bytes("state_sd.csv" if export else "state_sd_grid.html")
             return httpx.Response(200, content=body)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
