@@ -66,6 +66,7 @@ COVERED = {
     "WA": LIST,  # its State Senate and State House districts are both the Legislative District
     "IN": LIST,  # with its county offices and courts
     "MD": LIST,  # its House of Delegates subdistricts (1A, 1B) are the Census's, one to three seats each
+    "MO": LIST,  # its U.S. House district on its 2022 map, not the geocoder's (tigerweb.GOVERNING)
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the

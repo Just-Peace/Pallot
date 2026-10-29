@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "201 W CAPITOL AVE, JEFFERSON CITY, MO 65101"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "648479539"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "2900501",
+       "CENTLAT": "+38.8133898",
+       "AREAWATER": 64074001,
+       "BASENAME": "Boone (Outside Columbia City), Cole, Callaway & Moniteau",
+       "STATE": "29",
+       "OID": "2177029550460124",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.8123513",
+       "NAME": "Boone (Outside Columbia City), Cole, Callaway & Moniteau PUMA",
+       "OBJECTID": 2222,
+       "CENTLON": "-092.1213979",
+       "AREALAND": 4619912128,
+       "INTPTLON": "-092.1216885",
+       "MTFCC": "G6120",
+       "PUMA": "00501"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "65101",
+       "CENTLAT": "+38.4914054",
+       "AREAWATER": 15433316,
+       "BASENAME": "65101",
+       "OID": "221704258325399",
+       "ZCTA5": "65101",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.4974305",
+       "NAME": "ZCTA5 65101",
+       "OBJECTID": 26535,
+       "CENTLON": "-092.1501398",
+       "AREALAND": 339026851,
+       "INTPTLON": "-092.1332710",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "42967",
+       "CENTLAT": "+38.5698495",
+       "AREAWATER": 241577,
+       "BASENAME": "Jefferson City, MO",
+       "OID": "27021225834538",
+       "UA": "42967",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.5690859",
+       "NAME": "Jefferson City, MO Urban Area",
+       "OBJECTID": 237,
+       "CENTLON": "-092.2216991",
+       "AREALAND": 89248022,
+       "INTPTLON": "-092.2248080",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 159786186.85378194,
+       "NECTAPCI": "N",
+       "GEOID": "2937000",
+       "CENTLAT": "+38.5676539",
+       "AREAWATER": 4133438,
+       "BASENAME": "Jefferson City",
+       "STATE": "29",
+       "OID": "27890225807933",
+       "LSADC": "25",
+       "PLACE": "37000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.5674612",
+       "NAME": "Jefferson City city",
+       "OBJECTID": 31509,
+       "PLACECC": "C1",
+       "CENTLON": "-092.1759339",
+       "STGEOMETRY_Length": 119446.5732086585,
+       "CBSAPCI": "Y",
+       "AREALAND": 93400798,
+       "INTPTLON": "-092.1752539",
+       "PLACENS": "02395462",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "29051",
+       "CENTLAT": "+38.5053078",
+       "AREAWATER": 19203495,
+       "STATE": "29",
+       "BASENAME": "Cole",
+       "OID": "27590257368312",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.5032331",
+       "NAME": "Cole County",
+       "OBJECTID": 739,
+       "CENTLON": "-092.2816083",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00758480",
+       "AREALAND": 1014332664,
+       "INTPTLON": "-092.2800271",
+       "MTFCC": "G4020",
+       "COUNTY": "051"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "2916190",
+       "CENTLAT": "+38.5950561",
+       "AREAWATER": 18423161,
+       "STATE": "29",
+       "BASENAME": "Jefferson City Public Schools",
+       "OID": "28490225972321",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+38.5943603",
+       "SDUNI": "16190",
+       "NAME": "Jefferson City Public Schools",
+       "OBJECTID": 4553,
+       "CENTLON": "-092.1800101",
+       "HIGRADE": "12",
+       "AREALAND": 557465490,
+       "INTPTLON": "-092.1802016",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "290510207002007",
+       "CENTLAT": "+38.5792145",
+       "BLOCK": "2007",
+       "AREAWATER": 0,
+       "STATE": "29",
+       "BASENAME": "2007",
+       "OID": "210701005425593",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.5792145",
+       "NAME": "Block 2007",
+       "OBJECTID": 1818878,
+       "TRACT": "020700",
+       "CENTLON": "-092.1729712",
+       "BLKGRP": "2",
+       "AREALAND": 28702,
+       "INTPTLON": "-092.1729712",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "051"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779791",
+       "GEOID": "29",
+       "CENTLAT": "+38.3569837",
+       "AREAWATER": 2487431721,
+       "STATE": "29",
+       "BASENAME": "Missouri",
+       "STUSAB": "MO",
+       "OID": "2749046934061",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.3507508",
+       "DIVISION": "4",
+       "NAME": "Missouri",
+       "REGION": "2",
+       "OBJECTID": 12,
+       "CENTLON": "-092.4580520",
+       "AREALAND": 178052694679,
+       "INTPTLON": "-092.4567820",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "290510207002",
+       "CENTLAT": "+38.5787491",
+       "AREAWATER": 310775,
+       "STATE": "29",
+       "BASENAME": "2",
+       "OID": "208903693986778",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.5792170",
+       "NAME": "Block Group 2",
+       "OBJECTID": 240976,
+       "TRACT": "020700",
+       "CENTLON": "-092.1722890",
+       "BLKGRP": "2",
+       "AREALAND": 1455768,
+       "INTPTLON": "-092.1729747",
+       "MTFCC": "G5030",
+       "COUNTY": "051"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "190",
+       "CENTLAT": "+38.9071301",
+       "AREAWATER": 150721202,
+       "BASENAME": "Columbia-Jefferson City-Moberly, MO",
+       "OID": "2619034687908002",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.9069297",
+       "NAME": "Columbia-Jefferson City-Moberly, MO CSA",
+       "OBJECTID": 53,
+       "CSA": "190",
+       "CENTLON": "-092.2586314",
+       "INTPTLON": "-092.2626248",
+       "AREALAND": 13304353713,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "36764",
+       "GEOID": "2905136764",
+       "CENTLAT": "+38.5712501",
+       "AREAWATER": 5979031,
+       "STATE": "29",
+       "BASENAME": "Jefferson",
+       "OID": "27690257371769",
+       "LSADC": "44",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.5750714",
+       "NAME": "Jefferson township",
+       "OBJECTID": 17941,
+       "CENTLON": "-092.2323803",
+       "COUSUBCC": "Z1",
+       "AREALAND": 197374008,
+       "INTPTLON": "-092.2356321",
+       "MTFCC": "G4040",
+       "COUSUBNS": "00766521",
+       "COUNTY": "051"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "29006",
+       "CENTLAT": "+38.3193283",
+       "AREAWATER": 227105392,
+       "STATE": "29",
+       "BASENAME": "6",
+       "OID": "2129042393388451",
+       "SLDU": "006",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.3227052",
+       "NAME": "State Senate District 6",
+       "OBJECTID": 394,
+       "CENTLON": "-092.6205642",
+       "LSY": "2026",
+       "AREALAND": 6870577755,
+       "INTPTLON": "-092.6215027",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+42.7660395",
+       "AREAWATER": 33031368091,
+       "BASENAME": "West North Central",
+       "OID": "2739020719810",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7654797",
+       "DIVISION": "4",
+       "REGION": "2",
+       "NAME": "West North Central Division",
+       "OBJECTID": 9,
+       "CENTLON": "-097.0814964",
+       "AREALAND": 1314703193437,
+       "INTPTLON": "-097.0630087",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 35496824404.413475,
+       "CD120": "05",
+       "GEOID": "2905",
+       "CENTLAT": "+38.7677089",
+       "CDSESSN": "120",
+       "AREAWATER": 252749439,
+       "STATE": "29",
+       "BASENAME": "5",
+       "OID": "2119042393340458",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.7696918",
+       "NAME": "Congressional District 5",
+       "OBJECTID": 56,
+       "CENTLON": "-092.8879174",
+       "STGEOMETRY_Length": 1483523.816325273,
+       "AREALAND": 21293481782,
+       "INTPTLON": "-092.8894014",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "29060",
+       "CENTLAT": "+38.5636673",
+       "SLDL": "060",
+       "AREAWATER": 3205997,
+       "STATE": "29",
+       "BASENAME": "60",
+       "OID": "2139042393388544",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.5634052",
+       "NAME": "State House District 60",
+       "OBJECTID": 3597,
+       "CENTLON": "-092.1654820",
+       "LSY": "2026",
+       "AREALAND": 70956258,
+       "INTPTLON": "-092.1667397",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "27620",
+       "CENTLAT": "+38.6396655",
+       "AREAWATER": 80072803,
+       "BASENAME": "Jefferson City, MO",
+       "OID": "2629034687907449",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6369301",
+       "NAME": "Jefferson City, MO Metro Area",
+       "CSA": "190",
+       "OBJECTID": 583,
+       "CENTLON": "-092.0920043",
+       "CBSA": "27620",
+       "AREALAND": 5821708796,
+       "INTPTLON": "-092.0887929",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "29051020700",
+       "CENTLAT": "+38.5742698",
+       "AREAWATER": 726609,
+       "STATE": "29",
+       "BASENAME": "207",
+       "OID": "207903693541191",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.5746163",
+       "NAME": "Census Tract 207",
+       "OBJECTID": 25795,
+       "TRACT": "020700",
+       "CENTLON": "-092.1643095",
+       "AREALAND": 3091603,
+       "INTPTLON": "-092.1646032",
+       "MTFCC": "G5020",
+       "COUNTY": "051"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -92.172106709712,
+     "y": 38.57856460278
+    },
+    "addressComponents": {
+     "zip": "65101",
+     "streetName": "CAPITOL",
+     "preType": "",
+     "city": "JEFFERSON CITY",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "201",
+     "state": "MO",
+     "suffixType": "AVE",
+     "toAddress": "205",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "201 W CAPITOL AVE, JEFFERSON CITY, MO, 65101"
+   }
+  ]
+ }
+}

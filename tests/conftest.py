@@ -73,6 +73,8 @@ ADDRESSES = {
     "seattle": "600 4th Ave, Seattle, WA 98104",  # Washington's grid (states/wa.py); WA-7, Legislative District 34, King
     "fortwayne": "200 E Berry St, Fort Wayne, IN 46802",  # Indiana's spreadsheet (states/in_.py); IN-3, SD 16, HD 82, Allen
     "annapolis": "100 State Cir, Annapolis, MD 21401",  # Maryland's CSV (states/md.py); MD-3, SD 30, HD 30A, Anne Arundel
+    # Missouri's PDF (states/mo.py); MO-3 on the 2022 map in force (TIGERweb), MO-5 on the geocoder's; SD 6, HD 60, Cole
+    "jeffersoncity": "201 W Capitol Ave, Jefferson City, MO 65101",
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -94,7 +96,8 @@ ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".
 NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
 IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
 MD_FILES = {"/2026/general_candidates/index.html": "state_md.html", "_statewide_candidatelist.csv": "state_md.csv"}
-MD_NOT_FOUND = "<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
+MO_FILES = {"/elections": "state_mo.html", ".pdf": "state_mo.pdf"}
+MD_NOT_FOUND ="<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
 
@@ -337,6 +340,7 @@ class Upstream:
         self.tigerweb_status: int | None = None  # e.g. 429 when TIGERweb throttles us
         self.tigerweb_answer: dict[str, Any] | None = None  # e.g. an ArcGIS error, which comes with a 200
         self.tigerweb_wheres: list[str] = []  # the districts TIGERweb was asked for
+        self.tigerweb_points: list[tuple[str, str]] = []  # the points and layers asked of Missouri's map in force
         self.tiles_status: int | None = None  # e.g. 403 when OpenStreetMap's tile server blocks us
         self.tile_agents: set[str | None] = set()  # the User-Agents the tile server was sent
         self.precincts_status: int | None = None  # e.g. 429 when the TLC's portal throttles us
@@ -545,6 +549,13 @@ class Upstream:
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.sos.mo.gov":  # its Cloudflare challenges a script's default user agent
+            if "python-httpx" in request.headers.get("user-agent", ""):
+                return httpx.Response(403)
+            name = next((name for part, name in MO_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
                 return _file("state_ga_elections.json")
@@ -601,6 +612,11 @@ class Upstream:
                 return httpx.Response(self.tigerweb_status)
             if self.tigerweb_answer is not None:
                 return httpx.Response(200, json=self.tigerweb_answer)
+            if "/tigerWMS_ACS2024/" in url.path and not url.path.endswith("/query"):  # Missouri's map in force
+                if url.path.endswith("/identify"):
+                    self.tigerweb_points.append((params["geometry"], params["layers"]))
+                    return _file("tigerweb_identify_jeffersoncity.json")  # whatever the point
+                return _file("tigerweb_layers_mo.json")
             if url.path.endswith("/MapServer"):
                 return _file("tigerweb_layers.json")
             if url.path.endswith("/identify"):

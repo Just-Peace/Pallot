@@ -1,0 +1,25 @@
+{
+ "results": [
+  {
+   "layerId": 54,
+   "layerName": "119th Congressional Districts",
+   "displayFieldName": "BASENAME",
+   "value": "3",
+   "attributes": {
+    "MTFCC": "G5200",
+    "OID": "2119035951822585",
+    "GEOID": "2903",
+    "STATE": "29",
+    "BASENAME": "3",
+    "NAME": "Congressional District 3",
+    "LSADC": "C2",
+    "FUNCSTAT": "N",
+    "AREALAND": "19644523431",
+    "AREAWATER": "293071988",
+    "CDSESSN": "119",
+    "OBJECTID": "138",
+    "STGEOMETRY": "Polygon"
+   }
+  }
+ ]
+}

@@ -1,0 +1,140 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 8,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4MO03221",
+   "candidate_name": "ONDER, ROBERT FOR JR.",
+   "candidate_pcc_id": "C00870238",
+   "candidate_pcc_name": "ONDER FOR CONGRESS",
+   "cash_on_hand_end_period": 525827.92,
+   "committee_ids": [
+    "C00870238"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 771105.16,
+   "total_receipts": 1146488.94
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H8MO09146",
+   "candidate_name": "ONDER JR, ROBERT FRANK",
+   "candidate_pcc_id": "C00870238",
+   "candidate_pcc_name": "ONDER FOR CONGRESS",
+   "cash_on_hand_end_period": 525827.92,
+   "committee_ids": [
+    "C00870238"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 771105.16,
+   "total_receipts": 1146488.94
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2MO03167",
+   "candidate_name": "MANN, BETHANY",
+   "candidate_pcc_id": "C00806190",
+   "candidate_pcc_name": "BETHANY MANN FOR CONGRESS",
+   "cash_on_hand_end_period": 5711.74,
+   "committee_ids": [
+    "C00806190"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 85269.15,
+   "total_receipts": 86553.55
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MO03390",
+   "candidate_name": "FRASER, JOHN G",
+   "candidate_pcc_id": "C00942219",
+   "candidate_pcc_name": "FRASER FOR CONGRESS",
+   "cash_on_hand_end_period": 1224.95,
+   "committee_ids": [
+    "C00942219"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 18896.77,
+   "total_receipts": 20121.72
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MO03416",
+   "candidate_name": "HOLSTEIN, TOMMY",
+   "candidate_pcc_id": "C00945634",
+   "candidate_pcc_name": "TOMMY HOLSTEIN FOR CONGRESS",
+   "cash_on_hand_end_period": 2158.01,
+   "committee_ids": [
+    "C00945634"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 7936.78,
+   "total_receipts": 10094.79
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MO03382",
+   "candidate_name": "WILSON, PAUL",
+   "candidate_pcc_id": "C00938373",
+   "candidate_pcc_name": "PAUL WILSON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00938373"
+   ],
+   "coverage_end_date": "2026-08-04",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 5015.86,
+   "total_receipts": 4162.12
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MO03366",
+   "candidate_name": "THURMON, ALEXANDER",
+   "candidate_pcc_id": "C00912931",
+   "candidate_pcc_name": "THURMON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00912931"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MO03374",
+   "candidate_name": "THURMON, ALEXANDER",
+   "candidate_pcc_id": "C00912931",
+   "candidate_pcc_name": "THURMON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00912931"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}
