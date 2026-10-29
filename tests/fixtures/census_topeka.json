@@ -1,0 +1,424 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "300 SW 10TH AVE, TOPEKA, KS 66612"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "17889250"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "2000501",
+       "CENTLAT": "+39.0345692",
+       "AREAWATER": 8222697,
+       "BASENAME": "Shawnee County (Central)--Topeka City",
+       "STATE": "20",
+       "OID": "2177029550569672",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0346533",
+       "NAME": "Shawnee County (Central)--Topeka City PUMA",
+       "OBJECTID": 2293,
+       "CENTLON": "-095.7052991",
+       "AREALAND": 215170594,
+       "INTPTLON": "-095.7054861",
+       "MTFCC": "G6120",
+       "PUMA": "00501"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "66612",
+       "CENTLAT": "+39.0402240",
+       "AREAWATER": 0,
+       "BASENAME": "66612",
+       "OID": "221704258328297",
+       "ZCTA5": "66612",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0402240",
+       "NAME": "ZCTA5 66612",
+       "OBJECTID": 8361,
+       "CENTLON": "-095.6803342",
+       "AREALAND": 2757866,
+       "INTPTLON": "-095.6803342",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "88084",
+       "CENTLAT": "+39.0362484",
+       "AREAWATER": 3560986,
+       "BASENAME": "Topeka, KS",
+       "OID": "27021186830813",
+       "UA": "88084",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0361787",
+       "NAME": "Topeka, KS Urban Area",
+       "OBJECTID": 2367,
+       "CENTLON": "-095.6929544",
+       "AREALAND": 218147532,
+       "INTPTLON": "-095.6935068",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 4,
+       "STGEOMETRY_Area": 271721997.2020261,
+       "NECTAPCI": "N",
+       "GEOID": "2071000",
+       "CENTLAT": "+39.0344936",
+       "AREAWATER": 3406675,
+       "BASENAME": "Topeka",
+       "STATE": "20",
+       "OID": "27890186702352",
+       "LSADC": "25",
+       "PLACE": "71000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+39.0346734",
+       "NAME": "Topeka city",
+       "OBJECTID": 32314,
+       "PLACECC": "C5",
+       "CENTLON": "-095.6956017",
+       "STGEOMETRY_Length": 208560.50406745242,
+       "CBSAPCI": "Y",
+       "AREALAND": 160311960,
+       "INTPTLON": "-095.6961908",
+       "PLACENS": "00485655",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "20177",
+       "CENTLAT": "+39.0414460",
+       "AREAWATER": 30350116,
+       "STATE": "20",
+       "BASENAME": "Shawnee",
+       "OID": "2759063702328",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+39.0418053",
+       "NAME": "Shawnee County",
+       "OBJECTID": 1930,
+       "CENTLON": "-095.7564330",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00485051",
+       "AREALAND": 1408983539,
+       "INTPTLON": "-095.7556640",
+       "MTFCC": "G4020",
+       "COUNTY": "177"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "2012260",
+       "CENTLAT": "+39.0384386",
+       "AREAWATER": 2238192,
+       "STATE": "20",
+       "BASENAME": "Topeka Public Schools Unified School District 501",
+       "OID": "28490186837667",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+39.0378304",
+       "SDUNI": "12260",
+       "NAME": "Topeka Public Schools Unified School District 501",
+       "OBJECTID": 886,
+       "CENTLON": "-095.6878351",
+       "HIGRADE": "12",
+       "AREALAND": 92146331,
+       "INTPTLON": "-095.6881789",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "201770040002027",
+       "CENTLAT": "+39.0481188",
+       "BLOCK": "2027",
+       "AREAWATER": 0,
+       "STATE": "20",
+       "BASENAME": "2027",
+       "OID": "210701003512692",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0481188",
+       "NAME": "Block 2027",
+       "OBJECTID": 2768796,
+       "TRACT": "004000",
+       "CENTLON": "-095.6780088",
+       "BLKGRP": "2",
+       "AREALAND": 86567,
+       "INTPTLON": "-095.6780088",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "177"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "00481813",
+       "GEOID": "20",
+       "CENTLAT": "+38.4938959",
+       "AREAWATER": 1345196169,
+       "STATE": "20",
+       "BASENAME": "Kansas",
+       "STUSAB": "KS",
+       "OID": "2749051425496",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.4985464",
+       "DIVISION": "4",
+       "NAME": "Kansas",
+       "REGION": "2",
+       "OBJECTID": 14,
+       "CENTLON": "-098.3786217",
+       "AREALAND": 211754289000,
+       "INTPTLON": "-098.3834298",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "201770040002",
+       "CENTLAT": "+39.0484562",
+       "AREAWATER": 0,
+       "STATE": "20",
+       "BASENAME": "2",
+       "OID": "20890186582151",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0484562",
+       "NAME": "Block Group 2",
+       "OBJECTID": 33845,
+       "TRACT": "004000",
+       "CENTLON": "-095.6726801",
+       "BLKGRP": "2",
+       "AREALAND": 1103536,
+       "INTPTLON": "-095.6726801",
+       "MTFCC": "G5030",
+       "COUNTY": "177"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "71000",
+       "GEOID": "2017771000",
+       "CENTLAT": "+39.0344936",
+       "AREAWATER": 3406675,
+       "STATE": "20",
+       "BASENAME": "Topeka",
+       "OID": "27690186641974",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+39.0346734",
+       "NAME": "Topeka city",
+       "OBJECTID": 8623,
+       "CENTLON": "-095.6956017",
+       "COUSUBCC": "C5",
+       "AREALAND": 160311960,
+       "INTPTLON": "-095.6961908",
+       "MTFCC": "G4040",
+       "COUSUBNS": "00485655",
+       "COUNTY": "177"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "20019",
+       "CENTLAT": "+39.0313145",
+       "AREAWATER": 8236846,
+       "STATE": "20",
+       "BASENAME": "19",
+       "OID": "2129042393386659",
+       "SLDU": "019",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.0334611",
+       "NAME": "State Senate District 19",
+       "OBJECTID": 1483,
+       "CENTLON": "-095.4957217",
+       "LSY": "2026",
+       "AREALAND": 234553420,
+       "INTPTLON": "-095.4928117",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+42.7660395",
+       "AREAWATER": 33031368091,
+       "BASENAME": "West North Central",
+       "OID": "2739020719810",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7654797",
+       "DIVISION": "4",
+       "REGION": "2",
+       "NAME": "West North Central Division",
+       "OBJECTID": 9,
+       "CENTLON": "-097.0814964",
+       "AREALAND": 1314703193437,
+       "INTPTLON": "-097.0630087",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 65531689716.54846,
+       "CD120": "02",
+       "GEOID": "2002",
+       "CENTLAT": "+38.4056726",
+       "CDSESSN": "120",
+       "AREAWATER": 536395552,
+       "STATE": "20",
+       "BASENAME": "2",
+       "OID": "2119042393277884",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.4066990",
+       "NAME": "Congressional District 2",
+       "OBJECTID": 122,
+       "CENTLON": "-095.7297745",
+       "STGEOMETRY_Length": 2336792.04196346,
+       "AREALAND": 39622827440,
+       "INTPTLON": "-095.7294288",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "20057",
+       "CENTLAT": "+39.0614802",
+       "SLDL": "057",
+       "AREAWATER": 2464822,
+       "STATE": "20",
+       "BASENAME": "57",
+       "OID": "2139042393386760",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+39.0615132",
+       "NAME": "State House District 57",
+       "OBJECTID": 234,
+       "CENTLON": "-095.6567501",
+       "LSY": "2026",
+       "AREALAND": 47795169,
+       "INTPTLON": "-095.6578528",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "45820",
+       "CENTLAT": "+39.0430469",
+       "AREAWATER": 148292127,
+       "BASENAME": "Topeka, KS",
+       "OID": "2629034687907880",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0413888",
+       "NAME": "Topeka, KS Metro Area",
+       "CSA": "",
+       "OBJECTID": 317,
+       "CENTLON": "-095.8036012",
+       "CBSA": "45820",
+       "AREALAND": 8372652480,
+       "INTPTLON": "-095.8026393",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "20177004000",
+       "CENTLAT": "+39.0481455",
+       "AREAWATER": 157901,
+       "STATE": "20",
+       "BASENAME": "40",
+       "OID": "20790186796311",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+39.0475325",
+       "NAME": "Census Tract 40",
+       "OBJECTID": 42035,
+       "TRACT": "004000",
+       "CENTLON": "-095.6722613",
+       "AREALAND": 5341089,
+       "INTPTLON": "-095.6726804",
+       "MTFCC": "G5020",
+       "COUNTY": "177"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -95.678616634663,
+     "y": 39.046735303821
+    },
+    "addressComponents": {
+     "zip": "66612",
+     "streetName": "10TH",
+     "preType": "",
+     "city": "TOPEKA",
+     "preDirection": "SW",
+     "suffixDirection": "",
+     "fromAddress": "200",
+     "state": "KS",
+     "suffixType": "AVE",
+     "toAddress": "398",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "300 SW 10TH AVE, TOPEKA, KS, 66612"
+   }
+  ]
+ }
+}

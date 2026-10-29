@@ -35,7 +35,7 @@ from ..sources.fec import race_name
 # Where a race is on the ballot, which placement (place.py) checks against the voter's address.
 REACHES = (
     "cd",  # a U.S. House district
-    "sd", "hd",  # a State Senate or State House district
+    "sd", "hd",  # a State Senate or State House district; a board elected by several, them all: "1,5,18,22"
     "state",  # the whole state
     "counties",  # one district of an office split among whole counties (a judicial district): ``counties``
     "county",  # the whole county in ``counties``
@@ -127,9 +127,10 @@ REACH_NAMES = {"cd": "U.S. House", "sd": "State Senate", "hd": "State House"}
 def require(filings: list[Filing], minimum: Mapping[str, int]) -> list[Filing]:
     """``filings``, or ValueError when they have fewer districts of a reach than ``minimum``
     gives ({"cd": 52}): a list short of them isn't the whole list. A "cd" counts U.S. House
-    races only, not a board elected by congressional district."""
+    races only, and an "sd" or "hd" the Legislature's, not a board elected by their districts."""
     for reach, least in minimum.items():
-        found = len({f.district for f in filings if f.reach == reach and (reach != "cd" or f.group == "federal")})
+        group = "federal" if reach == "cd" else "legislature"
+        found = len({f.district for f in filings if f.reach == reach and f.group == group})
         if found < least:
             raise ValueError(f"{found} {REACH_NAMES[reach]} races, not {least}")
     return filings

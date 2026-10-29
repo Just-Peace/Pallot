@@ -70,6 +70,7 @@ COVERED = {
     "SC": LIST,  # its State Senate up only in a presidential year
     "KY": LIST,  # its State Senate's even-numbered half up in 2026; the statewide offices in an odd year
     "OK": LIST,  # only its contested races: an unopposed candidate isn't on the ballot
+    "KS": LIST,  # its State Board of Education placed by the four Senate districts of each
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the

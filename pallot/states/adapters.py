@@ -15,6 +15,7 @@ from .ga import GaList
 from .ia import IaList
 from .il import IlList
 from .in_ import InList
+from .ks import KsList
 from .ky import KyList
 from .md import MdList
 from .me import MeList
@@ -39,7 +40,7 @@ ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
-                             OkList)
+                             OkList, KsList)
 }
 
 

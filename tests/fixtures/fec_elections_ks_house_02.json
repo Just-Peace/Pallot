@@ -1,0 +1,60 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 3,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4KS02164",
+   "candidate_name": "SCHMIDT, DEREK",
+   "candidate_pcc_id": "C00877373",
+   "candidate_pcc_name": "DEREK SCHMIDT FOR CONGRESS",
+   "cash_on_hand_end_period": 457585.77,
+   "committee_ids": [
+    "C00877373"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1353904.34,
+   "total_receipts": 1772988.97
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6KS02276",
+   "candidate_name": "COOVER, DON",
+   "candidate_pcc_id": "C00917088",
+   "candidate_pcc_name": "DON COOVER FOR CONGRESS",
+   "cash_on_hand_end_period": 231675.8,
+   "committee_ids": [
+    "C00917088"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1131517.5,
+   "total_receipts": 1363193.3
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6KS02284",
+   "candidate_name": "CURWICK, BRAEDEN",
+   "candidate_pcc_id": "C00932624",
+   "candidate_pcc_name": "CURWICKFORCONGRESS",
+   "cash_on_hand_end_period": 90.0,
+   "committee_ids": [
+    "C00932624"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 181.0,
+   "total_receipts": 231.0
+  }
+ ]
+}
