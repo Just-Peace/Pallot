@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1100 GERVAIS ST, COLUMBIA, SC 29201"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "71820830"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "4501402",
+       "CENTLAT": "+34.0428431",
+       "AREAWATER": 3948072,
+       "BASENAME": "Richland County (Central)--Columbia City",
+       "STATE": "45",
+       "OID": "2177029550580452",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.0436305",
+       "NAME": "Richland County (Central)--Columbia City PUMA",
+       "OBJECTID": 1133,
+       "CENTLON": "-081.0563650",
+       "AREALAND": 130577253,
+       "INTPTLON": "-081.0527986",
+       "MTFCC": "G6120",
+       "PUMA": "01402"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "29201",
+       "CENTLAT": "+33.9838054",
+       "AREAWATER": 1525236,
+       "BASENAME": "29201",
+       "OID": "221704258293759",
+       "ZCTA5": "29201",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.9823292",
+       "NAME": "ZCTA5 29201",
+       "OBJECTID": 19513,
+       "CENTLON": "-081.0282746",
+       "AREALAND": 29863362,
+       "INTPTLON": "-081.0286589",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "18964",
+       "CENTLAT": "+34.0268186",
+       "AREAWATER": 18130793,
+       "BASENAME": "Columbia, SC",
+       "OID": "27021236087983",
+       "UA": "18964",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.0277520",
+       "NAME": "Columbia, SC Urban Area",
+       "OBJECTID": 1329,
+       "CENTLON": "-081.0884219",
+       "AREALAND": 952348027,
+       "INTPTLON": "-081.0881803",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 2,
+       "STGEOMETRY_Area": 539493343.5697632,
+       "NECTAPCI": "N",
+       "GEOID": "4516000",
+       "CENTLAT": "+34.0380785",
+       "AREAWATER": 7419722,
+       "BASENAME": "Columbia",
+       "STATE": "45",
+       "OID": "27890239015664",
+       "LSADC": "25",
+       "PLACE": "16000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+34.0403258",
+       "NAME": "Columbia city",
+       "OBJECTID": 32022,
+       "PLACECC": "C1",
+       "CENTLON": "-080.9039565",
+       "STGEOMETRY_Length": 598175.8698724393,
+       "CBSAPCI": "Y",
+       "AREALAND": 362111869,
+       "INTPTLON": "-080.8980712",
+       "PLACENS": "02404107",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "45079",
+       "CENTLAT": "+34.0217716",
+       "AREAWATER": 37974727,
+       "STATE": "45",
+       "BASENAME": "Richland",
+       "OID": "27590242024249",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+34.0294807",
+       "NAME": "Richland County",
+       "OBJECTID": 2553,
+       "CENTLON": "-080.9027803",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01249299",
+       "AREALAND": 1961406638,
+       "INTPTLON": "-080.8980324",
+       "MTFCC": "G4020",
+       "COUNTY": "079"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "4503360",
+       "CENTLAT": "+33.9507389",
+       "AREAWATER": 18783232,
+       "STATE": "45",
+       "BASENAME": "Richland School District 1",
+       "OID": "28490242074521",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+33.9611342",
+       "SDUNI": "03360",
+       "NAME": "Richland School District 1",
+       "OBJECTID": 10029,
+       "CENTLON": "-080.8633291",
+       "HIGRADE": "12",
+       "AREALAND": 1163199761,
+       "INTPTLON": "-080.8599622",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "450790031002044",
+       "CENTLAT": "+33.9998880",
+       "BLOCK": "2044",
+       "AREAWATER": 0,
+       "STATE": "45",
+       "BASENAME": "2044",
+       "OID": "210701001347562",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.9998880",
+       "NAME": "Block 2044",
+       "OBJECTID": 2671651,
+       "TRACT": "003100",
+       "CENTLON": "-081.0328869",
+       "BLKGRP": "2",
+       "AREALAND": 104158,
+       "INTPTLON": "-081.0328869",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "079"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779799",
+       "GEOID": "45",
+       "CENTLAT": "+33.8758222",
+       "AREAWATER": 5074456396,
+       "STATE": "45",
+       "BASENAME": "South Carolina",
+       "STUSAB": "SC",
+       "OID": "27490140244538",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+33.8741776",
+       "DIVISION": "5",
+       "NAME": "South Carolina",
+       "REGION": "3",
+       "OBJECTID": 8,
+       "CENTLON": "-080.8583129",
+       "AREALAND": 77865987384,
+       "INTPTLON": "-080.8542639",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "450790031002",
+       "CENTLAT": "+34.0058356",
+       "AREAWATER": 0,
+       "STATE": "45",
+       "BASENAME": "2",
+       "OID": "208903717436043",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.0058356",
+       "NAME": "Block Group 2",
+       "OBJECTID": 177010,
+       "TRACT": "003100",
+       "CENTLON": "-081.0355056",
+       "BLKGRP": "2",
+       "AREALAND": 1083195,
+       "INTPTLON": "-081.0355056",
+       "MTFCC": "G5030",
+       "COUNTY": "079"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "192",
+       "CENTLAT": "+33.9763184",
+       "AREAWATER": 482079691,
+       "BASENAME": "Columbia-Sumter-Orangeburg, SC",
+       "OID": "2619034687908003",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.9767061",
+       "NAME": "Columbia-Sumter-Orangeburg, SC CSA",
+       "OBJECTID": 72,
+       "CSA": "192",
+       "CENTLON": "-080.9844452",
+       "INTPTLON": "-080.9852264",
+       "AREALAND": 15811772143,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "90702",
+       "GEOID": "4507990702",
+       "CENTLAT": "+34.0146286",
+       "AREAWATER": 5780260,
+       "STATE": "45",
+       "BASENAME": "Columbia",
+       "OID": "27690242038695",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.0151303",
+       "NAME": "Columbia CCD",
+       "OBJECTID": 31570,
+       "CENTLON": "-080.9906946",
+       "COUSUBCC": "Z5",
+       "AREALAND": 238625024,
+       "INTPTLON": "-080.9904703",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01938234",
+       "COUNTY": "079"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "45026",
+       "CENTLAT": "+33.7791468",
+       "AREAWATER": 10994935,
+       "STATE": "45",
+       "BASENAME": "26",
+       "OID": "2129042549025232",
+       "SLDU": "026",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.7840973",
+       "NAME": "State Senate District 26",
+       "OBJECTID": 88,
+       "CENTLON": "-080.9704731",
+       "LSY": "2026",
+       "AREALAND": 839956578,
+       "INTPTLON": "-080.9714116",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "5",
+       "CENTLAT": "+33.7954697",
+       "AREAWATER": 86320496528,
+       "BASENAME": "South Atlantic",
+       "OID": "2739020719808",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7948282",
+       "DIVISION": "5",
+       "REGION": "3",
+       "NAME": "South Atlantic Division",
+       "OBJECTID": 2,
+       "CENTLON": "-080.9687982",
+       "AREALAND": 687144333254,
+       "INTPTLON": "-080.9658812",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 26503064767.463406,
+       "CD120": "06",
+       "GEOID": "4506",
+       "CENTLAT": "+33.2370634",
+       "CDSESSN": "120",
+       "AREAWATER": 550321756,
+       "STATE": "45",
+       "BASENAME": "6",
+       "OID": "2119042393280830",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.2465684",
+       "NAME": "Congressional District 6",
+       "OBJECTID": 187,
+       "CENTLON": "-080.5878984",
+       "STGEOMETRY_Length": 2116080.623932348,
+       "AREALAND": 17938584698,
+       "INTPTLON": "-080.5942581",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "45072",
+       "CENTLAT": "+33.9763066",
+       "SLDL": "072",
+       "AREAWATER": 2607712,
+       "STATE": "45",
+       "BASENAME": "72",
+       "OID": "2139042554629558",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+33.9772531",
+       "NAME": "State House District 72",
+       "OBJECTID": 3539,
+       "CENTLON": "-081.0300868",
+       "LSY": "2026",
+       "AREALAND": 53140714,
+       "INTPTLON": "-081.0283433",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "17900",
+       "CENTLAT": "+34.0915415",
+       "AREAWATER": 338258524,
+       "BASENAME": "Columbia, SC",
+       "OID": "2629034687907218",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.0775845",
+       "NAME": "Columbia, SC Metro Area",
+       "CSA": "192",
+       "OBJECTID": 574,
+       "CENTLON": "-081.0427623",
+       "CBSA": "17900",
+       "AREALAND": 9591147594,
+       "INTPTLON": "-081.0378453",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "45079003100",
+       "CENTLAT": "+34.0078902",
+       "AREAWATER": 0,
+       "STATE": "45",
+       "BASENAME": "31",
+       "OID": "207903717425422",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.0078902",
+       "NAME": "Census Tract 31",
+       "OBJECTID": 55055,
+       "TRACT": "003100",
+       "CENTLON": "-081.0307786",
+       "AREALAND": 2512096,
+       "INTPTLON": "-081.0307786",
+       "MTFCC": "G5020",
+       "COUNTY": "079"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -81.033446830312,
+     "y": 34.001250846332
+    },
+    "addressComponents": {
+     "zip": "29201",
+     "streetName": "GERVAIS",
+     "preType": "",
+     "city": "COLUMBIA",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "1100",
+     "state": "SC",
+     "suffixType": "ST",
+     "toAddress": "1298",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1100 GERVAIS ST, COLUMBIA, SC, 29201"
+   }
+  ]
+ }
+}
