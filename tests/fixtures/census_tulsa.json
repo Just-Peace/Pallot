@@ -1,0 +1,471 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "175 E 2ND ST, TULSA, OK 74103"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "166437640"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "4020802",
+       "CENTLAT": "+36.1184238",
+       "AREAWATER": 18152777,
+       "BASENAME": "Tulsa County (West)--Tulsa & Sand Springs Cities",
+       "STATE": "40",
+       "OID": "2177029922422234",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1182654",
+       "NAME": "Tulsa County (West)--Tulsa & Sand Springs Cities PUMA",
+       "OBJECTID": 1300,
+       "CENTLON": "-096.1194189",
+       "AREALAND": 287655192,
+       "INTPTLON": "-096.1272759",
+       "MTFCC": "G6120",
+       "PUMA": "20802"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "74103",
+       "CENTLAT": "+36.1561456",
+       "AREAWATER": 0,
+       "BASENAME": "74103",
+       "OID": "221704258474854",
+       "ZCTA5": "74103",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1561456",
+       "NAME": "ZCTA5 74103",
+       "OBJECTID": 20653,
+       "CENTLON": "-095.9956918",
+       "AREALAND": 1693114,
+       "INTPTLON": "-095.9956918",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "88948",
+       "CENTLAT": "+36.0969931",
+       "AREAWATER": 14148913,
+       "BASENAME": "Tulsa, OK",
+       "OID": "27021340237979",
+       "UA": "88948",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.0954362",
+       "NAME": "Tulsa, OK Urban Area",
+       "OBJECTID": 2126,
+       "CENTLON": "-095.9017083",
+       "AREALAND": 876235968,
+       "INTPTLON": "-095.8931982",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Oklahoma Tribal Statistical Areas": [
+      {
+       "AIANNH": "5620",
+       "AIANNHCC": "D6",
+       "GEOID": "5620R",
+       "CENTLAT": "+35.6572439",
+       "AREAWATER": 406270382,
+       "AIANNHFP2": "",
+       "BASENAME": "Creek",
+       "AIANNHFP1": "40-18170",
+       "OID": "22490340086256",
+       "AIANNHFP3": "",
+       "LSADC": "88",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+35.6675683",
+       "NAME": "Creek OTSA",
+       "OBJECTID": 619,
+       "CENTLON": "-096.0140725",
+       "AIANNHCOMP": "R",
+       "FSRFLG": "F",
+       "AREALAND": 11987959888,
+       "INTPTLON": "-096.0182545",
+       "AIANNHNS": "01925077",
+       "MTFCC": "G2140"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 801675879.6990576,
+       "NECTAPCI": "N",
+       "GEOID": "4075000",
+       "CENTLAT": "+36.1281873",
+       "AREAWATER": 10813862,
+       "BASENAME": "Tulsa",
+       "STATE": "40",
+       "OID": "27890519817357",
+       "LSADC": "25",
+       "PLACE": "75000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+36.1279488",
+       "NAME": "Tulsa city",
+       "OBJECTID": 32068,
+       "PLACECC": "C1",
+       "CENTLON": "-095.9041619",
+       "STGEOMETRY_Length": 415291.95749788923,
+       "CBSAPCI": "Y",
+       "AREALAND": 511107002,
+       "INTPTLON": "-095.9023162",
+       "PLACENS": "02412110",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "40143",
+       "CENTLAT": "+36.1208852",
+       "AREAWATER": 43147013,
+       "STATE": "40",
+       "BASENAME": "Tulsa",
+       "OID": "27590739344224",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+36.1203222",
+       "NAME": "Tulsa County",
+       "OBJECTID": 938,
+       "CENTLON": "-095.9414768",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01101859",
+       "AREALAND": 1476695533,
+       "INTPTLON": "-095.9418165",
+       "MTFCC": "G4020",
+       "COUNTY": "143"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "4030240",
+       "CENTLAT": "+36.1627171",
+       "AREAWATER": 9292525,
+       "STATE": "40",
+       "BASENAME": "Tulsa Public Schools",
+       "OID": "28490340243818",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+36.1644465",
+       "SDUNI": "30240",
+       "NAME": "Tulsa Public Schools",
+       "OBJECTID": 2076,
+       "CENTLON": "-095.9450949",
+       "HIGRADE": "12",
+       "AREALAND": 450729130,
+       "INTPTLON": "-095.9448255",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "401430025001038",
+       "CENTLAT": "+36.1550663",
+       "BLOCK": "1038",
+       "AREAWATER": 0,
+       "STATE": "40",
+       "BASENAME": "1038",
+       "OID": "210701008451735",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1550663",
+       "NAME": "Block 1038",
+       "OBJECTID": 2347810,
+       "TRACT": "002500",
+       "CENTLON": "-095.9912180",
+       "BLKGRP": "1",
+       "AREALAND": 41030,
+       "INTPTLON": "-095.9912180",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "143"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01102857",
+       "GEOID": "40",
+       "CENTLAT": "+35.5885699",
+       "AREAWATER": 3373498358,
+       "STATE": "40",
+       "BASENAME": "Oklahoma",
+       "STUSAB": "OK",
+       "OID": "2749092328581",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+35.5900815",
+       "DIVISION": "7",
+       "NAME": "Oklahoma",
+       "REGION": "3",
+       "OBJECTID": 41,
+       "CENTLON": "-097.4947176",
+       "AREALAND": 177664380882,
+       "INTPTLON": "-097.4867789",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "401430025001",
+       "CENTLAT": "+36.1507419",
+       "AREAWATER": 0,
+       "STATE": "40",
+       "BASENAME": "1",
+       "OID": "20890738911979",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1507419",
+       "NAME": "Block Group 1",
+       "OBJECTID": 14596,
+       "TRACT": "002500",
+       "CENTLON": "-095.9863051",
+       "BLKGRP": "1",
+       "AREALAND": 2097372,
+       "INTPTLON": "-095.9863051",
+       "MTFCC": "G5030",
+       "COUNTY": "143"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "538",
+       "CENTLAT": "+36.2062626",
+       "AREAWATER": 591096476,
+       "BASENAME": "Tulsa-Bartlesville-Muskogee, OK",
+       "OID": "2619034687908141",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.2195309",
+       "NAME": "Tulsa-Bartlesville-Muskogee, OK CSA",
+       "OBJECTID": 101,
+       "CSA": "538",
+       "CENTLON": "-096.0645664",
+       "INTPTLON": "-096.0644042",
+       "AREALAND": 19415387972,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "93380",
+       "GEOID": "4014393380",
+       "CENTLAT": "+36.1281792",
+       "AREAWATER": 38132104,
+       "STATE": "40",
+       "BASENAME": "Tulsa",
+       "OID": "27690739370687",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1287253",
+       "NAME": "Tulsa CCD",
+       "OBJECTID": 33249,
+       "CENTLON": "-095.9527061",
+       "COUSUBCC": "Z5",
+       "AREALAND": 1063204772,
+       "INTPTLON": "-095.9526327",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01937890",
+       "COUNTY": "143"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "40011",
+       "CENTLAT": "+36.2006488",
+       "AREAWATER": 2320686,
+       "STATE": "40",
+       "BASENAME": "11",
+       "OID": "2129042485196789",
+       "SLDU": "011",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+36.2029664",
+       "NAME": "State Senate District 11",
+       "OBJECTID": 781,
+       "CENTLON": "-095.9874111",
+       "LSY": "2026",
+       "AREALAND": 152427916,
+       "INTPTLON": "-095.9893722",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "7",
+       "CENTLAT": "+32.4683953",
+       "AREAWATER": 49213835709,
+       "BASENAME": "West South Central",
+       "OID": "2739020719806",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+32.4680012",
+       "DIVISION": "7",
+       "REGION": "3",
+       "NAME": "West South Central Division",
+       "OBJECTID": 1,
+       "CENTLON": "-097.3217459",
+       "AREALAND": 1100925237701,
+       "INTPTLON": "-097.3301012",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 4381953711.0123825,
+       "CD120": "01",
+       "GEOID": "4001",
+       "CENTLAT": "+36.0571756",
+       "CDSESSN": "120",
+       "AREAWATER": 64470485,
+       "STATE": "40",
+       "BASENAME": "1",
+       "OID": "2119042393278443",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+36.0563735",
+       "NAME": "Congressional District 1",
+       "OBJECTID": 418,
+       "CENTLON": "-095.8552740",
+       "STGEOMETRY_Length": 410071.996800051,
+       "AREALAND": 2793426608,
+       "INTPTLON": "-095.8532633",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "40073",
+       "CENTLAT": "+36.1941088",
+       "SLDL": "073",
+       "AREAWATER": 160261,
+       "STATE": "40",
+       "BASENAME": "73",
+       "OID": "2139042500606200",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+36.1968364",
+       "NAME": "State House District 73",
+       "OBJECTID": 3155,
+       "CENTLON": "-095.9939046",
+       "LSY": "2026",
+       "AREALAND": 57489116,
+       "INTPTLON": "-095.9973635",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "46140",
+       "CENTLAT": "+36.2492896",
+       "AREAWATER": 492201622,
+       "BASENAME": "Tulsa, OK",
+       "OID": "2629034687907889",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.2544426",
+       "NAME": "Tulsa, OK Metro Area",
+       "CSA": "538",
+       "OBJECTID": 396,
+       "CENTLON": "-096.1648571",
+       "CBSA": "46140",
+       "AREALAND": 16239584109,
+       "INTPTLON": "-096.1773746",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "40143002500",
+       "CENTLAT": "+36.1523851",
+       "AREAWATER": 0,
+       "STATE": "40",
+       "BASENAME": "25",
+       "OID": "20790739518556",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+36.1523851",
+       "NAME": "Census Tract 25",
+       "OBJECTID": 51726,
+       "TRACT": "002500",
+       "CENTLON": "-095.9906634",
+       "AREALAND": 3834117,
+       "INTPTLON": "-095.9906634",
+       "MTFCC": "G5020",
+       "COUNTY": "143"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -95.989530401791,
+     "y": 36.155122023351
+    },
+    "addressComponents": {
+     "zip": "74103",
+     "streetName": "2ND",
+     "preType": "",
+     "city": "TULSA",
+     "preDirection": "E",
+     "suffixDirection": "",
+     "fromAddress": "1",
+     "state": "OK",
+     "suffixType": "ST",
+     "toAddress": "199",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "175 E 2ND ST, TULSA, OK, 74103"
+   }
+  ]
+ }
+}

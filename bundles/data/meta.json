@@ -259,6 +259,14 @@
    "last_refresh": "2026-10-26T02:52:30+00:00",
    "races": 8
   },
+  "state_ok": {
+   "answers": 1,
+   "answers_hash": "097595f896cffa4c28b40cd35186ed995acee9e0cbbcb257314c17047bd681b0",
+   "candidates": 261,
+   "last_checked": "2026-10-29T17:22:19+00:00",
+   "last_refresh": "2026-10-29T17:22:19+00:00",
+   "races": 123
+  },
   "state_pa": {
    "answers": 1,
    "answers_hash": "998c9996ea8c04c1d17629739617b75d43ade55d7fe82765301e21e217e82f82",

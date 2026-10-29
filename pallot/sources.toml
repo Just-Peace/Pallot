@@ -51,6 +51,7 @@ state_md = true             # Maryland State Board of Elections
 state_mo = true             # Missouri Secretary of State
 state_sc = true             # South Carolina State Election Commission
 state_ky = true             # Kentucky Secretary of State
+state_ok = true             # Oklahoma State Election Board
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
