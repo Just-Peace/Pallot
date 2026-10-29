@@ -37,10 +37,10 @@ from . import Filing, Office, Rows, StateList, decoded, filings_json, party, req
 
 EXPORT = {"ctl00$ContentPlaceHolder1$grdCandidates$ctl00$ctl02$ctl00$ExportToCsvButton": " "}
 COLUMNS = {  # each shared column's names across the grids, as headings
-    "race": ("RACE", "CONTEST", "OFFICE"),
+    "race": ("RACE", "CONTEST", "CONTESTS", "OFFICE"),
     "district_type": ("DISTRICT TYPE", "DISTRICTTYPE"),
     "district": ("DISTRICT", "JURISDICTION", "DISTRICT/COUNTY"),
-    "name": ("NAME", "CANDIDATE NAME", "BALLOT NAME", "CANDIDATE"),
+    "name": ("NAME", "CANDIDATE NAME", "BALLOT NAME", "BALLOTNAME", "CANDIDATE"),
     "party": ("PARTY", "PARTY PREFERENCE", "PARTY AFFILIATION"),
     "status": ("STATUS", "CANDIDATE STATUS"),
     "order": ("BALLOT ORDER",),

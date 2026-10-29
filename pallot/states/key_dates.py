@@ -14,8 +14,8 @@ from typing import Callable
 from ..sources import ca_key_dates as california
 from ..sources import key_dates as texas
 from ..sources.key_dates import Deadlines
-from . import (ak, az, co, fl, ga, ia, il, in_, ks, ky, md, me, mi, mo, mt, nc, ne, nj, nm, nv, ny, oh, ok, pa, sc, sd, va,
-               wa, wi, wy)
+from . import (ak, az, co, fl, ga, hi, ia, il, in_, ks, ky, md, me, mi, mo, mt, nc, ne, nj, nm, nv, ny, oh, ok, pa, sc, sd,
+               va, wa, wi, wy)
 from .dates import Guide, columbus_day, first_tuesday_after_first_monday, mailed_to_every_voter, only_if
 
 __all__ = ["GUIDES", "PAGES", "RULES", "STATES", "Guide", "columbus_day", "computed", "first_tuesday_after_first_monday"]
@@ -77,7 +77,7 @@ CALIFORNIA = Guide(
 STATES: dict[str, ModuleType] = {  # each module's GUIDE and RULE
     "MI": mi, "AZ": az, "NV": nv, "GA": ga, "WI": wi, "OH": oh, "IA": ia, "NJ": nj, "NY": ny, "CO": co, "WY": wy,
     "IL": il, "AK": ak, "FL": fl, "NC": nc, "PA": pa, "VA": va, "ME": me, "NE": ne, "NM": nm, "WA": wa,
-    "IN": in_, "MD": md, "MO": mo, "SC": sc, "KY": ky, "OK": ok, "KS": ks, "MT": mt, "SD": sd,
+    "IN": in_, "MD": md, "MO": mo, "SC": sc, "KY": ky, "OK": ok, "KS": ks, "MT": mt, "SD": sd, "HI": hi,
 }
 GUIDES: dict[str, Guide] = {
     "TX": TEXAS, "CA": CALIFORNIA, **{state: module.GUIDE for state, module in STATES.items()},
