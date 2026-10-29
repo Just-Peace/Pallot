@@ -1,0 +1,92 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4MD03156",
+   "candidate_name": "ELFRETH, SARAH KELLY",
+   "candidate_pcc_id": "C00855353",
+   "candidate_pcc_name": "ELFRETH FOR MARYLAND",
+   "cash_on_hand_end_period": 240886.52,
+   "committee_ids": [
+    "C00855353"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1219845.63,
+   "total_receipts": 1429992.6
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4MD03149",
+   "candidate_name": "FLOWERS, BERNARD",
+   "candidate_pcc_id": "C00920082",
+   "candidate_pcc_name": "FLOWERS FOR MARYLAND",
+   "cash_on_hand_end_period": 9034.69,
+   "committee_ids": [
+    "C00920082"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 30138.51,
+   "total_receipts": 35461.92
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MD03482",
+   "candidate_name": "SEIER, FELIX MARK",
+   "candidate_pcc_id": "C00928473",
+   "candidate_pcc_name": "FELIX SEIER FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00928473"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MD03490",
+   "candidate_name": "HAMMOND, SEAN",
+   "candidate_pcc_id": "C00941062",
+   "candidate_pcc_name": "AMERICA FOR HAMMOND",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00941062"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MD05362",
+   "candidate_name": "CROSS, JENNIFER",
+   "candidate_pcc_id": "C00935569",
+   "candidate_pcc_name": "JENNIFER CROSS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00935569"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

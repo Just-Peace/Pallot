@@ -18517,5 +18517,229 @@
     "phone": "202-225-4436"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "V000128",
+   "thomas": "01729",
+   "govtrack": 400415,
+   "opensecrets": "N00013820",
+   "votesmart": 6098,
+   "fec": [
+    "H2MD08126",
+    "S6MD03441"
+   ],
+   "cspan": 20756,
+   "house_history": 21032,
+   "wikipedia": "Chris Van Hollen",
+   "maplight": 500,
+   "icpsr": 20330,
+   "wikidata": "Q1077819",
+   "google_entity_id": "kg:/m/025kb5",
+   "lis": "S390",
+   "ballotpedia": "Chris Van Hollen",
+   "pictorial": 13367
+  },
+  "name": {
+   "first": "Chris",
+   "last": "Van Hollen",
+   "official_full": "Chris Van Hollen"
+  },
+  "bio": {
+   "birthday": "1959-01-10",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "MD",
+    "district": 8,
+    "party": "Democrat",
+    "url": "http://www.house.gov/vanhollen"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "MD",
+    "district": 8,
+    "party": "Democrat",
+    "url": "http://www.house.gov/vanhollen"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "MD",
+    "district": 8,
+    "party": "Democrat",
+    "url": "http://vanhollen.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "MD",
+    "district": 8,
+    "party": "Democrat",
+    "url": "http://vanhollen.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "MD",
+    "district": 8,
+    "party": "Democrat",
+    "url": "http://vanhollen.house.gov",
+    "address": "1707 Longworth HOB; Washington DC 20515-2008",
+    "phone": "202-225-5341",
+    "fax": "202-225-0375",
+    "contact_form": "http://vanhollen.house.gov/HoR/MD08/Contact+Information/Web+Contact/Contact+Form.htm",
+    "office": "1707 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "MD",
+    "party": "Democrat",
+    "district": 8,
+    "url": "http://vanhollen.house.gov",
+    "address": "1707 Longworth HOB; Washington DC 20515-2008",
+    "phone": "202-225-5341",
+    "fax": "202-225-0375",
+    "contact_form": "http://vanhollen.house.gov/contact/",
+    "office": "1707 Longworth House Office Building",
+    "rss_url": "http://vanhollen.house.gov/news/rss.aspx"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "MD",
+    "party": "Democrat",
+    "district": 8,
+    "url": "https://vanhollen.house.gov",
+    "address": "1707 Longworth HOB; Washington DC 20515-2008",
+    "phone": "202-225-5341",
+    "fax": "202-225-0375",
+    "contact_form": "http://vanhollen.house.gov/contact/",
+    "office": "1707 Longworth House Office Building",
+    "rss_url": "http://vanhollen.house.gov/news/rss.aspx"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "MD",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "address": "110 Hart Senate Office Building Washington DC 20510",
+    "office": "110 Hart Senate Office Building",
+    "phone": "202-224-4654",
+    "url": "https://www.vanhollen.senate.gov",
+    "contact_form": "https://www.vanhollen.senate.gov/contact/email",
+    "fax": "202-225-0375"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "MD",
+    "class": 3,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.vanhollen.senate.gov",
+    "contact_form": "https://www.vanhollen.senate.gov/contact/email",
+    "address": "730 Hart Senate Office Building Washington DC 20510",
+    "office": "730 Hart Senate Office Building",
+    "phone": "202-224-4654"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "A000382",
+   "lis": "S428",
+   "fec": [
+    "S4MD00327"
+   ],
+   "govtrack": 456965,
+   "opensecrets": "N00053033",
+   "wikipedia": "Angela Alsobrooks",
+   "wikidata": "Q58755148",
+   "votesmart": 212637,
+   "ballotpedia": "Angela Alsobrooks",
+   "google_entity_id": "kg:/g/11fhksj8jt"
+  },
+  "name": {
+   "first": "Angela",
+   "middle": "Deneece",
+   "last": "Alsobrooks",
+   "official_full": "Angela D. Alsobrooks"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1971-02-23"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "MD",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.alsobrooks.senate.gov",
+    "contact_form": "https://alsobrooks.senate.gov/",
+    "address": "374 Russell Senate Office Building Washington DC 20510",
+    "office": "374 Russell Senate Office Building",
+    "phone": "202-224-4524"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "E000301",
+   "fec": [
+    "H4MD03156"
+   ],
+   "govtrack": 456992,
+   "opensecrets": "N00053710",
+   "wikipedia": "Sarah Elfreth",
+   "wikidata": "Q61970401",
+   "votesmart": 178463,
+   "ballotpedia": "Sarah Elfreth",
+   "google_entity_id": "kg:/g/11h5snsfyt"
+  },
+  "name": {
+   "first": "Sarah",
+   "middle": "Kelly",
+   "last": "Elfreth",
+   "official_full": "Sarah Elfreth"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1988-09-09"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MD",
+    "district": 3,
+    "party": "Democrat",
+    "address": "1213 Longworth House Office Building Washington DC 20515-2003",
+    "office": "1213 Longworth House Office Building",
+    "phone": "202-225-4016",
+    "url": "https://elfreth.house.gov"
+   }
+  ]
  }
 ]
