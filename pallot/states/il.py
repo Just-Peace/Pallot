@@ -20,6 +20,16 @@ from the address. The judges standing for retention (ballot groups RB and RC) ar
 question, in their whole circuit, a subcircuit's judge's too. A downstate appellate judge's isn't
 placed: since the districts were redrawn in 2021, a judge elected before then stands for
 retention in the old district or the new one, as they chose (705 ILCS 23/5), and the file doesn't say which.
+
+Illinois's key dates, for its general election (10 ILCS 5/2A-1.1: the Tuesday after the first Monday
+of November in an even year): registration by mail or in person closes the twenty-eighth day before
+(5/4-6, 5/6-29), online the sixteenth day before (5/1A-16.5), then grace-period registration and
+voting goes on in person through Election Day (5/4-50); early voting runs at the election
+authority's offices from the fortieth day before, at its permanent polling places from the
+fifteenth, through the day before (5/19A-15); any voter can vote by mail, an application by mail
+reaching the election authority by the fifth day before (5/19-2), and the ballot must be postmarked
+by Election Day and reach it within fourteen days after (5/19-8); polls are open 6 a.m. to 7 p.m.
+(5/17-1).
 """
 
 from __future__ import annotations
@@ -37,6 +47,7 @@ from . import (
     Filing, Office, StateList, counties_of, decoded, legislator, ordinal, party, require, statewide, us_house,
     us_senate,
 )
+from .dates import Counts, Guide
 
 BASE = "https://www.elections.il.gov/ElectionOperations/"
 INDEX = BASE + "CandidateOfficeFilingSearch.aspx"
@@ -240,3 +251,36 @@ class IlList(StateList):
         if not isinstance(raw, str):
             raise ValueError("not a candidate data file")
         return parse(raw)
+
+
+GUIDE = Guide(
+    name="Illinois",
+    source="Illinois State Board of Elections",
+    url="https://www.elections.il.gov/",
+    computed=True,
+    registration_url="https://ova.elections.il.gov/",
+    mail_url="https://www.elections.il.gov/",
+    register="The last day to register online for {election} in Illinois; by mail, registration closed 12 days "
+             "earlier. After it, you can still register and vote in person, with two forms of ID, at your election "
+             "authority's office or an early voting site, through Election Day.",
+    mail_summary="Vote-by-mail application by mail due",
+    mail="If you vote by mail in {election}, an application sent by mail must reach your election authority today. "
+         "Your ballot must be postmarked by Election Day and reach the election authority within 14 days after. Any "
+         "voter can vote by mail; how to apply:",
+    early_where="Your election authority's offices from the first day; its other early voting sites from 15 days "
+                "before Election Day. Your election authority lists the places and hours.",
+    credit="Dates worked out from Illinois's Election Code; more from the Illinois State Board of Elections",
+    poll_hours="6 a.m. – 7 p.m.",
+    check_url="https://ova.elections.il.gov/RegistrationLookup.aspx",
+    check_hint="Illinois's voter registration lookup (State Board of Elections): your registration and your polling "
+               "place",
+    where_url="https://ova.elections.il.gov/RegistrationLookup.aspx",
+    where_hint="The registration lookup: your polling place; your election authority lists its early voting sites",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed. Your ballot must be postmarked by "
+                     "Election Day and reach your election authority within 14 days after.",
+    mail_deadline="An application sent by mail must reach your election authority by ",
+    local_office="Your election authority (county clerk or board of election commissioners)",
+    late_registration="After that, register and vote in person through Election Day, with two forms of ID",
+)
+RULE = Counts(16, 5, 40, 1).rule("IL")

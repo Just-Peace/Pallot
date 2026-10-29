@@ -13,6 +13,9 @@ and anything it can't read is refused.
 Each Legislative District elects one senator and two representatives; the Census answers both
 of Arizona's legislative layers with the district, so a representative's race is placed by
 its State House district, which is the same number.
+
+Arizona's key dates are entered by hand from its Secretary of State's list, whose site blocks
+scripts; early voting in person ends at 5 p.m. the Friday before Election Day (A.R.S. 16-542(E)).
 """
 
 from __future__ import annotations
@@ -24,8 +27,10 @@ from collections import Counter
 from html.parser import HTMLParser
 from typing import Any
 
+from ..sources.key_dates import Deadlines
 from ..text import display_person
 from . import MONTH_DAY_YEAR, Filing, ManualList, Office, legislator, party, statewide, us_house, us_senate
+from .dates import Guide
 
 PAGE = "https://apps.arizona.vote/electioninfo/Election/69"
 _DATE = re.compile(rf"\b{MONTH_DAY_YEAR}\b")
@@ -182,3 +187,44 @@ class AzList(ManualList):
                 order=row["order"],
             ))
         return filings
+
+
+GUIDE = Guide(
+    name="Arizona",
+    source="Arizona Secretary of State",
+    url="https://azsos.gov/elections",
+    computed=False,
+    registration_url="https://my.arizona.vote/",
+    mail_url="https://my.arizona.vote/",
+    register="The last day to register to vote in {election} in Arizona, by 11:59 p.m.",
+    mail_summary="Early ballot request due",
+    mail="If you vote early by mail in {election}, ask your county recorder for your ballot in time for it to reach "
+         "you and come back by Election Day. Any voter can vote early by mail; how to ask:",
+    early_where="Your county recorder lists the places and hours.",
+    credit="Dates from the Arizona Secretary of State",
+    poll_hours="6 a.m. – 7 p.m.",
+    check_url="https://my.arizona.vote/",
+    check_hint="Arizona.Vote (Arizona Secretary of State): your registration, your polling place and your ballot's "
+               "status",
+    where_url="https://my.arizona.vote/",
+    where_hint="Arizona.Vote: your polling place; Maricopa and Pima counties also have their own lookups",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote early by mail, no reason needed. Early ballots go out from "
+                     "October 7; ask your county recorder for yours, or join the Active Early Voting List.",
+    local_office="Your county recorder",
+)
+
+DATES = {
+    dt.date(2026, 11, 3): Deadlines(
+        dt.date(2026, 11, 3), "General Election", register_by=dt.date(2026, 10, 5),
+        early_start=dt.date(2026, 10, 7), early_end=dt.date(2026, 10, 30), state="AZ",
+    ),
+}
+
+
+def arizona(day: dt.date) -> Deadlines | None:
+    """The dates of Arizona's statewide election on ``day``, as its Secretary of State lists them."""
+    return DATES.get(day)
+
+
+RULE = arizona

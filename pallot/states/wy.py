@@ -8,6 +8,14 @@ as its filings alone (``max_bytes``), so the cache and the bundle never hold the
 Its State Senate races are half the districts (the odd ones in 2026). The judges standing for
 retention have no party, each a race of their own: the Supreme Court's and the Chancery Court's
 for the whole state, a district court's or a circuit court's for its judicial district's counties.
+
+Wyoming's key dates, for its general election (W.S. 22-2-104: the Tuesday after the first Monday of
+November in an even year), as its Secretary of State's 2026 Key Election Dates give them:
+registration by mail or at the county clerk's closes the fifteenth day before (22-3-102), then
+voters register in person at the clerk's while voting absentee, or at the polls on Election Day
+(22-3-104); absentee voting, by mail or in person at the clerk's, runs from the twenty-eighth day
+before through the day before (22-9-125), a ballot can be asked for any time before Election Day,
+and it must reach the clerk by 7 p.m. on Election Day (22-9-119); polls are open 7 a.m. to 7 p.m.
 """
 
 from __future__ import annotations
@@ -22,7 +30,7 @@ from ..http_cache import RequestSpec
 from . import (
     _ORDINALS, Filing, Office, StateList, decoded, legislator, ordinal, party, require, statewide, us_house, us_senate,
 )
-from .key_dates import first_tuesday_after_first_monday
+from .dates import Counts, Guide, first_tuesday_after_first_monday
 
 URL = "https://sos.wyo.gov/Elections/Docs/{year}/{year}_WY_General_Election_Candidates.csv"
 MINIMUM = {"hd": 62}  # a list with fewer State House races isn't the whole list
@@ -121,3 +129,35 @@ class WyList(StateList):
         if not isinstance(raw, str):
             raise ValueError("not a CSV")
         return parse_text(raw)
+
+
+GUIDE = Guide(
+    name="Wyoming",
+    source="Wyoming Secretary of State",
+    url="https://sos.wyo.gov/Elections/",
+    computed=True,
+    registration_url="https://sos.wyo.gov/Elections/State/RegisteringToVote.aspx",
+    mail_url="https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx",
+    register="The last day to register by mail or at your county clerk's office for {election} in Wyoming. After it, "
+             "you can still register in person at the clerk's office while voting absentee, or at your polling place "
+             "on Election Day.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, ask your county clerk for your ballot by today. Your ballot must reach "
+         "the clerk by 7 p.m. on Election Day; one that arrives later isn't counted. Any voter can vote absentee; how "
+         "to ask:",
+    early_where="Your county clerk's office: vote absentee in person there. The clerk lists the places and hours.",
+    credit="Dates worked out from Wyoming's election law; more from the Wyoming Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://sos.wyo.gov/Elections/State/RegisteringToVote.aspx",
+    check_hint="Wyoming Secretary of State: how to register; your county clerk can check your registration",
+    where_url="https://sos.wyo.gov/Elections/State/AbsenteeVoting.aspx",
+    where_hint="Every county clerk's website (Wyoming Secretary of State); yours publishes your polling place",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county clerk by 7 p.m. on Election Day.",
+    mail_deadline="Ask your county clerk for your ballot by ",
+    local_office="Your county clerk",
+    late_registration="After that, register in person at your county clerk's office or at your polling place on "
+                      "Election Day",
+)
+RULE = Counts(15, 1, 28, 1).rule("WY")

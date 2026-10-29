@@ -7,6 +7,14 @@ in the primary, withdrawn, unopposed (elected without a vote) and the rest aren'
 numbers (Juris1num), a circuit judge's group the second (Juris2num). Supreme Court justices and
 appeals judges stand for retention, each a race of their own. County and city candidates file
 with the counties, so they aren't in it; nor is where a special district is, so those are left out.
+
+Florida's key dates, for its general election (F.S. 100.031: the first Tuesday after the first
+Monday of November in an even year): registration closes the twenty-ninth day before (97.055(1)(a));
+any voter can vote by mail, a request reaching the Supervisor of Elections by 5 p.m. on the twelfth
+day before (101.62(2)), and the ballot must reach the Supervisor by 7 p.m. on Election Day (101.67);
+early voting runs from the tenth day before through the third day before, and a county may add days
+from the fifteenth day before or the second (101.657(1)(d)); polls are open 7 a.m. to 7 p.m.
+(100.011). There's no registration on Election Day.
 """
 
 from __future__ import annotations
@@ -20,6 +28,7 @@ from typing import Any
 from ..http_cache import RequestSpec
 from ..sources.fec import race_name
 from . import Filing, Office, StateList, counties_of, ordinal, party
+from .dates import Counts, Guide
 
 URL = "https://dos.elections.myflorida.com/candidates/extractCanList.asp"
 COLUMNS = ("ElectionID", "OfficeCode", "OfficeDesc", "Juris1num", "Juris2num", "StatusCode", "PartyCode", "PartyDesc",
@@ -147,3 +156,33 @@ class FlList(StateList):
                 order=(position[race.office_id] * 10 + listed) * 10_000 + index,
             ))
         return filings
+
+
+GUIDE = Guide(
+    name="Florida",
+    source="Florida Division of Elections",
+    url="https://dos.fl.gov/elections/",
+    computed=True,
+    registration_url="https://registertovoteflorida.gov/",
+    mail_url="https://dos.fl.gov/elections/for-voters/voting/vote-by-mail/",
+    register="The last day to register to vote in {election} in Florida. There's no registration on Election Day.",
+    mail_summary="Vote-by-mail request due",
+    mail="If you vote by mail in {election}, your request must reach your county Supervisor of Elections by 5 p.m. "
+         "today. Your ballot must reach the Supervisor by 7 p.m. on Election Day; one that arrives later isn't "
+         "counted. Any voter can vote by mail; how to ask:",
+    early_where="Your county Supervisor of Elections lists the places and hours, and may add days before or after "
+                "these.",
+    credit="Dates worked out from Florida's election law; more from the Florida Division of Elections",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://registration.elections.myflorida.com/CheckVoterStatus",
+    check_hint="Florida's voter information lookup (Division of Elections): your registration and your polling place",
+    where_url="https://dos.fl.gov/elections/contacts/supervisor-of-elections/",
+    where_hint="Every county's Supervisor of Elections (Florida Division of Elections); yours publishes where and when "
+               "you can vote",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed. Your ballot must reach your county "
+                     "Supervisor of Elections by 7 p.m. on Election Day.",
+    mail_deadline="Your request must reach your Supervisor of Elections by 5 p.m. on ",
+    local_office="Your county Supervisor of Elections",
+)
+RULE = Counts(29, 12, 10, 3).rule("FL")

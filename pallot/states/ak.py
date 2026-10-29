@@ -11,6 +11,15 @@ the registration isn't a nomination: it's shown as the candidate's party, as the
 it. Each page is kept as its filings and its links to the others, never as the page. The
 courts' retention questions come on every page: each judge is a race of their own, statewide
 for the Supreme Court, by its boroughs and census areas for a judicial district.
+
+Alaska's key dates, for its general election (AS 15.15.020: the Tuesday after the first Monday of
+November in an even year), checked on akleg.gov on 2026-10-25: a registration must be made in
+person, or postmarked or sent electronically, at least 30 days before (15.07.070(c), (d)); early
+voting runs for the 15 days before and on Election Day (15.20.064(a)); any voter can vote absentee,
+an application for a ballot by mail reaching the Division of Elections at least 10 days before
+(15.20.081(b)), and a mailed ballot must be postmarked by Election Day and reach the election
+supervisor by the close of business on the 10th day after (15.20.081(e)); polls are open 7 a.m. to 8
+p.m.
 """
 
 from __future__ import annotations
@@ -30,6 +39,7 @@ from . import (
     SUFFIXES, Filing, Office, StateList, filings_json, from_json, legislator, ordinal, party, require, statewide,
     us_house, us_senate,
 )
+from .dates import Counts, Guide
 
 BASE = "https://www.elections.alaska.gov/candidates/"
 URL = BASE + "?election={year:02d}genr"
@@ -255,3 +265,32 @@ class AkList(StateList):
         except ValueError as exc:
             raise UpstreamError(self.source, f"its list isn't whole: {exc}") from exc
         return kept
+
+
+GUIDE = Guide(
+    name="Alaska",
+    source="Alaska Division of Elections",
+    url="https://www.elections.alaska.gov/",
+    computed=True,
+    registration_url="https://voterregistration.alaska.gov/",
+    mail_url="https://absenteeballotapplication.alaska.gov/",
+    register="The last day to register to vote in {election} in Alaska: in person, online, or by mail postmarked "
+             "today. There's no registration on Election Day.",
+    mail_summary="Absentee ballot application due",
+    mail="If you vote absentee by mail in {election}, your application must reach the Division of Elections today. "
+         "Your ballot must be postmarked by Election Day and reach the Division within 10 days after. Any voter can "
+         "vote absentee; how to apply:",
+    early_where="The Division of Elections lists the places and hours. Early voting goes on through Election Day.",
+    credit="Dates worked out from Alaska's election law; more from the Alaska Division of Elections",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://myvoterinformation.alaska.gov/",
+    check_hint="Alaska Division of Elections' My Voter Information: your registration and your polling place",
+    where_url="https://www.elections.alaska.gov/voter-information/absentee-and-early-voting/",
+    where_hint="Alaska Division of Elections: early and in-person absentee voting places",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must be postmarked "
+                     "by Election Day and reach the Division of Elections within 10 days after.",
+    mail_deadline="Your application must reach the Division of Elections by ",
+    local_office="The Division of Elections' regional office",
+)
+RULE = Counts(30, 10, 15, None).rule("AK")

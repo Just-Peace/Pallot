@@ -14,6 +14,15 @@ reaches the counties of its judicial district (NRS 3.010); a county's row office
 assessor) the whole county; a city's the whole city, but a ward only part of it; anything with
 a district, seat or area, a township or a special district only part of the county, so those are
 unconfirmed.
+
+Nevada's key dates, for its general election (NRS 293.12755: the first Tuesday after the first
+Monday of November in an even year): registration by mail or in person at the county clerk's closes
+the fourth Tuesday before, online on Election Day itself (NRS 293.560), and in person at a polling
+place it goes on through Election Day (NRS 293.5772 to 293.5887); every active voter is mailed a
+ballot, and so is anyone who registers or updates their registration by 14 days before (NRS
+293.269911); early voting runs from the third Saturday before through the Friday before (NRS
+293.3568); a mailed ballot must be postmarked by Election Day and reach the clerk by 5 p.m. on the
+fourth day after (NRS 293.269921); polls are open 7 a.m. to 7 p.m. (NRS 293.273).
 """
 
 from __future__ import annotations
@@ -26,7 +35,7 @@ from typing import Any
 from . import (
     _ORDINALS, SUFFIXES, WITHDRAWN, Filing, ManualList, Office, legislator, party, pdf_lines, us_house,
 )
-from .key_dates import first_tuesday_after_first_monday
+from .dates import Counts, Guide, first_tuesday_after_first_monday
 
 COLUMNS = {
     "name on ballot": "name", "party or nonpartisan office": "party", "office sought": "office",
@@ -194,3 +203,36 @@ class NvList(ManualList):
         if not isinstance(raw, bytes):
             raise ValueError("not a PDF")
         return parse_lines(pdf_lines(raw))
+
+
+GUIDE = Guide(
+    name="Nevada",
+    source="Nevada Secretary of State",
+    url="https://www.nvsos.gov/sos/elections",
+    computed=True,
+    registration_url="https://registertovote.nv.gov/",
+    mail_url="https://www.nvsos.gov/sos/elections",
+    register="The last day to register by mail or in person at your county clerk's office for {election} in Nevada. "
+             "After it, you can still register online through Election Day, or in person at a polling place during "
+             "early voting or on Election Day.",
+    mail_summary="Last day to register and still be mailed a ballot",
+    mail="Every active voter in Nevada is mailed a ballot for {election}. Register or update your registration by "
+         "today to still be mailed one. Mailed back, it must be postmarked by Election Day and reach your county "
+         "clerk by 5 p.m. on the fourth day after; or drop it off at any polling place or drop box by 7 p.m. on "
+         "Election Day. More:",
+    early_where="Your county clerk lists the places and hours.",
+    credit="Dates worked out from Nevada's election law; more from the Nevada Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://www.nvsos.gov/votersearch/",
+    check_hint="Nevada Secretary of State's voter search: your registration and your polling place",
+    where_url="https://www.nvsos.gov/sos/elections",
+    where_hint="Nevada Secretary of State's elections page; your county clerk publishes where and when you can vote",
+    mail_label="More on voting by mail",
+    mail_eligibility="Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must arrive by "
+                     "5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on "
+                     "Election Day.",
+    mail_deadline="To still be mailed one, register or update your registration by ",
+    local_office="Your county clerk",
+    late_registration="After that, register online or at a polling place through Election Day",
+)
+RULE = Counts(28, 14, 17, 4).rule("NV")  # mail: register by then to still be mailed a ballot

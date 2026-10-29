@@ -6,6 +6,14 @@ It has everyone who filed for the year, primary losers and party committee seats
 candidate is on the general ballot when approved and either won the primary (PrimaryResult) or
 was nominated by papers or as a substitute. Names are "LAST, FIRST M", parties written out, and
 a cross-filed candidate comes once per party. It has no incumbents.
+
+Pennsylvania's key dates, for its general election (25 P.S. 2753: the Tuesday after the first Monday
+of November in an even year; the odd years' is the municipal election): registration closes the
+fifteenth day before (25 Pa.C.S. 1326(b)); any voter can vote by mail, the application reaching the
+county board by 5 p.m. on the Tuesday before (25 P.S. 3150.12a), and the ballot must reach the board
+by 8 p.m. on Election Day (3150.16); there's no early voting, but a voter can apply for a mail
+ballot at the county election office and vote it there; polls are open 7 a.m. to 8 p.m. (3045).
+There's no registration on Election Day.
 """
 
 from __future__ import annotations
@@ -20,6 +28,7 @@ from ..http_cache import RequestSpec
 from ..sources.fec import race_name
 from ..text import display_office, display_person
 from . import Filing, Office, StateList, party, party_rank
+from .dates import Counts, Guide
 
 URL = "https://www.pavoterservices.pa.gov/ElectionInfo/ElectionInfo.aspx"
 COLUMNS = ("CandidateName", "PartyName", "CandidateStatusValue", "CandidateTypeValue", "OfficeName", "DistrictName",
@@ -107,3 +116,34 @@ class PaList(StateList):
                 + party_rank(code, party_name),
             ))
         return filings
+
+
+GUIDE = Guide(
+    name="Pennsylvania",
+    source="Pennsylvania Department of State",
+    url="https://www.pa.gov/agencies/vote",
+    computed=True,
+    registration_url="https://www.pavoterservices.pa.gov/pages/VoterRegistrationApplication.aspx",
+    mail_url="https://www.pavoterservices.pa.gov/OnlineAbsenteeApplication/",
+    register="The last day to register to vote in {election} in Pennsylvania. There's no registration on Election "
+             "Day.",
+    mail_summary="Mail ballot application due",
+    mail="If you vote by mail in {election}, your application must reach your county board of elections by 5 p.m. "
+         "today. You can also apply at the county election office and vote your mail ballot there. Your ballot must "
+         "reach the board by 8 p.m. on Election Day; one that arrives later isn't counted, even if it was mailed in "
+         "time. Any voter can vote by mail; how to apply:",
+    early_where="There's no early voting at a polling place; you can apply for a mail ballot at your county election "
+                "office and vote it there.",
+    credit="Dates worked out from Pennsylvania's election law; more from the Pennsylvania Department of State",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://www.pavoterservices.pa.gov/pages/voterregistrationstatus.aspx",
+    check_hint="Pennsylvania's voter registration status (Department of State)",
+    where_url="https://www.pavoterservices.pa.gov/pages/pollingplaceinfo.aspx",
+    where_hint="Pennsylvania's polling place search (Department of State)",
+    mail_label="How to apply",
+    mail_eligibility="Any registered voter can vote by mail, no reason needed, or apply at the county election office "
+                     "and vote the ballot there. Your ballot must reach your county board by 8 p.m. on Election Day.",
+    mail_deadline="Your application must reach your county board by 5 p.m. on ",
+    local_office="Your county board of elections",
+)
+RULE = Counts(15, 7, None, None).rule("PA")

@@ -9,6 +9,14 @@ by congressional district, or at large. The RTD's districts don't follow any the
 they're only counted. The judges stand for retention, each a yes-or-no question of their own: the
 Supreme Court and the Court of Appeals statewide, a district court judge in the counties of their
 judicial district, a county court judge in their county.
+
+Colorado's key dates, for its general election (C.R.S. 1-4-201: the Tuesday after the first Monday
+of November in an even year): every active voter is mailed a ballot, sent from the twenty-second day
+before (1-7.5-107(3)); registering online or by mail by the eighth day before still gets one
+(1-2-201(3)), and after that a voter registers and votes in person at a voter service and polling
+center through Election Day (1-2-217.7); the centers open the fifteenth day before (1-5-102.9); a
+ballot must reach the county clerk by 7 p.m. on Election Day (1-7.5-107(4)); polls and centers are
+open 7 a.m. to 7 p.m. on Election Day.
 """
 
 from __future__ import annotations
@@ -22,7 +30,7 @@ from ..http_cache import RequestSpec
 from . import (
     Filing, Office, StateList, legislator, ordinal, party, require, sheet_rows, statewide, us_house, us_senate,
 )
-from .key_dates import first_tuesday_after_first_monday
+from .dates import Counts, Guide, first_tuesday_after_first_monday
 
 URL = "https://www.coloradosos.gov/pubs/elections/vote/files/{year}/{year}GeneralCandidateListOfficial.xlsx"
 COLUMNS = ("Candidate Name", "Office", "District", "Party", "Write In?")
@@ -169,3 +177,38 @@ class CoList(StateList):
     @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
         return parse_rows(*_rows(raw))
+
+
+GUIDE = Guide(
+    name="Colorado",
+    source="Colorado Secretary of State",
+    url="https://www.coloradosos.gov/pubs/elections/main.html",
+    computed=True,
+    registration_url="https://www.govotecolorado.gov/",
+    mail_url="https://www.govotecolorado.gov/",
+    register="The last day to register online or by mail for {election} in Colorado and still be mailed a ballot. "
+             "After it, you can still register and vote in person at a voter service and polling center, through "
+             "Election Day.",
+    mail_summary="Mail ballots go out",
+    mail="Every active voter in Colorado is mailed a ballot for {election}. Your county clerk must have it back by "
+         "7 p.m. on Election Day, by mail or in a drop box or at a voter service and polling center; a postmark "
+         "doesn't count. More:",
+    early_where="Your county clerk lists the voter service and polling centers and their hours; you can register and "
+                "vote there in person.",
+    credit="Dates worked out from Colorado's election law; more from the Colorado Secretary of State",
+    poll_hours="7 a.m. – 7 p.m.",
+    check_url="https://www.govotecolorado.gov/",
+    check_hint="GoVoteColorado (Colorado Secretary of State): your registration, your ballot's status and where to vote",
+    where_url="https://www.govotecolorado.gov/",
+    where_hint="GoVoteColorado: your county's voter service and polling centers and drop boxes",
+    mail_label="Track your ballot",
+    mail_eligibility="Every active voter is mailed a ballot, from 22 days before Election Day. It must reach your county "
+                     "clerk by 7 p.m. on Election Day, by mail, in a drop box or at a voter service and polling center; "
+                     "a postmark doesn't count.",
+    local_office="Your county clerk",
+    polls_text="Voter service and polling centers are open 7 a.m. to 7 p.m. on Election Day; if you're in line at 7, "
+               "you can vote.",
+    late_registration="After that, register and vote in person at a voter service and polling center through "
+                      "Election Day",
+)
+RULE = Counts(8, None, 15, 1).rule("CO")  # every voter is mailed a ballot

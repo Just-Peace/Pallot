@@ -10,6 +10,15 @@ headings and a footer about the filing period, which are skipped.
 
 The list has Congress, the statewide offices and the Legislature. The Governor and Lieutenant
 Governor are elected as a ticket, but the list names them as two offices, and so does Pallot.
+
+Iowa's key dates, for its general election (Iowa Code 39.1: the first Tuesday after the first Monday
+of November in an even year), checked on legis.iowa.gov (Iowa Code 2026) on 2026-10-24:
+pre-registration closes at 5 p.m. fifteen days before (48A.9), then voters register at the polls on
+Election Day with ID and proof of residence (48A.7A); any voter can vote absentee, the written
+application reaching the county auditor by 5 p.m. on that same day (53.2(1)(b)), and the ballot must
+reach the auditor before the polls close (53.17); absentee voting in person at the auditor's office
+starts twenty days before (53.10) and goes on any day but Election Day (53.2(1)(a)); polls are open
+7 a.m. to 8 p.m. (49.73).
 """
 
 from __future__ import annotations
@@ -22,6 +31,7 @@ from . import (
     MONTH_DAY_YEAR, WITHDRAWN, Filing, ManualList, Office, legislator, party, pdf_lines, require, statewide, us_house,
     us_senate,
 )
+from .dates import Counts, Guide
 
 STATEWIDE = ("Governor", "Lieutenant Governor", "Secretary of State", "Auditor of State", "Treasurer of State",
              "Secretary of Agriculture", "Attorney General")
@@ -95,3 +105,34 @@ class IaList(ManualList):
         if not isinstance(raw, bytes):
             raise ValueError("not a PDF")
         return parse_lines(pdf_lines(raw))
+
+
+GUIDE = Guide(
+    name="Iowa",
+    source="Iowa Secretary of State",
+    url="https://sos.iowa.gov/general-election",
+    computed=True,
+    registration_url="https://sos.iowa.gov/elections-voting",
+    mail_url="https://sos.iowa.gov/elections-voting",
+    register="The last day to pre-register for {election} in Iowa, by 5 p.m. After it, you can still register at "
+             "your polling place on Election Day, with ID and proof of where you live.",
+    mail_summary="Absentee ballot request due",
+    mail="If you vote absentee in {election}, your request must reach your county auditor by 5 p.m. today. Your "
+         "ballot must reach the auditor before the polls close at 8 p.m. on Election Day; one that arrives later "
+         "isn't counted. Any voter can vote absentee; how to ask:",
+    early_where="Your county auditor's office, and any satellite sites your county opens; the auditor lists the "
+                "places and hours.",
+    credit="Dates worked out from Iowa's election law; more from the Iowa Secretary of State",
+    poll_hours="7 a.m. – 8 p.m.",
+    check_url="https://sos.iowa.gov/elections-voting",
+    check_hint="Iowa Secretary of State: check your registration and find your polling place",
+    where_url="https://sos.iowa.gov/elections-voting",
+    where_hint="Iowa Secretary of State: your polling place, and your county auditor's office for voting early",
+    mail_label="How to ask",
+    mail_eligibility="Any registered voter can vote absentee by mail, no reason needed. Your ballot must reach your "
+                     "county auditor before the polls close at 8 p.m. on Election Day.",
+    mail_deadline="Your request must reach your county auditor by 5 p.m. on ",
+    local_office="Your county auditor",
+    late_registration="After that, register at your polling place on Election Day, with ID and proof of where you live",
+)
+RULE = Counts(15, 15, 20, 1).rule("IA")
