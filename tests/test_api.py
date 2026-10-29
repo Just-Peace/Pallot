@@ -43,7 +43,7 @@ def test_sources_overview(client):
                                                        "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny",
                                                        "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne",
                                                        "state_nm", "state_wa", "state_in", "state_md", "state_mo",
-                                                       "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "key_dates_ca"]
+                                                       "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "key_dates_ca"]
     (geocoding, precincts, county, outlines, tiles, sos, dates, wiki, holders, bills, tracker, peace, _, _, example, _,
      fec, tec, polls, *_) = overview["sources"]  # no Google key: its rows (Google, suggestions) are left out
     assert (county["label"], county["toggleable"], county["enabled"]) == (
@@ -146,7 +146,7 @@ def test_sources_are_grouped(client):
         "states": ["state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "state_az", "state_nv",
                    "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co",
                    "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in",
-                   "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "key_dates_ca"],
+                   "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "key_dates_ca"],
         "ballot": ["wikidata", "officeholders", "congress_gov"],
         "polls": ["polls"],
         "scorecards": ["trackaipac", "voteforpeace", "cair", "emgage", "examplepac", "mupac"],

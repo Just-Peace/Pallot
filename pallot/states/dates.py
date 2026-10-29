@@ -45,6 +45,8 @@ class Guide:
     late_registration: str | None = None  # how to register once register_by is over, where the state allows it
     hours_set_by: str | None = None  # "your town": who sets when the polls open, where the law leaves it to them
     local_time: bool = False  # the state spans two time zones, so its poll hours are each place's own
+    check_label: str = "Am I registered?"  # the words of the link to check_url, and on a phone (check_short):
+    check_short: str = "Registered?"  # another where the state has no registration to check (North Dakota)
 
     @property
     def hours(self) -> str:
@@ -70,7 +72,7 @@ class Guide:
 
     def voter_info(self) -> VoterInfo:
         return VoterInfo(
-            registration=VoterLink(label="Am I registered?", short="Registered?", url=self.check_url, hint=self.check_hint),
+            registration=VoterLink(label=self.check_label, short=self.check_short, url=self.check_url, hint=self.check_hint),
             county_offices=VoterLink(label="Where to vote", short="Where", url=self.where_url, hint=self.where_hint),
             mail_apply=VoterLink(label=self.mail_label, url=self.mail_url),
             mail_eligibility=self.mail_eligibility,
