@@ -118,8 +118,8 @@ def test_a_columbus_ballot_has_the_statewide_races_and_the_fecs_house_race(tmp_p
     imported(tmp_path)
     with TestClient(make_app(bundles=tmp_path / "bundles")) as client:
         ballot = get_ballot(client, "columbus")
-        assert ballot["coverage"]["ballot"] == "list" and ballot["coverage"]["districts"] == ["cd"]
-        assert ballot["districts"]["cd"] == 15
+        assert ballot["coverage"]["ballot"] == "list" and ballot["coverage"]["districts"] == ["cd", "sd", "hd"]
+        assert (ballot["districts"]["cd"], ballot["districts"]["sd"], ballot["districts"]["hd"]) == (15, 15, 1)
         assert [race["name"] for race in ballot["races"]] == [
             "U.S. Senator", "U.S. Representative District 15", "Governor and Lieutenant Governor", "Attorney General",
             "Auditor of State", "Secretary of State", "Treasurer of State",

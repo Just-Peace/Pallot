@@ -21,7 +21,8 @@ from .sboe import Ring
 
 SOURCE = "tigerweb"
 DESCRIPTION = (
-    "Outlines of your U.S. House, State Senate and State House districts for the map, from the US Census's TIGERweb."
+    "Outlines of your U.S. House, State Senate and State House districts, in any state, for the map, from the US "
+    "Census's TIGERweb."
 )
 SERVICE = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer"
 SIMPLIFY_DEG = 0.0005  # about 50 m: shared boundaries still meet when zoomed to a State House district

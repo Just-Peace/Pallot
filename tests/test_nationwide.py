@@ -7,6 +7,7 @@ import datetime as dt
 import pytest
 
 from pallot import coverage
+from pallot.ballot import _placed
 from pallot.sources import census, fec, officeholders
 from pallot.states import key_dates as state_key_dates
 from pallot.states.adapters import ADAPTERS
@@ -32,8 +33,8 @@ def test_georgia_gets_its_senate_and_house_races_from_the_fec(client, upstream):
 
     assert ballot["election_date"] == "2026-11-03"
     assert [e["name"] for e in ballot["elections"]] == ["2026 General Election"]
-    assert ballot["coverage"] == {"ballot": "fec", "districts": ["cd"], "precincts": False, "labels": {}}
-    assert ballot["districts"]["cd"] == 5 and ballot["districts"]["sd"] is None and ballot["districts"]["sboe"] is None
+    assert ballot["coverage"] == {"ballot": "fec", "districts": ["cd", "sd", "hd"], "precincts": False, "labels": {}}
+    assert [ballot["districts"][kind] for kind in ("cd", "sd", "hd", "sboe")] == [5, 36, 58, None]
     assert ballot["location"]["county_name"] == "Fulton County"
     assert ballot["key_dates"] is None and ballot["maybe"] == [] and ballot["left_out"] is None
     assert [r["name"] for r in ballot["races"]] == ["U.S. Senator", "U.S. Representative District 5"]
@@ -70,6 +71,7 @@ def test_dc_has_its_delegate_and_no_senate_race(client):
     ballot = get_ballot(client, "dc")
     assert [r["name"] for r in ballot["races"]] == ["Delegate to the U.S. House of Representatives"]
     assert ballot["districts"]["cd"] == 0 and ballot["races"][0]["seat"] == "DC-00"
+    assert ballot["districts"]["sd"] is None and ballot["coverage"]["districts"] == ["cd"]  # the Census's "upper" is a ward
 
 
 def test_a_territory_is_refused(client):
@@ -102,8 +104,32 @@ def test_texas_keeps_its_full_coverage(client):
 
 def test_coverage_and_where_sources_work():
     assert coverage.of("TX").ballot == "state" and coverage.of("WY") is coverage.FEDERAL
+    assert coverage.of("MT").districts == ("cd", "sd", "hd") and coverage.of("MT").labels == {}
     assert coverage.works_in("tec", "TX")
     assert not coverage.works_in("tec", "GA") and coverage.works_in("polls", "GA")
+
+
+@pytest.mark.parametrize(("state", "kind", "districts", "labels"), [
+    ("MD", "fec", ("cd", "sd", "hd"), {"hd": "House of Delegates"}),
+    ("NE", "fec", ("cd", "sd"), {"sd": "Legislature"}),  # one chamber
+    ("DC", "fec", ("cd",), {}),
+    ("CA", "list", ("cd", "sd", "hd"), {"hd": "State Assembly"}),
+    ("NJ", "list", ("cd", "sd", "hd"), {"hd": "General Assembly"}),
+    ("TX", "state", ("cd", "sd", "hd", "sboe"), {}),
+])
+def test_every_state_shows_its_own_chambers(state, kind, districts, labels):
+    cover = coverage.of(state)
+    assert (cover.ballot, cover.districts, cover.labels) == (kind, districts, labels)
+    fallback = coverage.federal(state)  # when its list can't be had
+    assert (fallback.ballot, fallback.labels) == ("fec", {k: v for k, v in labels.items() if k in fallback.districts})
+
+
+def test_only_the_chambers_a_state_has_are_kept_from_the_census():
+    match = load("census_atlanta.json")["result"]["addressMatches"][0]
+    place = census.parse_geographies(match["geographies"], 0, 0, None)
+    assert _placed(place, coverage.of("GA")).model_dump(include={"cd", "sd", "hd"}) == {"cd": 5, "sd": 36, "hd": 58}
+    assert _placed(place, coverage.of("NE")).model_dump(include={"cd", "sd", "hd"}) == {"cd": 5, "sd": 36, "hd": None}
+    assert _placed(place, coverage.of("DC")).model_dump(include={"cd", "sd", "hd"}) == {"cd": 5, "sd": None, "hd": None}
 
 
 def test_census_numbers_at_large_and_delegate_seats_zero():

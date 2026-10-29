@@ -267,7 +267,9 @@ def test_a_florida_ballot_has_its_courts_retention_for_the_voters_county(client,
 
 def test_a_virginia_ballot_has_its_races_for_congress_from_its_list(client, logged_calls):
     ballot = get_ballot(client, "richmond")
-    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "districts": ["cd"]}
+    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "districts": ["cd", "sd", "hd"],
+                                  "labels": {"hd": "House of Delegates"}}
+    assert (ballot["districts"]["sd"], ballot["districts"]["hd"]) == (14, 78)  # for the map; its list has only Congress
     assert [race["name"] for race in ballot["races"]] == ["U.S. Senator", "U.S. Representative District 4"]
     house = find_race(ballot, "U.S. Representative District 4")
     assert [c["incumbent"] for c in house["candidates"]] == [True, False, False]

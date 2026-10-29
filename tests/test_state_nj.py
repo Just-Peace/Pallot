@@ -81,8 +81,9 @@ def test_a_list_short_of_its_total_or_of_a_house_district_or_that_isnt_one_is_re
 
 def test_a_trenton_ballot_has_the_senate_and_its_house_race_from_the_lists(client, upstream, logged_calls, tmp_path):
     ballot = get_ballot(client, "trenton")
-    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "districts": ["cd"]}
-    assert ballot["districts"]["cd"] == 12
+    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "districts": ["cd", "sd", "hd"],
+                                  "labels": {"hd": "General Assembly"}}
+    assert (ballot["districts"]["cd"], ballot["districts"]["sd"], ballot["districts"]["hd"]) == (12, 15, 15)
     assert [race["name"] for race in ballot["races"]] == ["U.S. Senator", "U.S. Representative District 12"]
     senate, house = ballot["races"]
     assert senate["source"] == house["source"] == "state_nj" and house["seat"] == "NJ-12"

@@ -255,6 +255,11 @@ def _shared(places: list[Place]) -> Place:
     return replace(first, **keep, matched_address=None, block_point=None)
 
 
+def _placed(place: Place, cover: coverage.Coverage) -> Districts:
+    """The districts the Census placed the address in that the state's coverage shows."""
+    return Districts(**{kind: getattr(place, kind) for kind in ("cd", "sd", "hd") if kind in cover.districts})
+
+
 async def locate_card(svc: Services, request: BallotRequest, sources: Sources) -> CardPlace:
     """A voter card's state and county, and for a Texas precinct, as locate() places an address:
     points inside it from the Texas Legislative Council's precinct map, and the Census's districts
@@ -438,9 +443,9 @@ class _Builder:
             place, location = await locate(self.svc, self.request.address, self.sources)
             cover = coverage.of(location.state)
             if cover.ballot == "list":
-                return await self._from_list(location, Districts(cd=place.cd, sd=place.sd, hd=place.hd), cover)
+                return await self._from_list(location, _placed(place, cover), cover)
             if cover.ballot == "fec":
-                return await self._from_fec(location, place.cd, cover)
+                return await self._from_fec(location, _placed(place, cover), cover)
             if not self.use_sos:
                 raise BallotError(400, SOS_OFF)
             county_name, county_fips = place.county, place.county_fips
@@ -452,7 +457,7 @@ class _Builder:
                 districts = self._card_districts(location.state, cover)
                 if cover.ballot == "list":
                     return await self._from_list(location, districts, cover)
-                return await self._from_fec(location, districts.cd, cover)
+                return await self._from_fec(location, districts, cover)
             if not self.use_sos:
                 raise BallotError(400, SOS_OFF)
             county_name, county_fips = card.county, card.county_fips
@@ -556,23 +561,23 @@ class _Builder:
         instead, saying why."""
         lists = self.svc.states.get(location.state)
         if lists is None:
-            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
+            return await self._from_fec(location, districts, coverage.federal(location.state))
         day = fec_source.general_day(self.svc.today())
         when = f"{day:%b} {day.day}, {day.year}"
         if not self.sources.enabled(lists.source):
             self.notes.append(f"The list of candidates from the {lists.label} is turned off, so this ballot has only "
                               f"the races for Congress. [Turn it on in Settings](settings.html#toggle-{lists.source}).")
-            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
+            return await self._from_fec(location, districts, coverage.federal(location.state))
         try:
             filings = await lists.filings(day)
         except UpstreamError as exc:
             log.warning("%s", exc)
             self.warnings.append(f"Couldn't load the list of candidates from the {lists.label}, so this ballot has "
                                  "only the races for Congress.")
-            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
+            return await self._from_fec(location, districts, coverage.federal(location.state))
         if not filings:
             self.notes.append(f"{lists.missing(when)}, so this ballot has only the races for Congress.")
-            return await self._from_fec(location, districts.cd, coverage.FEDERAL)
+            return await self._from_fec(location, districts, coverage.federal(location.state))
         requested = self.request.election_date
         if requested and requested != day:
             self.warnings.append(f"Pallot has only the general election on {when} here; showing it.")
@@ -650,11 +655,12 @@ class _Builder:
             self.warnings.append("Couldn't load the FEC's filers for the U.S. House race, so it isn't shown.")
             return []
 
-    async def _from_fec(self, location: Location, cd: int | None, cover: coverage.Coverage) -> Ballot:
+    async def _from_fec(self, location: Location, districts: Districts, cover: coverage.Coverage) -> Ballot:
         """The races for Congress from the FEC's filers (fec.ballot_races), for a state without
-        its own list: the Senate race when the FEC lists one this cycle, and the House race of
-        district ``cd``. No state source or precincts; key dates only where they're worked out by
-        rule (states/key_dates.py), or California's from its SOS (_state_key_dates)."""
+        its own list: the Senate race when the FEC lists one this cycle, and the House race of the
+        voter's district, their other districts kept for the map. No state source or precincts; key
+        dates only where they're worked out by rule (states/key_dates.py), or California's from its
+        SOS (_state_key_dates)."""
         if not self.sources.enabled(fec_source.SOURCE):
             raise BallotError(400, "Outside Texas, Pallot's races come from the FEC, which is turned off. Turn on "
                                    "the FEC in Settings.")
@@ -665,6 +671,7 @@ class _Builder:
             self.warnings.append(f"Outside Texas, Pallot has only the general election on {day:%b %d, %Y}; showing it.")
         state = location.state
         cycle = fec_source.cycle_of(day)
+        cd = districts.cd
         try:
             senate = (state, 0) in await fec.elections(cycle, "senate")
         except UpstreamError as exc:
@@ -695,7 +702,7 @@ class _Builder:
             key_dates=await self._state_key_dates(location.state, day),
             voter_info=voter_info(location.state),
             location=location,
-            districts=Districts(cd=cd),
+            districts=districts,
             races=races,
             maybe=[],
             notes=list(self.notes),
