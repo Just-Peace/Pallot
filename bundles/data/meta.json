@@ -189,10 +189,10 @@
   },
   "state_nj": {
    "answers": 3,
-   "answers_hash": "08c194f997a8af885ea2cb26324a227e87135010d1a1b8bdd657c9ea5c1d2dda",
+   "answers_hash": "a0b307730db4cade94b8ca949ab3cbe029d6c647db1845850f8dfef895a1e996",
    "candidates": 39,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-26T02:52:14+00:00",
+   "last_checked": "2026-10-29T11:50:34+00:00",
+   "last_refresh": "2026-10-29T11:50:34+00:00",
    "races": 13
   },
   "state_nm": {

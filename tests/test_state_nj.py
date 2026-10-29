@@ -1,7 +1,9 @@
-"""New Jersey's ballot (states/nj.py), from the Division of Elections' official U.S. Senate and
-House lists, two PDFs found by their links on its election information page, and its key dates
-worked out from the New Jersey Statutes. tests/fixtures/state_nj_*.pdf are those lists rewritten
-without the candidates' addresses (scripts/record_fixtures.py)."""
+"""New Jersey's ballot (states/nj.py), from the Division of Elections' official lists, PDFs found
+by their links on its election information page (U.S. Senate and House in an even year, State
+Senate and General Assembly in an odd one), and its key dates worked out from the New Jersey
+Statutes. tests/fixtures/state_nj_*.pdf are those lists rewritten without the candidates'
+addresses: 2026's for Congress, 2025's for the General Assembly and a State Senate special
+election, and 2023's for the whole State Senate (scripts/record_fixtures.py)."""
 
 from __future__ import annotations
 
@@ -10,9 +12,13 @@ import json
 import sqlite3
 from collections import Counter
 
+import httpx
 import pytest
+import respx
 from fastapi.testclient import TestClient
 
+from pallot.config import Ttls
+from pallot.http_cache import HttpCache
 from pallot.states import key_dates as state_key_dates
 from pallot.states import nj, pdf_lines
 from pallot.states.nj import NjList
@@ -22,6 +28,8 @@ from .conftest import FIXTURES, candidate_names, find_race, get_ballot, switch
 
 PAGE = (FIXTURES / "state_nj.html").read_text(encoding="utf-8")
 HOUSE = nj.links(PAGE)["links"]["house"]
+ODD_PAGE = (FIXTURES / "state_nj_2025.html").read_text(encoding="utf-8")
+LISTS = "https://www.nj.gov/state/elections/assets/pdf/election-results/"
 
 
 def listed(kind: str) -> bytes:
@@ -77,6 +85,85 @@ def test_a_list_short_of_its_total_or_of_a_house_district_or_that_isnt_one_is_re
         nj.parse_lines(["Official List", "Total Candidates 0"])
     with pytest.raises(ValueError, match="not a PDF"):
         NjList.parse(b"<html><body>Service Unavailable</body></html>")
+
+
+def test_an_odd_years_page_links_the_legislatures_lists_read_once_the_general_assemblys_is_out():
+    found = nj.links(ODD_PAGE)
+    assert found == {"year": 2025, "links": {
+        "state-senate": f"{LISTS}2025/2025-official-general-candidates-state-senate.pdf",
+        "general-assembly": f"{LISTS}2025/2025-official-general-candidates-general-assembly.pdf",
+    }}
+    assert set(nj.links((FIXTURES / "state_nj_2023.html").read_text(encoding="utf-8"))["links"]) == {
+        "state-senate", "general-assembly"}
+    lists = NjList.__new__(NjList)
+    assert [spec.url for spec in lists.follow(found, dt.date(2025, 11, 4))] == list(found["links"].values())
+    assert lists.follow({"year": 2025, "links": {"state-senate": found["links"]["state-senate"]}},
+                        dt.date(2025, 11, 4)) is None
+    assert lists.follow(nj.links(PAGE), dt.date(2026, 11, 3)) is not None
+
+
+def test_the_general_assemblys_list_has_two_seats_in_each_of_the_40_districts():
+    assembly = NjList.parse(listed("2025_general_assembly"))
+    assert len(assembly) == 159 and {f.district for f in assembly} == {str(n) for n in range(1, 41)}
+    assert {(f.day, f.reach, f.group, f.seats) for f in assembly} == {("2025-11-04", "hd", "legislature", 2)}
+    parties = Counter(f.party or f.party_name for f in assembly)
+    assert (parties["D"], parties["R"], parties["G"], parties["L"], parties["WE THE PEOPLE"]) == (80, 75, 2, 1, 1)
+    assert sum(f.incumbent for f in assembly) == 73
+    fifteenth = [(f.name, f.party, f.incumbent, f.office) for f in assembly if f.district == "15"]
+    assert fifteenth[:2] == [  # a name wrapped onto the next line, then the running mate in brackets
+        ("Verlina Reynolds-Jackson", "D", True, "General Assembly District 15"),
+        ("Anthony S. Verrelli", "D", True, "General Assembly District 15")]
+    fortieth = [(f.name, f.incumbent) for f in assembly if f.district == "40"]
+    assert fortieth[:2] == [("Christopher P. Dephillips", True), ("Al Barlas", True)]  # the asterisk wrapped alone
+    special = NjList.parse(listed("2025_state_senate"))
+    assert [(f.name, f.party, f.incumbent, f.office, f.reach) for f in special] == [
+        ("Benjie E. Wimberly", "D", True, "State Senator District 35", "sd"),
+        ("Frank G. Filippelli", "R", False, "State Senator District 35", "sd")]
+
+
+def test_a_year_the_whole_state_senate_is_up_its_list_has_every_district():
+    senate = NjList.parse(listed("2023_state_senate"))
+    assert len(senate) == 86 and {f.district for f in senate} == {str(n) for n in range(1, 41)}
+    assert {(f.day, f.reach, f.seats) for f in senate} == {("2023-11-07", "sd", 1)}
+    assert [(f.name, f.party, f.party_name) for f in senate if f.district == "4"] == [
+        ("Paul D. Moriarty", "D", None), ("Christopher W. Del Borrello", "R", None),
+        ("Giuseppe Costanzo", None, "CONSERVATIVES SOUTH JERSEY")]
+    lines = pdf_lines(listed("2023_state_senate"))
+    gopal = next(i for i, line in enumerate(lines) if line.startswith("VIN GOPAL"))
+    lines[gopal] = "VIN GOPAL *          1 MAIN STREET Apt-UnitDemocratic"  # the party run into the address, as served
+    assert next(f for f in nj.parse_lines(lines) if f.district == "11").party == "D"
+
+
+def test_a_legislative_list_short_of_a_district_in_a_year_theyre_all_up_is_refused():
+    lines = pdf_lines(listed("2025_general_assembly"))
+    start = next(i for i, line in enumerate(lines) if line.startswith("Fortieth Legislative District"))
+    end = next(i for i, line in enumerate(lines) if line.startswith("Candidate Totals"))
+    cut = lines[:start] + lines[end:]
+    listed_there = len(nj.parse_lines(lines)) - len([f for f in nj.parse_lines(lines) if f.district == "40"])
+    with pytest.raises(ValueError, match="39 State House races, not 40"):
+        nj.parse_lines([f"Total Candidates {listed_there}" if "Total Candidates" in line else line for line in cut])
+    with pytest.raises(ValueError, match="a line it can't read"):
+        nj.parse_lines(lines[:start + 1] + ["(bracketed with nobody)", "SOMEONE ELSE"] + lines[start + 1:])
+
+
+@pytest.mark.anyio
+async def test_an_odd_years_ballot_has_the_legislature_from_its_lists_and_asks_once(tmp_path):
+    files = {"election-information-2025.shtml": ODD_PAGE.encode(),
+             "2025-official-general-candidates-state-senate.pdf": listed("2025_state_senate"),
+             "2025-official-general-candidates-general-assembly.pdf": listed("2025_general_assembly")}
+    with respx.mock() as router:
+        route = router.route(host="www.nj.gov").mock(side_effect=lambda request: httpx.Response(
+            200, content=files[request.url.path.rsplit("/", 1)[-1]]))
+        async with httpx.AsyncClient() as client:
+            cache = HttpCache(tmp_path / "cache.sqlite3", client)
+            adapter = NjList(cache, Ttls())
+            filings = await adapter.filings(dt.date(2025, 11, 4))
+            assert route.call_count == 3
+            assert await adapter.filings(dt.date(2025, 11, 4)) == filings and route.call_count == 3
+            cache.close()
+    assert Counter(f.office_id for f in filings)["STATE SENATE 35"] == 2 and len(filings) == 161
+    assert {f.day for f in filings} == {"2025-11-04"}
+    assert filings[0].office_id == "STATE SENATE 35" and filings[2].office_id == "STATE HOUSE 1"
 
 
 def test_a_trenton_ballot_has_the_senate_and_its_house_race_from_the_lists(client, upstream, logged_calls, tmp_path):
@@ -152,6 +239,7 @@ def test_new_jerseys_bundled_lists_serve_a_lookup_without_asking(tmp_path, upstr
 
 @pytest.mark.parametrize("day, register, apply, early, end", [
     (dt.date(2026, 11, 3), dt.date(2026, 10, 13), dt.date(2026, 10, 27), dt.date(2026, 10, 24), dt.date(2026, 11, 1)),
+    (dt.date(2027, 11, 2), dt.date(2027, 10, 12), dt.date(2027, 10, 26), dt.date(2027, 10, 23), dt.date(2027, 10, 31)),
     (dt.date(2028, 11, 7), dt.date(2028, 10, 17), dt.date(2028, 10, 31), dt.date(2028, 10, 28), dt.date(2028, 11, 5)),
 ])
 def test_new_jerseys_key_dates_are_worked_out_from_its_statutes(day, register, apply, early, end):

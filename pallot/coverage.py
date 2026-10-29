@@ -54,7 +54,7 @@ COVERED = {
     "WI": LIST,
     "OH": LIST,  # its statewide races; the House race from the FEC
     "IA": LIST,
-    "NJ": LIST,  # only U.S. Senate and House in 2026
+    "NJ": LIST,  # Congress in an even year; the State Senate and General Assembly in an odd one
     "NY": LIST,
     "CO": LIST,
     "WY": LIST,
