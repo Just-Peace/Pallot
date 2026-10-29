@@ -15,7 +15,7 @@ from ..sources import ca_key_dates as california
 from ..sources import key_dates as texas
 from ..sources.key_dates import Deadlines
 from . import ak, az, co, fl, ga, ia, il, mi, nc, nj, nv, ny, oh, pa, va, wi, wy
-from .dates import Guide, columbus_day, first_tuesday_after_first_monday
+from .dates import Guide, columbus_day, first_tuesday_after_first_monday, mailed_to_every_voter, only_if
 
 __all__ = ["GUIDES", "PAGES", "RULES", "STATES", "Guide", "columbus_day", "computed", "first_tuesday_after_first_monday"]
 
@@ -38,8 +38,9 @@ TEXAS = Guide(
     where_url="https://www.votetexas.gov/voting/where.html",
     where_hint="Every county's elections office (Texas SOS); yours publishes where and when you can vote",
     mail_label="How to apply",
-    mail_eligibility="Only if you're 65 or older, sick or disabled, away from your county for all of early voting and "
-                     "Election Day, expecting to give birth around Election Day, or in jail but still eligible to vote.",
+    mail_eligibility=only_if("you're 65 or older", "sick or disabled",
+                             "away from your county for all of early voting and Election Day",
+                             "expecting to give birth around Election Day", "in jail but still eligible to vote"),
 )
 
 CALIFORNIA = Guide(
@@ -65,8 +66,8 @@ CALIFORNIA = Guide(
     where_hint="Every county's elections office (California SOS); yours lists its vote centers, polling places and drop "
                "boxes",
     mail_label="Voting by mail",
-    mail_eligibility="Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must reach your "
-                     "county within 7 days), or drop it off by 8 p.m. on Election Day.",
+    mail_eligibility=mailed_to_every_voter("Mail it back postmarked by Election Day (it must reach your county within 7 "
+                                           "days), or drop it off by 8 p.m. on Election Day."),
     mail_deadline="If yours is lost or damaged, the Secretary of State recommends asking your county for a new one by ",
     late_registration="After that, register and vote in person at your county elections office or a vote center "
                       "through Election Day",

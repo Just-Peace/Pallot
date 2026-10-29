@@ -3,6 +3,7 @@ parsing, calendar files, and the ballot's When to vote block."""
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 
 import httpx
@@ -15,6 +16,7 @@ from pallot.http_cache import HttpCache, RequestSpec, UpstreamError
 from pallot.sources import key_dates
 from pallot.sources.key_dates import Deadlines, parse
 from pallot.states import key_dates as state_key_dates
+from pallot.states.dates import Counts, Roll, columbus_day, mailed_to_every_voter, only_if
 
 from .conftest import FIXTURES, get_ballot, switch
 
@@ -280,6 +282,50 @@ def test_florida_north_carolina_pennsylvania_and_virginia_dates_follow_their_ele
     assert (found.register_by, found.mail_apply_by, found.early_start, found.early_end) == (
         register, mail, early_start, early_end)
     assert (state_key_dates.computed(state, D(2027, 11, 2)) is not None) == (state == "VA")
+
+
+def test_a_state_without_registration_has_no_register_date_or_event(monkeypatch):
+    monkeypatch.setitem(ics.GUIDES, "ZZ", state_key_dates.GUIDES["OH"])
+    found = Counts(None, 7, 14, 1).on("ZZ", D(2026, 11, 3))
+    assert (found.register_by, found.mail_apply_by, found.early_start) == (None, D(2026, 10, 27), D(2026, 10, 20))
+    assert [event.id for event in ics.events(found)] == ["early_start", "mail", "early_end", "election"]
+    assert Counts(None, None, None, None, early_after_register=True).on("ZZ", D(2026, 11, 3)).early_start is None
+
+
+@pytest.mark.parametrize("roll, register, mail", [
+    (None, D(2026, 10, 4), D(2026, 10, 3)),
+    (Roll(), D(2026, 10, 5), D(2026, 10, 5)),  # past Sunday, and past Saturday and Sunday
+    (Roll(saturday=False), D(2026, 10, 5), D(2026, 10, 3)),
+    (Roll(holidays=lambda year: (columbus_day(year), D(year, 10, 5))), D(2026, 10, 6), D(2026, 10, 6)),
+])
+def test_a_deadline_on_a_closed_day_rolls_to_the_next_open_one(roll, register, mail):
+    found = Counts(30, 31, 17, 4, roll=roll).on("ZZ", D(2026, 11, 3))
+    assert (found.register_by, found.mail_apply_by, found.early_start, found.early_end) == (
+        register, mail, D(2026, 10, 17), D(2026, 10, 30))  # early voting's dates never move
+    assert Roll(holidays=lambda year: (columbus_day(year),))(D(2026, 10, 10)) == D(2026, 10, 13)
+
+
+def test_poll_hours_a_town_sets_and_two_time_zones():
+    base = state_key_dates.GUIDES["MI"]
+    town = dataclasses.replace(base, poll_hours="7 p.m.", hours_set_by="your town")
+    assert town.voter_info().poll_hours == "until 7 p.m."
+    assert town.polls == "Polls close at 7 p.m.; your town sets when they open. If you're in line at 7, you can vote."
+    zones = dataclasses.replace(base, local_time=True)
+    assert zones.voter_info().poll_hours == "7 a.m. – 8 p.m. local time"
+    assert zones.polls == "Polls are open 7 a.m. to 8 p.m. local time; if you're in line at 8, you can vote."
+    both = dataclasses.replace(town, poll_hours="8 p.m.", local_time=True, hours_set_by="your county")
+    assert both.voter_info().poll_hours == "until 8 p.m. local time"
+    assert both.polls.startswith("Polls close at 8 p.m. local time; your county sets when they open.")
+    assert base.voter_info().poll_hours == "7 a.m. – 8 p.m." and dataclasses.replace(base, polls_text="x").polls == "x"
+
+
+def test_mail_wording_for_an_excuse_and_for_a_ballot_mailed_to_everyone():
+    assert only_if("you're away on Election Day") == "Only if you're away on Election Day."
+    assert only_if("you're 65 or older", "sick") == "Only if you're 65 or older or sick."
+    assert state_key_dates.GUIDES["TX"].mail_eligibility.startswith("Only if you're 65 or older, sick or disabled, away")
+    assert state_key_dates.GUIDES["TX"].mail_eligibility.endswith(", or in jail but still eligible to vote.")
+    assert mailed_to_every_voter("Mail it back.") == "Every active voter is mailed a ballot. Mail it back."
+    assert state_key_dates.GUIDES["NV"].mail_eligibility.startswith("Every active voter is mailed a ballot. Mail it back")
 
 
 def test_pallot_cache_refreshes_and_rebuilds_key_dates(client, make_app, upstream):

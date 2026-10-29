@@ -35,7 +35,7 @@ from typing import Any
 from . import (
     _ORDINALS, SUFFIXES, WITHDRAWN, Filing, ManualList, Office, legislator, party, pdf_lines, us_house,
 )
-from .dates import Counts, Guide, first_tuesday_after_first_monday
+from .dates import Counts, Guide, first_tuesday_after_first_monday, mailed_to_every_voter
 
 COLUMNS = {
     "name on ballot": "name", "party or nonpartisan office": "party", "office sought": "office",
@@ -228,9 +228,9 @@ GUIDE = Guide(
     where_url="https://www.nvsos.gov/sos/elections",
     where_hint="Nevada Secretary of State's elections page; your county clerk publishes where and when you can vote",
     mail_label="More on voting by mail",
-    mail_eligibility="Every active voter is mailed a ballot. Mail it back postmarked by Election Day (it must arrive by "
-                     "5 p.m. on the fourth day after), or drop it off at any polling place or drop box by 7 p.m. on "
-                     "Election Day.",
+    mail_eligibility=mailed_to_every_voter("Mail it back postmarked by Election Day (it must arrive by 5 p.m. on the "
+                                           "fourth day after), or drop it off at any polling place or drop box by 7 "
+                                           "p.m. on Election Day."),
     mail_deadline="To still be mailed one, register or update your registration by ",
     local_office="Your county clerk",
     late_registration="After that, register online or at a polling place through Election Day",
