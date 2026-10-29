@@ -115,6 +115,14 @@
    "last_refresh": "2026-10-26T02:44:12+00:00",
    "races": 236
   },
+  "state_de": {
+   "answers": 2,
+   "answers_hash": "b0d42716342abf7307e0d95e9a30c70631e2d23b06881669d47596d79dc21bc7",
+   "candidates": 130,
+   "last_checked": "2026-10-29T22:37:41+00:00",
+   "last_refresh": "2026-10-29T22:37:41+00:00",
+   "races": 77
+  },
   "state_fl": {
    "answers": 1,
    "answers_hash": "6a9480fbe2485d74d3e517c9dac015a01557f0cace92e4ecb54f6e87ad0573bc",

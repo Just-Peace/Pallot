@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -88,7 +88,9 @@ cut down to its form's hidden fields, and the CSV its postback exports, without 
 legal names, addresses, phones, emails and websites. North Dakota's (state_nd) takes a Bismarck
 address, the Secretary of State's Candidate page cut down to its link to the candidate list, the
 grid's page cut down to its form's hidden fields, and the table its Search postback answers, each
-row cut down to its contest, term, district, county, name and party. A Census answer whose
+row cut down to its contest, term, district, county, name and party. Delaware's (state_de) takes a
+Georgetown address, and the Department of Elections' candidate list and declared write-ins, each
+sheet cut down to its office, name, party, status and dates. A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -108,6 +110,7 @@ import json
 import re
 import sys
 import time
+import zipfile
 from pathlib import Path
 from typing import Collection
 
@@ -128,7 +131,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, ks, md, me, ky, mi, mo, mt, nc, nd, ne, nj, nm, ok, ordinal, pa, pdf_lines, sc, sd, hi, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, de, fl, ga, grid, ia, il, in_, ks, md, me, ky, mi, mo, mt, nc, nd, ne, nj, nm, ok, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -202,6 +205,7 @@ MT_ADDRESS = ("helena", "1301 E 6th Ave, Helena, MT 59601")  # the Capitol: Lewi
 SD_ADDRESS = ("pierre", "500 E Capitol Ave, Pierre, SD 57501")  # the Capitol: Hughes County, District 24
 HI_ADDRESS = ("honolulu", "415 S Beretania St, Honolulu, HI 96813")  # the State Capitol: HI-1
 ND_ADDRESS = ("bismarck", "600 E Boulevard Ave, Bismarck, ND 58505")  # the State Capitol: Burleigh County
+DE_ADDRESS = ("georgetown", "39 The Circle, Georgetown, DE 19947")  # Town Hall: Sussex, Senate District 19 (up in 2026)
 OK_ADDRESS = ("tulsa", "175 E 2nd St, Tulsa, OK 74103")  # City Hall: Tulsa County, OK-1, its district judges
 # Oklahoma's list's counties kept in its fixture: the Tulsa address's and a district judge's with it (Pawnee),
 # enough districts for its minimum, Le Flore (written "LEFLORE"), and county offices and judges of each kind.
@@ -1267,6 +1271,64 @@ def record_nd(client: httpx.Client, key: str) -> None:
     record_members(client, "ND")
 
 
+def write_sheet(path: Path, rows: list[list[str]]) -> None:
+    """``rows`` as a spreadsheet (.xlsx) of one sheet, each cell its text inline: what sheet_rows reads."""
+    def cell(text: str) -> str:
+        return f'<c t="inlineStr"><is><t xml:space="preserve">{html.escape(text, quote=False)}</t></is></c>'
+
+    body = "".join(f"<row>{''.join(cell(text) for text in row)}</row>" for row in rows)
+    main = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    rels = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    package = "http://schemas.openxmlformats.org/package/2006"
+    parts = {
+        "[Content_Types].xml": f'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="{package}/content-types">'
+        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+        '<Default Extension="xml" ContentType="application/xml"/>'
+        '<Override PartName="/xl/workbook.xml" '
+        'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
+        '<Override PartName="/xl/worksheets/sheet1.xml" '
+        'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>',
+        "_rels/.rels": f'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="{package}/relationships">'
+        f'<Relationship Id="rId1" Type="{rels}/officeDocument" Target="xl/workbook.xml"/></Relationships>',
+        "xl/workbook.xml": f'<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="{main}" xmlns:r="{rels}"><sheets>'
+        '<sheet name="Sheet" sheetId="1" r:id="rId1"/></sheets></workbook>',
+        "xl/_rels/workbook.xml.rels": f'<?xml version="1.0" encoding="UTF-8"?><Relationships '
+        f'xmlns="{package}/relationships"><Relationship Id="rId1" Type="{rels}/worksheet" '
+        'Target="worksheets/sheet1.xml"/></Relationships>',
+        "xl/worksheets/sheet1.xml": f'<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="{main}"><sheetData>'
+        f"{body}</sheetData></worksheet>",
+    }
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as book:
+        for name, text in parts.items():
+            book.writestr(zipfile.ZipInfo(name, (2026, 1, 1, 0, 0, 0)), text)
+    path.write_bytes(out.getvalue())
+
+
+def record_de(client: httpx.Client, key: str) -> None:
+    """Delaware: DE_ADDRESS's Census answer; the Department of Elections' general election
+    candidate list and its declared write-ins, each sheet cut down to the columns the adapter reads
+    and the dates (no legal names, addresses, websites, emails or phones); the FEC's filers for the
+    U.S. Senate and the House seat, its legislators, and its members of Congress added to
+    officeholders_congress.json."""
+    name, address = DE_ADDRESS
+    record_census(client, name, address)
+    kept = ("County", "Office", "Withdrawal Date", "BallotName", "Party", "Filing Date", "DisplayedStatus")
+    for kind, fixture in (("fcddt", "state_de.xlsx"), ("wcddt", "state_de_write_ins.xlsx")):
+        time.sleep(2)
+        response = client.get(f"{de.LISTS}genl_{kind}_{FEC_CYCLE}.xlsx")
+        response.raise_for_status()
+        heading, *rows = sheet_rows(response.content)[1]
+        columns = [heading.index(column) for column in kept if column in heading]
+        write_sheet(FIXTURES / fixture, [[row[at] if at < len(row) else "" for at in columns] for row in [heading, *rows]])
+        print(f"{fixture}: {len(de.DeList.parse((FIXTURES / fixture).read_bytes()))} candidates, "
+              f"{len(de.DeList.parse(response.content))} as served")
+    record_filers(client, key, "DE")
+    record_filers(client, key, "DE", 0)
+    record_legislators(client, "de")
+    record_members(client, "DE")
+
+
 def record_in(client: httpx.Client, key: str) -> None:
     """Indiana: IN_ADDRESS's Census answer; the Election Division's home page, cut down to its title
     and its link to the year's general election candidate list; the list as served (it has no
@@ -1866,7 +1928,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1947,6 +2009,8 @@ def main(argv: list[str] | None = None) -> int:
             record_hi(client, config.fec_api_key)
         if only in (None, "state_nd"):
             record_nd(client, config.fec_api_key)
+        if only in (None, "state_de"):
+            record_de(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):

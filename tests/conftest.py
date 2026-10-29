@@ -83,6 +83,7 @@ ADDRESSES = {
     "pierre": "500 E Capitol Ave, Pierre, SD 57501",  # South Dakota's grid (states/sd.py); SD-0, SD 24, HD 24
     "honolulu": "415 S Beretania St, Honolulu, HI 96813",  # Hawaii's grid (states/hi.py); HI-1, SD 13, HD 25
     "bismarck": "600 E Boulevard Ave, Bismarck, ND 58505",  # North Dakota's grid (states/nd.py); ND-0, Burleigh
+    "georgetown": "39 The Circle, Georgetown, DE 19947",  # Delaware's spreadsheets (states/de.py); DE-0, SD 19, HD 37, Sussex
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -104,6 +105,7 @@ VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "sta
 ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
 NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
 IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
+DE_FILES = {"/genl_fcddt_2026.xlsx": "state_de.xlsx", "/genl_wcddt_2026.xlsx": "state_de_write_ins.xlsx"}
 MD_FILES = {"/2026/general_candidates/index.html": "state_md.html", "_statewide_candidatelist.csv": "state_md.csv"}
 MO_FILES = {"/elections": "state_mo.html", ".pdf": "state_mo.pdf"}
 SC_ELECTION = "22596"  # the November 3, 2026 general election's id on South Carolina's list of elections
@@ -546,6 +548,11 @@ class Upstream:
             if "Mozilla/" not in request.headers.get("user-agent", ""):
                 return httpx.Response(403)
             name = next((name for part, name in ME_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "elections.delaware.gov":  # each year's two sheets, by name; another is a 404
+            name = next((name for part, name in DE_FILES.items() if url.path == f"/candidates/candidatelist{part}"), None)
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
