@@ -480,6 +480,33 @@ def test_a_census_refusal_pauses_it_and_addresses_already_looked_up_still_work(c
     assert row["notice"].endswith(" after the address lookup refused a request; addresses already looked up still work.")
 
 
+def test_with_the_census_districts_lookup_down_they_come_from_tigerweb(client, upstream, logged_calls):
+    upstream.census_geographies_status = 502
+    ballot = get_ballot(client)
+    location = ballot["location"]
+    assert (location["geocoder"], location["county"], location["city"]) == ("census", "Travis", "Austin")
+    assert location["matched_address"].startswith("1100 CONGRESS AVE")
+    assert [ballot["districts"][k] for k in ("cd", "sd", "hd", "sboe")] == [10, 14, 49, 5]
+    assert ballot["districts"]["election_precinct"]["name"] == "300"  # the block point came through
+    assert upstream.count("/locations/onelineaddress") == 1 and upstream.count("tigerweb.geo.census.gov/") == 2
+    get_ballot(client)
+    assert logged_calls() == 0
+
+
+def test_an_address_the_census_plain_lookup_misses_still_goes_to_nominatim(client, upstream):
+    upstream.census_geographies_status = 502
+    assert get_ballot(client, "mopac")["location"]["geocoder"] == "nominatim"
+    assert upstream.count("/locations/onelineaddress") == 1 and upstream.count("/identify") == 1
+
+
+def test_with_the_census_and_tigerweb_both_down_the_lookup_fails_as_before(client, upstream):
+    upstream.census_geographies_status = 502
+    upstream.down.add("tigerweb.geo.census.gov")
+    response = client.post("/api/ballot", json={"address": ADDRESSES["capitol"]})
+    assert response.status_code == 502
+    assert response.json()["detail"] == "The address lookup isn't answering right now. Try again in a minute."
+
+
 def test_a_nominatim_refusal_pauses_it(client, upstream):
     upstream.refusing["nominatim.openstreetmap.org"] = 403
     assert client.post("/api/ballot", json={"address": ADDRESSES["mopac"]}).status_code == 502

@@ -7,10 +7,17 @@ by matching the end of the name. One request per district, by GEOID (the state's
 the district's number), or by the state and the district's name where it isn't a number (Alaska's
 lettered State Senate districts, Massachusetts's "Third Suffolk"), with the geometry simplified on
 the server to about 50 m. Only the state and the district are sent.
+
+When the geocoder's own districts lookup errors, census.py asks TIGERweb for them instead (place_at): one
+identify request at the point, across the layers the geocoder answers from, whose features carry the
+same fields its geographies do. Those answers are kept per point under POINTS, part of the address
+lookup rather than the map, so the District map switch doesn't turn them off.
 """
 
 from __future__ import annotations
 
+import asyncio
+import re
 from typing import Any
 
 from ..config import Ttls
@@ -20,6 +27,7 @@ from .census import STATE_FIPS, vintage
 from .sboe import Ring
 
 SOURCE = "tigerweb"
+POINTS = "census_points"  # the districts at a point, when the geocoder can't give them
 DESCRIPTION = (
     "Outlines of your U.S. House, State Senate and State House districts, in any state, for the map, from the US "
     "Census's TIGERweb."
@@ -33,6 +41,9 @@ LAYERS = {
     "sd": ("State Legislative Districts - Upper", 3),
     "hd": ("State Legislative Districts - Lower", 3),
 }
+# what census.parse_geographies reads, as words in a layer's name
+PLACE_LAYERS = ("States", "Counties", "Congressional Districts", "State Legislative Districts", "Incorporated Places",
+                "School Districts", "Census Blocks")
 
 
 def geoid(kind: str, number: int, state: str = "TX") -> str:
@@ -86,12 +97,68 @@ def rings(answer: dict[str, Any]) -> list[Ring] | None:
     return [[(float(x), float(y)) for x, y, *_ in ring] for ring in found if len(ring) >= 4] or None
 
 
+def place_layer_ids(index: dict[str, Any]) -> list[int]:
+    """Every layer parse_geographies reads, all vintages, and none of their "… Labels" twins (nor
+    the Virgin Islands' "Estates", which only end like "States")."""
+    wanted = re.compile(r"\b(?:" + "|".join(PLACE_LAYERS) + r")\b", re.IGNORECASE)
+    return sorted(
+        layer["id"] for layer in index.get("layers") or []
+        if not str(layer.get("name", "")).endswith(" Labels") and wanted.search(str(layer.get("name", "")))
+    )
+
+
+def identify_spec(layers: list[int], lat: float, lon: float) -> RequestSpec:
+    """The features of ``layers`` under the point, without their shapes. Identify wants a map's
+    extent and size, which with no tolerance only need to hold the point."""
+    x, y = f"{lon:.6f}", f"{lat:.6f}"
+    params = {
+        "geometry": f"{x},{y}",
+        "geometryType": "esriGeometryPoint",
+        "sr": "4326",
+        "layers": "all:" + ",".join(str(layer) for layer in layers),
+        "tolerance": "0",
+        "mapExtent": f"{lon - 0.001:.6f},{lat - 0.001:.6f},{lon + 0.001:.6f},{lat + 0.001:.6f}",
+        "imageDisplay": "100,100,96",
+        "returnGeometry": "false",
+        "f": "json",
+    }
+    return RequestSpec("GET", f"{SERVICE}/identify", params=params)
+
+
+def geographies(answer: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+    """Identify's features as the geocoder lists its geographies: each layer's name -> its features' fields."""
+    found: dict[str, list[dict[str, Any]]] = {}
+    for result in answer.get("results") or []:
+        found.setdefault(str(result.get("layerName", "")), []).append(result.get("attributes") or {})
+    return found
+
+
 class Tigerweb:
     def __init__(self, cache: HttpCache, ttl: Ttls):
         self.cache = cache
         self.ttl = ttl
         cache.pause_on(SOURCE, ttl.outlines_backoff)
         cache.check_answers(SOURCE, arcgis_error)
+        cache.pause_on(POINTS, ttl.geocode_backoff)
+        cache.check_answers(POINTS, arcgis_error)
+
+    async def place_at(self, lat: float, lon: float) -> dict[str, list[dict[str, Any]]]:
+        """The geographies at the point, as the geocoder's are keyed, empty outside the US. Raises
+        UpstreamError when TIGERweb can't be asked or answers an error."""
+        index = await self.cache.get_json(SOURCE, index_spec(), ttl=self.ttl.outlines)
+        got = await self.cache.get_json(
+            POINTS, identify_spec(place_layer_ids(index.value), lat, lon), ttl=self.ttl.geocode,
+            empty_ttl=self.ttl.geocode_miss, empty_at=("results",),
+        )
+        return geographies(got.value)
+
+    async def kept_at(self, lat: float, lon: float) -> bool:
+        """Whether place_at's answer for the point is stored, fresh or not, without asking anyone."""
+        index = await asyncio.to_thread(self.cache.peek, index_spec())
+        if index is None:
+            return False
+        spec = identify_spec(place_layer_ids(index.value), lat, lon)
+        return await asyncio.to_thread(self.cache.peek, spec) is not None
 
     async def outline(self, kind: str, number: int | str, state: str = "TX") -> list[Ring] | None:
         """The district's rings in lon/lat; None when TIGERweb has no such layer or district.

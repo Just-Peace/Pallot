@@ -19,7 +19,7 @@ from .ballot import Services
 from .config import Config
 from .http_cache import HttpCache
 from .settings import Sources, defaults
-from .sources import ca_key_dates, census, congress_gov, google, key_dates, nominatim, osm_tiles, sboe, suggestions
+from .sources import ca_key_dates, census, congress_gov, google, key_dates, nominatim, osm_tiles, sboe, suggestions, tigerweb
 from .sources.census import Census
 from .sources.congress_gov import CongressGov
 from .sources.county_precincts import CountyPrecincts
@@ -43,15 +43,15 @@ from .sources.wikidata import Wikidata
 from .states.adapters import ADAPTERS, open_lists
 
 MIN_INTERVAL = {
-    "nominatim": 1.0, "suggestions": 0.5, "fec": 0.1, "tigerweb": 0.25, "election_precincts": 1.0,
+    "nominatim": 1.0, "suggestions": 0.5, "fec": 0.1, "tigerweb": 0.25, tigerweb.POINTS: 0.25, "election_precincts": 1.0,
     "sboe": 1.0, "county_precincts": 0.25, "officeholders": 1.0, "wikidata": 1.0, congress_gov.SOURCE: 0.25,
     **{feed.source: 1.0 for feed in FEEDS},
     **{cls.source: 2.0 for cls in ADAPTERS.values()}, ca_key_dates.SOURCE: 2.0,
 }
 TRANSIENT = frozenset({suggestions.SOURCE, osm_tiles.SOURCE})  # no use as a fallback once expired, and capped
 SHORT_LIVED = frozenset({congress_gov.SOURCE})  # asked live and kept only while fresh: deleted at the first prune once expired
-MISSES = frozenset({census.SOURCE, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
-ADDRESSES = (census.SOURCE, nominatim.SOURCE, google.SOURCE)  # an answer per address, capped
+MISSES = frozenset({census.SOURCE, tigerweb.POINTS, nominatim.SOURCE, google.SOURCE})  # whose "not found" answers are pruned once expired
+ADDRESSES = (census.SOURCE, tigerweb.POINTS, nominatim.SOURCE, google.SOURCE)  # an answer per address, capped
 
 
 def prune(cache: HttpCache, config: Config, *, vacuum: bool = True) -> int:
@@ -112,11 +112,12 @@ async def open_services(
                  *make_feeds(cache, config.ttl)],
                 key=lambda found: found.label.lower(),
             )
+            tigerweb_map = Tigerweb(cache, config.ttl)
             svc = Services(
                 config=config,
                 sources=Sources(defaults((found.source for found in lists), config.sources_path)),
                 cache=cache,
-                census=Census(cache, config.ttl),
+                census=Census(cache, config.ttl, tigerweb_map),
                 nominatim=Nominatim(cache, config.ttl),
                 google=Google(cache, config.ttl, config.google_api_key, config.google_daily_max),
                 suggestions=Suggestions(cache, config.ttl, config.google_api_key, config.suggest_daily_max),
@@ -139,7 +140,7 @@ async def open_services(
                 wikidata=Wikidata(cache, config.ttl),
                 key_dates=key_dates.KeyDatesPage(cache, config.ttl),
                 ca_key_dates=ca_key_dates.CaKeyDatesPage(cache, config.ttl),
-                tigerweb=Tigerweb(cache, config.ttl),
+                tigerweb=tigerweb_map,
                 tiles=Tiles(cache, config.ttl),
                 states=open_lists(cache, config.ttl),
                 today=today,

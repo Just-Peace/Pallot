@@ -9,7 +9,7 @@ import respx
 
 from pallot.config import Ttls
 from pallot.http_cache import HttpCache, UpstreamError
-from pallot.sources import tigerweb
+from pallot.sources import census, tigerweb
 from pallot.sources.sboe import _inside
 
 from .conftest import capitol_point, get_ballot, load, switch
@@ -56,6 +56,19 @@ def test_a_district_named_or_lettered_is_asked_by_its_state_and_name():
     assert tigerweb.where("sd", "A", "AK") == "STATE='02' AND BASENAME='A'"
     assert tigerweb.where("hd", "Third Suffolk", "MA") == "STATE='25' AND BASENAME='Third Suffolk'"
     assert tigerweb.where("hd", "St. Mary's", "MD") == "STATE='24' AND BASENAME='St. Mary''s'"
+
+
+def test_the_layers_asked_at_a_point_are_those_the_geocoder_answers_from():
+    assert tigerweb.place_layer_ids(load("tigerweb_layers.json")) == [12, 14, 16, 18, 28, 54, 56, 58, 80, 82]  # not Estates
+
+
+def test_identify_reads_as_the_geocoders_geographies():
+    lat, lon = capitol_point()
+    place = census.parse_geographies(tigerweb.geographies(load("tigerweb_identify_capitol.json")), lat, lon, None)
+    expected = census.parse_geographies(load("census_capitol.json")["result"]["addressMatches"][0]["geographies"],
+                                        lat, lon, None)
+    assert place == expected and (place.state, place.county, place.cd, place.sd, place.hd) == ("TX", "Travis", 10, 14, 49)
+    assert tigerweb.geographies({"results": []}) == {}
 
 
 def test_rings():

@@ -301,6 +301,7 @@ class Upstream:
         self.down: set[str] = set()  # hosts that answer HTTP 500
         self.refusing: dict[str, int] = {}  # host -> the status it refuses every request with, e.g. 429
         self.census_coordinates: str | None = None  # the recorded address whose geographies the Census gives any point (default: MoPac's)
+        self.census_geographies_status: int | None = None  # e.g. 502 when only the geocoder's districts lookup is down
         self.fec_status: int | None = None  # e.g. 429 when over the hourly limit
         self.fec_keys: set[str | None] = set()  # the X-Api-Key values the FEC was sent
         self.fec_sent: list[str | None] = []  # the X-Api-Key of each request to the FEC, in order
@@ -389,6 +390,14 @@ class Upstream:
             return httpx.Response(self.refusing[url.host])
         params = url.params
         if url.host == "geocoding.geo.census.gov":
+            if "/locations/" in url.path:
+                found = self._addresses.get(params["address"])
+                matches = load(f"census_{found}.json")["result"]["addressMatches"] if found else []
+                return httpx.Response(200, json={"result": {"addressMatches": [
+                    {k: v for k, v in match.items() if k != "geographies"} for match in matches
+                ]}})
+            if self.census_geographies_status:
+                return httpx.Response(self.census_geographies_status)
             if url.path.endswith("/onelineaddress"):
                 name = self._addresses.get(params["address"])
                 if name == "hd93":
@@ -545,6 +554,8 @@ class Upstream:
                 return httpx.Response(200, json=self.tigerweb_answer)
             if url.path.endswith("/MapServer"):
                 return _file("tigerweb_layers.json")
+            if url.path.endswith("/identify"):
+                return _file("tigerweb_identify_capitol.json")  # whatever the point
             self.tigerweb_wheres.append(params["where"])
             geoid = re.fullmatch(r"GEOID='(\d+)'", params["where"])
             if not geoid:

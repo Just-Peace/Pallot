@@ -51,6 +51,15 @@ def test_a_voter_card_gives_the_same_ballot_as_the_address(client, upstream):
     assert (location["county"], location["city"]) == ("Travis", "Austin")
 
 
+def test_with_the_census_districts_lookup_down_a_voter_card_asks_tigerweb(client, upstream, logged_calls):
+    upstream.census_geographies_status = 502
+    card = card_ballot(client)
+    assert [card["districts"][k] for k in ("cd", "sd", "hd", "sboe")] == [10, 14, 49, 5]
+    assert upstream.count("/identify") == 3 and card["location"]["city"] == "Austin"
+    card_ballot(client)
+    assert logged_calls() == 0
+
+
 def test_a_second_lookup_of_the_same_precinct_makes_no_calls(client, upstream, logged_calls):
     capitol_everywhere(upstream)
     first = card_ballot(client)
