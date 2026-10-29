@@ -1,5 +1,5 @@
 """States' official lists of candidates (pallot/states): reading North Carolina's, Michigan's,
-Pennsylvania's, Florida's, Virginia's and California's, and the ballots made from them."""
+Pennsylvania's, Florida's and California's, and the ballots made from them."""
 
 from __future__ import annotations
 
@@ -21,7 +21,6 @@ from pallot.states.fl import FlList
 from pallot.states.mi import MiList
 from pallot.states.nc import NcList
 from pallot.states.pa import PaList
-from pallot.states.va import VaList
 
 from .bundling import answers, build, came_with, lifetimes
 from .conftest import FIXTURES, candidate_names, find_race, get_ballot, switch
@@ -209,21 +208,9 @@ def test_floridas_list_is_asked_for_with_its_download_form():
     assert asked.key != RequestSpec("POST", fl.URL, form=fl.form(dt.date(2028, 11, 7)), as_text=True).key
 
 
-def test_virginias_list_has_its_races_for_congress_and_their_incumbents():
-    filings = VaList.parse(recorded("state_va.html"))
-    assert {f.day for f in filings} == {"2026-11-03"} and {f.group for f in filings} == {"federal"}
-    fourth = sorted((f for f in filings if f.district == "4"), key=lambda f: f.order)
-    assert [(f.name, f.party, f.party_name, f.incumbent) for f in fourth] == [
-        ("Jennifer L. McClellan", "D", None, True), ('Robert P. "Family Man" Murray, Jr.', "R", None, False),
-        ('Joan E. "Andrews" Bell', None, "Independent", False)]
-    with pytest.raises(ValueError):
-        VaList.parse("<html><body><h1>Page not found</h1></body></html>")
-
-
 @pytest.mark.parametrize("source, host, address", [
     ("state_pa", "www.pavoterservices.pa.gov", "harrisburg"),
     ("state_fl", "dos.elections.myflorida.com", "tallahassee"),
-    ("state_va", "www.elections.virginia.gov", "richmond"),
     ("state_ca", "elections.cdn.sos.ca.gov", "losangeles"),
 ])
 def test_each_states_bundled_list_serves_a_lookup_without_asking(tmp_path, upstream, make_app, source, host, address):
@@ -262,18 +249,6 @@ def test_a_florida_ballot_has_its_courts_retention_for_the_voters_county(client,
     assert [c["name"] for c in governor["candidates"] if c["write_in"]] == ["Kathy Anderson", "Erik Morris"]
     assert "POST dos.elections.myflorida.com/candidates/extractCanList.asp" in upstream.calls
     get_ballot(client, "tallahassee")
-    assert logged_calls() == 0
-
-
-def test_a_virginia_ballot_has_its_races_for_congress_from_its_list(client, logged_calls):
-    ballot = get_ballot(client, "richmond")
-    assert ballot["coverage"] == {**ballot["coverage"], "ballot": "list", "districts": ["cd", "sd", "hd"],
-                                  "labels": {"hd": "House of Delegates"}}
-    assert (ballot["districts"]["sd"], ballot["districts"]["hd"]) == (14, 78)  # for the map; its list has only Congress
-    assert [race["name"] for race in ballot["races"]] == ["U.S. Senator", "U.S. Representative District 4"]
-    house = find_race(ballot, "U.S. Representative District 4")
-    assert [c["incumbent"] for c in house["candidates"]] == [True, False, False]
-    get_ballot(client, "richmond")
     assert logged_calls() == 0
 
 

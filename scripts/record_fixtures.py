@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -27,8 +27,9 @@ lists of this cycle's elections (six pages) and five seats' filers, and add thos
 members of Congress to the seat holders. The states with an official list (state_lists) take an
 address each, North Carolina's list (cut down to four counties and the columns read),
 Michigan's report, Pennsylvania's and Florida's lists (cut down to the address's races and the
-fields read) and Virginia's federal list (without its contact columns), their seats' FEC
-filers, and their legislators. California's (state_ca) takes a Los Angeles address and its
+fields read) and Virginia's (state_va records it alone: its Candidates & Referendums page cut down
+to its links, the election's list of all offices, and 2023's General Assembly list, without their
+contact columns), their seats' FEC filers, and their legislators. California's (state_ca) takes a Los Angeles address and its
 certified list, a 14 MB PDF (--pdf a copy you downloaded), cut down to a small PDF of the pages
 that address needs, and the table of its SOS's election dates page. Nevada's (state_nv) takes a
 Las Vegas address and the certified list saved by hand in manual/state_nv (--pdf another copy),
@@ -155,6 +156,10 @@ IL_ADDRESS = ("chicago", "121 N LaSalle St, Chicago, IL 60602")  # City Hall: Co
 AK_ADDRESS = ("anchorage", "632 W 6th Ave, Anchorage, AK 99501")  # City Hall: Senate District I, up in 2026
 ME_ADDRESS = ("bangor", "73 Harlow St, Bangor, ME 04401")  # City Hall: ME-2, ranked-choice in 2026
 NE_ADDRESS = ("omaha", "4917 Underwood Ave, Omaha, NE 68132")  # Dundee, Douglas County: NE-2, Legislature District 8
+# Virginia's newest odd-year list still served, for both chambers: 2025's (the House of Delegates
+# alone) answered 404 by 2026-10-29, and 2023's moved to the previous candidate lists.
+VA_ODD_YEAR = ("https://www.elections.virginia.gov/casting-a-ballot/previous-candidate-lists/"
+               "2023-november-general-election---ga-candidates/")
 # What a voter might have typed so far: a street that's in Austin, Houston and elsewhere, and
 # a street that's only in Austin.
 SUGGEST = {"congress": "1100 congress ave", "duval": "4512 duval st"}
@@ -407,20 +412,54 @@ def record_fl(client: httpx.Client, place: census.Place) -> None:
     print(f"state_fl.tsv: {len(rows):,} rows")
 
 
+def va_list(text: str, locality: str | None = None) -> tuple[str, int]:
+    """One of Virginia's lists as a page with only its heading and the columns states/va.py reads
+    (no candidates' emails, phones or addresses); with ``locality``, the list of all offices cut
+    down to the first row of each candidate for an office it reads, and every row of that
+    locality. The page and its rows."""
+    reader = Rows(cells=("td", "th"))
+    reader.feed(text)
+    header = next(i for i, row in enumerate(reader.rows) if "Office Title" in row and "Candidate Name" in row)
+    names = reader.rows[header]
+    read = [names.index(name) for options in va.COLUMNS.values() for name in options if name in names]
+    if locality:
+        read.insert(0, names.index("Locality"))
+    rows, seen = [[names[i] for i in read]], set()
+    for row in reader.rows[header + 1:]:
+        if len(row) < len(names):
+            continue
+        key = (row[names.index("Office Title")], row[names.index("Candidate Name")])
+        if locality and row[names.index("Locality")] != locality and (key in seen or not va._race(*key[:1], "1")):
+            continue
+        seen.add(key)
+        rows.append([row[i] for i in read])
+    heading = " ".join(re.search(r"<h1[^>]*>.*?</h1>", text, re.S).group(0).split())
+    table = "\n".join("<tr>" + "".join(f"<td>{html.escape(cell)}</td>" for cell in row) + "</tr>" for row in rows)
+    return f"<html><body>{heading}\n<table>\n{table}\n</table></body></html>\n", len(rows) - 1
+
+
 def record_va(client: httpx.Client) -> None:
-    """Virginia's federal list, as a page with only its title and the table's first columns
-    (no candidates' emails, phones or addresses)."""
-    day = general_day(dt.date(FEC_CYCLE, 1, 1))
-    response = client.get(va.URL.format(day=day.day, year=day.year))
+    """Virginia: the Department of Elections' Candidates & Referendums page cut down to its title,
+    heading and links to the general election's lists; the election's list of all offices (va_list),
+    cut down to each candidate's first row and Richmond's; and VA_ODD_YEAR's list for the General
+    Assembly, cut down the same way."""
+    response = client.get(va.PAGE)
     response.raise_for_status()
-    reader = Rows()
-    reader.feed(response.text)
-    heading = re.search(r"<h1>[^<]+</h1>", response.text).group(0)
-    rows = "\n".join("<tr>" + "".join(f"<td>{html.escape(cell)}</td>" for cell in row[:len(va.COLUMNS)]) + "</tr>"
-                     for row in reader.rows if len(row) >= len(va.COLUMNS))
-    (FIXTURES / "state_va.html").write_text(f"<html><body>{heading}\n<table>\n{rows}\n</table></body></html>\n",
-                                            encoding="utf-8", newline="")
-    print(f"state_va.html: {len(reader.rows):,} rows")
+    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
+    heading = " ".join(re.search(r"<h1[^>]*>.*?</h1>", response.text, re.S).group(0).split())
+    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*-gen-elect-[^\"]*\".*?</a>", response.text, re.S)]
+    (FIXTURES / "state_va.html").write_text(
+        f"<html><head>{title}</head><body>{heading}\n" + "\n".join(f"<p>{a}</p>" for a in anchors) + "\n</body></html>\n",
+        encoding="utf-8", newline="")
+    day = general_day(dt.date(FEC_CYCLE, 1, 1))
+    for url, fixture, locality in ((va.read(va.links(response.text)["links"][day.isoformat()])[0], "state_va_all.html",
+                                    "RICHMOND CITY"), (VA_ODD_YEAR, "state_va_2023.html", None)):
+        time.sleep(2)
+        response = client.get(url)
+        response.raise_for_status()
+        page, rows = va_list(response.text, locality)
+        (FIXTURES / fixture).write_text(page, encoding="utf-8", newline="")
+        print(f"{fixture}: {rows:,} rows, {len(va.VaList.parse(page))} candidates")
 
 
 def record_state_lists(client: httpx.Client, key: str) -> None:
@@ -1248,7 +1287,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "grid", "polls", "key_dates", "officeholders",
                                            "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1273,6 +1312,8 @@ def main(argv: list[str] | None = None) -> int:
             record_nationwide(client, config.fec_api_key)
         if only in (None, "state_lists"):
             record_state_lists(client, config.fec_api_key)
+        if only == "state_va":
+            record_va(client)
         if only in (None, "state_ca"):
             record_ca(client, config.fec_api_key, args.pdf if only == "state_ca" else None)
         if only in (None, "state_nv"):

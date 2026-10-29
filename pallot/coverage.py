@@ -46,7 +46,7 @@ COVERED = {
     "MI": LIST,
     "PA": LIST,
     "FL": LIST,
-    "VA": LIST,  # only its federal list in an even year
+    "VA": LIST,  # Congress in an even year; the General Assembly and statewide offices in an odd one
     "CA": LIST,
     "AZ": LIST,  # its State Senate and State House districts are both the Legislative District
     "NV": LIST,
