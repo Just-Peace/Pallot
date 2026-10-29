@@ -18741,5 +18741,146 @@
     "url": "https://elfreth.house.gov"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "H001089",
+   "fec": [
+    "S8MO00160"
+   ],
+   "govtrack": 412840,
+   "opensecrets": "N00041620",
+   "wikipedia": "Josh Hawley",
+   "wikidata": "Q23020745",
+   "ballotpedia": "Josh Hawley",
+   "lis": "S399",
+   "google_entity_id": "kg:/g/11bwy_95zy",
+   "votesmart": 169716,
+   "icpsr": 41901,
+   "pictorial": 13427
+  },
+  "name": {
+   "first": "Joshua",
+   "nickname": "Josh",
+   "last": "Hawley",
+   "official_full": "Josh Hawley"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1979-12-31"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "MO",
+    "class": 1,
+    "party": "Republican",
+    "state_rank": "senior",
+    "url": "https://www.hawley.senate.gov",
+    "address": "115 Russell Senate Office Building Washington DC 20510",
+    "office": "115 Russell Senate Office Building",
+    "phone": "202-224-6154",
+    "contact_form": "https://www.hawley.senate.gov/contact-senator-hawley"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "MO",
+    "class": 1,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.hawley.senate.gov",
+    "contact_form": "https://www.hawley.senate.gov/contact-senator-hawley",
+    "address": "381 Russell Senate Office Building Washington DC 20510",
+    "office": "381 Russell Senate Office Building",
+    "phone": "202-224-6154"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "S001227",
+   "lis": "S420",
+   "fec": [
+    "S2MO00544"
+   ],
+   "govtrack": 456875,
+   "opensecrets": "N00048414",
+   "wikidata": "Q5387455",
+   "wikipedia": "Eric Schmitt",
+   "ballotpedia": "Eric Schmitt",
+   "votesmart": 104474,
+   "pictorial": 13416
+  },
+  "name": {
+   "first": "Eric",
+   "middle": "Stephen",
+   "last": "Schmitt",
+   "official_full": "Eric Schmitt"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1975-06-20"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "MO",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.schmitt.senate.gov",
+    "contact_form": "https://www.schmitt.senate.gov/contact/",
+    "address": "404 Russell Senate Office Building Washington DC 20510",
+    "office": "404 Russell Senate Office Building",
+    "phone": "202-224-5721"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "O000177",
+   "fec": [
+    "H8MO09146",
+    "H4MO03221"
+   ],
+   "govtrack": 456998,
+   "opensecrets": "N00030025",
+   "wikipedia": "Bob Onder",
+   "wikidata": "Q27064117",
+   "google_entity_id": "kg:/g/11c1tl91ch",
+   "votesmart": 66719,
+   "ballotpedia": "Bob Onder"
+  },
+  "name": {
+   "first": "Robert",
+   "middle": "F.",
+   "last": "Onder",
+   "suffix": "Jr.",
+   "official_full": "Robert F. Onder, Jr."
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1962-01-06"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MO",
+    "district": 3,
+    "party": "Republican",
+    "address": "1113 Longworth House Office Building Washington DC 20515-2503",
+    "office": "1113 Longworth House Office Building",
+    "phone": "202-225-2956",
+    "url": "https://onder.house.gov"
+   }
+  ]
  }
 ]

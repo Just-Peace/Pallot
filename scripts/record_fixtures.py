@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -65,7 +65,10 @@ candidate list, and the list's grid page for the election without contact detail
 takes a Fort Wayne address, the Election Division's home page cut down to its link to the
 candidate list, and the spreadsheet it links, as served (it has no contact details). Maryland's (state_md)
 takes an Annapolis address, the State Board of Elections' general candidate listings page cut down to
-its link to the statewide list, and that CSV with its contact columns emptied. A Census answer whose
+its link to the statewide list, and that CSV with its contact columns emptied. Missouri's (state_mo)
+takes a Jefferson City address, with its U.S. House district on the 2022 map from TIGERweb, the
+Secretary of State's elections page cut down to its links, and the certification it links as its
+text alone (it has no contact details). A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -105,7 +108,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, md, me, mi, nc, ne, nj, nm, ordinal, pa, pdf_lines, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, md, me, mi, mo, nc, ne, nj, nm, ordinal, pa, pdf_lines, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -170,6 +173,8 @@ NE_ADDRESS = ("omaha", "4917 Underwood Ave, Omaha, NE 68132")  # Dundee, Douglas
 WA_ADDRESS = ("seattle", "600 4th Ave, Seattle, WA 98104")  # City Hall: King County
 IN_ADDRESS = ("fortwayne", "200 E Berry St, Fort Wayne, IN 46802")  # Citizens Square: Allen County
 MD_ADDRESS = ("annapolis", "100 State Cir, Annapolis, MD 21401")  # the State House: Anne Arundel County
+# The Capitol, Cole County: MO-3 on Missouri's 2022 map, in force in 2026, and MO-5 on the 2025 one the geocoder gives.
+MO_ADDRESS = ("jeffersoncity", "201 W Capitol Ave, Jefferson City, MO 65101")
 NM_ADDRESS = ("albuquerque", "400 Marquette Ave NW, Albuquerque, NM 87102")  # the Government Center: NM-1
 # Virginia's newest odd-year list still served, for both chambers: 2025's (the House of Delegates
 # alone) answered 404 by 2026-10-29, and 2023's moved to the previous candidate lists.
@@ -1116,6 +1121,62 @@ def record_md(client: httpx.Client, key: str) -> None:
     record_members(client, "MD", (None, place.cd))
 
 
+def mo_lines(raw: bytes) -> list[list[str]]:
+    """Missouri's certification as its text alone, without its emblems: pdf_lines' lines, each run
+    of blank lines made one, in pages of 80 lines, in the characters text_pdf can write."""
+    lines: list[str] = []
+    for line in pdf_lines(raw):
+        if line.strip() or (lines and lines[-1].strip()):
+            lines.append(line.encode("latin-1", "replace").decode("latin-1"))
+    return [lines[at:at + 80] for at in range(0, len(lines), 80)]
+
+
+def record_mo(client: httpx.Client, key: str) -> None:
+    """Missouri: MO_ADDRESS's Census answer, and its U.S. House district on the map in force from
+    TIGERweb (the service's layers cut down to its congressional districts, and its identify
+    answer); the Secretary of State's elections page cut down to its title and its links to the
+    certified candidates (the one left in an HTML comment too); the certification as its text alone
+    (mo_lines; it has no contact details); the address's FEC filers for U.S. House, its
+    legislators, and its members of Congress added to officeholders_congress.json."""
+    name, address = MO_ADDRESS
+    place = record_census(client, name, address)
+    service = tigerweb.GOVERNING["MO"]
+    response = client.get(service, params={"f": "json"})
+    response.raise_for_status()
+    index = response.json()
+    save("tigerweb_layers_mo.json", {"layers": [{"id": layer["id"], "name": layer["name"]} for layer in index["layers"]
+                                                if "Congressional Districts" in layer["name"]]})
+    spec = tigerweb.identify_spec([tigerweb.layer_id(index, "cd")], place.lat, place.lon, service)
+    response = client.get(spec.url, params=spec.params)
+    response.raise_for_status()
+    save(f"tigerweb_identify_{name}.json", response.json())
+    cd = census.parse_geographies(tigerweb.geographies(response.json()), place.lat, place.lon, None).cd
+    print(f"{name}: MO-{cd} on the map in force, MO-{place.cd} on the geocoder's")
+    time.sleep(2)
+    response = client.get(mo.PAGE)
+    response.raise_for_status()
+    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
+    anchors = []
+    for found in re.finditer(r"<a [^>]*href=\"[^\"]*Candidates[^\"]*\.pdf\".*?</a>", response.text, re.S):
+        before = response.text[:found.start()]
+        commented = before.rfind("<!--") > before.rfind("-->")
+        anchor = " ".join(found.group(0).split())
+        anchors.append(f"<!--{anchor}-->" if commented else anchor)
+    (FIXTURES / "state_mo.html").write_text(
+        f"<html><head>{title}</head><body>\n" + "\n".join(f"<div>{a}</div>" for a in anchors) + "\n</body></html>\n",
+        encoding="utf-8", newline="")
+    url = mo.links(response.text)["links"][str(FEC_CYCLE)]
+    time.sleep(2)
+    response = client.get(url)
+    response.raise_for_status()
+    (FIXTURES / "state_mo.pdf").write_bytes(text_pdf(mo_lines(response.content)))
+    print(f"state_mo.pdf: {len(mo.MoList.parse((FIXTURES / 'state_mo.pdf').read_bytes()))} candidates, "
+          f"{len(mo.MoList.parse(response.content))} as served")
+    record_filers(client, key, "MO", cd)
+    record_legislators(client, "mo")
+    record_members(client, "MO", (None, cd))
+
+
 GA_PLACES = {
     ("Federal", ""), ("State Race", ""), ("Statewide", ""), ("Countywide", "FULTON"), ("County Level", "FULTON"),
     ("Countywide", "TOWNS"), ("Countywide", "LAMAR"), ("Countywide", "WASHINGTON"), ("Countywide", "FORSYTH"),
@@ -1449,7 +1510,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1512,6 +1573,8 @@ def main(argv: list[str] | None = None) -> int:
             record_in(client, config.fec_api_key)
         if only in (None, "state_md"):
             record_md(client, config.fec_api_key)
+        if only in (None, "state_mo"):
+            record_mo(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):

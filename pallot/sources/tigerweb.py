@@ -12,6 +12,10 @@ When the geocoder's own districts lookup errors, census.py asks TIGERweb for the
 identify request at the point, across the layers the geocoder answers from, whose features carry the
 same fields its geographies do. Those answers are kept per point under POINTS, part of the address
 lookup rather than the map, so the District map switch doesn't turn them off.
+
+A state whose U.S. House map for this election isn't the Current service's (GOVERNING) has its
+district, and its outline, from the service that has the map in force: one more identify request
+at the address's point, kept the same way.
 """
 
 from __future__ import annotations
@@ -33,6 +37,12 @@ DESCRIPTION = (
     "Census's TIGERweb."
 )
 SERVICE = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer"
+# States whose U.S. House map in force differs from the Current service's -> the service with it.
+# Missouri's 2025 map (the Current "120th Congressional Districts") was held back by a referendum
+# petition, which goes to its voters on November 3, 2026 as Proposition A; the Missouri Supreme
+# Court ordered the 2026 election held on its 2022 map, the "119th Congressional Districts" of the
+# ACS 2024 service. Look again once the referendum is decided.
+GOVERNING = {"MO": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_ACS2024/MapServer"}
 SIMPLIFY_DEG = 0.0005  # about 50 m: shared boundaries still meet when zoomed to a State House district
 
 # kind -> the end of its layer's name, and the width of the district number in its GEOID
@@ -69,9 +79,14 @@ def layer_id(index: dict[str, Any], kind: str) -> int | None:
     return max(layers, key=lambda layer: vintage(layer["name"]))["id"]
 
 
-def index_spec() -> RequestSpec:
+def index_spec(service: str = SERVICE) -> RequestSpec:
     """The service's layers, to find each kind's by name."""
-    return RequestSpec("GET", SERVICE, params={"f": "json"})
+    return RequestSpec("GET", service, params={"f": "json"})
+
+
+def service_of(kind: str, state: str) -> str:
+    """The service with ``state``'s map in force for a kind of district."""
+    return GOVERNING.get(state, SERVICE) if kind == "cd" else SERVICE
 
 
 def outline_spec(layer: int, kind: str, number: int | str, state: str = "TX") -> RequestSpec:
@@ -85,7 +100,7 @@ def outline_spec(layer: int, kind: str, number: int | str, state: str = "TX") ->
         "geometryPrecision": "5",
         "f": "json",
     }
-    return RequestSpec("GET", f"{SERVICE}/{layer}/query", params=params)
+    return RequestSpec("GET", f"{service_of(kind, state)}/{layer}/query", params=params)
 
 
 def rings(answer: dict[str, Any]) -> list[Ring] | None:
@@ -107,7 +122,7 @@ def place_layer_ids(index: dict[str, Any]) -> list[int]:
     )
 
 
-def identify_spec(layers: list[int], lat: float, lon: float) -> RequestSpec:
+def identify_spec(layers: list[int], lat: float, lon: float, service: str = SERVICE) -> RequestSpec:
     """The features of ``layers`` under the point, without their shapes. Identify wants a map's
     extent and size, which with no tolerance only need to hold the point."""
     x, y = f"{lon:.6f}", f"{lat:.6f}"
@@ -122,7 +137,7 @@ def identify_spec(layers: list[int], lat: float, lon: float) -> RequestSpec:
         "returnGeometry": "false",
         "f": "json",
     }
-    return RequestSpec("GET", f"{SERVICE}/identify", params=params)
+    return RequestSpec("GET", f"{service}/identify", params=params)
 
 
 def geographies(answer: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
@@ -152,6 +167,23 @@ class Tigerweb:
         )
         return geographies(got.value)
 
+    async def house_at(self, state: str, lat: float, lon: float) -> dict[str, list[dict[str, Any]]] | None:
+        """The U.S. House district at the point on ``state``'s map in force, as the geocoder keys its
+        geographies (empty off the map); None for a state whose map is the Current service's. Raises
+        UpstreamError when TIGERweb can't be asked or answers an error."""
+        service = GOVERNING.get(state)
+        if service is None:
+            return None
+        index = await self.cache.get_json(SOURCE, index_spec(service), ttl=self.ttl.outlines)
+        layer = layer_id(index.value, "cd")
+        if layer is None:
+            return {}
+        got = await self.cache.get_json(
+            POINTS, identify_spec([layer], lat, lon, service), ttl=self.ttl.geocode,
+            empty_ttl=self.ttl.geocode_miss, empty_at=("results",),
+        )
+        return geographies(got.value)
+
     async def kept_at(self, lat: float, lon: float) -> bool:
         """Whether place_at's answer for the point is stored, fresh or not, without asking anyone."""
         index = await asyncio.to_thread(self.cache.peek, index_spec())
@@ -163,7 +195,7 @@ class Tigerweb:
     async def outline(self, kind: str, number: int | str, state: str = "TX") -> list[Ring] | None:
         """The district's rings in lon/lat; None when TIGERweb has no such layer or district.
         Raises UpstreamError when it can't be asked, or answers an error, and nothing is cached."""
-        index = await self.cache.get_json(SOURCE, index_spec(), ttl=self.ttl.outlines)
+        index = await self.cache.get_json(SOURCE, index_spec(service_of(kind, state)), ttl=self.ttl.outlines)
         layer = layer_id(index.value, kind)
         if layer is None:
             return None

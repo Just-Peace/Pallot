@@ -1,8 +1,9 @@
 """US Census geocoder: address -> coordinates, county, congressional and legislative districts.
 
 Its "Current" vintage already carries the districts used on 2026 ballots (the 120th
-Congress map and the 2026 state legislative districts). Layer names change between
-vintages, so they are matched by name rather than by layer id.
+Congress map and the 2026 state legislative districts); a state whose U.S. House map in force
+isn't that one (Missouri's) has its district from TIGERweb instead (tigerweb.GOVERNING).
+Layer names change between vintages, so they are matched by name rather than by layer id.
 
 The districts lookup (/geographies) can be down while the rest of the Census answers. Then an
 address's point comes from its plain lookup (/locations), and the districts at a point from the
@@ -14,7 +15,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from ..config import Ttls
@@ -71,6 +72,23 @@ class Census:
 
     async def geocode(self, address: str) -> Place | None:
         """The address's place. An address placed by the fallback once is placed by it again, with no call."""
+        return await self._in_force(await self._geocode(address))
+
+    async def at(self, lat: float, lon: float) -> Place | None:
+        """The place at the point. A point placed by TIGERweb once is placed by it again, with no call."""
+        return await self._in_force(await self._at(lat, lon))
+
+    async def _in_force(self, place: Place | None) -> Place | None:
+        """``place`` with its U.S. House district on its state's map in force, where that isn't the
+        geocoder's (tigerweb.GOVERNING: Missouri's in 2026)."""
+        if place is None or not place.state:
+            return place
+        found = await self.tigerweb.house_at(place.state, place.lat, place.lon)
+        if found is None:
+            return place
+        return replace(place, cd=_congressional(_layer(found, "Congressional Districts")))
+
+    async def _geocode(self, address: str) -> Place | None:
         normalized = normalize_address(address)
         spec = RequestSpec("GET", f"{BASE}/onelineaddress", params={"address": normalized, **PARAMS})
         plain = RequestSpec("GET", f"{LOCATIONS}/onelineaddress",
@@ -90,9 +108,8 @@ class Census:
         coords = match.get("coordinates") or {}
         return parse_geographies(match.get("geographies") or {}, coords["y"], coords["x"], match.get("matchedAddress"))
 
-    async def at(self, lat: float, lon: float) -> Place | None:
-        """The place at the point. A point placed by TIGERweb once is placed by it again, with no call."""
-        spec = RequestSpec("GET", f"{BASE}/coordinates", params={"x": f"{lon:.6f}", "y": f"{lat:.6f}", **PARAMS})
+    async def _at(self, lat: float, lon: float) -> Place | None:
+        spec =RequestSpec("GET", f"{BASE}/coordinates", params={"x": f"{lon:.6f}", "y": f"{lat:.6f}", **PARAMS})
         if not await self._kept(spec) and await self.tigerweb.kept_at(lat, lon):
             return await self._at_tigerweb(lat, lon, None)
         try:
