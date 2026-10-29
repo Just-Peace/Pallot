@@ -19,7 +19,7 @@ How much of a ballot Pallot has depends on the state:
 | **Statewide races** | Ohio | Its statewide races (Governor, the other statewide offices, the Supreme Court and the U.S. Senate) from the Secretary of State's sample ballot, your U.S. House race from the FEC (Unverified, as below), and its key dates. The Legislature's, county and local races aren't shown |
 | **Congress only** | Every other state, and DC | Your U.S. Senate and U.S. House races, from the candidates who filed with the FEC and raised $5,000 or more. These aren't confirmed: someone who lost a primary or dropped out may still be listed, so each is marked **Unverified** |
 
-Everywhere, each candidate gets the money, endorsements, polls and profiles the sources have for them.
+Everywhere, each candidate gets the money, endorsements, polls and profiles the sources have for them, and Your districts names your U.S. House, State Senate and State House districts, as your state calls them (State Assembly, House of Delegates, Nebraska's one Legislature), with a map that outlines them. DC has only its Delegate's district.
 
 Some election offices' sites turn away programs like Pallot, so their lists are saved by hand from the site and come with Pallot: Arizona's, Iowa's, Nevada's, New York's and Wisconsin's, Georgia's list of qualified candidates (its party nominees come from its election results site, which Pallot asks itself), and Ohio's sample ballot, typed in. Settings says when each was imported.
 

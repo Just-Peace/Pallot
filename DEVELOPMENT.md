@@ -104,7 +104,7 @@ Each source contributes `SourceCard`s; the page draws them by `kind` (`money`, `
 A state goes from Congress only (the FEC's filers) to its own official list with:
 
 1. An adapter in `pallot/states/` that reads the list into one filing per candidate in a race, leaving out the withdrawn and disqualified, asked for through `HttpCache`, and its class in `ADAPTERS` (`states/adapters.py`). Its row in Settings and its bundle follow from that. Build it from the shared pieces in `states/__init__.py`: an `Office` per race (`us_senate`, `us_house`, `legislator`, `statewide`), `require` to refuse a list short of its races, `index_key` and `follow` for a list found through an index page first, `postback` for an ASP.NET form.
-2. Its entry in `COVERED` (`coverage.py`): which districts its races need.
+2. Its entry in `COVERED` (`coverage.py`): which districts its races need. Every state already has its State Senate and State House districts, named in `CHAMBERS` where the state calls them something else.
 3. Its `Guide` in `states/key_dates.py`, which gives "When to vote" and the calendar file, and its dates: a `Counts` when each deadline is a count of days before Election Day, a function in `RULES` when it isn't, or its office's page in `PAGES`.
 4. Its switch in `pallot/sources.toml`.
 5. Its fixture in `record_fixtures.py` (its own `--only state_<st>`, built from `record_census`, `record_filers`, `record_legislators` and `record_members`), and tests of the adapter and of a ballot there.

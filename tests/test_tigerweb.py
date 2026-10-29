@@ -204,6 +204,19 @@ def test_another_states_districts_are_asked_with_its_state(client, upstream):
     assert upstream.tigerweb_wheres[-1] == "GEOID='06007'"
 
 
+def test_each_state_names_its_chambers_and_draws_only_those_it_has(client, upstream):
+    maryland = outlines(client, state="MD", cd=7, sd=40, hd="12A")
+    assert maryland["notes"] == ["No outline found for U.S. House District 7.", "No outline found for State Senate District 40.",
+                                 "No outline found for House of Delegates District 12A."]
+    assert "STATE='24' AND BASENAME='12A'" in upstream.tigerweb_wheres
+    asked = len(upstream.tigerweb_wheres)
+    nebraska = outlines(client, state="NE", cd=2, sd=9, hd=9)
+    assert nebraska["notes"] == ["No outline found for U.S. House District 2.", "No outline found for Legislature District 9."]
+    dc = outlines(client, state="DC", cd=0, sd=2, hd=2)
+    assert dc["notes"] == ["No outline found for U.S. House (at large)."]
+    assert sorted(upstream.tigerweb_wheres[asked:]) == ["GEOID='1198'", "GEOID='31009'", "GEOID='3102'"]
+
+
 @pytest.mark.parametrize("numbers", [{"cd": 39}, {"sd": 32}, {"hd": 0}, {"sboe": 16}, {"cd": "ten"}, {"sd": "A"},
                                      {"state": "PR", "cd": 1}, {"state": "tx", "cd": 1}, {"state": "CA", "cd": 54}])
 def test_numbers_out_of_range_are_refused(client, upstream, numbers):

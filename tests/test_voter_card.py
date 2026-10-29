@@ -118,8 +118,10 @@ def test_a_card_in_a_state_without_a_list_has_the_fec_races(client, monkeypatch)
     monkeypatch.delitem(state_key_dates.RULES, "GA")
     monkeypatch.delitem(coverage.COVERED, "WY")
     monkeypatch.delitem(state_key_dates.RULES, "WY")
-    georgia = card_ballot(client, state="GA", county="Fulton", precinct=None, districts={"cd": 5})
+    georgia = card_ballot(client, state="GA", county="Fulton", precinct=None, districts={"cd": 5, "sd": 36, "sboe": 5})
     assert [r["name"] for r in georgia["races"]] == ["U.S. Senator", "U.S. Representative District 5"]
+    assert (georgia["districts"]["sd"], georgia["districts"]["sboe"]) == (36, None)  # kept for the map; no SBOE outside Texas
+    assert georgia["districts"]["entered"] == ["cd", "sd"]
     wyoming = card_ballot(client, state="WY", county="Laramie", precinct=None)
     assert wyoming["districts"]["cd"] == 0 and find_race(wyoming, "U.S. Representative At Large")
     unknown = card_ballot(client, state="GA", county="Fulton", precinct=None)
@@ -135,8 +137,11 @@ def test_the_entry_card_config(client):
     texas = states["TX"]
     assert len(texas["counties"]) == 254 and texas["counties"][0] == "Anderson County"
     assert texas["districts"] == ["cd", "sd", "hd", "sboe"] and texas["precincts"]
-    assert states["MT"]["districts"] == ["cd"] and not states["MT"]["precincts"]
+    assert states["MT"]["districts"] == ["cd", "sd", "hd"] and not states["MT"]["precincts"]
     assert states["GA"]["districts"] == ["cd", "sd", "hd"] and not states["GA"]["precincts"]
+    assert states["MD"]["labels"] == {"hd": "House of Delegates"}
+    assert states["NE"]["districts"] == ["cd", "sd"] and states["NE"]["labels"] == {"sd": "Legislature"}
+    assert states["DC"]["districts"] == ["cd"] and states["DC"]["labels"] == {}
     assert "Orleans Parish" in states["LA"]["counties"]
 
 

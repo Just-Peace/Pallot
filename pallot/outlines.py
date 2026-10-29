@@ -28,13 +28,14 @@ async def district_outlines(
     svc: Services, wanted: dict[str, int | str | None], precinct: tuple[int, str] | None = None,
     sources: Sources | None = None, state: str = "TX",
 ) -> DistrictOutlines:
-    """The districts in ``wanted`` (kind -> number, or name) in ``state``, then the election
+    """The districts in ``wanted`` (kind -> number, or name) that ``state`` has, then the election
     precinct (county FIPS, the map's code for it), with the sources the voter has on (by default,
     Pallot's defaults)."""
     calls = track_calls()
     sources = sources or svc.sources
     use_tigerweb = sources.enabled(tigerweb.SOURCE)
-    labels = {**LABELS, **coverage.of(state).labels}
+    cover = coverage.of(state)
+    labels = {**LABELS, **cover.labels}
     notes: list[str] = []
 
     async def one(kind: str, number: int | str) -> tuple[list[Ring] | None, str | None]:
@@ -69,7 +70,7 @@ async def district_outlines(
             return None, f"Couldn't read the election precinct map, so {label} isn't drawn."
         return found, None if found else f"No outline found for {label}."
 
-    asked = [(kind, number) for kind, number in wanted.items() if number is not None]
+    asked = [(kind, number) for kind, number in wanted.items() if number is not None and kind in cover.districts]
     if not use_tigerweb and any(kind in tigerweb.LAYERS for kind, _ in asked):
         notes.append("U.S. House, State Senate and State House outlines are turned off in Settings.")
         asked = [(kind, number) for kind, number in asked if kind not in tigerweb.LAYERS]
