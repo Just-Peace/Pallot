@@ -1,0 +1,424 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "500 E CAPITOL AVE, PIERRE, SD 57501"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "200332848"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "4600200",
+       "CENTLAT": "+44.1028590",
+       "AREAWATER": 1656597827,
+       "BASENAME": "Lakota Region",
+       "STATE": "46",
+       "OID": "217704485275351",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.0951424",
+       "NAME": "Lakota Region PUMA",
+       "OBJECTID": 2296,
+       "CENTLON": "-100.9441323",
+       "AREALAND": 75065188647,
+       "INTPTLON": "-100.9191877",
+       "MTFCC": "G6120",
+       "PUMA": "00200"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "57501",
+       "CENTLAT": "+44.5350215",
+       "AREAWATER": 248307177,
+       "BASENAME": "57501",
+       "OID": "221704258298871",
+       "ZCTA5": "57501",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.5276324",
+       "NAME": "ZCTA5 57501",
+       "OBJECTID": 18215,
+       "CENTLON": "-100.3182421",
+       "AREALAND": 1461110805,
+       "INTPTLON": "-100.3091229",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "69292",
+       "CENTLAT": "+44.3751970",
+       "AREAWATER": 160028,
+       "BASENAME": "Pierre, SD",
+       "OID": "27021158622002",
+       "UA": "69292",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.3745055",
+       "NAME": "Pierre, SD Urban Area",
+       "OBJECTID": 1578,
+       "CENTLON": "-100.3348902",
+       "AREALAND": 31114563,
+       "INTPTLON": "-100.3324339",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 2,
+       "STGEOMETRY_Area": 66157391.05286987,
+       "NECTAPCI": "N",
+       "GEOID": "4649600",
+       "CENTLAT": "+44.3748158",
+       "AREAWATER": 54968,
+       "BASENAME": "Pierre",
+       "STATE": "46",
+       "OID": "27890158621973",
+       "LSADC": "25",
+       "PLACE": "49600",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.3751628",
+       "NAME": "Pierre city",
+       "OBJECTID": 29498,
+       "PLACECC": "C5",
+       "CENTLON": "-100.3204768",
+       "STGEOMETRY_Length": 46126.149761368935,
+       "CBSAPCI": "Y",
+       "AREALAND": 33740239,
+       "INTPTLON": "-100.3199965",
+       "PLACENS": "01267533",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "46065",
+       "CENTLAT": "+44.3890656",
+       "AREAWATER": 153323261,
+       "STATE": "46",
+       "BASENAME": "Hughes",
+       "OID": "27590158621960",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.3844521",
+       "NAME": "Hughes County",
+       "OBJECTID": 2791,
+       "CENTLON": "-099.9956162",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01265774",
+       "AREALAND": 1920546187,
+       "INTPTLON": "-099.9756842",
+       "MTFCC": "G4020",
+       "COUNTY": "065"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "4655260",
+       "CENTLAT": "+44.4072401",
+       "AREAWATER": 98101827,
+       "STATE": "46",
+       "BASENAME": "Pierre School District 32-2",
+       "OID": "28490158622005",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+44.4036750",
+       "SDUNI": "55260",
+       "NAME": "Pierre School District 32-2",
+       "OBJECTID": 6528,
+       "CENTLON": "-100.1787088",
+       "HIGRADE": "12",
+       "AREALAND": 823165106,
+       "INTPTLON": "-100.1831495",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "460659777004039",
+       "CENTLAT": "+44.3662523",
+       "BLOCK": "4039",
+       "AREAWATER": 40313,
+       "STATE": "46",
+       "BASENAME": "4039",
+       "OID": "210701002026323",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.3649784",
+       "NAME": "Block 4039",
+       "OBJECTID": 3019882,
+       "TRACT": "977700",
+       "CENTLON": "-100.3441297",
+       "BLKGRP": "4",
+       "AREALAND": 115967,
+       "INTPTLON": "-100.3414154",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "B",
+       "UR": "U",
+       "COUNTY": "065"
+      }
+     ],
+     "Micropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "38180",
+       "CENTLAT": "+44.4047601",
+       "AREAWATER": 341706913,
+       "BASENAME": "Pierre, SD",
+       "OID": "2629034687907698",
+       "LSADC": "M2",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.4048969",
+       "NAME": "Pierre, SD Micro Area",
+       "CSA": "",
+       "OBJECTID": 309,
+       "CENTLON": "-100.4797138",
+       "CBSA": "38180",
+       "AREALAND": 5661617812,
+       "INTPTLON": "-100.4848175",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01785534",
+       "GEOID": "46",
+       "CENTLAT": "+44.4445705",
+       "AREAWATER": 3384087830,
+       "STATE": "46",
+       "BASENAME": "South Dakota",
+       "STUSAB": "SD",
+       "OID": "2749092876144",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.4467957",
+       "DIVISION": "4",
+       "NAME": "South Dakota",
+       "REGION": "2",
+       "OBJECTID": 17,
+       "CENTLON": "-100.2270262",
+       "AREALAND": 196345146308,
+       "INTPTLON": "-100.2381762",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "460659777004",
+       "CENTLAT": "+44.3805388",
+       "AREAWATER": 54968,
+       "STATE": "46",
+       "BASENAME": "4",
+       "OID": "20890158621930",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.3812071",
+       "NAME": "Block Group 4",
+       "OBJECTID": 232403,
+       "TRACT": "977700",
+       "CENTLON": "-100.3314714",
+       "BLKGRP": "4",
+       "AREALAND": 6252605,
+       "INTPTLON": "-100.3311479",
+       "MTFCC": "G5030",
+       "COUNTY": "065"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "49600",
+       "GEOID": "4606549600",
+       "CENTLAT": "+44.3748158",
+       "AREAWATER": 54968,
+       "STATE": "46",
+       "BASENAME": "Pierre",
+       "OID": "27690158621967",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+44.3751628",
+       "NAME": "Pierre city",
+       "OBJECTID": 17342,
+       "CENTLON": "-100.3204768",
+       "COUSUBCC": "C5",
+       "AREALAND": 33740239,
+       "INTPTLON": "-100.3199965",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01267533",
+       "COUNTY": "065"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "46024",
+       "CENTLAT": "+44.4569213",
+       "AREAWATER": 503531584,
+       "STATE": "46",
+       "BASENAME": "24",
+       "OID": "2129042562697765",
+       "SLDU": "024",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+44.4525461",
+       "NAME": "State Senate District 24",
+       "OBJECTID": 210,
+       "CENTLON": "-100.6301247",
+       "LSY": "2026",
+       "AREALAND": 14714697528,
+       "INTPTLON": "-100.6248485",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+42.7660395",
+       "AREAWATER": 33031368091,
+       "BASENAME": "West North Central",
+       "OID": "2739020719810",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7654797",
+       "DIVISION": "4",
+       "REGION": "2",
+       "NAME": "West North Central Division",
+       "OBJECTID": 9,
+       "CENTLON": "-097.0814964",
+       "AREALAND": 1314703193437,
+       "INTPTLON": "-097.0630087",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 391980891140.8374,
+       "CD120": "00",
+       "GEOID": "4600",
+       "CENTLAT": "+44.4445705",
+       "CDSESSN": "120",
+       "AREAWATER": 3384087830,
+       "STATE": "46",
+       "BASENAME": "Congressional District (at Large)",
+       "OID": "2119042393278530",
+       "LSADC": "C1",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+44.4467957",
+       "NAME": "Congressional District (at Large)",
+       "OBJECTID": 207,
+       "CENTLON": "-100.2270262",
+       "STGEOMETRY_Length": 2962957.786200933,
+       "AREALAND": 196345146308,
+       "INTPTLON": "-100.2381762",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "46024",
+       "CENTLAT": "+44.4569213",
+       "SLDL": "024",
+       "AREAWATER": 503531584,
+       "STATE": "46",
+       "BASENAME": "24",
+       "OID": "2139042563912545",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+44.4525461",
+       "NAME": "State House District 24",
+       "OBJECTID": 741,
+       "CENTLON": "-100.6301247",
+       "LSY": "2026",
+       "AREALAND": 14714697528,
+       "INTPTLON": "-100.6248485",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "2",
+       "CENTLAT": "+42.8315107",
+       "AREAWATER": 184265026841,
+       "BASENAME": "Midwest",
+       "OID": "2729020719825",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.8262692",
+       "REGION": "2",
+       "NAME": "Midwest Region",
+       "OBJECTID": 4,
+       "CENTLON": "-093.3114764",
+       "AREALAND": 1944015056703,
+       "INTPTLON": "-093.3107946",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "46065977700",
+       "CENTLAT": "+44.4034292",
+       "AREAWATER": 2785158,
+       "STATE": "46",
+       "BASENAME": "9777",
+       "OID": "20790158621984",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.4033233",
+       "NAME": "Census Tract 9777",
+       "OBJECTID": 74601,
+       "TRACT": "977700",
+       "CENTLON": "-100.3529705",
+       "AREALAND": 29153008,
+       "INTPTLON": "-100.3562361",
+       "MTFCC": "G5020",
+       "COUNTY": "065"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -100.346448582832,
+     "y": 44.366165237323
+    },
+    "addressComponents": {
+     "zip": "57501",
+     "streetName": "CAPITOL",
+     "preType": "",
+     "city": "PIERRE",
+     "preDirection": "E",
+     "suffixDirection": "",
+     "fromAddress": "598",
+     "state": "SD",
+     "suffixType": "AVE",
+     "toAddress": "400",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "500 E CAPITOL AVE, PIERRE, SD, 57501"
+   }
+  ]
+ }
+}

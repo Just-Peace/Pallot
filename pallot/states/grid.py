@@ -39,7 +39,7 @@ EXPORT = {"ctl00$ContentPlaceHolder1$grdCandidates$ctl00$ctl02$ctl00$ExportToCsv
 COLUMNS = {  # each shared column's names across the grids, as headings
     "race": ("RACE", "CONTEST", "OFFICE"),
     "district_type": ("DISTRICT TYPE", "DISTRICTTYPE"),
-    "district": ("DISTRICT", "JURISDICTION"),
+    "district": ("DISTRICT", "JURISDICTION", "DISTRICT/COUNTY"),
     "name": ("NAME", "CANDIDATE NAME", "BALLOT NAME", "CANDIDATE"),
     "party": ("PARTY", "PARTY PREFERENCE", "PARTY AFFILIATION"),
     "status": ("STATUS", "CANDIDATE STATUS"),
