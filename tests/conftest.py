@@ -76,6 +76,7 @@ ADDRESSES = {
     # Missouri's PDF (states/mo.py); MO-3 on the 2022 map in force (TIGERweb), MO-5 on the geocoder's; SD 6, HD 60, Cole
     "jeffersoncity": "201 W Capitol Ave, Jefferson City, MO 65101",
     "columbia": "1100 Gervais St, Columbia, SC 29201",  # South Carolina's search (states/sc.py); SC-6, SD 26, HD 72, Richland
+    "frankfort": "700 Capital Ave, Frankfort, KY 40601",  # Kentucky's filings (states/ky.py); KY-1, SD 20, HD 57, Franklin
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -99,6 +100,7 @@ IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
 MD_FILES = {"/2026/general_candidates/index.html": "state_md.html", "_statewide_candidatelist.csv": "state_md.csv"}
 MO_FILES = {"/elections": "state_mo.html", ".pdf": "state_mo.pdf"}
 SC_ELECTION = "22596"  # the November 3, 2026 general election's id on South Carolina's list of elections
+KY_ELECTION = "87"  # the November 3, 2026 general election's id in Kentucky's dropdown
 MD_NOT_FOUND ="<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
@@ -568,6 +570,15 @@ class Upstream:
             else:
                 return httpx.Response(404)
             return httpx.Response(200, content=text.encode() if text is not None else body)
+        if url.host == "web.sos.ky.gov":  # its page, and the list of all candidates a postback of its own form answers
+            if url.path != "/CandidateFilings/Default.aspx":
+                return httpx.Response(404)
+            form = dict(parse_qsl(request.content.decode())) if request.method == "POST" else {}
+            listed = (form.get("__VIEWSTATE") == "VIEWSTATE-recorded" and form.get("ctl00$MainContent$bListAll")
+                      and form.get("ctl00$MainContent$ddlElection") == KY_ELECTION)
+            text = self.state_lists.get(f"{url.host}#{'list' if listed else 'page'}")
+            body = text.encode() if text is not None else fixture_bytes("state_ky_list.html" if listed else "state_ky.html")
+            return httpx.Response(200, content=body)
         if url.host == "results.sos.ga.gov":
             if url.path.endswith("/jurisdictions/Georgia"):
                 return _file("state_ga_elections.json")

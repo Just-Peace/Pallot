@@ -163,6 +163,14 @@
    "last_refresh": "2026-10-29T12:19:11+00:00",
    "races": 1239
   },
+  "state_ky": {
+   "answers": 2,
+   "answers_hash": "39c84014d1f3c60da7809f0925ea1a4890a08c62f695be5e9cc0a05d06f6e3b5",
+   "candidates": 348,
+   "last_checked": "2026-10-29T17:06:01+00:00",
+   "last_refresh": "2026-10-29T17:06:01+00:00",
+   "races": 251
+  },
   "state_md": {
    "answers": 2,
    "answers_hash": "ca50cc776303b8296fd9cfe3741aaae649353922c036b878672bc47bacefbae0",
