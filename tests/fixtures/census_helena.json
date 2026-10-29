@@ -1,0 +1,447 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1301 E 6TH AVE, HELENA, MT 59601"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "202349829"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "3000500",
+       "CENTLAT": "+47.2037792",
+       "AREAWATER": 135797410,
+       "BASENAME": "Lewis and Clark & Cascade Counties--Great Falls & Helena City",
+       "STATE": "30",
+       "OID": "217704486214914",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+47.2158546",
+       "NAME": "Lewis and Clark & Cascade Counties--Great Falls & Helena City PUMA",
+       "OBJECTID": 1650,
+       "CENTLON": "-111.9337384",
+       "AREALAND": 15945498101,
+       "INTPTLON": "-111.9277178",
+       "MTFCC": "G6120",
+       "PUMA": "00500"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "59601",
+       "CENTLAT": "+46.5419653",
+       "AREAWATER": 684778,
+       "BASENAME": "59601",
+       "OID": "221704258289158",
+       "ZCTA5": "59601",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.5306974",
+       "NAME": "ZCTA5 59601",
+       "OBJECTID": 1324,
+       "CENTLON": "-112.1748300",
+       "AREALAND": 337159708,
+       "INTPTLON": "-112.1993655",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "38161",
+       "CENTLAT": "+46.6217506",
+       "AREAWATER": 181934,
+       "BASENAME": "Helena, MT",
+       "OID": "27021420149106",
+       "UA": "38161",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.6068913",
+       "NAME": "Helena, MT Urban Area",
+       "OBJECTID": 2451,
+       "CENTLON": "-111.9980146",
+       "AREALAND": 82062954,
+       "INTPTLON": "-112.0468686",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 95035134.94880667,
+       "NECTAPCI": "N",
+       "GEOID": "3035600",
+       "CENTLAT": "+46.5964489",
+       "AREAWATER": 103848,
+       "BASENAME": "Helena",
+       "STATE": "30",
+       "OID": "27890419898932",
+       "LSADC": "25",
+       "PLACE": "35600",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+46.5954652",
+       "NAME": "Helena city",
+       "OBJECTID": 29915,
+       "PLACECC": "C1",
+       "CENTLON": "-112.0202354",
+       "STGEOMETRY_Length": 126925.53728324467,
+       "CBSAPCI": "Y",
+       "AREALAND": 44783370,
+       "INTPTLON": "-112.0187458",
+       "PLACENS": "02410734",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "30049",
+       "CENTLAT": "+47.1210930",
+       "AREAWATER": 101496939,
+       "STATE": "30",
+       "BASENAME": "Lewis and Clark",
+       "OID": "27590419591203",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+47.1221028",
+       "NAME": "Lewis and Clark County",
+       "OBJECTID": 985,
+       "CENTLON": "-112.3873479",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00793926",
+       "AREALAND": 8957163884,
+       "INTPTLON": "-112.3829097",
+       "MTFCC": "G4020",
+       "COUNTY": "049"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "300490010004027",
+       "CENTLAT": "+46.5858610",
+       "BLOCK": "4027",
+       "AREAWATER": 0,
+       "STATE": "30",
+       "BASENAME": "4027",
+       "OID": "210701002437444",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.5858610",
+       "NAME": "Block 4027",
+       "OBJECTID": 4092603,
+       "TRACT": "001000",
+       "CENTLON": "-112.0184280",
+       "BLKGRP": "4",
+       "AREALAND": 58776,
+       "INTPTLON": "-112.0184280",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "049"
+      }
+     ],
+     "Secondary School Districts": [
+      {
+       "LOGRADE": "09",
+       "GEOID": "3013830",
+       "CENTLAT": "+46.8758306",
+       "AREAWATER": 39253330,
+       "STATE": "30",
+       "BASENAME": "Helena High School District",
+       "OID": "28390420119938",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+46.8779291",
+       "NAME": "Helena High School District",
+       "OBJECTID": 382,
+       "SDSEC": "13830",
+       "CENTLON": "-112.1420246",
+       "HIGRADE": "12",
+       "AREALAND": 3524298011,
+       "INTPTLON": "-112.1384188",
+       "MTFCC": "G5410"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "00767982",
+       "GEOID": "30",
+       "CENTLAT": "+47.0526547",
+       "AREAWATER": 3866839960,
+       "STATE": "30",
+       "BASENAME": "Montana",
+       "STUSAB": "MT",
+       "OID": "2749047339960",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+47.0511770",
+       "DIVISION": "8",
+       "NAME": "Montana",
+       "REGION": "4",
+       "OBJECTID": 13,
+       "CENTLON": "-109.6328844",
+       "AREALAND": 376973523239,
+       "INTPTLON": "-109.6348174",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "300490010004",
+       "CENTLAT": "+46.5861368",
+       "AREAWATER": 0,
+       "STATE": "30",
+       "BASENAME": "4",
+       "OID": "2089015504209987",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.5861368",
+       "NAME": "Block Group 4",
+       "OBJECTID": 17790,
+       "TRACT": "001000",
+       "CENTLON": "-112.0153501",
+       "BLKGRP": "4",
+       "AREALAND": 1086568,
+       "INTPTLON": "-112.0153501",
+       "MTFCC": "G5030",
+       "COUNTY": "049"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "91722",
+       "GEOID": "3004991722",
+       "CENTLAT": "+46.6010725",
+       "AREAWATER": 29422180,
+       "STATE": "30",
+       "BASENAME": "Helena",
+       "OID": "27690419750238",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.6012777",
+       "NAME": "Helena CCD",
+       "OBJECTID": 8261,
+       "CENTLON": "-112.0424409",
+       "COUSUBCC": "Z5",
+       "AREALAND": 796226721,
+       "INTPTLON": "-112.0431702",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01940643",
+       "COUNTY": "049"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "30041",
+       "CENTLAT": "+46.6484226",
+       "AREAWATER": 8347923,
+       "STATE": "30",
+       "BASENAME": "41",
+       "OID": "2129042393388840",
+       "SLDU": "041",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+46.6493769",
+       "NAME": "State Senate District 41",
+       "OBJECTID": 876,
+       "CENTLON": "-111.9692673",
+       "LSY": "2026",
+       "AREALAND": 103454886,
+       "INTPTLON": "-111.9606516",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "8",
+       "CENTLAT": "+40.2023972",
+       "AREAWATER": 18692985514,
+       "BASENAME": "Mountain",
+       "OID": "2739020719805",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1987470",
+       "DIVISION": "8",
+       "REGION": "4",
+       "NAME": "Mountain Division",
+       "OBJECTID": 5,
+       "CENTLON": "-110.2308131",
+       "AREALAND": 2217926739752,
+       "INTPTLON": "-110.2279740",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 593444027208.9154,
+       "CD120": "02",
+       "GEOID": "3002",
+       "CENTLAT": "+47.0699663",
+       "CDSESSN": "120",
+       "AREAWATER": 2286643937,
+       "STATE": "30",
+       "BASENAME": "2",
+       "OID": "2119042393278188",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+47.0710540",
+       "NAME": "Congressional District 2",
+       "OBJECTID": 415,
+       "CENTLON": "-108.1521170",
+       "STGEOMETRY_Length": 3847756.735682519,
+       "AREALAND": 272939587375,
+       "INTPTLON": "-108.1464843",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "30082",
+       "CENTLAT": "+46.6163214",
+       "SLDL": "082",
+       "AREAWATER": 115682,
+       "STATE": "30",
+       "BASENAME": "82",
+       "OID": "2139042393389086",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+46.6152078",
+       "NAME": "State House District 82",
+       "OBJECTID": 2138,
+       "CENTLON": "-111.9560410",
+       "LSY": "2026",
+       "AREALAND": 34803732,
+       "INTPTLON": "-111.9556427",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Elementary School Districts": [
+      {
+       "LOGRADE": "PK",
+       "SDELM": "00005",
+       "GEOID": "3000005",
+       "CENTLAT": "+46.6795643",
+       "AREAWATER": 17957298,
+       "STATE": "30",
+       "BASENAME": "Helena Elementary School District",
+       "OID": "28290419746891",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+46.6844417",
+       "NAME": "Helena Elementary School District",
+       "OBJECTID": 805,
+       "CENTLON": "-112.0087474",
+       "HIGRADE": "08",
+       "AREALAND": 935491655,
+       "INTPTLON": "-112.0053915",
+       "MTFCC": "G5400"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "25740",
+       "CENTLAT": "+46.7163147",
+       "AREAWATER": 226240550,
+       "BASENAME": "Helena, MT",
+       "OID": "2629034687907401",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.7157522",
+       "NAME": "Helena, MT Metro Area",
+       "CSA": "",
+       "OBJECTID": 16,
+       "CENTLON": "-112.1364919",
+       "CBSA": "25740",
+       "AREALAND": 16336962771,
+       "INTPTLON": "-112.1351552",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "30049001000",
+       "CENTLAT": "+46.5594477",
+       "AREAWATER": 5177,
+       "STATE": "30",
+       "BASENAME": "10",
+       "OID": "20790420139292",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+46.5595145",
+       "NAME": "Census Tract 10",
+       "OBJECTID": 71132,
+       "TRACT": "001000",
+       "CENTLON": "-112.0384425",
+       "AREALAND": 12141366,
+       "INTPTLON": "-112.0388179",
+       "MTFCC": "G5020",
+       "COUNTY": "049"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -112.018518960898,
+     "y": 46.586726085058
+    },
+    "addressComponents": {
+     "zip": "59601",
+     "streetName": "6TH",
+     "preType": "",
+     "city": "HELENA",
+     "preDirection": "E",
+     "suffixDirection": "",
+     "fromAddress": "1201",
+     "state": "MT",
+     "suffixType": "AVE",
+     "toAddress": "1301",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1301 E 6TH AVE, HELENA, MT, 59601"
+   }
+  ]
+ }
+}

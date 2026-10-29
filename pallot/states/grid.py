@@ -58,6 +58,24 @@ _LINK = re.compile(r"""<a\b[^>]*\bhref=["']([^"']*CandidateList\.aspx\?[^"']*)["
 _YEAR = re.compile(r"\b(\d{4}) General Election\b", re.I)
 _GRID = re.compile(r"""<form\b[^>]*\baction=["'][^"']*CandidateList\.aspx""", re.I)
 _WRITE_IN = re.compile(r"\s*\(write[- ]?in\)$", re.I)
+_NUMERALS = frozenset({"II", "III", "IV"})
+
+
+def _word(word: str) -> str:
+    """A word of a name in capitals as the ballot shows it: "O'CONNELL" is "O'Connell", "MCDANIEL"
+    "McDaniel", "AND" (a ticket's) "and", "III" stays."""
+    bare = word.strip(",.\"'()")
+    if bare in _NUMERALS:
+        return word
+    if bare == "AND":
+        return word.lower()
+    return re.sub(r"\bMc([a-z])", lambda m: "Mc" + m.group(1).upper(), word.title())
+
+
+def titled(name: str) -> str:
+    """A name a grid writes in capitals as the ballot shows it ("Ben R Lujan", "Juan De Jesus
+    Sanchez, III"); a name not all in capitals as it is."""
+    return name if name != name.upper() else " ".join(_word(word) for word in name.split())
 
 
 def elections(text: str) -> dict[str, Any]:
@@ -222,6 +240,13 @@ class GridList(StateList):
         return name
 
     @classmethod
+    def marked(cls, row: GridRow) -> tuple[str, bool, bool]:
+        """A row's name without its marks, whether it's a declared write-in's, and whether it's the
+        incumbent's: by default, a name ending "(write-in)" is a write-in's, and no incumbent is marked."""
+        written = _WRITE_IN.search(row.name)
+        return (row.name[:written.start()] if written else row.name), bool(written), False
+
+    @classmethod
     def parse(cls, raw: Any) -> list[Filing]:
         """Every candidate on the ballot in the grid's answer, each race in the grid's order and its
         candidates in their ballot order; ValueError for an answer that isn't the grid or a list
@@ -237,8 +262,7 @@ class GridList(StateList):
             seen = races.setdefault((row.district_type, row.district, row.race), [len(races), 0])
             seen[1] += 1
             code, name = cls.affiliation(row)
-            written = _WRITE_IN.search(row.name)
-            filings.append(race.filing(day="", name=cls.named(row.name[:written.start()] if written else row.name),
-                                       party=code, party_name=name, write_in=bool(written),
-                                       order=seen[0] * 1000 + (row.order or seen[1])))
+            shown, written, sitting = cls.marked(row)
+            filings.append(race.filing(day="", name=cls.named(shown), party=code, party_name=name, write_in=written,
+                                       incumbent=sitting or race.incumbent, order=seen[0] * 1000 + (row.order or seen[1])))
         return require(filings, cls.minimum)
