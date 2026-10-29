@@ -1,6 +1,6 @@
 // The Settings page: how much of the ballot shows (view.js), and its tips again (help.js); the web search engine; the people the voter avoids; the sources, under the groups the
 // server puts them in, on/off for this voter (one by one, or a whole group, kept in this browser),
-// each with one line of what it holds and how old it is; the appearance; and Clear data, which clears what
+// each with one line of what it holds and how old it is; the appearance; and Your data, which saves the session as a Pallot file or opens one, and clears what
 // this browser keeps. What the server keeps is refreshed and pruned on the host (pallot-cache), never
 // from here. Changes that affect the ballot are marked with markSettingsChanged(), so an open
 // ballot page reloads when the voter goes back to it. It imports page.js first, which draws the
@@ -11,10 +11,11 @@ import { showRememberedAddress } from "./address.js";
 import { api } from "./api.js";
 import { applyTheme, currentTheme, onThemeChange, setTheme } from "./appearance.js";
 import { banList, isPattern, setBanList } from "./ban-list.js";
-import { $, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
+import { $, closeOnBackdrop, confirmDialog, h, linkedText, onReturn, setStatus } from "./dom.js";
 import { SHORT_DATE, formatDate, plural, relativeTime } from "./format.js";
 import { forgetTips } from "./help.js";
 import { savedIssuesPicker } from "./issues.js";
+import { offerSession, openPallotFile, phraseLock, saveSession } from "./pallot-file.js";
 import { clearBrowserData, clearPicksAndNotes, restoreBrowserData } from "./picks.js";
 import { DEFAULT_ENGINE, ENGINES, currentEngine, setEngine } from "./search.js";
 import { markSettingsChanged, setSourceChoices, setUiPref, uiPref } from "./storage.js";
@@ -301,6 +302,64 @@ function showBrowserData() {
   searchSelect.value = currentEngine().id;
   showBanList();
 }
+
+// Your session as a Pallot file, saved from its own dialog, where the phrase is asked, and a file
+// opened here: a session is put back (and the ballot opens on it).
+const dataStatus = $("#data-status");
+const saveDialog = $("#save-dialog");
+const saveStatus = $("#save-status");
+const saveButton = $("#save-file");
+
+const saveLock = phraseLock({
+  check: $("#save-lock"), box: $("#save-phrase-box"), input: $("#save-phrase"), hint: $("#save-phrase-hint"), status: saveStatus,
+});
+
+closeOnBackdrop(saveDialog);
+saveDialog.addEventListener("close", () => saveLock.forget());
+saveDialog.querySelector("form").addEventListener("submit", (event) => event.preventDefault());
+$("#save-cancel").addEventListener("click", () => saveDialog.close());
+
+$("#save-session").addEventListener("click", () => {
+  setStatus(saveStatus, "");
+  saveLock.sync();
+  saveDialog.showModal();
+  (saveLock.locked() ? $("#save-phrase") : saveButton).focus();
+});
+
+saveButton.addEventListener("click", async () => {
+  const phrase = saveLock.chosen();
+  if (phrase === false) return;
+  saveButton.disabled = true;
+  if (phrase) setStatus(saveStatus, "Locking…", "busy");
+  try {
+    const name = await saveSession({ phrase });
+    saveDialog.close();
+    setStatus(dataStatus, `Saved ${name} to your downloads.${phrase ? " Keep the phrase somewhere safe: it can't be recovered." : ""}`, "ok");
+  } catch (error) {
+    setStatus(saveStatus, error.message || "Something went wrong. Try again.", "error");
+  } finally {
+    saveButton.disabled = false;
+  }
+});
+
+$("#save-phrase").addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+  event.preventDefault();
+  saveButton.click();
+});
+
+$("#open-session").addEventListener("click", async () => {
+  let opened;
+  try {
+    opened = await openPallotFile();
+  } catch (error) {
+    setStatus(dataStatus, error.message, "error");
+    return;
+  }
+  if (!opened) return;
+  if (opened.session) offerSession(opened);
+  else setStatus(dataStatus, "This file isn't a saved copy of everything.", "error");
+});
 
 $("#clear-my-picks").addEventListener("click", async () => {
   const sure = await confirmDialog({

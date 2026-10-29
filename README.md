@@ -83,7 +83,7 @@ Without a key, Pallot uses the shared `DEMO_KEY`, which only allows race totals 
 
 The FAQ (linked from every page) explains the figures and the features in detail. In short:
 
-- **Look up your ballot** by home address (with suggestions as you type), or under **My voter card** by state, county and the districts on the card (in Texas, the precinct number too), so no address is sent anywhere. Pick the election, and in Texas a party for a primary. The first lookup can take several seconds, and in Texas the very first after installing also downloads the precinct map (about 45 MB); looking the same address up again is instant.
+- **Look up your ballot** by home address (with suggestions as you type), or under the **Voter card** tab by state, county and the districts on the card (in Texas, the precinct number too), so no address is sent anywhere. Pick the election, and in Texas a party for a primary. The first lookup can take several seconds, and in Texas the very first after installing also downloads the precinct map (about 45 MB); looking the same address up again is instant.
 - **Your ballot** lists the races Pallot has for your state (see [Where it covers](#where-it-covers)), with the candidates' party, Incumbent and Open seat, and a write-in line; in Texas, in ballot order with the declared write-ins. Races that depend on a district or precinct Pallot doesn't know are left out, with a note saying which number to enter.
 - **When to vote** has the election's key dates, each downloadable to your calendar, and links to check your registration and find where to vote, in the states that have their key dates (see [Where it covers](#where-it-covers)). Elsewhere it links to your state's election office.
 - **Ranked-choice races** (Alaska's) let you rank the candidates 1st, 2nd, 3rd and on, and a judge standing for retention is a Yes-or-No question.
@@ -93,7 +93,8 @@ The FAQ (linked from every page) explains the figures and the features in detail
 - **Help me pick**: **Trust** picks the candidates of the endorsers you trust, and **Avoid** marks the ones you won't vote for, from watchlists or your own list. **More conditions** picks across the ballot, or in one race, by party, endorsements, money or polls. It never guesses in a race with more matches than seats.
 - **Avoid** on a candidate adds them to your own list, which you can also fill by name or pattern in Settings. Trust never picks them.
 - **Print my picks** as a full page or a wallet card. Your address isn't printed.
-- **Share picks** as a link or a picks file, to keep a copy, move them to another device or send them to a friend. The picks travel in the link itself, so the server never sees them, though anyone given the link can; the dialog warns of that, and leaves notes out of links unless ticked in. Either can be locked with a phrase, which never leaves the browser. Opening one shows what it holds before anything changes.
+- **Save everything** in Settings as a `.pallot` file (picks for every election, notes, address and settings) and open it on another device to pick up where you left off, even on a first visit.
+- **Share picks** as a link, to send them to a friend. You tick what it carries (picks, notes, your Avoid list); it also carries your districts but never your address. It travels in the link itself, so the server never sees it, though anyone given the link can; the dialog warns of that. Links and files are locked with a phrase unless you untick it, and the phrase never leaves the browser. Opening one shows what it holds before anything changes.
 - On a phone, the left pane becomes a top bar, and the ballot's buttons are under **More**.
 
 Your picks, notes, write-ins, Help me pick choices, the people you avoid and your settings are kept in your browser's `localStorage`, never on the server, even when you share them.
@@ -154,10 +155,10 @@ Pallot saves every answer it gets in `data/`, so looking up the same address (or
 
 ## Settings
 
-The **Settings** page has **Ballot view**, **Web search**, **People you avoid**, **Sources**, **Appearance** and **Clear data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
+The **Settings** page has **Ballot view**, **Web search**, **People you avoid**, **Sources**, **Appearance** and **Your data**. Everything you choose there is saved in your browser, so it changes only what you see, not anyone else using the same Pallot.
 
 - **Sources** lists every source in groups, with a switch for each (except the address lookup), a line on what it holds and how old it is, and a warning when it's paused or can't be used. Your switches travel with each request, so the server builds your ballot with them. A source you haven't switched follows the defaults (see [Which sources start on](#which-sources-start-on)).
-- **Clear data** clears your picks and notes, or everything Pallot keeps in this browser, each with **Undo**.
+- **Your data** saves your session as a Pallot file or opens one, and clears your picks and notes, or everything Pallot keeps in this browser, each with **Undo**.
 
 Settings can't refresh or clear what the server saved: anyone who opens Pallot can open Settings, and it has no login. That's for whoever runs Pallot, on the machine it runs on: see [Keeping the cache](#keeping-the-cache).
 
@@ -295,7 +296,7 @@ Set these as environment variables, for example `PALLOT_DATA_DIR=/var/lib/pallot
 | `PALLOT_TRUSTED_PROXIES` | `127.0.0.1`: the reverse proxies whose `X-Forwarded-For` header says who the visitor is, comma-separated IP addresses or networks (`10.0.0.0/8`), or `*` for any. The limits count each visitor by that address (see [Running it publicly](#running-it-publicly)) |
 | `PALLOT_PRUNE_EVERY` | `21600` seconds (6 hours): how often a running Pallot prunes the street map's tiles and the address suggestions |
 | `PALLOT_PORT` | `8000`: the port `uv run pallot` listens on (`--port` wins), and in Docker the port published on the host |
-| `PALLOT_DEFAULT_ENTRY` | `address`: the entry card's tab on a first visit. `voter_card` starts on **My voter card** (state, county and districts) instead; a voter's last lookup still picks its own tab |
+| `PALLOT_DEFAULT_ENTRY` | `address`: the entry card's tab on a first visit. `voter_card` starts on the **Voter card** tab (state, county and districts) instead; a voter's last lookup still picks its own tab |
 
 A value Pallot can't read, such as a port that isn't a whole number or a limit that isn't a rate, stops `pallot` and `pallot-cache` from starting, with one line naming the variable and its value.
 

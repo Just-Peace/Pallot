@@ -103,7 +103,7 @@ export function savedIssuesPicker(prefix, labelledBy) {
       showCount();
     }, id),
     many,
-    h("p", { class: "fine" }, "Kept in this browser. They go out only in a question you send."));
+    h("p", { class: "fine" }, "Saved on this device only, never by us. They leave it only in a question you choose to send."));
   const sync = () => {
     const saved = savedIssues();
     for (const chip of element.querySelectorAll(".issue-chip")) chip.setAttribute("aria-pressed", String(saved.includes(chip.dataset.issue)));

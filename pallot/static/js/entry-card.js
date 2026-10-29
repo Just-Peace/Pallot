@@ -1,5 +1,6 @@
-// The entry card on the ballot page: "See your ballot, race by race", with two equal tabs, My address
-// and My voter card, the election and party under both, and Show my ballot. It's in the main area
+// The entry card on the ballot page: "See your ballot, race by race", with equal tabs, Address, Voter
+// card and Pallot file (a saved session, or picks someone sent, read as soon as it's chosen and opened
+// on Show my ballot), the election and party under them, and Show my ballot. It's in the main area
 // while there's no ballot, and when "Change" is chosen; on a phone with a ballot showing, it opens in
 // the top bar's address panel instead. ballot.js sends the form; this module draws the tabs and says
 // which one is chosen.
@@ -11,18 +12,19 @@
 // and its commissioner and JP precincts too. The voter's last state is remembered.
 
 import { api } from "./api.js";
-import { $, h } from "./dom.js";
+import { $, h, setStatus } from "./dom.js";
 import { DISTRICTS, STATES, districtName } from "./labels.js";
+import { chooseFile, fileLines, readFile } from "./pallot-file.js";
 import { setUiPref, uiPref } from "./storage.js";
 
 const ENTRIES = {
   address: { tab: $("#entry-tab-address"), panel: $("#entry-address"), focus: () => $("#address") },
   voter_card: { tab: $("#entry-tab-card"), panel: $("#entry-voter-card"), focus: () => $("#vc-state") },
+  file: { tab: $("#entry-tab-file"), panel: $("#entry-file"), focus: () => $("#choose-file-btn") },
 };
 const TEXAS = { code: "TX", name: "Texas", counties: [], districts: ["cd", "sd", "hd", "sboe"], precincts: true };
 let cardStates = { TX: TEXAS };
 let wantedState = "TX";
-const tabs = $("#entry-tabs");
 const card = $("#entry");
 const home = card.parentElement;
 const above = card.previousElementSibling; // the welcome's heading, which stays above the card
@@ -35,7 +37,7 @@ export function entryMode() {
 
 // Shows one tab's fields; the other's are disabled, so the browser doesn't ask for them.
 export function selectEntry(mode, { focus = false } = {}) {
-  if (!ENTRIES[mode] || (mode === "voter_card" && tabs.hidden)) mode = "address";
+  if (!ENTRIES[mode] || ENTRIES[mode].tab.hidden) mode = "address";
   chosen = mode;
   for (const [name, { tab, panel }] of Object.entries(ENTRIES)) {
     const on = name === mode;
@@ -149,8 +151,32 @@ function initWhere() {
   });
 }
 
+// The Pallot file tab: the file is read as soon as it's chosen, asking for its phrase if it's locked, and
+// what it holds shows under it; ballot.js opens it on Show my ballot.
+let chosenSlate = null;
+export const pickedSlate = () => chosenSlate;
+
+function initFileTab() {
+  const status = $("#file-status");
+  const holds = $("#file-holds");
+  $("#choose-file-btn").addEventListener("click", async () => {
+    const file = await chooseFile();
+    if (!file) return;
+    setStatus(status, "");
+    let opened = null;
+    try {
+      opened = await readFile(file);
+    } catch (error) {
+      setStatus(status, error.message, "error");
+    }
+    chosenSlate = opened;
+    $("#chosen-file").textContent = opened ? file.name : "No file chosen";
+    holds.hidden = !opened;
+    holds.replaceChildren(...(opened ? fileLines(opened).map((line) => h("p", { class: "fine" }, line)) : []));
+  });
+}
+
 function initTabs() {
-  const order = Object.keys(ENTRIES);
   for (const [name, { tab, panel }] of Object.entries(ENTRIES)) {
     panel.setAttribute("role", "tabpanel");
     tab.addEventListener("click", () => {
@@ -161,6 +187,7 @@ function initTabs() {
       const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
       if (!step) return;
       event.preventDefault();
+      const order = Object.keys(ENTRIES).filter((key) => !ENTRIES[key].tab.hidden);
       const next = order[(order.indexOf(name) + step + order.length) % order.length];
       chosenByVoter = true;
       selectEntry(next);
@@ -181,13 +208,14 @@ export async function loadEntryConfig({ startOn = () => null, typed = () => fals
   }
   if (!config?.voter_card) return;
   initStates(config.states || []);
-  initTabs();
-  tabs.hidden = false;
+  ENTRIES.voter_card.tab.hidden = false;
   if (chosenByVoter) return;
   const mode = startOn() || (typed() ? "address" : config.default_entry);
   selectEntry(mode === "voter_card" ? "voter_card" : "address");
 }
 
 initWhere();
+initTabs();
+initFileTab();
 chooseState(uiPref("cardState") || "TX");
 selectEntry("address");

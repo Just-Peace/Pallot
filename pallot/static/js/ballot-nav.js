@@ -18,7 +18,7 @@ import { addMoreSection, initMoreSheet, moreAction } from "./more-sheet.js";
 import { onPicksSaved } from "./picks.js";
 import { STILL_LOADING, cardFor, redrawRace, refillPart, setAllCollapsed } from "./race-cards.js";
 import { hasPolls, syncBoxes, syncFunding, syncLines } from "./source-cards.js";
-import { setUiPrefs, uiPref } from "./storage.js";
+import { LAST_RACE, setUiPrefs, uiPref, writeJson } from "./storage.js";
 import {
   FOCUSES, VIEW_MODES, bindViewControls, focusChips, focuses, migrateView, modeChoice, onViewChange,
   setViewPref, showViewControls, syncSourceNotes, viewPref,
@@ -446,7 +446,8 @@ function fillMoreSheet() {
   bindThemeToggle(moreTheme);
   stripPrint.addEventListener("click", () => $("#print-btn").click());
   addMoreSection({ id: "picks", label: "Your picks" },
-    moreAction("Share picks", "share", () => $("#share-btn").click()), clearButtons[1], waitNotes[1]);
+    moreAction("Share picks", "share", () => $("#share-btn").click()),
+    moreAction("Save everything", "download", () => location.assign("settings.html#data-title")), clearButtons[1], waitNotes[1]);
   addMoreSection({ id: "help", label: ["Help me pick ", helpLink("endorsements", "Help me pick")] }, moreHelp);
   addMoreSection({ id: "view", label: ["View ", helpLink("view-modes", "focus and views")] }, moreView, moreFocus);
   // Settings and the appearance beside Done, in the sheet's head
@@ -489,16 +490,26 @@ function syncChipFades() {
   jumpList.classList.toggle("fade-end", jumpList.scrollLeft < end - 2);
 }
 
-// On a phone, where the race headings don't stick, the strip names the race at its foot.
+// On a phone, where the race headings don't stick, the strip names the race at its foot. On any
+// screen the race there is remembered (LAST_RACE), so a saved session goes back to it.
+let lastRace = null;
+
 function markCurrentRace() {
   const line = strip.getBoundingClientRect().bottom;
-  let name = "";
-  for (const card of narrow.matches ? result.querySelectorAll(".race") : []) {
+  let current = null;
+  for (const card of result.querySelectorAll(".race")) {
+    if (!card.offsetParent) continue;
     const box = card.getBoundingClientRect();
     if (box.top > line) break;
-    if (box.bottom > line + 40) name = card.querySelector(".race-name")?.textContent || "";
+    if (box.bottom > line + 40) current = card;
   }
+  const name = narrow.matches ? current?.querySelector(".race-name")?.textContent || "" : "";
   if (stripRace.textContent !== name) stripRace.textContent = name;
+  const key = current?.dataset.race || null;
+  if (key && key !== lastRace) {
+    lastRace = key;
+    writeJson(LAST_RACE, key);
+  }
 }
 
 // The bar between the toolbar's two groups shows only while they share a line, so a narrow

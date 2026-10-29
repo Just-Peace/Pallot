@@ -490,7 +490,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .welcome-head .lede { margin: 0; }
 .entry { max-width: 560px; margin-top: 8px; padding: 24px 28px; }
 .entry h2 { margin: 0 0 16px; font-size: 1.5rem; }
-.entry-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border: 1px solid var(--line-strong);
+.entry-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; padding: 3px; border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm); background: var(--panel-2); }
 .entry-tab { padding: 8px 12px; border: 0; border-radius: calc(var(--radius-sm) - 2px); background: none; color: var(--muted);
   font-weight: 600; cursor: pointer; }
@@ -1352,27 +1352,38 @@ blockquote { margin: 0 0 8px; padding: 8px 12px; border-left: 3px solid var(--li
 .print-unpicked { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
 .print-unpicked p { flex: 1 1 12em; margin: 0; }
 .print-layout legend { font-weight: 600; font-size: 0.9rem; padding: 0; }
-.share-picks-part { margin: 16px 0 0; }
-.share-picks-part + .share-picks-part { padding-top: 14px; border-top: 1px solid var(--line); }
-.share-picks-part h3 { margin: 0 0 6px; font-size: 1rem; }
-.share-picks-part .fine { margin: 0 0 4px; }
-.share-picks-part > .btn { width: 100%; justify-content: center; min-height: 44px; }
-.share-picks-warn { margin: 0 0 4px; }
-.share-picks-lock { margin: 12px 0 0; }
-.phrase-box { margin: 4px 0 0; }
-.phrase-field { display: flex; gap: 8px; align-items: stretch; margin-top: 4px; }
-.phrase-field input { flex: 1 1 auto; min-width: 0; font-size: 16px; }
-.phrase-field .btn { flex: none; min-width: 64px; justify-content: center; }
-.phrase-rules { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; font-size: 0.85rem; color: var(--muted); }
-.phrase-rules li { display: flex; gap: 6px; align-items: center; }
-.phrase-rules li .icon { width: 14px; height: 14px; flex: none; }
-.phrase-rules li.met { color: var(--good); }
+/* Pallot file: what a file brings back, and Load */
+.entry-file p { margin: 0 0 8px; }
+.file-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 4px 0 2px; }
+.file-pick .muted { min-width: 0; overflow-wrap: anywhere; }
+/* Share your picks (share-dialog.js): a title with the blue ✕, what goes in the link, the phrase lock, Copy link */
+.dialog-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 8px; }
+.dialog-title h2 { margin: 0; }
+.share-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+.share-actions .btn { flex: 1 1 10em; justify-content: center; min-height: 44px; }
+.share-warn { margin: 8px 0 0; }
+.share-foot { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.share-picks-lock { margin: 4px 0 0; }
+.phrase-box { margin: 0 0 0 26px; }
+.phrase-box.off { opacity: 0.5; }
+/* a password box, as tall as the others, with its eye inside the right edge */
+.phrase-field { position: relative; max-width: 16rem; }
+.phrase-field input { padding-right: 40px; font-size: 16px; }
+.phrase-eye { position: absolute; top: 0; right: 0; bottom: 0; width: 40px; display: grid; place-items: center; padding: 0; border: 0;
+  background: none; color: var(--muted); cursor: pointer; border-radius: var(--radius-sm); }
+.phrase-eye:hover:not(:disabled), .phrase-eye[aria-pressed="true"] { color: var(--text); }
+.phrase-eye:disabled { cursor: default; }
+.phrase-eye .icon { width: 18px; height: 18px; }
+/* what the phrase still needs, while it's typed */
+.phrase-box .phrase-hint { margin: 4px 0 0; }
+.phrase-hint.needs { color: var(--warn); }
+.share-parts { border: 0; margin: 4px 0 0; padding: 0; }
+.share-parts legend { padding: 0; font-weight: 600; font-size: 0.9rem; }
+.share-parts .check { margin: 6px 0; }
+.share-count { color: var(--muted); font-weight: 400; }
 .small-dialog .dialog-pad { padding: 20px; }
 .small-dialog .dialog-pad h2 { margin: 0 0 8px; font-size: 1.15rem; }
 .share-picks-url { width: 100%; margin-top: 8px; font-size: 16px; }
-.share-picks-open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 18px 0 14px; padding-top: 14px;
-  border-top: 1px solid var(--line); }
-.share-picks-open p { flex: 1 1 14em; margin: 0; }
 
 /* ---- More (more-sheet.js): a sheet from the foot of the screen, a section per part of the page ---- */
 .sheet { width: min(560px, 100%); max-width: none; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto auto 0;

@@ -130,9 +130,23 @@
       </section>
 
       <section class="panel" aria-labelledby="data-title">
-        <h2 id="data-title">Clear data</h2>
-        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, use Share picks on your ballot. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
+        <h2 id="data-title">Your data</h2>
+        <p class="panel-intro">Your picks, notes, address and choices are kept only in this browser. An election's picks and notes are forgotten 90 days after it; to keep a copy or move them, save everything. <a href="privacy.html">Privacy</a> lists everything Pallot keeps.</p>
         <ul class="data-actions">
+          <li class="data-action">
+            <div class="data-action-text">
+              <h3>Save everything</h3>
+              <p>Saves a Pallot file with everything kept here: your picks for every election, notes, address, districts and settings. Open it on another device, or here later, to pick up where you left off.</p>
+            </div>
+            <button class="btn small" id="save-session" type="button" aria-haspopup="dialog" aria-controls="save-dialog">Save everything…</button>
+          </li>
+          <li class="data-action">
+            <div class="data-action-text">
+              <h3>Open a Pallot file</h3>
+              <p>Puts everything you saved back, replacing what's here or merged with it, with Undo, and opens your ballot where you left off.</p>
+            </div>
+            <button class="btn small" id="open-session" type="button">Open a file</button>
+          </li>
           <li class="data-action">
             <div class="data-action-text">
               <h3>Clear my picks &amp; notes</h3>
@@ -148,8 +162,31 @@
             <button class="btn small danger" id="clear-browser-data" type="button">Clear browser data</button>
           </li>
         </ul>
+        <p class="status" id="data-status" role="status" aria-live="polite"></p>
       </section>
     </main>
   </div>
+
+  <dialog id="save-dialog" class="small-dialog" aria-labelledby="save-title" aria-describedby="save-intro">
+    <form class="dialog-pad">
+      <h2 id="save-title">Save everything</h2>
+      <p id="save-intro">A Pallot file with your picks for every election, notes, address, districts and settings, saved to your downloads.</p>
+      <div class="share-picks-lock">
+        <label class="check"><input type="checkbox" id="save-lock" aria-controls="save-phrase" checked> Lock with a phrase</label>
+        <div class="phrase-box" id="save-phrase-box">
+          <div class="phrase-field">
+            <input type="password" id="save-phrase" aria-label="Phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="save-phrase-hint">
+            <button class="phrase-eye" type="button" data-phrase-show aria-controls="save-phrase" aria-label="Show phrase"></button>
+          </div>
+          <p class="fine phrase-hint" id="save-phrase-hint">It can't be recovered, so keep it somewhere safe.</p>
+        </div>
+      </div>
+      <p class="status" id="save-status" role="status" aria-live="polite"></p>
+      <div class="button-row end">
+        <button class="btn ghost" type="button" id="save-cancel">Cancel</button>
+        <button class="btn primary with-icon" type="button" id="save-file"><span data-icon="download"></span>Save file</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 </html>

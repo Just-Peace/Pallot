@@ -25,15 +25,16 @@
     <main id="main" class="content">
       <header id="welcome-head" class="welcome-head" data-welcome hidden>
         <h1>Welcome to Pallot</h1>
-        <p class="lede">Your vote is yours. Look up your ballot to research each candidate before you vote. No account, ads or tracking: your picks stay in this browser.</p>
+        <p class="lede">Your vote is yours. Look up your ballot to research each candidate before you vote. No account, ads or tracking: your picks stay on your device, never with us.</p>
       </header>
 
       <section id="entry" class="panel entry" aria-labelledby="entry-title" hidden>
         <h2 id="entry-title">See your ballot, race by race</h2>
         <form id="lookup-form" class="lookup-form">
-          <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by" hidden>
-            <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">My address</button>
-            <button class="entry-tab" type="button" role="tab" id="entry-tab-card" aria-controls="entry-voter-card">My voter card</button>
+          <div class="entry-tabs" id="entry-tabs" role="tablist" aria-label="Look up your ballot by">
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-address" aria-controls="entry-address">Address</button>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-card" aria-controls="entry-voter-card" hidden>Voter card</button>
+            <button class="entry-tab" type="button" role="tab" id="entry-tab-file" aria-controls="entry-file">Pallot file</button>
           </div>
           <div id="entry-address" aria-labelledby="entry-tab-address">
             <fieldset class="entry-fields">
@@ -83,6 +84,18 @@
               </div>
             </fieldset>
           </div>
+          <div id="entry-file" aria-labelledby="entry-tab-file" hidden>
+            <fieldset class="entry-fields entry-file" disabled>
+              <p>Saved your session with Pallot before? Choose the file you saved (it ends in .pallot), then Show my ballot, to get back your address, picks, notes and settings, right where you left off. It also opens picks someone sent you.</p>
+              <p class="fine">First time here? You don't need a file: look up your ballot with your address.</p>
+              <div class="file-pick">
+                <button class="btn" type="button" id="choose-file-btn">Choose file</button>
+                <span class="muted" id="chosen-file">No file chosen</span>
+              </div>
+              <div class="file-holds" id="file-holds" hidden></div>
+              <p class="status" id="file-status" role="status" aria-live="polite"></p>
+            </fieldset>
+          </div>
           <div class="field-row">
             <div class="field">
               <label for="election">Election</label>
@@ -102,7 +115,7 @@
             <button class="btn ghost" type="button" id="cancel-change" hidden>Cancel</button>
           </div>
           <p id="status" class="status" role="status" aria-live="polite"></p>
-          <p class="fine">Full ballot in Texas; in many states, the state's official list; elsewhere, the races for Congress (<a href="faq.html#coverage">what you get</a>). Kept in this browser. What's sent where: <a href="privacy.html#lookups">Privacy</a>.</p>
+          <p class="fine">Any U.S. address: the most complete ballot your state publishes, and at least the races for Congress (<a href="faq.html#coverage">what you get</a>). Your picks and choices stay on this device: we don't keep them, and don't know who you are. What's sent where: <a href="privacy.html#lookups">Privacy</a>.</p>
         </form>
       </section>
 
@@ -261,66 +274,38 @@
 
   <dialog id="share-dialog" class="small-dialog" aria-labelledby="share-title" aria-describedby="share-summary">
     <form method="dialog">
-      <h2 id="share-title">Share your picks</h2>
+      <div class="dialog-title">
+        <h2 id="share-title">Share your picks</h2>
+        <button class="icon-only close-x" type="button" id="share-close" aria-label="Close" title="Close"><span data-icon="x"></span></button>
+      </div>
       <p id="share-summary"></p>
       <div id="share-choices">
+        <fieldset class="share-parts">
+          <legend>The link carries</legend>
+          <label class="check" id="share-picks-choice"><input type="checkbox" id="share-picks" checked> <span>My picks <span class="share-count" id="share-picks-count"></span></span></label>
+          <label class="check" id="share-notes-choice"><input type="checkbox" id="share-notes"> <span>My notes <span class="share-count" id="share-notes-count"></span></span></label>
+          <label class="check" id="share-avoid-choice"><input type="checkbox" id="share-avoid"> <span>My Avoid list <span class="share-count" id="share-avoid-count"></span></span></label>
+        </fieldset>
         <div class="share-picks-lock" id="share-lock-choice">
-          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase-box"> Lock with a phrase, for the link and the file</label>
-          <div class="phrase-box" id="share-phrase-box" hidden>
-            <label for="share-phrase">Phrase</label>
+          <label class="check"><input type="checkbox" id="share-lock" aria-controls="share-phrase" checked> Lock with a phrase</label>
+          <div class="phrase-box" id="share-phrase-box">
             <div class="phrase-field">
-              <input type="password" id="share-phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-rules share-phrase-note">
-              <button class="btn ghost small" type="button" data-phrase-show aria-controls="share-phrase" aria-pressed="false">Show</button>
+              <input type="password" id="share-phrase" aria-label="Phrase" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" aria-describedby="share-phrase-hint">
+              <button class="phrase-eye" type="button" data-phrase-show aria-controls="share-phrase" aria-label="Show phrase"></button>
             </div>
-            <ul class="phrase-rules" id="share-phrase-rules"></ul>
-            <p class="fine" id="share-phrase-note">Your phrase stays on this device. Pallot's server never sees it. Give it to them another way than the link, such as in person.</p>
+            <p class="fine phrase-hint" id="share-phrase-hint">Send it apart from the link, such as in person.</p>
           </div>
         </div>
-        <section class="share-picks-part" aria-labelledby="share-link-title">
-          <h3 id="share-link-title">Send a link</h3>
-          <p class="notice notice-warn share-picks-warn" id="share-warn">A link shows who you picked to anyone who has it, and to anyone they pass it on to. Send it only to people you trust.</p>
-          <label class="check notes-choice"><input type="checkbox" id="share-link-notes"> Include my notes in the link</label>
-          <label class="check"><input type="checkbox" id="share-address"> Include my address, so it opens this same ballot</label>
+        <div class="share-actions">
           <button class="btn primary with-icon" type="button" id="share-link"><span data-icon="share"></span><span id="share-link-label">Copy link</span></button>
-          <label for="share-url" class="sr-only">Link to your picks</label>
-          <input type="text" id="share-url" class="share-picks-url" readonly hidden>
-        </section>
-        <section class="share-picks-part" aria-labelledby="share-file-title">
-          <h3 id="share-file-title">Save a file</h3>
-          <p class="fine">A copy to keep, or to open on another device.</p>
-          <label class="check notes-choice"><input type="checkbox" id="share-file-notes" checked> Include my notes in the file</label>
-          <button class="btn with-icon" type="button" id="share-save"><span data-icon="download"></span>Save file</button>
-        </section>
+        </div>
+        <label for="share-url" class="sr-only">Link to your picks</label>
+        <input type="text" id="share-url" class="share-picks-url" readonly hidden>
         <p class="status" id="share-status" role="status" aria-live="polite"></p>
-        <p class="fine">Pallot's server never sees what you share. <a href="faq.html#share-picks">More on sharing</a></p>
+        <p class="fine share-warn" id="share-warn"></p>
       </div>
-      <div class="share-picks-open">
-        <p>Picks from someone else, or from another device?</p>
-        <button class="btn small" type="button" id="share-open">Open a picks file</button>
-        <input type="file" id="share-file" accept=".json,application/json" hidden>
-      </div>
-      <div class="button-row end">
-        <button class="btn ghost" type="button" id="share-done">Done</button>
-      </div>
+      <p class="fine share-foot"><a href="faq.html#share-picks">More on sharing</a> · <a href="settings.html#data-title">Save everything</a></p>
     </form>
-  </dialog>
-
-  <dialog id="phrase-dialog" class="small-dialog" aria-labelledby="phrase-title" aria-describedby="phrase-intro">
-    <div class="dialog-pad">
-      <h2 id="phrase-title">These picks are locked</h2>
-      <p id="phrase-intro">Type the phrase that came with them.</p>
-      <label for="phrase-input">Phrase</label>
-      <div class="phrase-field">
-        <input type="password" id="phrase-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true">
-        <button class="btn ghost small" type="button" data-phrase-show aria-controls="phrase-input" aria-pressed="false">Show</button>
-      </div>
-      <p class="status" id="phrase-status" role="status" aria-live="polite"></p>
-      <p class="fine">Your phrase stays on this device. Pallot's server never sees it.</p>
-      <div class="button-row end">
-        <button class="btn ghost" type="button" id="phrase-cancel">Cancel</button>
-        <button class="btn primary" type="button" id="phrase-open">Open</button>
-      </div>
-    </div>
   </dialog>
 
   <div id="print-sheet" class="print-sheet" aria-hidden="true"></div>

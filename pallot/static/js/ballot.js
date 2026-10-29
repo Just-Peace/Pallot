@@ -11,8 +11,8 @@
 import { lookupLabel, rememberedCard, showAddress } from "./address.js";
 import { api } from "./api.js";
 import {
-  applyHidePicked, askFocus, hidingNote, initNav, markCurrentSection, nextRace, pickProgress, renderSections, setCardsLoading, syncPollMarks,
-  updateProgress,
+  applyHidePicked, askFocus, goTo, hidingNote, initNav, markCurrentSection, nextRace, pickProgress, renderSections, setCardsLoading,
+  syncPollMarks, updateProgress,
 } from "./ballot-nav.js";
 import { electionLine, shortElectionLine } from "./ballot-shared.js";
 import { initBallotTop, renderBallotTop } from "./ballot-top.js";
@@ -23,17 +23,19 @@ import { syncMap } from "./district-map.js";
 import { initDistrictsCard, openDistricts, renderDistricts } from "./districts-card.js";
 import { syncEndorserBar } from "./endorser-bar.js";
 import { $, closeOnBackdrop, confirmDialog, extLink, h, linkedText, onReturn, phoneWords, setStatus as showStatus, stepText } from "./dom.js";
-import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, placeEntry, readVoterCard } from "./entry-card.js";
+import { entryMode, fillVoterCard, focusEntry, loadEntryConfig, pickedSlate, placeEntry, readVoterCard, selectEntry } from "./entry-card.js";
 import { formatDate } from "./format.js";
 import { hydrateIcons } from "./icons.js";
 import { keyDatesCard } from "./key-dates.js";
-import { STATES, coverageOf, stateInfo } from "./labels.js";
+import { STATES, coverageOf, districtLine, stateInfo } from "./labels.js";
+import { offerUndoRestore, takeRestored } from "./pallot-file.js";
 import { hideBanner, initRules, openRules, syncRuleBanner } from "./pick-rule-dialog.js";
 import { Picks, onPicksChanged } from "./picks.js";
 import { buildPrintSheet } from "./print.js";
-import { initRaceCards, redrawCards, refillBans, refillCards, renderCards } from "./race-cards.js";
-import { initShare, offerHeldPicks, takeLinkedPicks } from "./share-dialog.js";
-import { ADDRESS_CARD, LAST_LOOKUP, readJson, settingsStamp, writeJson } from "./storage.js";
+import { cardFor, initRaceCards, redrawCards, refillBans, refillCards, renderCards } from "./race-cards.js";
+import { districtsRecord } from "./share.js";
+import { initShare, offerHeldPicks, openFromStart, requestFor, takeLinkedPicks } from "./share-dialog.js";
+import { ADDRESS_CARD, LAST_DISTRICTS, LAST_LOOKUP, readJson, setUiPref, settingsStamp, uiPref, writeJson } from "./storage.js";
 import { attachSuggestions } from "./suggest.js";
 import { hideToast, showToast } from "./toast.js";
 import { onEnterAddress, openPanel } from "./topbar.js";
@@ -233,6 +235,9 @@ async function lookup(request, { keepForm = false, keepBallot = false, clearPick
     clearPicks?.reload();
     const cleared = clearPicks?.clear();
     page.picks = new Picks(found.election_date);
+    page.picks.describe(found);
+    const line = districtLine(found.districts, { state: found.location.state, labels: coverageOf(found).labels });
+    writeJson(LAST_DISTRICTS, districtsRecord(found, line));
     const fromAsk = loading.contains(document.activeElement);
     render();
     if (asked) scrollTo({ top: 0 });
@@ -461,8 +466,22 @@ $("#print-next").addEventListener("click", () => {
   nextRace();
 });
 printDialog.addEventListener("close", () => {
-  if (printDialog.returnValue === "print" && page.ballot) setTimeout(() => window.print(), 50);
+  if (printDialog.returnValue !== "print" || !page.ballot) return;
+  setTimeout(() => {
+    window.print();
+    nudgeSave();
+  }, 50);
 });
+
+// Once, after the first Print my picks, the moment a voter is done: where to keep a copy of
+// everything, since this browser forgets an election's picks 90 days after it.
+function nudgeSave() {
+  if (uiPref("saveNudged")) return;
+  setUiPref("saveNudged", true);
+  showToast("Want a copy you can open later? Save everything in Settings.", {
+    label: "Settings", run: () => location.assign("settings.html#data-title"),
+  });
+}
 // Every print, Print my picks or the browser's own (Ctrl+P), gets a sheet of the current
 // picks, laid out by the print dialog's current choices.
 window.addEventListener("beforeprint", () => {
@@ -508,6 +527,10 @@ initShare(page);
 // nothing else the voter chose is cleared.
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (entryMode() === "file") {
+    openChosenFile();
+    return;
+  }
   const request = readForm();
   const old = page.ballot && page.picks;
   if (!old || ballotOf(request) === ballotOf(page.request)) {
@@ -529,6 +552,21 @@ form.addEventListener("submit", async (event) => {
   });
   if (sure) lookup(request, { clearPicks: old, ask: true });
 });
+
+// Show my ballot on the Pallot file tab: a session is put back; anything else waits for the voter's
+// own ballot, once they look it up with the Address tab.
+function openChosenFile() {
+  const opened = pickedSlate();
+  if (!opened) {
+    setStatus("Choose your Pallot file first.", "error");
+    focusEntry();
+    return;
+  }
+  openFromStart(opened, (text, tone) => {
+    setStatus(text, tone);
+    selectEntry("address", { focus: true });
+  });
+}
 
 function offerUndoClear(picks, cleared) {
   showToast("Cleared your picks for the old address.", {
@@ -567,15 +605,12 @@ onPicksChanged(() => {
   renderRaces();
 });
 
-// The ballot a link's picks open on: the voter's own, else the one the picks name, for the
-// election and party they're for.
-function linkedRequest(linked, own) {
-  const base = own || linked.ballot;
-  if (!base) return null;
-  const request = { ...base };
-  if (linked.election.date) request.election_date = linked.election.date;
-  if (linked.election.party) request.party = linked.election.party;
-  return request;
+// After a session is put back (pallot-file.js): the ballot goes back to the race it was saved on,
+// and Undo puts this browser back as it was.
+function resumeRestored(restored) {
+  const card = restored.race && cardFor(restored.race);
+  if (card) goTo(card);
+  offerUndoRestore(restored.before);
 }
 
 async function start() {
@@ -586,7 +621,8 @@ async function start() {
   let initial = fromHash.get("address")
     ? { address: fromHash.get("address"), ...(fromHash.get("date") ? { election_date: fromHash.get("date") } : {}) }
     : readJson(LAST_LOOKUP, null);
-  if (linked) initial = linkedRequest(linked, initial);
+  // A link's picks open on the voter's own ballot, for the election and party they're for.
+  if (linked && initial && (linked.races.length || linked.notes.length)) initial = requestFor(linked, initial);
   const label = lookupLabel(initial);
   if (label) {
     // Show the remembered address or voter card right away; the lookup fills in the rest.
@@ -597,15 +633,19 @@ async function start() {
   // A first visit starts with the cursor in the address box, except on a touch screen, where the
   // keyboard would cover the card.
   if (changing || !label) showEntry(true, { focus: changing || typingDevice.matches });
-  if (linked && !label) setStatus("Look up your address to see the picks you were sent on your ballot.");
+  if (linked && !label) setStatus("Look up your address to see what you were sent on your ballot.");
   loadElections(initial?.election_date);
   loadEntryConfig({
     startOn: () => (label ? (initial.address ? "address" : "voter_card") : null),
     typed: () => Boolean(addressInput.value.trim()),
   });
+  const restored = takeRestored();
   if (label) {
     if (initial.party) partySelect.value = initial.party;
-    lookup(initial, { keepForm: changing });
+    await lookup(initial, { keepForm: changing });
+    if (restored && page.ballot) resumeRestored(restored);
+  } else if (restored) {
+    offerUndoRestore(restored.before);
   }
 }
 
