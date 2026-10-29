@@ -39,7 +39,7 @@ import re
 
 from . import Office, legislator, statewide, us_house, us_senate
 from .dates import Counts, Guide
-from .grid import GridList, GridRow
+from .grid import GridList, GridRow, titled
 
 INDEX = "https://www.sos.nm.gov/"
 PAGE = "https://candidateportal.servis.sos.state.nm.us/CandidateList.aspx"
@@ -48,7 +48,6 @@ STATEWIDE = ("Governor", "Lieutenant Governor", "Secretary of State", "Attorney 
 LEFT_OUT = frozenset({"ECX", "JDX", "JMC", "MGX", "MUX", "CTY", "CCX"})  # district types it doesn't place
 _DISTRICT = re.compile(r"DISTRICT (\d+)", re.I)
 _APPEALS = re.compile(r"Judge of the Court of Appeals Position (\d+)", re.I)
-_NUMERALS = frozenset({"II", "III", "IV"})
 
 
 def _number(row: GridRow) -> int:
@@ -56,17 +55,6 @@ def _number(row: GridRow) -> int:
     if not found:
         raise ValueError(f"no district for {row.race}: {row.district!r}")
     return int(found.group(1))
-
-
-def _word(word: str) -> str:
-    """A word of a name in capitals as the ballot shows it: "O'CONNELL" is "O'Connell", "MCDANIEL"
-    "McDaniel", "AND" (a ticket's) "and", "III" stays."""
-    bare = word.strip(",.\"'()")
-    if bare in _NUMERALS:
-        return word
-    if bare == "AND":
-        return word.lower()
-    return re.sub(r"\bMc([a-z])", lambda m: "Mc" + m.group(1).upper(), word.title())
 
 
 class NmList(GridList):
@@ -118,9 +106,8 @@ class NmList(GridList):
 
     @classmethod
     def named(cls, name: str) -> str:
-        """The list's name in capitals, as the ballot shows it ("Ben R Lujan", "Juan De Jesus Sanchez,
-        III"); a name not all in capitals as it is."""
-        return name if name != name.upper() else " ".join(_word(word) for word in name.split())
+        """The list's name in capitals, as the ballot shows it (titled)."""
+        return titled(name)
 
 
 GUIDE = Guide(

@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -77,7 +77,9 @@ or email. Oklahoma's (state_ok) takes a Tulsa address, and the State Election Bo
 elections cut down to a few counties' sections, as served (it has no contact details). Kansas's
 (state_ks) takes a Topeka address, the Secretary of State's candidate list page cut down to its
 election dropdown, and the list its postback answers, each row cut down to its first six columns,
-without addresses, phones or emails. A Census answer whose
+without addresses, phones or emails. Montana's (state_mt) takes a Helena address, the Secretary of
+State's candidate list page cut down to its election dropdown, and the CSV its postback exports,
+without the candidates' contact details. A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -117,7 +119,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, ks, md, me, ky, mi, mo, nc, ne, nj, nm, ok, ordinal, pa, pdf_lines, sc, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, ks, md, me, ky, mi, mo, mt, nc, ne, nj, nm, ok, ordinal, pa, pdf_lines, sc, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -187,6 +189,7 @@ MO_ADDRESS = ("jeffersoncity", "201 W Capitol Ave, Jefferson City, MO 65101")
 SC_ADDRESS = ("columbia", "1100 Gervais St, Columbia, SC 29201")  # the State House: Richland County
 KY_ADDRESS = ("frankfort", "700 Capital Ave, Frankfort, KY 40601")  # the Capitol: Franklin County, Senate District 20
 KS_ADDRESS = ("topeka", "300 SW 10th Ave, Topeka, KS 66612")  # the Statehouse: Shawnee County, its district judges
+MT_ADDRESS = ("helena", "1301 E 6th Ave, Helena, MT 59601")  # the Capitol: Lewis and Clark County
 OK_ADDRESS = ("tulsa", "175 E 2nd St, Tulsa, OK 74103")  # City Hall: Tulsa County, OK-1, its district judges
 # Oklahoma's list's counties kept in its fixture: the Tulsa address's and a district judge's with it (Pawnee),
 # enough districts for its minimum, Le Flore (written "LEFLORE"), and county offices and judges of each kind.
@@ -1078,6 +1081,51 @@ def record_wa(client: httpx.Client, key: str) -> None:
     record_members(client, "WA", (None, place.cd))
 
 
+def record_mt(client: httpx.Client, key: str) -> None:
+    """Montana: MT_ADDRESS's Census answer; the Secretary of State's candidate list page, cut down to
+    its election dropdown and its hidden fields with made-up values; the CSV export its postback
+    answers for the general election, without the candidates' addresses, emails, websites and phones
+    (a declared write-in's "WRITE-IN" mark kept); the address's FEC filers for U.S. House, its
+    legislators, and its members of Congress added to officeholders_congress.json."""
+    name, address = MT_ADDRESS
+    place = record_census(client, name, address)
+    page = client.get(mt.PAGE)
+    page.raise_for_status()
+    election = grid.elections(page.text)["elections"][general_day(dt.date.today()).isoformat()]
+    url = f"{mt.PAGE}?e={election}"
+    time.sleep(2)
+    page = client.get(url)
+    page.raise_for_status()
+    fields = hidden_fields(page.text)
+    select = next(m.group(0) for m in re.finditer(r"<select\b[^>]*>.*?</select>", page.text, re.S)
+                  if "ddlElection" in m.group(0))
+    inputs = "\n".join(f'<input type="hidden" name="{field}" id="{field}" value="{field.strip("_")}-recorded" />'
+                       for field in fields)
+    (FIXTURES / "state_mt.html").write_text(
+        f'<html><body><form name="frmMain" method="post" action="./CandidateList.aspx?e={election}" id="frmMain">\n'
+        f"{inputs}\n{select}\n</form></body></html>\n", encoding="utf-8", newline="")
+    time.sleep(2)
+    response = client.post(url, data={**fields, **mt.EXPORT})
+    response.raise_for_status()
+    lines = list(csv.reader(io.StringIO(response.content.decode("utf-8-sig"))))
+    contact = {i for i, heading in enumerate(lines[0]) if heading.upper() in ("MAILING ADDRESS", mt.WEB, "PHONE")}
+
+    def kept(i: int, cell: str) -> str:
+        if i not in contact:
+            return cell
+        return "WRITE-IN" if lines[0][i].upper() == mt.WEB and re.search(r"\bWRITE[- ]?IN\b", cell, re.I) else ""
+
+    out = io.StringIO()
+    csv.writer(out, quoting=csv.QUOTE_ALL, lineterminator="\r\n").writerows(
+        [lines[0], *([kept(i, cell) for i, cell in enumerate(line)] for line in lines[1:] if line)])
+    (FIXTURES / "state_mt.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_mt.csv: {len(mt.MtList.parse(out.getvalue()))} candidates, "
+          f"{len(mt.MtList.parse(response.content))} as served")
+    record_filers(client, key, "MT", place.cd)
+    record_legislators(client, "mt")
+    record_members(client, "MT", (None, place.cd))
+
+
 def record_in(client: httpx.Client, key: str) -> None:
     """Indiana: IN_ADDRESS's Census answer; the Election Division's home page, cut down to its title
     and its link to the year's general election candidate list; the list as served (it has no
@@ -1677,7 +1725,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1750,6 +1798,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ok(client, config.fec_api_key)
         if only in (None, "state_ks"):
             record_ks(client, config.fec_api_key)
+        if only in (None, "state_mt"):
+            record_mt(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):
