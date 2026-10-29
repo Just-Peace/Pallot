@@ -1,0 +1,60 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 3,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6KY01110",
+   "candidate_name": "COMER, JAMES",
+   "candidate_pcc_id": "C00588764",
+   "candidate_pcc_name": "COMER FOR CONGRESS",
+   "cash_on_hand_end_period": 1623432.27,
+   "committee_ids": [
+    "C00588764"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 3904151.06,
+   "total_receipts": 2318360.81
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6KY01169",
+   "candidate_name": "WILLIAMS, JOHN ANDREW",
+   "candidate_pcc_id": "C00904243",
+   "candidate_pcc_name": "WILLIAMS FOR KENTUCKY CAMPAIGN",
+   "cash_on_hand_end_period": 7976.68,
+   "committee_ids": [
+    "C00904243"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 213880.62,
+   "total_receipts": 223179.9
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6KY01177",
+   "candidate_name": "SIMS, DAVID",
+   "candidate_pcc_id": "C00926873",
+   "candidate_pcc_name": "DAVID SIMS FOR CONGRESS",
+   "cash_on_hand_end_period": 298.66,
+   "committee_ids": [
+    "C00926873"
+   ],
+   "coverage_end_date": "2026-07-19",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1501.34,
+   "total_receipts": 1800.0
+  }
+ ]
+}

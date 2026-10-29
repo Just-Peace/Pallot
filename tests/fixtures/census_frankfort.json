@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "700 CAPITAL AVE, FRANKFORT, KY 40601"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "97057132"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "2102000",
+       "CENTLAT": "+38.0136557",
+       "AREAWATER": 32399041,
+       "BASENAME": "Bluegrass Area Development District (West)",
+       "STATE": "21",
+       "OID": "217704485565772",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.0202102",
+       "NAME": "Bluegrass Area Development District (West) PUMA",
+       "OBJECTID": 532,
+       "CENTLON": "-084.8735927",
+       "AREALAND": 2199231751,
+       "INTPTLON": "-084.8698745",
+       "MTFCC": "G6120",
+       "PUMA": "02000"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "40601",
+       "CENTLAT": "+38.2328614",
+       "AREAWATER": 10439640,
+       "BASENAME": "40601",
+       "OID": "221704258281298",
+       "ZCTA5": "40601",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.2349190",
+       "NAME": "ZCTA5 40601",
+       "OBJECTID": 18431,
+       "CENTLON": "-084.8832904",
+       "AREALAND": 563663533,
+       "INTPTLON": "-084.8687863",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "31249",
+       "CENTLAT": "+38.1879027",
+       "AREAWATER": 1328563,
+       "BASENAME": "Frankfort, KY",
+       "OID": "27021103875919",
+       "UA": "31249",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.1882281",
+       "NAME": "Frankfort, KY Urban Area",
+       "OBJECTID": 1289,
+       "CENTLON": "-084.8577568",
+       "AREALAND": 57837995,
+       "INTPTLON": "-084.8595770",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 4,
+       "STGEOMETRY_Area": 63288749.88200152,
+       "NECTAPCI": "N",
+       "GEOID": "2128900",
+       "CENTLAT": "+38.1924490",
+       "AREAWATER": 775721,
+       "BASENAME": "Frankfort",
+       "STATE": "21",
+       "OID": "27890103873903",
+       "LSADC": "25",
+       "PLACE": "28900",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.1949659",
+       "NAME": "Frankfort city",
+       "OBJECTID": 30371,
+       "PLACECC": "C1",
+       "CENTLON": "-084.8643306",
+       "STGEOMETRY_Length": 72264.8534375278,
+       "CBSAPCI": "Y",
+       "AREALAND": 38255490,
+       "INTPTLON": "-084.8658767",
+       "PLACENS": "02403656",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "21073",
+       "CENTLAT": "+38.2391118",
+       "AREAWATER": 10608228,
+       "STATE": "21",
+       "BASENAME": "Franklin",
+       "OID": "27590103873220",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.2349190",
+       "NAME": "Franklin County",
+       "OBJECTID": 2508,
+       "CENTLON": "-084.8770987",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00516883",
+       "AREALAND": 538490297,
+       "INTPTLON": "-084.8687863",
+       "MTFCC": "G4020",
+       "COUNTY": "073"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "2101980",
+       "CENTLAT": "+38.1997935",
+       "AREAWATER": 416728,
+       "STATE": "21",
+       "BASENAME": "Frankfort Independent School District",
+       "OID": "28490103876040",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+38.2002579",
+       "SDUNI": "01980",
+       "NAME": "Frankfort Independent School District",
+       "OBJECTID": 5095,
+       "CENTLON": "-084.8737081",
+       "HIGRADE": "12",
+       "AREALAND": 5356725,
+       "INTPTLON": "-084.8732917",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "210730705002039",
+       "CENTLAT": "+38.1890494",
+       "BLOCK": "2039",
+       "AREAWATER": 0,
+       "STATE": "21",
+       "BASENAME": "2039",
+       "OID": "210701003187565",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.1890494",
+       "NAME": "Block 2039",
+       "OBJECTID": 2203442,
+       "TRACT": "070500",
+       "CENTLON": "-084.8759958",
+       "BLKGRP": "2",
+       "AREALAND": 19696,
+       "INTPTLON": "-084.8759958",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "073"
+      }
+     ],
+     "Micropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "23180",
+       "CENTLAT": "+38.1237041",
+       "AREAWATER": 15852762,
+       "BASENAME": "Frankfort, KY",
+       "OID": "2629034687907339",
+       "LSADC": "M2",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.1214495",
+       "NAME": "Frankfort, KY Micro Area",
+       "CSA": "336",
+       "OBJECTID": 624,
+       "CENTLON": "-084.9331120",
+       "CBSA": "23180",
+       "AREALAND": 1062340346,
+       "INTPTLON": "-084.9331670",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779786",
+       "GEOID": "21",
+       "CENTLAT": "+37.5351657",
+       "AREAWATER": 2383063305,
+       "STATE": "21",
+       "BASENAME": "Kentucky",
+       "STUSAB": "KY",
+       "OID": "27490100360204",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+37.5336844",
+       "DIVISION": "6",
+       "NAME": "Kentucky",
+       "REGION": "3",
+       "OBJECTID": 52,
+       "CENTLON": "-085.3018147",
+       "AREALAND": 102267828307,
+       "INTPTLON": "-085.2929801",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "210730705002",
+       "CENTLAT": "+38.1926961",
+       "AREAWATER": 56457,
+       "STATE": "21",
+       "BASENAME": "2",
+       "OID": "2089015496833226",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.1931702",
+       "NAME": "Block Group 2",
+       "OBJECTID": 125937,
+       "TRACT": "070500",
+       "CENTLON": "-084.8785265",
+       "BLKGRP": "2",
+       "AREALAND": 582275,
+       "INTPTLON": "-084.8786860",
+       "MTFCC": "G5030",
+       "COUNTY": "073"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "336",
+       "CENTLAT": "+37.9497151",
+       "AREAWATER": 102734174,
+       "BASENAME": "Lexington-Fayette--Richmond--Frankfort, KY",
+       "OID": "2619034687908062",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+37.9475413",
+       "NAME": "Lexington-Fayette--Richmond--Frankfort, KY CSA",
+       "OBJECTID": 162,
+       "CSA": "336",
+       "CENTLON": "-084.2972436",
+       "INTPTLON": "-084.2959040",
+       "AREALAND": 9237542775,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "91320",
+       "GEOID": "2107391320",
+       "CENTLAT": "+38.1989533",
+       "AREAWATER": 7159562,
+       "STATE": "21",
+       "BASENAME": "Frankfort",
+       "OID": "27690103873782",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.1998935",
+       "NAME": "Frankfort CCD",
+       "OBJECTID": 13302,
+       "CENTLON": "-084.8699455",
+       "COUSUBCC": "Z5",
+       "AREALAND": 331037786,
+       "INTPTLON": "-084.8713642",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01937010",
+       "COUNTY": "073"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "21020",
+       "CENTLAT": "+38.5470949",
+       "AREAWATER": 62469160,
+       "STATE": "21",
+       "BASENAME": "20",
+       "OID": "2129042393387553",
+       "SLDU": "020",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.5581958",
+       "NAME": "State Senate District 20",
+       "OBJECTID": 1399,
+       "CENTLON": "-084.8672191",
+       "LSY": "2026",
+       "AREALAND": 2318408260,
+       "INTPTLON": "-084.8777632",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "6",
+       "CENTLAT": "+34.5139096",
+       "AREAWATER": 13221047366,
+       "BASENAME": "East South Central",
+       "OID": "2739020719813",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+34.5174373",
+       "DIVISION": "6",
+       "REGION": "3",
+       "NAME": "East South Central Division",
+       "OBJECTID": 3,
+       "CENTLON": "-087.1639905",
+       "AREALAND": 461761542001,
+       "INTPTLON": "-087.1675441",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 48776822603.003296,
+       "CD120": "01",
+       "GEOID": "2101",
+       "CENTLAT": "+37.1072339",
+       "CDSESSN": "120",
+       "AREAWATER": 1184503609,
+       "STATE": "21",
+       "BASENAME": "1",
+       "OID": "2119042393277980",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+36.9654032",
+       "NAME": "Congressional District 1",
+       "OBJECTID": 82,
+       "CENTLON": "-087.0654137",
+       "STGEOMETRY_Length": 2560090.8307029624,
+       "AREALAND": 29784130630,
+       "INTPTLON": "-088.3425944",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "21057",
+       "CENTLAT": "+38.2194934",
+       "SLDL": "057",
+       "AREAWATER": 5904025,
+       "STATE": "21",
+       "BASENAME": "57",
+       "OID": "2139042393387640",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.2217256",
+       "NAME": "State House District 57",
+       "OBJECTID": 3703,
+       "CENTLON": "-084.9232364",
+       "LSY": "2026",
+       "AREALAND": 328067419,
+       "INTPTLON": "-084.9359389",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "21073070500",
+       "CENTLAT": "+38.1925995",
+       "AREAWATER": 111352,
+       "STATE": "21",
+       "BASENAME": "705",
+       "OID": "20790103875367",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.1926598",
+       "NAME": "Census Tract 705",
+       "OBJECTID": 27945,
+       "TRACT": "070500",
+       "CENTLON": "-084.8756062",
+       "AREALAND": 999874,
+       "INTPTLON": "-084.8759100",
+       "MTFCC": "G5020",
+       "COUNTY": "073"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -84.875198991505,
+     "y": 38.189608417364
+    },
+    "addressComponents": {
+     "zip": "40601",
+     "streetName": "CAPITOL",
+     "preType": "",
+     "city": "FRANKFORT",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "798",
+     "state": "KY",
+     "suffixType": "AVE",
+     "toAddress": "700",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "700 CAPITOL AVE, FRANKFORT, KY, 40601"
+   }
+  ]
+ }
+}

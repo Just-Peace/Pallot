@@ -50,6 +50,7 @@ state_in = true             # Indiana Election Division
 state_md = true             # Maryland State Board of Elections
 state_mo = true             # Missouri Secretary of State
 state_sc = true             # South Carolina State Election Commission
+state_ky = true             # Kentucky Secretary of State
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -70,7 +70,10 @@ takes a Jefferson City address, with its U.S. House district on the 2022 map fro
 Secretary of State's elections page cut down to its links, and the certification it links as its
 text alone (it has no contact details). South Carolina's (state_sc) takes a Columbia address, the
 State Election Commission's list of the year's elections, and its search of the general election's
-candidates cut down to the rows it places and two of each office it leaves out. A Census answer whose
+candidates cut down to the rows it places and two of each office it leaves out. Kentucky's (state_ky)
+takes a Frankfort address, the Secretary of State's candidate filings page cut down to its election
+dropdown, and the list of all candidates its postback answers, each row without its post office box
+or email. A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -110,7 +113,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, md, me, mi, mo, nc, ne, nj, nm, ordinal, pa, pdf_lines, sc, va, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ca, co, fl, ga, grid, ia, il, in_, md, me, ky, mi, mo, nc, ne, nj, nm, ordinal, pa, pdf_lines, sc, va, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -178,6 +181,7 @@ MD_ADDRESS = ("annapolis", "100 State Cir, Annapolis, MD 21401")  # the State Ho
 # The Capitol, Cole County: MO-3 on Missouri's 2022 map, in force in 2026, and MO-5 on the 2025 one the geocoder gives.
 MO_ADDRESS = ("jeffersoncity", "201 W Capitol Ave, Jefferson City, MO 65101")
 SC_ADDRESS = ("columbia", "1100 Gervais St, Columbia, SC 29201")  # the State House: Richland County
+KY_ADDRESS = ("frankfort", "700 Capital Ave, Frankfort, KY 40601")  # the Capitol: Franklin County, Senate District 20
 NM_ADDRESS = ("albuquerque", "400 Marquette Ave NW, Albuquerque, NM 87102")  # the Government Center: NM-1
 # Virginia's newest odd-year list still served, for both chambers: 2025's (the House of Delegates
 # alone) answered 404 by 2026-10-29, and 2023's moved to the previous candidate lists.
@@ -1180,6 +1184,54 @@ def record_mo(client: httpx.Client, key: str) -> None:
     record_members(client, "MO", (None, cd))
 
 
+def record_ky(client: httpx.Client, key: str) -> None:
+    """Kentucky: KY_ADDRESS's Census answer; the Secretary of State's candidate filings page, cut
+    down to its heading, its election dropdown and its hidden fields with made-up values; the list
+    of all candidates its postback answers for the general election, each row rewritten as its name
+    (a running mate's under it), office, district and party, without the post office box or email;
+    the address's FEC filers for U.S. House, its legislators, and its members of Congress added to
+    officeholders_congress.json."""
+    name, address = KY_ADDRESS
+    place = record_census(client, name, address)
+    page = client.get(ky.PAGE)
+    page.raise_for_status()
+    fields = hidden_fields(page.text)
+    election = ky.elections(page.text)["elections"][general_day(dt.date.today()).isoformat()]
+
+    def cut(text: str, header: str, rows: str = "") -> str:
+        select = re.search(r"<select\b[^>]*ddlElection.*?</select>", text, re.S).group(0)
+        inputs = "\n".join(f'<input type="hidden" name="{field}" id="{field}" value="{field.strip("_")}-recorded" />'
+                           for field in fields)
+        return (f'<html><body><form method="post" action="./Default.aspx" id="form1">\n{inputs}\n'
+                f'<span id="ctl00_MainContent_lblSearchHeader">{header}</span>\n{select}\n{rows}</form></body></html>\n')
+
+    (FIXTURES / "state_ky.html").write_text(cut(page.text, "Search Criteria"), encoding="utf-8", newline="")
+    time.sleep(2)
+    response = client.post(ky.PAGE, data={**fields, ky.ELECTION: election, **ky.FORM})
+    response.raise_for_status()
+    text = response.text
+    wdd = re.search(r'<div id="ctl00_MainContent_pnlWddResults"', text)
+
+    def table(part: str) -> str:
+        out = []
+        for row in re.findall(r"<tr\b[^>]*class=[\"']boldleft[\"'][^>]*>(.*?)</tr>", part, re.S):
+            cells = re.findall(r"<td\b[^>]*>(.*?)</td>", row, re.S)
+            names = [" ".join(html.unescape(re.sub(r"<[^>]*>", " ", n)).split()) for n in re.split(r"<br\s*/?>", cells[0])]
+            plain = [html.escape(" ".join(html.unescape(re.sub(r"<[^>]*>", " ", c)).split())) for c in cells[2:5]]
+            out.append(f'<tr class="boldleft"><td>{"<br />".join(html.escape(n) for n in names if n)}</td><td></td>'
+                       + "".join(f"<td>{c}</td>" for c in plain) + "</tr>")
+        return "<table>\n" + "\n".join(out) + "\n</table>\n"
+
+    rows = (f'<div id="ctl00_MainContent_pnlResults">\n{table(text[:wdd.start()] if wdd else text)}</div>\n'
+            + (f'<div id="ctl00_MainContent_pnlWddResults">\n{table(text[wdd.start():])}</div>\n' if wdd else ""))
+    (FIXTURES / "state_ky_list.html").write_text(cut(text, "All Candidates", rows), encoding="utf-8", newline="")
+    print(f"state_ky_list.html: {len(ky.KyList.parse((FIXTURES / 'state_ky_list.html').read_bytes()))} candidates, "
+          f"{len(ky.KyList.parse(response.content))} as served")
+    record_filers(client, key, "KY", place.cd)
+    record_legislators(client, "ky")
+    record_members(client, "KY", (None, place.cd))
+
+
 def record_sc(client: httpx.Client, key: str) -> None:
     """South Carolina: SC_ADDRESS's Census answer; the State Election Commission's list of the
     year's statewide elections, as served; the search of the general election's candidates, its
@@ -1553,7 +1605,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -1620,6 +1672,8 @@ def main(argv: list[str] | None = None) -> int:
             record_mo(client, config.fec_api_key)
         if only in (None, "state_sc"):
             record_sc(client, config.fec_api_key)
+        if only in (None, "state_ky"):
+            record_ky(client, config.fec_api_key)
         if only in (None, "grid"):
             record_grid(client)
         if only in (None, "polls"):

@@ -19280,5 +19280,373 @@
     "url": "https://www.dgraham.senate.gov"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "M000355",
+   "thomas": "01395",
+   "lis": "S174",
+   "govtrack": 300072,
+   "opensecrets": "N00003389",
+   "votesmart": 53298,
+   "icpsr": 14921,
+   "fec": [
+    "S2KY00012"
+   ],
+   "cspan": 2351,
+   "wikipedia": "Mitch McConnell",
+   "ballotpedia": "Mitch McConnell",
+   "maplight": 593,
+   "wikidata": "Q355522",
+   "google_entity_id": "kg:/m/01z6ls",
+   "pictorial": 13357
+  },
+  "name": {
+   "first": "Mitch",
+   "last": "McConnell",
+   "official_full": "Mitch McConnell"
+  },
+  "bio": {
+   "birthday": "1942-02-20",
+   "gender": "M"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2007-01-04",
+    "end": "2009-01-06"
+   },
+   {
+    "title": "Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2009-01-06",
+    "end": "2011-01-05"
+   },
+   {
+    "title": "Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2011-01-05",
+    "end": "2013-01-03"
+   },
+   {
+    "title": "Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2013-01-03",
+    "end": "2015-01-03"
+   },
+   {
+    "title": "Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2015-01-03",
+    "end": "2017-01-03"
+   },
+   {
+    "title": "Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2017-01-03",
+    "end": "2019-01-03"
+   },
+   {
+    "title": "Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2019-01-03",
+    "end": "2021-01-03"
+   },
+   {
+    "title": "Senate Majority Leader",
+    "chamber": "senate",
+    "start": "2021-01-03",
+    "end": "2021-01-20"
+   },
+   {
+    "title": "Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2021-01-20",
+    "end": "2023-01-03"
+   },
+   {
+    "title": "Senate Minority Leader",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "sen",
+    "start": "1985-01-03",
+    "end": "1991-01-03",
+    "state": "KY",
+    "class": 2,
+    "party": "Republican"
+   },
+   {
+    "type": "sen",
+    "start": "1991-01-03",
+    "end": "1997-01-03",
+    "state": "KY",
+    "class": 2,
+    "party": "Republican"
+   },
+   {
+    "type": "sen",
+    "start": "1997-01-07",
+    "end": "2003-01-03",
+    "state": "KY",
+    "class": 2,
+    "party": "Republican"
+   },
+   {
+    "type": "sen",
+    "start": "2003-01-07",
+    "end": "2009-01-03",
+    "state": "KY",
+    "class": 2,
+    "party": "Republican",
+    "url": "http://mcconnell.senate.gov/"
+   },
+   {
+    "type": "sen",
+    "start": "2009-01-06",
+    "end": "2015-01-03",
+    "state": "KY",
+    "class": 2,
+    "party": "Republican",
+    "url": "http://www.mcconnell.senate.gov",
+    "address": "317 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-2541",
+    "fax": "202-224-2499",
+    "contact_form": "http://www.mcconnell.senate.gov/public/index.cfm?p=ContactForm",
+    "office": "317 Russell Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.mcconnell.senate.gov/public/?a=rss.feed"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "KY",
+    "class": 2,
+    "party": "Republican",
+    "url": "https://www.mcconnell.senate.gov",
+    "address": "317 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-2541",
+    "fax": "202-224-2499",
+    "contact_form": "http://www.mcconnell.senate.gov/public/index.cfm?p=contact",
+    "office": "317 Russell Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.mcconnell.senate.gov/public/?a=rss.feed"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "KY",
+    "class": 2,
+    "state_rank": "senior",
+    "party": "Republican",
+    "url": "https://www.mcconnell.senate.gov",
+    "rss_url": "http://www.mcconnell.senate.gov/public/?a=rss.feed",
+    "contact_form": "https://www.mcconnell.senate.gov/public/index.cfm?p=contact",
+    "address": "317 Russell Senate Office Building Washington DC 20510",
+    "office": "317 Russell Senate Office Building",
+    "phone": "202-224-2541"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "P000603",
+   "thomas": "02082",
+   "lis": "S348",
+   "govtrack": 412492,
+   "opensecrets": "N00030836",
+   "votesmart": 117285,
+   "fec": [
+    "S0KY00156"
+   ],
+   "cspan": 9265241,
+   "wikipedia": "Rand Paul",
+   "ballotpedia": "Rand Paul",
+   "maplight": 1497,
+   "icpsr": 41104,
+   "wikidata": "Q463557",
+   "google_entity_id": "kg:/m/05pdb7q",
+   "pictorial": 13350
+  },
+  "name": {
+   "first": "Rand",
+   "last": "Paul",
+   "official_full": "Rand Paul"
+  },
+  "bio": {
+   "birthday": "1963-01-07",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2011-01-05",
+    "end": "2017-01-03",
+    "state": "KY",
+    "class": 3,
+    "party": "Republican",
+    "url": "https://www.paul.senate.gov",
+    "address": "167 Russell Senate Office Building Washington DC 20510",
+    "phone": "202-224-4343",
+    "contact_form": "http://www.paul.senate.gov/?p=contact",
+    "fax": "202-228-1373",
+    "office": "167 Russell Senate Office Building",
+    "state_rank": "junior",
+    "rss_url": "http://paul.senate.gov/rss/?p=news"
+   },
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "KY",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.paul.senate.gov",
+    "rss_url": "http://paul.senate.gov/rss/?p=news",
+    "address": "167 Russell Senate Office Building Washington DC 20510",
+    "office": "167 Russell Senate Office Building",
+    "phone": "202-224-4343",
+    "contact_form": "https://www.paul.senate.gov/connect/email-rand",
+    "fax": "202-228-1373"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "KY",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.paul.senate.gov",
+    "rss_url": "http://paul.senate.gov/rss/?p=news",
+    "contact_form": "https://www.paul.senate.gov/connect/email-rand",
+    "address": "295 Russell Senate Office Building Washington DC 20510",
+    "office": "295 Russell Senate Office Building",
+    "phone": "202-224-4343"
+   }
+  ],
+  "family": [
+   {
+    "name": "Ronald Ernest Paul",
+    "relation": "son"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C001108",
+   "govtrack": 412676,
+   "opensecrets": "N00038260",
+   "fec": [
+    "H6KY01110"
+   ],
+   "cspan": 76619,
+   "wikipedia": "James Comer",
+   "ballotpedia": "James Comer Jr.",
+   "google_entity_id": "kg:/m/0j65cf0",
+   "wikidata": "Q6131602",
+   "votesmart": 35169,
+   "maplight": 2166,
+   "icpsr": 21565,
+   "pictorial": 13063
+  },
+  "name": {
+   "first": "James",
+   "last": "Comer",
+   "official_full": "James Comer"
+  },
+  "bio": {
+   "birthday": "1972-08-19",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2016-11-14",
+    "end": "2017-01-03",
+    "state": "KY",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://comer.house.gov/",
+    "address": "2184 Rayburn HOB; Washington DC 20515-1701",
+    "phone": "202-225-3115",
+    "office": "2184 Rayburn House Office Building",
+    "rss_url": "https://comer.house.gov/rss.xml",
+    "contact_form": "https://comer.house.gov/contact/email"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "KY",
+    "district": 1,
+    "party": "Republican",
+    "phone": "202-225-3115",
+    "url": "https://comer.house.gov",
+    "rss_url": "https://comer.house.gov/rss.xml",
+    "address": "1513 Longworth House Office Building; Washington DC 20515-1701",
+    "office": "1513 Longworth House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "KY",
+    "district": 1,
+    "party": "Republican",
+    "phone": "202-225-3115",
+    "address": "1037 Longworth House Office Building Washington DC 20515-1701",
+    "office": "1037 Longworth House Office Building",
+    "url": "https://comer.house.gov",
+    "rss_url": "https://comer.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "KY",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://comer.house.gov",
+    "rss_url": "https://comer.house.gov/rss.xml",
+    "address": "2410 Rayburn House Office Building Washington DC 20515-1701",
+    "office": "2410 Rayburn House Office Building",
+    "phone": "202-225-3115"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "KY",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://comer.house.gov",
+    "rss_url": "https://comer.house.gov/rss.xml",
+    "address": "2410 Rayburn House Office Building Washington DC 20515-1701",
+    "office": "2410 Rayburn House Office Building",
+    "phone": "202-225-3115"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "KY",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://comer.house.gov",
+    "rss_url": "https://comer.house.gov/rss.xml",
+    "address": "2410 Rayburn House Office Building Washington DC 20515-1701",
+    "office": "2410 Rayburn House Office Building",
+    "phone": "202-225-3115"
+   }
+  ]
  }
 ]

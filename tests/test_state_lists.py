@@ -259,7 +259,7 @@ def test_settings_lists_each_states_election_office(client):
     assert set(rows) == {"state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "key_dates_ca", "state_az",
                          "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny",
                          "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa",
-                         "state_in", "state_md", "state_mo", "state_sc"}
+                         "state_in", "state_md", "state_mo", "state_sc", "state_ky"}
     assert rows["state_nc"]["enabled"] and rows["key_dates_ca"]["enabled"]
 
 
