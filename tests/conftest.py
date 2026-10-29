@@ -68,6 +68,7 @@ ADDRESSES = {
     "chicago": "121 N LaSalle St, Chicago, IL 60602",  # Illinois's candidate data file (states/il.py); IL-7, Cook County
     "anchorage": "632 W 6th Ave, Anchorage, AK 99501",  # Alaska's list, three pages (states/ak.py); Senate I, House 17
     "bangor": "73 Harlow St, Bangor, ME 04401",  # Maine's spreadsheet and write-ins (states/me.py); ME-2
+    "omaha": "4917 Underwood Ave, Omaha, NE 68132",  # Nebraska's two PDFs (states/ne.py); NE-2, Legislature 8, Douglas County
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -84,6 +85,7 @@ STATE_LISTS = {
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
+NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 
 
@@ -502,6 +504,12 @@ class Upstream:
             if "Mozilla/" not in request.headers.get("user-agent", ""):
                 return httpx.Response(403)
             name = next((name for part, name in ME_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "sos.nebraska.gov":
+            name = next((name for part, name in NE_FILES.items()
+                         if url.path.endswith(part) or part.startswith("_") and part in url.path), None)
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)

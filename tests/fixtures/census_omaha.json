@@ -1,0 +1,213 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "4917 UNDERWOOD AVE, OMAHA, NE 68132"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "116983311"
+    },
+    "coordinates": {
+     "x": -95.988325264467,
+     "y": 41.265007580266
+    },
+    "addressComponents": {
+     "zip": "68132",
+     "streetName": "UNDERWOOD",
+     "preType": "",
+     "city": "OMAHA",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "4901",
+     "state": "NE",
+     "suffixType": "AVE",
+     "toAddress": "4999",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "4917 UNDERWOOD AVE, OMAHA, NE, 68132",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "310550048003009",
+       "STATE": "31",
+       "COUNTY": "055",
+       "TRACT": "004800",
+       "BLOCK": "3009",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "20965",
+       "MTFCC": "G5040",
+       "NAME": "Block 3009",
+       "BASENAME": "3009",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "3",
+       "CENTLON": "-095.9890822",
+       "CENTLAT": "+41.2645994",
+       "INTPTLON": "-095.9890822",
+       "INTPTLAT": "+41.2645994",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "2187868",
+       "OID": "210701001957928"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490306589492",
+       "GEOID": "3174820",
+       "STATE": "31",
+       "SDUNI": "74820",
+       "BASENAME": "Omaha Public Schools",
+       "NAME": "Omaha Public Schools",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "337148713",
+       "AREAWATER": "9562148",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.2900892",
+       "CENTLON": "-096.0125392",
+       "INTPTLAT": "+41.2900058",
+       "INTPTLON": "-096.0131418",
+       "OBJECTID": "9050"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32033",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "376066403",
+       "AREAWATER": "9385981",
+       "PLACENS": "02396064",
+       "PLACECC": "C5",
+       "PLACE": "37000",
+       "FUNCSTAT": "A",
+       "GEOID": "3137000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Omaha",
+       "NAME": "Omaha city",
+       "OID": "27890317101319",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "31",
+       "CENTLON": "-096.0563975",
+       "CENTLAT": "+41.2635468",
+       "INTPTLON": "-096.0564963",
+       "INTPTLAT": "+41.2640133",
+       "DISP_CLR": "4"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "119",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "3157085404",
+       "AREAWATER": "77781522",
+       "CD120": "02",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "3102",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "2",
+       "NAME": "Congressional District 2",
+       "OID": "2119042393278252",
+       "STATE": "31",
+       "CENTLON": "-096.4528940",
+       "CENTLAT": "+41.2297940",
+       "INTPTLON": "-096.4506899",
+       "INTPTLAT": "+41.2285893"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042393389259",
+       "GEOID": "31008",
+       "STATE": "31",
+       "SLDU": "008",
+       "BASENAME": "8",
+       "NAME": "State Senate District 8",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "23596483",
+       "AREAWATER": "55945",
+       "LSY": "2026",
+       "OBJECTID": "1740",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.2842205",
+       "CENTLON": "-096.0194092",
+       "INTPTLAT": "+41.2844342",
+       "INTPTLON": "-096.0197123",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "2749072488932",
+       "GEOID": "31",
+       "STATE": "31",
+       "STATENS": "01779792",
+       "BASENAME": "Nebraska",
+       "NAME": "Nebraska",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "198950728991",
+       "AREAWATER": "1378181126",
+       "REGION": "2",
+       "DIVISION": "4",
+       "STUSAB": "NE",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.5381095",
+       "CENTLON": "-099.7949779",
+       "INTPTLAT": "+41.5433050",
+       "INTPTLON": "-099.8118641",
+       "OBJECTID": "36"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590317069824",
+       "GEOID": "31055",
+       "STATE": "31",
+       "COUNTY": "055",
+       "COUNTYNS": "00835849",
+       "BASENAME": "Douglas",
+       "NAME": "Douglas County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "845735089",
+       "AREAWATER": "33157716",
+       "OBJECTID": "855",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+41.2953852",
+       "CENTLON": "-096.1544421",
+       "INTPTLAT": "+41.2970908",
+       "INTPTLON": "-096.1540664"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any, ClassVar, Mapping
 from xml.etree import ElementTree
 
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 from ..config import Ttls
 from ..http_cache import HttpCache, RequestSpec, hidden_fields
@@ -223,13 +223,20 @@ def pdf_lines(raw: bytes, *, layout: bool = True) -> list[str]:
     """A PDF list's text, line by line, without trailing spaces: with ``layout``, each line's
     columns kept apart by runs of spaces as the page lays them out; without, in the order the
     file holds its text, which some tools' pages (California's courts) keep whole where layout
-    splits words. One encrypted for printing only (no password) is opened with the empty one.
+    splits words. One encrypted for printing only (no password) is opened with the empty one, and a
+    page turned sideways (Nebraska's) is turned upright first, since layout reads only upright text.
     ValueError for a file that isn't a PDF it can read."""
     try:
         reader = PdfReader(io.BytesIO(raw))
         if reader.is_encrypted:
             reader.decrypt("")
-        pages = [page.extract_text(extraction_mode="layout") if layout else page.extract_text() for page in reader.pages]
+        turned = layout and any(page.rotation % 360 for page in reader.pages)
+        source = PdfWriter(clone_from=reader) if turned else reader
+        pages = []
+        for page in source.pages:
+            if turned and page.rotation % 360:
+                page.transfer_rotation_to_content()
+            pages.append(page.extract_text(extraction_mode="layout") if layout else page.extract_text())
     except Exception as exc:
         raise ValueError(f"not a PDF it can read ({type(exc).__name__})") from exc
     return [line.rstrip() for text in pages for line in text.splitlines()]

@@ -43,6 +43,7 @@ state_co = true             # Colorado Secretary of State
 state_wy = true             # Wyoming Secretary of State
 state_il = true             # Illinois State Board of Elections
 state_me = true             # Maine Secretary of State
+state_ne = true             # Nebraska Secretary of State
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

@@ -1,0 +1,142 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 8,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00129",
+   "candidate_name": "RICKETTS, PETE",
+   "candidate_pcc_id": "C00832436",
+   "candidate_pcc_name": "PETE RICKETTS FOR SENATE",
+   "cash_on_hand_end_period": 1218138.97,
+   "committee_ids": [
+    "C00832436"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 13815789.54,
+   "total_receipts": 14546959.4
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4NE00207",
+   "candidate_name": "OSBORN, DAN",
+   "candidate_pcc_id": "C00901355",
+   "candidate_pcc_name": "OSBORN FOR SENATE",
+   "cash_on_hand_end_period": 1953183.3,
+   "committee_ids": [
+    "C00850677",
+    "C00891465",
+    "C00901355"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 9139828.03,
+   "total_receipts": 11029845.41
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00145",
+   "candidate_name": "BURBANK, CINDY",
+   "candidate_pcc_id": "C00941641",
+   "candidate_pcc_name": "CINDY BURBANK FOR SENATE",
+   "cash_on_hand_end_period": 23108.17,
+   "committee_ids": [
+    "C00941641"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": null,
+   "total_disbursements": 25501.72,
+   "total_receipts": 48609.89
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00152",
+   "candidate_name": "MARVIN, MIKE",
+   "candidate_pcc_id": "C00944199",
+   "candidate_pcc_name": "MARVIN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00944199"
+   ],
+   "coverage_end_date": "2026-09-11",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "OTHER",
+   "total_disbursements": 27750.0,
+   "total_receipts": 27750.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00160",
+   "candidate_name": "FORBES, WILLIAM",
+   "candidate_pcc_id": "C00943969",
+   "candidate_pcc_name": "BILL FORBES FOR NEBRASKA",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00943969"
+   ],
+   "coverage_end_date": "2026-05-21",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1000.0,
+   "total_receipts": 1000.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00202",
+   "candidate_name": "CONBOY, CHARLES",
+   "candidate_pcc_id": "C00962845",
+   "candidate_pcc_name": "CONBOY FOR US SENATE",
+   "cash_on_hand_end_period": -88.3,
+   "committee_ids": [
+    "C00962845"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "OTHER",
+   "total_disbursements": 88.32,
+   "total_receipts": 0.02
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00178",
+   "candidate_name": "AXTELL SCHULTZ, DEBRA LEANNE MS",
+   "candidate_pcc_id": "C00948760",
+   "candidate_pcc_name": "DEBB AXTELL SCHULTZ FOR US SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00948760"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6NE00210",
+   "candidate_name": "RICHARDS, ROBIN MRS.",
+   "candidate_pcc_id": "C00962506",
+   "candidate_pcc_name": "ROBIN RICHARDS FOR U.S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00962506"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "OTHER",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

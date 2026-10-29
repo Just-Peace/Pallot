@@ -43,7 +43,7 @@ LEGISLATURE = "https://data.openstates.org/people/current/{state}.csv"
 # States that redrew their U.S. House map mid-decade -> when the first Congress elected under the
 # new map starts (a term that began before it was won under the district's old lines), and the words.
 REDRAWN = {"TX": (dt.date(2027, 1, 3), "Texas redrew its U.S. House map in 2025")}
-_CHAMBERS = {"upper": "STATESEN", "lower": "STATEREP"}
+_CHAMBERS = {"upper": "STATESEN", "lower": "STATEREP", "legislature": "STATESEN"}  # Nebraska's one house: "legislature"
 _PARTIES = (("REPUBLICAN", "R", "Republican"), ("DEMOCRAT", "D", "Democrat"), ("LIBERTARIAN", "L", "Libertarian"),
             ("GREEN", "G", "Green"), ("INDEPENDENT", "I", "Independent"))
 # A member's pages elsewhere, by the id congress-legislators gives each site, in the order shown.
@@ -71,7 +71,10 @@ class Holder:
 
 
 def _party(text: str | None) -> tuple[str | None, str | None]:
+    """(code, name) of a holder's party; none for a nonpartisan seat (Nebraska's Legislature)."""
     upper = (text or "").upper()
+    if upper == "NONPARTISAN":
+        return None, None
     return next(((code, name) for word, code, name in _PARTIES if word in upper), (None, (text or "").strip() or None))
 
 

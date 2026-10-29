@@ -1,0 +1,158 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 9,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02174",
+   "candidate_name": "POWELL, DENISE",
+   "candidate_pcc_id": "C00903948",
+   "candidate_pcc_name": "DENISE POWELL FOR CONGRESS",
+   "cash_on_hand_end_period": 480473.26,
+   "committee_ids": [
+    "C00903948"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 4612630.73,
+   "total_receipts": 5093103.99
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02208",
+   "candidate_name": "HARDING, BRINKER",
+   "candidate_pcc_id": "C00909515",
+   "candidate_pcc_name": "BRINKER HARDING FOR CONGRESS",
+   "cash_on_hand_end_period": 313372.85,
+   "committee_ids": [
+    "C00909515",
+    "C00909812",
+    "C00919449"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 2537204.17,
+   "total_receipts": 2850577.02
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02190",
+   "candidate_name": "CAVANAUGH, JOHN",
+   "candidate_pcc_id": "C00907246",
+   "candidate_pcc_name": "JOHN CAVANAUGH FOR CONGRESS",
+   "cash_on_hand_end_period": 11846.21,
+   "committee_ids": [
+    "C00907246"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1356772.99,
+   "total_receipts": 1368619.2
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02224",
+   "candidate_name": "ASKINS, KISHLA",
+   "candidate_pcc_id": "C00912105",
+   "candidate_pcc_name": "KISHLA ASKINS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00912105"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 901522.43,
+   "total_receipts": 901522.43
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02240",
+   "candidate_name": "LEUSCHEN, JAMES",
+   "candidate_pcc_id": "C00920173",
+   "candidate_pcc_name": "LEUSCHEN FOR CONGRESS",
+   "cash_on_hand_end_period": 118337.77,
+   "committee_ids": [
+    "C00920173"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 275465.92,
+   "total_receipts": 393803.69
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02216",
+   "candidate_name": "LINDSTROM, BRETT",
+   "candidate_pcc_id": "C00910166",
+   "candidate_pcc_name": "BRETT LINDSTROM FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00910166"
+   ],
+   "coverage_end_date": "2026-07-15",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 375098.51,
+   "total_receipts": 375098.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02257",
+   "candidate_name": "RHOADES, CRYSTAL",
+   "candidate_pcc_id": "C00912014",
+   "candidate_pcc_name": "CRYSTAL FOR CONGRESS",
+   "cash_on_hand_end_period": 112.0,
+   "committee_ids": [
+    "C00912014"
+   ],
+   "coverage_end_date": "2026-05-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 182679.25,
+   "total_receipts": 182791.25
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02166",
+   "candidate_name": "JOHNSTON, MARK EDMUND",
+   "candidate_pcc_id": "C00902940",
+   "candidate_pcc_name": "MARK JOHNSTON FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00902940"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 10146.58,
+   "total_receipts": 10146.58
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6NE02265",
+   "candidate_name": "WILLIAMS, MELANIE",
+   "candidate_pcc_id": "C00940510",
+   "candidate_pcc_name": "MELANIE WILLIAMS FOR CONGRESS 2026",
+   "cash_on_hand_end_period": 679.0,
+   "committee_ids": [
+    "C00940510"
+   ],
+   "coverage_end_date": "2026-04-22",
+   "incumbent_challenge_full": "Open seat",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1740.0,
+   "total_receipts": 2419.0
+  }
+ ]
+}
