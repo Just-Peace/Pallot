@@ -72,6 +72,7 @@ ADDRESSES = {
     "albuquerque": "400 Marquette Ave NW, Albuquerque, NM 87102",  # New Mexico's grid (states/nm.py); NM-1, SD 13, HD 11
     "seattle": "600 4th Ave, Seattle, WA 98104",  # Washington's grid (states/wa.py); WA-7, Legislative District 34, King
     "fortwayne": "200 E Berry St, Fort Wayne, IN 46802",  # Indiana's spreadsheet (states/in_.py); IN-3, SD 16, HD 82, Allen
+    "annapolis": "100 State Cir, Annapolis, MD 21401",  # Maryland's CSV (states/md.py); MD-3, SD 30, HD 30A, Anne Arundel
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -92,6 +93,8 @@ VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "sta
 ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
 NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
 IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
+MD_FILES = {"/2026/general_candidates/index.html": "state_md.html", "_statewide_candidatelist.csv": "state_md.csv"}
+MD_NOT_FOUND = "<html><head><title>404: Page Not Found - Maryland State Board of Elections</title></head></html>"
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
 WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
 
@@ -531,6 +534,11 @@ class Upstream:
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "elections.maryland.gov":  # a page it doesn't have is its "Page Not Found", with a 200
+            name = next((name for part, name in MD_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else MD_NOT_FOUND.encode()
+            return httpx.Response(200, content=body)
         if url.host == "sos.nebraska.gov":
             name = next((name for part, name in NE_FILES.items()
                          if url.path.endswith(part) or part.startswith("_") and part in url.path), None)

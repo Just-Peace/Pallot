@@ -163,6 +163,14 @@
    "last_refresh": "2026-10-29T12:19:11+00:00",
    "races": 1239
   },
+  "state_md": {
+   "answers": 2,
+   "answers_hash": "ca50cc776303b8296fd9cfe3741aaae649353922c036b878672bc47bacefbae0",
+   "candidates": 323,
+   "last_checked": "2026-10-29T16:02:39+00:00",
+   "last_refresh": "2026-10-29T16:02:39+00:00",
+   "races": 131
+  },
   "state_me": {
    "answers": 3,
    "answers_hash": "a3ea8bd67ef5c7256147290dc2fad1df8d5d2e5154db532d03738ce3b579ce13",

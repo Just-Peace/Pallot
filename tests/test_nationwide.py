@@ -110,7 +110,7 @@ def test_coverage_and_where_sources_work():
 
 
 @pytest.mark.parametrize(("state", "kind", "districts", "labels"), [
-    ("MD", "fec", ("cd", "sd", "hd"), {"hd": "House of Delegates"}),
+    ("MD", "list", ("cd", "sd", "hd"), {"hd": "House of Delegates"}),
     ("NE", "list", ("cd", "sd"), {"sd": "Legislature"}),  # one chamber
     ("NM", "list", ("cd", "sd", "hd"), {}),
     ("WA", "list", ("cd", "sd", "hd"), {}),
