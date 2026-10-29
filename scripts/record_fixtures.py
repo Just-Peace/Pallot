@@ -44,7 +44,8 @@ copy), never downloaded, with the address's House seat's FEC filers. Iowa's (sta
 Moines address and the candidate list saved by hand in manual/state_ia (--pdf another copy), never
 downloaded, as a few of its text lines with every candidate's contact details made up. New Jersey's (state_nj) takes a
 Trenton address, the Division of Elections' page cut down to its links, and the U.S. Senate and House
-lists it links, rewritten as small text PDFs without the candidates' addresses. New York's (state_ny) takes a
+lists it links, rewritten as small text PDFs without the candidates' addresses, and the same for
+the odd years' lists for the State Senate and General Assembly (NJ_ODD_YEARS). New York's (state_ny) takes a
 Manhattan and an Albany address and the certification saved by hand in manual/state_ny (--pdf
 another copy), never downloaded, cut down to some races' text lines. Colorado's (state_co) takes a
 Denver address and the SOS's candidate spreadsheet as served (it has no contact details). Wyoming's (state_wy) takes the
@@ -150,6 +151,9 @@ NY_RACES = (("REPRESENTATIVE IN CONGRESS", "1"), ("REPRESENTATIVE IN CONGRESS", 
 IA_ADDRESS = ("desmoines", "400 Robert D Ray Dr, Des Moines, IA 50309")  # City Hall: an odd State Senate district, up in 2026
 IA_CONTACT = "PO Box 1, Des Moines, IA 50301          515-555-0100      candidate@example.com"  # made up
 NJ_ADDRESS = ("trenton", "125 W State St, Trenton, NJ 08608")  # the State House: NJ-12, an open seat in 2026
+# New Jersey's newest odd years: 2025's lists (the General Assembly, and the State Senate's special
+# election in the 35th district) and 2023's, the newest list of the whole State Senate.
+NJ_ODD_YEARS = {2025: ("state-senate", "general-assembly"), 2023: ("state-senate",)}
 CO_ADDRESS = ("denver", "1437 Bannock St, Denver, CO 80202")  # the City and County Building: CO-1
 WY_CONTACT = {"Mailing Address": "PO Box 1", "Mailing City State & Zip": "CHEYENNE WY 82001",
               "Campaign Telephone": "307-555-0100", "Email Address": "CANDIDATE@EXAMPLE.COM",
@@ -674,44 +678,74 @@ def text_pdf(pages: list[list[str]], width: int = 612) -> bytes:
 
 def without_addresses(raw: bytes) -> list[list[str]]:
     """New Jersey's list, page by page, without its candidates' addresses: a candidate's first
-    line keeps its name and party where they were, the address lines under it are left out."""
+    line keeps its name and party where they were, a name or running mate wrapped onto the lines
+    under it keeps only that, and the address lines are left out."""
+    lines = pdf_lines(raw)
+    labels = nj._labels(lines)
     pages: list[list[str]] = []
-    for line in pdf_lines(raw):
-        if re.match(r"\d{2}/\d{2}/\d{4}\s.*Official List", line):
+    totals = False
+    for line in lines:
+        if re.match(r"\s*\d{2}/\d{2}/\d{4}\s.*Official List", line):
             pages.append([])
         if not line.strip() or not pages:
             continue
         indent = len(line) - len(line.lstrip())
-        if indent and indent < 50 and not re.search(r"Candidates for|GENERAL ELECTION", line):
+        if indent and indent < 50 and not re.search(r"Candidates for|GENERAL ELECTION|Official List", line):
             continue
+        text = " ".join(line.split())
+        totals = totals or text.startswith("Candidate Totals")
         cells = re.split(r"\s{2,}", line.strip())
-        if (not indent and len(cells) >= 3 and not re.match(r"Name\s{2,}Address|\d{2}/\d{2}/\d{4}", line)
-                and "Congressional District" not in line):
-            line = cells[0].ljust(line.rindex(cells[-1])) + cells[-1]
+        if not (indent or totals or re.match(r"Name\s{2,}Address|\d{2}/\d{2}/\d{4}", line) or "District:" in line):
+            label = next((label for label in labels if text.endswith(label)), None)
+            line = (cells[0].ljust(max(len(line.rstrip()) - len(label), len(cells[0]) + 2)) + label if label
+                    else cells[0][:cells[0].index(")") + 1] if cells[0].startswith("(") and ")" in cells[0] else cells[0])
         pages[-1].append(line)
     return pages
+
+
+def nj_page(client: httpx.Client, year: int, fixture: str) -> dict[str, str]:
+    """New Jersey's election information page for ``year``, written to ``fixture`` cut down to its
+    title and its links to the general election's lists. Its links (nj.links)."""
+    response = client.get(nj.URL.format(year=year))
+    response.raise_for_status()
+    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
+    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*\.pdf\".*?</a>", response.text, re.S)
+               if "-general-candidates-" in a or re.search(r"-general-results-us-(senate|house)\.pdf", a)]
+    (FIXTURES / fixture).write_text(
+        f"<html><head>{title}</head><body>\n" + "\n".join(f"<p>{a}</p>" for a in anchors) + "\n</body></html>\n",
+        encoding="utf-8", newline="")
+    return nj.links(response.text)["links"]
+
+
+def nj_list(client: httpx.Client, url: str, fixture: str) -> None:
+    """One of New Jersey's lists, written to ``fixture`` without its candidates' addresses."""
+    response = client.get(url)
+    response.raise_for_status()
+    (FIXTURES / fixture).write_bytes(text_pdf(without_addresses(response.content)))
+    print(f"{fixture}: {len(nj.NjList.parse((FIXTURES / fixture).read_bytes()))} candidates")
+
+
+def record_nj_odd_years(client: httpx.Client) -> None:
+    """New Jersey's lists for the Legislature: for each of NJ_ODD_YEARS, its page cut down to its
+    links (state_nj_{year}.html) and the lists named, without the candidates' addresses."""
+    for year, kinds in NJ_ODD_YEARS.items():
+        found = nj_page(client, year, f"state_nj_{year}.html")
+        for kind in kinds:
+            time.sleep(2)
+            nj_list(client, found[kind], f"state_nj_{year}_{kind.replace('-', '_')}.pdf")
 
 
 def record_nj(client: httpx.Client, key: str) -> None:
     """New Jersey: NJ_ADDRESS's Census answer; the Division of Elections' election information
     page, cut down to its title and its links to the general election's lists; the U.S. Senate and
-    House lists it links, rewritten without the candidates' addresses; the address's FEC filers for
-    U.S. Senate and House, its legislators, and its members of Congress added to officeholders_congress.json."""
+    House lists it links, rewritten without the candidates' addresses; the odd years' lists for the
+    Legislature (record_nj_odd_years); the address's FEC filers for U.S. Senate and House, its
+    legislators, and its members of Congress added to officeholders_congress.json."""
     name, address = NJ_ADDRESS
     place = record_census(client, name, address)
-    response = client.get(nj.URL.format(year=FEC_CYCLE))
-    response.raise_for_status()
-    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
-    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*\.pdf\".*?</a>", response.text, re.S)
-               if "-general-candidates-" in a or re.search(r"-general-results-us-(senate|house)\.pdf", a)]
-    (FIXTURES / "state_nj.html").write_text(
-        f"<html><head>{title}</head><body>\n" + "\n".join(f"<p>{a}</p>" for a in anchors) + "\n</body></html>\n",
-        encoding="utf-8", newline="")
-    for kind, url in nj.links(response.text)["links"].items():
-        response = client.get(url)
-        response.raise_for_status()
-        (FIXTURES / f"state_nj_{kind}.pdf").write_bytes(text_pdf(without_addresses(response.content)))
-        print(f"state_nj_{kind}.pdf: {len(nj.NjList.parse((FIXTURES / f'state_nj_{kind}.pdf').read_bytes()))} candidates")
+    for kind, url in nj_page(client, FEC_CYCLE, "state_nj.html").items():
+        nj_list(client, url, f"state_nj_{kind}.pdf")
+    record_nj_odd_years(client)
     for district in (None, place.cd):
         record_filers(client, key, "NJ", district)
     record_legislators(client, "nj")
