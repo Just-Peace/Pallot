@@ -75,6 +75,7 @@ COVERED = {
     "SD": LIST,  # two Representatives a district, but one each in House subdistricts 26A, 26B, 28A and 28B
     "HI": LIST,  # only its contested races: a candidate unopposed after the primary is elected then
     "ND": LIST,  # its odd-numbered districts up in 2026, with an unexpired House seat in 20, 26 and 42
+    "DE": LIST,  # with its county offices elected countywide
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the

@@ -57,6 +57,7 @@ state_mt = true             # Montana Secretary of State
 state_sd = true             # South Dakota Secretary of State
 state_hi = true             # Hawaii Office of Elections
 state_nd = true             # North Dakota Secretary of State
+state_de = true             # Delaware Department of Elections
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

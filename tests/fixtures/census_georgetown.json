@@ -1,0 +1,424 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "39 THE CIRCLE, GEORGETOWN, DE 19947"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "106086920"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "1000302",
+       "CENTLAT": "+38.6769716",
+       "AREAWATER": 21150749,
+       "BASENAME": "Sussex West",
+       "STATE": "10",
+       "OID": "2177029558008568",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6810672",
+       "NAME": "Sussex West PUMA",
+       "OBJECTID": 1926,
+       "CENTLON": "-075.4934191",
+       "AREALAND": 1630550208,
+       "INTPTLON": "-075.4901653",
+       "MTFCC": "G6120",
+       "PUMA": "00302"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "19947",
+       "CENTLAT": "+38.6741866",
+       "AREAWATER": 466228,
+       "BASENAME": "19947",
+       "OID": "221704257714946",
+       "ZCTA5": "19947",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6702708",
+       "NAME": "ZCTA5 19947",
+       "OBJECTID": 161,
+       "CENTLON": "-075.3986571",
+       "AREALAND": 308773042,
+       "INTPTLON": "-075.4046587",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "32950",
+       "CENTLAT": "+38.6888332",
+       "AREAWATER": 0,
+       "BASENAME": "Georgetown, DE",
+       "OID": "27021337218959",
+       "UA": "32950",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6888332",
+       "NAME": "Georgetown, DE Urban Area",
+       "OBJECTID": 2455,
+       "CENTLON": "-075.3836502",
+       "AREALAND": 12775600,
+       "INTPTLON": "-075.3836502",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 21379712.918528285,
+       "NECTAPCI": "N",
+       "GEOID": "1029090",
+       "CENTLAT": "+38.6894495",
+       "AREAWATER": 0,
+       "BASENAME": "Georgetown",
+       "STATE": "10",
+       "OID": "27890337205657",
+       "LSADC": "43",
+       "PLACE": "29090",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.6894495",
+       "NAME": "Georgetown town",
+       "OBJECTID": 24656,
+       "PLACECC": "C1",
+       "CENTLON": "-075.3872288",
+       "STGEOMETRY_Length": 41160.86549693103,
+       "CBSAPCI": "N",
+       "AREALAND": 13006380,
+       "INTPTLON": "-075.3872288",
+       "PLACENS": "02390203",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "10005",
+       "CENTLAT": "+38.6832032",
+       "AREAWATER": 674015034,
+       "STATE": "10",
+       "BASENAME": "Sussex",
+       "OID": "27590337189172",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.6732275",
+       "NAME": "Sussex County",
+       "OBJECTID": 253,
+       "CENTLON": "-075.3395931",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00217269",
+       "AREALAND": 2424704523,
+       "INTPTLON": "-075.3370237",
+       "MTFCC": "G4020",
+       "COUNTY": "005"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "1000680",
+       "CENTLAT": "+38.5799232",
+       "AREAWATER": 162412997,
+       "STATE": "10",
+       "BASENAME": "Indian River School District",
+       "OID": "28490337220503",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+38.5796303",
+       "SDUNI": "00680",
+       "NAME": "Indian River School District",
+       "OBJECTID": 5261,
+       "CENTLON": "-075.2537417",
+       "HIGRADE": "12",
+       "AREALAND": 856604314,
+       "INTPTLON": "-075.2534463",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "100050505033038",
+       "CENTLAT": "+38.6906270",
+       "BLOCK": "3038",
+       "AREAWATER": 0,
+       "STATE": "10",
+       "BASENAME": "3038",
+       "OID": "210701008013001",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6906270",
+       "NAME": "Block 3038",
+       "OBJECTID": 174237,
+       "TRACT": "050503",
+       "CENTLON": "-075.3858623",
+       "BLKGRP": "3",
+       "AREALAND": 6061,
+       "INTPTLON": "-075.3858623",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "005"
+      }
+     ],
+     "Micropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "42580",
+       "CENTLAT": "+38.6832032",
+       "AREAWATER": 674015034,
+       "BASENAME": "Seaford, DE",
+       "OID": "2629034687907801",
+       "LSADC": "M2",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6732275",
+       "NAME": "Seaford, DE Micro Area",
+       "CSA": "",
+       "OBJECTID": 846,
+       "CENTLON": "-075.3395931",
+       "CBSA": "42580",
+       "AREALAND": 2424704523,
+       "INTPTLON": "-075.3370237",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779781",
+       "GEOID": "10",
+       "CENTLAT": "+38.9932570",
+       "AREAWATER": 1399105001,
+       "STATE": "10",
+       "BASENAME": "Delaware",
+       "STUSAB": "DE",
+       "OID": "27490331618368",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+38.9988742",
+       "DIVISION": "5",
+       "NAME": "Delaware",
+       "REGION": "3",
+       "OBJECTID": 31,
+       "CENTLON": "-075.4514104",
+       "AREALAND": 5046806302,
+       "INTPTLON": "-075.4422351",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "100050505033",
+       "CENTLAT": "+38.7044668",
+       "AREAWATER": 0,
+       "STATE": "10",
+       "BASENAME": "3",
+       "OID": "2089015487591584",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.7044668",
+       "NAME": "Block Group 3",
+       "OBJECTID": 171106,
+       "TRACT": "050503",
+       "CENTLON": "-075.3756906",
+       "BLKGRP": "3",
+       "AREALAND": 2890534,
+       "INTPTLON": "-075.3756906",
+       "MTFCC": "G5030",
+       "COUNTY": "005"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "91036",
+       "GEOID": "1000591036",
+       "CENTLAT": "+38.6921967",
+       "AREAWATER": 905354,
+       "STATE": "10",
+       "BASENAME": "Georgetown",
+       "OID": "27690337200019",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.6909462",
+       "NAME": "Georgetown CCD",
+       "OBJECTID": 9747,
+       "CENTLON": "-075.4101363",
+       "COUSUBCC": "Z5",
+       "AREALAND": 183453546,
+       "INTPTLON": "-075.4119932",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01935608",
+       "COUNTY": "005"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "10019",
+       "CENTLAT": "+38.6577612",
+       "AREAWATER": 22770044,
+       "STATE": "10",
+       "BASENAME": "19",
+       "OID": "2129042393385718",
+       "SLDU": "019",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.6563893",
+       "NAME": "State Senate District 19",
+       "OBJECTID": 1516,
+       "CENTLON": "-075.3349590",
+       "LSY": "2026",
+       "AREALAND": 406743191,
+       "INTPTLON": "-075.3324758",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "5",
+       "CENTLAT": "+33.7954697",
+       "AREAWATER": 86320496528,
+       "BASENAME": "South Atlantic",
+       "OID": "2739020719808",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.7948282",
+       "DIVISION": "5",
+       "REGION": "3",
+       "NAME": "South Atlantic Division",
+       "OBJECTID": 2,
+       "CENTLON": "-080.9687982",
+       "AREALAND": 687144333254,
+       "INTPTLON": "-080.9658812",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 10687083808.63624,
+       "CD120": "00",
+       "GEOID": "1000",
+       "CENTLAT": "+38.9932570",
+       "CDSESSN": "120",
+       "AREAWATER": 1399105001,
+       "STATE": "10",
+       "BASENAME": "Congressional District (at Large)",
+       "OID": "2119042393277427",
+       "LSADC": "C1",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.9988742",
+       "NAME": "Congressional District (at Large)",
+       "OBJECTID": 80,
+       "CENTLON": "-075.4514104",
+       "STGEOMETRY_Length": 541798.6395054894,
+       "AREALAND": 5046806302,
+       "INTPTLON": "-075.4422351",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "10037",
+       "CENTLAT": "+38.6622416",
+       "SLDL": "037",
+       "AREAWATER": 242191,
+       "STATE": "10",
+       "BASENAME": "37",
+       "OID": "2139042393385738",
+       "LSADC": "09",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+38.6732275",
+       "NAME": "State Representative District 37",
+       "OBJECTID": 3207,
+       "CENTLON": "-075.3297195",
+       "LSY": "2026",
+       "AREALAND": 232375380,
+       "INTPTLON": "-075.3370237",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "10005050503",
+       "CENTLAT": "+38.7247175",
+       "AREAWATER": 0,
+       "STATE": "10",
+       "BASENAME": "505.03",
+       "OID": "207903702868266",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+38.7247175",
+       "NAME": "Census Tract 505.03",
+       "OBJECTID": 74647,
+       "TRACT": "050503",
+       "CENTLON": "-075.3872263",
+       "AREALAND": 26945660,
+       "INTPTLON": "-075.3872263",
+       "MTFCC": "G5020",
+       "COUNTY": "005"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -75.385975387364,
+     "y": 38.690390628269
+    },
+    "addressComponents": {
+     "zip": "19947",
+     "streetName": "THE CIR",
+     "preType": "",
+     "city": "GEORGETOWN",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "99",
+     "state": "DE",
+     "suffixType": "",
+     "toAddress": "15",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "39 THE CIR, GEORGETOWN, DE, 19947"
+   }
+  ]
+ }
+}

@@ -10,6 +10,7 @@ from .ak import AkList
 from .ca import CaList
 from .az import AzList
 from .co import CoList
+from .de import DeList
 from .fl import FlList
 from .ga import GaList
 from .hi import HiList
@@ -44,7 +45,7 @@ ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
-                             OkList, KsList, MtList, SdList, HiList, NdList)
+                             OkList, KsList, MtList, SdList, HiList, NdList, DeList)
 }
 
 
