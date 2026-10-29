@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "600 4TH AVE, SEATTLE, WA 98104"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "186589609"
+    },
+    "coordinates": {
+     "x": -122.330271265167,
+     "y": 47.603309859934
+    },
+    "addressComponents": {
+     "zip": "98104",
+     "streetName": "4TH",
+     "preType": "",
+     "city": "SEATTLE",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "600",
+     "state": "WA",
+     "suffixType": "AVE",
+     "toAddress": "698",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "600 4TH AVE, SEATTLE, WA, 98104",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "530330081022004",
+       "STATE": "53",
+       "COUNTY": "033",
+       "TRACT": "008102",
+       "BLOCK": "2004",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "9185",
+       "MTFCC": "G5040",
+       "NAME": "Block 2004",
+       "BASENAME": "2004",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "2",
+       "CENTLON": "-122.3300714",
+       "CENTLAT": "+47.6038212",
+       "INTPTLON": "-122.3300714",
+       "INTPTLAT": "+47.6038212",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "4136254",
+       "OID": "210701008286985"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490836536316",
+       "GEOID": "5307710",
+       "STATE": "53",
+       "SDUNI": "07710",
+       "BASENAME": "Seattle Public Schools",
+       "NAME": "Seattle Public Schools",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "221488926",
+       "AREAWATER": "151079585",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+47.6188042",
+       "CENTLON": "-122.3505525",
+       "INTPTLAT": "+47.6193352",
+       "INTPTLON": "-122.3515382",
+       "OBJECTID": "4138"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32609",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "217623540",
+       "AREAWATER": "150342248",
+       "PLACENS": "02411856",
+       "PLACECC": "C1",
+       "PLACE": "63000",
+       "FUNCSTAT": "A",
+       "GEOID": "5363000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Seattle",
+       "NAME": "Seattle city",
+       "OID": "27890836057945",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "53",
+       "CENTLON": "-122.3512303",
+       "CENTLAT": "+47.6199354",
+       "INTPTLON": "-122.3515382",
+       "INTPTLAT": "+47.6193352",
+       "DISP_CLR": "3"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "231",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "355970775",
+       "AREAWATER": "299367966",
+       "CD120": "07",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "5307",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "7",
+       "NAME": "Congressional District 7",
+       "OID": "2119042393278565",
+       "STATE": "53",
+       "CENTLON": "-122.3915424",
+       "CENTLAT": "+47.5535873",
+       "INTPTLON": "-122.3917291",
+       "INTPTLAT": "+47.5530560"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042579647314",
+       "GEOID": "53034",
+       "STATE": "53",
+       "SLDU": "034",
+       "BASENAME": "34",
+       "NAME": "Legislative (Senate) District 34",
+       "LSADC": "LS",
+       "FUNCSTAT": "N",
+       "AREALAND": "169147699",
+       "AREAWATER": "170276105",
+       "LSY": "2026",
+       "OBJECTID": "1020",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+47.4627244",
+       "CENTLON": "-122.4269327",
+       "INTPTLAT": "+47.4669023",
+       "INTPTLON": "-122.4363322",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042579647364",
+       "GEOID": "53034",
+       "STATE": "53",
+       "SLDL": "034",
+       "BASENAME": "34",
+       "NAME": "Legislative (House) District 34",
+       "LSADC": "LH",
+       "FUNCSTAT": "N",
+       "AREALAND": "169147699",
+       "AREAWATER": "170276105",
+       "LSY": "2026",
+       "OBJECTID": "442",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+47.4627244",
+       "CENTLON": "-122.4269327",
+       "INTPTLAT": "+47.4669023",
+       "INTPTLON": "-122.4363322",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490225755057",
+       "GEOID": "53",
+       "STATE": "53",
+       "STATENS": "01779804",
+       "BASENAME": "Washington",
+       "NAME": "Washington",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "172121722793",
+       "AREAWATER": "12545952132",
+       "REGION": "4",
+       "DIVISION": "9",
+       "STUSAB": "WA",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+47.4148774",
+       "CENTLON": "-120.5954939",
+       "INTPTLAT": "+47.4073801",
+       "INTPTLON": "-120.5760468",
+       "OBJECTID": "20"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590836057068",
+       "GEOID": "53033",
+       "STATE": "53",
+       "COUNTY": "033",
+       "COUNTYNS": "01531933",
+       "BASENAME": "King",
+       "NAME": "King County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "5479767045",
+       "AREAWATER": "496378304",
+       "OBJECTID": "3",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+47.4908756",
+       "CENTLON": "-121.8360321",
+       "INTPTLAT": "+47.4750465",
+       "INTPTLON": "-121.8137431"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

@@ -70,6 +70,7 @@ ADDRESSES = {
     "bangor": "73 Harlow St, Bangor, ME 04401",  # Maine's spreadsheet and write-ins (states/me.py); ME-2
     "omaha": "4917 Underwood Ave, Omaha, NE 68132",  # Nebraska's two PDFs (states/ne.py); NE-2, Legislature 8, Douglas County
     "albuquerque": "400 Marquette Ave NW, Albuquerque, NM 87102",  # New Mexico's grid (states/nm.py); NM-1, SD 13, HD 11
+    "seattle": "600 4th Ave, Seattle, WA 98104",  # Washington's grid (states/wa.py); WA-7, Legislative District 34, King
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
 GOOGLE_KEY = "test-google-key"
@@ -90,6 +91,7 @@ VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "sta
 ME_FILES = {"/upcoming-elections": "state_me.html", ".xlsx": "state_me.xlsx", ".pdf": "state_me_write_ins.pdf"}
 NE_FILES = {"/elections": "state_ne.html", "_Candidate_Filing_List_": "state_ne.pdf", "_Retention_": "state_ne_retention.pdf"}
 IL_ELECTION = "sejIrI+Qmww="  # the November 3, 2026 general election's ID on Illinois's list of elections
+WA_GRID = "voter.votewa.gov"  # Washington's grid: its page (grid_wa.html), and the CSV export a postback answers
 
 
 @functools.cache
@@ -496,6 +498,13 @@ class Upstream:
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
         if url.host == "www.elections.il.gov":
             return self._il(request)
+        if url.host == WA_GRID:  # it refuses Python's default user agent
+            if "python-httpx" in request.headers.get("user-agent", ""):
+                return httpx.Response(403)
+            export = request.method == "POST"
+            text = self.state_lists.get(f"{url.host}#{'csv' if export else 'page'}")
+            body = text.encode() if text is not None else fixture_bytes("grid_wa.csv" if export else "grid_wa.html")
+            return httpx.Response(200, content=body)
         if url.host == "www.elections.alaska.gov":
             page = next((value for name, value in params.items() if name.startswith("frm-page-")), "1")
             text = self.state_lists.get(f"{url.host}#{page}")
