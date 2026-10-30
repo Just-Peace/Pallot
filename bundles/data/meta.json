@@ -123,6 +123,14 @@
    "last_refresh": "2026-10-26T02:44:12+00:00",
    "races": 236
   },
+  "state_dc": {
+   "answers": 2,
+   "answers_hash": "72bfc2cdcb60fbfddd83f3fc0e131117fbf77fdd05763736b791590028cc617d",
+   "candidates": 18,
+   "last_checked": "2026-10-30T19:53:38+00:00",
+   "last_refresh": "2026-10-30T19:53:38+00:00",
+   "races": 7
+  },
   "state_de": {
    "answers": 2,
    "answers_hash": "b0d42716342abf7307e0d95e9a30c70631e2d23b06881669d47596d79dc21bc7",
