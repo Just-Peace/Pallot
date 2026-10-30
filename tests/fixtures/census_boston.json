@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1 ASHBURTON PL, BOSTON, MA 02108"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "637176512"
+    },
+    "coordinates": {
+     "x": -71.062782591909,
+     "y": 42.359259902523
+    },
+    "addressComponents": {
+     "zip": "02108",
+     "streetName": "ASHBURTON",
+     "preType": "",
+     "city": "BOSTON",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "1",
+     "state": "MA",
+     "suffixType": "PL",
+     "toAddress": "99",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1 ASHBURTON PL, BOSTON, MA, 02108",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "250250303021040",
+       "STATE": "25",
+       "COUNTY": "025",
+       "TRACT": "030302",
+       "BLOCK": "1040",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "9258",
+       "MTFCC": "G5040",
+       "NAME": "Block 1040",
+       "BASENAME": "1040",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "1",
+       "CENTLON": "-071.0622170",
+       "CENTLAT": "+42.3595923",
+       "INTPTLON": "-071.0622170",
+       "INTPTLAT": "+42.3595923",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "6831797",
+       "OID": "210701007749492"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490210251134",
+       "GEOID": "2502790",
+       "STATE": "25",
+       "SDUNI": "02790",
+       "BASENAME": "Boston School District",
+       "NAME": "Boston School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "125204346",
+       "AREAWATER": "106896378",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+42.3322591",
+       "CENTLON": "-071.0164764",
+       "INTPTLAT": "+42.3327346",
+       "INTPTLON": "-071.0135134",
+       "OBJECTID": "3578"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32396",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "125204346",
+       "AREAWATER": "106896378",
+       "PLACENS": "00619463",
+       "PLACECC": "C5",
+       "PLACE": "07000",
+       "FUNCSTAT": "A",
+       "GEOID": "2507000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Boston",
+       "NAME": "Boston city",
+       "OID": "27890210203331",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "25",
+       "CENTLON": "-071.0164764",
+       "CENTLAT": "+42.3322591",
+       "INTPTLON": "-071.0135134",
+       "INTPTLAT": "+42.3327346",
+       "DISP_CLR": "1"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "192",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "759895949",
+       "AREAWATER": "433762256",
+       "CD120": "08",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "2508",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "8",
+       "NAME": "Congressional District 8",
+       "OID": "2119042393278139",
+       "STATE": "25",
+       "CENTLON": "-070.9725320",
+       "CENTLAT": "+42.2054245",
+       "INTPTLON": "-070.9737618",
+       "INTPTLAT": "+42.2040095"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042393388049",
+       "GEOID": "25D25",
+       "STATE": "25",
+       "SLDU": "D25",
+       "BASENAME": "Third Suffolk",
+       "NAME": "Third Suffolk District",
+       "LSADC": "07",
+       "FUNCSTAT": "N",
+       "AREALAND": "36723539",
+       "AREAWATER": "37484423",
+       "LSY": "2026",
+       "OBJECTID": "1808",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+42.3883733",
+       "CENTLON": "-070.9957390",
+       "INTPTLAT": "+42.3886230",
+       "INTPTLON": "-070.9934427",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042393388275",
+       "GEOID": "25125",
+       "STATE": "25",
+       "SLDL": "125",
+       "BASENAME": "3rd Suffolk",
+       "NAME": "3rd Suffolk District",
+       "LSADC": "07",
+       "FUNCSTAT": "N",
+       "AREALAND": "3457478",
+       "AREAWATER": "857554",
+       "LSY": "2026",
+       "OBJECTID": "2214",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+42.3575176",
+       "CENTLON": "-071.0580539",
+       "INTPTLAT": "+42.3575206",
+       "INTPTLON": "-071.0577105",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490203627104",
+       "GEOID": "25",
+       "STATE": "25",
+       "STATENS": "00606926",
+       "BASENAME": "Massachusetts",
+       "NAME": "Massachusetts",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "20204495062",
+       "AREAWATER": "7130555467",
+       "REGION": "1",
+       "DIVISION": "1",
+       "STUSAB": "MA",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+42.1618490",
+       "CENTLON": "-071.4975238",
+       "INTPTLAT": "+42.1565196",
+       "INTPTLON": "-071.4895915",
+       "OBJECTID": "44"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590210166934",
+       "GEOID": "25025",
+       "STATE": "25",
+       "COUNTY": "025",
+       "COUNTYNS": "00606939",
+       "BASENAME": "Suffolk",
+       "NAME": "Suffolk County",
+       "LSADC": "06",
+       "FUNCSTAT": "N",
+       "COUNTYCC": "H4",
+       "AREALAND": "150886864",
+       "AREAWATER": "160489722",
+       "OBJECTID": "2775",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+42.3487288",
+       "CENTLON": "-070.9857079",
+       "INTPTLAT": "+42.3327346",
+       "INTPTLON": "-071.0135134"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

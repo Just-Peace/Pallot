@@ -1,0 +1,4 @@
+# The saved page stays on this machine: only its parsed candidates are committed (bundles/data/state_ma.json).
+*
+!.gitignore
+!README.md

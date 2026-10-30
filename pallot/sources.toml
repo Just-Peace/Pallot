@@ -64,6 +64,7 @@ state_ar = true             # Arkansas Secretary of State
 state_mn = true             # Minnesota Secretary of State
 state_nh = true             # New Hampshire Secretary of State
 state_tn = true             # Tennessee Secretary of State
+state_ma = true             # Massachusetts Secretary of the Commonwealth
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders
