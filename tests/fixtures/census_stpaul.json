@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "15 W KELLOGG BLVD, ST PAUL, MN 55102"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "642883731"
+    },
+    "coordinates": {
+     "x": -93.093101193134,
+     "y": 44.943952274339
+    },
+    "addressComponents": {
+     "zip": "55102",
+     "streetName": "KELLOGG",
+     "preType": "",
+     "city": "SAINT PAUL",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "1",
+     "state": "MN",
+     "suffixType": "BLVD",
+     "toAddress": "99",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "15 W KELLOGG BLVD, SAINT PAUL, MN, 55102",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "271230342012003",
+       "STATE": "27",
+       "COUNTY": "123",
+       "TRACT": "034201",
+       "BLOCK": "2003",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "10952",
+       "MTFCC": "G5040",
+       "NAME": "Block 2003",
+       "BASENAME": "2003",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "2",
+       "CENTLON": "-093.0938424",
+       "CENTLAT": "+44.9442250",
+       "INTPTLON": "-093.0938424",
+       "INTPTLAT": "+44.9442250",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "1228940",
+       "OID": "210701008594265"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490306366597",
+       "GEOID": "2733840",
+       "STATE": "27",
+       "SDUNI": "33840",
+       "BASENAME": "St. Paul Public School District",
+       "NAME": "St. Paul Public School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "134628326",
+       "AREAWATER": "10681428",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.9477905",
+       "CENTLON": "-093.1038777",
+       "INTPTLAT": "+44.9489130",
+       "INTPTLON": "-093.1040298",
+       "OBJECTID": "9605"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32560",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "134628326",
+       "AREAWATER": "10681428",
+       "PLACENS": "02396511",
+       "PLACECC": "C5",
+       "PLACE": "58000",
+       "FUNCSTAT": "A",
+       "GEOID": "2758000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "St. Paul",
+       "NAME": "St. Paul city",
+       "OID": "27890306277821",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "27",
+       "CENTLON": "-093.1038777",
+       "CENTLAT": "+44.9477905",
+       "INTPTLON": "-093.1040298",
+       "INTPTLAT": "+44.9489130",
+       "DISP_CLR": "4"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "151",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "785265651",
+       "AREAWATER": "79776917",
+       "CD120": "04",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "2704",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "4",
+       "NAME": "Congressional District 4",
+       "OID": "2119042973232419",
+       "STATE": "27",
+       "CENTLON": "-092.9902394",
+       "CENTLAT": "+45.0036126",
+       "INTPTLON": "-092.9900225",
+       "INTPTLAT": "+45.0016036"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042973032222",
+       "GEOID": "27065",
+       "STATE": "27",
+       "SLDU": "065",
+       "BASENAME": "65",
+       "NAME": "State Senate District 65",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "35621638",
+       "AREAWATER": "2101237",
+       "LSY": "2026",
+       "OBJECTID": "604",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.9427054",
+       "CENTLON": "-093.1003085",
+       "INTPTLAT": "+44.9426320",
+       "INTPTLON": "-093.0981608",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042973032835",
+       "GEOID": "2765B",
+       "STATE": "27",
+       "SLDL": "65B",
+       "BASENAME": "65B",
+       "NAME": "State House District 65B",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "21706633",
+       "AREAWATER": "2087955",
+       "LSY": "2026",
+       "OBJECTID": "1451",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.9319595",
+       "CENTLON": "-093.0860397",
+       "INTPTLAT": "+44.9318293",
+       "INTPTLON": "-093.0858248",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490186175787",
+       "GEOID": "27",
+       "STATE": "27",
+       "STATENS": "00662849",
+       "BASENAME": "Minnesota",
+       "NAME": "Minnesota",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "206245465168",
+       "AREAWATER": "18936562279",
+       "REGION": "2",
+       "DIVISION": "4",
+       "STUSAB": "MN",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+46.3167397",
+       "CENTLON": "-094.1982323",
+       "INTPTLAT": "+46.3159573",
+       "INTPTLON": "-094.1996043",
+       "OBJECTID": "56"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590306243859",
+       "GEOID": "27123",
+       "STATE": "27",
+       "COUNTY": "123",
+       "COUNTYNS": "00659507",
+       "BASENAME": "Ramsey",
+       "NAME": "Ramsey County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "394349507",
+       "AREAWATER": "45983122",
+       "OBJECTID": "1464",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+45.0170609",
+       "CENTLON": "-093.0995550",
+       "INTPTLAT": "+45.0152037",
+       "INTPTLON": "-093.0999648"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
