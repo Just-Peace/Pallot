@@ -44,6 +44,8 @@ def test_districts_are_spelled_one_way_however_they_are_written():
     assert district_key("12A") == "12A" and district_key("Washington-4") == "WASHINGTON 4"
     assert district_key("Chittenden Southeast") == district_key("Chittenden-Southeast") == district_key("Chittenden South East") == "CHITTENDEN SOUTH EAST"
     assert district_key("Northwest") == "NORTH WEST" and district_key("Eastside") == "EASTSIDE"
+    assert district_key("Barnstable, Dukes and Nantucket") == district_key("Barnstable-Dukes-Nantucket") == (
+        "BARNSTABLE DUKES NANTUCKET")
 
 
 def test_north_carolinas_list_has_each_candidate_once_with_the_counties_their_race_reaches():
@@ -261,7 +263,7 @@ def test_settings_lists_each_states_election_office(client):
     assert set(rows) == {"state_nc", "state_mi", "state_pa", "state_fl", "state_va", "state_ca", "key_dates_ca", "state_az",
                          "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny",
                          "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa",
-                         "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn"}
+                         "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma"}
     assert rows["state_nc"]["enabled"] and rows["key_dates_ca"]["enabled"]
 
 

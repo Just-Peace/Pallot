@@ -22992,5 +22992,541 @@
     "phone": "202-225-4311"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "L000562",
+   "thomas": "01686",
+   "govtrack": 400249,
+   "opensecrets": "N00013855",
+   "votesmart": 4844,
+   "fec": [
+    "H2MA09072",
+    "S0MA00083"
+   ],
+   "cspan": 1000222,
+   "wikipedia": "Stephen Lynch (politician)",
+   "house_history": 17301,
+   "ballotpedia": "Stephen Lynch",
+   "maplight": 348,
+   "icpsr": 20119,
+   "wikidata": "Q2344921",
+   "google_entity_id": "kg:/m/028vsz",
+   "pictorial": 13082
+  },
+  "name": {
+   "first": "Stephen",
+   "middle": "F.",
+   "last": "Lynch",
+   "official_full": "Stephen F. Lynch"
+  },
+  "bio": {
+   "birthday": "1955-03-31",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2001-10-23",
+    "end": "2003-01-03",
+    "state": "MA",
+    "district": 9,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "MA",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://www.house.gov/lynch"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "MA",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://www.house.gov/lynch"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "MA",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://www.house.gov/lynch"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "MA",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://www.house.gov/lynch"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "MA",
+    "district": 9,
+    "party": "Democrat",
+    "url": "http://www.house.gov/lynch",
+    "address": "2348 Rayburn HOB; Washington DC 20515-2109",
+    "phone": "202-225-8273",
+    "fax": "202-225-3984",
+    "contact_form": "http://www.house.gov/writerep",
+    "office": "2348 Rayburn House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2015-01-03",
+    "state": "MA",
+    "party": "Democrat",
+    "district": 8,
+    "url": "http://lynch.house.gov",
+    "address": "2133 Rayburn HOB; Washington DC 20515-2108",
+    "phone": "202-225-8273",
+    "fax": "202-225-3984",
+    "contact_form": "https://lynch.house.gov/contact-me/email-me",
+    "office": "2133 Rayburn House Office Building",
+    "rss_url": "http://lynch.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2015-01-06",
+    "end": "2017-01-03",
+    "state": "MA",
+    "party": "Democrat",
+    "district": 8,
+    "url": "http://lynch.house.gov",
+    "address": "2369 Rayburn HOB; Washington DC 20515-2108",
+    "phone": "202-225-8273",
+    "fax": "202-225-3984",
+    "contact_form": "https://lynch.house.gov/contact-me/email-me",
+    "office": "2369 Rayburn House Office Building",
+    "rss_url": "http://lynch.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2017-01-03",
+    "end": "2019-01-03",
+    "state": "MA",
+    "district": 8,
+    "party": "Democrat",
+    "phone": "202-225-8273",
+    "url": "https://lynch.house.gov",
+    "rss_url": "http://lynch.house.gov/rss.xml",
+    "address": "2268 Rayburn House Office Building; Washington DC 20515-2108",
+    "office": "2268 Rayburn House Office Building",
+    "fax": "202-225-3984"
+   },
+   {
+    "type": "rep",
+    "start": "2019-01-03",
+    "end": "2021-01-03",
+    "state": "MA",
+    "district": 8,
+    "party": "Democrat",
+    "phone": "202-225-8273",
+    "address": "2109 Rayburn House Office Building Washington DC 20515-2108",
+    "office": "2109 Rayburn House Office Building",
+    "url": "https://lynch.house.gov",
+    "rss_url": "http://lynch.house.gov/rss.xml"
+   },
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "MA",
+    "district": 8,
+    "party": "Democrat",
+    "url": "https://lynch.house.gov",
+    "rss_url": "http://lynch.house.gov/rss.xml",
+    "address": "2109 Rayburn House Office Building Washington DC 20515-2108",
+    "office": "2109 Rayburn House Office Building",
+    "phone": "202-225-8273"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "MA",
+    "district": 8,
+    "party": "Democrat",
+    "url": "https://lynch.house.gov",
+    "rss_url": "http://lynch.house.gov/rss.xml",
+    "address": "2109 Rayburn House Office Building Washington DC 20515-2108",
+    "office": "2109 Rayburn House Office Building",
+    "phone": "202-225-8273"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "MA",
+    "district": 8,
+    "party": "Democrat",
+    "url": "https://lynch.house.gov",
+    "rss_url": "http://lynch.house.gov/rss.xml",
+    "address": "2109 Rayburn House Office Building Washington DC 20515-2108",
+    "office": "2109 Rayburn House Office Building",
+    "phone": "202-225-8273"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "M000133",
+   "thomas": "00735",
+   "lis": "S369",
+   "govtrack": 400253,
+   "opensecrets": "N00000270",
+   "votesmart": 26900,
+   "icpsr": 14435,
+   "fec": [
+    "H6MA07101",
+    "S4MA00028"
+   ],
+   "cspan": 260,
+   "wikipedia": "Ed Markey",
+   "house_history": 17493,
+   "ballotpedia": "Ed Markey",
+   "maplight": 351,
+   "wikidata": "Q1282411",
+   "google_entity_id": "kg:/m/028vr4",
+   "pictorial": 13363
+  },
+  "name": {
+   "first": "Edward",
+   "middle": "J.",
+   "last": "Markey",
+   "nickname": "Ed",
+   "official_full": "Edward J. Markey"
+  },
+  "bio": {
+   "birthday": "1946-07-11",
+   "gender": "M"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1975-01-14",
+    "end": "1977-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1977-01-04",
+    "end": "1979-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1979-01-15",
+    "end": "1981-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1981-01-05",
+    "end": "1983-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1983-01-03",
+    "end": "1985-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1985-01-03",
+    "end": "1987-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1987-01-06",
+    "end": "1989-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1989-01-03",
+    "end": "1991-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1991-01-03",
+    "end": "1993-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1993-01-05",
+    "end": "1995-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1995-01-04",
+    "end": "1997-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1997-01-07",
+    "end": "1999-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "1999-01-06",
+    "end": "2001-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/markey"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/markey"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/markey"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/markey"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "MA",
+    "district": 7,
+    "party": "Democrat",
+    "url": "http://www.house.gov/markey",
+    "address": "2108 Rayburn HOB; Washington DC 20515-2107",
+    "phone": "202-225-2836",
+    "fax": "202-226-0092",
+    "contact_form": "http://markey.house.gov/index.php?option=com_email_form&amp;Itemid=124",
+    "office": "2108 Rayburn House Office Building"
+   },
+   {
+    "type": "rep",
+    "start": "2013-01-03",
+    "end": "2013-07-15",
+    "state": "MA",
+    "party": "Democrat",
+    "district": 5,
+    "url": "http://www.house.gov/markey",
+    "address": "2108 Rayburn HOB; Washington DC 20515-2107",
+    "phone": "202-225-2836",
+    "fax": "202-226-0092",
+    "contact_form": "http://markey.house.gov/index.php?option=com_email_form&amp;Itemid=124",
+    "office": "2108 Rayburn House Office Building",
+    "rss_url": "http://markey.house.gov/rss.xml"
+   },
+   {
+    "type": "sen",
+    "start": "2013-07-16",
+    "end": "2015-01-03",
+    "state": "MA",
+    "party": "Democrat",
+    "class": 2,
+    "state_rank": "junior",
+    "url": "http://www.markey.senate.gov",
+    "phone": "202-224-2742",
+    "office": "218 Russell Senate Office Building",
+    "address": "218 Russell Senate Office Building Washington DC 20510",
+    "contact_form": "http://www.markey.senate.gov/contact"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "MA",
+    "party": "Democrat",
+    "class": 2,
+    "state_rank": "junior",
+    "url": "https://www.markey.senate.gov",
+    "phone": "202-224-2742",
+    "office": "255 Dirksen Senate Office Building",
+    "address": "255 Dirksen Senate Office Building Washington DC 20510",
+    "contact_form": "https://www.markey.senate.gov/contact"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "MA",
+    "class": 2,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.markey.senate.gov",
+    "contact_form": "https://www.markey.senate.gov/contact",
+    "address": "255 Dirksen Senate Office Building Washington DC 20510",
+    "office": "255 Dirksen Senate Office Building",
+    "phone": "202-224-2742",
+    "fax": "202-228-0769"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "W000817",
+   "thomas": "02182",
+   "lis": "S366",
+   "govtrack": 412542,
+   "cspan": 1023023,
+   "wikipedia": "Elizabeth Warren",
+   "votesmart": 141272,
+   "opensecrets": "N00033492",
+   "fec": [
+    "S2MA00170"
+   ],
+   "ballotpedia": "Elizabeth Warren",
+   "maplight": 1766,
+   "icpsr": 41301,
+   "house_history": 15032390639,
+   "wikidata": "Q434706",
+   "google_entity_id": "kg:/m/01qh39",
+   "pictorial": 13378
+  },
+  "name": {
+   "first": "Elizabeth",
+   "last": "Warren",
+   "official_full": "Elizabeth Warren"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1949-06-22"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Democratic Conference Vice Chair",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Democratic Conference Vice Chair",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "MA",
+    "party": "Democrat",
+    "class": 1,
+    "url": "https://www.warren.senate.gov",
+    "address": "317 Hart Senate Office Building Washington DC 20510",
+    "office": "317 Hart Senate Office Building",
+    "phone": "202-224-4543",
+    "fax": "202-228-2072",
+    "state_rank": "senior",
+    "contact_form": "https://www.warren.senate.gov/?p=email_senator",
+    "rss_url": "http://www.warren.senate.gov/rss/?p=hot_topic"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "MA",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "senior",
+    "url": "https://www.warren.senate.gov",
+    "rss_url": "http://www.warren.senate.gov/rss/?p=hot_topic",
+    "contact_form": "https://www.warren.senate.gov/?p=email_senator",
+    "address": "309 Hart Senate Office Building Washington DC 20510",
+    "office": "309 Hart Senate Office Building",
+    "phone": "202-224-4543"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "MA",
+    "class": 1,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.warren.senate.gov",
+    "rss_url": "http://www.warren.senate.gov/rss/?p=hot_topic",
+    "contact_form": "https://www.warren.senate.gov/?p=email_senator",
+    "address": "311 Hart Senate Office Building Washington DC 20510",
+    "office": "311 Hart Senate Office Building",
+    "phone": "202-224-4543"
+   }
+  ]
  }
 ]

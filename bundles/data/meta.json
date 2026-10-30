@@ -203,6 +203,14 @@
    "last_refresh": "2026-10-29T17:06:01+00:00",
    "races": 251
   },
+  "state_ma": {
+   "answers": 1,
+   "answers_hash": "5433d5c676fcc650244ecd253e29513a09caa8cff6becbb6d7fc8b0eb466c2b1",
+   "candidates": 293,
+   "last_checked": "2026-10-30T12:39:35+00:00",
+   "last_refresh": "2026-10-30T12:39:35+00:00",
+   "races": 215
+  },
   "state_md": {
    "answers": 2,
    "answers_hash": "ca50cc776303b8296fd9cfe3741aaae649353922c036b878672bc47bacefbae0",
