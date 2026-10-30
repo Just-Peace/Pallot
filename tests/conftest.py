@@ -120,6 +120,7 @@ IN_FILES = {"/sos/elections/": "state_in.html", ".xlsx": "state_in.xlsx"}
 DE_FILES = {"/genl_fcddt_2026.xlsx": "state_de.xlsx", "/genl_wcddt_2026.xlsx": "state_de_write_ins.xlsx"}
 MD_FILES = {"/2026/general_candidates/index.html": "state_md.html", "_statewide_candidatelist.csv": "state_md.csv"}
 MO_FILES = {"/elections": "state_mo.html", ".pdf": "state_mo.pdf"}
+DC_FILES = {"/elections/2026-elections": "state_dc.html", "/2026-General-CANDIDATES-07152026.pdf": "state_dc.pdf"}
 SC_ELECTION = "22596"  # the November 3, 2026 general election's id on South Carolina's list of elections
 KY_ELECTION = "87"  # the November 3, 2026 general election's id in Kentucky's dropdown
 KS_ELECTION = "36"  # the November 3, 2026 general election's id in Kansas's dropdown
@@ -592,6 +593,11 @@ class Upstream:
         if url.host == "sos.nebraska.gov":
             name = next((name for part, name in NE_FILES.items()
                          if url.path.endswith(part) or part.startswith("_") and part in url.path), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "www.dcboe.org":  # the year's elections page, and the candidate list it links; another is a 404
+            name = next((name for part, name in DC_FILES.items() if url.path.endswith(part)), None)
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
