@@ -424,6 +424,12 @@ class StateList:
         """Whether the voter ranks the candidates in ``race`` instead of picking."""
         return False
 
+    @classmethod
+    def contest(cls, race: Race) -> tuple[str, str] | None:
+        """The state's name for the contest ``race`` is on the ballot in, and a note on what it
+        decides, where it isn't a general election (Louisiana's "Open Primary"); None for a general."""
+        return None
+
 
 IMPORTED = "manual:"  # the scheme of an imported list's key (ManualList.spec)
 

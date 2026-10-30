@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -106,7 +106,9 @@ manual/state_tn (--folder another copy), never downloaded, cut down to their off
 columns, Governor, Congress and a few districts' rows. Massachusetts's (state_ma) takes a Boston
 address and the candidates page saved by hand in manual/state_ma (--page another copy), never
 downloaded, cut down to its headings and candidates, with a placeholder for each candidate's street
-and town. A Census answer whose
+and town. Louisiana's (state_la) takes a Baton Rouge address and the candidate inquiry's CSV saved
+by hand in manual/state_la (--csv another copy), never downloaded, cut down to the columns it reads,
+Congress, the Legislature and a few of each kind of office left out. A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -147,7 +149,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, il, in_, ks, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, va, vt, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, va, vt, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -232,6 +234,9 @@ TN_ADDRESS = ("memphis", "125 N Main St, Memphis, TN 38103")  # City Hall: Shelb
 # no candidate qualified.
 TN_DISTRICTS = ("Tennessee Senate District 31", "Tennessee House of Representatives District 93")
 MA_ADDRESS = ("boston", "1 Ashburton Pl, Boston, MA 02108")  # the Secretary of the Commonwealth's: Suffolk County
+LA_ADDRESS = ("batonrouge", "900 N 3rd St, Baton Rouge, LA 70802")  # the State Capitol: East Baton Rouge, LA-2 (2026 map)
+# Louisiana's offices kept in its fixture besides Congress and the Legislature: some of each kind left out.
+LA_LEFT_OUT = ("PSC", "BESE", "Associate Justice", "Magistrate", "City Marshal")
 AR_ADDRESS = ("littlerock", "500 Woodlane St, Little Rock, AR 72201")  # the State Capitol: Pulaski County, AR-2
 # Arkansas's offices kept in its fixture besides Congress, the statewide ones and the address's districts: House 8's
 # full term and its special, an independent's race, and a circuit judge's runoff, which is left out.
@@ -1799,6 +1804,37 @@ def record_ar(client: httpx.Client, key: str, saved: Path | None) -> None:
     record_members(client, "AR", (None, place.cd))
 
 
+def record_la(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """Louisiana: LA_ADDRESS's Census answer; the Secretary of State's candidate inquiry, never
+    downloaded (a JavaScript page): ``saved``, or the CSV in manual/state_la, cut down to the
+    columns it reads (no address, phone, email, race or gender) and to Congress, the Legislature,
+    LA_LEFT_OUT's offices and a district attorney's race; the FEC's filers for the U.S. Senate and
+    the address's seat, its legislators, and its members of Congress added to officeholders_congress.json."""
+    name, address = LA_ADDRESS
+    place = record_census(client, name, address)
+    path = saved or next(iter(sorted((ROOT / "manual" / "state_la").glob("*.csv"))), None)
+    if path is None:
+        raise SystemExit("state_la: save Louisiana's candidate inquiry in manual/state_la (see its README), or pass --csv")
+    reader = csv.DictReader(io.StringIO(path.read_text(encoding="utf-8-sig")))
+    out = io.StringIO()
+    writer = csv.DictWriter(out, la.COLUMNS, extrasaction="ignore", quoting=csv.QUOTE_ALL, lineterminator="\n")
+    writer.writeheader()
+    attorney = None
+    for row in reader:
+        office = row["OfficeTitle"]
+        if office == "District Attorney" and attorney in (None, row["OfficeTitleDescription"]):
+            attorney = row["OfficeTitleDescription"]
+        elif not (office.startswith(("U. S. ", "State ")) or office in LA_LEFT_OUT):
+            continue
+        writer.writerow(row)
+    (FIXTURES / "state_la.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_la.csv: {len(la.parse_rows(out.getvalue()))} candidates")
+    record_filers(client, key, "LA")
+    record_filers(client, key, "LA", place.cd)
+    record_legislators(client, "la")
+    record_members(client, "LA", (None, place.cd))
+
+
 def record_mn(client: httpx.Client, key: str) -> None:
     """Minnesota: MN_ADDRESS's Census answer; the Secretary of State's results files for 2026's
     general election, as served (they have no contact details), one request each; the FEC's filers
@@ -2137,7 +2173,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -2150,7 +2186,8 @@ def main(argv: list[str] | None = None) -> int:
                                                  "saved in manual/state_wi; state_ar: Arkansas's candidate search, "
                                                  "instead of the one saved in manual/state_ar; state_nh: New "
                                                  "Hampshire's candidate list, instead of the one saved in "
-                                                 "manual/state_nh")
+                                                 "manual/state_nh; state_la: Louisiana's candidate inquiry, instead "
+                                                 "of the one saved in manual/state_la")
     parser.add_argument("--folder", type=Path, help="state_tn: a folder of Tennessee's candidate lists, instead of "
                                                     "manual/state_tn")
     parser.add_argument("--page", type=Path, help="state_ma: Massachusetts's candidates page, instead of the one "
@@ -2233,6 +2270,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ms(client, config.fec_api_key)
         if only in (None, "state_ar"):
             record_ar(client, config.fec_api_key, args.csv if only == "state_ar" else None)
+        if only in (None, "state_la"):
+            record_la(client, config.fec_api_key, args.csv if only == "state_la" else None)
         if only in (None, "state_mn"):
             record_mn(client, config.fec_api_key)
         if only in (None, "state_nh"):

@@ -89,6 +89,7 @@ ADDRESSES = {
     "stpaul": "15 W Kellogg Blvd, St Paul, MN 55102",  # Minnesota's results files (states/mn.py); Ramsey
     "concord": "107 N Main St, Concord, NH 03301",  # New Hampshire's list, imported by hand (states/nh.py); NH-2, Merrimack
     "memphis": "125 N Main St, Memphis, TN 38103",  # Tennessee's lists, imported by hand (states/tn.py); TN-5 (2026 map), SD 29, HD 86
+    "batonrouge": "900 N 3rd St, Baton Rouge, LA 70802",  # Louisiana's list, imported by hand (states/la.py); LA-2 (2026 map)
     "boston": "1 Ashburton Pl, Boston, MA 02108",  # Massachusetts's page, imported by hand (states/ma.py); MA-8, Third Suffolk, 3rd Suffolk
     "georgetown": "39 The Circle, Georgetown, DE 19947",  # Delaware's spreadsheets (states/de.py); DE-0, SD 19, HD 37, Sussex
 }

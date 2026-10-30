@@ -32,7 +32,7 @@ from .config import Config
 from .http_cache import CallStats, HttpCache, UpstreamError, track_calls
 from .models import (
     GROUPS, Ballot, BallotRequest, Candidate, CountySource, Districts, ElectionDate, ElectionPrecinct, ElectionRef,
-    KeyDates, LeftOut, Location, MaybeSection, PrecinctSource, Race, VoterInfo,
+    KeyDates, LeftOut, Location, MaybeSection, PrecinctSource, Race, RaceNote, VoterInfo,
 )
 from .offices import DISTRICT_KINDS, KIND_LABELS, PRECINCT_KINDS, OfficeScope, classify
 from .settings import Sources
@@ -593,6 +593,9 @@ class _Builder:
             found.races = sorted(found.races + house, key=lambda race: GROUPS.index(race.group))
         for race in found.races + found.unconfirmed:
             race.ranked_choice = lists.ranked_choice(race)
+            if contest := lists.contest(race):
+                race.election_name, note = contest
+                race.notes.append(RaceNote(text=note, url=lists.page, source=lists.label))
         if not (found.races or found.unconfirmed):
             raise BallotError(404, f"The {lists.label} lists no races for this {self.where}.")
         if found.unplaced:

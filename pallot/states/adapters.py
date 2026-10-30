@@ -20,6 +20,7 @@ from .il import IlList
 from .in_ import InList
 from .ks import KsList
 from .ky import KyList
+from .la import LaList
 from .ma import MaList
 from .md import MdList
 from .me import MeList
@@ -53,7 +54,7 @@ ADAPTERS: dict[str, type[StateList]] = {
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
                              OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList, MsList, ArList,
-                             MnList, NhList, TnList, MaList)
+                             MnList, NhList, TnList, MaList, LaList)
 }
 
 
