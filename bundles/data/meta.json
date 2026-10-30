@@ -395,6 +395,14 @@
    "last_refresh": "2026-10-30T03:56:59+00:00",
    "races": 126
   },
+  "state_ut": {
+   "answers": 1,
+   "answers_hash": "6b3aa85c12bc8dbb084220464c2d6fad22d43e16fd4322a40ac4b1eed9351ca4",
+   "candidates": 241,
+   "last_checked": "2026-10-30T13:36:38+00:00",
+   "last_refresh": "2026-10-30T13:36:38+00:00",
+   "races": 126
+  },
   "state_va": {
    "answers": 2,
    "answers_hash": "717134c95785a70a7405fded0e974148cd252ded0c61fa637daa4427a2ba1f41",

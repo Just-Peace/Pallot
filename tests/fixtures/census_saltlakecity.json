@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "350 N STATE ST, SALT LAKE CITY, UT 84103"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "176067295"
+    },
+    "coordinates": {
+     "x": -111.888135934461,
+     "y": 40.775542644427
+    },
+    "addressComponents": {
+     "zip": "84103",
+     "streetName": "STATE",
+     "preType": "",
+     "city": "SALT LAKE CITY",
+     "preDirection": "N",
+     "suffixDirection": "",
+     "fromAddress": "242",
+     "state": "UT",
+     "suffixType": "ST",
+     "toAddress": "398",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "350 N STATE ST, SALT LAKE CITY, UT, 84103",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "490351008001003",
+       "STATE": "49",
+       "COUNTY": "035",
+       "TRACT": "100800",
+       "BLOCK": "1003",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "19597",
+       "MTFCC": "G5040",
+       "NAME": "Block 1003",
+       "BASENAME": "1003",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "1",
+       "CENTLON": "-111.8873986",
+       "CENTLAT": "+40.7752924",
+       "INTPTLON": "-111.8873986",
+       "INTPTLAT": "+40.7752924",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "649187",
+       "OID": "210701004187258"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490190589370",
+       "GEOID": "4900870",
+       "STATE": "49",
+       "SDUNI": "00870",
+       "BASENAME": "Salt Lake City School District",
+       "NAME": "Salt Lake City School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "286975244",
+       "AREAWATER": "1161755",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+40.7777226",
+       "CENTLON": "-111.9299579",
+       "INTPTLAT": "+40.7785390",
+       "INTPTLON": "-111.9298677",
+       "OBJECTID": "7444"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32254",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "287205573",
+       "AREAWATER": "1163130",
+       "PLACENS": "02411771",
+       "PLACECC": "C1",
+       "PLACE": "67000",
+       "FUNCSTAT": "A",
+       "GEOID": "4967000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Salt Lake City",
+       "NAME": "Salt Lake City city",
+       "OID": "27890190531735",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "49",
+       "CENTLON": "-111.9305069",
+       "CENTLAT": "+40.7772238",
+       "INTPTLON": "-111.9272660",
+       "INTPTLAT": "+40.7753661",
+       "DISP_CLR": "3"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "60",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "1466923372",
+       "AREAWATER": "136432765",
+       "CD120": "01",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "4901",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "1",
+       "NAME": "Congressional District 1",
+       "OID": "2119042393340661",
+       "STATE": "49",
+       "CENTLON": "-111.9095536",
+       "CENTLAT": "+40.7118994",
+       "INTPTLON": "-111.9095583",
+       "INTPTLAT": "+40.7143496"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042579646970",
+       "GEOID": "49009",
+       "STATE": "49",
+       "SLDU": "009",
+       "BASENAME": "9",
+       "NAME": "State Senate District 9",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "262363697",
+       "AREAWATER": "381009",
+       "LSY": "2026",
+       "OBJECTID": "1961",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+40.7692620",
+       "CENTLON": "-111.7489849",
+       "INTPTLAT": "+40.7617131",
+       "INTPTLON": "-111.7593863",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042579646995",
+       "GEOID": "49022",
+       "STATE": "49",
+       "SLDL": "022",
+       "BASENAME": "22",
+       "NAME": "State House District 22",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "103799634",
+       "AREAWATER": "0",
+       "LSY": "2026",
+       "OBJECTID": "4776",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+40.8127052",
+       "CENTLON": "-111.8089140",
+       "INTPTLAT": "+40.8127052",
+       "INTPTLON": "-111.8089140",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490187824724",
+       "GEOID": "49",
+       "STATE": "49",
+       "STATENS": "01455989",
+       "BASENAME": "Utah",
+       "NAME": "Utah",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "213921716191",
+       "AREAWATER": "5963329884",
+       "REGION": "4",
+       "DIVISION": "8",
+       "STUSAB": "UT",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+39.3063102",
+       "CENTLON": "-111.6703458",
+       "INTPTLAT": "+39.3349925",
+       "INTPTLON": "-111.6563326",
+       "OBJECTID": "39"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590190526678",
+       "GEOID": "49035",
+       "STATE": "49",
+       "COUNTY": "035",
+       "COUNTYNS": "01448031",
+       "BASENAME": "Salt Lake",
+       "NAME": "Salt Lake County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "1949519819",
+       "AREAWATER": "136760850",
+       "OBJECTID": "3063",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+40.6671979",
+       "CENTLON": "-111.9236029",
+       "INTPTLAT": "+40.6672051",
+       "INTPTLON": "-111.9216020"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
