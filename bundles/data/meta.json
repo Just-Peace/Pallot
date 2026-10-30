@@ -171,6 +171,14 @@
    "last_refresh": "2026-10-26T02:56:53+00:00",
    "races": 137
   },
+  "state_id": {
+   "answers": 1,
+   "answers_hash": "9807ed8eeb0f023525deee235678105ec0dd6ebe8af0b6fb46b3d0f06f23db35",
+   "candidates": 231,
+   "last_checked": "2026-10-30T14:07:16+00:00",
+   "last_refresh": "2026-10-30T14:07:16+00:00",
+   "races": 115
+  },
   "state_il": {
    "answers": 2,
    "answers_hash": "a89df8a35531ad8b7c7eb06f1438ad7eda6731336d5496b9cbd930948cf8f0c9",

@@ -1,0 +1,172 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 10,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H8ID02064",
+   "candidate_name": "SIMPSON, MICHAEL",
+   "candidate_pcc_id": "C00331397",
+   "candidate_pcc_name": "SIMPSON FOR CONGRESS",
+   "cash_on_hand_end_period": 300591.21,
+   "committee_ids": [
+    "C00331397"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 1213826.5,
+   "total_receipts": 1409211.99
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02274",
+   "candidate_name": "GILBREATH, ELINOR",
+   "candidate_pcc_id": "C00940247",
+   "candidate_pcc_name": "ELLIE FOR IDAHO",
+   "cash_on_hand_end_period": 36716.27,
+   "committee_ids": [
+    "C00940247"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 132510.19,
+   "total_receipts": 169226.46
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02225",
+   "candidate_name": "WILEY, JULIE MARISA",
+   "candidate_pcc_id": "C00911115",
+   "candidate_pcc_name": "JULIE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00911115"
+   ],
+   "coverage_end_date": "2026-05-17",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 30477.4,
+   "total_receipts": 30477.4
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02241",
+   "candidate_name": "HUTCHINSON, TRIPP CHARLES",
+   "candidate_pcc_id": "C00928408",
+   "candidate_pcc_name": "TRIPP HUTCHINSON FOR UNITED STATES CONGRESS",
+   "cash_on_hand_end_period": 6963.48,
+   "committee_ids": [
+    "C00928408"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 1578.36,
+   "total_receipts": 7565.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02233",
+   "candidate_name": "SHUMWAY, PERRY",
+   "candidate_pcc_id": "C00917328",
+   "candidate_pcc_name": "COMMITTEE TO ELECT PERRY SHUMWAY TO CONGRESS",
+   "cash_on_hand_end_period": -4742.97,
+   "committee_ids": [
+    "C00917328"
+   ],
+   "coverage_end_date": "2026-08-02",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 5669.24,
+   "total_receipts": 5391.98
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4ID02097",
+   "candidate_name": "HIGGINS, SEAN",
+   "candidate_pcc_id": "C00866038",
+   "candidate_pcc_name": "SEAN HIGGINS FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00866038"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02217",
+   "candidate_name": "LEWIS, KEVEN PAUL",
+   "candidate_pcc_id": "C00901504",
+   "candidate_pcc_name": "KEVEN FOR IDAHO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00901504"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02266",
+   "candidate_name": "CLARKE, ERIC",
+   "candidate_pcc_id": "C00938191",
+   "candidate_pcc_name": "ERIC CLARKE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00938191"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02282",
+   "candidate_name": "HOUSER, EMRE",
+   "candidate_pcc_id": "C00945923",
+   "candidate_pcc_name": "HOUSER FOR IDAHO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00945923"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6ID02290",
+   "candidate_name": "JOHANSON, WILL",
+   "candidate_pcc_id": "C00950386",
+   "candidate_pcc_name": "JOHANSON FOR IDAHO",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00950386"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}
