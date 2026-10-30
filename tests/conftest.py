@@ -83,6 +83,7 @@ ADDRESSES = {
     "pierre": "500 E Capitol Ave, Pierre, SD 57501",  # South Dakota's grid (states/sd.py); SD-0, SD 24, HD 24
     "honolulu": "415 S Beretania St, Honolulu, HI 96813",  # Hawaii's grid (states/hi.py); HI-1, SD 13, HD 25
     "bismarck": "600 E Boulevard Ave, Bismarck, ND 58505",  # North Dakota's grid (states/nd.py); ND-0, Burleigh
+    "montpelier": "115 State St, Montpelier, VT 05633",  # Vermont's spreadsheet (states/vt.py); VT-0, Washington
     "georgetown": "39 The Circle, Georgetown, DE 19947",  # Delaware's spreadsheets (states/de.py); DE-0, SD 19, HD 37, Sussex
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
@@ -548,6 +549,11 @@ class Upstream:
             if "Mozilla/" not in request.headers.get("user-agent", ""):
                 return httpx.Response(403)
             name = next((name for part, name in ME_FILES.items() if url.path.endswith(part)), None)
+            text = self.state_lists.get(f"{url.host}{url.path}")
+            body = text.encode() if text is not None else fixture_bytes(name) if name else None
+            return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        if url.host == "outside.vermont.gov":  # each year's sheet, by name; another is a 404
+            name = "state_vt.xlsx" if url.path.endswith("/2026_general_election_qualified_candidates.xlsx") else None
             text = self.state_lists.get(f"{url.host}{url.path}")
             body = text.encode() if text is not None else fixture_bytes(name) if name else None
             return httpx.Response(200, content=body) if body is not None else httpx.Response(404)

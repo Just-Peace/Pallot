@@ -339,6 +339,14 @@
    "last_refresh": "2026-10-29T11:17:30+00:00",
    "races": 13
   },
+  "state_vt": {
+   "answers": 1,
+   "answers_hash": "f66f11f79df6ce7e9758b098ebf3fcbaeaa1a523a2831696fada9b7e6e5db3af",
+   "candidates": 422,
+   "last_checked": "2026-10-30T02:21:43+00:00",
+   "last_refresh": "2026-10-30T02:21:43+00:00",
+   "races": 202
+  },
   "state_wa": {
    "answers": 2,
    "answers_hash": "d32b93d345ebe65fc1487ccfa8600b983600be6750c229b4fd8fce5d8288c1c8",
