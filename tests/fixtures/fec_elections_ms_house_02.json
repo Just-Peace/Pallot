@@ -1,0 +1,92 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4MS02068",
+   "candidate_name": "THOMPSON, BENNIE G.",
+   "candidate_pcc_id": "C00279851",
+   "candidate_pcc_name": "FRIENDS OF BENNIE THOMPSON",
+   "cash_on_hand_end_period": 1282156.34,
+   "committee_ids": [
+    "C00279851"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1272252.92,
+   "total_receipts": 928245.03
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MS02220",
+   "candidate_name": "TURNAGE, EVAN",
+   "candidate_pcc_id": "C00930982",
+   "candidate_pcc_name": "TURNAGE FOR CONGRESS",
+   "cash_on_hand_end_period": 563.53,
+   "committee_ids": [
+    "C00930982"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 473648.98,
+   "total_receipts": 474212.51
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MS02238",
+   "candidate_name": "WILSON, KEVIN",
+   "candidate_pcc_id": "C00931014",
+   "candidate_pcc_name": "WILSON FOR CONGRESS",
+   "cash_on_hand_end_period": -15.58,
+   "committee_ids": [
+    "C00931014"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 280333.02,
+   "total_receipts": 280317.44
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2MS02203",
+   "candidate_name": "ELLER, RON",
+   "candidate_pcc_id": "C00781468",
+   "candidate_pcc_name": "RON ELLER FOR CONGRESS",
+   "cash_on_hand_end_period": 42108.88,
+   "committee_ids": [
+    "C00781468"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 65445.19,
+   "total_receipts": 70824.97
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6MS02188",
+   "candidate_name": "FOSTER, BENNIE",
+   "candidate_pcc_id": "C00902874",
+   "candidate_pcc_name": "FRIENDS TO ELECT BENNIE FOSTER JR",
+   "cash_on_hand_end_period": 9189.82,
+   "committee_ids": [
+    "C00902874"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

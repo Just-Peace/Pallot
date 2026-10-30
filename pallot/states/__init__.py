@@ -37,7 +37,7 @@ REACHES = (
     "cd",  # a U.S. House district
     "sd", "hd",  # a State Senate or State House district; a board elected by several, them all: "1,5,18,22"
     "state",  # the whole state
-    "counties",  # one district of an office split among whole counties (a judicial district): ``counties``
+    "counties",  # one district of an office split among counties (a judicial district): ``counties``, one only partly in it starred ("HINDS*")
     "county",  # the whole county in ``counties``
     "part_county",  # part of the county in ``counties`` (a commissioner's district): not placed
     "city",  # the whole of ``city``

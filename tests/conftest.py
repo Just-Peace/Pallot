@@ -84,6 +84,7 @@ ADDRESSES = {
     "honolulu": "415 S Beretania St, Honolulu, HI 96813",  # Hawaii's grid (states/hi.py); HI-1, SD 13, HD 25
     "bismarck": "600 E Boulevard Ave, Bismarck, ND 58505",  # North Dakota's grid (states/nd.py); ND-0, Burleigh
     "montpelier": "115 State St, Montpelier, VT 05633",  # Vermont's spreadsheet (states/vt.py); VT-0, Washington
+    "jackson": "400 High St, Jackson, MS 39201",  # Mississippi's page (states/ms.py); MS-2, SD 29, HD 67, Hinds
     "georgetown": "39 The Circle, Georgetown, DE 19947",  # Delaware's spreadsheets (states/de.py); DE-0, SD 19, HD 37, Sussex
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does
@@ -99,7 +100,7 @@ STATE_LISTS = {
     "elections.cdn.sos.ca.gov": "state_ca.pdf",
     "www.coloradosos.gov": "state_co.xlsx", "sos.wyo.gov": "state_wy.csv",
     "www.sos.nm.gov": "state_nm.html", "candidateportal.servis.sos.state.nm.us": "state_nm_list.html",
-    "hosting.okelections.gov": "state_ok.html",
+    "hosting.okelections.gov": "state_ok.html", "www.sos.ms.gov": "state_ms.html",
 }  # host -> its recorded list
 NJ_FILES = {".shtml": "state_nj.html", "-us-senate.pdf": "state_nj_senate.pdf", "-us-house": "state_nj_house.pdf"}
 VA_FILES = {"/candidate-list/": "state_va.html", "-gen-elect-all-offices/": "state_va_all.html"}
