@@ -39,6 +39,7 @@ from .nv import NvList
 from .ny import NyList
 from .oh import OhList
 from .ok import OkList
+from .or_ import OrList
 from .pa import PaList
 from .sc import ScList
 from .sd import SdList
@@ -54,7 +55,7 @@ ADAPTERS: dict[str, type[StateList]] = {
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
                              OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList, MsList, ArList,
-                             MnList, NhList, TnList, MaList, LaList)
+                             MnList, NhList, TnList, MaList, LaList, OrList)
 }
 
 

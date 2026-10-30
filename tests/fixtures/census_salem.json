@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "900 COURT ST NE, SALEM, OR 97301"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "156249894"
+    },
+    "coordinates": {
+     "x": -123.030567446723,
+     "y": 44.939049633207
+    },
+    "addressComponents": {
+     "zip": "97301",
+     "streetName": "COURT",
+     "preType": "",
+     "city": "SALEM",
+     "preDirection": "",
+     "suffixDirection": "NE",
+     "fromAddress": "866",
+     "state": "OR",
+     "suffixType": "ST",
+     "toAddress": "998",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "900 COURT ST NE, SALEM, OR, 97301",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "410470002003031",
+       "STATE": "41",
+       "COUNTY": "047",
+       "TRACT": "000200",
+       "BLOCK": "3031",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "62942",
+       "MTFCC": "G5040",
+       "NAME": "Block 3031",
+       "BASENAME": "3031",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "3",
+       "CENTLON": "-123.0308269",
+       "CENTLAT": "+44.9385487",
+       "INTPTLON": "-123.0308269",
+       "INTPTLAT": "+44.9385487",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "5270046",
+       "OID": "210701003951031"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490446494933",
+       "GEOID": "4110820",
+       "STATE": "41",
+       "SDUNI": "10820",
+       "BASENAME": "Salem-Keizer School District 24J",
+       "NAME": "Salem-Keizer School District 24J",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "439129459",
+       "AREAWATER": "6201057",
+       "HIGRADE": "12",
+       "LOGRADE": "KG",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.9454421",
+       "CENTLON": "-123.0271741",
+       "INTPTLAT": "+44.9449465",
+       "INTPTLON": "-123.0280604",
+       "OBJECTID": "3970"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32402",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "127023141",
+       "AREAWATER": "1425885",
+       "PLACENS": "02411764",
+       "PLACECC": "C1",
+       "PLACE": "64900",
+       "FUNCSTAT": "A",
+       "GEOID": "4164900",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Salem",
+       "NAME": "Salem city",
+       "OID": "27890446398978",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "41",
+       "CENTLON": "-123.0243535",
+       "CENTLAT": "+44.9230318",
+       "INTPTLON": "-123.0230068",
+       "INTPTLAT": "+44.9238996",
+       "DISP_CLR": "2"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "425",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "4908098348",
+       "AREAWATER": "30581750",
+       "CD120": "06",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "4106",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "6",
+       "NAME": "Congressional District 6",
+       "OID": "2119042393278475",
+       "STATE": "41",
+       "CENTLON": "-123.2629575",
+       "CENTLAT": "+45.0644670",
+       "INTPTLON": "-123.2628219",
+       "INTPTLAT": "+45.0647035"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042506138313",
+       "GEOID": "41011",
+       "STATE": "41",
+       "SLDU": "011",
+       "BASENAME": "11",
+       "NAME": "State Senate District 11",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "227882586",
+       "AREAWATER": "3926070",
+       "LSY": "2026",
+       "OBJECTID": "1188",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+45.0656684",
+       "CENTLON": "-122.9781415",
+       "INTPTLAT": "+45.0618086",
+       "INTPTLON": "-122.9737520",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042513049208",
+       "GEOID": "41021",
+       "STATE": "41",
+       "SLDL": "021",
+       "BASENAME": "21",
+       "NAME": "State House District 21",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "39174221",
+       "AREAWATER": "1106036",
+       "LSY": "2026",
+       "OBJECTID": "3436",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.9821150",
+       "CENTLON": "-123.0206294",
+       "INTPTLAT": "+44.9825528",
+       "INTPTLON": "-123.0195899",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490206508673",
+       "GEOID": "41",
+       "STATE": "41",
+       "STATENS": "01155107",
+       "BASENAME": "Oregon",
+       "NAME": "Oregon",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "248630762803",
+       "AREAWATER": "6168644112",
+       "REGION": "4",
+       "DIVISION": "9",
+       "STUSAB": "OR",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+43.9396011",
+       "CENTLON": "-120.6109268",
+       "INTPTLAT": "+43.9717125",
+       "INTPTLON": "-120.6229578",
+       "OBJECTID": "35"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590270103643",
+       "GEOID": "41047",
+       "STATE": "41",
+       "COUNTY": "047",
+       "COUNTYNS": "01135859",
+       "BASENAME": "Marion",
+       "NAME": "Marion County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "3058360774",
+       "AREAWATER": "26468478",
+       "OBJECTID": "1516",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+44.9036620",
+       "CENTLON": "-122.5836721",
+       "INTPTLAT": "+44.9008984",
+       "INTPTLON": "-122.5762602"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
