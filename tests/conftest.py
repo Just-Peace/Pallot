@@ -85,6 +85,7 @@ ADDRESSES = {
     "bismarck": "600 E Boulevard Ave, Bismarck, ND 58505",  # North Dakota's grid (states/nd.py); ND-0, Burleigh
     "montpelier": "115 State St, Montpelier, VT 05633",  # Vermont's spreadsheet (states/vt.py); VT-0, Washington
     "jackson": "400 High St, Jackson, MS 39201",  # Mississippi's page (states/ms.py); MS-2, SD 29, HD 67, Hinds
+    "littlerock": "500 Woodlane St, Little Rock, AR 72201",  # Arkansas's search, imported by hand (states/ar.py); AR-2, SD 14, HD 74
     "georgetown": "39 The Circle, Georgetown, DE 19947",  # Delaware's spreadsheets (states/de.py); DE-0, SD 19, HD 37, Sussex
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does

@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "500 WOODLANE ST, LITTLE ROCK, AR 72201"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "83510134"
+    },
+    "coordinates": {
+     "x": -92.287985545626,
+     "y": 34.746391117995
+    },
+    "addressComponents": {
+     "zip": "72201",
+     "streetName": "WOODLANE",
+     "preType": "",
+     "city": "LITTLE ROCK",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "500",
+     "state": "AR",
+     "suffixType": "ST",
+     "toAddress": "598",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "500 WOODLANE ST, LITTLE ROCK, AR, 72201",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "051190044002034",
+       "STATE": "05",
+       "COUNTY": "119",
+       "TRACT": "004400",
+       "BLOCK": "2034",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "29129",
+       "MTFCC": "G5040",
+       "NAME": "Block 2034",
+       "BASENAME": "2034",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "2",
+       "CENTLON": "-092.2883712",
+       "CENTLAT": "+34.7459256",
+       "INTPTLON": "-092.2883712",
+       "INTPTLAT": "+34.7459256",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "7201535",
+       "OID": "210701002073431"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490330146784",
+       "GEOID": "0509000",
+       "STATE": "05",
+       "SDUNI": "09000",
+       "BASENAME": "Little Rock School District",
+       "NAME": "Little Rock School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "249283417",
+       "AREAWATER": "7792035",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+34.7220019",
+       "CENTLON": "-092.3497555",
+       "INTPTLAT": "+34.7205792",
+       "INTPTLON": "-092.3467308",
+       "OBJECTID": "7900"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32004",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "318457499",
+       "AREAWATER": "7664888",
+       "PLACENS": "02404939",
+       "PLACECC": "C1",
+       "PLACE": "41000",
+       "FUNCSTAT": "A",
+       "GEOID": "0541000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Little Rock",
+       "NAME": "Little Rock city",
+       "OID": "27890330081609",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "05",
+       "CENTLON": "-092.3559352",
+       "CENTLAT": "+34.7252916",
+       "INTPTLON": "-092.3562643",
+       "INTPTLAT": "+34.7232181",
+       "DISP_CLR": "5"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "174",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "13731006239",
+       "AREAWATER": "361921225",
+       "CD120": "02",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "0502",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "2",
+       "NAME": "Congressional District 2",
+       "OID": "2119042393277274",
+       "STATE": "05",
+       "CENTLON": "-092.3621953",
+       "CENTLAT": "+35.1604053",
+       "INTPTLON": "-092.3758376",
+       "INTPTLAT": "+35.1678883"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042393384500",
+       "GEOID": "05014",
+       "STATE": "05",
+       "SLDU": "014",
+       "BASENAME": "14",
+       "NAME": "State Senate District 14",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "95748950",
+       "AREAWATER": "3888580",
+       "LSY": "2026",
+       "OBJECTID": "1471",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+34.7746584",
+       "CENTLON": "-092.3917344",
+       "INTPTLAT": "+34.7746222",
+       "INTPTLON": "-092.3931135",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042393384845",
+       "GEOID": "05074",
+       "STATE": "05",
+       "SLDL": "074",
+       "BASENAME": "74",
+       "NAME": "State House District 74",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "24317924",
+       "AREAWATER": "331887",
+       "LSY": "2026",
+       "OBJECTID": "995",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+34.7580167",
+       "CENTLON": "-092.3373797",
+       "INTPTLAT": "+34.7579423",
+       "INTPTLON": "-092.3371554",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "2749045148374",
+       "GEOID": "05",
+       "STATE": "05",
+       "STATENS": "00068085",
+       "BASENAME": "Arkansas",
+       "NAME": "Arkansas",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "134658805539",
+       "AREAWATER": "3122427118",
+       "REGION": "3",
+       "DIVISION": "7",
+       "STUSAB": "AR",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+34.8941718",
+       "CENTLON": "-092.4418676",
+       "INTPTLAT": "+34.8955256",
+       "INTPTLON": "-092.4446262",
+       "OBJECTID": "10"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590323494903",
+       "GEOID": "05119",
+       "STATE": "05",
+       "COUNTY": "119",
+       "COUNTYNS": "00069177",
+       "BASENAME": "Pulaski",
+       "NAME": "Pulaski County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "1964169578",
+       "AREAWATER": "126979453",
+       "OBJECTID": "2043",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+34.7699812",
+       "CENTLON": "-092.3118615",
+       "INTPTLAT": "+34.7703106",
+       "INTPTLON": "-092.3129960"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
