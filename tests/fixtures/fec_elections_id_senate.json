@@ -1,0 +1,124 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 7,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8ID00092",
+   "candidate_name": "RISCH, JAMES E MR.",
+   "candidate_pcc_id": "C00440362",
+   "candidate_pcc_name": "JIM RISCH FOR U.S. SENATE COMMITTEE",
+   "cash_on_hand_end_period": 2122234.76,
+   "committee_ids": [
+    "C00440362"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "UNKNOWN",
+   "total_disbursements": 5081713.54,
+   "total_receipts": 5009089.21
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ID00146",
+   "candidate_name": "ACHILLES, TODD BAKER",
+   "candidate_pcc_id": "C00909309",
+   "candidate_pcc_name": "TODD ACHILLES FOR IDAHO",
+   "cash_on_hand_end_period": 195818.55,
+   "committee_ids": [
+    "C00909309"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 1733606.31,
+   "total_receipts": 1921131.94
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ID00161",
+   "candidate_name": "LAVE, DENNY",
+   "candidate_pcc_id": "C00940833",
+   "candidate_pcc_name": "DENNY FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00940833"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 170735.0,
+   "total_receipts": 170735.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ID00153",
+   "candidate_name": "ROY, JOSHUA S",
+   "candidate_pcc_id": "C00928424",
+   "candidate_pcc_name": "JOSH ROY FOR IDAHO",
+   "cash_on_hand_end_period": 4279.8,
+   "committee_ids": [
+    "C00928424"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 53306.51,
+   "total_receipts": 57586.31
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ID00138",
+   "candidate_name": "ROTH, DAVID JORDAN",
+   "candidate_pcc_id": "C00839720",
+   "candidate_pcc_name": "DAVID ROTH FOR IDAHO",
+   "cash_on_hand_end_period": 278.5,
+   "committee_ids": [
+    "C00839720"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 14802.92,
+   "total_receipts": 14626.74
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ID00120",
+   "candidate_name": "EVANS, JOE",
+   "candidate_pcc_id": "C00894816",
+   "candidate_pcc_name": "JOE EVANS FOR SENATE",
+   "cash_on_hand_end_period": 90.83,
+   "committee_ids": [
+    "C00894816"
+   ],
+   "coverage_end_date": "2026-03-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 7650.17,
+   "total_receipts": 7741.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6ID00179",
+   "candidate_name": "BONDS, NICKOLAS",
+   "candidate_pcc_id": "C00944744",
+   "candidate_pcc_name": "COMMITTEE TO ELECT NICKOLAS 007 BONDS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00944744"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

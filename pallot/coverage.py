@@ -87,6 +87,7 @@ COVERED = {
     "OR": LIST,  # all 60 House districts and about half the Senate's up in 2026; a candidate of several parties once
     "UT": LIST,  # all 75 House districts and about half the Senate's up in 2026; its U.S. House map of 2026 (Map 1A)
     "WV": LIST,  # all 100 House of Delegates districts and one seat of each of the 17 Senate districts
+    "ID": LIST,  # all 35 districts' Senate seat and House Seats A and B up in 2026
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the

@@ -69,6 +69,7 @@ state_la = true             # Louisiana Secretary of State
 state_or = true             # Oregon Secretary of State
 state_ut = true             # Utah Lieutenant Governor's Office
 state_wv = true             # West Virginia Secretary of State
+state_id = true             # Idaho Secretary of State
 
 # Third-party ballot data
 wikidata = true             # Wikidata: profiles and photos of officeholders

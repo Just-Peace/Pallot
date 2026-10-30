@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "700 W JEFFERSON ST, BOISE, ID 83702"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "117864756"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "1600800",
+       "CENTLAT": "+43.3565809",
+       "AREAWATER": 12803750,
+       "BASENAME": "Ada County (South)--Boise (South) & Kuna Cities",
+       "STATE": "16",
+       "OID": "217704486183015",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.3546773",
+       "NAME": "Ada County (South)--Boise (South) & Kuna Cities PUMA",
+       "OBJECTID": 2268,
+       "CENTLON": "-116.2139840",
+       "AREALAND": 1903273960,
+       "INTPTLON": "-116.2142832",
+       "MTFCC": "G6120",
+       "PUMA": "00800"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "83720",
+       "CENTLAT": "+43.6177067",
+       "AREAWATER": 0,
+       "BASENAME": "83720",
+       "OID": "2217026263094577",
+       "ZCTA5": "83720",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.6177067",
+       "NAME": "ZCTA5 83720",
+       "OBJECTID": 22298,
+       "CENTLON": "-116.1997312",
+       "AREALAND": 24005,
+       "INTPTLON": "-116.1997312",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "08785",
+       "CENTLAT": "+43.6168097",
+       "AREAWATER": 4954661,
+       "BASENAME": "Boise City, ID",
+       "OID": "27021339399590",
+       "UA": "08785",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.6176269",
+       "NAME": "Boise City, ID Urban Area",
+       "OBJECTID": 1004,
+       "CENTLON": "-116.2998262",
+       "AREALAND": 360674234,
+       "INTPTLON": "-116.3016738",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 1,
+       "STGEOMETRY_Area": 433295682.73538,
+       "NECTAPCI": "N",
+       "GEOID": "1608830",
+       "CENTLAT": "+43.5983171",
+       "AREAWATER": 2542080,
+       "BASENAME": "Boise City",
+       "STATE": "16",
+       "OID": "27890339384412",
+       "LSADC": "25",
+       "PLACE": "08830",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+43.5980503",
+       "NAME": "Boise City city",
+       "OBJECTID": 32104,
+       "PLACECC": "C1",
+       "CENTLON": "-116.2296929",
+       "STGEOMETRY_Length": 303740.7786188175,
+       "CBSAPCI": "Y",
+       "AREALAND": 224624119,
+       "INTPTLON": "-116.2315964",
+       "PLACENS": "02409876",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "16001",
+       "CENTLAT": "+43.4507085",
+       "AREAWATER": 22028760,
+       "STATE": "16",
+       "BASENAME": "Ada",
+       "OID": "27590339374049",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+43.4514764",
+       "NAME": "Ada County",
+       "OBJECTID": 96,
+       "CENTLON": "-116.2408880",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "00395066",
+       "AREALAND": 2725324952,
+       "INTPTLON": "-116.2443759",
+       "MTFCC": "G4020",
+       "COUNTY": "001"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "1600360",
+       "CENTLAT": "+43.4302892",
+       "AREAWATER": 17512122,
+       "STATE": "16",
+       "BASENAME": "Boise City Independent School District 1",
+       "OID": "28490339408750",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+43.2804596",
+       "SDUNI": "00360",
+       "NAME": "Boise City Independent School District 1",
+       "OBJECTID": 8041,
+       "CENTLON": "-116.1224733",
+       "HIGRADE": "12",
+       "AREALAND": 1280229403,
+       "INTPTLON": "-116.0238313",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "160010001023015",
+       "CENTLAT": "+43.6177067",
+       "BLOCK": "3015",
+       "AREAWATER": 0,
+       "STATE": "16",
+       "BASENAME": "3015",
+       "OID": "210701002424824",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.6177067",
+       "NAME": "Block 3015",
+       "OBJECTID": 949845,
+       "TRACT": "000102",
+       "CENTLON": "-116.1997312",
+       "BLKGRP": "3",
+       "AREALAND": 24005,
+       "INTPTLON": "-116.1997312",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "001"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779783",
+       "GEOID": "16",
+       "CENTLAT": "+44.3524056",
+       "AREAWATER": 2390671797,
+       "STATE": "16",
+       "BASENAME": "Idaho",
+       "STUSAB": "ID",
+       "OID": "27490130780184",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.3520074",
+       "DIVISION": "8",
+       "NAME": "Idaho",
+       "REGION": "4",
+       "OBJECTID": 4,
+       "CENTLON": "-114.6136830",
+       "AREALAND": 214050828985,
+       "INTPTLON": "-114.5978748",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "160010001023",
+       "CENTLAT": "+43.6164580",
+       "AREAWATER": 0,
+       "STATE": "16",
+       "BASENAME": "3",
+       "OID": "2089015682248358",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.6164580",
+       "NAME": "Block Group 3",
+       "OBJECTID": 96459,
+       "TRACT": "000102",
+       "CENTLON": "-116.1969606",
+       "BLKGRP": "3",
+       "AREALAND": 649438,
+       "INTPTLON": "-116.1969606",
+       "MTFCC": "G5030",
+       "COUNTY": "001"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "147",
+       "CENTLAT": "+43.1403721",
+       "AREAWATER": 357107993,
+       "BASENAME": "Boise City-Mountain Home-Ontario, ID-OR",
+       "OID": "2619034687907983",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.1502054",
+       "NAME": "Boise City-Mountain Home-Ontario, ID-OR CSA",
+       "OBJECTID": 46,
+       "CSA": "147",
+       "CENTLON": "-116.6515370",
+       "INTPTLON": "-116.6385243",
+       "AREALAND": 65102749516,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "90345",
+       "GEOID": "1600190345",
+       "CENTLAT": "+43.6093047",
+       "AREAWATER": 4117616,
+       "STATE": "16",
+       "BASENAME": "Boise City",
+       "OID": "27690339376730",
+       "LSADC": "22",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.6084454",
+       "NAME": "Boise City CCD",
+       "OBJECTID": 33018,
+       "CENTLON": "-116.3102161",
+       "COUSUBCC": "Z5",
+       "AREALAND": 439439464,
+       "INTPTLON": "-116.3050324",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01936680",
+       "COUNTY": "001"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "16019",
+       "CENTLAT": "+43.6724038",
+       "AREAWATER": 658352,
+       "STATE": "16",
+       "BASENAME": "19",
+       "OID": "2129042393385890",
+       "SLDU": "019",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+43.6690190",
+       "NAME": "State Senate District 19",
+       "OBJECTID": 1564,
+       "CENTLON": "-116.1879339",
+       "LSY": "2026",
+       "AREALAND": 248430586,
+       "INTPTLON": "-116.1952595",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "8",
+       "CENTLAT": "+40.2023972",
+       "AREAWATER": 18692985514,
+       "BASENAME": "Mountain",
+       "OID": "2739020719805",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+40.1987470",
+       "DIVISION": "8",
+       "REGION": "4",
+       "NAME": "Mountain Division",
+       "OBJECTID": 5,
+       "CENTLON": "-110.2308131",
+       "AREALAND": 2217926739752,
+       "INTPTLON": "-110.2279740",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 214875732148.43106,
+       "CD120": "02",
+       "GEOID": "1602",
+       "CENTLAT": "+43.4639022",
+       "CDSESSN": "120",
+       "AREAWATER": 1081986332,
+       "STATE": "16",
+       "BASENAME": "2",
+       "OID": "2119042393277690",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+43.4439256",
+       "NAME": "Congressional District 2",
+       "OBJECTID": 79,
+       "CENTLON": "-113.3578297",
+       "STGEOMETRY_Length": 2924692.1203564676,
+       "AREALAND": 112005713937,
+       "INTPTLON": "-113.3642618",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "16019",
+       "CENTLAT": "+43.6724038",
+       "SLDL": "019",
+       "AREAWATER": 658352,
+       "STATE": "16",
+       "BASENAME": "19",
+       "OID": "2139042393385951",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+43.6690190",
+       "NAME": "State House District 19",
+       "OBJECTID": 1870,
+       "CENTLON": "-116.1879339",
+       "LSY": "2026",
+       "AREALAND": 248430586,
+       "INTPTLON": "-116.1952595",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "4",
+       "CENTLAT": "+49.9401545",
+       "AREAWATER": 313750173666,
+       "BASENAME": "West",
+       "OID": "2729020719823",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+19.8281671",
+       "REGION": "4",
+       "NAME": "West Region",
+       "OBJECTID": 2,
+       "CENTLON": "-124.1894076",
+       "AREALAND": 4538933004900,
+       "INTPTLON": "-155.4950421",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "14260",
+       "CENTLAT": "+43.0097793",
+       "AREAWATER": 170864243,
+       "BASENAME": "Boise City, ID",
+       "OID": "2629034687907134",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.0066485",
+       "NAME": "Boise City, ID Metro Area",
+       "CSA": "147",
+       "OBJECTID": 62,
+       "CENTLON": "-116.1429369",
+       "CBSA": "14260",
+       "AREALAND": 30475475446,
+       "INTPTLON": "-116.1419089",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "16001000102",
+       "CENTLAT": "+43.6188396",
+       "AREAWATER": 16150,
+       "STATE": "16",
+       "BASENAME": "1.02",
+       "OID": "2079015682248169",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+43.6188646",
+       "NAME": "Census Tract 1.02",
+       "OBJECTID": 85169,
+       "TRACT": "000102",
+       "CENTLON": "-116.2065426",
+       "AREALAND": 2564299,
+       "INTPTLON": "-116.2065056",
+       "MTFCC": "G5020",
+       "COUNTY": "001"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -116.200031318285,
+     "y": 43.617359972006
+    },
+    "addressComponents": {
+     "zip": "83720",
+     "streetName": "JEFFERSON",
+     "preType": "",
+     "city": "BOISE",
+     "preDirection": "W",
+     "suffixDirection": "",
+     "fromAddress": "620",
+     "state": "ID",
+     "suffixType": "ST",
+     "toAddress": "798",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "700 W JEFFERSON ST, BOISE, ID, 83720"
+   }
+  ]
+ }
+}
