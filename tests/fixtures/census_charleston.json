@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "1900 KANAWHA BLVD E, CHARLESTON, WV 25305"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "648478374"
+    },
+    "coordinates": {
+     "x": -81.614204298414,
+     "y": 38.335841257227
+    },
+    "addressComponents": {
+     "zip": "25305",
+     "streetName": "KANAWHA",
+     "preType": "",
+     "city": "CHARLESTON",
+     "preDirection": "",
+     "suffixDirection": "E",
+     "fromAddress": "1900",
+     "state": "WV",
+     "suffixType": "BLVD",
+     "toAddress": "1998",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "1900 KANAWHA BLVD E, CHARLESTON, WV, 25305",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "540390011006017",
+       "STATE": "54",
+       "COUNTY": "039",
+       "TRACT": "001100",
+       "BLOCK": "6017",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "118239",
+       "MTFCC": "G5040",
+       "NAME": "Block 6017",
+       "BASENAME": "6017",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "6",
+       "CENTLON": "-081.6131392",
+       "CENTLAT": "+38.3368192",
+       "INTPTLON": "-081.6131392",
+       "INTPTLAT": "+38.3368192",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "6689178",
+       "OID": "210701006961673"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490829219515",
+       "GEOID": "5400600",
+       "STATE": "54",
+       "SDUNI": "00600",
+       "BASENAME": "Kanawha County School District",
+       "NAME": "Kanawha County School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "2335490840",
+       "AREAWATER": "24050221",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+38.3363964",
+       "CENTLON": "-081.5279852",
+       "INTPTLAT": "+38.3250374",
+       "INTPTLON": "-081.5327749",
+       "OBJECTID": "9357"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "31276",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "81317442",
+       "AREAWATER": "2948453",
+       "PLACENS": "02390575",
+       "PLACECC": "C1",
+       "PLACE": "14600",
+       "FUNCSTAT": "A",
+       "GEOID": "5414600",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Charleston",
+       "NAME": "Charleston city",
+       "OID": "27890847725326",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "54",
+       "CENTLON": "-081.6320690",
+       "CENTLAT": "+38.3484218",
+       "INTPTLON": "-081.6323240",
+       "INTPTLAT": "+38.3486917",
+       "DISP_CLR": "1"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "431",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "37141061118",
+       "AREAWATER": "284396312",
+       "CD120": "01",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "5401",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "1",
+       "NAME": "Congressional District 1",
+       "OID": "2119042393279572",
+       "STATE": "54",
+       "CENTLON": "-081.1414554",
+       "CENTLAT": "+38.2054660",
+       "INTPTLON": "-081.1289657",
+       "INTPTLAT": "+38.1877736"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042579647509",
+       "GEOID": "54008",
+       "STATE": "54",
+       "SLDU": "008",
+       "BASENAME": "8",
+       "NAME": "State Senate District 8",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "3337982234",
+       "AREAWATER": "15614608",
+       "LSY": "2026",
+       "OBJECTID": "65",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+38.6174892",
+       "CENTLON": "-081.4070868",
+       "INTPTLAT": "+38.6162485",
+       "INTPTLON": "-081.4130480",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042579647578",
+       "GEOID": "54054",
+       "STATE": "54",
+       "SLDL": "054",
+       "BASENAME": "54",
+       "NAME": "Delegate District 54",
+       "LSADC": "11",
+       "FUNCSTAT": "N",
+       "AREALAND": "16972826",
+       "AREAWATER": "792904",
+       "LSY": "2026",
+       "OBJECTID": "730",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+38.3668376",
+       "CENTLON": "-081.6517683",
+       "INTPTLAT": "+38.3670056",
+       "INTPTLON": "-081.6520786",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490156252396",
+       "GEOID": "54",
+       "STATE": "54",
+       "STATENS": "01779805",
+       "BASENAME": "West Virginia",
+       "NAME": "West Virginia",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "62266834219",
+       "AREAWATER": "488593963",
+       "REGION": "3",
+       "DIVISION": "5",
+       "STUSAB": "WV",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+38.6411869",
+       "CENTLON": "-080.6234537",
+       "INTPTLAT": "+38.6472843",
+       "INTPTLON": "-080.6182259",
+       "OBJECTID": "53"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590829219408",
+       "GEOID": "54039",
+       "STATE": "54",
+       "COUNTY": "039",
+       "COUNTYNS": "01550026",
+       "BASENAME": "Kanawha",
+       "NAME": "Kanawha County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "2335490840",
+       "AREAWATER": "24050221",
+       "OBJECTID": "837",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+38.3363964",
+       "CENTLON": "-081.5279852",
+       "INTPTLAT": "+38.3250374",
+       "INTPTLON": "-081.5327749"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

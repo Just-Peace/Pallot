@@ -45,6 +45,7 @@ from .sc import ScList
 from .sd import SdList
 from .tn import TnList
 from .ut import UtList
+from .wv import WvList
 from .vt import VtList
 from .va import VaList
 from .wa import WaList
@@ -56,7 +57,7 @@ ADAPTERS: dict[str, type[StateList]] = {
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
                              OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList, MsList, ArList,
-                             MnList, NhList, TnList, MaList, LaList, OrList, UtList)
+                             MnList, NhList, TnList, MaList, LaList, OrList, UtList, WvList)
 }
 
 
