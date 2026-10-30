@@ -1,0 +1,468 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "115 STATE ST, MONTPELIER, VT 05633"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "648478220"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "5000200",
+       "CENTLAT": "+44.1001170",
+       "AREAWATER": 140836140,
+       "BASENAME": "Central Vermont--Addison, Washington & Orange Counties",
+       "STATE": "50",
+       "OID": "217704485343060",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.1048429",
+       "NAME": "Central Vermont--Addison, Washington & Orange Counties PUMA",
+       "OBJECTID": 2401,
+       "CENTLON": "-072.7336542",
+       "AREALAND": 5542600534,
+       "INTPTLON": "-072.7398619",
+       "MTFCC": "G6120",
+       "PUMA": "00200"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "05602",
+       "CENTLAT": "+44.2847416",
+       "AREAWATER": 2697896,
+       "BASENAME": "05602",
+       "OID": "221704257530049",
+       "ZCTA5": "05602",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.2885816",
+       "NAME": "ZCTA5 05602",
+       "OBJECTID": 21089,
+       "CENTLON": "-072.6149366",
+       "AREALAND": 227414292,
+       "INTPTLON": "-072.6292919",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "05221",
+       "CENTLAT": "+44.2131764",
+       "AREAWATER": 421897,
+       "BASENAME": "Barre--Montpelier, VT",
+       "OID": "27021487710377",
+       "UA": "05221",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.2129088",
+       "NAME": "Barre--Montpelier, VT Urban Area",
+       "OBJECTID": 2393,
+       "CENTLON": "-072.5255675",
+       "AREALAND": 37244637,
+       "INTPTLON": "-072.5269184",
+       "MTFCC": "G3500"
+      }
+     ],
+     "School District Administrative Areas": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "5000406",
+       "CENTLAT": "+44.1086704",
+       "AREAWATER": 629047,
+       "SDADM": "00406",
+       "STATE": "50",
+       "BASENAME": "Montpelier-Roxbury Supervisory Union",
+       "OID": "28590487711537",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+44.0860915",
+       "NAME": "Montpelier-Roxbury Supervisory Union",
+       "OBJECTID": 15,
+       "CENTLON": "-072.6960603",
+       "HIGRADE": "12",
+       "AREALAND": 134048743,
+       "INTPTLON": "-072.7414663",
+       "MTFCC": "G5430"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 3,
+       "STGEOMETRY_Area": 51789003.13557637,
+       "NECTAPCI": "N",
+       "GEOID": "5046000",
+       "CENTLAT": "+44.2659363",
+       "AREAWATER": 504946,
+       "BASENAME": "Montpelier",
+       "STATE": "50",
+       "OID": "27890487695479",
+       "LSADC": "25",
+       "PLACE": "46000",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.2664485",
+       "NAME": "Montpelier city",
+       "OBJECTID": 28225,
+       "PLACECC": "C5",
+       "CENTLON": "-072.5717225",
+       "STGEOMETRY_Length": 38799.38175864352,
+       "CBSAPCI": "N",
+       "AREALAND": 26048135,
+       "INTPTLON": "-072.5715237",
+       "PLACENS": "01462152",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "50023",
+       "CENTLAT": "+44.2735134",
+       "AREAWATER": 21516903,
+       "STATE": "50",
+       "BASENAME": "Washington",
+       "OID": "27590486844552",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.2885816",
+       "NAME": "Washington County",
+       "OBJECTID": 1216,
+       "CENTLON": "-072.6150676",
+       "COUNTYCC": "H1",
+       "COUNTYNS": "01461768",
+       "AREALAND": 1779478075,
+       "INTPTLON": "-072.6292919",
+       "MTFCC": "G4020",
+       "COUNTY": "023"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "5000410",
+       "CENTLAT": "+44.1086704",
+       "AREAWATER": 629047,
+       "STATE": "50",
+       "BASENAME": "Montpelier Roxbury Unified Union School District",
+       "OID": "2849029550239227",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+44.0860915",
+       "SDUNI": "00410",
+       "NAME": "Montpelier Roxbury Unified Union School District",
+       "OBJECTID": 3058,
+       "CENTLON": "-072.6960603",
+       "HIGRADE": "12",
+       "AREALAND": 134048743,
+       "INTPTLON": "-072.7414663",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "500239546002003",
+       "CENTLAT": "+44.2659260",
+       "BLOCK": "2003",
+       "AREAWATER": 0,
+       "STATE": "50",
+       "BASENAME": "2003",
+       "OID": "210701004707520",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.2659260",
+       "NAME": "Block 2003",
+       "OBJECTID": 1646744,
+       "TRACT": "954600",
+       "CENTLON": "-072.5797853",
+       "BLKGRP": "2",
+       "AREALAND": 567117,
+       "INTPTLON": "-072.5797853",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "023"
+      }
+     ],
+     "Micropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "12740",
+       "CENTLAT": "+44.2735134",
+       "AREAWATER": 21516903,
+       "BASENAME": "Barre, VT",
+       "OID": "2629034687907100",
+       "LSADC": "M2",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.2885816",
+       "NAME": "Barre, VT Micro Area",
+       "CSA": "162",
+       "OBJECTID": 201,
+       "CENTLON": "-072.6150676",
+       "CBSA": "12740",
+       "AREALAND": 1779478075,
+       "INTPTLON": "-072.6292919",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01779802",
+       "GEOID": "50",
+       "CENTLAT": "+44.0693369",
+       "AREAWATER": 1030604623,
+       "STATE": "50",
+       "BASENAME": "Vermont",
+       "STUSAB": "VT",
+       "OID": "27490227024193",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+44.0589536",
+       "DIVISION": "1",
+       "NAME": "Vermont",
+       "REGION": "1",
+       "OBJECTID": 29,
+       "CENTLON": "-072.6660621",
+       "AREALAND": 23872617229,
+       "INTPTLON": "-072.6710173",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "500239546002",
+       "CENTLAT": "+44.2659054",
+       "AREAWATER": 79136,
+       "STATE": "50",
+       "BASENAME": "2",
+       "OID": "20890487676214",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.2671256",
+       "NAME": "Block Group 2",
+       "OBJECTID": 36043,
+       "TRACT": "954600",
+       "CENTLON": "-072.5932079",
+       "BLKGRP": "2",
+       "AREALAND": 4062782,
+       "INTPTLON": "-072.5973306",
+       "MTFCC": "G5030",
+       "COUNTY": "023"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "162",
+       "CENTLAT": "+44.5558339",
+       "AREAWATER": 678137743,
+       "BASENAME": "Burlington-South Burlington-Barre, VT",
+       "OID": "2619034687907990",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.5647510",
+       "NAME": "Burlington-South Burlington-Barre, VT CSA",
+       "OBJECTID": 62,
+       "CSA": "162",
+       "CENTLON": "-072.8994284",
+       "INTPTLON": "-072.9050808",
+       "AREALAND": 5015932112,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "46000",
+       "GEOID": "5002346000",
+       "CENTLAT": "+44.2659363",
+       "AREAWATER": 504946,
+       "STATE": "50",
+       "BASENAME": "Montpelier",
+       "OID": "27690487688446",
+       "LSADC": "25",
+       "FUNCSTAT": "F",
+       "INTPTLAT": "+44.2664485",
+       "NAME": "Montpelier city",
+       "OBJECTID": 4337,
+       "CENTLON": "-072.5717225",
+       "COUSUBCC": "C5",
+       "AREALAND": 26048135,
+       "INTPTLON": "-072.5715237",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01462152",
+       "COUNTY": "023"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "50WAS",
+       "CENTLAT": "+44.2721062",
+       "AREAWATER": 22949532,
+       "STATE": "50",
+       "BASENAME": "Washington",
+       "OID": "2129042579647106",
+       "SLDU": "WAS",
+       "LSADC": "L2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+44.2885816",
+       "NAME": "Washington Senatorial District",
+       "OBJECTID": 1360,
+       "CENTLON": "-072.6179129",
+       "LSY": "2026",
+       "AREALAND": 2166891213,
+       "INTPTLON": "-072.6292919",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "1",
+       "CENTLAT": "+44.0884319",
+       "AREAWATER": 24071106051,
+       "BASENAME": "New England",
+       "OID": "2739020719807",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.0860059",
+       "DIVISION": "1",
+       "REGION": "1",
+       "NAME": "New England Division",
+       "OBJECTID": 6,
+       "CENTLON": "-070.6636318",
+       "AREALAND": 162376291632,
+       "INTPTLON": "-070.6608882",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 48271718911.912796,
+       "CD120": "00",
+       "GEOID": "5000",
+       "CENTLAT": "+44.0693369",
+       "CDSESSN": "120",
+       "AREAWATER": 1030604623,
+       "STATE": "50",
+       "BASENAME": "Congressional District (at Large)",
+       "OID": "2119042393278555",
+       "LSADC": "C1",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+44.0589536",
+       "NAME": "Congressional District (at Large)",
+       "OBJECTID": 430,
+       "CENTLON": "-072.6660621",
+       "STGEOMETRY_Length": 1280901.546268147,
+       "AREALAND": 23872617229,
+       "INTPTLON": "-072.6710173",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "50WA4",
+       "CENTLAT": "+44.2659363",
+       "SLDL": "WA4",
+       "AREAWATER": 504946,
+       "STATE": "50",
+       "BASENAME": "Washington-4",
+       "OID": "2139042579647205",
+       "LSADC": "L9",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+44.2664485",
+       "NAME": "Washington-4 State House District",
+       "OBJECTID": 4392,
+       "CENTLON": "-072.5717225",
+       "LSY": "2026",
+       "AREALAND": 26048135,
+       "INTPTLON": "-072.5715237",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "1",
+       "CENTLAT": "+42.7754036",
+       "AREAWATER": 50257795201,
+       "BASENAME": "Northeast",
+       "OID": "2729020719824",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+42.7778249",
+       "REGION": "1",
+       "NAME": "Northeast Region",
+       "OBJECTID": 3,
+       "CENTLON": "-074.2183092",
+       "AREALAND": 419357207693,
+       "INTPTLON": "-074.2123732",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "50023954600",
+       "CENTLAT": "+44.2749629",
+       "AREAWATER": 183194,
+       "STATE": "50",
+       "BASENAME": "9546",
+       "OID": "20790487707797",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+44.2782783",
+       "NAME": "Census Tract 9546",
+       "OBJECTID": 65948,
+       "TRACT": "954600",
+       "CENTLON": "-072.5868342",
+       "AREALAND": 9037978,
+       "INTPTLON": "-072.5843726",
+       "MTFCC": "G5020",
+       "COUNTY": "023"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -72.580283682082,
+     "y": 44.261260106574
+    },
+    "addressComponents": {
+     "zip": "05602",
+     "streetName": "STATE",
+     "preType": "",
+     "city": "MONTPELIER",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "115",
+     "state": "VT",
+     "suffixType": "ST",
+     "toAddress": "131",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "115 STATE ST, MONTPELIER, VT, 05602"
+   }
+  ]
+ }
+}

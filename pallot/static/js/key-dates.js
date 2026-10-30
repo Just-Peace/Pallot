@@ -46,12 +46,16 @@ function dateWithCalendar(iso, at, event, what, extra = "") {
 // The main list: register by, early voting, Election Day. The first that isn't over is the
 // next one, in bold with how far off it is. Once registration's deadline is over in a state that
 // still lets voters register (``state.lateRegistration``), the row says how instead of "passed".
+// A state with no registration deadline (Vermont) says how to register, undated.
 function dateRows(dates, state, at) {
   const day = dates.election_day;
   const rows = [
     dates.register_by && {
       label: "Register by", first: dates.register_by, last: dates.register_by, late: state.lateRegistration,
       value: dateWithCalendar(dates.register_by, at, "register", "Last day to register"),
+    },
+    !dates.register_by && state.lateRegistration && {
+      label: "Register", undated: true, value: extLink(state.lateRegistration.url, state.lateRegistration.label),
     },
     (dates.early_voting_start || dates.early_voting_end) && {
       label: "Early voting", first: dates.early_voting_start || dates.early_voting_end, last: earlyEnd(dates),
@@ -68,6 +72,7 @@ function dateRows(dates, state, at) {
   ].filter(Boolean);
   let next = null;
   return rows.map((row) => {
+    if (row.undated) return h("div", { class: "key-date" }, h("dt", {}, row.label), h("dd", {}, row.value));
     const [untilFirst, untilLast] = [daysUntil(row.first), daysUntil(row.last)];
     const passed = untilLast < 0;
     const late = passed && row.late;

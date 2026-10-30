@@ -1,0 +1,93 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 5,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H2VT01076",
+   "candidate_name": "BALINT, REBECCA 'BECCA'",
+   "candidate_pcc_id": "C00797175",
+   "candidate_pcc_name": "BECCA BALINT FOR VERMONT",
+   "cash_on_hand_end_period": 612015.81,
+   "committee_ids": [
+    "C00797175"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 712248.27,
+   "total_receipts": 1178502.59
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VT01085",
+   "candidate_name": "MALLOY, GERALD MR.",
+   "candidate_pcc_id": "C00956573",
+   "candidate_pcc_name": "GERALD MALLOY FOR US CONGRESS, LIMITED",
+   "cash_on_hand_end_period": 34219.69,
+   "committee_ids": [
+    "C00950048",
+    "C00956573"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 155348.33,
+   "total_receipts": 189568.02
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4VT01056",
+   "candidate_name": "COESTER, C. MARK MR",
+   "candidate_pcc_id": "C00874214",
+   "candidate_pcc_name": "CARL MARK COESTER",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00874214"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 26968.51,
+   "total_receipts": 36038.95
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VT00269",
+   "candidate_name": "SEYMOUR, SUZANNE",
+   "candidate_pcc_id": "C00956482",
+   "candidate_pcc_name": "SUZ FOR VERMONT",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00956482"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6VT01093",
+   "candidate_name": "WALTON, RYAN PATRICK",
+   "candidate_pcc_id": "C00957886",
+   "candidate_pcc_name": "WALTON FOR VERMONT",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00957886"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}
