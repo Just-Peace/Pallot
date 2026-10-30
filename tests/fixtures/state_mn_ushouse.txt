@@ -1,0 +1,25 @@
+MN;;;0104;U.S. Representative District 1;1;0401;Jake Johnson;;;DFL;330;750;5584;47.27;11812
+MN;;;0104;U.S. Representative District 1;1;0302;Brad Finstad;;;R;330;750;2575;21.80;11812
+MN;;;0104;U.S. Representative District 1;1;9901;WRITE-IN;;;WI;330;750;3653;30.93;11812
+MN;;;0105;U.S. Representative District 2;2;0401;Matt Little;;;DFL;242;260;1906;30.68;6213
+MN;;;0105;U.S. Representative District 2;2;0302;Eric Pratt;;;R;242;260;2692;43.33;6213
+MN;;;0105;U.S. Representative District 2;2;9901;WRITE-IN;;;WI;242;260;1615;25.99;6213
+MN;;;0106;U.S. Representative District 3;3;0301;Tyler Bass;;;R;198;229;1037;16.62;6238
+MN;;;0106;U.S. Representative District 3;3;0402;Kelly Morrison;;;DFL;198;229;2078;33.31;6238
+MN;;;0106;U.S. Representative District 3;3;9901;WRITE-IN;;;WI;198;229;3123;50.06;6238
+MN;;;0107;U.S. Representative District 4;4;0401;Betty McCollum;;;DFL;51;212;595;41.67;1428
+MN;;;0107;U.S. Representative District 4;4;0302;Paul Wikstrom;;;R;51;212;476;33.33;1428
+MN;;;0107;U.S. Representative District 4;4;9901;WRITE-IN;;;WI;51;212;357;25.00;1428
+MN;;;0108;U.S. Representative District 5;5;0401;Ilhan Omar;;;DFL;195;217;1280;10.04;12754
+MN;;;0108;U.S. Representative District 5;5;0302;John Nagel;;;R;195;217;2553;20.02;12754
+MN;;;0108;U.S. Representative District 5;5;1003;DeVelle L. Jackson;;;IND;195;217;3821;29.96;12754
+MN;;;0108;U.S. Representative District 5;5;9901;WRITE-IN;;;WI;195;217;5100;39.99;12754
+MN;;;0109;U.S. Representative District 6;6;0301;Tom Emmer;;;R;99;276;502;16.66;3013
+MN;;;0109;U.S. Representative District 6;6;0402;Doug Chapin;;;DFL;99;276;1004;33.32;3013
+MN;;;0109;U.S. Representative District 6;6;9901;WRITE-IN;;;WI;99;276;1507;50.02;3013
+MN;;;0110;U.S. Representative District 7;7;0301;Michelle Fischbach;;;R;416;1327;2203;16.68;13211
+MN;;;0110;U.S. Representative District 7;7;0402;Erik Osberg;;;DFL;416;1327;4405;33.34;13211
+MN;;;0110;U.S. Representative District 7;7;9901;WRITE-IN;;;WI;416;1327;6603;49.98;13211
+MN;;;0111;U.S. Representative District 8;8;0301;Pete Stauber;;;R;135;834;477;15.99;2983
+MN;;;0111;U.S. Representative District 8;8;0402;Trina Swanson;;;DFL;135;834;1670;55.98;2983
+MN;;;0111;U.S. Representative District 8;8;9901;WRITE-IN;;;WI;135;834;836;28.03;2983

@@ -1,0 +1,4 @@
+MN;;;0333;State Auditor;;0801;Jay Reeves;;;FI;1666;4105;9921;12.39;80050
+MN;;;0333;State Auditor;;0302;Scott Jensen;;;R;1666;4105;17844;22.29;80050
+MN;;;0333;State Auditor;;0403;Zack Filipovich;;;DFL;1666;4105;24075;30.07;80050
+MN;;;0333;State Auditor;;9901;WRITE-IN;;;WI;1666;4105;28210;35.24;80050

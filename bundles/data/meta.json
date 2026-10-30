@@ -227,6 +227,14 @@
    "last_refresh": "2026-10-28T15:58:51+00:00",
    "races": 331
   },
+  "state_mn": {
+   "answers": 8,
+   "answers_hash": "625cf66c53e7af2d84cde4cd9ab06780715ae11a27bd2ba6cc72aad7a956bc35",
+   "candidates": 420,
+   "last_checked": "2026-10-30T03:25:33+00:00",
+   "last_refresh": "2026-10-30T03:25:33+00:00",
+   "races": 214
+  },
   "state_mo": {
    "answers": 2,
    "answers_hash": "66c809e67d02fa10c88d44d920dff55d444811add26384ce1f7f51d4cb36c98e",
