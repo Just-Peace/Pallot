@@ -165,7 +165,7 @@ def test_dcs_calendar_file_and_when_to_vote_give_its_poll_hours_and_the_mailed_b
     assert response.status_code == 200 and "dc-election-2026-11-03.ics" in response.headers["content-disposition"]
     text = response.text.replace("\r\n ", "")
     assert "Polls are open 7 a.m. to 8 p.m.\\; if you're in line at 8\\, you can vote." in text
-    assert all(day in text for day in ("20261013", "20261019", "20261026", "20261101", "20261103"))
+    assert all(day in text for day in ("20261013", "20261026", "20261101", "20261103"))  # not the mail request
     info = state_key_dates.GUIDES["DC"].voter_info()
     assert info.poll_hours == "7 a.m. – 8 p.m." and "vote center" in info.late_registration.label
     assert info.mail_eligibility.startswith("Every active voter is mailed a ballot.")
