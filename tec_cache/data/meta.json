@@ -1,17 +1,17 @@
 {
-  "content_hash": "6f1db807e27b439616634b21d12698f9f6fc25f7a46a91bd2f5423584b310c70",
+  "content_hash": "4774689f7aa50ed0568a149b476272b00f6f903fbaacd3cf54ed9b7875489b89",
   "counts": {
-    "contribs": 1082577,
-    "dce": 12195,
+    "contribs": 1082911,
+    "dce": 12224,
     "filers": 10626,
-    "reports": 8788,
+    "reports": 8794,
     "snapshot_filers": 2154
   },
-  "last_checked": "2026-10-28T16:44:39+00:00",
-  "last_refresh": "2026-10-28T16:44:39+00:00",
+  "last_checked": "2026-10-30T16:38:56+00:00",
+  "last_refresh": "2026-10-30T16:38:56+00:00",
   "members": {
     "contribs_100.csv": {
-      "crc": 3340198158,
+      "crc": 2996404754,
       "first": "20260505",
       "last": "20261005"
     },
@@ -26,9 +26,9 @@
       "last": "20261026"
     },
     "contribs_103.csv": {
-      "crc": 2789727914,
+      "crc": 2991854453,
       "first": "20260805",
-      "last": "20261026"
+      "last": "20261029"
     },
     "contribs_104.csv": {
       "crc": 3184077655,
@@ -41,12 +41,12 @@
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 1809849549,
+      "crc": 1797859780,
       "first": "20260929",
       "last": "20261026"
     },
     "contribs_107.csv": {
-      "crc": 1793800120,
+      "crc": 4174278207,
       "first": "20261001",
       "last": "20261026"
     },
@@ -66,14 +66,19 @@
       "last": "20261027"
     },
     "contribs_111.csv": {
-      "crc": 989552486,
+      "crc": 1944253220,
       "first": "20261005",
-      "last": "20261027"
+      "last": "20261029"
     },
     "contribs_112.csv": {
-      "crc": 1604225968,
+      "crc": 1347412120,
       "first": "20261025",
-      "last": "20261027"
+      "last": "20261029"
+    },
+    "contribs_113.csv": {
+      "crc": 664647392,
+      "first": "20261028",
+      "last": "20261029"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -207,11 +212,11 @@
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-10-28",
+  "snapshot": "2026-10-30",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"158b59738ddb9606ee63eb229ea6ae23-129\"",
-    "last_modified": "Wed, 28 Oct 2026 10:35:03 GMT",
-    "size": 1080467278
+    "etag": "\"6842ca4bde330ff3918bcdd69d879fb9-130\"",
+    "last_modified": "Fri, 30 Oct 2026 10:35:03 GMT",
+    "size": 1084831042
   }
 }

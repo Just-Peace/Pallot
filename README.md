@@ -236,47 +236,47 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 <!-- source-stats:start -->
 | Source | Candidates | Also | Data changed | Checked |
 |---|---|---|---|---|
-| FEC | **93** | 39 races | 2026-10-28 | 2026-10-28 |
-| FEC race lists, other states | — | 431 races · 50 states | 2026-10-27 | 2026-10-28 |
-| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-28 | 2026-10-28 |
-| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-27 | 2026-10-28 |
+| FEC | **93** | 39 races | 2026-10-30 | 2026-10-30 |
+| FEC race lists, other states | — | 431 races · 50 states | 2026-10-30 | 2026-10-30 |
+| Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-10-30 | 2026-10-30 |
+| Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-10-30 | 2026-10-30 |
 | Seat holders | — | 539 members of Congress · 2,292 state legislators | 2026-10-25 | 2026-10-25 |
 | Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-27 | 2026-10-27 |
 | TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-10-26 |
 | County precinct records | — | 7 counties | 2026-10-26 | 2026-10-26 |
-| FiftyPlusOne polls | — | 575 Senate polls (+8) · 362 House polls (+2) · 615 Governor polls (+12) | 2026-10-28 | 2026-10-28 |
-| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-28 |
-| CAIR Action | **1,366** (-1) · Texas: 390 | — | 2026-10-28 | 2026-10-28 |
-| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-28 |
-| NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-26 | 2026-10-28 |
-| Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-28 | 2026-10-28 |
-| Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-26 | 2026-10-28 |
-| Florida Division of Elections candidate list | **367** | 168 races | 2026-10-28 | 2026-10-28 |
-| Virginia Department of Elections candidate list | **40** | 13 races | 2026-10-29 | 2026-10-29 |
-| California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-28 |
+| FiftyPlusOne polls | — | 603 Senate polls (+28) · 373 House polls (+11) · 641 Governor polls (+26) | 2026-10-30 | 2026-10-30 |
+| Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-10-30 |
+| CAIR Action | **1,367** (+1) · Texas: 390 | — | 2026-10-30 | 2026-10-30 |
+| Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-10-30 |
+| NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-26 | 2026-10-30 |
+| Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-28 | 2026-10-30 |
+| Pennsylvania Department of State candidate list | **436** | 247 races | 2026-10-26 | 2026-10-30 |
+| Florida Division of Elections candidate list | **367** | 168 races | 2026-10-30 | 2026-10-30 |
+| Virginia Department of Elections candidate list | **40** | 13 races | 2026-10-29 | 2026-10-30 |
+| California Secretary of State candidate list | **388** | 228 races | 2026-10-26 | 2026-10-30 |
 | Arizona Secretary of State candidate list | **232** | 91 races | 2026-10-26 | 2026-10-26 |
 | Nevada Secretary of State candidate list | **633** | 364 races | 2026-10-22 | 2026-10-22 |
 | Georgia Secretary of State candidate list | **292** | 184 races | 2026-10-26 | 2026-10-26 |
-| Georgia Secretary of State party nominees | **451** | 271 races | 2026-10-28 | 2026-10-28 |
+| Georgia Secretary of State party nominees | **451** | 271 races | 2026-10-30 | 2026-10-30 |
 | Wisconsin Elections Commission candidate list | **445** | 293 races | 2026-10-26 | 2026-10-26 |
 | Ohio Secretary of State candidate list | **20** | 8 races | 2026-10-26 | 2026-10-26 |
 | Iowa Secretary of State candidate list | **245** | 137 races | 2026-10-26 | 2026-10-26 |
-| New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-29 | 2026-10-29 |
+| New Jersey Division of Elections candidate list | **39** | 13 races | 2026-10-29 | 2026-10-30 |
 | New York State Board of Elections candidate list | **502** | 253 races | 2026-10-26 | 2026-10-26 |
-| Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-28 |
-| Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-28 |
-| Illinois State Board of Elections candidate list | **501** | 391 races | 2026-10-26 | 2026-10-28 |
-| Alaska Division of Elections candidate list | **156** | 74 races | 2026-10-27 | 2026-10-28 |
-| Maine Secretary of State candidate list | **362** | 190 races | 2026-10-29 | 2026-10-29 |
-| Nebraska Secretary of State candidate list | **81** | 38 races | 2026-10-29 | 2026-10-29 |
-| New Mexico Secretary of State candidate list | **129** | 85 races | 2026-10-29 | 2026-10-29 |
-| Washington Secretary of State candidate list | **269** | 149 races | 2026-10-29 | 2026-10-29 |
-| Indiana Election Division candidate list | **1,696** | 1,239 races | 2026-10-29 | 2026-10-29 |
-| Maryland State Board of Elections candidate list | **323** | 131 races | 2026-10-29 | 2026-10-29 |
-| Missouri Secretary of State candidate list | **425** | 248 races | 2026-10-29 | 2026-10-29 |
-| South Carolina State Election Commission candidate list | **415** | 257 races | 2026-10-29 | 2026-10-29 |
-| Kentucky Secretary of State candidate list | **348** | 251 races | 2026-10-29 | 2026-10-29 |
-| Oklahoma State Election Board candidate list | **261** | 123 races | 2026-10-29 | 2026-10-29 |
+| Colorado Secretary of State candidate list | **397** | 236 races | 2026-10-26 | 2026-10-30 |
+| Wyoming Secretary of State candidate list | **151** | 107 races | 2026-10-26 | 2026-10-30 |
+| Illinois State Board of Elections candidate list | **501** | 391 races | 2026-10-26 | 2026-10-30 |
+| Alaska Division of Elections candidate list | **156** | 74 races | 2026-10-27 | 2026-10-30 |
+| Maine Secretary of State candidate list | **362** | 190 races | 2026-10-29 | 2026-10-30 |
+| Nebraska Secretary of State candidate list | **81** | 38 races | 2026-10-29 | 2026-10-30 |
+| New Mexico Secretary of State candidate list | **129** | 85 races | 2026-10-29 | 2026-10-30 |
+| Washington Secretary of State candidate list | **269** | 149 races | 2026-10-29 | 2026-10-30 |
+| Indiana Election Division candidate list | **1,696** | 1,239 races | 2026-10-29 | 2026-10-30 |
+| Maryland State Board of Elections candidate list | **323** | 131 races | 2026-10-29 | 2026-10-30 |
+| Missouri Secretary of State candidate list | **425** | 248 races | 2026-10-29 | 2026-10-30 |
+| South Carolina State Election Commission candidate list | **415** | 257 races | 2026-10-29 | 2026-10-30 |
+| Kentucky Secretary of State candidate list | **348** | 251 races | 2026-10-29 | 2026-10-30 |
+| Oklahoma State Election Board candidate list | **261** | 123 races | 2026-10-29 | 2026-10-30 |
 | Kansas Secretary of State candidate list | **362** | 247 races | 2026-10-29 | 2026-10-29 |
 | Montana Secretary of State candidate list | **256** | 131 races | 2026-10-29 | 2026-10-29 |
 | South Dakota Secretary of State candidate list | **178** | 81 races | 2026-10-29 | 2026-10-29 |
@@ -296,9 +296,9 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | West Virginia Secretary of State candidate list | **244** | 122 races | 2026-10-30 | 2026-10-30 |
 | Idaho Secretary of State candidate list | **231** | 115 races | 2026-10-30 | 2026-10-30 |
 | DC Board of Elections candidate list | **18** | 7 races | 2026-10-30 | 2026-10-30 |
-| TrackAIPAC | **651** (+6) · Texas: 61 (+1) · House: 534 (+6) · Other: 1 · Senate: 116 | — | 2026-10-28 | 2026-10-28 |
-| Vote for Peace | **1,429** · Texas: 193 · State legislature: 501 · Federal: 276 · County: 268 · Local: 178 · Statewide: 95 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-28 | 2026-10-28 |
-| Texas Ethics Commission | **2,154** | 1,082,577 contributions (+223) · 8,788 reports (+12) | 2026-10-28 | 2026-10-28 |
+| TrackAIPAC | **656** (+5) · Texas: 61 · House: 539 (+5) · Other: 1 · Senate: 116 | — | 2026-10-30 | 2026-10-30 |
+| Vote for Peace | **1,429** · Texas: 193 · State legislature: 501 · Federal: 276 · County: 268 · Local: 178 · Statewide: 95 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-28 | 2026-10-28 ⚠ overdue (daily) |
+| Texas Ethics Commission | **2,154** | 1,082,911 contributions (+334) · 8,794 reports (+6) | 2026-10-30 | 2026-10-30 |
 <!-- source-stats:end -->
 
 ## Configuration
