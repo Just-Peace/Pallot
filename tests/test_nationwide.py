@@ -129,6 +129,7 @@ def test_coverage_and_where_sources_work():
     ("MS", "list", ("cd", "sd", "hd"), {}),
     ("AR", "list", ("cd", "sd", "hd"), {}),
     ("MN", "list", ("cd", "sd", "hd"), {}),
+    ("NH", "list", ("cd", "sd", "hd"), {}),
     ("DC", "fec", ("cd",), {}),
     ("CA", "list", ("cd", "sd", "hd"), {"hd": "State Assembly"}),
     ("NJ", "list", ("cd", "sd", "hd"), {"hd": "General Assembly"}),

@@ -22560,5 +22560,185 @@
     "phone": "202-224-5641"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "S001181",
+   "thomas": "01901",
+   "lis": "S324",
+   "govtrack": 412323,
+   "opensecrets": "N00024790",
+   "votesmart": 1663,
+   "fec": [
+    "S0NH00219"
+   ],
+   "cspan": 22850,
+   "wikipedia": "Jeanne Shaheen",
+   "ballotpedia": "Jeanne Shaheen",
+   "maplight": 805,
+   "icpsr": 40906,
+   "house_history": 22618,
+   "wikidata": "Q270316",
+   "google_entity_id": "kg:/m/01rrm2",
+   "pictorial": 13394
+  },
+  "name": {
+   "first": "Jeanne",
+   "last": "Shaheen",
+   "official_full": "Jeanne Shaheen"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1947-01-28"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2009-01-06",
+    "end": "2015-01-03",
+    "state": "NH",
+    "class": 2,
+    "party": "Democrat",
+    "url": "http://www.shaheen.senate.gov",
+    "address": "520 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-2841",
+    "contact_form": "http://www.shaheen.senate.gov/contact/",
+    "office": "520 Hart Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.shaheen.senate.gov/rss/",
+    "fax": "202-228-3194"
+   },
+   {
+    "type": "sen",
+    "start": "2015-01-06",
+    "end": "2021-01-03",
+    "state": "NH",
+    "class": 2,
+    "party": "Democrat",
+    "url": "https://www.shaheen.senate.gov",
+    "address": "506 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-2841",
+    "contact_form": "https://www.shaheen.senate.gov/contact/contact-jeanne",
+    "office": "506 Hart Senate Office Building",
+    "state_rank": "senior",
+    "rss_url": "http://www.shaheen.senate.gov/rss/",
+    "fax": "202-228-3194"
+   },
+   {
+    "type": "sen",
+    "start": "2021-01-03",
+    "end": "2027-01-03",
+    "state": "NH",
+    "class": 2,
+    "state_rank": "senior",
+    "party": "Democrat",
+    "url": "https://www.shaheen.senate.gov",
+    "rss_url": "http://www.shaheen.senate.gov/rss/",
+    "contact_form": "https://www.shaheen.senate.gov/contact/contact-jeanne",
+    "address": "506 Hart Senate Office Building Washington DC 20510",
+    "office": "506 Hart Senate Office Building",
+    "phone": "202-224-2841"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "H001076",
+   "fec": [
+    "S6NH00091"
+   ],
+   "govtrack": 412680,
+   "votesmart": 42552,
+   "wikipedia": "Maggie Hassan",
+   "ballotpedia": "Maggie Hassan",
+   "lis": "S388",
+   "wikidata": "Q24053",
+   "google_entity_id": "kg:/m/03c3zch",
+   "opensecrets": "N00038397",
+   "maplight": 2192,
+   "cspan": 67481,
+   "icpsr": 41702,
+   "pictorial": 13426
+  },
+  "name": {
+   "first": "Margaret",
+   "middle": "Wood",
+   "nickname": "Maggie",
+   "last": "Hassan",
+   "official_full": "Margaret Wood Hassan"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1958-02-27"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2017-01-03",
+    "end": "2023-01-03",
+    "state": "NH",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "address": "324 Hart Senate Office Building Washington DC 20510",
+    "office": "324 Hart Senate Office Building",
+    "phone": "202-224-3324",
+    "url": "https://www.hassan.senate.gov",
+    "contact_form": "https://www.hassan.senate.gov/content/contact-senator"
+   },
+   {
+    "type": "sen",
+    "start": "2023-01-03",
+    "end": "2029-01-03",
+    "state": "NH",
+    "class": 3,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.hassan.senate.gov",
+    "contact_form": "https://www.hassan.senate.gov/content/contact-senator",
+    "address": "324 Hart Senate Office Building Washington DC 20510",
+    "office": "324 Hart Senate Office Building",
+    "phone": "202-224-3324"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "G000604",
+   "fec": [
+    "H4NH02399"
+   ],
+   "govtrack": 457007,
+   "opensecrets": "N00055218",
+   "wikipedia": "Maggie Goodlander",
+   "wikidata": "Q126718734",
+   "google_entity_id": "kg:/g/11c31t9glt",
+   "votesmart": 218522,
+   "ballotpedia": "Maggie Goodlander"
+  },
+  "name": {
+   "first": "Maggie",
+   "middle": "Vivian",
+   "last": "Goodlander",
+   "official_full": "Maggie Goodlander"
+  },
+  "bio": {
+   "gender": "F",
+   "birthday": "1986-11-04"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "NH",
+    "district": 2,
+    "party": "Democrat",
+    "address": "223 Cannon House Office Building Washington DC 20515-2902",
+    "office": "223 Cannon House Office Building",
+    "phone": "202-225-5206",
+    "url": "https://goodlander.house.gov"
+   }
+  ]
  }
 ]

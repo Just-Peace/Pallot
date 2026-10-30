@@ -87,6 +87,7 @@ ADDRESSES = {
     "jackson": "400 High St, Jackson, MS 39201",  # Mississippi's page (states/ms.py); MS-2, SD 29, HD 67, Hinds
     "littlerock": "500 Woodlane St, Little Rock, AR 72201",  # Arkansas's search, imported by hand (states/ar.py); AR-2, SD 14, HD 74
     "stpaul": "15 W Kellogg Blvd, St Paul, MN 55102",  # Minnesota's results files (states/mn.py); Ramsey
+    "concord": "107 N Main St, Concord, NH 03301",  # New Hampshire's list, imported by hand (states/nh.py); NH-2, Merrimack
     "georgetown": "39 The Circle, Georgetown, DE 19947",  # Delaware's spreadsheets (states/de.py); DE-0, SD 19, HD 37, Sussex
 }
 NEW_STREET = "19527 Juniper Breeze Ln, Spring, TX 77379"  # neither the Census nor Nominatim knows it; Google does

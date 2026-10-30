@@ -30,6 +30,7 @@ from .mt import MtList
 from .nc import NcList
 from .nd import NdList
 from .ne import NeList
+from .nh import NhList
 from .nj import NjList
 from .nm import NmList
 from .nv import NvList
@@ -50,7 +51,7 @@ ADAPTERS: dict[str, type[StateList]] = {
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
                              OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList, MsList, ArList,
-                             MnList)
+                             MnList, NhList)
 }
 
 
