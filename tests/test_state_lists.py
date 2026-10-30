@@ -42,6 +42,8 @@ def test_districts_are_spelled_one_way_however_they_are_written():
     assert district_key("038") == district_key(38) == district_key("District 38") == "38"
     assert district_key("3rd Suffolk") == district_key("Third Suffolk") == "3 SUFFOLK"
     assert district_key("12A") == "12A" and district_key("Washington-4") == "WASHINGTON 4"
+    assert district_key("Chittenden Southeast") == district_key("Chittenden-Southeast") == district_key("Chittenden South East") == "CHITTENDEN SOUTH EAST"
+    assert district_key("Northwest") == "NORTH WEST" and district_key("Eastside") == "EASTSIDE"
 
 
 def test_north_carolinas_list_has_each_candidate_once_with_the_counties_their_race_reaches():

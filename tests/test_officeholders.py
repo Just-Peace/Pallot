@@ -5,6 +5,7 @@ import datetime as dt
 from pallot.models import Candidate, Race
 from pallot.sources import officeholders
 from pallot.sources.officeholders import Holder, congress_holders, legislature_holders, seat_info
+from pallot.states import district_key
 
 from .conftest import fixture_bytes, find_race, get_ballot, load, switch
 
@@ -103,6 +104,8 @@ def test_the_lists_are_read():
     assert (alaska["STATESEN:I"], alaska["STATEREP:17"]) == ("Löki Tobin", "Zack Fields")
     padded = "name,current_party,current_district,current_chamber\nJane Roe,Democratic,07,lower\n"
     assert [h.seat for h in legislature_holders(padded)] == ["STATEREP:7"]
+    vermont = legislature_holders(fixture_bytes("officeholders_vt.csv").decode())
+    assert len([h for h in vermont if h.seat == f"STATESEN:{district_key('Chittenden South East')}"]) == 3
 
 
 def test_the_senator_up_is_the_one_whose_term_ends_after_the_election():
