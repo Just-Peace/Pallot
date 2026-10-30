@@ -299,8 +299,10 @@ _ORDINALS = {
 
 def district_key(text: str | int | None) -> str:
     """One spelling for a district however it's written, so a list's and the Census's agree:
-    "025", "District 25" and 25 are "25"; "3rd Suffolk" and "Third Suffolk" are "3 SUFFOLK"."""
-    words = re.sub(r"[^A-Z0-9 ]", " ", str(text if text is not None else "").upper()).split()
+    "025", "District 25" and 25 are "25"; "3rd Suffolk" and "Third Suffolk" are "3 SUFFOLK";
+    "Chittenden Southeast" and "Chittenden South East" are "CHITTENDEN SOUTH EAST"."""
+    text = re.sub(r"\b(NORTH|SOUTH)(EAST|WEST)\b", r"\1 \2", str(text if text is not None else "").upper())
+    words = re.sub(r"[^A-Z0-9 ]", " ", text).split()
     out = []
     for word in words:
         if word in ("DISTRICT", "STATE", "SENATE", "HOUSE", "SENATORIAL", "REPRESENTATIVE"):
