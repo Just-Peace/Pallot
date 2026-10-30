@@ -283,6 +283,14 @@
    "last_refresh": "2026-10-29T11:02:45+00:00",
    "races": 38
   },
+  "state_nh": {
+   "answers": 1,
+   "answers_hash": "88b66d53a66559ce72ea64814a7c500cd2e6cf0d330ed94b092e9531e35aab83",
+   "candidates": 769,
+   "last_checked": "2026-10-30T03:42:47+00:00",
+   "last_refresh": "2026-10-30T03:42:47+00:00",
+   "races": 231
+  },
   "state_nj": {
    "answers": 3,
    "answers_hash": "a0b307730db4cade94b8ca949ab3cbe029d6c647db1845850f8dfef895a1e996",

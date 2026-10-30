@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "107 N MAIN ST, CONCORD, NH 03301"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "117716331"
+    },
+    "coordinates": {
+     "x": -71.537630955181,
+     "y": 43.209978590252
+    },
+    "addressComponents": {
+     "zip": "03301",
+     "streetName": "N MAIN",
+     "preType": "",
+     "city": "CONCORD",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "101",
+     "state": "NH",
+     "suffixType": "ST",
+     "toAddress": "163",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "107 N MAIN ST, CONCORD, NH, 03301",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "330130324001005",
+       "STATE": "33",
+       "COUNTY": "013",
+       "TRACT": "032400",
+       "BLOCK": "1005",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "37495",
+       "MTFCC": "G5040",
+       "NAME": "Block 1005",
+       "BASENAME": "1005",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "1",
+       "CENTLON": "-071.5382937",
+       "CENTLAT": "+43.2092225",
+       "INTPTLON": "-071.5382937",
+       "INTPTLAT": "+43.2092225",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "1372939",
+       "OID": "210701004697183"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490304038066",
+       "GEOID": "3302460",
+       "STATE": "33",
+       "SDUNI": "02460",
+       "BASENAME": "Concord School District",
+       "NAME": "Concord School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "154353020",
+       "AREAWATER": "7614754",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+43.2273721",
+       "CENTLON": "-071.5569770",
+       "INTPTLAT": "+43.2268116",
+       "INTPTLON": "-071.5586867",
+       "OBJECTID": "4587"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32348",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "165602777",
+       "AREAWATER": "8420313",
+       "PLACENS": "00873569",
+       "PLACECC": "C5",
+       "PLACE": "14200",
+       "FUNCSTAT": "A",
+       "GEOID": "3314200",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Concord",
+       "NAME": "Concord city",
+       "OID": "27890303979859",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "33",
+       "CENTLON": "-071.5595238",
+       "CENTLAT": "+43.2305385",
+       "INTPTLON": "-071.5612523",
+       "INTPTLAT": "+43.2324926",
+       "DISP_CLR": "5"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "177",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "17638270044",
+       "AREAWATER": "416716478",
+       "CD120": "02",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "3302",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "2",
+       "NAME": "Congressional District 2",
+       "OID": "2119042393278301",
+       "STATE": "33",
+       "CENTLON": "-071.7093684",
+       "CENTLAT": "+43.7688291",
+       "INTPTLON": "-071.6970813",
+       "INTPTLAT": "+43.7675493"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042406150533",
+       "GEOID": "33015",
+       "STATE": "33",
+       "SLDU": "015",
+       "BASENAME": "15",
+       "NAME": "State Senate District 15",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "350702195",
+       "AREAWATER": "14029393",
+       "LSY": "2026",
+       "OBJECTID": "1451",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+43.1998867",
+       "CENTLON": "-071.5975993",
+       "INTPTLAT": "+43.2075911",
+       "INTPTLON": "-071.6052782",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042407703336",
+       "GEOID": "33618",
+       "STATE": "33",
+       "SLDL": "618",
+       "BASENAME": "Merrimack 18",
+       "NAME": "State House District Merrimack 18",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "4270154",
+       "AREAWATER": "542715",
+       "LSY": "2026",
+       "OBJECTID": "1729",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+43.2164718",
+       "CENTLON": "-071.5374561",
+       "INTPTLAT": "+43.2167846",
+       "INTPTLON": "-071.5380658",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "27490227215319",
+       "GEOID": "33",
+       "STATE": "33",
+       "STATENS": "01779794",
+       "BASENAME": "New Hampshire",
+       "NAME": "New Hampshire",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "23190733536",
+       "AREAWATER": "1025365173",
+       "REGION": "1",
+       "DIVISION": "1",
+       "STUSAB": "NH",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+43.6740325",
+       "CENTLON": "-071.5738502",
+       "INTPTLAT": "+43.6724310",
+       "INTPTLON": "-071.5835011",
+       "OBJECTID": "5"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590303911112",
+       "GEOID": "33013",
+       "STATE": "33",
+       "COUNTY": "013",
+       "COUNTYNS": "00873180",
+       "BASENAME": "Merrimack",
+       "NAME": "Merrimack County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "2416073588",
+       "AREAWATER": "57302049",
+       "OBJECTID": "460",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+43.2974373",
+       "CENTLON": "-071.6799421",
+       "INTPTLAT": "+43.2995786",
+       "INTPTLON": "-071.6800412"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

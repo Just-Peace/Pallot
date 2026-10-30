@@ -2,7 +2,7 @@
 
 A race reaching the whole state is always there; Congress and the Legislature by the Census's
 districts, as is a board elected by several of the Legislature's districts (Kansas's State Board of
-Education); a county's or a town's when the address is in it. A race on only part of a county or
+Education) or a seat elected by several (New Hampshire's floterial House districts); a county's or a town's when the address is in it. A race on only part of a county or
 town (a commissioner's district, a ward), or a judicial district when another district of the
 same office also reaches the county or only part of the county is in it, can't be told from the address, so it's "unconfirmed":
 the ballot leaves it out unless asked, as Texas's precinct races. A race the list doesn't say
@@ -113,6 +113,7 @@ def races(filings: list[Filing], location: Location, districts: Districts, *, st
             ],
         )
         if first.reach in ("sd", "hd") and first.group == "legislature" and first.district:
-            placed.scopes[key] = OfficeScope(first.reach, district_key(first.district), first.unexpired, first.office.upper())
+            seat = first.district.split(",")[0]  # a district placed by others too (a floterial) is its own first
+            placed.scopes[key] = OfficeScope(first.reach, district_key(seat), first.unexpired, first.office.upper())
         (placed.races if verdict == "include" else placed.unconfirmed).append(race)
     return placed

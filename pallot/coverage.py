@@ -80,6 +80,7 @@ COVERED = {
     "MS": LIST,  # its Legislature elected in odd years: only special elections in 2026
     "AR": LIST,  # all 100 House districts and about half the Senate's up in 2026
     "MN": LIST,  # both chambers up in 2026; the House's districts lettered halves of the Senate's ("1A", "1B")
+    "NH": LIST,  # its House districts named by county ("Hillsborough 12"); a floterial placed by its base districts
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the
