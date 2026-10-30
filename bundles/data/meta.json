@@ -435,6 +435,14 @@
    "last_refresh": "2026-10-26T02:57:00+00:00",
    "races": 293
   },
+  "state_wv": {
+   "answers": 1,
+   "answers_hash": "a0bc31bc340b53cb1e921f34839b7de6ea9b61d1cb0f6f2cfec3d3082a7a6fb0",
+   "candidates": 244,
+   "last_checked": "2026-10-30T13:54:46+00:00",
+   "last_refresh": "2026-10-30T13:54:46+00:00",
+   "races": 122
+  },
   "state_wy": {
    "answers": 1,
    "answers_hash": "592993827ac2ff7004bbe4add876f6d4fef8819defc96f69d934858b7830af29",

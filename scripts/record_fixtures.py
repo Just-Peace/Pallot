@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, state_or, state_ut, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, state_or, state_ut, state_wv, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -110,7 +110,10 @@ and town. Louisiana's (state_la) takes a Baton Rouge address and the candidate i
 by hand in manual/state_la (--csv another copy), never downloaded, cut down to the columns it reads,
 Congress, the Legislature and a few of each kind of office left out. Utah's (state_ut) takes a Salt
 Lake City address and the certification's text saved by hand in manual/state_ut (--text another
-copy), never downloaded, up to its constitutional amendments. Oregon's (state_or) takes a
+copy), never downloaded, up to its constitutional amendments. West Virginia's (state_wv) takes
+a Charleston address and the candidate listing's CSV saved by hand in manual/state_wv (--csv
+another copy), never downloaded, cut down to the columns it reads (no contact details), Congress,
+the address's districts, a few more and a row of every other district. Oregon's (state_or) takes a
 Salem address and ORESTAR's candidate export saved by hand in manual/state_or (--xlsx another
 copy), never downloaded, cut down to the columns it reads (no contact details), Governor,
 Congress, the address's districts, a few more and a few rows of each kind left out. A Census answer whose
@@ -154,7 +157,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, or_, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, ut, va, vt, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, or_, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, ut, va, vt, wv, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -244,6 +247,12 @@ LA_ADDRESS = ("batonrouge", "900 N 3rd St, Baton Rouge, LA 70802")  # the State 
 LA_LEFT_OUT = ("PSC", "BESE", "Associate Justice", "Magistrate", "City Marshal")
 OR_ADDRESS = ("salem", "900 Court St NE, Salem, OR 97301")  # the State Capitol: Marion County
 UT_ADDRESS = ("saltlakecity", "350 N State St, Salt Lake City, UT 84103")  # the State Capitol: Salt Lake County
+WV_ADDRESS = ("charleston", "1900 Kanawha Blvd E, Charleston, WV 25305")  # the State Capitol: Kanawha County
+# West Virginia's races kept whole in its fixture besides Congress and the address's: the Senate's two
+# unexpired terms, and minor-party and independent nominees.
+WV_RACES = ("STATE SENATE - UNEXPIRED - DISTRICT 3", "STATE SENATE - UNEXPIRED - DISTRICT 17", "STATE SENATE - DISTRICT 3",
+            "HOUSE OF DELEGATES - DISTRICT 12", "HOUSE OF DELEGATES - DISTRICT 39", "HOUSE OF DELEGATES - DISTRICT 79",
+            "HOUSE OF DELEGATES - DISTRICT 84")
 # Oregon's legislative races kept in its fixture besides the address's: write-in and minor-party nominees.
 OR_DISTRICTS = ("State Representative, 10th District", "State Senator, 4th District")
 AR_ADDRESS = ("littlerock", "500 Woodlane St, Little Rock, AR 72201")  # the State Capitol: Pulaski County, AR-2
@@ -1948,6 +1957,40 @@ def record_ut(client: httpx.Client, key: str, saved: Path | None) -> None:
     record_members(client, "UT", (place.cd,))
 
 
+def record_wv(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """West Virginia: WV_ADDRESS's Census answer; the Secretary of State's candidate listing, never
+    downloaded (its site blocks scripts): ``saved``, or the CSV in manual/state_wv, cut down to the
+    columns it reads (no legal name, address, phone or email) and to Congress, the address's
+    districts, WV_RACES, every Senate and House district's first row (the reader wants them all) and
+    one row of each kind left out; the FEC's filers for the U.S. Senate and the address's seat, its
+    legislators, and its members of Congress added to officeholders_congress.json."""
+    name, address = WV_ADDRESS
+    place = record_census(client, name, address)
+    path = saved or next(iter(sorted((ROOT / "manual" / "state_wv").glob("*.csv"))), None)
+    if path is None:
+        raise SystemExit("state_wv: save West Virginia's candidate listing in manual/state_wv (see its README), or pass --csv")
+    reader = csv.DictReader(io.StringIO(path.read_text(encoding="utf-8-sig")))
+    kept = {f"STATE SENATE - DISTRICT {place.sd}", f"HOUSE OF DELEGATES - DISTRICT {place.hd}", *WV_RACES}
+    out = io.StringIO()
+    writer = csv.DictWriter(out, wv.COLUMNS, extrasaction="ignore", quoting=csv.QUOTE_ALL, lineterminator="\n")
+    writer.writeheader()
+    seen: set[str] = set()
+    for row in reader:
+        race = row["Race"]
+        first = race.split(" - ")[0] if race.startswith(wv.LEFT_OUT) else race
+        if race.startswith("U.S. ") or race in kept:
+            writer.writerow(row)
+        elif first not in seen and race.startswith(("STATE SENATE - DISTRICT", "HOUSE OF DELEGATES", *wv.LEFT_OUT)):
+            seen.add(first)
+            writer.writerow(row)
+    (FIXTURES / "state_wv.csv").write_text(out.getvalue(), encoding="utf-8", newline="")
+    print(f"state_wv.csv: {len(wv.parse_rows(out.getvalue()))} candidates")
+    record_filers(client, key, "WV")
+    record_filers(client, key, "WV", place.cd)
+    record_legislators(client, "wv")
+    record_members(client, "WV", (None, place.cd))
+
+
 def record_tn(client: httpx.Client, key: str, saved: Path | None) -> None:
     """Tennessee: TN_ADDRESS's Census answer; the Secretary of State's five spreadsheets, never
     downloaded (its site blocks scripts): those in ``saved``, or in manual/state_tn, each cut down to
@@ -2239,7 +2282,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "state_or", "state_ut", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "state_or", "state_ut", "state_wv", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -2253,7 +2296,8 @@ def main(argv: list[str] | None = None) -> int:
                                                  "instead of the one saved in manual/state_ar; state_nh: New "
                                                  "Hampshire's candidate list, instead of the one saved in "
                                                  "manual/state_nh; state_la: Louisiana's candidate inquiry, instead "
-                                                 "of the one saved in manual/state_la")
+                                                 "of the one saved in manual/state_la; state_wv: West Virginia's "
+                                                 "candidate listing, instead of the one saved in manual/state_wv")
     parser.add_argument("--folder", type=Path, help="state_tn: a folder of Tennessee's candidate lists, instead of "
                                                     "manual/state_tn")
     parser.add_argument("--text", type=Path, help="state_ut: the certification's text, instead of the one saved in "
@@ -2346,6 +2390,8 @@ def main(argv: list[str] | None = None) -> int:
             record_or(client, config.fec_api_key, args.xlsx if only == "state_or" else None)
         if only in (None, "state_ut"):
             record_ut(client, config.fec_api_key, args.text if only == "state_ut" else None)
+        if only in (None, "state_wv"):
+            record_wv(client, config.fec_api_key, args.csv if only == "state_wv" else None)
         if only in (None, "state_mn"):
             record_mn(client, config.fec_api_key)
         if only in (None, "state_nh"):
