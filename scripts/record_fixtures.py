@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, state_or, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -108,7 +108,10 @@ address and the candidates page saved by hand in manual/state_ma (--page another
 downloaded, cut down to its headings and candidates, with a placeholder for each candidate's street
 and town. Louisiana's (state_la) takes a Baton Rouge address and the candidate inquiry's CSV saved
 by hand in manual/state_la (--csv another copy), never downloaded, cut down to the columns it reads,
-Congress, the Legislature and a few of each kind of office left out. A Census answer whose
+Congress, the Legislature and a few of each kind of office left out. Oregon's (state_or) takes a
+Salem address and ORESTAR's candidate export saved by hand in manual/state_or (--xlsx another
+copy), never downloaded, cut down to the columns it reads (no contact details), Governor,
+Congress, the address's districts, a few more and a few rows of each kind left out. A Census answer whose
 /geographies fails is its /locations match with TIGERweb's identify. The candidate-list grid six states share (grid) takes Washington's page, cut down to its election
 dropdown and its table's first rows, and the CSV it exports, both without contact details. The
 TrackAIPAC, Vote for Peace and Texas Ethics
@@ -149,7 +152,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, va, vt, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, or_, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, va, vt, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -237,6 +240,9 @@ MA_ADDRESS = ("boston", "1 Ashburton Pl, Boston, MA 02108")  # the Secretary of 
 LA_ADDRESS = ("batonrouge", "900 N 3rd St, Baton Rouge, LA 70802")  # the State Capitol: East Baton Rouge, LA-2 (2026 map)
 # Louisiana's offices kept in its fixture besides Congress and the Legislature: some of each kind left out.
 LA_LEFT_OUT = ("PSC", "BESE", "Associate Justice", "Magistrate", "City Marshal")
+OR_ADDRESS = ("salem", "900 Court St NE, Salem, OR 97301")  # the State Capitol: Marion County
+# Oregon's legislative races kept in its fixture besides the address's: write-in and minor-party nominees.
+OR_DISTRICTS = ("State Representative, 10th District", "State Senator, 4th District")
 AR_ADDRESS = ("littlerock", "500 Woodlane St, Little Rock, AR 72201")  # the State Capitol: Pulaski County, AR-2
 # Arkansas's offices kept in its fixture besides Congress, the statewide ones and the address's districts: House 8's
 # full term and its special, an independent's race, and a circuit judge's runoff, which is left out.
@@ -1882,6 +1888,44 @@ def record_nh(client: httpx.Client, key: str, saved: Path | None) -> None:
     record_members(client, "NH", (None, place.cd))
 
 
+def record_or(client: httpx.Client, key: str, saved: Path | None) -> None:
+    """Oregon: OR_ADDRESS's Census answer; ORESTAR's candidate export, never downloaded (a Java
+    form): ``saved``, or the spreadsheet in manual/state_or, cut down to the columns it reads (no
+    address, phone, email or background) and to Governor, Congress, the address's districts,
+    OR_DISTRICTS, all 60 House districts' first row (the reader wants them all) and one row of each
+    kind left out; the FEC's filers for the U.S. Senate and the address's seat, its legislators, and
+    its members of Congress added to officeholders_congress.json."""
+    name, address = OR_ADDRESS
+    place = record_census(client, name, address)
+    path = saved or next(iter(sorted((ROOT / "manual" / "state_or").glob("*.xlsx"))), None)
+    if path is None:
+        raise SystemExit("state_or: save ORESTAR's candidate export in manual/state_or (see its README), or pass --xlsx")
+    _, rows = sheet_rows(path.read_bytes())
+    columns = [rows[0].index(column) for column in or_.COLUMNS]
+    group, office = rows[0].index("Office Group"), rows[0].index("Office")
+    kept = {f"State Senator, {ordinal(int(place.sd))} District", f"State Representative, {ordinal(int(place.hd))} District",
+            *OR_DISTRICTS}
+    houses: set[str] = set()
+    left_out: set[str] = set()
+    out = [rows[0]]
+    for row in rows[1:]:
+        where = f"{row[group]}, {row[office]}"
+        if row[group] in ("Governor", "US Senator", "US Representative") or where in kept:
+            out.append(row)
+        elif row[group] == "State Representative" and row[office] not in houses:
+            houses.add(row[office])
+            out.append(row)
+        elif row[group] not in ("State Representative", "State Senator") and row[group] not in left_out:
+            left_out.add(row[group])
+            out.append(row)
+    write_sheet(FIXTURES / "state_or.xlsx", [[row[at] if at < len(row) else "" for at in columns] for row in out])
+    print(f"state_or.xlsx: {len(or_.OrList.parse((FIXTURES / 'state_or.xlsx').read_bytes()))} candidates")
+    record_filers(client, key, "OR")
+    record_filers(client, key, "OR", place.cd)
+    record_legislators(client, "or")
+    record_members(client, "OR", (None, place.cd))
+
+
 def record_tn(client: httpx.Client, key: str, saved: Path | None) -> None:
     """Tennessee: TN_ADDRESS's Census answer; the Secretary of State's five spreadsheets, never
     downloaded (its site blocks scripts): those in ``saved``, or in manual/state_tn, each cut down to
@@ -2173,7 +2217,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "state_or", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -2190,6 +2234,8 @@ def main(argv: list[str] | None = None) -> int:
                                                  "of the one saved in manual/state_la")
     parser.add_argument("--folder", type=Path, help="state_tn: a folder of Tennessee's candidate lists, instead of "
                                                     "manual/state_tn")
+    parser.add_argument("--xlsx", type=Path, help="state_or: ORESTAR's candidate export, instead of the one saved in "
+                                                  "manual/state_or")
     parser.add_argument("--page", type=Path, help="state_ma: Massachusetts's candidates page, instead of the one "
                                                   "saved in manual/state_ma")
     args = parser.parse_args(argv)
@@ -2272,6 +2318,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ar(client, config.fec_api_key, args.csv if only == "state_ar" else None)
         if only in (None, "state_la"):
             record_la(client, config.fec_api_key, args.csv if only == "state_la" else None)
+        if only in (None, "state_or"):
+            record_or(client, config.fec_api_key, args.xlsx if only == "state_or" else None)
         if only in (None, "state_mn"):
             record_mn(client, config.fec_api_key)
         if only in (None, "state_nh"):
