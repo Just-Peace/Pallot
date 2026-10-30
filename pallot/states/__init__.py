@@ -434,6 +434,7 @@ class ManualList(StateList):
 
     folder: ClassVar[str]  # where the saved file and the steps to refresh it are: "manual/state_az"
     binary: ClassVar[bool] = False  # parse() takes the saved file's bytes (a PDF), not its text
+    folders: ClassVar[bool] = False  # saved as several files in one folder, imported together: parse() takes {name: bytes}
     challenge: ClassVar[tuple[str, ...]] = ()  # what the site's bot check page says, to refuse it by name
     fetched: ClassVar[bool] = False  # part of its ballot is fetched as it's used (Georgia's nominees): bundled apart, daily
 

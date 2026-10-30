@@ -24,21 +24,26 @@ MANUAL = {state: cls for state, cls in ADAPTERS.items() if issubclass(cls, Manua
 
 def import_list(state: str, path: str | Path, *, data_dir: str | Path | None = None,
                 today: Callable[[], dt.date] = dt.date.today, now: dt.datetime | None = None) -> Outcome:
-    """Write ``state``'s bundle from the file at ``path``; BundleError, writing nothing, when the
-    file can't be read or isn't the list."""
+    """Write ``state``'s bundle from the file at ``path`` (or the folder, for a list saved as several
+    files: ManualList.folders); BundleError, writing nothing, when it can't be read or isn't the list."""
     cls = MANUAL.get(state.upper())
     if cls is None:
         raise BundleError(f"{state} has no list imported by hand; the states that do: {', '.join(MANUAL)}")
+    folder = Path(path).is_dir()
+    if folder != cls.folders:
+        raise BundleError(f"{path} isn't {'a folder' if cls.folders else 'a file'}: the {cls.label}'s list is imported "
+                          f"from {'the folder of its files' if cls.folders else 'its saved file'} ({cls.folder}/README.md)")
     try:
-        raw = Path(path).read_bytes()
+        raw = ({file.name: file.read_bytes() for file in sorted(Path(path).iterdir()) if file.is_file()} if folder
+               else Path(path).read_bytes())
     except OSError as exc:
         raise BundleError(f"couldn't read {path}: {exc.strerror or exc}") from exc
-    text = raw.decode("utf-8", errors="replace")
-    if not raw.startswith(b"%PDF") and any(mark in text for mark in cls.challenge):
+    text = "" if isinstance(raw, dict) else raw.decode("utf-8", errors="replace")
+    if not isinstance(raw, dict) and not raw.startswith(b"%PDF") and any(mark in text for mark in cls.challenge):
         raise BundleError(f"{path} is the site's bot check, not the list: open the page, wait for the candidates to "
                           f"show, and save it again ({cls.folder}/README.md)")
     try:
-        filings = cls.parse(raw if cls.binary else text)
+        filings = cls.parse(raw if cls.binary or isinstance(raw, dict) else text)
     except ValueError as exc:
         raise BundleError(f"{path} isn't a list the {cls.label}'s reader understands: {exc}") from exc
     day = general_day(today())
