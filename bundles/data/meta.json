@@ -91,6 +91,14 @@
    "last_refresh": "2026-10-27T15:23:07+00:00",
    "races": 74
   },
+  "state_ar": {
+   "answers": 1,
+   "answers_hash": "920a394f773c64c8d2077b42553c88c47863b9a0264e08b29990d9f4c823c153",
+   "candidates": 190,
+   "last_checked": "2026-10-30T03:04:07+00:00",
+   "last_refresh": "2026-10-30T03:04:07+00:00",
+   "races": 131
+  },
   "state_az": {
    "answers": 1,
    "answers_hash": "6ad73f4e337cd7f9cbdee7d6dd5772b6bc784794bcbef36d7713727052ba1e93",

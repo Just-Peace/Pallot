@@ -1,0 +1,76 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 4,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4AR02141",
+   "candidate_name": "HILL, JAMES FRENCH",
+   "candidate_pcc_id": "C00551275",
+   "candidate_pcc_name": "FRENCH HILL FOR ARKANSAS",
+   "cash_on_hand_end_period": 1488431.2,
+   "committee_ids": [
+    "C00551275"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 5151945.46,
+   "total_receipts": 5264024.47
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AR02286",
+   "candidate_name": "JONES, CHRIS",
+   "candidate_pcc_id": "C00912899",
+   "candidate_pcc_name": "THE COMMITTEE TO ELECT CHRIS JONES",
+   "cash_on_hand_end_period": 274178.71,
+   "committee_ids": [
+    "C00912899"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 1684839.35,
+   "total_receipts": 1959018.06
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AR02278",
+   "candidate_name": "MCDOWELL, CHASE",
+   "candidate_pcc_id": "C00902619",
+   "candidate_pcc_name": "MCDOWELL FOR ARKANSAS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00902619"
+   ],
+   "coverage_end_date": "2026-04-12",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 163105.11,
+   "total_receipts": 163105.11
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6AR02294",
+   "candidate_name": "HUFFMAN, ZACKARY BLAKE",
+   "candidate_pcc_id": "C00912345",
+   "candidate_pcc_name": "COMMITTEE TO ELECT ZACK HUFFMAN",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00912345"
+   ],
+   "coverage_end_date": "2026-04-18",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 12402.59,
+   "total_receipts": 12402.59
+  }
+ ]
+}

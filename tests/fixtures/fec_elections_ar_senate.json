@@ -1,0 +1,140 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 8,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4AR00103",
+   "candidate_name": "COTTON, THOMAS",
+   "candidate_pcc_id": "C00499988",
+   "candidate_pcc_name": "COTTON FOR SENATE, INC.",
+   "cash_on_hand_end_period": 5129927.81,
+   "committee_ids": [
+    "C00499988"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 15784601.36,
+   "total_receipts": 14517576.18
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AR00199",
+   "candidate_name": "SHOFFNER, HALLIE",
+   "candidate_pcc_id": "C00905471",
+   "candidate_pcc_name": "HALLIE SHOFFNER FOR ARKANSAS",
+   "cash_on_hand_end_period": 756931.7,
+   "committee_ids": [
+    "C00905471"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3285879.13,
+   "total_receipts": 4042810.83
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AR00215",
+   "candidate_name": "LITTLE, JEB",
+   "candidate_pcc_id": "C00926568",
+   "candidate_pcc_name": "JEB LITTLE FOR SENATE",
+   "cash_on_hand_end_period": 127.4,
+   "committee_ids": [
+    "C00926568"
+   ],
+   "coverage_end_date": "2026-03-31",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 92404.15,
+   "total_receipts": 92531.55
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AR00223",
+   "candidate_name": "WADLIN, JEFFREY FRANCIS",
+   "candidate_pcc_id": "C00940619",
+   "candidate_pcc_name": "WADLIN FOR SENATE 2026",
+   "cash_on_hand_end_period": 6291.43,
+   "committee_ids": [
+    "C00940619"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 73771.57,
+   "total_receipts": 80063.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AR00207",
+   "candidate_name": "ASHBY, MICAH",
+   "candidate_pcc_id": "C00919803",
+   "candidate_pcc_name": "MICAH ASHBY FOR SENATE 2026",
+   "cash_on_hand_end_period": 754.4,
+   "committee_ids": [
+    "C00919803"
+   ],
+   "coverage_end_date": "2026-02-11",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 126.26,
+   "total_receipts": 41161.53
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AR00173",
+   "candidate_name": "DUNBAR, ETHAN N SR.",
+   "candidate_pcc_id": "C00916502",
+   "candidate_pcc_name": "FRIENDS OF NOEL DBA ETHANFORARKANSAS",
+   "cash_on_hand_end_period": 1110.62,
+   "committee_ids": [
+    "C00916502"
+   ],
+   "coverage_end_date": "2026-03-27",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 22253.18,
+   "total_receipts": 17461.7
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6AR00181",
+   "candidate_name": "RUSSELL, JAMES RICHARD MR III",
+   "candidate_pcc_id": "C00918136",
+   "candidate_pcc_name": "COMMITTEE TO ELECT JAMES RUSSELL",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00918136"
+   ],
+   "coverage_end_date": "2025-11-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3186.9,
+   "total_receipts": 3086.9
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S0AR00218",
+   "candidate_name": "WHITFIELD, DANIEL ALLEN",
+   "candidate_pcc_id": "C00726422",
+   "candidate_pcc_name": "DANWHITCONGRESS",
+   "cash_on_hand_end_period": 2194.37,
+   "committee_ids": [
+    "C00726422"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 202.85,
+   "total_receipts": 2388.12
+  }
+ ]
+}
