@@ -11,6 +11,7 @@ from .ar import ArList
 from .ca import CaList
 from .az import AzList
 from .co import CoList
+from .dc import DcList
 from .de import DeList
 from .fl import FlList
 from .ga import GaList
@@ -58,7 +59,7 @@ ADAPTERS: dict[str, type[StateList]] = {
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
                              OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList, MsList, ArList,
-                             MnList, NhList, TnList, MaList, LaList, OrList, UtList, WvList, IdList)
+                             MnList, NhList, TnList, MaList, LaList, OrList, UtList, WvList, IdList, DcList)
 }
 
 

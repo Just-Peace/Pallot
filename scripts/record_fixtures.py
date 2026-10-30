@@ -1,7 +1,7 @@
 """Record the live API responses that Pallot's tests replay, into tests/fixtures/.
 
     python scripts/record_fixtures.py              # everything
-    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, state_or, state_ut, state_wv, state_id, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
+    python scripts/record_fixtures.py --only fec   # just the FEC responses (or ballots, suggest, nationwide, state_lists, state_va, state_ca, state_nv, state_ga, state_wi, state_oh, state_ia, state_nj, state_ny, state_co, state_wy, state_il, state_ak, state_me, state_ne, state_nm, state_wa, state_in, state_md, state_mo, state_sc, state_ky, state_ok, state_ks, state_mt, state_sd, state_hi, state_nd, state_de, state_vt, state_ms, state_ar, state_mn, state_nh, state_tn, state_ma, state_la, state_or, state_ut, state_wv, state_id, state_dc, grid, polls, key_dates, officeholders, congress_gov, wikidata, tigerweb, election_precincts, county_precincts, endorsement_feeds, tec, trackaipac, voteforpeace)
 
 The ballots take about 30 requests (Census geocoder, Nominatim, Texas SOS), and
 the address suggestions two (Google's Places Autocomplete, with PALLOT_GOOGLE_API_KEY), the polls three (FiftyPlusOne, one per kind of race),
@@ -117,7 +117,9 @@ the address's districts, a few more and a row of every other district. Idaho's (
 Boise address and the candidate search's export saved by hand in manual/state_id (--xlsx another
 copy), never downloaded, cut down to the columns it reads (no mailing address), Congress, the
 statewide offices, the address's district, a few more, a row of each other district's races and a
-row of each office left out. Oregon's (state_or) takes a
+row of each office left out. DC's (state_dc) takes the Board of Elections' page of the year's
+elections cut down to its link to the candidates in ballot order, and that PDF rewritten as each
+office and candidate with the day filed (no contact details). Oregon's (state_or) takes a
 Salem address and ORESTAR's candidate export saved by hand in manual/state_or (--xlsx another
 copy), never downloaded, cut down to the columns it reads (no contact details), Governor,
 Congress, the address's districts, a few more and a few rows of each kind left out. A Census answer whose
@@ -161,7 +163,7 @@ from pallot.sources.endorsement_feeds import FEEDS  # noqa: E402
 from pallot.text import display_person  # noqa: E402
 from pallot.sources.tec import _seats, tec_seat  # noqa: E402
 from pallot.sources.fec import general_day  # noqa: E402
-from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, de, fl, ga, grid, ia, id_, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, or_, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, ut, va, vt, wv, wy  # noqa: E402
+from pallot.states import _ORDINALS, Rows, ak, ar, ca, co, dc, de, fl, ga, grid, ia, id_, il, in_, ks, la, ma, md, me, ky, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm, ok, or_, ordinal, pa, pdf_lines, sc, sd, hi, sheet_rows, tn, ut, va, vt, wv, wy  # noqa: E402
 from pypdf import PdfReader, PdfWriter  # noqa: E402
 
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -1544,6 +1546,37 @@ def record_mo(client: httpx.Client, key: str) -> None:
     record_members(client, "MO", (None, cd))
 
 
+def record_dc(client: httpx.Client) -> None:
+    """DC: the Board of Elections' page of the year's elections cut down to its title and its link to
+    the general election's candidates in ballot order; that list rewritten as its heading, each
+    office and each candidate's name and party with the day filed, without the contact details; and
+    DC's Council members from Open States. Its Census answer and the Delegate's FEC filers are the
+    nationwide fixtures'."""
+    response = client.get(dc.year_page(FEC_CYCLE))
+    response.raise_for_status()
+    title = " ".join(re.search(r"<title>[^<]*</title>", response.text).group(0).split())
+    [url] = dc.links(response.text)["links"]
+    anchors = [" ".join(a.split()) for a in re.findall(r"<a [^>]*href=\"[^\"]*\.pdf[^\"]*\".*?</a>", response.text, re.S)
+               if html.unescape(re.search(r'href="([^"]*)"', a).group(1)) in url]
+    (FIXTURES / "state_dc.html").write_text(
+        f"<html><head>{title}</head><body>\n" + "\n".join(f"<li>{a}</li>" for a in anchors) + "\n</body></html>\n",
+        encoding="utf-8", newline="")
+    time.sleep(2)
+    response = client.get(url)
+    response.raise_for_status()
+    lines = []
+    for line in pdf_lines(response.content):
+        cells = re.split(r"\s{2,}", line.strip())
+        if not line.strip() or line[0].isspace():
+            lines.append(line if "Board of Elections" in line else "")
+        else:
+            lines.append(cells[0] if len(cells) == 1 else f"{cells[0]:<60}{cells[-1]}")
+    (FIXTURES / "state_dc.pdf").write_bytes(text_pdf([[line for line in lines if line]]))
+    print(f"state_dc.pdf: {len(dc.DcList.parse((FIXTURES / 'state_dc.pdf').read_bytes()))} candidates, "
+          f"{len(dc.DcList.parse(response.content))} as served")
+    record_legislators(client, "dc")
+
+
 def record_ky(client: httpx.Client, key: str) -> None:
     """Kentucky: KY_ADDRESS's Census answer; the Secretary of State's candidate filings page, cut
     down to its heading, its election dropdown and its hidden fields with made-up values; the list
@@ -2324,7 +2357,7 @@ def record_voteforpeace() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record the responses Pallot's tests replay.")
-    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "state_or", "state_ut", "state_wv", "state_id", "grid", "polls", "key_dates", "officeholders",
+    parser.add_argument("--only", choices=("ballots", "suggest", "fec", "nationwide", "state_lists", "state_va", "state_ca", "state_nv", "state_ga", "state_wi", "state_oh", "state_ia", "state_nj", "state_ny", "state_co", "state_wy", "state_il", "state_ak", "state_me", "state_ne", "state_nm", "state_wa", "state_in", "state_md", "state_mo", "state_sc", "state_ky", "state_ok", "state_ks", "state_mt", "state_sd", "state_hi", "state_nd", "state_de", "state_vt", "state_ms", "state_ar", "state_mn", "state_nh", "state_tn", "state_ma", "state_la", "state_or", "state_ut", "state_wv", "state_id", "state_dc", "grid", "polls", "key_dates", "officeholders",
 "congress_gov", "wikidata", "tigerweb", "election_precincts", "county_precincts", "endorsement_feeds", "tec", "trackaipac", "voteforpeace"),
                         help="record just this part")
     parser.add_argument("--pdf", type=Path, help="state_ca: a copy of California's certified list, instead of downloading it; "
@@ -2435,6 +2468,8 @@ def main(argv: list[str] | None = None) -> int:
             record_ut(client, config.fec_api_key, args.text if only == "state_ut" else None)
         if only in (None, "state_wv"):
             record_wv(client, config.fec_api_key, args.csv if only == "state_wv" else None)
+        if only in (None, "state_dc"):
+            record_dc(client)
         if only in (None, "state_id"):
             record_id(client, config.fec_api_key, args.xlsx if only == "state_id" else None)
         if only in (None, "state_mn"):
