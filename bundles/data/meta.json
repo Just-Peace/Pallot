@@ -227,6 +227,14 @@
    "last_refresh": "2026-10-29T16:25:13+00:00",
    "races": 248
   },
+  "state_ms": {
+   "answers": 1,
+   "answers_hash": "142c047989c94d7547d8c54a9fe9861e9f67e3657c5c26695fa64d4966640c0d",
+   "candidates": 39,
+   "last_checked": "2026-10-30T02:41:10+00:00",
+   "last_refresh": "2026-10-30T02:41:10+00:00",
+   "races": 14
+  },
   "state_mt": {
    "answers": 2,
    "answers_hash": "7b6de42d906e2c9bacd867982590bc6bce70a80980433d4204690b2706bc60b1",

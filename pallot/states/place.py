@@ -4,7 +4,7 @@ A race reaching the whole state is always there; Congress and the Legislature by
 districts, as is a board elected by several of the Legislature's districts (Kansas's State Board of
 Education); a county's or a town's when the address is in it. A race on only part of a county or
 town (a commissioner's district, a ward), or a judicial district when another district of the
-same office also reaches the county, can't be told from the address, so it's "unconfirmed":
+same office also reaches the county or only part of the county is in it, can't be told from the address, so it's "unconfirmed":
 the ballot leaves it out unless asked, as Texas's precinct races. A race the list doesn't say
 where it is ("unplaced") is only counted.
 """
@@ -51,6 +51,8 @@ def where(filing: Filing, districts: Districts, county: str | None, city: str | 
             return "unconfirmed"
         mine = district_key(mine)
         return "include" if any(district_key(part) == mine for part in (filing.district or "").split(",")) else "skip"
+    if reach == "counties" and county and f"{county}*" in filing.counties:
+        return "unconfirmed"
     if reach == "unplaced" or not county or county not in filing.counties:
         return "skip"
     if reach == "counties":

@@ -1,0 +1,140 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 8,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S8MS00261",
+   "candidate_name": "HYDE-SMITH, CINDY",
+   "candidate_pcc_id": "C00675348",
+   "candidate_pcc_name": "CINDY HYDE-SMITH FOR US SENATE",
+   "cash_on_hand_end_period": 1395723.78,
+   "committee_ids": [
+    "C00675348"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Incumbent",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 5045478.02,
+   "total_receipts": 6279659.29
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MS00133",
+   "candidate_name": "COLOM, SCOTT",
+   "candidate_pcc_id": "C00918359",
+   "candidate_pcc_name": "SCOTT COLOM FOR SENATE",
+   "cash_on_hand_end_period": 1018716.95,
+   "committee_ids": [
+    "C00918359"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3382172.58,
+   "total_receipts": 4400889.53
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MS00109",
+   "candidate_name": "ADLAKHA, SARAH ANNE DR",
+   "candidate_pcc_id": "C00900944",
+   "candidate_pcc_name": "SARAH ADLAKHA FOR SENATE",
+   "cash_on_hand_end_period": 9729.37,
+   "committee_ids": [
+    "C00900944"
+   ],
+   "coverage_end_date": "2026-02-18",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 556454.75,
+   "total_receipts": 566184.12
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S4MS00187",
+   "candidate_name": "PINKINS, TY",
+   "candidate_pcc_id": "C00830554",
+   "candidate_pcc_name": "TY PINKINS FOR CONGRESS",
+   "cash_on_hand_end_period": 4862.52,
+   "committee_ids": [
+    "C00830554"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "INDEPENDENT",
+   "total_disbursements": 105063.33,
+   "total_receipts": 104310.83
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MS00141",
+   "candidate_name": "TILL, PRISCILLA WILLIAMS",
+   "candidate_pcc_id": "C00921445",
+   "candidate_pcc_name": "PRISCILLA WILLIAMS TILL FOR U. S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00921445"
+   ],
+   "coverage_end_date": "2026-04-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3029.82,
+   "total_receipts": 8584.39
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MS00158",
+   "candidate_name": "TILL, PRISCILLA WILLIAMS",
+   "candidate_pcc_id": "C00921445",
+   "candidate_pcc_name": "PRISCILLA WILLIAMS TILL FOR U. S. SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00921445"
+   ],
+   "coverage_end_date": "2026-04-15",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 3029.82,
+   "total_receipts": 8584.39
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MS00117",
+   "candidate_name": "LITTELL, ALBERT R",
+   "candidate_pcc_id": "C00908046",
+   "candidate_pcc_name": "ALBERT LITTELL FOR SENATE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00908046"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "S6MS00125",
+   "candidate_name": "SMITH, ANDREW SCOTT",
+   "candidate_pcc_id": "C00865618",
+   "candidate_pcc_name": "ANDREW SCOTT SMITH FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00865618"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

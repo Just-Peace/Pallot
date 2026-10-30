@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "400 HIGH ST, JACKSON, MS 39201"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "65372532"
+    },
+    "coordinates": {
+     "x": -90.183039067896,
+     "y": 32.30510946913
+    },
+    "addressComponents": {
+     "zip": "39201",
+     "streetName": "HIGH",
+     "preType": "",
+     "city": "JACKSON",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "400",
+     "state": "MS",
+     "suffixType": "ST",
+     "toAddress": "498",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "400 HIGH ST, JACKSON, MS, 39201",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "280490016003014",
+       "STATE": "28",
+       "COUNTY": "049",
+       "TRACT": "001600",
+       "BLOCK": "3014",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "17679",
+       "MTFCC": "G5040",
+       "NAME": "Block 3014",
+       "BASENAME": "3014",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "3",
+       "CENTLON": "-090.1823680",
+       "CENTLAT": "+32.3056824",
+       "INTPTLON": "-090.1823680",
+       "INTPTLAT": "+32.3056824",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "6965080",
+       "OID": "210701001550037"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490265003796",
+       "GEOID": "2802190",
+       "STATE": "28",
+       "SDUNI": "02190",
+       "BASENAME": "Jackson Public School District",
+       "NAME": "Jackson Public School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "269642834",
+       "AREAWATER": "5564033",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+32.3184413",
+       "CENTLON": "-090.2151094",
+       "INTPTLAT": "+32.3188920",
+       "INTPTLON": "-090.2162370",
+       "OBJECTID": "7857"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "32255",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "289261935",
+       "AREAWATER": "5532980",
+       "PLACENS": "02404779",
+       "PLACECC": "C1",
+       "PLACE": "36000",
+       "FUNCSTAT": "A",
+       "GEOID": "2836000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Jackson",
+       "NAME": "Jackson city",
+       "OID": "2789076969367",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "28",
+       "CENTLON": "-090.2125987",
+       "CENTLAT": "+32.3156102",
+       "INTPTLON": "-090.2128502",
+       "INTPTLAT": "+32.3158340",
+       "DISP_CLR": "4"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "438",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "46609378991",
+       "AREAWATER": "1056996360",
+       "CD120": "02",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "2802",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "2",
+       "NAME": "Congressional District 2",
+       "OID": "2119042972359730",
+       "STATE": "28",
+       "CENTLON": "-090.4473256",
+       "CENTLAT": "+32.9397510",
+       "INTPTLON": "-090.4344022",
+       "INTPTLAT": "+32.9387814"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042972371751",
+       "GEOID": "28029",
+       "STATE": "28",
+       "SLDU": "029",
+       "BASENAME": "29",
+       "NAME": "State Senate District 29",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "537606725",
+       "AREAWATER": "5417424",
+       "LSY": "2026",
+       "OBJECTID": "711",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+32.1432733",
+       "CENTLON": "-090.3596587",
+       "INTPTLAT": "+32.1431790",
+       "INTPTLON": "-090.3544082",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042972372082",
+       "GEOID": "28067",
+       "STATE": "28",
+       "SLDL": "067",
+       "BASENAME": "67",
+       "NAME": "State House District 67",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "31655900",
+       "AREAWATER": "846067",
+       "LSY": "2026",
+       "OBJECTID": "2306",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+32.3275526",
+       "CENTLON": "-090.1954373",
+       "INTPTLAT": "+32.3300401",
+       "INTPTLON": "-090.1949264",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "2749046721299",
+       "GEOID": "28",
+       "STATE": "28",
+       "STATENS": "01779790",
+       "BASENAME": "Mississippi",
+       "NAME": "Mississippi",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "121534778051",
+       "AREAWATER": "3913858054",
+       "REGION": "3",
+       "DIVISION": "6",
+       "STUSAB": "MS",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+32.6972986",
+       "CENTLON": "-089.6552478",
+       "INTPTLAT": "+32.6864714",
+       "INTPTLON": "-089.6561377",
+       "OBJECTID": "11"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590264929709",
+       "GEOID": "28049",
+       "STATE": "28",
+       "COUNTY": "049",
+       "COUNTYNS": "00695748",
+       "BASENAME": "Hinds",
+       "NAME": "Hinds County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "2252888301",
+       "AREAWATER": "19259532",
+       "OBJECTID": "785",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+32.2666225",
+       "CENTLON": "-090.4428940",
+       "INTPTLAT": "+32.2677884",
+       "INTPTLON": "-090.4660161"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

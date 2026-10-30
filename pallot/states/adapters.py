@@ -23,6 +23,7 @@ from .md import MdList
 from .me import MeList
 from .mi import MiList
 from .mo import MoList
+from .ms import MsList
 from .mt import MtList
 from .nc import NcList
 from .nd import NdList
@@ -46,7 +47,7 @@ ADAPTERS: dict[str, type[StateList]] = {
     cls.state: cls for cls in (NcList, MiList, PaList, FlList, VaList, CaList, AzList, NvList, GaList, WiList, OhList,
                              IaList, NjList, NyList, CoList, WyList, IlList,
                              AkList, MeList, NeList, NmList, WaList, InList, MdList, MoList, ScList, KyList,
-                             OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList)
+                             OkList, KsList, MtList, SdList, HiList, NdList, DeList, VtList, MsList)
 }
 
 

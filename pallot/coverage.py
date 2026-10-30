@@ -77,6 +77,7 @@ COVERED = {
     "ND": LIST,  # its odd-numbered districts up in 2026, with an unexpired House seat in 20, 26 and 42
     "DE": LIST,  # with its county offices elected countywide
     "VT": LIST,  # its State Senate and State House districts are named ("Chittenden Central", "Addison-Rutland")
+    "MS": LIST,  # its Legislature elected in odd years: only special elections in 2026
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the
