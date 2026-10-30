@@ -24053,5 +24053,67 @@
     "phone": "202-225-5643"
    }
   ]
+ },
+ {
+  "id": {
+   "bioguide": "M001213",
+   "fec": [
+    "H0UT01205"
+   ],
+   "opensecrets": "N00046598",
+   "govtrack": 456851,
+   "wikidata": "Q101196971",
+   "wikipedia": "Blake Moore",
+   "google_entity_id": "kg:/g/11ftchfsgn",
+   "pictorial": 13296
+  },
+  "name": {
+   "first": "Blake",
+   "middle": "David",
+   "last": "Moore",
+   "official_full": "Blake D. Moore"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1980-06-22"
+  },
+  "terms": [
+   {
+    "type": "rep",
+    "start": "2021-01-03",
+    "end": "2023-01-03",
+    "state": "UT",
+    "district": 1,
+    "party": "Republican",
+    "address": "1320 Longworth House Office Building Washington DC 20515-4401",
+    "office": "1320 Longworth House Office Building",
+    "phone": "202-225-0453",
+    "url": "https://blakemoore.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2023-01-03",
+    "end": "2025-01-03",
+    "state": "UT",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://blakemoore.house.gov",
+    "address": "1131 Longworth House Office Building Washington DC 20515-4401",
+    "office": "1131 Longworth House Office Building",
+    "phone": "202-225-0453"
+   },
+   {
+    "type": "rep",
+    "start": "2025-01-03",
+    "end": "2027-01-03",
+    "state": "UT",
+    "district": 1,
+    "party": "Republican",
+    "url": "https://blakemoore.house.gov",
+    "address": "1131 Longworth House Office Building Washington DC 20515-4401",
+    "office": "1131 Longworth House Office Building",
+    "phone": "202-225-0453"
+   }
+  ]
  }
 ]

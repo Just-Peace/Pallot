@@ -1,0 +1,220 @@
+{
+ "api_version": "1.0",
+ "pagination": {
+  "count": 13,
+  "is_count_exact": true,
+  "page": 1,
+  "pages": 1,
+  "per_page": 100
+ },
+ "results": [
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H8UT04053",
+   "candidate_name": "MCADAMS, BEN",
+   "candidate_pcc_id": "C00658633",
+   "candidate_pcc_name": "FRIENDS OF BEN MCADAMS",
+   "cash_on_hand_end_period": 377817.48,
+   "committee_ids": [
+    "C00658633"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 2450992.38,
+   "total_receipts": 2813806.53
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01178",
+   "candidate_name": "BLOUIN, NATE",
+   "candidate_pcc_id": "C00928002",
+   "candidate_pcc_name": "NATE BLOUIN FOR UTAH",
+   "cash_on_hand_end_period": 894.7,
+   "committee_ids": [
+    "C00928002"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 707666.48,
+   "total_receipts": 708561.18
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01236",
+   "candidate_name": "FARRELL, MICHAEL",
+   "candidate_pcc_id": "C00933838",
+   "candidate_pcc_name": "MICHAEL FARRELL FOR UTAH",
+   "cash_on_hand_end_period": 12769.13,
+   "committee_ids": [
+    "C00933838"
+   ],
+   "coverage_end_date": "2026-06-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 300293.14,
+   "total_receipts": 313062.27
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01228",
+   "candidate_name": "MOHAMED, LIBAN",
+   "candidate_pcc_id": "C00931931",
+   "candidate_pcc_name": "LIBAN FOR CONGRESS",
+   "cash_on_hand_end_period": 14729.76,
+   "committee_ids": [
+    "C00931931"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 289243.12,
+   "total_receipts": 303972.88
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01244",
+   "candidate_name": "OWEN, RILEY MONTGOMERY",
+   "candidate_pcc_id": "C00940411",
+   "candidate_pcc_name": "RILEY OWEN FOR UTAH",
+   "cash_on_hand_end_period": 9503.11,
+   "committee_ids": [
+    "C00940411"
+   ],
+   "coverage_end_date": "2026-10-14",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 154566.82,
+   "total_receipts": 164069.93
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4UT02304",
+   "candidate_name": "RIEBE, KATHLEEN",
+   "candidate_pcc_id": "C00926311",
+   "candidate_pcc_name": "KATHLEEN RIEBE FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00926311"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 125123.99,
+   "total_receipts": 125123.99
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01194",
+   "candidate_name": "KITCHEN, DEREK",
+   "candidate_pcc_id": "C00927343",
+   "candidate_pcc_name": "KITCHEN FOR UTAH",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00927343"
+   ],
+   "coverage_end_date": "2026-04-09",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 59241.67,
+   "total_receipts": 59241.67
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01210",
+   "candidate_name": "LOPEZ CHAVEZ, EVA",
+   "candidate_pcc_id": "C00931089",
+   "candidate_pcc_name": "FRIENDS OF EVA LOPEZ CHAVEZ",
+   "cash_on_hand_end_period": 465.86,
+   "committee_ids": [
+    "C00931089"
+   ],
+   "coverage_end_date": "2026-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 52333.94,
+   "total_receipts": 52799.8
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01152",
+   "candidate_name": "TOMKINS, ANTHONY",
+   "candidate_pcc_id": "C00895540",
+   "candidate_pcc_name": "TOMKINS FOR UTAH",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00895540"
+   ],
+   "coverage_end_date": "2025-09-30",
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 119.52,
+   "total_receipts": 119.52
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H4UT04078",
+   "candidate_name": "LOPEZ, JONATHAN",
+   "candidate_pcc_id": "C00868836",
+   "candidate_pcc_name": "JONATHAN FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00868836"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "REPUBLICAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01186",
+   "candidate_name": "HINCKLEY, KYE",
+   "candidate_pcc_id": "C00930040",
+   "candidate_pcc_name": "KYELEE FOR UTAH",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00930040"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01202",
+   "candidate_name": "VILLARREAL, LUIS ANGEL",
+   "candidate_pcc_id": "C00927673",
+   "candidate_pcc_name": "LUIS VILLARREAL ELECTION COMMITTEE",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00927673"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "DEMOCRATIC PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  },
+  {
+   "candidate_election_year": 2026,
+   "candidate_id": "H6UT01251",
+   "candidate_name": "WEST, JESSE KEEGAN",
+   "candidate_pcc_id": "C00945485",
+   "candidate_pcc_name": "JESSE WEST FOR CONGRESS",
+   "cash_on_hand_end_period": 0.0,
+   "committee_ids": [
+    "C00945485"
+   ],
+   "coverage_end_date": null,
+   "incumbent_challenge_full": "Challenger",
+   "party_full": "LIBERTARIAN PARTY",
+   "total_disbursements": 0.0,
+   "total_receipts": 0.0
+  }
+ ]
+}

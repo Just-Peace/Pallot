@@ -15,7 +15,7 @@ from ..sources import ca_key_dates as california
 from ..sources import key_dates as texas
 from ..sources.key_dates import Deadlines
 from . import (ak, ar, az, co, de, fl, ga, hi, ia, il, in_, ks, ky, la, ma, md, me, mi, mn, mo, ms, mt, nc, nd, ne, nh, nj, nm,
-               nv, ny, oh, ok, or_, pa, sc, sd, tn, va, vt, wa, wi, wy)
+               nv, ny, oh, ok, or_, pa, sc, sd, tn, ut, va, vt, wa, wi, wy)
 from .dates import Guide, columbus_day, first_tuesday_after_first_monday, mailed_to_every_voter, only_if
 
 __all__ = ["GUIDES", "PAGES", "RULES", "STATES", "Guide", "columbus_day", "computed", "first_tuesday_after_first_monday"]
@@ -79,7 +79,7 @@ STATES: dict[str, ModuleType] = {  # each module's GUIDE and RULE
     "IL": il, "AK": ak, "FL": fl, "NC": nc, "PA": pa, "VA": va, "ME": me, "NE": ne, "NM": nm, "WA": wa,
     "IN": in_, "MD": md, "MO": mo, "SC": sc, "KY": ky, "OK": ok, "KS": ks, "MT": mt, "SD": sd, "HI": hi,
     "ND": nd, "DE": de, "VT": vt, "MS": ms, "AR": ar, "MN": mn, "NH": nh, "TN": tn, "MA": ma,
-    "LA": la, "OR": or_,
+    "LA": la, "OR": or_, "UT": ut,
 }
 GUIDES: dict[str, Guide] = {
     "TX": TEXAS, "CA": CALIFORNIA, **{state: module.GUIDE for state, module in STATES.items()},

@@ -85,6 +85,7 @@ COVERED = {
     "MA": LIST,  # its State Senate and State House districts named by county ("Third Suffolk", "Cape and Islands")
     "LA": LIST,  # its Legislature elected in odd years: only special elections in 2026; its U.S. House map of 2026
     "OR": LIST,  # all 60 House districts and about half the Senate's up in 2026; a candidate of several parties once
+    "UT": LIST,  # all 75 House districts and about half the Senate's up in 2026; its U.S. House map of 2026 (Map 1A)
 }
 
 # Each state's own name for a chamber's districts, or None where it has no such chamber: the
