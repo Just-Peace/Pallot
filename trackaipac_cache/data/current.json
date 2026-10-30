@@ -5671,6 +5671,53 @@
       "state": "CT"
     },
     {
+      "candidate_id": "ct-chris-shea",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "05",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "ct-chris-shea",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "05",
+          "donate_url": null,
+          "donations": 1000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 1000,
+          "lines": [
+            "Candidate for U.S. House",
+            "CT-05 [R]",
+            "Israel Lobby Total: $1,000",
+            "Donations: $1,000",
+            "IE: $0",
+            "AMP"
+          ],
+          "name": "Chris Shea",
+          "notes": [],
+          "pacs": [
+            "AMP"
+          ],
+          "party": "R",
+          "seat": "CT-05",
+          "seat_text": "CT-05 [R]",
+          "section": null,
+          "source": "candidates",
+          "state": "CT",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Chris Shea",
+      "party": "R",
+      "seat": "CT-05",
+      "state": "CT"
+    },
+    {
       "candidate_id": "ct-jahana-hayes",
       "categories": [
         "congress"
@@ -6824,6 +6871,53 @@
       "state": "FL"
     },
     {
+      "candidate_id": "fl-eliott-rodriguez",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "27",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-eliott-rodriguez",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "27",
+          "donate_url": null,
+          "donations": 1000,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 1000,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-27 [D]",
+            "Israel Lobby Total: $1,000",
+            "Donations: $1,000",
+            "IE: $0",
+            "DMFI"
+          ],
+          "name": "Eliott Rodriguez",
+          "notes": [],
+          "pacs": [
+            "DMFI"
+          ],
+          "party": "D",
+          "seat": "FL-27",
+          "seat_text": "FL-27 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Eliott Rodriguez",
+      "party": "D",
+      "seat": "FL-27",
+      "state": "FL"
+    },
+    {
       "candidate_id": "fl-eric-yonce",
       "categories": [
         "endorsed"
@@ -7407,6 +7501,51 @@
       "name": "Laurel Lee",
       "party": "R",
       "seat": "FL-15",
+      "state": "FL"
+    },
+    {
+      "candidate_id": "fl-leela-gray",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "13",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "fl-leela-gray",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "13",
+          "donate_url": null,
+          "donations": null,
+          "election_date": null,
+          "ie": null,
+          "incumbent": false,
+          "israel_lobby_total": null,
+          "lines": [
+            "Candidate for U.S. House",
+            "FL-13 [D]",
+            "Israel Lobby Total: TBD",
+            "Endorsed by DMFI"
+          ],
+          "name": "Leela Gray",
+          "notes": [
+            "Endorsed by DMFI"
+          ],
+          "pacs": [],
+          "party": "D",
+          "seat": "FL-13",
+          "seat_text": "FL-13 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "FL",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Leela Gray",
+      "party": "D",
+      "seat": "FL-13",
       "state": "FL"
     },
     {
@@ -8582,16 +8721,16 @@
           "chamber": "house",
           "district": "10",
           "donate_url": null,
-          "donations": 15500,
+          "donations": 24000,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 15500,
+          "israel_lobby_total": 24000,
           "lines": [
             "Candidate for U.S. House",
             "GA-10 [R]",
-            "Israel Lobby Total: $15,500",
-            "Donations: $15,500",
+            "Israel Lobby Total: $24,000",
+            "Donations: $24,000",
             "IE: $0",
             "AIPAC, NORPAC"
           ],
@@ -14894,6 +15033,53 @@
       "state": "MI"
     },
     {
+      "candidate_id": "mi-christina-hines",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "10",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "mi-christina-hines",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "10",
+          "donate_url": null,
+          "donations": 2500,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 2500,
+          "lines": [
+            "Candidate for U.S. House",
+            "MI-10 [D]",
+            "Israel Lobby Total: $2,500",
+            "Donations: $2,500",
+            "IE: $0",
+            "DMFI"
+          ],
+          "name": "Christina Hines",
+          "notes": [],
+          "pacs": [
+            "DMFI"
+          ],
+          "party": "D",
+          "seat": "MI-10",
+          "seat_text": "MI-10 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "MI",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Christina Hines",
+      "party": "D",
+      "seat": "MI-10",
+      "state": "MI"
+    },
+    {
       "candidate_id": "mi-debbie-dingell",
       "categories": [
         "congress"
@@ -15533,15 +15719,15 @@
           "donate_url": null,
           "donations": 226419,
           "election_date": null,
-          "ie": 12841212,
+          "ie": 31321920,
           "incumbent": false,
-          "israel_lobby_total": 13067630,
+          "israel_lobby_total": 31548339,
           "lines": [
             "Candidate for U.S. Senate",
             "MI [R]",
-            "Israel Lobby Total: $13,067,630",
+            "Israel Lobby Total: $31,548,339",
             "Donations: $226,419",
-            "IE: $12,841,212",
+            "IE: $31,321,920",
             "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, TFM, YJL"
           ],
           "name": "Mike Rogers",
@@ -15698,53 +15884,6 @@
       "name": "Shri Thanedar",
       "party": "D",
       "seat": "MI-13",
-      "state": "MI"
-    },
-    {
-      "candidate_id": "mi-tim-greimel",
-      "categories": [
-        "watchlist"
-      ],
-      "chamber": "house",
-      "district": "10",
-      "listings": [
-        {
-          "campaign_url": null,
-          "candidate_id": "mi-tim-greimel",
-          "category": "watchlist",
-          "chamber": "house",
-          "district": "10",
-          "donate_url": null,
-          "donations": 1686,
-          "election_date": null,
-          "ie": 0,
-          "incumbent": false,
-          "israel_lobby_total": 1686,
-          "lines": [
-            "Candidate for U.S. House",
-            "MI-10 [D]",
-            "Israel Lobby Total: $1,686",
-            "Donations: $1,686",
-            "IE: $0",
-            "JAC"
-          ],
-          "name": "Tim Greimel",
-          "notes": [],
-          "pacs": [
-            "JAC"
-          ],
-          "party": "D",
-          "seat": "MI-10",
-          "seat_text": "MI-10 [D]",
-          "section": null,
-          "source": "candidates",
-          "state": "MI",
-          "title": "Candidate for U.S. House"
-        }
-      ],
-      "name": "Tim Greimel",
-      "party": "D",
-      "seat": "MI-10",
       "state": "MI"
     },
     {
@@ -19454,7 +19593,7 @@
       "state": "NH"
     },
     {
-      "candidate_id": "nh-maura-sullivan",
+      "candidate_id": "nh-stefany-shaheen",
       "categories": [
         "watchlist"
       ],
@@ -19463,33 +19602,30 @@
       "listings": [
         {
           "campaign_url": null,
-          "candidate_id": "nh-maura-sullivan",
+          "candidate_id": "nh-stefany-shaheen",
           "category": "watchlist",
           "chamber": "house",
           "district": "01",
           "donate_url": null,
-          "donations": 39725,
+          "donations": 8850,
           "election_date": null,
-          "ie": 382,
+          "ie": 1206055,
           "incumbent": false,
-          "israel_lobby_total": 40107,
+          "israel_lobby_total": 1214905,
           "lines": [
             "Candidate for U.S. House",
             "NH-01 [D]",
-            "Israel Lobby Total: $40,107",
-            "Donations: $39,725",
-            "IE: $382",
-            "COPAC, DMFI, JAC, JSTREET, MDACC, NORPAC"
+            "Israel Lobby Total: $1,214,905",
+            "Donations: $8,850",
+            "IE: $1,206,055",
+            "AO, JAC, JSTREET"
           ],
-          "name": "Maura Sullivan",
+          "name": "Stefany Shaheen",
           "notes": [],
           "pacs": [
-            "COPAC",
-            "DMFI",
+            "AO",
             "JAC",
-            "JSTREET",
-            "MDACC",
-            "NORPAC"
+            "JSTREET"
           ],
           "party": "D",
           "seat": "NH-01",
@@ -19500,7 +19636,7 @@
           "title": "Candidate for U.S. House"
         }
       ],
-      "name": "Maura Sullivan",
+      "name": "Stefany Shaheen",
       "party": "D",
       "seat": "NH-01",
       "state": "NH"
@@ -20245,6 +20381,54 @@
       "name": "Nellie Pou",
       "party": "D",
       "seat": "NJ-09",
+      "state": "NJ"
+    },
+    {
+      "candidate_id": "nj-rebecca-bennett",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "07",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "nj-rebecca-bennett",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "07",
+          "donate_url": null,
+          "donations": 60311,
+          "election_date": null,
+          "ie": 253656,
+          "incumbent": false,
+          "israel_lobby_total": 313967,
+          "lines": [
+            "Candidate for U.S. House",
+            "NJ-07 [D]",
+            "Israel Lobby Total: $313,967",
+            "Donations: $60,311",
+            "IE: $253,656",
+            "AO, JSTREET"
+          ],
+          "name": "Rebecca Bennett",
+          "notes": [],
+          "pacs": [
+            "AO",
+            "JSTREET"
+          ],
+          "party": "D",
+          "seat": "NJ-07",
+          "seat_text": "NJ-07 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "NJ",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Rebecca Bennett",
+      "party": "D",
+      "seat": "NJ-07",
       "state": "NJ"
     },
     {
@@ -26946,6 +27130,53 @@
       "state": "TN"
     },
     {
+      "candidate_id": "tn-chaz-molder",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "05",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "tn-chaz-molder",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "05",
+          "donate_url": null,
+          "donations": 2500,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 2500,
+          "lines": [
+            "Candidate for U.S. House",
+            "TN-05 [D]",
+            "Israel Lobby Total: $2,500",
+            "Donations: $2,500",
+            "IE: $0",
+            "DMFI"
+          ],
+          "name": "Chaz Molder",
+          "notes": [],
+          "pacs": [
+            "DMFI"
+          ],
+          "party": "D",
+          "seat": "TN-05",
+          "seat_text": "TN-05 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "TN",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Chaz Molder",
+      "party": "D",
+      "seat": "TN-05",
+      "state": "TN"
+    },
+    {
       "candidate_id": "tn-chuck-fleischmann",
       "categories": [
         "congress"
@@ -29504,16 +29735,16 @@
           "chamber": "house",
           "district": "21",
           "donate_url": null,
-          "donations": 10750,
+          "donations": 34705,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 10750,
+          "israel_lobby_total": 34705,
           "lines": [
             "Candidate for U.S. House",
             "TX-21 [R]",
-            "Israel Lobby Total: $10,750",
-            "Donations: $10,750",
+            "Israel Lobby Total: $34,705",
+            "Donations: $34,705",
             "IE: $0",
             "RJC"
           ],
@@ -30685,7 +30916,7 @@
           "donate_url": null,
           "donations": 94575,
           "election_date": null,
-          "ie": 0,
+          "ie": 214831,
           "incumbent": false,
           "israel_lobby_total": 94575,
           "lines": [
@@ -30693,14 +30924,15 @@
             "UT-01 [D]",
             "Israel Lobby Total: $94,575",
             "Donations: $94,575",
-            "IE: $0",
-            "BBF, DMFI ('20)"
+            "IE: $214,831",
+            "AO, BBF, DMFI"
           ],
           "name": "Ben McAdams",
           "notes": [],
           "pacs": [
+            "AO",
             "BBF",
-            "DMFI ('20)"
+            "DMFI"
           ],
           "party": "D",
           "seat": "UT-01",
@@ -33743,5 +33975,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-28"
+  "snapshot": "2026-10-30"
 }

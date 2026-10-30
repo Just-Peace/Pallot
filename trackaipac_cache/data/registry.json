@@ -790,6 +790,13 @@
     "party": "D",
     "state": "CT"
   },
+  "ct-chris-shea": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Chris Shea",
+    "party": "R",
+    "state": "CT"
+  },
   "ct-jahana-hayes": {
     "chamber": "house",
     "district": "05",
@@ -944,6 +951,13 @@
     "party": "D",
     "state": "FL"
   },
+  "fl-eliott-rodriguez": {
+    "chamber": "house",
+    "district": "27",
+    "name": "Eliott Rodriguez",
+    "party": "D",
+    "state": "FL"
+  },
   "fl-eric-yonce": {
     "chamber": "house",
     "district": "06",
@@ -1026,6 +1040,13 @@
     "district": "15",
     "name": "Laurel Lee",
     "party": "R",
+    "state": "FL"
+  },
+  "fl-leela-gray": {
+    "chamber": "house",
+    "district": "13",
+    "name": "Leela Gray",
+    "party": "D",
     "state": "FL"
   },
   "fl-lois-frankel": {
@@ -2022,6 +2043,13 @@
     "party": "R",
     "state": "MI"
   },
+  "mi-christina-hines": {
+    "chamber": "house",
+    "district": "10",
+    "name": "Christina Hines",
+    "party": "D",
+    "state": "MI"
+  },
   "mi-debbie-dingell": {
     "chamber": "house",
     "district": "06",
@@ -2652,6 +2680,13 @@
     "party": "R",
     "state": "NH"
   },
+  "nh-stefany-shaheen": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Stefany Shaheen",
+    "party": "D",
+    "state": "NH"
+  },
   "nj-adam-hamawy": {
     "chamber": "house",
     "district": "12",
@@ -2740,6 +2775,13 @@
     "chamber": "house",
     "district": "09",
     "name": "Nellie Pou",
+    "party": "D",
+    "state": "NJ"
+  },
+  "nj-rebecca-bennett": {
+    "chamber": "house",
+    "district": "07",
+    "name": "Rebecca Bennett",
     "party": "D",
     "state": "NJ"
   },
@@ -3644,6 +3686,13 @@
     "district": "05",
     "name": "Charlie Hatcher",
     "party": "R",
+    "state": "TN"
+  },
+  "tn-chaz-molder": {
+    "chamber": "house",
+    "district": "05",
+    "name": "Chaz Molder",
+    "party": "D",
     "state": "TN"
   },
   "tn-chuck-fleischmann": {

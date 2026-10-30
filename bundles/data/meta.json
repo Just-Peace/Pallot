@@ -3,10 +3,10 @@
  "sources": {
   "cair": {
    "answers": 1,
-   "answers_hash": "c69a678bded3ade5294b35ae2aac4988180ce59232acba4fd4faf4a2bab5e0be",
-   "candidates": 1366,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-28T15:58:51+00:00",
+   "answers_hash": "b4a422a8a54df53bd5405ed5a7e1850a95f8844dad16961610257d097f675bbc",
+   "candidates": 1367,
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
    "texas": 390
   },
   "county_precincts": {
@@ -21,23 +21,23 @@
    "answers": 1,
    "answers_hash": "d2e3fc500aafeb8fa556966918705e346d4aae5a96cd33e920f51488061e8394",
    "candidates": 39,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-08T20:47:28+00:00",
    "texas": 3
   },
   "fec": {
    "answers": 469,
-   "answers_hash": "a97d46f157e223ae0005ec5f720c1bc9dc226f71b61e98634f15c225b204fed1",
+   "answers_hash": "a8877f1963f64eab811c138c06da64daaecda6b273081a7f42637bcf0c87bc19",
    "candidates": 93,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
    "races": 39
   },
   "fec_races": {
    "answers": 437,
-   "answers_hash": "830a1bd923fd70dafeb4153116717b84589bd766907dd7541570b24bc147e80c",
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-27T15:23:07+00:00",
+   "answers_hash": "956f277ead7a62d0e89912456a7e79f728b082506080ab78d0e12cec48924ad7",
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
    "races": 431,
    "states": 50
   },
@@ -45,7 +45,7 @@
    "answers": 1,
    "answers_hash": "068dfea88b2198fd0f62fc44bfaa55c1738d918823bd0048f1efe97dea54ca82",
    "candidates": 26,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-08T20:47:28+00:00",
    "texas": 3
   },
@@ -59,35 +59,35 @@
   },
   "polls": {
    "answers": 5,
-   "answers_hash": "d7207f37b7f7b2b5fb029c8702db5dfe224110282f6e926b8cc8600424f99471",
-   "governor": 615,
-   "house": 362,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-28T15:58:51+00:00",
-   "senate": 575
+   "answers_hash": "7dcf1f787a966bde76a9a782e0ad5a53a712e6f3a46b10b0f4f734b1c307d84c",
+   "governor": 641,
+   "house": 373,
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
+   "senate": 603
   },
   "sos": {
    "answers": 9,
-   "answers_hash": "5dc47b443061d76435c9628e20dd85ad9872e8c48f74af83783e4cbb0197f7fd",
+   "answers_hash": "62fa9d91c37f8e3a4e71887a024455a2b66e38566d99b90af25686dab9c2a06f",
    "candidates": 3971,
    "elections": 3,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-28T15:58:51+00:00"
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00"
   },
   "sos_ballot_order": {
    "answers": 254,
-   "answers_hash": "5c78c0ab6a6d4c00bcacc0d214376f9ac6efd0ff7159beb9784516477d9bdf2c",
+   "answers_hash": "4c02c72ae9db0a729c23e14bb8cd9d2aadaa33db1095ba72a639a23afb15a260",
    "ballot_orders": 254,
    "elections": 3,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-27T15:23:07+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
    "server_errors": 0
   },
   "state_ak": {
    "answers": 3,
    "answers_hash": "eff611e5bc7c94f6ae32d7d9f1995cecbebed08ceae99bfccb49c68ea036e797",
    "candidates": 156,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-27T15:23:07+00:00",
    "races": 74
   },
@@ -111,7 +111,7 @@
    "answers": 1,
    "answers_hash": "6fc140cd8ffc0b8b234e68567a0267b75b89912623b2e1e8f90e8389691e1d54",
    "candidates": 388,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-26T02:44:12+00:00",
    "races": 228
   },
@@ -119,7 +119,7 @@
    "answers": 1,
    "answers_hash": "a17ee911ee498df1cf8e1972bca7773ace1add89a63876b349b5a3dc38d1b989",
    "candidates": 397,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-26T02:44:12+00:00",
    "races": 236
   },
@@ -133,10 +133,10 @@
   },
   "state_fl": {
    "answers": 1,
-   "answers_hash": "6a9480fbe2485d74d3e517c9dac015a01557f0cace92e4ecb54f6e87ad0573bc",
+   "answers_hash": "8e559674a01be94b88b7557ab6d1335ead9e345a1a82a6a11119d5c720e7809a",
    "candidates": 367,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
    "races": 168
   },
   "state_ga": {
@@ -149,10 +149,10 @@
   },
   "state_ga_results": {
    "answers": 4,
-   "answers_hash": "c0f6184749bac8e48e826d5b1a9b6dc5b327febba5acbdc8047accecf54cdfc4",
+   "answers_hash": "0d6d70b551f40fe2ead559a1b72fae3aee2c3c1d94b002455aec71e503910744",
    "candidates": 451,
-   "last_checked": "2026-10-28T15:58:51+00:00",
-   "last_refresh": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
+   "last_refresh": "2026-10-30T15:53:08+00:00",
    "races": 271
   },
   "state_hi": {
@@ -183,7 +183,7 @@
    "answers": 2,
    "answers_hash": "a89df8a35531ad8b7c7eb06f1438ad7eda6731336d5496b9cbd930948cf8f0c9",
    "candidates": 501,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-26T02:44:12+00:00",
    "races": 391
   },
@@ -191,7 +191,7 @@
    "answers": 2,
    "answers_hash": "bdc1fc8caa0e9a7b94c075d6082ab89eff1ee53eee285fe68af1e281edf15ff2",
    "candidates": 1696,
-   "last_checked": "2026-10-29T12:19:11+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T12:19:11+00:00",
    "races": 1239
   },
@@ -207,7 +207,7 @@
    "answers": 2,
    "answers_hash": "39c84014d1f3c60da7809f0925ea1a4890a08c62f695be5e9cc0a05d06f6e3b5",
    "candidates": 348,
-   "last_checked": "2026-10-29T17:06:01+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T17:06:01+00:00",
    "races": 251
   },
@@ -231,7 +231,7 @@
    "answers": 2,
    "answers_hash": "ca50cc776303b8296fd9cfe3741aaae649353922c036b878672bc47bacefbae0",
    "candidates": 323,
-   "last_checked": "2026-10-29T16:02:39+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T16:02:39+00:00",
    "races": 131
   },
@@ -239,7 +239,7 @@
    "answers": 3,
    "answers_hash": "a3ea8bd67ef5c7256147290dc2fad1df8d5d2e5154db532d03738ce3b579ce13",
    "candidates": 362,
-   "last_checked": "2026-10-29T02:47:48+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T02:47:48+00:00",
    "races": 190
   },
@@ -247,7 +247,7 @@
    "answers": 1,
    "answers_hash": "de6905a28a37b731524f8b3667667776e073f4e0936d6fdd8e49f463f98cc419",
    "candidates": 707,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-28T15:58:51+00:00",
    "races": 331
   },
@@ -263,7 +263,7 @@
    "answers": 2,
    "answers_hash": "66c809e67d02fa10c88d44d920dff55d444811add26384ce1f7f51d4cb36c98e",
    "candidates": 425,
-   "last_checked": "2026-10-29T16:25:13+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T16:25:13+00:00",
    "races": 248
   },
@@ -287,7 +287,7 @@
    "answers": 1,
    "answers_hash": "775b880ba14817215fd9d9e32022fa8ce778e7fd034bf02bf011231014376297",
    "candidates": 2484,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 1324
   },
@@ -303,7 +303,7 @@
    "answers": 3,
    "answers_hash": "e1079910441e246309082b74aa33e69a37c1594866893548de3ccec31781e8f2",
    "candidates": 81,
-   "last_checked": "2026-10-29T11:02:45+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T11:02:45+00:00",
    "races": 38
   },
@@ -319,7 +319,7 @@
    "answers": 3,
    "answers_hash": "a0b307730db4cade94b8ca949ab3cbe029d6c647db1845850f8dfef895a1e996",
    "candidates": 39,
-   "last_checked": "2026-10-29T11:50:34+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T11:50:34+00:00",
    "races": 13
   },
@@ -327,7 +327,7 @@
    "answers": 2,
    "answers_hash": "1d9d0e7914bbdfe1de65d5e5dd9c115eb798d0dbe030170847b3daacea1e3a36",
    "candidates": 129,
-   "last_checked": "2026-10-29T11:35:58+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T11:35:58+00:00",
    "races": 85
   },
@@ -359,7 +359,7 @@
    "answers": 1,
    "answers_hash": "097595f896cffa4c28b40cd35186ed995acee9e0cbbcb257314c17047bd681b0",
    "candidates": 261,
-   "last_checked": "2026-10-29T17:22:19+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T17:22:19+00:00",
    "races": 123
   },
@@ -375,7 +375,7 @@
    "answers": 1,
    "answers_hash": "998c9996ea8c04c1d17629739617b75d43ade55d7fe82765301e21e217e82f82",
    "candidates": 436,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-26T02:52:14+00:00",
    "races": 247
   },
@@ -383,7 +383,7 @@
    "answers": 2,
    "answers_hash": "aed3e91a4f383c7a7048a35c57958becd1cd8385b826e01a25d5fa1ffa93a2aa",
    "candidates": 415,
-   "last_checked": "2026-10-29T16:46:07+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T16:46:07+00:00",
    "races": 257
   },
@@ -415,7 +415,7 @@
    "answers": 2,
    "answers_hash": "717134c95785a70a7405fded0e974148cd252ded0c61fa637daa4427a2ba1f41",
    "candidates": 40,
-   "last_checked": "2026-10-29T11:17:30+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T11:17:30+00:00",
    "races": 13
   },
@@ -431,7 +431,7 @@
    "answers": 2,
    "answers_hash": "d32b93d345ebe65fc1487ccfa8600b983600be6750c229b4fd8fce5d8288c1c8",
    "candidates": 269,
-   "last_checked": "2026-10-29T12:04:39+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-29T12:04:39+00:00",
    "races": 149
   },
@@ -455,7 +455,7 @@
    "answers": 1,
    "answers_hash": "592993827ac2ff7004bbe4add876f6d4fef8819defc96f69d934858b7830af29",
    "candidates": 151,
-   "last_checked": "2026-10-28T15:58:51+00:00",
+   "last_checked": "2026-10-30T15:53:08+00:00",
    "last_refresh": "2026-10-26T02:44:12+00:00",
    "races": 107
   },
