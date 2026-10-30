@@ -23,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     cmd.add_argument("--data-dir", metavar="DIR", help="bundle directory (default: the package's data)")
     imp = sub.add_parser("import-list", help="bundle a state's list of candidates saved by hand (its site blocks scripts)")
     imp.add_argument("state", metavar="STATE", help="the state's postal code, e.g. az")
-    imp.add_argument("file", metavar="FILE", type=Path, help="the page or answer saved from the state's site")
+    imp.add_argument("file", metavar="FILE", type=Path, help="the page or answer saved from the state's site (Tennessee's: the folder of its spreadsheets)")
     imp.add_argument("--data-dir", metavar="DIR", help="bundle directory (default: the package's data)")
     st = sub.add_parser("stats", help="print each bundled snapshot's counts as a Markdown table")
     st.add_argument("--since", metavar="REF", help="show each figure's change since this git ref (e.g. HEAD)")

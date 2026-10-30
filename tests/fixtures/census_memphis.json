@@ -1,0 +1,236 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "125 N MAIN ST, MEMPHIS, TN 38103"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "L",
+     "tigerLineId": "72902684"
+    },
+    "coordinates": {
+     "x": -90.05155413782,
+     "y": 35.148562911373
+    },
+    "addressComponents": {
+     "zip": "38103",
+     "streetName": "N MAIN",
+     "preType": "",
+     "city": "MEMPHIS",
+     "preDirection": "",
+     "suffixDirection": "",
+     "fromAddress": "111",
+     "state": "TN",
+     "suffixType": "ST",
+     "toAddress": "199",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "125 N MAIN ST, MEMPHIS, TN, 38103",
+    "geographies": {
+     "2020 Census Blocks": [
+      {
+       "GEOID": "471570042001012",
+       "STATE": "47",
+       "COUNTY": "157",
+       "TRACT": "004200",
+       "BLOCK": "1012",
+       "SUFFIX": "Null",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "AREAWATER": "0",
+       "AREALAND": "28939",
+       "MTFCC": "G5040",
+       "NAME": "Block 1012",
+       "BASENAME": "1012",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "BLKGRP": "1",
+       "CENTLON": "-090.0518881",
+       "CENTLAT": "+35.1493568",
+       "INTPTLON": "-090.0518881",
+       "INTPTLAT": "+35.1493568",
+       "STGEOMETRY": "Polygon",
+       "OBJECTID": "5350658",
+       "OID": "210701004416310"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "MTFCC": "G5420",
+       "OID": "28490180076610",
+       "GEOID": "4700148",
+       "STATE": "47",
+       "SDUNI": "00148",
+       "BASENAME": "Shelby County School District",
+       "NAME": "Shelby County School District",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "AREALAND": "1362766489",
+       "AREAWATER": "34466369",
+       "HIGRADE": "12",
+       "LOGRADE": "PK",
+       "SDTYP": "Null",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.1645619",
+       "CENTLON": "-089.9226985",
+       "INTPTLAT": "+35.1640565",
+       "INTPTLON": "-089.9224302",
+       "OBJECTID": "9892"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "OBJECTID": "31947",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "750470802",
+       "AREAWATER": "23162573",
+       "PLACENS": "02405068",
+       "PLACECC": "C1",
+       "PLACE": "48000",
+       "FUNCSTAT": "A",
+       "GEOID": "4748000",
+       "LSADC": "25",
+       "MTFCC": "G4110",
+       "BASENAME": "Memphis",
+       "NAME": "Memphis city",
+       "OID": "27890180034181",
+       "CBSAPCI": "Y",
+       "NECTAPCI": "N",
+       "STATE": "47",
+       "CENTLON": "-089.9687628",
+       "CENTLAT": "+35.1081407",
+       "INTPTLON": "-089.9685113",
+       "INTPTLAT": "+35.1091639",
+       "DISP_CLR": "5"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "OBJECTID": "72",
+       "STGEOMETRY": "Polygon",
+       "AREALAND": "17225738731",
+       "AREAWATER": "691847628",
+       "CD120": "05",
+       "CDSESSN": "120",
+       "FUNCSTAT": "N",
+       "GEOID": "4705",
+       "LSADC": "C2",
+       "MTFCC": "G5200",
+       "BASENAME": "5",
+       "NAME": "Congressional District 5",
+       "OID": "2119042393280903",
+       "STATE": "47",
+       "CENTLON": "-088.3796147",
+       "CENTLAT": "+36.0288400",
+       "INTPTLON": "-087.6780952",
+       "INTPTLAT": "+36.2574236"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "MTFCC": "G5210",
+       "OID": "2129042572600112",
+       "GEOID": "47029",
+       "STATE": "47",
+       "SLDU": "029",
+       "BASENAME": "29",
+       "NAME": "State Senate District 29",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "AREALAND": "737193616",
+       "AREAWATER": "68997036",
+       "LSY": "2026",
+       "OBJECTID": "236",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.2059329",
+       "CENTLON": "-090.0331263",
+       "INTPTLAT": "+35.1980531",
+       "INTPTLON": "-090.0434229",
+       "LDTYP": "O"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "MTFCC": "G5220",
+       "OID": "2139042578122723",
+       "GEOID": "47086",
+       "STATE": "47",
+       "SLDL": "086",
+       "BASENAME": "86",
+       "NAME": "State House District 86",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "AREALAND": "521789706",
+       "AREAWATER": "68410759",
+       "LSY": "2026",
+       "OBJECTID": "430",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.2123918",
+       "CENTLON": "-090.0630516",
+       "INTPTLAT": "+35.2848704",
+       "INTPTLON": "-090.1039871",
+       "LDTYP": "O"
+      }
+     ],
+     "States": [
+      {
+       "MTFCC": "G4000",
+       "OID": "2749051118086",
+       "GEOID": "47",
+       "STATE": "47",
+       "STATENS": "01325873",
+       "BASENAME": "Tennessee",
+       "NAME": "Tennessee",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "AREALAND": "106771882230",
+       "AREAWATER": "2344021339",
+       "REGION": "3",
+       "DIVISION": "6",
+       "STUSAB": "TN",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.8582468",
+       "CENTLON": "-086.3491254",
+       "INTPTLAT": "+35.8584393",
+       "INTPTLON": "-086.3496332",
+       "OBJECTID": "42"
+      }
+     ],
+     "Counties": [
+      {
+       "MTFCC": "G4020",
+       "OID": "27590180019484",
+       "GEOID": "47157",
+       "STATE": "47",
+       "COUNTY": "157",
+       "COUNTYNS": "01639790",
+       "BASENAME": "Shelby",
+       "NAME": "Shelby County",
+       "LSADC": "06",
+       "FUNCSTAT": "A",
+       "COUNTYCC": "H1",
+       "AREALAND": "1949677125",
+       "AREAWATER": "74570154",
+       "OBJECTID": "2673",
+       "STGEOMETRY": "Polygon",
+       "CENTLAT": "+35.1841831",
+       "CENTLON": "-089.8940796",
+       "INTPTLAT": "+35.1845529",
+       "INTPTLON": "-089.8946125"
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

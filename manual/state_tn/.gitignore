@@ -1,0 +1,4 @@
+# The saved lists stay on this machine: only their parsed candidates are committed (bundles/data/state_tn.json).
+*
+!.gitignore
+!README.md
