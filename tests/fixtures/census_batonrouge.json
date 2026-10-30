@@ -1,0 +1,445 @@
+{
+ "result": {
+  "input": {
+   "address": {
+    "address": "900 N 3RD ST, BATON ROUGE, LA 70802"
+   },
+   "vintage": {
+    "isDefault": true,
+    "id": "4",
+    "vintageName": "Current_Current",
+    "vintageDescription": "Current Vintage - Current Benchmark"
+   },
+   "benchmark": {
+    "isDefault": true,
+    "benchmarkDescription": "Public Address Ranges - Current Benchmark",
+    "id": "4",
+    "benchmarkName": "Public_AR_Current"
+   }
+  },
+  "addressMatches": [
+   {
+    "tigerLine": {
+     "side": "R",
+     "tigerLineId": "92179512"
+    },
+    "geographies": {
+     "2020 Census Public Use Microdata Areas": [
+      {
+       "GEOID": "2201502",
+       "CENTLAT": "+30.4939307",
+       "AREAWATER": 11736153,
+       "BASENAME": "Capital Region Planning Commission 3--Baton Rouge City (North)",
+       "STATE": "22",
+       "OID": "217704485233636",
+       "LSADC": "P0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4940229",
+       "NAME": "Capital Region Planning Commission 3--Baton Rouge City (North) PUMA",
+       "OBJECTID": 293,
+       "CENTLON": "-091.1520287",
+       "AREALAND": 128929223,
+       "INTPTLON": "-091.1506869",
+       "MTFCC": "G6120",
+       "PUMA": "01502"
+      }
+     ],
+     "2020 Census ZIP Code Tabulation Areas": [
+      {
+       "GEOID": "70802",
+       "CENTLAT": "+30.4468799",
+       "AREAWATER": 2280202,
+       "BASENAME": "70802",
+       "OID": "221704258473884",
+       "ZCTA5": "70802",
+       "LSADC": "Z5",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4454715",
+       "NAME": "ZCTA5 70802",
+       "OBJECTID": 13012,
+       "CENTLON": "-091.1755609",
+       "AREALAND": 18311976,
+       "INTPTLON": "-091.1752698",
+       "MTFCC": "G6350",
+       "ZCTA5CC": "B5"
+      }
+     ],
+     "Urban Areas": [
+      {
+       "GEOID": "05680",
+       "CENTLAT": "+30.4111497",
+       "AREAWATER": 11263848,
+       "BASENAME": "Baton Rouge, LA",
+       "OID": "2702153994012",
+       "UA": "05680",
+       "LSADC": "67",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4104619",
+       "NAME": "Baton Rouge, LA Urban Area",
+       "OBJECTID": 1677,
+       "CENTLON": "-091.0337803",
+       "AREALAND": 1026563986,
+       "INTPTLON": "-091.0322855",
+       "MTFCC": "G3500"
+      }
+     ],
+     "Incorporated Places": [
+      {
+       "DISP_CLR": 5,
+       "STGEOMETRY_Area": 311609970.0963981,
+       "NECTAPCI": "N",
+       "GEOID": "2205000",
+       "CENTLAT": "+30.4415958",
+       "AREAWATER": 5708637,
+       "BASENAME": "Baton Rouge",
+       "STATE": "22",
+       "OID": "2789053993127",
+       "LSADC": "25",
+       "PLACE": "05000",
+       "FUNCSTAT": "B",
+       "INTPTLAT": "+30.4404433",
+       "NAME": "Baton Rouge city",
+       "OBJECTID": 32105,
+       "PLACECC": "C1",
+       "CENTLON": "-091.1305067",
+       "STGEOMETRY_Length": 277808.3094133822,
+       "CBSAPCI": "Y",
+       "AREALAND": 225151691,
+       "INTPTLON": "-091.1331665",
+       "PLACENS": "02403821",
+       "MTFCC": "G4110"
+      }
+     ],
+     "Counties": [
+      {
+       "GEOID": "22033",
+       "CENTLAT": "+30.5381774",
+       "AREAWATER": 38467140,
+       "STATE": "22",
+       "BASENAME": "East Baton Rouge",
+       "OID": "2759053993107",
+       "LSADC": "15",
+       "FUNCSTAT": "B",
+       "INTPTLAT": "+30.5439699",
+       "NAME": "East Baton Rouge Parish",
+       "OBJECTID": 887,
+       "CENTLON": "-091.0956457",
+       "COUNTYCC": "H6",
+       "COUNTYNS": "00558530",
+       "AREALAND": 1179721416,
+       "INTPTLON": "-091.0931492",
+       "MTFCC": "G4020",
+       "COUNTY": "033"
+      }
+     ],
+     "Unified School Districts": [
+      {
+       "LOGRADE": "PK",
+       "GEOID": "2200540",
+       "CENTLAT": "+30.5019954",
+       "AREAWATER": 29723989,
+       "STATE": "22",
+       "BASENAME": "East Baton Rouge Parish School District",
+       "OID": "2849054014529",
+       "SDTYP": "",
+       "LSADC": "00",
+       "FUNCSTAT": "E",
+       "INTPTLAT": "+30.5011669",
+       "SDUNI": "00540",
+       "NAME": "East Baton Rouge Parish School District",
+       "OBJECTID": 8297,
+       "CENTLON": "-091.0752722",
+       "HIGRADE": "12",
+       "AREALAND": 773826225,
+       "INTPTLON": "-091.0748187",
+       "MTFCC": "G5420"
+      }
+     ],
+     "2020 Census Blocks": [
+      {
+       "SUFFIX": "",
+       "GEOID": "220330051003010",
+       "CENTLAT": "+30.4570199",
+       "BLOCK": "3010",
+       "AREAWATER": 0,
+       "STATE": "22",
+       "BASENAME": "3010",
+       "OID": "210701003331431",
+       "LSADC": "BK",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4570199",
+       "NAME": "Block 3010",
+       "OBJECTID": 4040284,
+       "TRACT": "005100",
+       "CENTLON": "-091.1873552",
+       "BLKGRP": "3",
+       "AREALAND": 30308,
+       "INTPTLON": "-091.1873552",
+       "MTFCC": "G5040",
+       "LWBLKTYP": "L",
+       "UR": "U",
+       "COUNTY": "033"
+      }
+     ],
+     "States": [
+      {
+       "STATENS": "01629543",
+       "GEOID": "22",
+       "CENTLAT": "+30.9025928",
+       "AREAWATER": 23708550639,
+       "STATE": "22",
+       "BASENAME": "Louisiana",
+       "STUSAB": "LA",
+       "OID": "2749052402301",
+       "LSADC": "00",
+       "FUNCSTAT": "A",
+       "INTPTLAT": "+30.7083190",
+       "DIVISION": "7",
+       "NAME": "Louisiana",
+       "REGION": "3",
+       "OBJECTID": 21,
+       "CENTLON": "-091.7982299",
+       "AREALAND": 111943089659,
+       "INTPTLON": "-091.6046207",
+       "MTFCC": "G4000"
+      }
+     ],
+     "Census Block Groups": [
+      {
+       "GEOID": "220330051003",
+       "CENTLAT": "+30.4527433",
+       "AREAWATER": 562875,
+       "STATE": "22",
+       "BASENAME": "3",
+       "OID": "2089053992786",
+       "LSADC": "BG",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4535579",
+       "NAME": "Block Group 3",
+       "OBJECTID": 125308,
+       "TRACT": "005100",
+       "CENTLON": "-091.1881631",
+       "BLKGRP": "3",
+       "AREALAND": 1272101,
+       "INTPTLON": "-091.1878199",
+       "MTFCC": "G5030",
+       "COUNTY": "033"
+      }
+     ],
+     "Combined Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "132",
+       "CENTLAT": "+30.5340825",
+       "AREAWATER": 667529815,
+       "BASENAME": "Baton Rouge-Hammond, LA",
+       "OID": "2619034687907978",
+       "LSADC": "M0",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.5299012",
+       "NAME": "Baton Rouge-Hammond, LA CSA",
+       "OBJECTID": 81,
+       "CSA": "132",
+       "CENTLON": "-091.0144233",
+       "INTPTLON": "-091.0118806",
+       "AREALAND": 13361720304,
+       "HU100": "",
+       "MTFCC": "G3100"
+      }
+     ],
+     "County Subdivisions": [
+      {
+       "COUSUB": "95482",
+       "GEOID": "2203395482",
+       "CENTLAT": "+30.4674259",
+       "AREAWATER": 5844469,
+       "STATE": "22",
+       "BASENAME": "10",
+       "OID": "2769053993121",
+       "LSADC": "28",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.4675661",
+       "NAME": "District 10",
+       "OBJECTID": 15687,
+       "CENTLON": "-091.1812174",
+       "COUSUBCC": "Z1",
+       "AREALAND": 39344356,
+       "INTPTLON": "-091.1823420",
+       "MTFCC": "G4040",
+       "COUSUBNS": "01929779",
+       "COUNTY": "033"
+      }
+     ],
+     "2026 State Legislative Districts - Upper": [
+      {
+       "GEOID": "22014",
+       "CENTLAT": "+30.4043675",
+       "AREAWATER": 14513756,
+       "STATE": "22",
+       "BASENAME": "14",
+       "OID": "2129042975507912",
+       "SLDU": "014",
+       "LSADC": "LU",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.4234341",
+       "NAME": "State Senate District 14",
+       "OBJECTID": 1905,
+       "CENTLON": "-091.1546890",
+       "LSY": "2026",
+       "AREALAND": 162445643,
+       "INTPTLON": "-091.1291646",
+       "MTFCC": "G5210",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Divisions": [
+      {
+       "GEOID": "7",
+       "CENTLAT": "+32.4683953",
+       "AREAWATER": 49213835709,
+       "BASENAME": "West South Central",
+       "OID": "2739020719806",
+       "LSADC": "69",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+32.4680012",
+       "DIVISION": "7",
+       "REGION": "3",
+       "NAME": "West South Central Division",
+       "OBJECTID": 1,
+       "CENTLON": "-097.3217459",
+       "AREALAND": 1100925237701,
+       "INTPTLON": "-097.3301012",
+       "MTFCC": "G1200"
+      }
+     ],
+     "120th Congressional Districts": [
+      {
+       "STGEOMETRY_Area": 4060858121.641772,
+       "CD120": "02",
+       "GEOID": "2202",
+       "CENTLAT": "+30.0254713",
+       "CDSESSN": "120",
+       "AREAWATER": 461326506,
+       "STATE": "22",
+       "BASENAME": "2",
+       "OID": "2119042975507691",
+       "LSADC": "C2",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.0305444",
+       "NAME": "Congressional District 2",
+       "OBJECTID": 200,
+       "CENTLON": "-090.5720207",
+       "STGEOMETRY_Length": 864245.316354494,
+       "AREALAND": 2572515743,
+       "INTPTLON": "-090.5713020",
+       "MTFCC": "G5200"
+      }
+     ],
+     "2026 State Legislative Districts - Lower": [
+      {
+       "GEOID": "22067",
+       "CENTLAT": "+30.3846553",
+       "SLDL": "067",
+       "AREAWATER": 11163668,
+       "STATE": "22",
+       "BASENAME": "67",
+       "OID": "2139042975507964",
+       "LSADC": "LL",
+       "FUNCSTAT": "N",
+       "INTPTLAT": "+30.3687505",
+       "NAME": "State House District 67",
+       "OBJECTID": 3449,
+       "CENTLON": "-091.1840737",
+       "LSY": "2026",
+       "AREALAND": 60812948,
+       "INTPTLON": "-091.1982714",
+       "MTFCC": "G5220",
+       "LDTYP": "O"
+      }
+     ],
+     "Census Regions": [
+      {
+       "GEOID": "3",
+       "CENTLAT": "+33.5118953",
+       "AREAWATER": 148755379603,
+       "BASENAME": "South",
+       "OID": "2729020719822",
+       "LSADC": "68",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+33.5144473",
+       "REGION": "3",
+       "NAME": "South Region",
+       "OBJECTID": 1,
+       "CENTLON": "-090.1228227",
+       "AREALAND": 2249831112956,
+       "INTPTLON": "-090.1228714",
+       "MTFCC": "G1100"
+      }
+     ],
+     "Metropolitan Statistical Areas": [
+      {
+       "POP100": "",
+       "GEOID": "12940",
+       "CENTLAT": "+30.5167596",
+       "AREAWATER": 530861396,
+       "BASENAME": "Baton Rouge, LA",
+       "OID": "2629034687907104",
+       "LSADC": "M1",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.5152419",
+       "NAME": "Baton Rouge, LA Metro Area",
+       "CSA": "132",
+       "OBJECTID": 356,
+       "CENTLON": "-091.1266749",
+       "CBSA": "12940",
+       "AREALAND": 11312573522,
+       "INTPTLON": "-091.1269263",
+       "HU100": "",
+       "MTFCC": "G3110"
+      }
+     ],
+     "Census Tracts": [
+      {
+       "GEOID": "22033005100",
+       "CENTLAT": "+30.4611244",
+       "AREAWATER": 1263509,
+       "STATE": "22",
+       "BASENAME": "51",
+       "OID": "207903709686736",
+       "LSADC": "CT",
+       "FUNCSTAT": "S",
+       "INTPTLAT": "+30.4637942",
+       "NAME": "Census Tract 51",
+       "OBJECTID": 5456,
+       "TRACT": "005100",
+       "CENTLON": "-091.1834036",
+       "AREALAND": 4690581,
+       "INTPTLON": "-091.1838910",
+       "MTFCC": "G5020",
+       "COUNTY": "033"
+      }
+     ]
+    },
+    "coordinates": {
+     "x": -91.18848487218,
+     "y": 30.456451279141
+    },
+    "addressComponents": {
+     "zip": "70802",
+     "streetName": "3RD",
+     "preType": "",
+     "city": "BATON ROUGE",
+     "preDirection": "N",
+     "suffixDirection": "",
+     "fromAddress": "900",
+     "state": "LA",
+     "suffixType": "ST",
+     "toAddress": "1098",
+     "suffixQualifier": "",
+     "preQualifier": ""
+    },
+    "matchedAddress": "900 N 3RD ST, BATON ROUGE, LA, 70802"
+   }
+  ]
+ }
+}
