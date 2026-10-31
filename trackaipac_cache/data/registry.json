@@ -202,6 +202,13 @@
     "party": "D",
     "state": "AZ"
   },
+  "az-jonathan-nez": {
+    "chamber": "house",
+    "district": "02",
+    "name": "Jonathan Nez",
+    "party": "D",
+    "state": "AZ"
+  },
   "az-juan-ciscomani": {
     "chamber": "house",
     "district": "06",
@@ -4220,6 +4227,13 @@
     "party": null,
     "state": null
   },
+  "unk-new-list-item": {
+    "chamber": null,
+    "district": null,
+    "name": "New List Item",
+    "party": null,
+    "state": null
+  },
   "ut-ben-mcadams": {
     "chamber": "house",
     "district": "01",
@@ -4351,6 +4365,13 @@
     "district": "01",
     "name": "Rob Wittman",
     "party": "R",
+    "state": "VA"
+  },
+  "va-shannon-taylor": {
+    "chamber": "house",
+    "district": "01",
+    "name": "Shannon Taylor",
+    "party": "D",
     "state": "VA"
   },
   "va-suhas-subramanyam": {

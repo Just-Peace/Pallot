@@ -134,27 +134,26 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 96546,
+          "donations": 249523,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 96546,
+          "israel_lobby_total": 249523,
           "lines": [
             "Candidate for U.S. Senate",
             "AK [D]",
-            "Israel Lobby Total: $96,546",
-            "Donations: $96,546",
+            "Israel Lobby Total: $249,523",
+            "Donations: $249,523",
             "IE: $0",
-            "JSTREET, JDCA, AIPAC ('24), DMFI ('24), JAC ('24)"
+            "JAC, JSTREET, AIPAC (2024), DMFI (2024)"
           ],
           "name": "Mary Peltola",
           "notes": [],
           "pacs": [
+            "JAC",
             "JSTREET",
-            "JDCA",
-            "AIPAC ('24)",
-            "DMFI ('24)",
-            "JAC ('24)"
+            "AIPAC (2024)",
+            "DMFI (2024)"
           ],
           "party": "D",
           "seat": "AK-SEN",
@@ -1162,26 +1161,26 @@
           "chamber": "house",
           "district": "01",
           "donate_url": null,
-          "donations": 21450,
+          "donations": 53975,
           "election_date": null,
           "ie": 1933,
           "incumbent": false,
-          "israel_lobby_total": 23383,
+          "israel_lobby_total": 55908,
           "lines": [
             "Candidate for U.S. House",
             "AZ-01 [D]",
-            "Israel Lobby Total: $23,383",
-            "Donations: $21,450",
+            "Israel Lobby Total: $55,908",
+            "Donations: $53,975",
             "IE: $1,933",
-            "JSTREET, DMFI ('24), JAC ('24), JDCA ('24)"
+            "JSTREET, DMFI (2024), JDCA (2024), JAC (2024)"
           ],
           "name": "Amish Shah",
           "notes": [],
           "pacs": [
             "JSTREET",
-            "DMFI ('24)",
-            "JAC ('24)",
-            "JDCA ('24)"
+            "DMFI (2024)",
+            "JDCA (2024)",
+            "JAC (2024)"
           ],
           "party": "D",
           "seat": "AZ-01",
@@ -1455,24 +1454,25 @@
           "chamber": "house",
           "district": "06",
           "donate_url": null,
-          "donations": 81516,
+          "donations": 135995,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 81516,
+          "israel_lobby_total": 135995,
           "lines": [
             "Candidate for U.S. House",
             "AZ-06 [D]",
-            "Israel Lobby Total: $81,516",
-            "Donations: $81,516",
+            "Israel Lobby Total: $135,995",
+            "Donations: $135,995",
             "IE: $0",
-            "JSTREET, JDCA"
+            "JAC, JDCA, JSTREET"
           ],
           "name": "Joanna Mendoza",
           "notes": [],
           "pacs": [
-            "JSTREET",
-            "JDCA"
+            "JAC",
+            "JDCA",
+            "JSTREET"
           ],
           "party": "D",
           "seat": "AZ-06",
@@ -1486,6 +1486,54 @@
       "name": "Joanna Mendoza",
       "party": "D",
       "seat": "AZ-06",
+      "state": "AZ"
+    },
+    {
+      "candidate_id": "az-jonathan-nez",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "02",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "az-jonathan-nez",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "02",
+          "donate_url": null,
+          "donations": 42919,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 42919,
+          "lines": [
+            "Candidate for U.S. House",
+            "AZ-02 [D]",
+            "Israel Lobby Total: $42,919",
+            "Donations: $42,919",
+            "IE: $0",
+            "JSTREET, DMFI (2024)"
+          ],
+          "name": "Jonathan Nez",
+          "notes": [],
+          "pacs": [
+            "JSTREET",
+            "DMFI (2024)"
+          ],
+          "party": "D",
+          "seat": "AZ-02",
+          "seat_text": "AZ-02 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "AZ",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Jonathan Nez",
+      "party": "D",
+      "seat": "AZ-02",
       "state": "AZ"
     },
     {
@@ -2621,15 +2669,14 @@
             "Israel Lobby Total: $3,515",
             "Donations: $3,515",
             "IE: $0",
-            "CAJD, JAC ('00), JSTREET ('06), WAFI ('08)"
+            "JAC (2000), JSTREET (2008), WAFI (2006)"
           ],
           "name": "Hilda Solis",
           "notes": [],
           "pacs": [
-            "CAJD",
-            "JAC ('00)",
-            "JSTREET ('06)",
-            "WAFI ('08)"
+            "JAC (2000)",
+            "JSTREET (2008)",
+            "WAFI (2006)"
           ],
           "party": "D",
           "seat": "CA-38",
@@ -3761,23 +3808,24 @@
           "chamber": "house",
           "district": "48",
           "donate_url": null,
-          "donations": 3675,
+          "donations": 76481,
           "election_date": null,
           "ie": 2000333,
           "incumbent": false,
-          "israel_lobby_total": 2004008,
+          "israel_lobby_total": 2076814,
           "lines": [
             "Candidate for U.S. House",
             "CA-48 [D]",
-            "Israel Lobby Total: $2,004,008",
-            "Donations: $3,675",
+            "Israel Lobby Total: $2,076,814",
+            "Donations: $76,481",
             "IE: $2,000,333",
-            "DMFI, JSTREET"
+            "DMFI, JAC, JSTREET"
           ],
           "name": "Marni Von Wilpert",
           "notes": [],
           "pacs": [
             "DMFI",
+            "JAC",
             "JSTREET"
           ],
           "party": "D",
@@ -3855,27 +3903,24 @@
           "chamber": "house",
           "district": "14",
           "donate_url": null,
-          "donations": 0,
+          "donations": 6000,
           "election_date": null,
           "ie": 6379454,
           "incumbent": false,
-          "israel_lobby_total": 6379454,
+          "israel_lobby_total": 6385454,
           "lines": [
             "Candidate for U.S. House",
             "CA-14 [D]",
-            "Israel Lobby Total: $6,379,454",
-            "Donations: $0",
+            "Israel Lobby Total: $6,385,454",
+            "Donations: $6,000",
             "IE: $6,379,454",
-            "AIPAC",
-            "Passthrough PACS: Alameda Come Together PAC, Pro-Choice Majority Action, BOLD America, Safer Alameda County PAC, SD 2026"
+            "AIPAC, DMFI, GCSC, PASSTHROUGH ALERT: Pro-Choice Majority, BOLD AMERICA, SD PAC network"
           ],
           "name": "Melissa Hernandez",
           "notes": [
-            "Passthrough PACS: Alameda Come Together PAC, Pro-Choice Majority Action, BOLD America, Safer Alameda County PAC, SD 2026"
+            "AIPAC, DMFI, GCSC, PASSTHROUGH ALERT: Pro-Choice Majority, BOLD AMERICA, SD PAC network"
           ],
-          "pacs": [
-            "AIPAC"
-          ],
+          "pacs": [],
           "party": "D",
           "seat": "CA-14",
           "seat_text": "CA-14 [D]",
@@ -4692,16 +4737,16 @@
           "chamber": "house",
           "district": "11",
           "donate_url": null,
-          "donations": 44496,
+          "donations": 47748,
           "election_date": null,
           "ie": 60000,
           "incumbent": false,
-          "israel_lobby_total": 104496,
+          "israel_lobby_total": 107748,
           "lines": [
             "Candidate for U.S. House",
             "CA-11 [D]",
-            "Israel Lobby Total: $104,496",
-            "Donations: $44,496",
+            "Israel Lobby Total: $107,748",
+            "Donations: $47,748",
             "IE: $60,000",
             "JSTREET",
             "[This candidate is pro-Israel.](https://wienerfacts.com/)"
@@ -9540,11 +9585,11 @@
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 326809,
+          "israel_lobby_total": 386568,
           "lines": [
             "Candidate for U.S. House",
             "IA-01 [D]",
-            "Israel Lobby Total: $326,809",
+            "Israel Lobby Total: $386,568",
             "Donations: $326,809",
             "IE: $0",
             "JSTREET, DMFI ('24)"
@@ -10252,16 +10297,16 @@
           "chamber": "house",
           "district": "09",
           "donate_url": null,
-          "donations": 209685,
+          "donations": 214984,
           "election_date": null,
           "ie": 149773,
           "incumbent": false,
-          "israel_lobby_total": 359458,
+          "israel_lobby_total": 364757,
           "lines": [
             "Candidate for U.S. House",
             "IL-09 [D]",
-            "Israel Lobby Total: $359,458",
-            "Donations: $209,685",
+            "Israel Lobby Total: $364,757",
+            "Donations: $214,984",
             "IE: $149,773",
             "JAC, JSTREET"
           ],
@@ -10552,16 +10597,16 @@
           "chamber": "house",
           "district": "02",
           "donate_url": null,
-          "donations": 14650,
+          "donations": 17150,
           "election_date": null,
           "ie": 4379243,
           "incumbent": false,
-          "israel_lobby_total": 4393893,
+          "israel_lobby_total": 4396393,
           "lines": [
             "Candidate for U.S. House",
             "IL-02 [D]",
-            "Israel Lobby Total: $4,393,893",
-            "Donations: $14,650",
+            "Israel Lobby Total: $4,396,393",
+            "Donations: $17,150",
             "IE: $4,379,243",
             "AIPAC, DMFI, GCSC, JAC, TPOH"
           ],
@@ -10653,16 +10698,16 @@
           "chamber": "house",
           "district": "14",
           "donate_url": null,
-          "donations": 670,
+          "donations": 700,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 670,
+          "israel_lobby_total": 700,
           "lines": [
             "Candidate for U.S. House",
             "IL-14 [R]",
-            "Israel Lobby Total: $670",
-            "Donations: $670",
+            "Israel Lobby Total: $700",
+            "Donations: $700",
             "IE: $0",
             "RJC"
           ],
@@ -11003,16 +11048,16 @@
           "chamber": "house",
           "district": "08",
           "donate_url": null,
-          "donations": 66483,
+          "donations": 93983,
           "election_date": null,
           "ie": 4649577,
           "incumbent": false,
-          "israel_lobby_total": 4716060,
+          "israel_lobby_total": 4743560,
           "lines": [
             "Candidate for U.S. House",
             "IL-08 [D]",
-            "Israel Lobby Total: $4,716,060",
-            "Donations: $66,483",
+            "Israel Lobby Total: $4,743,560",
+            "Donations: $93,983",
             "IE: $4,649,577",
             "AIPAC, DMFI"
           ],
@@ -12596,16 +12641,16 @@
           "chamber": "house",
           "district": "04",
           "donate_url": null,
-          "donations": 85346,
+          "donations": 100647,
           "election_date": null,
           "ie": 15458859,
           "incumbent": false,
-          "israel_lobby_total": 15544205,
+          "israel_lobby_total": 15559506,
           "lines": [
             "Candidate for U.S. House",
             "KY-04 [R]",
-            "Israel Lobby Total: $15,544,205",
-            "Donations: $85,346",
+            "Israel Lobby Total: $15,559,506",
+            "Donations: $100,647",
             "IE: $15,458,859",
             "AIPAC (UDP), AMP, GCSC, MAGA KY, RJC, SUNPAC, USI"
           ],
@@ -14087,16 +14132,16 @@
           "chamber": "house",
           "district": "05",
           "donate_url": null,
-          "donations": 18000,
+          "donations": 19000,
           "election_date": null,
           "ie": 5734013,
           "incumbent": false,
-          "israel_lobby_total": 5752013,
+          "israel_lobby_total": 5753013,
           "lines": [
             "Candidate for U.S. House",
             "MD-05 [D]",
-            "Israel Lobby Total: $5,752,013",
-            "Donations: $18,000",
+            "Israel Lobby Total: $5,753,013",
+            "Donations: $19,000",
             "IE: $5,734,013",
             "AIPAC (UDP), DMFI, COPAC, CITY, GCSC, SUNPAC, TPOH"
           ],
@@ -15470,16 +15515,16 @@
           "chamber": "house",
           "district": "11",
           "donate_url": null,
-          "donations": 56975,
+          "donations": 58975,
           "election_date": null,
           "ie": 382,
           "incumbent": false,
-          "israel_lobby_total": 57357,
+          "israel_lobby_total": 59357,
           "lines": [
             "Candidate for U.S. House",
             "MI-11 [D]",
-            "Israel Lobby Total: $57,357",
-            "Donations: $56,975",
+            "Israel Lobby Total: $59,357",
+            "Donations: $58,975",
             "IE: $382",
             "BBF, DMFI"
           ],
@@ -15719,15 +15764,15 @@
           "donate_url": null,
           "donations": 226419,
           "election_date": null,
-          "ie": 31321920,
+          "ie": 31395754,
           "incumbent": false,
-          "israel_lobby_total": 31548339,
+          "israel_lobby_total": 31622173,
           "lines": [
             "Candidate for U.S. Senate",
             "MI [R]",
-            "Israel Lobby Total: $31,548,339",
+            "Israel Lobby Total: $31,622,173",
             "Donations: $226,419",
-            "IE: $31,321,920",
+            "IE: $31,395,754",
             "AIPAC, AMP, AGG, BICOUNTY, FIPAC, LAFAS, RJC, TFM, YJL"
           ],
           "name": "Mike Rogers",
@@ -18251,16 +18296,16 @@
           "chamber": "house",
           "district": "01",
           "donate_url": null,
-          "donations": 6199,
+          "donations": 11199,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 6199,
+          "israel_lobby_total": 11199,
           "lines": [
             "Candidate for U.S. House",
             "NC-01 [R]",
-            "Israel Lobby Total: $6,199",
-            "Donations: $6,199",
+            "Israel Lobby Total: $11,199",
+            "Donations: $11,199",
             "IE: $0",
             "RJC"
           ],
@@ -18344,16 +18389,16 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 26156,
+          "donations": 31156,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 26156,
+          "israel_lobby_total": 31156,
           "lines": [
             "Candidate for U.S. Senate",
             "NC [R]",
-            "Israel Lobby Total: $26,156",
-            "Donations: $26,156",
+            "Israel Lobby Total: $31,156",
+            "Donations: $31,156",
             "IE: $0",
             "AMP, RJC"
           ],
@@ -18496,17 +18541,17 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 132025,
+          "donations": 174848,
           "election_date": null,
-          "ie": 0,
+          "ie": 2651,
           "incumbent": false,
-          "israel_lobby_total": 132025,
+          "israel_lobby_total": 177499,
           "lines": [
             "Candidate for U.S. Senate",
             "NC [D]",
-            "Israel Lobby Total: $132,025",
-            "Donations: $132,025",
-            "IE: $0",
+            "Israel Lobby Total: $177,499",
+            "Donations: $174,848",
+            "IE: $2,651",
             "DMFI, JAC, JSTREET"
           ],
           "name": "Roy Cooper",
@@ -21417,17 +21462,17 @@
           "chamber": "house",
           "district": "17",
           "donate_url": null,
-          "donations": 1350,
+          "donations": 84600,
           "election_date": null,
-          "ie": 0,
+          "ie": 382,
           "incumbent": false,
-          "israel_lobby_total": 1350,
+          "israel_lobby_total": 84982,
           "lines": [
             "Candidate for U.S. House",
             "NY-17 [D]",
-            "Israel Lobby Total: $1,350",
-            "Donations: $1,350",
-            "IE: $0",
+            "Israel Lobby Total: $84,982",
+            "Donations: $84,600",
+            "IE: $382",
             "DMFI, JSTREET"
           ],
           "name": "Cait Conley",
@@ -23745,17 +23790,17 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 1418351,
+          "donations": 1670033,
           "election_date": null,
-          "ie": 54237,
+          "ie": 55810,
           "incumbent": false,
-          "israel_lobby_total": 1472588,
+          "israel_lobby_total": 1725843,
           "lines": [
             "Candidate for U.S. Senate",
             "OH [D]",
-            "Israel Lobby Total: $1,472,588",
-            "Donations: $1,418,351",
-            "IE: $54,237",
+            "Israel Lobby Total: $1,725,843",
+            "Donations: $1,670,033",
+            "IE: $55,810",
             "AUSD, BICOUNTY, COPAC, CITY, DVPAC, FIPAC, HEARTLAND, HVPAC, JAC, JSTREET, MDACC, MMPAC, MOPAC, NACPAC, NATPAC, NORPAC, PHXED, DESERT, WAPAC, WAFI"
           ],
           "name": "Sherrod Brown",
@@ -25250,16 +25295,16 @@
           "chamber": "house",
           "district": "10",
           "donate_url": null,
-          "donations": 28350,
+          "donations": 38834,
           "election_date": null,
           "ie": 51775,
           "incumbent": false,
-          "israel_lobby_total": 80125,
+          "israel_lobby_total": 90609,
           "lines": [
             "Candidate for U.S. House",
             "PA-10 [D]",
-            "Israel Lobby Total: $80,125",
-            "Donations: $28,350",
+            "Israel Lobby Total: $90,609",
+            "Donations: $38,834",
             "IE: $51,775",
             "DJOPA, DMFI, JDCA, JAC"
           ],
@@ -25639,24 +25684,21 @@
           "chamber": "house",
           "district": "08",
           "donate_url": null,
-          "donations": 47777,
+          "donations": 111188,
           "election_date": null,
           "ie": 382,
           "incumbent": false,
-          "israel_lobby_total": 48159,
+          "israel_lobby_total": 111570,
           "lines": [
             "Candidate for U.S. House",
             "PA-08 [D]",
-            "Israel Lobby Total: $48,159",
-            "Donations: $47,777",
+            "Israel Lobby Total: $111,570",
+            "Donations: $111,188",
             "IE: $382",
-            "DMFI, JSTREET",
-            "Endorsed by DMFI"
+            "DMFI, JSTREET"
           ],
           "name": "Paige Cognetti",
-          "notes": [
-            "Endorsed by DMFI"
-          ],
+          "notes": [],
           "pacs": [
             "DMFI",
             "JSTREET"
@@ -26201,16 +26243,16 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": 5330,
+          "donations": 5460,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 5330,
+          "israel_lobby_total": 5460,
           "lines": [
             "Candidate for U.S. Senate",
             "SC [D]",
-            "Israel Lobby Total: $5,330",
-            "Donations: $5,330",
+            "Israel Lobby Total: $5,460",
+            "Donations: $5,460",
             "IE: $0",
             "JAC"
           ],
@@ -28507,16 +28549,16 @@
           "chamber": "house",
           "district": "34",
           "donate_url": null,
-          "donations": 3501,
+          "donations": 3531,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 3501,
+          "israel_lobby_total": 3531,
           "lines": [
             "Candidate for U.S. House",
             "TX-34 [R]",
-            "Israel Lobby Total: $3,501",
-            "Donations: $3,501",
+            "Israel Lobby Total: $3,531",
+            "Donations: $3,531",
             "IE: $0",
             "RJC"
           ],
@@ -28824,24 +28866,28 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": null,
+          "donations": 450,
           "election_date": null,
-          "ie": null,
+          "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 0,
+          "israel_lobby_total": 450,
           "lines": [
             "Candidate for U.S. Senate",
             "Texas [D]",
-            "Israel Lobby Total: $0",
-            "Endorsed by JAC",
+            "Israel Lobby Total: $450",
+            "Donations: $450",
+            "IE: $0",
+            "JAC, JDCA",
             "[This candidate is pro-israel.](/james-talarico)"
           ],
           "name": "James Talarico",
           "notes": [
-            "Endorsed by JAC",
             "[This candidate is pro-israel.](/james-talarico)"
           ],
-          "pacs": [],
+          "pacs": [
+            "JAC",
+            "JDCA"
+          ],
           "party": "D",
           "seat": "TX-SEN",
           "seat_text": "Texas [D]",
@@ -29422,22 +29468,28 @@
           "chamber": "senate",
           "district": null,
           "donate_url": null,
-          "donations": null,
+          "donations": 6000,
           "election_date": null,
-          "ie": null,
+          "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 0,
+          "israel_lobby_total": 6000,
           "lines": [
             "Candidate for U.S. Senate",
             "Texas [R]",
-            "Israel Lobby Total: $0",
+            "Israel Lobby Total: $6,000",
+            "Donations: $6,000",
+            "IE: $0",
+            "NORPAC, RJC",
             "[This candidate is pro-Israel.](https://x.com/KenPaxtonTX/status/1731727033187577869)"
           ],
           "name": "Ken Paxton",
           "notes": [
             "[This candidate is pro-Israel.](https://x.com/KenPaxtonTX/status/1731727033187577869)"
           ],
-          "pacs": [],
+          "pacs": [
+            "NORPAC",
+            "RJC"
+          ],
           "party": "R",
           "seat": "TX-SEN",
           "seat_text": "Texas [R]",
@@ -30900,6 +30952,48 @@
       "state": null
     },
     {
+      "candidate_id": "unk-new-list-item",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": null,
+      "district": null,
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "unk-new-list-item",
+          "category": "watchlist",
+          "chamber": null,
+          "district": null,
+          "donate_url": null,
+          "donations": null,
+          "election_date": null,
+          "ie": null,
+          "incumbent": null,
+          "israel_lobby_total": null,
+          "lines": [
+            "Description goes here"
+          ],
+          "name": "New List Item",
+          "notes": [
+            "Description goes here"
+          ],
+          "pacs": [],
+          "party": null,
+          "seat": null,
+          "seat_text": null,
+          "section": null,
+          "source": "candidates",
+          "state": null,
+          "title": null
+        }
+      ],
+      "name": "New List Item",
+      "party": null,
+      "seat": null,
+      "state": null
+    },
+    {
       "candidate_id": "ut-ben-mcadams",
       "categories": [
         "watchlist"
@@ -31849,6 +31943,50 @@
       ],
       "name": "Rob Wittman",
       "party": "R",
+      "seat": "VA-01",
+      "state": "VA"
+    },
+    {
+      "candidate_id": "va-shannon-taylor",
+      "categories": [
+        "watchlist"
+      ],
+      "chamber": "house",
+      "district": "01",
+      "listings": [
+        {
+          "campaign_url": null,
+          "candidate_id": "va-shannon-taylor",
+          "category": "watchlist",
+          "chamber": "house",
+          "district": "01",
+          "donate_url": null,
+          "donations": 39686,
+          "election_date": null,
+          "ie": 0,
+          "incumbent": false,
+          "israel_lobby_total": 39686,
+          "lines": [
+            "Candidate for U.S. House",
+            "VA-01 [D]",
+            "Israel Lobby Total: $39,686",
+            "Donations: $39,686",
+            "IE: $0"
+          ],
+          "name": "Shannon Taylor",
+          "notes": [],
+          "pacs": [],
+          "party": "D",
+          "seat": "VA-01",
+          "seat_text": "VA-01 [D]",
+          "section": null,
+          "source": "candidates",
+          "state": "VA",
+          "title": "Candidate for U.S. House"
+        }
+      ],
+      "name": "Shannon Taylor",
+      "party": "D",
       "seat": "VA-01",
       "state": "VA"
     },
@@ -33307,16 +33445,16 @@
           "chamber": "house",
           "district": "03",
           "donate_url": null,
-          "donations": 209323,
+          "donations": 209336,
           "election_date": null,
           "ie": 0,
           "incumbent": false,
-          "israel_lobby_total": 209323,
+          "israel_lobby_total": 209336,
           "lines": [
             "Candidate for U.S. House",
             "WI-03 [D]",
-            "Israel Lobby Total: $209,323",
-            "Donations: $209,323",
+            "Israel Lobby Total: $209,336",
+            "Donations: $209,336",
             "IE: $0",
             "JAC, JSTREET, DMFI ('24), JDCA ('24)"
           ],
@@ -33975,5 +34113,5 @@
       "state": "WY"
     }
   ],
-  "snapshot": "2026-10-30"
+  "snapshot": "2026-10-31"
 }
