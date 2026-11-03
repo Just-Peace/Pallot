@@ -241,12 +241,12 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | Texas SOS candidate lists | **3,971** · 2026 November General Election: 3,967 · 2026 Special Election House District 93: 2 · 2026 Special Election Senate District 22: 2 | 3 elections | 2026-11-02 | 2026-11-02 |
 | Texas SOS ballot orders | — | 254 county ballot orders · 3 elections | 2026-11-02 | 2026-11-02 |
 | Seat holders | — | 539 members of Congress · 6,897 state legislators | 2026-11-01 | 2026-11-01 |
-| Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-10-27 | 2026-10-27 |
+| Wikidata | — | 662 Texas officeholders · 653 with their seat | 2026-11-03 | 2026-11-03 |
 | TIGERweb district outlines | — | 38 U.S. House · 31 State Senate · 150 State House | 2026-10-08 | 2026-11-02 |
 | County precinct records | — | 7 counties | 2026-11-02 | 2026-11-02 |
-| FiftyPlusOne polls | — | 662 Senate polls (+45) · 378 House polls (+4) · 697 Governor polls (+40) | 2026-11-02 | 2026-11-02 |
+| FiftyPlusOne polls | — | 662 Senate polls · 378 House polls · 697 Governor polls | 2026-11-02 | 2026-11-02 |
 | Muslims United PAC | **26** · Texas: 3 | — | 2026-10-08 | 2026-11-02 |
-| CAIR Action | **1,453** (+4) · Texas: 390 | — | 2026-11-02 | 2026-11-02 |
+| CAIR Action | **1,453** · Texas: 390 | — | 2026-11-02 | 2026-11-02 |
 | Emgage PAC | **39** · Texas: 3 | — | 2026-10-08 | 2026-11-02 |
 | NC State Board of Elections candidate list | **2,484** | 1,324 races | 2026-10-26 | 2026-11-02 |
 | Michigan Bureau of Elections candidate list | **707** | 331 races | 2026-10-28 | 2026-11-02 |
@@ -298,7 +298,7 @@ Each daily run rewrites this table (`uv run pallot-bundle stats --since HEAD --r
 | DC Board of Elections candidate list | **18** | 7 races | 2026-10-30 | 2026-11-02 |
 | TrackAIPAC | **659** · Texas: 61 · House: 541 · Other: 2 · Senate: 116 | — | 2026-10-31 | 2026-11-02 |
 | Vote for Peace | **1,429** · Texas: 193 · State legislature: 501 · Federal: 276 · County: 268 · Local: 178 · Statewide: 95 · State: 89 · Special district: 14 · Judicial: 8 | — | 2026-10-28 | 2026-10-28 ⚠ overdue (daily) |
-| Texas Ethics Commission | **2,155** | 1,082,924 contributions · 8,803 reports | 2026-11-02 | 2026-11-02 |
+| Texas Ethics Commission | **2,155** | 1,082,924 contributions · 8,803 reports | 2026-11-03 | 2026-11-03 |
 <!-- source-stats:end -->
 
 ## Configuration
