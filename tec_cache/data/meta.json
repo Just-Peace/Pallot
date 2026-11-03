@@ -1,14 +1,14 @@
 {
-  "content_hash": "b2db2a140c5a0bc86f4b83dba76eab9bd3ddbce46a0521afc81d204b53670dad",
+  "content_hash": "0d80d7289799dfedeaaadc5c42284dd830ba82d6bcbddea501a491eef45a731b",
   "counts": {
     "contribs": 1082924,
-    "dce": 12224,
+    "dce": 12295,
     "filers": 10626,
     "reports": 8803,
     "snapshot_filers": 2155
   },
-  "last_checked": "2026-11-01T16:45:34+00:00",
-  "last_refresh": "2026-11-01T16:45:34+00:00",
+  "last_checked": "2026-11-03T17:00:11+00:00",
+  "last_refresh": "2026-11-03T17:00:11+00:00",
   "members": {
     "contribs_100.csv": {
       "crc": 2996404754,
@@ -26,9 +26,9 @@
       "last": "20261026"
     },
     "contribs_103.csv": {
-      "crc": 2991854453,
+      "crc": 2276673274,
       "first": "20260805",
-      "last": "20261029"
+      "last": "20261102"
     },
     "contribs_104.csv": {
       "crc": 3184077655,
@@ -41,14 +41,14 @@
       "last": "20261005"
     },
     "contribs_106.csv": {
-      "crc": 1797859780,
+      "crc": 2364599562,
       "first": "20260929",
-      "last": "20261026"
+      "last": "20261102"
     },
     "contribs_107.csv": {
-      "crc": 4174278207,
+      "crc": 1544982578,
       "first": "20261001",
-      "last": "20261026"
+      "last": "20261102"
     },
     "contribs_108.csv": {
       "crc": 3228377825,
@@ -61,24 +61,24 @@
       "last": "20261026"
     },
     "contribs_110.csv": {
-      "crc": 3818926655,
+      "crc": 1836760835,
       "first": "20261005",
-      "last": "20261027"
+      "last": "20261102"
     },
     "contribs_111.csv": {
-      "crc": 2036505081,
+      "crc": 2667459257,
       "first": "20261005",
-      "last": "20261031"
+      "last": "20261102"
     },
     "contribs_112.csv": {
-      "crc": 3964047172,
+      "crc": 2826193507,
       "first": "20261025",
-      "last": "20261031"
+      "last": "20261102"
     },
     "contribs_113.csv": {
-      "crc": 3489914659,
+      "crc": 1289286794,
       "first": "20261028",
-      "last": "20261031"
+      "last": "20261102"
     },
     "contribs_74.csv": {
       "crc": 578003376,
@@ -206,17 +206,17 @@
       "last": "20261004"
     },
     "contribs_99.csv": {
-      "crc": 1575742328,
+      "crc": 224712349,
       "first": "20260223",
       "last": "20260804"
     }
   },
   "schema_version": 2,
-  "snapshot": "2026-11-01",
+  "snapshot": "2026-11-03",
   "window_start": "2024-11-06",
   "zip": {
-    "etag": "\"0944da5b97375b721f95a39d3ec8f927-130\"",
-    "last_modified": "Sun, 01 Nov 2026 11:35:03 GMT",
-    "size": 1084895166
+    "etag": "\"281214e6428b7fc48c69fb75bcae2f77-130\"",
+    "last_modified": "Tue, 03 Nov 2026 11:35:03 GMT",
+    "size": 1084955247
   }
 }
