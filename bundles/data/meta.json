@@ -3,10 +3,10 @@
  "sources": {
   "cair": {
    "answers": 1,
-   "answers_hash": "cb15edd35b27b55b3f570892a891f64d4375f0a72589c7944de8d53eb95a574d",
+   "answers_hash": "3dca20c259fb9cb04f09b252a1e6782ebcd8f5b86970123c07cec0cb680a12f7",
    "candidates": 1453,
-   "last_checked": "2026-11-02T19:26:39+00:00",
-   "last_refresh": "2026-11-02T19:26:39+00:00",
+   "last_checked": "2026-11-04T17:11:22+00:00",
+   "last_refresh": "2026-11-04T17:11:22+00:00",
    "texas": 390
   },
   "county_precincts": {
@@ -19,10 +19,10 @@
   },
   "emgage": {
    "answers": 1,
-   "answers_hash": "d2e3fc500aafeb8fa556966918705e346d4aae5a96cd33e920f51488061e8394",
+   "answers_hash": "2b00eb1a11ad05e40af4cec734912c3f9a940fdcaad13280d1c3110eaa1f8eb9",
    "candidates": 39,
-   "last_checked": "2026-11-02T19:26:39+00:00",
-   "last_refresh": "2026-10-08T20:47:28+00:00",
+   "last_checked": "2026-11-04T17:11:22+00:00",
+   "last_refresh": "2026-11-04T17:11:22+00:00",
    "texas": 3
   },
   "fec": {
@@ -35,9 +35,9 @@
   },
   "fec_races": {
    "answers": 437,
-   "answers_hash": "afab7bf3863d6a2e5a3f7a701816f8780f7e5010f09093a011086035bf32b221",
-   "last_checked": "2026-11-02T19:26:39+00:00",
-   "last_refresh": "2026-11-02T19:26:39+00:00",
+   "answers_hash": "cbe4bac352e22d612c2f72552d73ae9f1a153e6a6b712c215fc7ef08330bc498",
+   "last_checked": "2026-11-04T17:11:22+00:00",
+   "last_refresh": "2026-11-04T17:11:22+00:00",
    "races": 431,
    "states": 50
   },
@@ -45,7 +45,7 @@
    "answers": 1,
    "answers_hash": "068dfea88b2198fd0f62fc44bfaa55c1738d918823bd0048f1efe97dea54ca82",
    "candidates": 26,
-   "last_checked": "2026-11-02T19:26:39+00:00",
+   "last_checked": "2026-11-04T17:11:22+00:00",
    "last_refresh": "2026-10-08T20:47:28+00:00",
    "texas": 3
   },
@@ -59,12 +59,12 @@
   },
   "polls": {
    "answers": 5,
-   "answers_hash": "0fc238a3950b4e96c48d3df2154cbdfe42147a27ee773ca1a3f149ad6ee7c29d",
-   "governor": 697,
-   "house": 378,
-   "last_checked": "2026-11-02T19:26:39+00:00",
-   "last_refresh": "2026-11-02T19:26:39+00:00",
-   "senate": 662
+   "answers_hash": "cd68b8429eb5bf80e0687c801ae774833664dafb4d1cbb1b9ae7b6573ad242c4",
+   "governor": 718,
+   "house": 382,
+   "last_checked": "2026-11-04T17:11:22+00:00",
+   "last_refresh": "2026-11-04T17:11:22+00:00",
+   "senate": 686
   },
   "sos": {
    "answers": 9,
