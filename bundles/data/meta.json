@@ -3,10 +3,10 @@
  "sources": {
   "cair": {
    "answers": 1,
-   "answers_hash": "e710a10eb8cc7240203e01452ab8c847f55eee868824236876056fe78b7b7984",
+   "answers_hash": "40f72658f484bd56f2487f26626353a33c0a33ac6d1bd66afeed7dd76c19e25c",
    "candidates": 1453,
-   "last_checked": "2026-11-05T17:21:26+00:00",
-   "last_refresh": "2026-11-05T17:21:26+00:00",
+   "last_checked": "2026-11-06T16:44:16+00:00",
+   "last_refresh": "2026-11-06T16:44:16+00:00",
    "texas": 390
   },
   "county_precincts": {
@@ -21,7 +21,7 @@
    "answers": 1,
    "answers_hash": "2b00eb1a11ad05e40af4cec734912c3f9a940fdcaad13280d1c3110eaa1f8eb9",
    "candidates": 39,
-   "last_checked": "2026-11-05T17:21:26+00:00",
+   "last_checked": "2026-11-06T16:44:16+00:00",
    "last_refresh": "2026-11-04T17:11:22+00:00",
    "texas": 3
   },
@@ -36,7 +36,7 @@
   "fec_races": {
    "answers": 437,
    "answers_hash": "cbe4bac352e22d612c2f72552d73ae9f1a153e6a6b712c215fc7ef08330bc498",
-   "last_checked": "2026-11-05T17:21:26+00:00",
+   "last_checked": "2026-11-06T16:44:16+00:00",
    "last_refresh": "2026-11-04T17:11:22+00:00",
    "races": 431,
    "states": 50
@@ -45,7 +45,7 @@
    "answers": 1,
    "answers_hash": "068dfea88b2198fd0f62fc44bfaa55c1738d918823bd0048f1efe97dea54ca82",
    "candidates": 26,
-   "last_checked": "2026-11-05T17:21:26+00:00",
+   "last_checked": "2026-11-06T16:44:16+00:00",
    "last_refresh": "2026-10-08T20:47:28+00:00",
    "texas": 3
   },
@@ -59,11 +59,11 @@
   },
   "polls": {
    "answers": 5,
-   "answers_hash": "c5ec76882e29515d2edaf712be0b15d2e0f167058be67ecca25a478ea44f433d",
+   "answers_hash": "96feaf0e8dbefcf309e3040c9784e9fac0038b8964881062914b5a22531b3447",
    "governor": 718,
    "house": 382,
-   "last_checked": "2026-11-05T17:21:26+00:00",
-   "last_refresh": "2026-11-05T17:21:26+00:00",
+   "last_checked": "2026-11-06T16:44:16+00:00",
+   "last_refresh": "2026-11-06T16:44:16+00:00",
    "senate": 686
   },
   "sos": {
