@@ -112,6 +112,21 @@ class Sos:
                 by_day[election.day].append(election)
         return dict(sorted(by_day.items()))
 
+    async def shown(self) -> dict[dt.date, list[Election]]:
+        """What Pallot offers: the upcoming elections, plus the latest day before today, so the
+        ballot doesn't go empty between one election and the state listing the next. The
+        year before is asked only when this year has no election behind it yet."""
+        today = self.today()
+        found = [e for year in await asyncio.gather(self.elections(today.year), self.elections(today.year + 1)) for e in year]
+        if not any(e.day and e.day < today for e in found):
+            found += await self.elections(today.year - 1)
+        last = max((e.day for e in found if e.day and e.day < today), default=None)
+        by_day: dict[dt.date, list[Election]] = defaultdict(list)
+        for election in found:
+            if election.day and (election.day >= today or election.day == last):
+                by_day[election.day].append(election)
+        return dict(sorted(by_day.items()))
+
     async def counties(self) -> dict[str, int]:
         """County name in capitals ("TRAVIS") -> the SOS county id."""
         got = await self._get(f"{SYSTEM}/getAllRegions", self.ttl.sos_reference)

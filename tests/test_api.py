@@ -28,9 +28,10 @@ def test_elections_list(client):
     response = client.get("/api/elections")
     assert "cache-control" not in response.headers
     dates = response.json()
-    assert [d["date"] for d in dates] == ["2026-11-03"]
-    assert [e["id"] for e in dates[0]["elections"]] == [53815, 66734, 66618]
-    assert dates[0]["has_primaries"] is False
+    assert [d["date"] for d in dates] == ["2026-05-26", "2026-11-03"]  # the latest past election, then the upcoming
+    assert dates[0]["has_primaries"] is True
+    assert [e["id"] for e in dates[1]["elections"]] == [53815, 66734, 66618]
+    assert dates[1]["has_primaries"] is False
 
 
 def test_sources_overview(client):

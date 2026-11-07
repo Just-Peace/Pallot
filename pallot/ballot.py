@@ -176,7 +176,7 @@ def voter_info(state: str | None) -> VoterInfo | None:
 
 
 async def election_dates(sos: Sos) -> list[ElectionDate]:
-    upcoming = await sos.upcoming()
+    upcoming = await sos.shown()
     return [
         ElectionDate(
             date=day.isoformat(),
@@ -729,15 +729,16 @@ class _Builder:
     async def _elections(self) -> tuple[list[Election], dt.date | None]:
         requested = self.request.election_date
         try:
-            upcoming = await self.svc.sos.upcoming()
+            upcoming = await self.svc.sos.shown()
         except UpstreamError as exc:
             self.sos_error = str(exc)
             log.warning("%s", exc)
             return [], requested
         if not upcoming:
-            self.warnings.append("Texas SOS doesn't list any upcoming elections.")
+            self.warnings.append("Texas SOS doesn't list any elections.")
             return [], requested
-        day = requested if requested in upcoming else next(iter(upcoming))
+        today = self.svc.sos.today()
+        day = requested if requested in upcoming else next((d for d in upcoming if d >= today), max(upcoming))
         if requested and requested != day:
             self.warnings.append(f"Texas SOS lists no election on {requested:%b %d, %Y}; showing {day:%b %d, %Y}.")
         on_day = upcoming[day]

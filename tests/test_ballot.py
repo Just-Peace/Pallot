@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
+import datetime as dt
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -20,6 +23,34 @@ def sources_of(candidate):
 
 def card_of(candidate, source):
     return next(card for card in candidate["cards"] if card["source"] == source)
+
+
+def test_shown_elections_keep_the_latest_past_one():
+    from unittest.mock import MagicMock
+
+    from pallot.config import Ttls
+    from pallot.sources.sos import Election, Sos
+
+    def listed(today, years):
+        sos = Sos(MagicMock(), Ttls(), today=lambda: today)
+
+        async def elections(year):
+            return years.get(year, [])
+
+        sos.elections = elections
+        return asyncio.run(sos.shown())
+
+    early = Election(1, "2026 PRIMARY", "P", dt.date(2026, 3, 3))
+    old = Election(2, "2026 GENERAL", "GE", dt.date(2026, 11, 3))
+    older = Election(3, "2025 GENERAL", "GE", dt.date(2025, 11, 4))
+    later = Election(4, "2027 GENERAL", "GE", dt.date(2027, 11, 2))
+
+    assert list(listed(dt.date(2026, 11, 6), {2026: [early, old]})) == [dt.date(2026, 11, 3)]
+    assert list(listed(dt.date(2026, 9, 27), {2026: [early, old], 2027: [later]})) == [
+        dt.date(2026, 3, 3), dt.date(2026, 11, 3), dt.date(2027, 11, 2)]
+    assert list(listed(dt.date(2027, 1, 5), {2026: [early, old], 2025: [older]})) == [dt.date(2026, 11, 3)]
+    assert list(listed(dt.date(2026, 1, 5), {2026: [old], 2025: [older]})) == [dt.date(2025, 11, 4), dt.date(2026, 11, 3)]
+    assert listed(dt.date(2026, 11, 6), {}) == {}
 
 
 def test_capitol_ballot(client):
